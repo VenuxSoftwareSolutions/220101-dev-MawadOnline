@@ -171,7 +171,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         KingFlamez\Rave\RaveServiceProvider::class,
-        
+
         /*
          * Package Service Providers...
          */
@@ -188,6 +188,7 @@ return [
         App\Providers\ComposerServiceProvider::class,
 
         Spatie\Permission\PermissionServiceProvider::class,
+        Laravel\Sanctum\SanctumServiceProvider::class,
 
     ],
 
