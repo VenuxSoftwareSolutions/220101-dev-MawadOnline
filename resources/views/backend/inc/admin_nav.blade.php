@@ -23,7 +23,7 @@
                 <!-- Browse Website -->
                 <div class="aiz-topbar-item">
                     <div class="d-flex align-items-center">
-                        <a class="btn btn-topbar has-transition btn-icon btn-circle btn-light d-flex align-items-center justify-content-center" 
+                        <a class="btn btn-topbar has-transition btn-icon btn-circle btn-light d-flex align-items-center justify-content-center"
                             href="{{ route('home') }}" target="_blank" data-toggle="tooltip" data-title="{{ translate('Browse Website') }}">
                             {{-- <i class="las la-2x la-globe"></i> --}}
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
@@ -127,7 +127,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="text-center border-top">
                             <a href="{{ route('admin.all-notification') }}" class="text-reset d-block py-2">
                                 {{ translate('View All Notifications') }}
@@ -176,7 +176,7 @@
                         role="button" aria-haspopup="false" aria-expanded="false">
                         <span class="d-flex align-items-center">
                             <span class="d-none d-md-block">
-                                <span class="d-block fw-500">{{ Auth::user()->name }}</span>
+                                <span class="d-block fw-500">{{ Auth::user()->name }} </span>
                                 <span class="d-block small opacity-60 text-right">{{ Auth::user()->user_type }}</span>
                             </span>
                             <span class="size-45px rounded-content overflow-hidden ml-md-2">

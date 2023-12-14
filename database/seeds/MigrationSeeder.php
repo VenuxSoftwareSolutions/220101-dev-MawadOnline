@@ -57,5 +57,11 @@ class MigrationSeeder extends Seeder
             'batch' => 2
         ]);
 
+        DB::table('migrations')->insert([
+            'id' => 8,
+            'migration' => '2019_12_14_000001_create_personal_access_tokens_table',
+            'batch' => 2
+        ]);
+
     }
 }

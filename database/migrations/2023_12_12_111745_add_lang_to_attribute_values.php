@@ -13,12 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('verification_codes', function (Blueprint $table) {
-            $table->id();
-            $table->string('email')->unique();
-            $table->string('code');
-            $table->timestamp('expires_at');
-            $table->timestamps();
+
+        Schema::table('attribute_values', function (Blueprint $table) {
+            $table->string('lang')->after('color_code')->nullable();
         });
     }
 
@@ -29,7 +26,9 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('verification_codes');
 
+        Schema::table('attribute_values', function (Blueprint $table) {
+            //
+        });
     }
 };

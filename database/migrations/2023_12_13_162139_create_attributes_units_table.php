@@ -13,12 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('verification_codes', function (Blueprint $table) {
+
+        Schema::create('attributes_units', function (Blueprint $table) {
             $table->id();
-            $table->string('email')->unique();
-            $table->string('code');
-            $table->timestamp('expires_at');
+            $table->foreignId('unite_id')->constrained('unites');
+            $table->foreignId('attribute_id')->constrained('attributes');
             $table->timestamps();
+
         });
     }
 
@@ -29,7 +30,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('verification_codes');
 
+        Schema::dropIfExists('attributes_units');
     }
 };

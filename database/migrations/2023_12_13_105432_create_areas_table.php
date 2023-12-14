@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->foreignId('emirate_id')->constrained('emirates');
             $table->timestamps();
+
         });
     }
 
@@ -29,5 +30,6 @@ return new class extends Migration
     public function down()
     {
         Schema::dropIfExists('areas');
+
     }
 };
