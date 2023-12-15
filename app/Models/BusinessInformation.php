@@ -9,16 +9,18 @@ use Spatie\Translatable\HasTranslations;
 class BusinessInformation extends Model
 {
     use HasFactory;
+    use HasTranslations;
+
     public $translatable = ['trade_name','eshop_name','eshop_desc'];
     protected $fillable = [
         'user_id',
-        'trade_name_english',
-        'trade_name_arabic',
+        'trade_name',
+        'trade_name',
         'trade_license_doc',
-        'eshop_name_english',
-        'eshop_name_arabic',
-        'eshop_desc_en',
-        'eshop_desc_ar',
+        'eshop_name',
+        'eshop_name',
+        'eshop_desc',
+        'eshop_desc',
         'license_issue_date',
         'license_expiry_date',
         'state',

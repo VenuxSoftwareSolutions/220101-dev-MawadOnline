@@ -15,7 +15,8 @@ return new class extends Migration
     {
         Schema::create('business_information', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained(); // Assuming you have a users table
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('trade_name');
             $table->string('trade_license_doc');
             $table->string('eshop_name');

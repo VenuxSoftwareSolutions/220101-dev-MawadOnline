@@ -50,8 +50,8 @@
                                             <div class="fs-15 fw-600 p-3">
                                                 {{ translate('Personal Info') }}
                                             </div>
-                                            <div id="validation-errors" class="alert alert-danger" style="display: none;">
-                                            </div>
+                                            {{-- <div id="validation-errors" class="alert alert-danger" style="display: none;">
+                                            </div> --}}
 
                                             <div class="p-3">
                                                 <div class="form-group">
@@ -75,7 +75,7 @@
                                                     <label>{{ translate('Your Email') }} <span
                                                             class="text-primary">*</span></label>
                                                     <input id="email" type="email" class="form-control rounded-0"
-                                                        value="{{ old('email') }}" placeholder="{{ translate('Email') }}"
+                                                        value="{{ $user->email ?? "" }}" placeholder="{{ translate('Email') }}"
                                                         name="email" required>
 
                                                 </div>
@@ -117,7 +117,7 @@
                                                 <div class="form-group">
                                                     <label>{{ translate('Verification Code') }} <span
                                                             class="text-primary">*</span></label>
-                                                    <input type="hidden" name="email" id="emailAccount">
+                                                    <input type="hidden" value="{{ $user->email ?? "" }}" name="email" id="emailAccount">
                                                     <input type="text" class="form-control rounded-0"
                                                         placeholder="{{ translate('Enter Code') }}"
                                                         name="verification_code" required maxlength="6"
@@ -141,7 +141,7 @@
 
                                 <div class="tab-pane fade" id="business-info">
                                     <form   id="businessInfoForm" class="" action="{{ route('shops.business_info') }}" method="POST" enctype="multipart/form-data"
-                                        data-next-tab="contactPersonForm">
+                                        data-next-tab="contact-person">
                                         @csrf
                                         <!-- ... Business Info form fields ... -->
 
@@ -160,7 +160,7 @@
                                                                     class="text-primary">*</span></label>
                                                             <input type="text" class="form-control rounded-0"
                                                                 placeholder="{{ translate('English Trade Name') }}"
-                                                                name="trade_name_english" required>
+                                                                value="{{ isset($user->business_information->trade_name) ? $user->business_information->getTranslation('trade_name','en',false) : "" }}"  name="trade_name_english" required>
 
                                                         </div>
                                                     </div>
@@ -170,7 +170,7 @@
                                                                     class="text-primary">*</span></label>
                                                             <input type="text" class="form-control rounded-0"
                                                                 placeholder="{{ translate('Arabic Trade Name') }}"
-                                                                name="trade_name_arabic" required>
+                                                                value="{{ isset($user->business_information->trade_name) ? $user->business_information->getTranslation('trade_name','ar',false) : "" }}"    name="trade_name_arabic" required>
 
                                                         </div>
                                                     </div>
@@ -178,14 +178,21 @@
                                                         <div class="form-group">
                                                             <label>{{ translate('Trade License Doc') }} <span
                                                                     class="text-primary">*</span></label>
-                                                            {{-- <input type="file" class="form-control rounded-0"
-                                                                placeholder="{{ translate('Trade License Doc') }}"
-                                                                name="trade_license_doc" required> --}}
+                                                                    @if(isset($user) && isset($user->business_information) && $user->business_information->trade_license_doc)
 
-                                                          <div class="custom-file">
+                                                                    <a class="old_file" href="{{ static_asset($user->business_information->trade_license_doc) }}" target="_blank">{{ translate('View Trade License Doc') }}</a>
+                                                                    <input type="hidden"  name="trade_license_doc_old" value="{{$user->business_information->trade_license_doc}}">
+
+                                                                @endif
+                                                            <input type="file" class="form-control rounded-0"
+                                                                placeholder="{{ translate('Trade License Doc') }}"
+                                                                name="trade_license_doc" required>
+
+
+                                                          {{-- <div class="custom-file">
                                                             <input name="trade_license_doc" type="file" class="custom-file-input" id="inputGroupFile01">
                                                             <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
-                                                          </div>
+                                                          </div> --}}
 
                                                         </div>
 
@@ -196,7 +203,7 @@
                                                                     class="text-primary">*</span></label>
                                                             <input type="text" class="form-control rounded-0"
                                                                 placeholder="{{ translate('English E-shop Name') }}"
-                                                                name="eshop_name_english" required>
+                                                                value="{{ isset($user->business_information->eshop_name) ? $user->business_information->getTranslation('eshop_name','en',false) : "" }}" name="eshop_name_english" required>
 
                                                         </div>
                                                     </div>
@@ -206,7 +213,7 @@
                                                                     class="text-primary">*</span></label>
                                                             <input type="text" class="form-control rounded-0"
                                                                 placeholder="{{ translate('Arabic E-shop Name') }}"
-                                                                name="eshop_name_arabic" required>
+                                                                value="{{ isset($user->business_information->eshop_name) ? $user->business_information->getTranslation('eshop_name','ar',false) : "" }}" name="eshop_name_arabic" required>
 
                                                         </div>
                                                     </div>
@@ -216,7 +223,7 @@
                                                                     class="text-primary"></span></label>
 
                                                             <textarea class="form-control rounded-0" placeholder="{{ translate('English e-Shop description') }}"
-                                                                name="eshop_desc_en"></textarea>
+                                                                name="eshop_desc_en">{{ isset($user->business_information->eshop_desc) ? $user->business_information->getTranslation('eshop_desc','en',false) : "" }}</textarea>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
@@ -225,7 +232,7 @@
                                                                     class="text-primary"></span></label>
 
                                                             <textarea class="form-control rounded-0" placeholder="{{ translate('Arabic e-Shop description') }}"
-                                                                name="eshop_desc_ar"></textarea>
+                                                                name="eshop_desc_ar">{{ isset($user->business_information->eshop_desc) ? $user->business_information->getTranslation('eshop_desc','ar',false) : "" }}</textarea>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
@@ -235,7 +242,7 @@
 
                                                             <input required type="date" class="form-control rounded-0"
                                                                 placeholder="{{ translate('License Issue Date') }}"
-                                                                name="license_issue_date">
+                                                                value="{{ $user->business_information->license_issue_date ?? "" }}" name="license_issue_date">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
@@ -244,7 +251,7 @@
                                                                     class="text-primary">*</span></label>
 
                                                             <input required type="date" class="form-control rounded-0"
-                                                                placeholder="{{ translate('License Expiry Date') }}"
+                                                            value="{{ $user->business_information->license_expiry_date ?? "" }}"  placeholder="{{ translate('License Expiry Date') }}"
                                                                 name="license_expiry_date">
                                                         </div>
                                                     </div>
@@ -284,7 +291,7 @@
                                                             <label>{{ translate('Street') }} <span
                                                                     class="text-primary">*</span></label>
                                                             <input type="text" class="form-control rounded-0"
-                                                                placeholder="{{ translate('Street') }}" name="street"
+                                                            value="{{ $user->business_information->street ?? "" }}"  placeholder="{{ translate('Street') }}" name="street"
                                                                 required>
 
                                                         </div>
@@ -294,7 +301,7 @@
                                                             <label>{{ translate('Building') }} <span
                                                                     class="text-primary">*</span></label>
                                                             <input type="text" class="form-control rounded-0"
-                                                                placeholder="{{ translate('Building') }}" name="building"
+                                                            value="{{ $user->business_information->building ?? "" }}"   placeholder="{{ translate('Building') }}" name="building"
                                                                 required>
 
                                                         </div>
@@ -304,7 +311,7 @@
                                                             <label>{{ translate('Unit/Office No.') }} <span
                                                                     class="text-primary"></span></label>
                                                             <input type="text" class="form-control rounded-0"
-                                                                placeholder="{{ translate('Unit/Office No.') }}"
+                                                            value="{{ $user->business_information->unit ?? "" }}" placeholder="{{ translate('Unit/Office No.') }}"
                                                                 name="unit">
 
                                                         </div>
@@ -314,7 +321,7 @@
                                                             <label>{{ translate('PO Box') }} <span
                                                                     class="text-primary"></span></label>
                                                             <input type="text" class="form-control rounded-0"
-                                                                placeholder="{{ translate('PO Box') }}" name="po_box">
+                                                            value="{{ $user->business_information->po_box ?? "" }}"  placeholder="{{ translate('PO Box') }}" name="po_box">
 
                                                         </div>
                                                     </div>
@@ -322,7 +329,7 @@
                                                         <div class="form-group">
                                                             <label>{{ translate('Landline Phone No.') }} <span
                                                                     class="text-primary"></span></label>
-                                                            <input type="text" class="form-control rounded-0"
+                                                            <input value="{{ $user->business_information->landline ?? "" }}" type="text" class="form-control rounded-0"
                                                                 placeholder="{{ translate('Landline Phone No.') }}"
                                                                 name="landline">
 
@@ -336,7 +343,7 @@
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="radio"
                                                                     value="1" id="vatRegisteredYes"
-                                                                    name="vat_registered" checked>
+                                                                    name="vat_registered" @if(isset($user) && isset($user->business_information) && $user->business_information->vat_registered == 1 || !isset($user->business_information->vat_registered)) checked @endif>
                                                                 <label class="form-check-label" for="vatRegisteredYes">
                                                                     {{ translate('Yes') }}
                                                                 </label>
@@ -344,35 +351,48 @@
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="radio"
                                                                     value="0" id="vatRegisteredNo"
-                                                                    name="vat_registered">
+                                                                    @if(isset($user) && isset($user->business_information) && $user->business_information->vat_registered == 0) checked @endif name="vat_registered">
                                                                 <label class="form-check-label" for="vatRegisteredNo">
                                                                     {{ translate('No') }}
                                                                 </label>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6" id="vatCertificateGroup">
+                                                    <div class="col-md-6" id="vatCertificateGroup"  >
                                                         <div class="form-group">
                                                             <label>{{ translate('Vat Certificate') }} <span
                                                                     class="text-primary">*</span></label>
-                                                            <input type="file" class="form-control rounded-0"
+                                                                    @if(isset($user) && isset($user->business_information) && $user->business_information->vat_certificate)
+
+                                                                    <a class="old_file" href="{{ static_asset($user->business_information->vat_certificate) }}" target="_blank">{{ translate('View Vat Certificate') }}</a>
+                                                                    <input type="hidden"  name="vat_certificate_old" value="{{$user->business_information->vat_certificate}}">
+
+                                                                @endif
+                                                            <input   type="file" class="form-control rounded-0"
                                                                 placeholder="{{ translate('Vat Certificate') }}"
                                                                 name="vat_certificate">
+
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6" id="trnGroup">
                                                         <div class="form-group">
                                                             <label>{{ translate('TRN') }} <span
                                                                     class="text-primary">*</span></label>
-                                                            <input type="text" class="form-control rounded-0"
+                                                            <input value="{{ $user->business_information->trn	 ?? "" }}"  type="text" class="form-control rounded-0"
                                                                 placeholder="{{ translate('TRN') }}" name="trn">
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6" id="taxWaiverGroup" style="display: none;">
+                                                    <div class="col-md-6" id="taxWaiverGroup" {{-- style="display: none;" --}}>
                                                         <div class="form-group">
                                                             <label>{{ translate('Tax Waiver Certificate') }} <span
                                                                     class="text-primary">*</span></label>
-                                                            <input type="file" class="form-control rounded-0"
+                                                                    @if(isset($user) && isset($user->business_information) && $user->business_information->tax_waiver)
+
+                                                                    <a class="old_file" href="{{ static_asset($user->business_information->tax_waiver) }}" target="_blank">{{ translate('View Tax Waiver Certificate') }}</a>
+                                                                    <input type="hidden"  name="tax_waiver_old" value="{{$user->business_information->tax_waiver}}">
+
+                                                                @endif
+                                                            <input   type="file" class="form-control rounded-0"
                                                                 name="tax_waiver">
                                                         </div>
                                                     </div>
@@ -380,8 +400,15 @@
                                                         <div class="form-group">
                                                             <label>{{ translate('Civil Denfense Approval') }} <span
                                                                     class="text-primary"></span></label>
-                                                            <input type="file" class="form-control rounded-0"
-                                                                name="civil_defense_approval">
+                                                            {{-- <input  type="file" class="form-control rounded-0"
+                                                                name="civil_defense_approval"> --}}
+                                                                @if(isset($user) && isset($user->business_information) && $user->business_information->civil_defense_approval)
+
+                                                                <a class="old_file" href="{{ static_asset($user->business_information->civil_defense_approval) }}" target="_blank">{{ translate('View Civil Defense Approval') }}</a>
+
+                                                            @endif
+                                                            <input type="file" class="form-control rounded-0" name="civil_defense_approval">
+                                                            <input type="hidden"  name="civil_defense_approval_old" value="{{$user->business_information->civil_defense_approval}}">
 
                                                         </div>
 
@@ -401,13 +428,13 @@
                                 </div>
 
                                 <div class="tab-pane fade" id="contact-person">
-                                    <form id="contactPersonForm" class="" {{-- action="{{ route('shops.contact_person') }}" --}} method="POST"
-                                        data-next-tab="warehousesForm">
+                                    <form id="contactPersonForm" class="" action="{{ route('shops.contact_person') }}" method="POST"
+                                        data-next-tab="warehouses">
                                         @csrf
                                         <!-- ... Contact Person form fields ... -->
                                         <div class="bg-white border mb-4">
                                             <div class="fs-15 fw-600 p-3">
-                                                {{ translate('Business Information') }}
+                                                {{ translate('Contact Person') }}
                                             </div>
                                             {{-- <div id="validation-errors" class="alert alert-danger"
                                                 style="display: none;"></div> --}}
@@ -416,20 +443,136 @@
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('English Trade Name') }} <span
+                                                            <label>{{ translate('First Name') }} <span
                                                                     class="text-primary">*</span></label>
                                                             <input type="text" class="form-control rounded-0"
-                                                                placeholder="{{ translate('English Trade Name') }}"
-                                                                name="trade_name_english" required>
+                                                                placeholder="{{ translate('First Name') }}"
+                                                                name="first_name" required>
 
                                                         </div>
                                                     </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ translate('Last Name') }} <span
+                                                                    class="text-primary">*</span></label>
+                                                            <input type="text" class="form-control rounded-0"
+                                                                placeholder="{{ translate('Last Name') }}"
+                                                                name="last_name" required>
 
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ translate('Email') }} <span
+                                                                    class="text-primary">*</span></label>
+                                                            <input type="email" class="form-control rounded-0"
+                                                                placeholder="{{ translate('Email') }}"
+                                                                name="email" required>
 
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ translate('Mobile Phone') }} <span
+                                                                    class="text-primary">*</span></label>
+                                                            <input type="text" class="form-control rounded-0"
+                                                                placeholder="{{ translate('Mobile Phone') }}"
+                                                                name="mobile_phone" required>
 
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ translate('Additional Mobile Phone') }} <span
+                                                                    class="text-primary"></span></label>
+                                                            <input type="text" class="form-control rounded-0"
+                                                                placeholder="{{ translate('Additional Mobile Phone') }}"
+                                                                name="additional_mobile_phone" >
 
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ translate('Nationality') }} <span
+                                                                    class="text-primary">*</span></label>
+                                                                    <br>
+                                                                    <select name="nationality"  class="selectpicker countrypicker" data-flag="true" ></select>
 
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ translate('Date Of Birth') }} <span
+                                                                    class="text-primary">*</span></label>
+                                                            <input type="date" class="form-control rounded-0"
+                                                                placeholder="{{ translate('Date Of Birth') }}"
+                                                                name="date_of_birth" required>
 
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ translate('Emirates ID - Number') }} <span
+                                                                    class="text-primary">*</span></label>
+                                                            <input type="text" class="form-control rounded-0"
+                                                                placeholder="{{ translate('Emirates ID - Number') }}"
+                                                                required name="emirates_id_number" >
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ translate('Emirates ID - Expiry Date') }} <span
+                                                                    class="text-primary">*</span></label>
+                                                            <input type="date" class="form-control rounded-0"
+                                                                placeholder="{{ translate('Emirates ID - Expiry Date') }}"
+                                                                required name="emirates_id_expiry_date" >
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ translate('Emirates ID') }} <span
+                                                                    class="text-primary">*</span></label>
+                                                            <input type="file" class="form-control rounded-0"
+                                                                placeholder="{{ translate('Emirates ID') }}"
+                                                                required  name="emirates_id_file" >
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ translate('Business Owner') }} <span
+                                                                    class="text-primary">*
+                                                                </span></label> <br>
+                                                            <div class="form-check form-check-inline">
+                                                                <input checked class="form-check-input" type="radio"
+                                                                    value="1" id="vatRegisteredYes"
+                                                                    name="business_owner" >
+                                                                <label class="form-check-label" for="vatRegisteredYes">
+                                                                    {{ translate('Yes') }}
+                                                                </label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio"
+                                                                    value="0" id="vatRegisteredNo"
+                                                                    name="business_owner">
+                                                                <label class="form-check-label" for="vatRegisteredNo">
+                                                                    {{ translate('No') }}
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ translate('Designation') }} <span
+                                                                    class="text-primary">*</span></label>
+                                                            <input type="text" class="form-control rounded-0"
+                                                            required   placeholder="{{ translate('Designation') }}"
+                                                                name="designation" >
+
+                                                        </div>
+                                                    </div>
 
                                                 </div>
                                             </div>
@@ -443,14 +586,69 @@
                                 </div>
 
                                 <div class="tab-pane fade" id="warehouses">
-                                    <form id="warehousesForm" class="" {{-- action="{{ route('shops.warehouses') }}" --}}
-                                        data-next-tab="payoutInfoForm" method="POST">
+                                    <form id="warehousesForm" class="" action="{{ route('shops.warehouses') }}"
+                                        data-next-tab="payout-info" method="POST">
                                         @csrf
                                         <!-- ... Warehouses form fields ... -->
-                                        <input type="password"
-                                            class="form-control rounded-0{{ $errors->has('password') ? ' is-invalid' : '' }}"
-                                            value="{{ old('password') }}" placeholder="{{ translate('Password') }}"
-                                            name="password" required>
+                                        <div class="bg-white border mb-4">
+                                            <div class="fs-15 fw-600 p-3">
+                                                {{ translate('Warehouses') }}
+                                            </div>
+                                            {{-- <div id="validation-errors" class="alert alert-danger"
+                                                style="display: none;"></div> --}}
+
+                                            <div class="p-3">
+                                                <div class="container mt-4">
+                                                    {{-- <h2>Warehouse Information</h2> --}}
+                                                    <table class="table" id="warehouseTable">
+                                                        <thead class="thead-dark">
+                                                            <tr>
+                                                                <th>Warehouse Name</th>
+                                                                <th>State/Emirate</th>
+                                                                <th>Area</th>
+                                                                <th>Street</th>
+                                                                <th>Building</th>
+                                                                <th>Unit/Office No.</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td><input type="text" class="form-control" name="warehouse_name[]" required></td>
+                                                                <td>
+
+                                                                    <select required name="state[]"
+                                                                    class="form-control rounded-0 emirateSelect" id="emirateempire">
+                                                                    <option value="" selected>Please Choose !!</option>
+                                                                    <option value="1">Abu dhabi</option>
+                                                                    <option value="2">Ajman</option>
+                                                                    <option value="3">Sharjah</option>
+                                                                    <option value="4">Dubai</option>
+                                                                    <option value="5">Fujairah</option>
+                                                                    <option value="6">ras al khaimah</option>
+                                                                    <option value="7">Umm Al-Quwain</option>
+
+                                                                </select>
+                                                                </td>
+                                                                <td>
+                                                                    <select class="form-control areaSelect" name="area[]" required>
+                                                                        <option value="" selected>Please Choose !!</option>
+                                                                        <!-- Options for area -->
+                                                                    </select>
+                                                                </td>
+                                                                <td><input type="text" class="form-control" name="street[]" required></td>
+                                                                <td><input type="text" class="form-control" name="building[]" required></td>
+                                                                <td><input type="text" class="form-control" name="unit[]" required></td>
+                                                                <td><button type="button" class="btn btn-danger removeRow">Remove</button></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+
+                                                    <button type="button" class="btn btn-primary" id="addRow">Add Row</button>
+                                                </div>
+                                            </div>
+                                        </div>
+
 
                                         <div class="text-right">
                                             <button type="button" class="btn btn-primary fw-600 rounded-0"
@@ -460,13 +658,58 @@
                                 </div>
 
                                 <div class="tab-pane fade" id="payout-info">
-                                    <form id="payoutInfoForm" class="" {{-- action="{{ route('shops.payout_info') }}" --}} method="POST">
+                                    <form id="payoutInfoForm" class="" action="{{ route('shops.payout_info') }}" method="POST">
                                         @csrf
                                         <!-- ... Payout Info form fields ... -->
-                                        <input type="password"
-                                            class="form-control rounded-0{{ $errors->has('password') ? ' is-invalid' : '' }}"
-                                            value="{{ old('password') }}" placeholder="{{ translate('Password') }}"
-                                            name="password" required>
+                                        <div class="bg-white border mb-4">
+                                            <div class="fs-15 fw-600 p-3">
+                                                {{ translate('Payout Information') }}
+                                            </div>
+                                            {{-- <div id="validation-errors" class="alert alert-danger"
+                                                style="display: none;"></div> --}}
+
+                                            <div class="p-3">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ translate('Bank Name') }} <span class="text-primary">*</span></label>
+                                                            <input type="text" class="form-control rounded-0" placeholder="{{ translate('Bank Name') }}" name="bank_name" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ translate('Account Name') }} <span class="text-primary">*</span></label>
+                                                            <input type="text" class="form-control rounded-0" placeholder="{{ translate('Account Name') }}" name="account_name" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ translate('Account Number') }} <span class="text-primary">*</span></label>
+                                                            <input type="text" class="form-control rounded-0" placeholder="{{ translate('Account Number') }}" name="account_number" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ translate('IBAN') }} <span class="text-primary">*</span></label>
+                                                            <input type="text" class="form-control rounded-0" placeholder="{{ translate('IBAN') }}" name="iban" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ translate('Swift Code') }} <span class="text-primary">*</span></label>
+                                                            <input type="text" class="form-control rounded-0" placeholder="{{ translate('Swift Code') }}" name="swift_code" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{ translate('IBAN Certificate') }}<span class="text-primary">*</span></label>
+                                                            <input required type="file" class="form-control rounded-0" name="iban_certificate">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
 
                                         <div class="text-right">
                                             <button type="submit" class="btn btn-primary fw-600 rounded-0">Register Your
@@ -490,12 +733,53 @@
         $(document).ready(function() {
             // Your existing logic here
 
+            var stepNumber = {{ $step_number ?? 0 }}; // Get the step number from the server
+
+                // Check the stepNumber variable and switch tabs accordingly
+                switch (stepNumber) {
+                    case 0:
+                        switchTab('personal-info');
+                        break;
+                    case 1:
+                        switchTab('code-verification');
+                        break;
+                    case 2:
+                        switchTab('business-info');
+                        break;
+                    case 3:
+                        switchTab('contact-person');
+                        break;
+                    case 4:
+                        switchTab('warehouses');
+                        break;
+                    case 5:
+                        switchTab('payout-info');
+                        break;
+                    default:
+                        switchTab('personal-info'); // Default to the first tab if stepNumber is not recognized
+                        break;
+                }
+
+            // Add Row
+            $('#addRow').on('click', function() {
+                    var newRow = $('#warehouseTable tbody tr:first').clone();
+                    newRow.find('input, select').val('');
+                    newRow.find('.removeRow').show();
+                    $('#warehouseTable tbody').append(newRow);
+                });
+
+                // Remove Row
+                $('#warehouseTable').on('click', '.removeRow', function() {
+                    $(this).closest('tr').remove();
+                });
+
+
             $('#registerTabs a').on('click', function(e) {
                 e.preventDefault();
                 $(this).tab('show');
             });
 
-            $('#registerTabsContent').find('.tab-pane button:not(#resendCodeBtn)').on('click', function(e) {
+            $('#registerTabsContent').find('.tab-pane button:not(#resendCodeBtn,#addRow)').on('click', function(e) {
 
                 var email = $('#email').val();
                 $('#emailAccount').val(email);
@@ -521,6 +805,7 @@
                             var nextTabId = form.data(
                                 'next-tab'
                             ); // Assuming you set a data attribute on the form with the next tab ID
+
                             switchTab(nextTabId);
                         }
                     },
@@ -697,6 +982,76 @@
                 $('#taxWaiver').prop('required', !isVatRegistered);
             });
 
+            isVatRegistered = $('input[name="vat_registered"]:checked').val();
+
+            if (isVatRegistered == 1) {
+                // If VAT is registered
+                $('#vatCertificateGroup').show();
+                $('#trnGroup').show();
+                $('#taxWaiverGroup').hide();
+                $('#vatCertificate').prop('required', true);
+                $('#trn').prop('required', true);
+                $('#taxWaiver').prop('required', false);
+            } else {
+
+                // If VAT is not registered
+                $('#vatCertificateGroup').hide();
+                $('#trnGroup').hide();
+                $('#taxWaiverGroup').show();
+                $('#vatCertificate').prop('required', false);
+                $('#trn').prop('required', false);
+                $('#taxWaiver').prop('required', true);
+            }
+
+
+
+            $(document).on('change','.emirateSelect', function() {
+
+            // $('').on('change', function() {
+            var emirateId = $(this).val();
+
+            var areaSelect = $(this).closest('tr').find('.areaSelect');
+
+            // Make an AJAX call to get areas based on the selected emirate
+            $.ajax({
+                url: '{{ route("get.area", ["id" => ":id"]) }}'.replace(':id', emirateId),
+                method: 'GET',
+                success: function(response) {
+                    // Update the options in the area select
+                    areaSelect.empty();
+                    areaSelect.append('<option value="" selected>Please Choose !!</option>');
+
+                    // Add options based on the response
+                    // $.each(response, function(index, area) {
+                    //     console.log(area)
+                    //     areaSelect.append('<option value="' + area[0].id + '">' + area[0].name + '</option>');
+                    // });
+                    var len = 0;
+                        if (response['data'] != null) {
+                            len = response['data'].length;
+                        }
+
+                        if (len > 0) {
+                            // Read data and create <option >
+                            for (var i = 0; i < len; i++) {
+
+                                var id = response['data'][i].id;
+                                var name = response['data'][i].name;
+
+                                var option = "<option value='" + id + "'>" + name + "</option>";
+
+                                areaSelect.append(option);
+                            }
+                        }
+                },
+                error: function(error) {
+                    console.error('Error fetching areas:', error);
+                }
+            });
+        });
+
         });
     </script>
+
+
 @endsection

@@ -360,6 +360,9 @@ Route::post('verify-code', [ShopController::class,"verifyCode"])->name('verify.c
 Route::post('/shops/business_info', [ShopController::class, 'storeBusinessInfo'])->name('shops.business_info');
 Route::post('/resend-code', [ShopController::class,"resendCode"])->name('resend.code');
 Route::get('/getArea/{id}', [ShopController::class,"getArea"])->name('get.area');
+Route::post('/shops/contact_person', [ShopController::class, 'storeContactPerson'])->name('shops.contact_person');
+Route::post('/shops/warehouse', [ShopController::class, 'storeWarehouse'])->name('shops.warehouses');
+Route::post('/shops/payout_info', [ShopController::class, 'storePayoutInfo'])->name('shops.payout_info');
 
 
 Route::get('/instamojo/payment/pay-success', [InstamojoController::class, 'success'])->name('instamojo.success');

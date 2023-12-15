@@ -17,6 +17,13 @@ class IsSeller
     public function handle($request, Closure $next)
     {
         if (Auth::check() && Auth::user()->user_type == 'seller'  && !Auth::user()->banned) {
+            $user = Auth::user();
+
+            if (!$user->steps) {
+                // Redirect to shops.create with the step number
+                return redirect()->route('shops.create', ['step' => $user->step_number]);
+            }
+
             return $next($request);
         }
         else{

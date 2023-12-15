@@ -72,6 +72,7 @@
     @endif
     <link rel="stylesheet" href="{{ static_asset('assets/css/aiz-core.css?v=') }}{{ rand(1000, 9999) }}">
     <link rel="stylesheet" href="{{ static_asset('assets/css/custom-style.css') }}">
+    <link rel="stylesheet" href="{{ static_asset('assets/css/bootstrap-select-country.min.css') }}">
 
 
     <script>
@@ -129,7 +130,7 @@
             font-family: 'Public Sans', sans-serif;
             font-weight: 400;
         }
-        
+
         .pagination .page-link,
         .page-item.disabled .page-link {
             min-width: 32px;
@@ -222,7 +223,7 @@
             }
 
             $system_language = get_system_language();
-            
+
             // if ($user != null) {
             //     $carts = App\Models\Cart::where('user_id', auth()->user()->id)->get();
             // }
@@ -231,7 +232,7 @@
         @include('frontend.inc.nav')
 
         @yield('content')
-        
+
         <!-- footer -->
         @include('frontend.inc.footer')
 
@@ -289,7 +290,7 @@
     @endif
 
     @include('frontend.'.get_setting('homepage_select').'.partials.modal')
-    
+
     @include('frontend.'.get_setting('homepage_select').'.partials.account_delete_modal')
 
     <div class="modal fade" id="addToCart">
@@ -314,6 +315,7 @@
     <script src="{{ static_asset('assets/js/vendors.js') }}"></script>
     <script src="{{ static_asset('assets/js/aiz-core.js?v=') }}{{ rand(1000, 9999) }}"></script>
 
+    <script src="{{ static_asset('assets/js/bootstrap-select-country.min.js') }}"></script>
 
 
     @if (get_setting('facebook_chat') == 1)
@@ -349,7 +351,7 @@
 
     <script>
         @if (Route::currentRouteName() == 'home' || Route::currentRouteName() == '/')
-            
+
             $.post('{{ route('home.section.featured') }}', {
                 _token: '{{ csrf_token() }}'
             }, function(data) {
@@ -399,7 +401,7 @@
                 $(el).on('mouseover', function(){
                     if(!$(el).find('.sub-cat-menu').hasClass('loaded')){
                         $.post('{{ route('category.elements') }}', {
-                            _token: AIZ.data.csrf, 
+                            _token: AIZ.data.csrf,
                             id:$(el).data('id'
                             )}, function(data){
                             $(el).find('.sub-cat-menu').addClass('loaded').html(data);
@@ -485,7 +487,7 @@
             if($trigger !== event.target && !$trigger.has(event.target).length){
                 $("#click-category-menu").slideUp("fast");;
                 $("#category-menu-bar-icon").removeClass('show');
-            }   
+            }
         });
 
         function updateNavCart(view,count){
@@ -641,7 +643,7 @@
                 AIZ.plugins.notify('warning', "{{ translate('Please Login as a customer to add products to the Cart.') }}");
                 return false;
             @endif
-            
+
             if(checkAddToCartValidity()) {
                 $('#addToCart-modal-body').html(null);
                 $('#addToCart').modal();
@@ -683,7 +685,7 @@
                 $('#login_modal').modal('show');
             @endif
         }
-        
+
         function clickToSlide(btn,id){
             $('#'+id+' .aiz-carousel').find('.'+btn).trigger('click');
             $('#'+id+' .slide-arrow').removeClass('link-disable');
@@ -717,7 +719,7 @@
             setTimeout(function(){
                 $('.cart-ok').css({ fill: '#d43533' });
             }, 2000);
-            
+
         });
     </script>
 
