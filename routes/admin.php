@@ -427,6 +427,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
 
         //Change status is activated or not
         Route::post('/is_activated', 'is_activated')->name('attributes.activated');
+
+        //Delete value of attribute
+        Route::post('/attributes/delete/value/{id}', 'delete_value')->name('attributes-delete-value');
     });
 
     //Product unites

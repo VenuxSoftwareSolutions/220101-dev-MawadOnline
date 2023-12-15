@@ -112,7 +112,8 @@ class AttributeController extends Controller
     {
         $lang      = $request->lang;
         $attribute = Attribute::findOrFail($id);
-        return view('backend.product.attribute.edit', compact('attribute','lang'));
+        $units = Unity::all();
+        return view('backend.product.attribute.edit', compact('attribute','lang', 'units'));
     }
 
     /**
@@ -124,18 +125,50 @@ class AttributeController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $attribute = Attribute::findOrFail($id);
-        if($request->lang == env("DEFAULT_LANGUAGE")){
-          $attribute->name = $request->name;
+
+        $request->validate([
+            'name' => ['required'],
+            'display_name_english' => ['required' , 'max:128'],
+            'display_name_arabic' => ['required' , 'max:64'],
+            'type_value' => ['required' , 'max:128']
+        ]);
+
+        $attribute = $this->attributeService->update($request->all());
+        
+        if($attribute == null){
+            flash(translate('Attribute name already existe'))->error();
+            return back();
+        }else{
+            flash(translate('Attribute has been updated successfully'))->success();
+            return back();
         }
-        $attribute->save();
+    }
 
-        $attribute_translation = AttributeTranslation::firstOrNew(['lang' => $request->lang, 'attribute_id' => $attribute->id]);
-        $attribute_translation->name = $request->name;
-        $attribute_translation->save();
+    public function delete_value($id){
+        if (str_contains($id, '-')) {
+            $ids = explode("-", $id);
 
-        flash(translate('Attribute has been updated successfully'))->success();
-        return back();
+            $values1 = AttributeValue::find($ids[0]);
+            if ($values1 != null) {
+                $values1->delete();
+            }
+
+            $values2 = AttributeValue::find($ids[1]);
+            if ($values2 != null) {
+                $values2->delete();
+            }
+            return response()->json(['status' => 'done']);
+
+        }else{
+            $values = AttributeValue::find($id);
+            if ($values != null) {
+                $values->delete();
+                return response()->json(['status' => 'done']);
+            }else{
+                return response()->json(['status' => 'failed']);
+            }
+        }
+
     }
 
     /**

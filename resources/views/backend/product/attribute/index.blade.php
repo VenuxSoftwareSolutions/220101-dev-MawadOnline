@@ -187,6 +187,11 @@
                             'Your deletion is undone',
                             'warning'
                         )
+                        if(current.is(":checked") == true ){
+                            current.prop("checked", false);
+                        }else{
+                            current.prop("checked", true);
+                        }
                     }
                 })
             })
