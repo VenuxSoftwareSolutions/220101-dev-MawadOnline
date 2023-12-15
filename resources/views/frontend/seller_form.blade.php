@@ -405,10 +405,10 @@
                                                                 @if(isset($user) && isset($user->business_information) && $user->business_information->civil_defense_approval)
 
                                                                 <a class="old_file" href="{{ static_asset($user->business_information->civil_defense_approval) }}" target="_blank">{{ translate('View Civil Defense Approval') }}</a>
+                                                                <input type="hidden"  name="civil_defense_approval_old" value="{{$user->business_information->civil_defense_approval}}">
 
                                                             @endif
                                                             <input type="file" class="form-control rounded-0" name="civil_defense_approval">
-                                                            <input type="hidden"  name="civil_defense_approval_old" value="{{$user->business_information->civil_defense_approval}}">
 
                                                         </div>
 
