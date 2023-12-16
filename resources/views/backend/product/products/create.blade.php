@@ -27,6 +27,7 @@
                 @csrf
                 <input type="hidden" name="added_by" value="admin">
                 <div class="card">
+
                     <div class="card-header">
                         <h5 class="mb-0 h6">{{translate('Product Information')}}</h5>
                     </div>
@@ -690,17 +691,17 @@
 		}
         // Disable the submit button while evaluating if the form should be submitted
         // $("button[type='submit']").prop('disabled', true);
-        
+
         // var valid = true;
 
         // if (!valid) {
             // e.preventDefault();
-            
+
             ////Reactivate the button if the form was not submitted
             // $("button[type='submit']").button.prop('disabled', false);
         // }
     });
-    
+
     $("[name=shipping_type]").on("change", function (){
         $(".flat_rate_shipping_div").hide();
 

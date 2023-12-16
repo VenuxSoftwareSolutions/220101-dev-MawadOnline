@@ -14,27 +14,61 @@
                 <h5 class="mb-0 h6">{{translate('Category Information')}}</h5>
             </div>
             <div class="card-body">
+
                 <form class="form-horizontal" action="{{ route('categories.store') }}" method="POST" enctype="multipart/form-data">
                 	@csrf
                     <div class="form-group row">
-                        <label class="col-md-3 col-form-label">{{translate('Name')}}</label>
-                        <div class="col-md-9">
-                            <input type="text" placeholder="{{translate('Name')}}" id="name" name="name" class="form-control" required>
+                        <div class="col-md-6">
+
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label">{{translate('Name')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
+                                <div class="col-md-9">
+                                    <input type="text" placeholder="{{translate('Name en')}}" id="name" name="name" class="form-control" required value="{{old('name')}}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label">{{translate('Name')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
+                                <div class="col-md-9">
+                                    <input type="text" placeholder="{{translate('Name ar')}}" id="name_sa" name="name_sa" class="form-control" required value="{{old('name_sa')}}">
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    <div class="form-group row">
+                        <div class="col-md-6">
+
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label">{{translate('Description')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
+                                <div class="col-md-9">
+                                    <textarea rows="10" cols="30" type="text" placeholder="{{translate('Description en')}}" id="description" name="description" class="form-control" required>{{old('description')}}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label">{{translate('Description')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
+                                <div class="col-md-9">
+                                    <textarea rows="10" cols="30" type="text" placeholder="{{translate('Description ar')}}" id="description_sa" name="description_sa" class="form-control" required>{{old('description_sa')}}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label">{{translate('Type')}}</label>
                         <div class="col-md-9">
                             <select name="digital" onchange="categoriesByType(this.value)" required class="form-control aiz-selectpicker mb-2 mb-md-0">
                                 <option value="0">{{translate('Physical')}}</option>
-                                <option value="1">{{translate('Digital')}}</option>
+                                <!--<option value="1">{{translate('Digital')}}</option>-->
                             </select>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label">{{translate('Parent Category')}}</label>
                         <div class="col-md-9">
-                            <select class="select2 form-control aiz-selectpicker" name="parent_id" data-toggle="select2" data-placeholder="Choose ..." data-live-search="true">
+                            <select  required class="select2 form-control aiz-selectpicker" id="selected_parent_id" name="parent_id" data-toggle="select2" data-placeholder="Choose ..." data-live-search="true">
                                 @include('backend.product.categories.categories_option', ['categories' => $categories])
                                 {{-- <option value="0">{{ translate('No Parent') }}</option>
                                 @foreach ($categories as $category)
@@ -46,12 +80,14 @@
                             </select>
                         </div>
                     </div>
+
+
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label">
                             {{translate('Ordering Number')}}
                         </label>
                         <div class="col-md-9">
-                            <input type="number" name="order_level" class="form-control" id="order_level" placeholder="{{translate('Order Level')}}">
+                            <input type="number" name="order_level" class="form-control" id="order_level" value="{{old('order_level')}}" placeholder="{{translate('Order Level')}}">
                             <small>{{translate('Higher number has high priority')}}</small>
                         </div>
                     </div>
@@ -93,28 +129,57 @@
                                 <div class="form-control file-amount">{{ translate('Choose File') }}</div>
                                 <input type="hidden" name="cover_image" class="selected-files">
                             </div>
+                            <br>
+                            <div>@if($errors->has('cover_image'))
+                                <span class="alert alert-danger" role="alert">{{ translate('Cover Image is required')}}</span>@endif</div>
+
                             <div class="file-preview box sm">
                             </div>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-md-3 col-form-label">{{translate('Meta Title')}}</label>
-                        <div class="col-md-9">
-                            <input type="text" class="form-control" name="meta_title" placeholder="{{translate('Meta Title')}}">
+                        <div class="col-md-6">
+                            <div class="row">
+                                <label class="col-md-3 col-form-label">{{translate('Meta Title')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" name="meta_title" placeholder="{{translate('Meta Title')}}" value="{{old('meta_title')}}">
+                                </div>
+                            </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <label class="col-md-3 col-form-label">{{translate('Meta Title ar')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" name="meta_title_ar" placeholder="{{translate('Meta Title ar')}}" value="{{old('meta_title_ar')}}">
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                     <div class="form-group row">
-                        <label class="col-md-3 col-form-label">{{translate('Meta Description')}}</label>
-                        <div class="col-md-9">
-                            <textarea name="meta_description" rows="5" class="form-control"></textarea>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <label class="col-md-3 col-form-label">{{translate('Meta Description')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
+                                <div class="col-md-9">
+                                    <textarea name="meta_description" rows="5" class="form-control"> {{old('meta_description')}}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <label class="col-md-3 col-form-label">{{translate('Meta Description ar')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
+                                <div class="col-md-9">
+                                    <textarea name="meta_description_ar" rows="5" class="form-control"> {{old('meta_description_ar')}}</textarea>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     @if (get_setting('category_wise_commission') == 1)
                         <div class="form-group row">
                             <label class="col-md-3 col-form-label">{{translate('Commission Rate')}}</label>
                             <div class="col-md-9 input-group">
-                                <input type="number" lang="en" min="0" step="0.01" placeholder="{{translate('Commission Rate')}}" id="commision_rate" name="commision_rate" class="form-control">
+                                <input type="number" lang="en" min="0" step="0.01" placeholder="{{translate('Commission Rate')}}" value="{{old('commision_rate')}}" id="commision_rate" name="commision_rate" class="form-control">
                                 <div class="input-group-append">
                                     <span class="input-group-text">%</span>
                                 </div>
@@ -129,6 +194,12 @@
                                     <option value="{{ $attribute->id }}">{{ $attribute->getTranslation('name') }}</option>
                                 @endforeach
                             </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-3 col-form-label">{{translate('featured')}}</label>
+                        <div class="col-md-3">
+                            <input type="checkbox" class="form-control" checked name="featured"  style="width: 20px; height:20px"  >
                         </div>
                     </div>
                     <div class="form-group mb-0 text-right">
@@ -147,6 +218,7 @@
 <script type="text/javascript">
     function categoriesByType(val){
         $('select[name="parent_id"]').html('');
+
         AIZ.plugins.bootstrapSelect('refresh');
         $.ajax({
             headers: {
@@ -158,6 +230,7 @@
                digital: val
             },
             success: function(data) {
+
                 $('select[name="parent_id"]').html(data);
                 AIZ.plugins.bootstrapSelect('refresh');
             }

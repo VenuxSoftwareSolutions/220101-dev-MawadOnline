@@ -36,6 +36,12 @@
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label class="col-md-3 col-form-label">{{translate('description')}} <i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
+                        <div class="col-md-9">
+                            <input type="text" name="description" value="{{ $category->getTranslation('description', $lang) }}" class="form-control" id="name" placeholder="{{translate('description')}}" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <label class="col-md-3 col-form-label">{{translate('Type')}}</label>
                         <div class="col-md-9">
                             <select name="digital" onchange="categoriesByType(this.value)" required class="form-control aiz-selectpicker mb-2 mb-md-0">

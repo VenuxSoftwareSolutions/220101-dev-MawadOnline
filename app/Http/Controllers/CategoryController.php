@@ -42,14 +42,15 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request,)
     {
+        $lang = $request->lang;
         $categories = Category::where('parent_id', 0)
             ->where('digital', 0)
             ->with('childrenCategories')
             ->get();
 
-        return view('backend.product.categories.create', compact('categories'));
+        return view('backend.product.categories.create', compact('categories', 'lang'));
     }
 
     /**
@@ -60,6 +61,12 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
+        if($request->featured == 'on'){
+             $request->validate([
+                'cover_image' => 'required',
+            ]);
+        }
+
         $category = new Category;
         $category->name = $request->name;
         $category->order_level = 0;
@@ -96,6 +103,15 @@ class CategoryController extends Controller
 
         $category_translation = CategoryTranslation::firstOrNew(['lang' => env('DEFAULT_LANGUAGE'), 'category_id' => $category->id]);
         $category_translation->name = $request->name;
+        $category_translation->description = $request->description;
+        $category_translation->meta_title = $request->meta_title;
+        $category_translation->meta_description = $request->meta_description;
+        $category_translation->save();
+        $category_translation = CategoryTranslation::firstOrNew(['lang' => 'sa', 'category_id' => $category->id]);
+        $category_translation->name = $request->name_sa;
+        $category_translation->description = $request->description_sa;
+        $category_translation->meta_title = $request->meta_title_ar;
+        $category_translation->meta_description = $request->meta_description_ar;
         $category_translation->save();
 
         flash(translate('Category has been inserted successfully'))->success();
