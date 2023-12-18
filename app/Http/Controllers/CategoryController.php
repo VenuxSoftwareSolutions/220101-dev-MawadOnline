@@ -28,10 +28,14 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         $sort_search =null;
-        $categories = Category::orderBy('order_level', 'desc');
+        $categories = Category::where('parent_id','=',0)->orderBy('order_level', 'desc');
         if ($request->has('search')){
             $sort_search = $request->search;
-            $categories = $categories->where('name', 'like', '%'.$sort_search.'%');
+            $categories = $categories->where('name', 'like', '%'.$sort_search.'%')
+            ->orwhereHas('childrenCategories',function($query)use($sort_search){
+                $query->where('name','like', '%'.$sort_search.'%');
+            })
+            ;
         }
         $categories = $categories->paginate(15);
         return view('backend.product.categories.index', compact('categories', 'sort_search'));

@@ -36,6 +36,7 @@
         <table class="table aiz-table mb-0">
             <thead>
                 <tr>
+                    <th data-breakpoints="lg"></th>
                     <th data-breakpoints="lg">#</th>
                     <th>{{translate('Name')}}</th>
                     <th data-breakpoints="lg">{{ translate('Parent Category') }}</th>
@@ -52,6 +53,11 @@
             <tbody>
                 @foreach($categories as $key => $category)
                     <tr>
+                        <td>
+                        @if(count($category->childrenCategories)>0)
+                            <button id="mycatbutton-{{$category->id}}" style="border: 0px" onclick="expandmysubcategories({{$category->id}})">></button>
+                        @endif
+                        </td>
                         <td>{{ ($key+1) + ($categories->currentPage() - 1)*$categories->perPage() }}</td>
                         <td class="d-flex align-items-center">
                             {{ $category->getTranslation('name') }}
@@ -114,6 +120,9 @@
                             @endcan
                         </td>
                     </tr>
+                    @foreach ($category->childrenCategories as $childCategory)
+                        @include('backend.product.categories.list-subcategories', ['category' => $childCategory,'parent'=>$category])
+                    @endforeach
                 @endforeach
             </tbody>
         </table>
@@ -147,6 +156,19 @@
                     AIZ.plugins.notify('danger', '{{ translate('Something went wrong') }}');
                 }
             });
+        }
+        function expandmysubcategories(id){
+            let expandrows = document.querySelectorAll('.mycat-'+id);
+            let myhideaction = document.getElementById('hide-'+id);
+
+            if(expandrows && myhideaction){
+                expandrows.forEach(element => {
+                    if(element){
+                        element.style.display=myhideaction.value;
+                    }
+                });
+                myhideaction.value=='none' ? myhideaction.value='' : myhideaction.value='none';
+            }
         }
     </script>
 @endsection
