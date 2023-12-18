@@ -46,6 +46,9 @@
                     <th data-breakpoints="lg">{{translate('Cover Image')}}</th>
                     <th data-breakpoints="lg">{{translate('Featured')}}</th>
                     <th data-breakpoints="lg">{{translate('Commission')}}</th>
+                    @if(Illuminate\Support\Facades\Auth::user()->hasRole('Super Admin'))
+                    <th data-breakpoints="lg">{{translate('status')}}</th>
+                    @endif
                     <th width="10%" class="text-right">{{translate('Options')}}</th>
                 </tr>
             </thead>
@@ -101,6 +104,14 @@
                             </label>
                         </td>
                         <td>{{ $category->commision_rate }} %</td>
+                        @if(Illuminate\Support\Facades\Auth::user()->hasRole('Super Admin'))
+                        <td>
+                            <label class="aiz-switch aiz-switch-success mb-0">
+                                <input type="checkbox" onchange="update_status(this)"  value="{{ $category->id }}" <?php if($category->status == 1) echo "checked";?>>
+                                <span></span>
+                            </label>
+                        </td>
+                        @endif
                         <td class="text-right">
                             @can('edit_product_category')
                                 <a class="btn btn-soft-primary btn-icon btn-circle btn-sm" href="{{route('categories.edit', ['id'=>$category->id, 'lang'=>env('DEFAULT_LANGUAGE')] )}}" title="{{ translate('Edit') }}">
@@ -108,9 +119,9 @@
                                 </a>
                             @endcan
                             @can('delete_product_category')
-                                <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('categories.destroy', $category->id)}}" title="{{ translate('Delete') }}">
+                                <!--<a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('categories.destroy', $category->id)}}" title="{{ translate('Delete') }}">
                                     <i class="las la-trash"></i>
-                                </a>
+                                </a>-->
                             @endcan
                         </td>
                     </tr>
@@ -142,6 +153,22 @@
             $.post('{{ route('categories.featured') }}', {_token:'{{ csrf_token() }}', id:el.value, status:status}, function(data){
                 if(data == 1){
                     AIZ.plugins.notify('success', '{{ translate('Featured categories updated successfully') }}');
+                }
+                else{
+                    AIZ.plugins.notify('danger', '{{ translate('Something went wrong') }}');
+                }
+            });
+        }
+        function update_status(el){
+            if(el.checked){
+                var status = 1;
+            }
+            else{
+                var status = 0;
+            }
+            $.post('{{ route('categories.updatestatus') }}', {_token:'{{ csrf_token() }}', id:el.value, status:status}, function(data){
+                if(data == 1){
+                    AIZ.plugins.notify('success', '{{ translate('Status categorie updated successfully') }}');
                 }
                 else{
                     AIZ.plugins.notify('danger', '{{ translate('Something went wrong') }}');

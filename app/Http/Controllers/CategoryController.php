@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\CategoryTranslation;
 use App\Utility\CategoryUtility;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 use Cache;
 
 class CategoryController extends Controller
@@ -209,8 +210,13 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        $category = Category::findOrFail($id);
-        $category->attributes()->detach();
+
+        if(Auth::user()->hasRole('Super Admin')){
+
+            $category = Category::findOrFail($id);
+            $category->status = 0;
+
+        /*$category->attributes()->detach();
 
         // Category Translations Delete
         foreach ($category->category_translations as $key => $category_translation) {
@@ -222,10 +228,11 @@ class CategoryController extends Controller
             $product->save();
         }
 
-        CategoryUtility::delete_category($id);
+        CategoryUtility::delete_category($id);*/
         Cache::forget('featured_categories');
 
-        flash(translate('Category has been deleted successfully'))->success();
+        flash(translate('Category has been disabled successfully'))->success();
+        }
         return redirect()->route('categories.index');
     }
 
@@ -236,6 +243,18 @@ class CategoryController extends Controller
         $category->save();
         Cache::forget('featured_categories');
         return 1;
+    }
+    public function updatestatus(Request $request)
+    {
+
+        if(Auth::user()->hasRole('Super Admin')){
+            $category = Category::findOrFail($request->id);
+            $category->status = $request->status==0?false:true;
+            $category->save();
+            Cache::forget('featured_categories');
+        }
+        return 1;
+
     }
 
     public function categoriesByType(Request $request)
