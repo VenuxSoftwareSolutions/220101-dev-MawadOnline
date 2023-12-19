@@ -17,5 +17,6 @@ class Warehouse extends Model
         'address_street',
         'address_building',
         'address_unit',
+        'saveasdraft'
     ];
 }

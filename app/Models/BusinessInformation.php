@@ -35,5 +35,6 @@ class BusinessInformation extends Model
         'trn',
         'tax_waiver',
         'civil_defense_approval',
+        'saveasdraft'
     ];
 }

@@ -17,6 +17,7 @@ class PayoutInformation extends Model
         'iban',
         'swift_code',
         'iban_certificate',
+        'saveasdraft'
     ];
 
 }

@@ -17,6 +17,7 @@ use App\Models\Warehouse;
 use Auth;
 use Hash;
 use App\Notifications\EmailVerificationNotification;
+use App\Rules\CustomPasswordRule;
 use Illuminate\Support\Facades\Notification;
 use Mail;
 use Session;
@@ -91,7 +92,9 @@ class ShopController extends Controller
                     $query->whereNotNull('email_verified_at');
                 }),
             ],
-            'password' => 'required|string|min:6|confirmed',
+            // 'password' => ['required', 'confirmed', new CustomPasswordRule],
+            'password' => [ 'required', 'confirmed', new CustomPasswordRule($request->input('first_name'), $request->input('last_name'), $request->input('email'))],
+
         ]);
 
         if ($validator->fails()) {
@@ -135,7 +138,7 @@ class ShopController extends Controller
 
 
             // Send the verification code to the user's email
-            // Mail::to($request->email)->send(new VerificationCodeEmail($verificationCode));
+            Mail::to($request->email)->send(new VerificationCodeEmail($verificationCode));
         }
         return response()->json(['success' => true, 'message' => 'Your success message']);
 
@@ -195,20 +198,27 @@ class ShopController extends Controller
     }
     public function storeBusinessInfo(Request $request)
     {
+
         if (!Auth::check()) {
 
-            return response()->json(['loginFailed' => 'You are not logged in.'], 401);
+
+            return response()->json(['loginFailed' => 'Login unsuccessful. Please create an account and confirm it.'], 401);
         }
 
         // Check if the user's account is not verified (assuming 'verified' is a column in the users table)
         if (!Auth::user()->email_verified_at) {
+            flash('My message');
+
             return response()->json(['loginFailed' => 'Your account is not verified.'], 403);
         }
         // Validation logic
+        $action = $request->input('action');
 
-        // if(Session::get('user_id')== null) {
+        if (!$action ) {
 
-        // }
+
+
+
 
 
         $validatedData = Validator::make($request->all(),[
@@ -252,14 +262,29 @@ class ShopController extends Controller
 
             return response()->json(['errors' => $validatedData->errors()], 422);
         }
+        $saveasdraft=false ;
+     }
+     else {
+        $validatedData = Validator::make($request->all(),[
 
+            'trade_license_doc' => !isset( $request->trade_license_doc_old) ? 'nullable|file|mimes:pdf,doc,docx|max:5120':'',
+
+            'vat_certificate' => $request->vat_registered == 1 && !isset( $request->vat_certificate_old) ? 'nullable|file|mimes:pdf,doc,docx|max:5120' : '',
+            'tax_waiver' => $request->vat_registered == 0 && !isset( $request->tax_waiver_old)  ? 'nullable|file|mimes:pdf,doc,docx|max:5120' : '',
+            'civil_defense_approval' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
+        ]) ;
+        if ($validatedData->fails()) {
+
+            return response()->json(['errors' => $validatedData->errors()], 422);
+        }
+     }
 
         if ($request->input('vat_registered') == 1) {
 
             // If VAT is registered, handle VAT certificate and TRN
             if(isset($request->vat_certificate_old) && ! $request->hasFile('vat_certificate') )
                 $vatCertificatePath = $request->vat_certificate_old ;
-            else
+            elseif ($request->hasFile('vat_certificate'))
                 $vatCertificatePath = Storage::putFile('vat_certificates', $request->file('vat_certificate'));
 
             $trn = $request->input('trn');
@@ -267,7 +292,7 @@ class ShopController extends Controller
             // If VAT is not registered, handle tax waiver
             if(isset($request->tax_waiver_old) && ! $request->hasFile('tax_waiver'))
                 $taxWaiverPath = $request->tax_waiver_old ;
-            else
+            elseif ($request->hasFile('tax_waiver'))
                   $taxWaiverPath = Storage::putFile('tax_waivers', $request->file('tax_waiver'));
         }
 
@@ -303,13 +328,16 @@ class ShopController extends Controller
                 'trn' => isset($trn) ? $trn : null,
                 'tax_waiver' => isset($taxWaiverPath) ? $taxWaiverPath : null,
                 'civil_defense_approval' => $request->hasFile('civil_defense_approval') ?  $request->file('civil_defense_approval')->store('civil_defense_approvals'):$civil_defense_approval,
+                'saveasdraft' => $saveasdraft ?? true,
+
             ]
         );
+        if (!$action ) {
 
-        $user = Auth::user() ;
-        $user->step_number= 3 ;
-        $user->save() ;
-
+            $user = Auth::user() ;
+            $user->step_number= 3 ;
+            $user->save() ;
+        }
         // Return a response
         return response()->json(['success' => true,'message' => 'Business info stored successfully']);
 
@@ -319,13 +347,17 @@ class ShopController extends Controller
     public function storeContactPerson(Request $request) {
         if (!Auth::check()) {
 
-            return response()->json(['loginFailed' => 'You are not logged in.'], 401);
+            return response()->json(['loginFailed' => 'Login unsuccessful. Please create an account and confirm it.'], 401);
         }
 
         // Check if the user's account is not verified (assuming 'verified' is a column in the users table)
         if (!Auth::user()->email_verified_at) {
             return response()->json(['loginFailed' => 'Your account is not verified.'], 403);
         }
+
+        $action = $request->input('action');
+
+        if (!$action ) {
         $validator = Validator::make($request->all(), [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
@@ -341,15 +373,40 @@ class ShopController extends Controller
             'designation' => 'required|string|max:255',
 
         ]);
+        $saveasdraft=false ;
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
+    }
+    else {
+
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'nullable|string|max:255',
+            'last_name' => 'nullable|string|max:255',
+            'email' => 'nullable|email',
+            'mobile_phone' => ['nullable', 'string', 'max:20', new \App\Rules\UaeMobilePhone],
+            'additional_mobile_phone' => 'nullable|string|max:20',
+            'nationality' => 'nullable|string|max:255',
+            'date_of_birth' => 'nullable|date',
+            'emirates_id_number' => 'nullable|string|max:255',
+            'emirates_id_expiry_date' => 'nullable|date',
+            'emirates_id_file' => !isset( $request->emirates_id_file_old) ?  'nullable|file|mimes:pdf,doc,docx|max:5120':'',
+            'business_owner' => 'nullable|boolean',
+            'designation' => 'nullable|string|max:255',
+
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+    }
+
     // Handle file upload
+    $emiratesIdFilePath=null ;
     if(isset($request->emirates_id_file_old) && ! $request->hasFile('emirates_id_file'))
             $emiratesIdFilePath = $request->emirates_id_file_old ;
-    else
+    else if($request->hasFile('emirates_id_file'))
             $emiratesIdFilePath = Storage::putFile('emirates_ids', $request->file('emirates_id_file'));
 
     // Store contact person data
@@ -370,11 +427,16 @@ class ShopController extends Controller
         'emirates_id_file_path' => $emiratesIdFilePath,
         'business_owner' => $request->input('business_owner'),
         'designation' => $request->input('designation'),
+        'saveasdraft' => $saveasdraft ?? true,
+
         // Add other fields as needed
     ]);
-    $user = Auth::user() ;
-    $user->step_number= 4 ;
-    $user->save() ;
+    if (!$action ) {
+
+        $user = Auth::user() ;
+        $user->step_number= 4 ;
+        $user->save() ;
+    }
 
     // Return a response
     return response()->json(['success' => true,'message' => 'Contact person stored successfully']);
@@ -382,6 +444,9 @@ class ShopController extends Controller
     public function verifyCode(Request $request)
     {
 
+        if (!$request->email) {
+            return response()->json(['loginFailed' => 'Please Register !!'], 422);
+        }
         // Validate the verification code
         $validator = Validator::make($request->all(), [
             'verification_code' => 'required|digits:6',
@@ -432,7 +497,7 @@ class ShopController extends Controller
         $expirationTime = now()->addMinutes(10); // Set expiration time to 10 minutes
 
         if (!$email) {
-            return response()->json(['success' => false, 'message' => 'Email not found.']);
+            return response()->json(['loginFailed' => 'Please Register !!'], 422);
         }
 
         VerificationCode::create([
@@ -460,13 +525,16 @@ class ShopController extends Controller
     public function storeWarehouse(Request $request) {
         if (!Auth::check()) {
 
-            return response()->json(['loginFailed' => 'You are not logged in.'], 401);
+            return response()->json(['loginFailed' => 'Login unsuccessful. Please create an account and confirm it.'], 401);
         }
 
         // Check if the user's account is not verified (assuming 'verified' is a column in the users table)
         if (!Auth::user()->email_verified_at) {
             return response()->json(['loginFailed' => 'Your account is not verified.'], 403);
         }
+        $action = $request->input('action');
+
+        if (!$action ) {
         $validator = Validator::make($request->all(), [
             'warehouse_name.*' => 'required',
             'state.*' => 'required',
@@ -475,10 +543,12 @@ class ShopController extends Controller
             'building.*' => 'required',
             'unit.*' => 'required',
         ]);
+        $saveasdraft=false ;
 
         if ($validator->fails()) {
 
             return response()->json(['errors' => $validator->errors()], 422);
+        }
         }
 
         $user =  Auth::user() ;
@@ -495,11 +565,15 @@ class ShopController extends Controller
                     'address_street' => $request->street[$key],
                     'address_building' => $request->building[$key],
                     'address_unit' => $request->unit[$key],
+                    'saveasdraft' => $saveasdraft ?? true,
+
                 ]);
             }
+            if (!$action ) {
             $user = Auth::user() ;
             $user->step_number= 5 ;
             $user->save() ;
+            }
 
             return response()->json(['success' => true,'message' => 'Warehouses stored successfully']);
         } catch (\Exception $e) {
@@ -511,30 +585,44 @@ class ShopController extends Controller
 {
     if (!Auth::check()) {
 
-        return response()->json(['loginFailed' => 'You are not logged in.'], 401);
+        return response()->json(['loginFailed' => 'Login unsuccessful. Please create an account and confirm it.'], 401);
     }
 
     // Check if the user's account is not verified (assuming 'verified' is a column in the users table)
     if (!Auth::user()->email_verified_at) {
         return response()->json(['loginFailed' => 'Your account is not verified.'], 403);
     }
-    $validator = Validator::make($request->all(), [
-        'bank_name' => 'required|string|max:255',
-        'account_name' => 'required|string|max:255',
-        'account_number' => 'required|string|max:255',
-        'iban' => 'required|string|max:255',
-        'swift_code' => 'required|string|max:255',
-        'iban_certificate' =>  !isset( $request->iban_certificate_old) ?  'required|file|mimes:pdf,doc,docx|max:5120':'',
-    ], [
-        // Custom error messages if needed
-    ]);
+    $action = $request->input('action');
 
-    if ($validator->fails()) {
-        return response()->json(['errors' => $validator->errors()], 422);
+    if (!$action ) {
+        $validator = Validator::make($request->all(), [
+            'bank_name' => 'required|string|max:255',
+            'account_name' => 'required|string|max:255',
+            'account_number' => 'required|string|max:255',
+            'iban' => 'required|string|max:255',
+            'swift_code' => 'required|string|max:255',
+            'iban_certificate' =>  !isset( $request->iban_certificate_old) ?  'required|file|mimes:pdf,doc,docx|max:5120':'',
+        ], [
+            // Custom error messages if needed
+        ]);
+        $saveasdraft=false ;
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
     }
+    else {
+        $validator = Validator::make($request->all(), [
+            'iban_certificate' =>  !isset( $request->iban_certificate_old) ?  'nullable|file|mimes:pdf,doc,docx|max:5120':'',
+        ]) ;
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+    }
+    $ibanCertificatePath=null ;
     if(isset($request->iban_certificate_old) && ! $request->hasFile('iban_certificate'))
     $ibanCertificatePath = $request->iban_certificate_old ;
-else
+else if($request->hasFile('iban_certificate'))
     $ibanCertificatePath = Storage::putFile('iban_certificates', $request->file('iban_certificate'));
     // Assuming you have a logged-in user
 
@@ -552,17 +640,25 @@ else
             'swift_code' => $request->swift_code,
             // 'iban_certificate' => $request->file('iban_certificate')->store('iban_certificates'),
             'iban_certificate' => $ibanCertificatePath,
+            'saveasdraft' => $saveasdraft ?? true,
 
         ]);
-        $user = Auth::user() ;
-        $user->step_number= 6 ;
-        if($user->business_information && $user->contact_people && $user->payout_information && count($user->warehouses)>0  )
-            $user->steps= 1 ;
+        if (!$action ) {
+            $user = Auth::user() ;
+            $user->step_number= 6 ;
+            if($user->business_information && $user->business_information->saveasdraft==0  && $user->contact_people && $user->contact_people->saveasdraft==0 && $user->payout_information && $user->payout_information->saveasdraft==0 && count($user->warehouses)>0  &&
+            !$user->warehouses->contains('saveasdraft', 1) )
+                $user->steps= 1 ;
 
 
-        $user->save() ;
+            $user->save() ;
+            return response()->json(['finish'=> true ,'success' => true,'message' => 'Payout information stored successfully']);
 
-        return response()->json(['finish'=> true ,'success' => true,'message' => 'Payout information stored successfully']);
+        }
+        else {
+            return response()->json(['success' => true,'message' => 'Payout information stored successfully']);
+
+        }
 
 }
 

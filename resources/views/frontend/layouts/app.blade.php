@@ -73,7 +73,7 @@
     <link rel="stylesheet" href="{{ static_asset('assets/css/aiz-core.css?v=') }}{{ rand(1000, 9999) }}">
     <link rel="stylesheet" href="{{ static_asset('assets/css/custom-style.css') }}">
     <link rel="stylesheet" href="{{ static_asset('assets/css/bootstrap-select-country.min.css') }}">
-
+     @yield('style')
 
     <script>
         var AIZ = AIZ || {};

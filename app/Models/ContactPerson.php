@@ -23,6 +23,7 @@ class ContactPerson extends Model
         'emirates_id_file_path',
         'business_owner',
         'designation',
+        'saveasdraft'
         // Add other fields as needed
     ];
 }
