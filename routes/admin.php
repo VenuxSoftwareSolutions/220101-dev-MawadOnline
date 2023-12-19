@@ -429,7 +429,11 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::post('/is_activated', 'is_activated')->name('attributes.activated');
 
         //Delete value of attribute
-        Route::post('/attributes/delete/value/{id}', 'delete_value')->name('attributes-delete-value');
+        Route::post('/attributes/get-id/delete/value/{id}/{language}', 'get_id_to_delete_value')->name('get-id-to-delete-value');
+        Route::get('/attributes/delete/values', 'delete_values')->name('attribute-delete-values');
+
+        //search if value of attribute is used in create product
+        Route::get('/attributes/search/value', 'search_value_is_used')->name('search-value-is-used');
     });
 
     //Product unites

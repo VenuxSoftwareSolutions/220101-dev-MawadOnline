@@ -8,6 +8,7 @@ use App\Models\Color;
 use App\Models\AttributeTranslation;
 use App\Models\AttributeValue;
 use App\Models\Unity;
+use App\Models\ProductAttributeValues;
 use CoreComponentRepository;
 use App\Http\Requests\AttributeRequest;
 use App\Services\AttributeService;
@@ -134,7 +135,7 @@ class AttributeController extends Controller
         ]);
 
         $attribute = $this->attributeService->update($request->all());
-        
+
         if($attribute == null){
             flash(translate('Attribute name already existe'))->error();
             return back();
@@ -144,9 +145,45 @@ class AttributeController extends Controller
         }
     }
 
-    public function delete_value($id){
-        if (str_contains($id, '-')) {
-            $ids = explode("-", $id);
+    public function get_id_to_delete_value($id, $language){
+        $value = AttributeValue::find($id);
+        $values_english = AttributeValue::where('attribute_id', $value->attribute_id)->where('lang', 'en')->get();
+        $values_arabic = AttributeValue::where('attribute_id', $value->attribute_id)->where('lang', 'ar')->get();
+        $values_english_ids = AttributeValue::where('attribute_id', $value->attribute_id)->where('lang', 'en')->pluck('id')->toArray();
+        $values_arabic_ids = AttributeValue::where('attribute_id', $value->attribute_id)->where('lang', 'ar')->pluck('id')->toArray();
+        if($language == 'arabic'){
+            $key = array_search($id,$values_arabic_ids);
+            if($key != null){
+                $id_to_delete = $values_english[$key]->id;
+                $check_first_value = ProductAttributeValues::where('id_attribute', $value->attribute_id)->where('id_values', $id)->get();
+                $check_second_value = ProductAttributeValues::where('id_attribute', $value->attribute_id)->where('id_values', $values_english[$key]->id)->get();
+                if((count($check_first_value) > 0) || (count($check_second_value) > 0)){
+                    return response()->json(['status' => 'failed used', 'id_to_delete' => '']);
+                }
+                return response()->json(['status' => 'done', 'id_to_delete' => $id_to_delete]);
+            }else{
+                return response()->json(['status' => 'failed', 'id_to_delete' => '']);
+            }
+        }else{
+            $key = array_search($id,$values_english_ids);
+            if($key != null){
+                $id_to_delete = $values_arabic[$key]->id;
+                $check_first_value = ProductAttributeValues::where('id_attribute', $value->attribute_id)->where('id_values', $id)->get();
+                $check_second_value = ProductAttributeValues::where('id_attribute', $value->attribute_id)->where('id_values', $values_arabic[$key]->id)->get();
+                if((count($check_first_value) > 0) || (count($check_second_value) > 0)){
+                    return response()->json(['status' => 'failed used', 'id_to_delete' => '']);
+                }
+                return response()->json(['status' => 'done', 'id_to_delete' => $id_to_delete]);
+            }else{
+                return response()->json(['status' => 'failed', 'id_to_delete' => '']);
+            }
+        }
+
+    }
+
+    public function delete_values(Request $request){
+        if (str_contains($request->ids, '-')) {
+            $ids = explode("-", $request->ids);
 
             $values1 = AttributeValue::find($ids[0]);
             if ($values1 != null) {
@@ -159,16 +196,17 @@ class AttributeController extends Controller
             }
             return response()->json(['status' => 'done']);
 
-        }else{
-            $values = AttributeValue::find($id);
-            if ($values != null) {
-                $values->delete();
-                return response()->json(['status' => 'done']);
-            }else{
-                return response()->json(['status' => 'failed']);
-            }
         }
+    }
 
+    public function search_value_is_used(Request $request){
+        $check = ProductAttributeValues::where('id_attribute', $request->attribute_id)->where('id_values', $request->value_id)->get();
+
+        if(count($check) > 0){
+            return response()->json(['status'=>'Exist']);
+        }else{
+            return response()->json(['status'=>'Not exist']);
+        }
     }
 
     /**

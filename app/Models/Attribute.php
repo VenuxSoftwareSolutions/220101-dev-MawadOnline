@@ -30,8 +30,8 @@ class Attribute extends Model
         return $values_color;
     }
 
-    public function attribute_values_list() {
-        $values_list = AttributeValue::where('attribute_id', $this->id)->whereNull('color_code')->get();
+    public function attribute_values_list($lang_code) {
+        $values_list = AttributeValue::where('attribute_id', $this->id)->where('lang', $lang_code)->whereNull('color_code')->get();
         return $values_list;
     }
 

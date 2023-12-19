@@ -1,120 +1,135 @@
 @extends('backend.layouts.app')
-<style>
-    .dropdown-item.active, .dropdown-item:hover, .dropdown-item:active {
-        color: black !important;
-    }
-</style>
+
 @section('content')
-    <div class="aiz-titlebar text-left mt-2 mb-3">
-        <div class="align-items-center">
-            <h1 class="h3">{{ translate('Add Attributes') }}</h1>
+
+@php
+    CoreComponentRepository::instantiateShopRepository();
+    CoreComponentRepository::initializeCache();
+@endphp
+
+<div class="aiz-titlebar text-left mt-2 mb-3">
+    <h5 class="mb-0 h6">{{translate('Attribute Information')}}</h5>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card">
+            <div class="card-body p-0">
+                <ul class="nav nav-tabs nav-fill border-light">
+                    @foreach (get_all_active_language() as $key => $language)
+                    <li class="nav-item">
+                        <a class="nav-link text-reset @if ($language->code == "en") show active @else bg-soft-dark border-light border-left-0 @endif py-3" data-toggle="tab" href="#{{ $language->code }}">
+                            <img src="{{ static_asset('assets/img/flags/'.$language->code.'.png') }}" height="11" class="mr-1">
+                            <span>{{$language->name}}</span>
+                        </a>
+                    </li>
+                    @endforeach
+                </ul>
+                <form action="{{ route('attributes.store') }}" method="post">
+                    @csrf
+                    <div class="tab-content p-4">
+                        @foreach (get_all_active_language() as $key => $language)
+                        @php
+                            $name = strtolower($language->name);
+                            $titre_display = 'Display name in '.$name.' version';
+                            $titre_discription = ucfirst($name).' description';
+                            $key_display = 'name_display_'.$name;
+                            $key_description = 'description_'.$name;
+                        @endphp
+                            <div class="tab-pane @if ($language->code == "en") fade in active show @endif" id="{{ $language->code }}">
+                                <div class="row">
+                                    <div class="col-12 ">
+                                        <div class="row">
+                                            @if ($language->code == "en")
+                                                <div class="form-group mb-3 col-12">
+                                                    <label for="name">{{ translate('Name') }}</label>
+                                                    <input type="text" id="name" name="name" class="form-control" required>
+                                                    <small style="color: red">The name should be unique. </small>
+                                                </div>
+                                            @endif
+                                            <div class="form-group mb-3 col-12">
+                                                <label for="name">{{ translate($titre_display) }}</label>
+                                                <input type="text"  id="name" name="display_name_{{ $name }}" class="form-control" required>
+                                            </div>
+                                            @if ($language->code == "en")
+                                                <div class="form-group mb-3 col-12">
+                                                    <label for="name">{{ translate('Value type') }}</label>
+                                                    <select class="form-control" id="value_type" name="type_value">
+                                                        <option value="" selected="true" disabled="disabled">Please choose type</option>
+                                                        <option value="list">List of values</option>
+                                                        <option value="text">Text</option>
+                                                        <option value="color">Color</option>
+                                                        <option value="numeric">Numeric</option>
+                                                        <option value="boolean">Boolean</option>
+                                                    </select>
+                                                </div>
+                                            @endif
+                                            <div class="form-group mb-3 col-12">
+                                                <label for="name">{{ translate($titre_discription) }}</label>
+                                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="description_{{ $name }}"></textarea>
+                                            </div>
+                                        </div>
+                                        @php
+                                            $titre = 'Value in '.$name;
+                                        @endphp
+                                        <div class="row values_{{$name}}" id="">
+                                            <div class="row" style="width: 100%;margin-left: 1px;" id="bloc_{{ $name }}_1">
+                                                <div class="form-group mb-3 col-10">
+                                                    <label for="name" class="tagify-label">{{ translate($titre) }}</label>
+                                                    <input name='values_{{ $name }}[]' class="form-control" autofocus>
+                                                </div>
+                                                <div class="col-1">
+                                                    <i class="las la-plus add_values" style="margin-left: 5px; margin-top: 40px;" title="Add another values"></i>
+                                                    <i class="las la-trash trash_values" data-id_bloc="1" style="margin-left: 5px; margin-top: 40px;" title="Delete this values"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @if ($language->code == "en")
+                                            <div class="row">
+                                                <div class="form-group mb-3 col-6" id="unit">
+                                                    <label for="name">{{ translate('Units') }}</label>
+                                                    <select multiple name="units[]" id="shapes">
+                                                        @if(count($units) > 0)
+                                                            @foreach ($units as $key => $unit)
+                                                                <option value="{{ $unit->id }}">{{ $unit->name }}</option>
+                                                            @endforeach
+                                                        @endif
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                        <div class="form-group mb-3 text-center">
+                            <button type="submit" class="btn btn-primary">{{ translate('Save') }}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
+</div>
 
-    <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0 h6">{{ translate('Add New Attribute') }}</h5>
-                    </div>
-                    <div class="card-body">
-                        <form action="{{ route('attributes.store') }}" method="POST">
-                            @csrf
-                            <div class="row">
-                                <div class="form-group mb-3 col-6">
-                                    <label for="name">{{ translate('Name') }}</label>
-                                    <input type="text" id="name" name="name" class="form-control" required>
-                                    <small style="color: red">The name should be unique. </small>
-                                </div>
-                                <div class="form-group mb-3 col-6">
-                                    <label for="name">{{ translate('Display name in english version') }}</label>
-                                    <input type="text"  id="name" name="display_name_english" class="form-control" required>
-                                </div>
-                                <div class="form-group mb-3 col-6">
-                                    <label for="name">{{ translate('Display name in arabic version') }}</label>
-                                    <input type="text" id="name" name="display_name_arabic" class="form-control" required>
-                                </div>
-                                <div class="form-group mb-3 col-6">
-                                    <label for="name">{{ translate('Value type') }}</label>
-                                    <select class="form-control" id="value_type" name="type_value">
-                                        <option value="" selected="true" disabled="disabled">Please choose type</option>
-                                        <option value="list">List of values</option>
-                                        <option value="text">Text</option>
-                                        <option value="color">Color</option>
-                                        <option value="numeric">Numeric</option>
-                                        <option value="boolean">Boolean</option>
-                                    </select>
-                                </div>
-                                <div class="form-group mb-3 col-6">
-                                    <label for="name">{{ translate('English description') }}</label>
-                                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="description_english"></textarea>
-                                </div>
-                                <div class="form-group mb-3 col-6">
-                                    <label for="name">{{ translate('Arabic description') }}</label>
-                                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="description_arabic"></textarea>
-                                </div>
-                            </div>
-
-                            <div class="row" id="color">
-                                <div class="row" style="width: 100%;margin-left: 1px;">
-                                    <div class="form-group mb-3 col-6">
-                                        <label for="name">{{ translate('Color name') }}</label>
-                                        <input type="text" id="name" name="color_name[]" class="form-control">
-                                    </div>
-                                    <div class="form-group mb-3 col-5">
-                                        <label for="name">{{ translate('Code color') }}</label>
-                                        <input type="color" name="color_code[]" class="form-control">
-                                    </div>
-                                    <div class="col-1">
-                                        <i class="las la-plus add" style="margin-left: 5px; margin-top: 40px;" title="Add another color"></i>
-                                        <i class="las la-trash trash" style="margin-left: 5px; margin-top: 40px;" title="Delete this color"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row" id="values">
-                                <div class="row" style="width: 100%;margin-left: 1px;">
-                                    <div class="form-group mb-3 col-5">
-                                        <label for="name" class="tagify-label">{{ translate('Values in english') }}</label>
-                                        <input name='values_english[]' class="form-control" autofocus>
-                                    </div>
-                                    <div class="form-group mb-3 col-5">
-                                        <label for="name" class="tagify-label">{{ translate('Values in arabic') }}</label>
-                                        <input name='values_arabic[]' class="form-control" autofocus>
-                                    </div>
-                                    <div class="col-1">
-                                        <i class="las la-plus add_values" style="margin-left: 5px; margin-top: 40px;" title="Add another values"></i>
-                                        <i class="las la-trash trash_values" style="margin-left: 5px; margin-top: 40px;" title="Delete this values"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="form-group mb-3 col-6" id="unit">
-                                    <label for="name">{{ translate('Units') }}</label>
-                                    <select multiple name="units[]" id="shapes">
-                                        @if(count($units) > 0)
-                                            @foreach ($units as $key => $unit)
-                                                <option value="{{ $unit->id }}" @if($key == 0) {{ 'selected' }} @endif>{{ $unit->name }}</option>
-                                            @endforeach
-                                        @endif
-                                    </select>
-
-                                </div>
-                            </div>
-                            <div class="form-group mb-3 text-center">
-                                <button type="submit" class="btn btn-primary">{{ translate('Save') }}</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-    </div>
 @endsection
 
 @section('script')
 
-    <script src="{{ static_asset('assets/js/jQuery.tagify.min.js') }}"></script>
+<script type="text/javascript">
+    $(document).on('click', '.nav-link', function(){
+        $('.nav-tabs').find('a').addClass('bg-soft-dark');
+        $('.nav-tabs').find('a').addClass('border-light');
+        $('.nav-tabs').find('a').addClass('border-left-0');
+        $('.nav-tabs').find('.active').removeClass("active");
+        $(this).addClass('active');
+        $(this).removeClass('bg-soft-dark');
+        $(this).removeClass('border-light');
+        $(this).removeClass('border-left-0');
+    })
+</script>
+
+<script src="{{ static_asset('assets/js/jQuery.tagify.min.js') }}"></script>
     <script src="{{ static_asset('assets/js/tagify.min.js') }}"></script>
     <script src="{{ static_asset('assets/js/filter-multi-select-bundle.js') }}"></script>
     <script>
@@ -126,77 +141,96 @@
                 caseSensitive: true,
             });
 
-            $('body .trash:first').hide();
             $('body .trash_values:first').hide();
 
-            $('#color').hide();
-            $('#values').hide();
+            $("div[class*='values_']").hide();
             $('#unit').hide();
 
-            $('body').on('click', '.add', function(){
-                var html = `<div class="row" style="width: 100%;margin-left: 1px;">
-                                    <div class="form-group mb-3 col-6">
-                                        <label for="name">{{ translate('Color name') }}</label>
-                                        <input type="text" id="name" name="color_name[]" class="form-control">
-                                    </div>
-                                    <div class="form-group mb-3 col-5">
-                                        <label for="name">{{ translate('Code color') }}</label>
-                                        <input type="color" name="color_code[]" class="form-control">
-                                    </div>
-                                    <div class="col-1">
-                                        <i class="las la-plus add" style="margin-left: 5px; margin-top: 40px;" title="Add another color"></i>
-                                        <i class="las la-trash trash" style="margin-left: 5px; margin-top: 40px;" title="Delete this color"></i>
-                                    </div>
-                                </div>`;
-                $('#color').append(html);
-                AIZ.plugins.bootstrapSelect('refresh');
-            })
+            var id_bloc = 2;
 
             $('body').on('click', '.add_values', function(){
-                var html = `<div class="row" style="width: 100%;margin-left: 1px;">
-                                    <div class="form-group mb-3 col-5">
+
+                var html_english = `<div class="row" style="width: 100%;margin-left: 1px;" id="bloc_english_${id_bloc}">
+                                    <div class="form-group mb-3 col-10">
                                         <label for="name" class="tagify-label">{{ translate('Values in english') }}</label>
                                         <input name='values_english[]' class="form-control" autofocus>
                                     </div>
-                                    <div class="form-group mb-3 col-5">
+                                    <div class="col-1">
+                                        <i class="las la-plus add_values" style="margin-left: 5px; margin-top: 40px;" title="Add another values"></i>
+                                        <i class="las la-trash trash_values" data-language="english" data-id_bloc="${id_bloc}" style="margin-left: 5px; margin-top: 40px;" title="Delete this values"></i>
+                                    </div>
+                                </div>`;
+
+                var html_arabic = `<div class="row" style="width: 100%;margin-left: 1px;" id="bloc_arabic_${id_bloc}">
+                                    <div class="form-group mb-3 col-10">
                                         <label for="name" class="tagify-label">{{ translate('Values in arabic') }}</label>
                                         <input name='values_arabic[]' class="form-control" autofocus>
                                     </div>
                                     <div class="col-1">
                                         <i class="las la-plus add_values" style="margin-left: 5px; margin-top: 40px;" title="Add another values"></i>
-                                        <i class="las la-trash trash_values" style="margin-left: 5px; margin-top: 40px;" title="Delete this values"></i>
+                                        <i class="las la-trash trash_values" data-language="arabic" data-id_bloc="${id_bloc}" style="margin-left: 5px; margin-top: 40px;" title="Delete this values"></i>
                                     </div>
                                 </div>`;
-                $('#values').append(html);
-            })
-
-            $('body').on('click', '.trash', function(){
-                $(this).parent().parent().remove();
+                $('.values_english').append(html_english);
+                $('.values_arabic').append(html_arabic);
+                id_bloc++;
             })
 
             $('body').on('click', '.trash_values', function(){
-                $(this).parent().parent().remove();
+                var language = $(this).data('language');
+                var current = $(this);
+
+                var id = $(this).data('id_bloc');
+                swal({
+                    title: "This value will be deleted in both English and Arabic sections!",
+                    type: "warning",
+                    confirmButtonText: "Delete",
+                    showCancelButton: true
+                })
+                .then((result) => {
+                    if (result.value) {
+                        if(language == "arabic"){
+                            current.parent().parent().remove();
+                            $(`body #bloc_english_${id}`).remove();
+                        }else{
+                            current.parent().parent().remove();
+                            $(`body #bloc_arabic_${id}`).remove();
+                        }
+
+                    } else if (result.dismiss === 'cancel') {
+                        swal(
+                            'Cancelled',
+                            'Your deletion is undone',
+                            'warning'
+                        )
+                    } else{
+                        swal(
+                            'Error',
+                            'Something went wrong!',
+                            'error'
+                        )
+                    }
+                })
+
             })
 
             $('#value_type').on('change', function(){
                 if($(this).val() == "list"){
-                    $("#color").hide();
                     $("#unit").hide();
-                    $("#values").show();
+                    $("div[class*='values_']").show();
                 }else if($(this).val() == "color"){
-                    $("#values").hide();
+                    $("div[class*='values_']").hide();
                     $("#unit").hide();
-                    $("#color").show();
                 }else if($(this).val() == "numeric"){
-                    $("#color").hide();
-                    $("#values").hide();
+                    $("div[class*='values_']").hide();
                     $("#unit").show();
                 }else{
-                    $("#values").hide();
-                    $("#color").hide();
+                    $("div[class*='values_']").hide();
                     $("#unit").hide();
                 }
             });
+
         });
     </script>
+
 @endsection
