@@ -10,6 +10,50 @@
 <div class="row">
     <div class="col-lg-8 mx-auto">
         <div class="card">
+            <ul class="nav nav-tabs nav-fill border-light">
+                @foreach (get_all_active_language() as $key => $language)
+                <li class="nav-item fa fa-hand-pointer-o language-switcher" id="my-active-lang-{{$language->code}}" data-lang-switcher="{{$language->code}}" >
+                    <div class="nav-link text-reset @if ($language->code == $lang) active @else bg-soft-dark border-light border-left-0 @endif py-3" href="">
+                        <img src="{{ static_asset('assets/img/flags/'.$language->code.'.png') }}" height="11" class="mr-1">
+                        <span>{{$language->name}}</span>
+                    </div>
+                </li>
+                @endforeach
+            </ul>
+            <script>
+                let switchers = document.querySelectorAll('.language-switcher');
+                switchers.forEach(element => {
+
+                    element.addEventListener('click',function(){
+                        let lang = element.getAttribute('data-lang-switcher');
+                        let allswitchers = document.querySelectorAll('.language-switcher-tabs');
+                        allswitchers.forEach(myelement=>{
+
+                            let currentlang = myelement.getAttribute('data-lang-switcher');
+                            if(currentlang==lang){
+                                myelement.style.display='';
+                            }
+                            else
+                            {
+                                myelement.style.display='none';
+
+                            }
+                        })
+                        let nottranslatabletabs = document.querySelectorAll('.not-translatable');
+                        if(nottranslatabletabs && lang!='en'){
+                            nottranslatabletabs.forEach(nottranselement =>{
+                                nottranselement.style.display='none';
+                            })
+                        }
+                        if(nottranslatabletabs && lang=='en'){
+                            nottranslatabletabs.forEach(nottranselement =>{
+                                nottranselement.style.display='';
+                            })
+                        }
+
+                    })
+                });
+            </script>
             <div class="card-header">
                 <h5 class="mb-0 h6">{{translate('Category Information')}}</h5>
             </div>
@@ -17,46 +61,33 @@
 
                 <form class="form-horizontal" action="{{ route('categories.store') }}" method="POST" enctype="multipart/form-data">
                 	@csrf
-                    <div class="form-group row">
-                        <div class="col-md-6">
+                    @foreach (get_all_active_language() as $key => $language)
 
-                            <div class="form-group row">
-                                <label class="col-md-3 col-form-label">{{translate('Name')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
-                                <div class="col-md-9">
-                                    <input type="text" placeholder="{{translate('Name en')}}" id="name" name="name" class="form-control" required value="{{old('name')}}">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group row">
-                                <label class="col-md-3 col-form-label">{{translate('Name')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
-                                <div class="col-md-9">
-                                    <input type="text" placeholder="{{translate('Name ar')}}" id="name_sa" name="name_sa" class="form-control" required value="{{old('name_sa')}}">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-6">
+                        <div class="form-group row language-switcher-tabs" data-lang-switcher="{{$language->code}}" style="@if($language->code!='en')display:none @endif">
+                            <div class="col-md-12">
 
-                            <div class="form-group row">
-                                <label class="col-md-3 col-form-label">{{translate('Description')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
-                                <div class="col-md-9">
-                                    <textarea rows="10" cols="30" type="text" placeholder="{{translate('Description en')}}" id="description" name="description" class="form-control" required>{{old('description')}}</textarea>
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label">{{translate('Name')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
+                                    <div class="col-md-9">
+                                        <input type="text" placeholder="{{__('Name '. ($language->code=='en'?'':$language->code))}}" id="name{{$language->code=='en'?'':'_'.$language->code}}" name="name{{$language->code=='en'?'':'_'.$language->code}}" class="form-control" required value="{{old('name'. ($language->code=='en'?'':'_'.$language->code))}}">
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group row">
-                                <label class="col-md-3 col-form-label">{{translate('Description')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
-                                <div class="col-md-9">
-                                    <textarea rows="10" cols="30" type="text" placeholder="{{translate('Description ar')}}" id="description_sa" name="description_sa" class="form-control" required>{{old('description_sa')}}</textarea>
+                        <div class="form-group row language-switcher-tabs" data-lang-switcher="{{$language->code}}" style="@if($language->code!='en')display:none @endif">
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label">{{translate('Description')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
+                                    <div class="col-md-9">
+                                        <textarea rows="10" cols="30" type="text" placeholder="{{__('Description '. ($language->code=='en'?'':$language->code))}}" id="description{{$language->code=='en'?'':'_'.$language->code}}" name="description{{$language->code=='en'?'':'_'.$language->code}}" class="form-control" required>{{old('description'. ($language->code=='en'?'':'_'.$language->code))}}</textarea>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    @endforeach
 
-                    <div class="form-group row">
+
+                    <div class="form-group row not-translatable">
                         <label class="col-md-3 col-form-label">{{translate('Type')}}</label>
                         <div class="col-md-9">
                             <select name="digital" onchange="categoriesByType(this.value)" required class="form-control aiz-selectpicker mb-2 mb-md-0">
@@ -65,7 +96,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row  not-translatable">
                         <label class="col-md-3 col-form-label">{{translate('Parent Category')}}</label>
                         <div class="col-md-9">
                             <select  required class="select2 form-control aiz-selectpicker" id="selected_parent_id" name="parent_id" data-toggle="select2" data-placeholder="Choose ..." data-live-search="true">
@@ -82,7 +113,7 @@
                     </div>
 
 
-                    <div class="form-group row">
+                    <div class="form-group row  not-translatable">
                         <label class="col-md-3 col-form-label">
                             {{translate('Ordering Number')}}
                         </label>
@@ -91,7 +122,7 @@
                             <small>{{translate('Higher number has high priority')}}</small>
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row  not-translatable">
                         <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Banner')}} <small>({{ translate('200x200') }})</small></label>
                         <div class="col-md-9">
                             <div class="input-group" data-toggle="aizuploader" data-type="image">
@@ -105,7 +136,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row  not-translatable">
                         <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Icon')}} <small>({{ translate('32x32') }})</small></label>
                         <div class="col-md-9">
                             <div class="input-group" data-toggle="aizuploader" data-type="image">
@@ -119,7 +150,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row  not-translatable">
                         <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Cover Image')}} <small>({{ translate('360x360') }})</small></label>
                         <div class="col-md-9">
                             <div class="input-group" data-toggle="aizuploader" data-type="image">
@@ -137,46 +168,36 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-6">
+
+                    @foreach (get_all_active_language() as $key => $language)
+                    <div class="form-group row  language-switcher-tabs" data-lang-switcher="{{$language->code}}"  style="@if($language->code!='en')display:none @endif">
+                        <div class="col-md-12">
                             <div class="row">
                                 <label class="col-md-3 col-form-label">{{translate('Meta Title')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
                                 <div class="col-md-9">
-                                    <input type="text" class="form-control" name="meta_title" placeholder="{{translate('Meta Title')}}" value="{{old('meta_title')}}">
+                                    <input type="text" class="form-control" name="meta_title{{$language->code=='en'?'':'_'.$language->code}}" placeholder="{{translate('Meta Title '. ($language->code=='en'?'':$language->code))}}" value="{{old('meta_title'. ($language->code=='en'?'':'_'.$language->code))}}">
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="row">
-                                <label class="col-md-3 col-form-label">{{translate('Meta Title ar')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
-                                <div class="col-md-9">
-                                    <input type="text" class="form-control" name="meta_title_ar" placeholder="{{translate('Meta Title ar')}}" value="{{old('meta_title_ar')}}">
-                                </div>
-                            </div>
-                        </div>
+
 
                     </div>
 
-                    <div class="form-group row">
-                        <div class="col-md-6">
+                    <div class="form-group row  language-switcher-tabs" data-lang-switcher="{{$language->code}}" style="@if($language->code!='en')display:none @endif">
+                        <div class="col-md-12">
                             <div class="row">
                                 <label class="col-md-3 col-form-label">{{translate('Meta Description')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
                                 <div class="col-md-9">
-                                    <textarea name="meta_description" rows="5" class="form-control"> {{old('meta_description')}}</textarea>
+                                    <textarea name="meta_description{{$language->code=='en'?'':'_'.$language->code}}" rows="5"  placeholder="{{__('Meta Description '. ($language->code=='en'?'':$language->code))}}" class="form-control"> {{old('meta_description'. ($language->code=='en'?'':'_'.$language->code))}}</textarea>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="row">
-                                <label class="col-md-3 col-form-label">{{translate('Meta Description ar')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
-                                <div class="col-md-9">
-                                    <textarea name="meta_description_ar" rows="5" class="form-control"> {{old('meta_description_ar')}}</textarea>
-                                </div>
-                            </div>
-                        </div>
+
                     </div>
+                    @endforeach
+
                     @if (get_setting('category_wise_commission') == 1)
-                        <div class="form-group row">
+                        <div class="form-group row  not-translatable">
                             <label class="col-md-3 col-form-label">{{translate('Commission Rate')}}</label>
                             <div class="col-md-9 input-group">
                                 <input type="number" lang="en" min="0" step="0.01" placeholder="{{translate('Commission Rate')}}" value="{{old('commision_rate')}}" id="commision_rate" name="commision_rate" class="form-control">
@@ -186,7 +207,7 @@
                             </div>
                         </div>
                     @endif
-                    <div class="form-group row">
+                    <div class="form-group row  not-translatable">
                         <label class="col-md-3 col-form-label">{{translate('Filtering Attributes')}}</label>
                         <div class="col-md-9">
                             <select class="select2 form-control aiz-selectpicker" name="filtering_attributes[]" data-toggle="select2" data-placeholder="Choose ..."data-live-search="true" multiple>
@@ -196,7 +217,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row  not-translatable">
                         <label class="col-md-3 col-form-label">{{translate('featured')}}</label>
                         <div class="col-md-3">
                             <input type="checkbox" class="form-control" checked name="featured"  style="width: 20px; height:20px"  >

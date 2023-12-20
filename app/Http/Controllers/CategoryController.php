@@ -101,7 +101,20 @@ class CategoryController extends Controller
 
         $category->attributes()->sync($request->filtering_attributes);
 
-        $category_translation = CategoryTranslation::firstOrNew(['lang' => env('DEFAULT_LANGUAGE'), 'category_id' => $category->id]);
+        foreach (get_all_active_language() as $key => $language){
+            $category_translation = CategoryTranslation::firstOrNew(['lang' => $language->code, 'category_id' => $category->id]);
+            $prefixlang = $language->code==env('DEFAULT_LANGUAGE') ? '' : '_'.$language->code;
+            $attribute = 'name'.$prefixlang;
+            $category_translation->name = $request->$attribute;
+            $attribute = 'description'.$prefixlang;
+            $category_translation->description = $request->$attribute;
+            $attribute = 'meta_title'.$prefixlang;
+            $category_translation->meta_title = $request->$attribute;
+            $attribute = 'meta_description'.$prefixlang;
+            $category_translation->meta_description = $request->$attribute;
+            $category_translation->save();
+        }
+        /*$category_translation = CategoryTranslation::firstOrNew(['lang' => env('DEFAULT_LANGUAGE'), 'category_id' => $category->id]);
         $category_translation->name = $request->name;
         $category_translation->description = $request->description;
         $category_translation->meta_title = $request->meta_title;
@@ -112,7 +125,7 @@ class CategoryController extends Controller
         $category_translation->description = $request->description_sa;
         $category_translation->meta_title = $request->meta_title_ar;
         $category_translation->meta_description = $request->meta_description_ar;
-        $category_translation->save();
+        $category_translation->save();*/
 
         flash(translate('Category has been inserted successfully'))->success();
         return redirect()->route('categories.index');

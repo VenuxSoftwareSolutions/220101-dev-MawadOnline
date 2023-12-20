@@ -118,13 +118,13 @@
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label">{{translate('Meta Title')}}</label>
                         <div class="col-md-9">
-                            <input type="text" class="form-control" name="meta_title" value="{{ $category->meta_title }}" placeholder="{{translate('Meta Title')}}">
+                            <input type="text" class="form-control" name="meta_title" value="{{ $category->getTranslation('meta_title', $lang) }}" placeholder="{{translate('Meta Title')}}">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label">{{translate('Meta Description')}}</label>
                         <div class="col-md-9">
-                            <textarea name="meta_description" rows="5" class="form-control">{{ $category->meta_description }}</textarea>
+                            <textarea name="meta_description" rows="5" class="form-control">{{ $category->getTranslation('meta_description', $lang) }}</textarea>
                         </div>
                     </div>
                     <div class="form-group row">
