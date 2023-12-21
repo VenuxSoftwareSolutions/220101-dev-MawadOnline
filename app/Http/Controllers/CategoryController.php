@@ -223,6 +223,9 @@ class CategoryController extends Controller
 
         $category_translation = CategoryTranslation::firstOrNew(['lang' => $request->lang, 'category_id' => $category->id]);
         $category_translation->name = $request->name;
+        $category_translation->description = $request->description;
+        $category_translation->meta_title = $request->meta_title;
+        $category_translation->meta_description = $request->meta_description;
         $category_translation->save();
 
         Cache::forget('featured_categories');
