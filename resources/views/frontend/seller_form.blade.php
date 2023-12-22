@@ -1,27 +1,31 @@
 @extends('frontend.layouts.app')
 @section('style')
-<style>
-    #password-strength {
-    margin-top: 10px;
-    /* padding: 10px; */
-    /* border: 1px solid #ddd; */
-    border-radius: 5px;
+    <style>
+        #password-strength {
+            margin-top: 10px;
+            /* padding: 10px; */
+            /* border: 1px solid #ddd; */
+            border-radius: 5px;
+        }
+
+        #password-strength p {
+            margin: 5px 0;
+        }
+
+        #password-strength.valid {
+            border-color: #4caf50;
+            background-color: #dff0d8;
+        }
+
+        .removeRow {
+            margin-bottom: 8px;
+        }
+        .has-errors {
+    background-color: #f8d7da; /* Highlight color for errors */
+    color: #721c24; /* Text color for errors */
 }
 
-#password-strength p {
-    margin: 5px 0;
-}
-
-#password-strength.valid {
-    border-color: #4caf50;
-    background-color: #dff0d8;
-}
-.removeRow {
-    margin-bottom: 8px ;
-}
-
-</style>
-
+    </style>
 @endsection
 @section('content')
     <section class="pt-4 mb-4">
@@ -84,16 +88,16 @@
                                                         <label>{{ translate('First Name') }} <span
                                                                 class="text-primary">*</span></label>
                                                         <input type="text" class="form-control rounded-0"
-                                                            value="{{ old('name') }}"
-                                                          id="first_name"  placeholder="{{ translate('First Name') }}" name="first_name"
+                                                            value="{{ old('name') }}" id="first_name"
+                                                            placeholder="{{ translate('First Name') }}" name="first_name"
                                                             required>
 
                                                     </div>
                                                     <div class="form-group">
                                                         <label>{{ translate('Last name') }} <span
                                                                 class="text-primary">*</span></label>
-                                                        <input type="text" class="form-control rounded-0"
-                                                          id="last_name"   placeholder="{{ translate('Last name') }}" name="last_name"
+                                                        <input type="text" class="form-control rounded-0" id="last_name"
+                                                            placeholder="{{ translate('Last name') }}" name="last_name"
                                                             required>
 
                                                     </div>
@@ -112,7 +116,7 @@
                                                             value="{{ old('password') }}"
                                                             placeholder="{{ translate('Password') }}" name="password"
                                                             required>
-                                                            <div id="password-strength"></div>
+                                                        <div id="password-strength"></div>
 
 
                                                     </div>
@@ -210,7 +214,11 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label>{{ translate('Trade License Doc') }} <span
-                                                                    class="text-primary">*</span></label>
+                                                                    class="text-primary">*</span><small>Max file size is
+                                                                    5MB and accepted file types are PDF and image
+                                                                    formats.</small></label>
+
+
                                                             @if (isset($user) && isset($user->business_information) && $user->business_information->trade_license_doc)
                                                                 <a class="old_file"
                                                                     href="{{ static_asset($user->business_information->trade_license_doc) }}"
@@ -274,10 +282,12 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label>{{ translate('License Issue Date') }} <span
-                                                                    class="text-primary">*</span></label>
+                                                                    class="text-primary">*</span>
+                                                            </label>
 
                                                             <input required type="date" class="form-control rounded-0"
                                                                 placeholder="{{ translate('License Issue Date') }}"
+                                                                id="license_issue_date"
                                                                 value="{{ $user->business_information->license_issue_date ?? '' }}"
                                                                 name="license_issue_date">
                                                         </div>
@@ -293,93 +303,95 @@
                                                                 name="license_expiry_date">
                                                         </div>
                                                     </div>
-                                                    @if(isset($user->business_information) && !empty($user->business_information->state))
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>{{ translate('State/Emirate') }} <span
-                                                                    class="text-primary">*</span></label>
-                                                            <select required name="state" class="form-control rounded-0"
-                                                                id="emirateempire">
-                                                                <option value="" >Please Choose !!</option>
-                                                                <option
-                                                                @if ($user->business_information->state == 1) selected @endif
-                                                                value="1">Abu dhabi</option>
-                                                            <option
-                                                                @if ($user->business_information->state == 2) selected @endif
-                                                                value="2">Ajman</option>
-                                                            <option
-                                                                @if ($user->business_information->state == 3) selected @endif
-                                                                value="3">Sharjah</option>
-                                                            <option
-                                                                @if ($user->business_information->state == 4) selected @endif
-                                                                value="4">Dubai</option>
-                                                            <option
-                                                                @if ($user->business_information->state == 5) selected @endif
-                                                                value="5">Fujairah</option>
-                                                            <option
-                                                                @if ($user->business_information->state == 6) selected @endif
-                                                                value="6">ras al khaimah</option>
-                                                            <option
-                                                                @if ($user->business_information->state == 7) selected @endif
-                                                                value="7">Umm Al-Quwain</option>
+                                                    @if (isset($user->business_information) && !empty($user->business_information->state))
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label>{{ translate('State/Emirate') }} <span
+                                                                        class="text-primary">*</span></label>
+                                                                <select required name="state"
+                                                                    class="form-control rounded-0" id="emirateempire">
+                                                                    <option value="">Please Choose !!</option>
+                                                                    <option
+                                                                        @if ($user->business_information->state == 1) selected @endif
+                                                                        value="1">Abu dhabi</option>
+                                                                    <option
+                                                                        @if ($user->business_information->state == 2) selected @endif
+                                                                        value="2">Ajman</option>
+                                                                    <option
+                                                                        @if ($user->business_information->state == 3) selected @endif
+                                                                        value="3">Sharjah</option>
+                                                                    <option
+                                                                        @if ($user->business_information->state == 4) selected @endif
+                                                                        value="4">Dubai</option>
+                                                                    <option
+                                                                        @if ($user->business_information->state == 5) selected @endif
+                                                                        value="5">Fujairah</option>
+                                                                    <option
+                                                                        @if ($user->business_information->state == 6) selected @endif
+                                                                        value="6">ras al khaimah</option>
+                                                                    <option
+                                                                        @if ($user->business_information->state == 7) selected @endif
+                                                                        value="7">Umm Al-Quwain</option>
 
-                                                            </select>
+                                                                </select>
 
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>{{ translate('Area') }} <span
-                                                                    class="text-primary">*</span></label>
-                                                            <select required name="area_id" class="form-control rounded-0"
-                                                                id="areaempire">
-                                                                @php
-                                                                $areas=App\Models\Area::where('emirate_id',$user->business_information->state)->get() ;
-                                                            @endphp
-                                                            <option value="" selected>Please Choose
-                                                                !!</option>
-                                                                @foreach ( $areas as $area )
-                                                                <option value="{{$area->id}}" @if ($area->id == $user->business_information->area_id )
-                                                                    selected
-                                                                @endif >{{$area->name}}</option>
-                                                                @endforeach
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label>{{ translate('Area') }} <span
+                                                                        class="text-primary">*</span></label>
+                                                                <select required name="area_id"
+                                                                    class="form-control rounded-0" id="areaempire">
+                                                                    @php
+                                                                        $areas = App\Models\Area::where('emirate_id', $user->business_information->state)->get();
+                                                                    @endphp
+                                                                    <option value="" selected>Please Choose
+                                                                        !!</option>
+                                                                    @foreach ($areas as $area)
+                                                                        <option value="{{ $area->id }}"
+                                                                            @if ($area->id == $user->business_information->area_id) selected @endif>
+                                                                            {{ $area->name }}</option>
+                                                                    @endforeach
 
 
-                                                            </select>
+                                                                </select>
+                                                            </div>
                                                         </div>
-                                                    </div>
                                                     @else
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>{{ translate('State/Emirate') }} <span
-                                                                    class="text-primary">*</span></label>
-                                                            <select required name="state" class="form-control rounded-0"
-                                                                id="emirateempire">
-                                                                <option value="" selected>Please Choose !!</option>
-                                                                <option value="1">Abu dhabi</option>
-                                                                <option value="2">Ajman</option>
-                                                                <option value="3">Sharjah</option>
-                                                                <option value="4">Dubai</option>
-                                                                <option value="5">Fujairah</option>
-                                                                <option value="6">ras al khaimah</option>
-                                                                <option value="7">Umm Al-Quwain</option>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label>{{ translate('State/Emirate') }} <span
+                                                                        class="text-primary">*</span></label>
+                                                                <select required name="state"
+                                                                    class="form-control rounded-0" id="emirateempire">
+                                                                    <option value="" selected>Please Choose !!
+                                                                    </option>
+                                                                    <option value="1">Abu dhabi</option>
+                                                                    <option value="2">Ajman</option>
+                                                                    <option value="3">Sharjah</option>
+                                                                    <option value="4">Dubai</option>
+                                                                    <option value="5">Fujairah</option>
+                                                                    <option value="6">ras al khaimah</option>
+                                                                    <option value="7">Umm Al-Quwain</option>
 
-                                                            </select>
+                                                                </select>
 
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>{{ translate('Area') }} <span
-                                                                    class="text-primary">*</span></label>
-                                                            <select required name="area_id" class="form-control rounded-0"
-                                                                id="areaempire">
-                                                                <option value="" selected>Please Choose !!</option>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label>{{ translate('Area') }} <span
+                                                                        class="text-primary">*</span></label>
+                                                                <select required name="area_id"
+                                                                    class="form-control rounded-0" id="areaempire">
+                                                                    <option value="" selected>Please Choose !!
+                                                                    </option>
 
 
-                                                            </select>
+                                                                </select>
+                                                            </div>
                                                         </div>
-                                                    </div>
                                                     @endif
                                                     <div class="col-md-6">
                                                         <div class="form-group">
@@ -466,7 +478,9 @@
                                                     <div class="col-md-6" id="vatCertificateGroup">
                                                         <div class="form-group">
                                                             <label>{{ translate('Vat Certificate') }} <span
-                                                                    class="text-primary">*</span></label>
+                                                                    class="text-primary">*</span><small>Max file size is
+                                                                    5MB and accepted file types are PDF and image
+                                                                    formats.</small></label>
                                                             @if (isset($user) && isset($user->business_information) && $user->business_information->vat_certificate)
                                                                 <a class="old_file"
                                                                     href="{{ static_asset($user->business_information->vat_certificate) }}"
@@ -492,7 +506,9 @@
                                                     <div class="col-md-6" id="taxWaiverGroup" {{-- style="display: none;" --}}>
                                                         <div class="form-group">
                                                             <label>{{ translate('Tax Waiver Certificate') }} <span
-                                                                    class="text-primary">*</span></label>
+                                                                    class="text-primary">*</span><small>Max file size is
+                                                                    5MB and accepted file types are PDF and image
+                                                                    formats.</small></label>
                                                             @if (isset($user) && isset($user->business_information) && $user->business_information->tax_waiver)
                                                                 <a class="old_file"
                                                                     href="{{ static_asset($user->business_information->tax_waiver) }}"
@@ -507,7 +523,9 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label>{{ translate('Civil Denfense Approval') }} <span
-                                                                    class="text-primary"></span></label>
+                                                                    class="text-primary"></span><small>Max file size is 5MB
+                                                                    and accepted file types are PDF and image
+                                                                    formats.</small></label>
                                                             {{-- <input  type="file" class="form-control rounded-0"
                                                                 name="civil_defense_approval"> --}}
                                                             @if (isset($user) && isset($user->business_information) && $user->business_information->civil_defense_approval)
@@ -531,7 +549,9 @@
 
 
                                         <div class="text-right">
-                                            <button type="button" class="btn btn-secondary fw-600 rounded-0 save-as-draft" data-action="save-as-draft">Save as Draft</button>
+                                            <button type="button"
+                                                class="btn btn-secondary fw-600 rounded-0 save-as-draft"
+                                                data-action="save-as-draft">Save as Draft</button>
 
                                             <button type="button" class="btn btn-primary fw-600 rounded-0"
                                                 {{-- onclick="switchTab('contact-person')" --}}>Next</button>
@@ -563,7 +583,6 @@
                                                                 $fistName = null;
                                                                 if (isset($user->contact_people->first_name) && !empty($user->contact_people->first_name)) {
                                                                     $fistName = $user->contact_people->first_name;
-
                                                                 } elseif (isset($user->first_name)) {
                                                                     $fistName = $user->first_name;
                                                                     // dd($user->first_name) ;
@@ -610,7 +629,7 @@
                                                         <div class="form-group">
                                                             <label>{{ translate('Mobile Phone') }} <span
                                                                     class="text-primary">*</span></label>
-                                                                    <small class="text-muted">Example: +971123456789</small>
+                                                            <small class="text-muted">Example: +971123456789</small>
 
                                                             <input type="text" class="form-control rounded-0"
                                                                 placeholder="{{ translate('Mobile Phone') }}"
@@ -622,10 +641,12 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label>{{ translate('Additional Mobile Phone') }} <span
-                                                                    class="text-primary"></span></label>
+                                                                    class="text-primary"></span><small
+                                                                    class="text-muted">Example:
+                                                                    +971123456789</small></label>
                                                             <input type="text" class="form-control rounded-0"
                                                                 placeholder="{{ translate('Additional Mobile Phone') }}"
-                                                                value="{{ $user->contact_people->additional_mobile_phone ?? '' }}"
+                                                                value="{{ $user->contact_people->additional_mobile_phone ?? '+971' }}"
                                                                 name="additional_mobile_phone">
 
                                                         </div>
@@ -635,8 +656,10 @@
                                                             <label>{{ translate('Nationality') }} <span
                                                                     class="text-primary">*</span></label>
                                                             <br>
-                                                            <select name="nationality" class="selectpicker countrypicker"
-                                                           @if(isset($user->contact_people) && !empty($user->contact_people->nationality)) data-default="{{$user->contact_people->nationality}}" @endif data-flag="true"></select>
+                                                            <select title="{{ translate('Select Nationality') }}"
+                                                                name="nationality" class="selectpicker countrypicker"
+                                                                @if (isset($user->contact_people) && !empty($user->contact_people->nationality)) data-default="{{ $user->contact_people->nationality }}" @else data-default="" @endif
+                                                                data-flag="true"></select>
 
                                                         </div>
                                                     </div>
@@ -676,7 +699,9 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label>{{ translate('Emirates ID') }} <span
-                                                                    class="text-primary">*</span></label>
+                                                                    class="text-primary">*</span><small>Max file size is
+                                                                    5MB and accepted file types are PDF and image
+                                                                    formats.</small></label>
                                                             @if (isset($user) && isset($user->contact_people) && $user->contact_people->emirates_id_file_path)
                                                                 <a class="old_file"
                                                                     href="{{ static_asset($user->contact_people->emirates_id_file_path) }}"
@@ -734,7 +759,9 @@
                                         </div>
 
                                         <div class="text-right">
-                                            <button type="button" class="btn btn-secondary fw-600 rounded-0 save-as-draft" data-action="save-as-draft">Save as Draft</button>
+                                            <button type="button"
+                                                class="btn btn-secondary fw-600 rounded-0 save-as-draft"
+                                                data-action="save-as-draft">Save as Draft</button>
 
                                             <button type="button" class="btn btn-primary fw-600 rounded-0"
                                                 {{-- onclick="switchTab('warehouses')" --}}>Next</button>
@@ -755,9 +782,84 @@
                                                 style="display: none;"></div> --}}
 
                                             <div class="p-3">
-                                                {{-- <div class="container mt-4">
 
-                                                    <table class="table" id="warehouseTable">
+                                                    <div class="row warehouseRow" id="warehouseRows">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="warehouse_name">Warehouse Name<span
+                                                                        class="text-primary">*</span></label>
+                                                                <input type="text" class="form-control"
+                                                                   name="warehouse_name_add"  >
+
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="state">State/Emirate<span
+                                                                        class="text-primary">*</span></label>
+                                                                <select name="state_warehouse_add"
+                                                                    class="form-control rounded-0 emirateSelect"
+                                                                    id="emirateempire">
+                                                                    <option value="" selected>Please Choose !!
+                                                                    </option>
+                                                                    <option value="1">Abu dhabi</option>
+                                                                    <option value="2">Ajman</option>
+                                                                    <option value="3">Sharjah</option>
+                                                                    <option value="4">Dubai</option>
+                                                                    <option value="5">Fujairah</option>
+                                                                    <option value="6">ras al khaimah</option>
+                                                                    <option value="7">Umm Al-Quwain</option>
+
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="area">Area<span
+                                                                        class="text-primary">*</span></label>
+                                                                <select name="area_warehouse_add" class="form-control areaSelect"
+                                                                    >
+                                                                    <option value="" selected>Please Choose !!
+                                                                    </option>
+                                                                    <!-- Options for area -->
+                                                                </select>
+
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="street">Street<span
+                                                                        class="text-primary">*</span></label>
+                                                                <input type="text" class="form-control"
+                                                                  name="street_warehouse_add"   >
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="building">Building<span
+                                                                        class="text-primary">*</span></label>
+                                                                <input type="text" class="form-control"
+                                                                name="building_warehouse_add"    >
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="unit">Unit/Office No.<span
+                                                                        class="text-primary">*</span></label>
+                                                                <input type="text" class="form-control"
+                                                                 name="unit_add"   >
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div class="col-auto ml-auto">
+                                                            <button type="button" class="btn btn-primary" id="addRow">Add
+                                                                Warehouses</button>
+
+                                                        </div>
+                                                    </div>
+                                                    <table class="table mt-3" id="warehouseTable">
                                                         <thead class="thead-dark">
                                                             <tr>
                                                                 <th>Warehouse Name</th>
@@ -772,13 +874,13 @@
                                                         <tbody>
                                                             @if (isset($user))
                                                             @foreach ($user->warehouses as $warehouse)
-                                                                <tr>
+                                                                <tr class="warehouseRow">
                                                                     <td><input value="{{ $warehouse->warehouse_name }}"
                                                                             type="text" class="form-control"
                                                                             name="warehouse_name[]" required></td>
                                                                     <td>
 
-                                                                        <select required name="state[]"
+                                                                        <select required name="state_warehouse[]"
                                                                             class="form-control rounded-0 emirateSelect"
                                                                             id="emirateempire">
                                                                             <option value="" selected>Please Choose
@@ -809,14 +911,14 @@
                                                                     </td>
                                                                     <td>
                                                                         <select class="form-control areaSelect"
-                                                                            name="area[]" required>
+                                                                            name="area_warehouse[]" required>
                                                                             @php
                                                                                 $areas=App\Models\Area::where('emirate_id',$warehouse->emirate_id)->get() ;
                                                                             @endphp
                                                                             <option value="" selected>Please Choose
                                                                                 !!</option>
-                                                                                @foreach ( $areas as $area )
-                                                                                <option value="{{$area->id}}" @if ($area->id == $warehouse->area_id  )
+                                                                                @foreach ($areas as $area)
+                                                                                <option value="{{$area->id}}" @if ($area->id == $warehouse->area_id)
                                                                                     selected
                                                                                 @endif >{{$area->name}}</option>
                                                                                 @endforeach
@@ -825,24 +927,147 @@
                                                                         </select>
                                                                     </td>
                                                                     <td><input type="text" class="form-control"
-                                                                        value="{{$warehouse->address_street}}" name="street[]" required></td>
+                                                                        value="{{$warehouse->address_street}}" name="street_warehouse[]" required></td>
                                                                     <td><input type="text" class="form-control"
-                                                                        value="{{$warehouse->address_building}}"   name="building[]" required></td>
+                                                                        value="{{$warehouse->address_building}}"   name="building_warehouse[]" required></td>
                                                                     <td><input type="text" class="form-control"
-                                                                        value="{{$warehouse->address_unit}}"  name="unit[]" required></td>
+                                                                        value="{{$warehouse->address_unit}}"  name="unit_warehouse[]" required></td>
                                                                     <td><button type="button"
                                                                             class="btn btn-danger removeRow">Remove</button>
                                                                     </td>
                                                                 </tr>
                                                             @endforeach
                                                             @endif
-                                                            @if(!isset($user->warehouses) || isset($user->warehouses) && count($user->warehouses)==0  )
-                                                            <tr>
-                                                                <td><input type="text" class="form-control"
-                                                                        name="warehouse_name[]" required></td>
-                                                                <td>
 
-                                                                    <select required name="state[]"
+                                                        </tbody>
+                                                    </table>
+
+
+                                                {{-- <div id="warehouseRowsContainer">
+                                                    @if (isset($user))
+                                                        @foreach ($user->warehouses as $warehouse)
+                                                            <div class="row warehouseRow" id="warehouseRows">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label for="warehouse_name">Warehouse Name<span
+                                                                                class="text-primary">*</span></label>
+                                                                        <input value="{{ $warehouse->warehouse_name }}"
+                                                                            type="text" class="form-control"
+                                                                            name="warehouse_name[]" required>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label for="state">State/Emirate<span
+                                                                                class="text-primary">*</span></label>
+                                                                        <select required name="state_warehouse[]"
+                                                                            class="form-control rounded-0 emirateSelect"
+                                                                            id="emirateempire">
+                                                                            <option value="" selected>Please Choose
+                                                                                !!</option>
+                                                                            <option
+                                                                                @if ($warehouse->emirate_id == 1) selected @endif
+                                                                                value="1">Abu dhabi</option>
+                                                                            <option
+                                                                                @if ($warehouse->emirate_id == 2) selected @endif
+                                                                                value="2">Ajman</option>
+                                                                            <option
+                                                                                @if ($warehouse->emirate_id == 3) selected @endif
+                                                                                value="3">Sharjah</option>
+                                                                            <option
+                                                                                @if ($warehouse->emirate_id == 4) selected @endif
+                                                                                value="4">Dubai</option>
+                                                                            <option
+                                                                                @if ($warehouse->emirate_id == 5) selected @endif
+                                                                                value="5">Fujairah</option>
+                                                                            <option
+                                                                                @if ($warehouse->emirate_id == 6) selected @endif
+                                                                                value="6">ras al khaimah</option>
+                                                                            <option
+                                                                                @if ($warehouse->emirate_id == 7) selected @endif
+                                                                                value="7">Umm Al-Quwain</option>
+
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label for="area">Area<span
+                                                                                class="text-primary">*</span></label>
+                                                                        <select class="form-control areaSelect"
+                                                                            name="area_warehouse[]" required>
+                                                                            @php
+                                                                                $areas = App\Models\Area::where('emirate_id', $warehouse->emirate_id)->get();
+                                                                            @endphp
+                                                                            <option value="" selected>Please Choose
+                                                                                !!</option>
+                                                                            @foreach ($areas as $area)
+                                                                                <option value="{{ $area->id }}"
+                                                                                    @if ($area->id == $warehouse->area_id) selected @endif>
+                                                                                    {{ $area->name }}</option>
+                                                                            @endforeach
+
+                                                                            <!-- Options for area -->
+                                                                        </select>
+
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label for="street">Street<span
+                                                                                class="text-primary">*</span></label>
+                                                                        <input type="text" class="form-control"
+                                                                            value="{{ $warehouse->address_street }}"
+                                                                            name="street_warehouse[]" required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label for="building">Building<span
+                                                                                class="text-primary">*</span></label>
+                                                                        <input type="text" class="form-control"
+                                                                            value="{{ $warehouse->address_building }}"
+                                                                            name="building_warehouse[]" required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label for="unit">Unit/Office No.<span
+                                                                                class="text-primary">*</span></label>
+                                                                        <input type="text" class="form-control"
+                                                                            value="{{ $warehouse->address_unit }}"
+                                                                            name="unit_warehouse[]" required>
+                                                                    </div>
+                                                                </div>
+
+
+                                                                <div class="col-auto ml-auto">
+                                                                    <button type="button"
+                                                                        class="btn btn-outline-danger removeRow">
+                                                                        Remove Warehouse <i class="bi bi-trash"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        @endforeach
+                                                    @endif
+                                                    @if (!isset($user->warehouses) || (isset($user->warehouses) && count($user->warehouses) == 0))
+                                                        <div class="row warehouseRow" id="warehouseRows">
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="warehouse_name">Warehouse Name<span
+                                                                            class="text-primary">*</span></label>
+                                                                    <input type="text" class="form-control"
+                                                                        name="warehouse_name[]" required>
+
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="state">State/Emirate<span
+                                                                            class="text-primary">*</span></label>
+                                                                    <select required name="state_warehouse[]"
                                                                         class="form-control rounded-0 emirateSelect"
                                                                         id="emirateempire">
                                                                         <option value="" selected>Please Choose !!
@@ -856,233 +1081,83 @@
                                                                         <option value="7">Umm Al-Quwain</option>
 
                                                                     </select>
-                                                                </td>
-                                                                <td>
-                                                                    <select class="form-control areaSelect" name="area[]"
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="area">Area<span
+                                                                            class="text-primary">*</span></label>
+                                                                    <select class="form-control areaSelect" name="area_warehouse[]"
                                                                         required>
                                                                         <option value="" selected>Please Choose !!
                                                                         </option>
                                                                         <!-- Options for area -->
                                                                     </select>
-                                                                </td>
-                                                                <td><input type="text" class="form-control"
-                                                                        name="street[]" required></td>
-                                                                <td><input type="text" class="form-control"
-                                                                        name="building[]" required></td>
-                                                                <td><input type="text" class="form-control"
-                                                                        name="unit[]" required></td>
-                                                                <td><button type="button"
-                                                                        class="btn btn-danger removeRow">Remove</button>
-                                                                </td>
-                                                            </tr>
-                                                            @endif
-                                                        </tbody>
-                                                    </table>
 
-                                                    <button type="button" class="btn btn-primary" id="addRow">Add
-                                                        Row</button>
-                                                </div> --}}
-                                                <div id="warehouseRowsContainer">
-                                                    @if (isset($user))
-                                                    @foreach ($user->warehouses as $warehouse)
-                                                    <div class="row warehouseRow" id="warehouseRows">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="warehouse_name">Warehouse Name<span
-                                                                    class="text-primary">*</span></label>
-                                                                    <input value="{{ $warehouse->warehouse_name }}"
-                                                                    type="text" class="form-control"
-                                                                    name="warehouse_name[]" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="street">Street<span
+                                                                            class="text-primary">*</span></label>
+                                                                    <input type="text" class="form-control"
+                                                                        name="street_warehouse[]" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="building">Building<span
+                                                                            class="text-primary">*</span></label>
+                                                                    <input type="text" class="form-control"
+                                                                        name="building_warehouse[]" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="unit">Unit/Office No.<span
+                                                                            class="text-primary">*</span></label>
+                                                                    <input type="text" class="form-control"
+                                                                        name="unit_warehouse[]" required>
+                                                                </div>
+                                                            </div>
+
+
+                                                            <div class="col-auto ml-auto">
+                                                                <button type="button"
+                                                                    class="btn btn-outline-danger removeRow">
+                                                                    Remove Warehouse <i class="bi bi-trash"></i>
+                                                                </button>
                                                             </div>
                                                         </div>
-
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="state">State/Emirate<span
-                                                                    class="text-primary">*</span></label>
-                                                                    <select required name="state[]"
-                                                                    class="form-control rounded-0 emirateSelect"
-                                                                    id="emirateempire">
-                                                                    <option value="" selected>Please Choose
-                                                                        !!</option>
-                                                                    <option
-                                                                        @if ($warehouse->emirate_id == 1) selected @endif
-                                                                        value="1">Abu dhabi</option>
-                                                                    <option
-                                                                        @if ($warehouse->emirate_id == 2) selected @endif
-                                                                        value="2">Ajman</option>
-                                                                    <option
-                                                                        @if ($warehouse->emirate_id == 3) selected @endif
-                                                                        value="3">Sharjah</option>
-                                                                    <option
-                                                                        @if ($warehouse->emirate_id == 4) selected @endif
-                                                                        value="4">Dubai</option>
-                                                                    <option
-                                                                        @if ($warehouse->emirate_id == 5) selected @endif
-                                                                        value="5">Fujairah</option>
-                                                                    <option
-                                                                        @if ($warehouse->emirate_id == 6) selected @endif
-                                                                        value="6">ras al khaimah</option>
-                                                                    <option
-                                                                        @if ($warehouse->emirate_id == 7) selected @endif
-                                                                        value="7">Umm Al-Quwain</option>
-
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="area">Area<span
-                                                                    class="text-primary">*</span></label>
-                                                                    <select class="form-control areaSelect"
-                                                                    name="area[]" required>
-                                                                    @php
-                                                                        $areas=App\Models\Area::where('emirate_id',$warehouse->emirate_id)->get() ;
-                                                                    @endphp
-                                                                    <option value="" selected>Please Choose
-                                                                        !!</option>
-                                                                        @foreach ( $areas as $area )
-                                                                        <option value="{{$area->id}}" @if ($area->id == $warehouse->area_id  )
-                                                                            selected
-                                                                        @endif >{{$area->name}}</option>
-                                                                        @endforeach
-
-                                                                    <!-- Options for area -->
-                                                                </select>
-
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="street">Street<span
-                                                                    class="text-primary">*</span></label>
-                                                                    <input type="text" class="form-control"
-                                                                    value="{{$warehouse->address_street}}" name="street[]" required>                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="building">Building<span
-                                                                    class="text-primary">*</span></label>
-                                                                    <input type="text" class="form-control"
-                                                                    value="{{$warehouse->address_building}}"   name="building[]" required>                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="unit">Unit/Office No.<span
-                                                                    class="text-primary">*</span></label>
-                                                                    <input type="text" class="form-control"
-                                                                    value="{{$warehouse->address_unit}}"  name="unit[]" required>                                                            </div>
-                                                        </div>
-
-
-                                                        <div class="col-auto ml-auto">
-                                                            <button type="button" class="btn btn-outline-danger removeRow">
-                                                                Remove Warehouse <i class="bi bi-trash"></i>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                    @endforeach
                                                     @endif
-                                                    @if(!isset($user->warehouses) || isset($user->warehouses) && count($user->warehouses)==0  )
 
-                                                <div class="row warehouseRow" id="warehouseRows">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label for="warehouse_name">Warehouse Name<span
-                                                                class="text-primary">*</span></label>
-                                                            <input type="text" class="form-control" name="warehouse_name[]" required>
-
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label for="state">State/Emirate<span
-                                                                class="text-primary">*</span></label>
-                                                                <select required name="state[]"
-                                                                class="form-control rounded-0 emirateSelect"
-                                                                id="emirateempire">
-                                                                <option value="" selected>Please Choose !!
-                                                                </option>
-                                                                <option value="1">Abu dhabi</option>
-                                                                <option value="2">Ajman</option>
-                                                                <option value="3">Sharjah</option>
-                                                                <option value="4">Dubai</option>
-                                                                <option value="5">Fujairah</option>
-                                                                <option value="6">ras al khaimah</option>
-                                                                <option value="7">Umm Al-Quwain</option>
-
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label for="area">Area<span
-                                                                class="text-primary">*</span></label>
-                                                              <select class="form-control areaSelect" name="area[]"
-                                                                        required>
-                                                                        <option value="" selected>Please Choose !!
-                                                                        </option>
-                                                                        <!-- Options for area -->
-                                                                    </select>
-
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label for="street">Street<span
-                                                                class="text-primary">*</span></label>
-                                                            <input type="text" class="form-control" name="street[]" required>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label for="building">Building<span
-                                                                class="text-primary">*</span></label>
-                                                            <input type="text" class="form-control" name="building[]" required>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label for="unit">Unit/Office No.<span
-                                                                class="text-primary">*</span></label>
-                                                            <input type="text" class="form-control" name="unit[]" required>
-                                                        </div>
-                                                    </div>
-
-
-                                                    <div class="col-auto ml-auto">
-                                                        <button type="button" class="btn btn-outline-danger removeRow">
-                                                            Remove Warehouse <i class="bi bi-trash"></i>
-                                                        </button>
-                                                    </div>
                                                 </div>
-                                                @endif
-
-                                              </div>
 
                                                 <div class="row">
                                                     <div class="col-auto mx-auto text-center">
-                                                        <button type="button" class="btn btn-primary addWarehouse" id="addRow">Add
+                                                        <button type="button" class="btn btn-primary addWarehouse"
+                                                            id="addRow">Add
                                                             Warehouse</button>
                                                     </div>
-                                                </div>
+                                                </div> --}}
                                             </div>
                                         </div>
 
 
                                         <div class="text-right">
-                                            <button type="button" class="btn btn-secondary fw-600 rounded-0 save-as-draft" data-action="save-as-draft">Save as Draft</button>
+                                            <button type="button"
+                                                class="btn btn-secondary fw-600 rounded-0 save-as-draft"
+                                                data-action="save-as-draft">Save as Draft</button>
 
                                             <button type="button" class="btn btn-primary fw-600 rounded-0"
-                                               {{--  onclick="switchTab('payout-info')" --}}>Next</button>
+                                                {{--  onclick="switchTab('payout-info')" --}}>Next</button>
                                         </div>
                                     </form>
                                 </div>
 
                                 <div class="tab-pane fade" id="payout-info">
                                     <form id="payoutInfoForm" class="" action="{{ route('shops.payout_info') }}"
-                                    data-next-tab="payout-info"  method="POST">
+                                        data-next-tab="payout-info" method="POST">
                                         @csrf
                                         <!-- ... Payout Info form fields ... -->
                                         <div class="bg-white border mb-4">
@@ -1151,7 +1226,9 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label>{{ translate('IBAN Certificate') }}<span
-                                                                    class="text-primary">*</span></label>
+                                                                    class="text-primary">*</span><small>Max file size is
+                                                                    5MB and accepted file types are PDF and image
+                                                                    formats.</small></label>
                                                             @if (isset($user) && isset($user->payout_information) && $user->payout_information->iban_certificate)
                                                                 <a class="old_file"
                                                                     href="{{ static_asset($user->payout_information->iban_certificate) }}"
@@ -1169,9 +1246,12 @@
                                         </div>
 
                                         <div class="text-right">
-                                            <button type="button" class="btn btn-secondary fw-600 rounded-0 save-as-draft" data-action="save-as-draft">Save as Draft</button>
+                                            <button type="button"
+                                                class="btn btn-secondary fw-600 rounded-0 save-as-draft"
+                                                data-action="save-as-draft">Save as Draft</button>
 
-                                            <button type="submit" class="btn btn-primary fw-600 rounded-0">Register Your
+                                            <button id="registerShop" type="submit"
+                                                class="btn btn-primary fw-600 rounded-0">Register Your
                                                 Shop</button>
                                         </div>
                                     </form>
@@ -1243,56 +1323,97 @@
             //     }
             // });
             // Add Warehouse Row
-       // Add Warehouse button click event
-       $('#addRow').on('click', function () {
-            // Clone the entire warehouseRows section
-            var newWarehouseRows = $('#warehouseRows').clone();
+            // Add Warehouse button click event
+            // $('#addRow').on('click', function() {
+            //     // Clone the entire warehouseRows section
+            //     var newWarehouseRows = $('#warehouseRows').clone();
 
-            // Show the "Remove Warehouse" button in the new row
-            newWarehouseRows.find('.removeRow').show();
-            newWarehouseRows.find('input,select').val('');
-            newWarehouseRows.find('input, select').removeClass('is-invalid is-valid') ;
-            // Append the new row to the warehouseRowsContainer
-            $('#warehouseRowsContainer').append(newWarehouseRows);
+            //     // Show the "Remove Warehouse" button in the new row
+            //     newWarehouseRows.find('.removeRow').show();
+            //     newWarehouseRows.find('input,select').val('');
+            //     newWarehouseRows.find('input, select').removeClass('is-invalid is-valid');
+            //     // Append the new row to the warehouseRowsContainer
+            //     $('#warehouseRowsContainer').append(newWarehouseRows);
+            // });
+
+            // // Remove Warehouse button click event
+            // $('#warehouseRowsContainer').on('click', '.removeRow', function() {
+            //     // Check if there is at least one warehouse row
+            //     if ($('#warehouseRowsContainer .row').length > 1) {
+            //         // Remove the closest warehouse row
+            //         $(this).closest('.row').remove();
+            //     } else {
+            //         // Display a message or take appropriate action when there's only one row left
+            //         toastr.error('Cannot remove the last warehouse.');
+            //     }
+            // });
+            $('#addRow').on('click', function () {
+                var warehouseName = $('input[name="warehouse_name_add"]').val();
+    var state = $('select[name="state_warehouse_add"]').val();
+    var stateText = $('select[name="state_warehouse_add"] option:selected').text();
+    var area = $('select[name="area_warehouse_add"]').val();
+    var areaText = $('select[name="area_warehouse_add"] option:selected').text();
+    var street = $('input[name="street_warehouse_add"]').val();
+    var building = $('input[name="building_warehouse_add"]').val();
+    var unit = $('input[name="unit_add"]').val();
+    // Check if any input is empty
+    if (!warehouseName || !state || !area || !street || !building || !unit) {
+        // Show toast with translated message
+        toastr.error('{{ translate("Please fill in all fields.") }}');
+        return; // Stop execution if any input is empty
+    }
+    const newRow = $('<tr>');
+
+    // Create cells
+    newRow.append('<td><input type="text" class="form-control" name="warehouse_name[]" value="' + warehouseName + '" required></td>');
+    newRow.append('<td><select required name="state_warehouse[]" class="form-control rounded-0 emirateSelect"><option value="' + state + '" selected>' + stateText + '</option></select></td>');
+    newRow.append('<td><select class="form-control areaSelect" name="area_warehouse[]" required><option value="' + area + '" selected>' + areaText + '</option></select></td>');
+    newRow.append('<td><input type="text" class="form-control" name="street_warehouse[]" value="' + street + '" required></td>');
+    newRow.append('<td><input type="text" class="form-control" name="building_warehouse[]" value="' + building + '" required></td>');
+    newRow.append('<td><input type="text" class="form-control" name="unit_warehouse[]" value="' + unit + '" required></td>');
+    newRow.append('<td><button type="button" class="btn btn-danger removeRow">Remove</button></td>');
+
+    $('#warehouseTable tbody').append(newRow);
+
+    // Clear input fields
+    $('input[name="warehouse_name_add"]').val('');
+    $('select[name="state_warehouse_add"]').val('');
+    $('select[name="area_warehouse_add"]').val('');
+    $('input[name="street_warehouse_add"]').val('');
+    $('input[name="building_warehouse_add"]').val('');
+    $('input[name="unit_add"]').val('');
         });
 
-        // Remove Warehouse button click event
-        $('#warehouseRowsContainer').on('click', '.removeRow', function () {
-            // Check if there is at least one warehouse row
-            if ($('#warehouseRowsContainer .row').length > 1) {
-                // Remove the closest warehouse row
-                $(this).closest('.row').remove();
-            } else {
-                // Display a message or take appropriate action when there's only one row left
-                toastr.error('Cannot remove the last warehouse.');
-            }
+        // Add event listener for the "Remove" button
+        $(document).on('click', '.removeRow', function () {
+            $(this).closest('tr').remove();
         });
-
 
             $('#registerTabs a').on('click', function(e) {
                 e.preventDefault();
                 $(this).tab('show');
             });
 
-            $('#registerTabsContent').find('.tab-pane button:not(#resendCodeBtn,#addRow,.removeRow)').on('click', function(e) {
-            // // Iterate over each warehouse row
+            $('#registerTabsContent').find('.tab-pane button:not(#resendCodeBtn,#addRow,.removeRow,#registerShop)')
+                .on('click', function(e) {
+                    // // Iterate over each warehouse row
 
 
 
 
-               var shouldContinue = true;  // Initialize the boolean variable
-                var clickedButton = e.target;
+                    var shouldContinue = true; // Initialize the boolean variable
+                    var clickedButton = e.target;
 
 
-                e.preventDefault();
-                var form = $(this).closest('form');
-                if (form.attr('id') == 'warehousesForm') {
-                $('#warehouseRowsContainer .warehouseRow').each(function () {
+                    e.preventDefault();
+                    var form = $(this).closest('form');
+                    if (form.attr('id') == 'warehousesForm') {
+                        $('#warehouseRowsContainer .warehouseRow').each(function() {
                             var warehouseInputs = $(this).find('input, select');
                             var isEmpty = true;
 
                             // Check if all input fields are empty
-                            warehouseInputs.each(function () {
+                            warehouseInputs.each(function() {
                                 if ($(this).val() !== '') {
                                     isEmpty = false;
                                     return false; // Exit the loop if a non-empty field is found
@@ -1300,44 +1421,130 @@
                             });
 
                             // If the warehouse is empty, remove the row
-                            if (isEmpty && $('#warehouseRowsContainer .warehouseRow').length>1) {
+                            if (isEmpty && $('#warehouseRowsContainer .warehouseRow').length > 1) {
                                 $(this).remove();
                             }
                         });
-                }
+                    }
 
-                var formData = new FormData(form[0]); // Create FormData object from the form
-                if ($(clickedButton).hasClass('save-as-draft')) {
-                    var action = $(clickedButton).data('action');
-                    formData.append('action',action) ;
-                }
+                    var formData = new FormData(form[0]); // Create FormData object from the form
+                    if ($(clickedButton).hasClass('save-as-draft')) {
+                        var action = $(clickedButton).data('action');
+                        formData.append('action', action);
+                    }
+                    $.ajax({
+                        url: form.attr('action'),
+                        type: 'POST',
+                        // data: form.serialize(),
+                        data: formData,
+                        contentType: false, // Required for sending FormData
+                        processData: false, // Required for sending FormData
+                        success: function(response) {
+                            if (form.attr('id') == 'shop') {
+                                var email = $('#email').val();
+                                $('#emailAccount').val(email);
+                            }
+                            // Handle success, e.g., show a message
+                            if (response.hasOwnProperty('finish') && response.finish === true) {
+                                location.reload();
+
+                            }
+                            if (response.hasOwnProperty('verif_login') && response.verif_login ===
+                                true) {
+
+                                $('#personal-info-tab, #code-verification-tab').addClass(
+                                'disabled');
+                                $('#personal-info, #code-verification').addClass('disabled');
+
+                                $('#registerTabs a[data-toggle="tab"]').on('click', function(e) {
+                                    e.preventDefault();
+                                });
+                            }
+
+                            // Switch to the next tab if the save operation is successful
+                            if (response.success) {
+                                // switchTab('code-verification'); // Change the tab ID accordingly
+                                var nextTabId = form.data(
+                                    'next-tab'
+                                ); // Assuming you set a data attribute on the form with the next tab ID
+                                // if (form.attr('id') != 'warehousesForm') {
+                                displayValidation(form);
+                                // }
+                                switchTab(nextTabId);
+
+                            }
+                        },
+                        error: function(xhr) {
+                            if (xhr.status === 429) {
+                                // Too Many Attempts
+                                toastr.error('Too many attempts. Please try again later.');
+                            } else {
+                                if (xhr.responseJSON.hasOwnProperty('loginFailed')) {
+                                    // Display login failure message using JavaScript
+                                    toastr.error(xhr.responseJSON.loginFailed);
+                                    shouldContinue = false;
+
+                                }
+                                // Handle errors, e.g., show validation errors
+                                var errors = xhr.responseJSON.errors;
+
+                                // Display validation errors in the form
+                                if (form.attr('id') != 'warehousesForm' && shouldContinue !=
+                                    false) {
+                                    displayValidationErrors(errors, form);
+                                }
+                                if (form.attr('id') == 'warehousesForm') {
+                                    toastr.error(
+                                    'Fill up the rest of the table for warehousesForm');
+                                }
+                            }
+
+                        }
+                    });
+                });
+
+            $('#registerTabsContent').find('.tab-pane button#registerShop').on('click', function(e) {
+                // // Iterate over each warehouse row
+                e.preventDefault();
+                // Create a FormData object to store all form data
+                var formData = new FormData();
+
+                // Iterate over each form and append its data to the main FormData object
+                $('#businessInfoForm, #contactPersonForm, #warehousesForm, #payoutInfoForm').each(
+            function() {
+                    var currentFormData = new FormData($(this)[0]);
+
+                    // Append each key-value pair from the current form data to the main form data
+                    for (var pair of currentFormData.entries()) {
+                        formData.append(pair[0], pair[1]);
+                    }
+                });
+
+                // Include the CSRF token in the headers
+                var csrfToken = $('meta[name="csrf-token"]').attr('content');
                 $.ajax({
-                    url: form.attr('action'),
+                    url: "{{ route('shops.register') }}",
                     type: 'POST',
                     // data: form.serialize(),
                     data: formData,
+
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken, // Include CSRF token in headers
+                    },
                     contentType: false, // Required for sending FormData
                     processData: false, // Required for sending FormData
                     success: function(response) {
-                        if (form.attr('id') == 'shop') {
-                            var email = $('#email').val();
-                             $('#emailAccount').val(email);
-                        }
+
                         // Handle success, e.g., show a message
                         if (response.hasOwnProperty('finish') && response.finish === true) {
                             location.reload();
 
                         }
-                        if (response.hasOwnProperty('verif_login') && response.verif_login === true) {
 
-                            $('#personal-info-tab, #code-verification-tab').addClass('disabled');
-                            $('#personal-info, #code-verification').addClass('disabled');
-
-                            $('#registerTabs a[data-toggle="tab"]').on('click', function (e) {
-                                e.preventDefault();
-                            });
+                        if (response.status === 'error') {
+                            // Display the error message
+                            toastr.error(response.message);
                         }
-
                         // Switch to the next tab if the save operation is successful
                         if (response.success) {
                             // switchTab('code-verification'); // Change the tab ID accordingly
@@ -1345,29 +1552,35 @@
                                 'next-tab'
                             ); // Assuming you set a data attribute on the form with the next tab ID
                             // if (form.attr('id') != 'warehousesForm') {
-                            displayValidation(form) ;
+                            displayValidation(form);
                             // }
                             switchTab(nextTabId);
 
                         }
                     },
                     error: function(xhr) {
-                        if (xhr.responseJSON.hasOwnProperty('loginFailed')) {
-                // Display login failure message using JavaScript
-                             toastr.error(xhr.responseJSON.loginFailed);
-                             shouldContinue = false;
+
+                        if (xhr.status === 429) {
+                            // Too Many Attempts
+                            toastr.error('Too many attempts. Please try again later.');
+                        } else {
+                            if (xhr.status === 403) {
+                                // Authorization failed
+                                toastr.error(xhr.responseJSON.message); // Display the error message
+                            }
+                            // Handle errors, e.g., show validation errors
+                            var errors = xhr.responseJSON.errors;
+
+                            // Display validation errors in the form
+                            $('#businessInfoForm, #contactPersonForm, #warehousesForm, #payoutInfoForm').each(
+            function() {
+                displayValidationErrors(errors, $(this));
+
+                });
+
 
                         }
-                        // Handle errors, e.g., show validation errors
-                        var errors = xhr.responseJSON.errors;
 
-                        // Display validation errors in the form
-                        if (form.attr('id') != 'warehousesForm' && shouldContinue != false) {
-                        displayValidationErrors(errors, form);
-                        }
-                        if (form.attr('id') == 'warehousesForm') {
-                            toastr.error('Fill up the rest of the table for warehousesForm');
-                        }
                     }
                 });
             });
@@ -1423,11 +1636,16 @@
                         // You can add additional logic here if needed
                     },
                     error: function(xhr) {
-
-                        if (xhr.responseJSON.hasOwnProperty('loginFailed')) {
-                            // Display the error message using Toastr.js
-                            toastr.error(xhr.responseJSON.loginFailed);
+                        if (xhr.status === 429) {
+                            // Too Many Attempts
+                            toastr.error('Too many attempts. Please try again later.');
+                        } else {
+                            if (xhr.responseJSON.hasOwnProperty('loginFailed')) {
+                                // Display the error message using Toastr.js
+                                toastr.error(xhr.responseJSON.loginFailed);
+                            }
                         }
+
                         // // Handle errors, e.g., show validation errors
                         // var errors = xhr.responseJSON.errors;
                         // // Update this part based on your error handling needs
@@ -1439,6 +1657,7 @@
 
 
             function displayValidationErrors(errors, form) {
+
                 // Clear existing error messages and success styles
                 form.find('.invalid-feedback').remove();
                 form.find('.is-invalid').removeClass('is-invalid');
@@ -1446,10 +1665,12 @@
 
                 // Clear global validation error messages
                 $('#validation-errors').empty().hide();
+                // $("#registerTabs a").removeClass('has-errors');
 
                 // Display new error messages
                 $.each(errors, function(field, messages) {
                     var inputField = form.find('[name="' + field + '"]');
+
                     var errorContainer = $('<div class="invalid-feedback"></div>');
 
                     $.each(messages, function(key, message) {
@@ -1464,13 +1685,23 @@
                     }
 
                     inputField.after(errorContainer);
+
+                    form.find('.form-control').each(function() {
+                    var inputField = $(this);
+
+                    if (inputField.hasClass('is-invalid')) {
+                         tabErreur=$(this).closest('.tab-pane').attr('id')
+                        $('#'+tabErreur+"-tab").addClass('has-errors');
+
+                    }
+                });
                 });
 
                 // Highlight fields without errors
                 form.find('.form-control').each(function() {
                     var inputField = $(this);
 
-                    if (!inputField.hasClass('is-invalid') && inputField.val() !== '') {
+                    if (!inputField.hasClass('is-invalid') && inputField.val() !== '' || inputField.parent().find('a').hasClass('old_file')) {
                         inputField.addClass('is-valid');
                     }
                 });
@@ -1478,12 +1709,12 @@
                 $('#validation-errors').html('Validation errors occurred. Please check the form.').show();
             }
 
-            function displayValidation( form) {
+            function displayValidation(form) {
 
                 form.find('.form-control').each(function() {
                     var inputField = $(this);
-
-                    if (inputField.val() !== '' || inputField.parent().find('a').hasClass('old_file') ) {
+                    inputField.removeClass('is-valid');
+                    if (inputField.val() !== '' || inputField.parent().find('a').hasClass('old_file')) {
 
                         inputField.removeClass('is-invalid');
                         inputField.addClass('is-valid');
@@ -1589,7 +1820,7 @@
                         // Update the options in the area select
                         areaSelect.empty();
                         areaSelect.append(
-                        '<option value="" selected>Please Choose !!</option>');
+                            '<option value="" selected>Please Choose !!</option>');
 
                         // Add options based on the response
                         // $.each(response, function(index, area) {
@@ -1623,16 +1854,46 @@
         });
 
         toastr.options = {
-        positionClass: 'toast-top-right',
-        closeButton: true,
-        timeOut: 3000, // Set the duration for which the toast will be displayed (in milliseconds)
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            timeOut: 3000, // Set the duration for which the toast will be displayed (in milliseconds)
         };
-        $('#password').on('input', function () {
+        $('#password').on('input', function() {
             $('#password-strength').css('border', '1px solid #ddd');
             $('#password-strength').css('padding', '10px');
 
             var password = $(this).val();
             var strengthMeter = $('#password-strength');
+
+            var patterns = [
+                'abc', 'bcd', 'cde', 'def', 'efg', 'fgh', 'ghi', 'hij', 'ijk', 'jkl',
+                'klm', 'lmn', 'mno', 'nop', 'opq', 'pqr', 'qrs', 'rst', 'stu', 'tuv',
+                'uvw', 'vwx', 'wxy', 'xyz'
+            ];
+
+            var patternRegex = new RegExp(patterns.join('|') + '|' + patterns.map(function(pattern) {
+                return pattern.split('').reverse().join('');
+            }).join('|'), 'i');
+
+            // Function to calculate the percentage of repeated characters in the password
+            function calculateRepeatedCharacterPercentage(password) {
+                var characterCount = {};
+                for (var i = 0; i < password.length; i++) {
+                    var char = password[i];
+                    characterCount[char] = (characterCount[char] || 0) + 1;
+                }
+
+                var repeatedCount = 0;
+                for (var char in characterCount) {
+                    if (characterCount[char] > 1) {
+                        repeatedCount += characterCount[char];
+                    }
+                }
+
+                return (repeatedCount / password.length) * 100;
+            }
+
+            var repeatedCharacterPercentage = calculateRepeatedCharacterPercentage(password);
 
             // Password strength rules
             var rules = {
@@ -1640,13 +1901,19 @@
                 "At least one uppercase letter": /[A-Z]/.test(password),
                 "At least one lowercase letter": /[a-z]/.test(password),
                 // "At least one number": /\d/.test(password),
-                "At least one special character": /[@$!%*?&]/.test(password),
+                "At least one special character": /[@#-+/=$!%*?&]/.test(password),
                 "At least one number and Max Four Numbers": /^\D*(\d\D*){1,4}$/.test(password),
                 // maxConsecutiveChars: !/(.)\1\1/.test(password),
                 // maxPercentage: calculateMaxPercentage(password),
                 "No spaces allowed": !/\s/.test(password),
-                "No three consecutive numbers, Example 678,543,987": !/(012|123|234|345|456|567|678|789)/.test(password),
-                "No three characters or more can be a substring of first name, last name, or email": !checkSubstring(password)
+                "No three consecutive numbers, Example 678,543,789,987": !
+                    /(012|123|234|345|456|567|678|789|987|876|765|654|543|432|321|210)/.test(password),
+                "No three characters or more can be a substring of first name, last name, or email": !
+                    checkSubstring(password),
+                "No three consecutive characters or their reverses in the same case are allowed, Example efg,ZYX,LMN,cba":
+                    !patternRegex.test(password),
+                "No more than 40% of repeated characters": repeatedCharacterPercentage <= 40
+
             };
 
             // Display password strength rules
@@ -1701,7 +1968,78 @@
 
             return false;
         }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the input element
+            var inputElement = document.getElementById('license_issue_date');
 
+            // Get the span element for displaying the formatted date
+            var formattedDateElement = document.getElementById('formattedDate');
+            // Add an event listener to handle the change in the input value
+            inputElement.addEventListener('change', function() {
+                // Get the selected date from the input
+                var selectedDate = inputElement.value;
 
+                // Convert the selected date to a JavaScript Date object
+                var dateObject = new Date(selectedDate);
+
+                // Format the date as "dd mmm yyyy"
+                var formattedDate = dateObject.getDate() + ' ' + getMonthAbbreviation(dateObject
+                .getMonth()) + ' ' + dateObject.getFullYear();
+
+                // Display the formatted date
+                formattedDateElement.textContent = formattedDate;
+            });
+
+            // Function to get the abbreviated month name
+            function getMonthAbbreviation(monthIndex) {
+                var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                return months[monthIndex];
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all date input elements
+            var dateInputs = document.querySelectorAll('input[type="date"]');
+
+            // Iterate through each date input
+            dateInputs.forEach(function(inputElement) {
+                // Create a new span element for each input
+                var newSpan = document.createElement('span');
+
+                // Set the content of the new span
+                newSpan.textContent = ''; // Initially empty, will be populated on input change
+
+                // Add a class or style to the new span as needed
+                newSpan.classList.add('text-muted'); // Add your custom class here
+
+                // Append the new span after the label
+                inputElement.parentNode.appendChild(newSpan);
+
+                // Add an event listener to handle the change in the input value
+                inputElement.addEventListener('change', function() {
+                    // Get the selected date from the input
+                    var selectedDate = inputElement.value;
+
+                    // Convert the selected date to a JavaScript Date object
+                    var dateObject = new Date(selectedDate);
+
+                    // Format the date as "dd mmm yyyy"
+                    var formattedDate = dateObject.getDate() + ' ' + getMonthAbbreviation(dateObject
+                        .getMonth()) + ' ' + dateObject.getFullYear();
+
+                    // Set the content of the span with the formatted date
+                    newSpan.textContent = formattedDate;
+                });
+            });
+
+            // Function to get the abbreviated month name
+            function getMonthAbbreviation(monthIndex) {
+                var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                return months[monthIndex];
+            }
+        });
     </script>
 @endsection

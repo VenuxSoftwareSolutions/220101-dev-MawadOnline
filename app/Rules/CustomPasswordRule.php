@@ -3,6 +3,8 @@
 namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Support\Facades\File;
+use Str;
 
 class CustomPasswordRule implements Rule
 {
@@ -43,6 +45,26 @@ class CustomPasswordRule implements Rule
         if (!preg_match('/\d/', $value) || preg_match_all('/\d/', $value) > 4) {
             $this->failures[] = 'At least one number and maximum of 4 numbers';
         }
+        // Check for three consecutive characters or their reverses in the same case
+            $patterns = [
+                'abc', 'bcd', 'cde', 'def', 'efg', 'fgh', 'ghi', 'hij', 'ijk', 'jkl',
+                'klm', 'lmn', 'mno', 'nop', 'opq', 'pqr', 'qrs', 'rst', 'stu', 'tuv',
+                'uvw', 'vwx', 'wxy', 'xyz'
+            ];
+
+            $patternRegex = implode('|', $patterns);
+
+            $reversedPatterns = array_map('strrev', $patterns);
+
+            $reversedPatternRegex = implode('|', $reversedPatterns);
+
+            if (preg_match("/$patternRegex|$reversedPatternRegex/i", $value)) {
+                $this->failures[] = 'No three consecutive characters or their reverses in the same case are allowed';
+            }
+
+        if (!Str::contains($value, ['@', '#', '-', '+', '/', '=', '$', '!', '%', '*', '?', '&'])) {
+            $this->failures[] = 'At least one special character';
+        }
 
         // At least one sign
         if (!preg_match('/[^a-zA-Z0-9]/', $value)) {
@@ -54,11 +76,27 @@ class CustomPasswordRule implements Rule
             $this->failures[] = 'No spaces allowed';
         }
 
-        if (preg_match('/012|123|234|345|456|567|678|789/', $value)) {
+        if (preg_match('/012|123|234|345|456|567|678|789|987|876|765|654|543|432|321|210/', $value)) {
             $this->failures[] = 'No three consecutive numbers, Example 678,543,987';
 
         }
 
+
+        $length = strlen($value);
+        $characterCount = array_count_values(str_split($value));
+
+        $repeatedCount = 0;
+        foreach ($characterCount as $char => $count) {
+            if ($count > 1) {
+                $repeatedCount += $count;
+            }
+        }
+
+        $repetitiveCharacterPercentage = ($repeatedCount / $length) * 100;
+
+        if ($repetitiveCharacterPercentage > 40) {
+            $this->failures[] = 'No more than 40% repetitive characters.';
+        }
     //     // No three consecutive numbers allowed
     //     if (preg_match('/\d{3}/', $value)) {
     //         $this->failures[] = 'No three consecutive numbers allowed';
@@ -72,16 +110,13 @@ class CustomPasswordRule implements Rule
 
 
         // // No more than 40% of the password can be uppercase, lowercase, number, or sign
-        // $length = strlen($value);
-        // $uppercaseCount = preg_match_all('/[A-Z]/', $value);
-        // $lowercaseCount = preg_match_all('/[a-z]/', $value);
-        // $numberCount = preg_match_all('/\d/', $value);
-        // $signCount = preg_match_all('/[^a-zA-Z0-9]/', $value);
+        $length = strlen($value);
+        $uniqueCharacters = count(array_count_values(str_split($value)));
+        $repeatedCharacterPercentage = ($length - $uniqueCharacters) / $length * 100;
 
-        // if ($uppercaseCount > ($length * 0.4) || $lowercaseCount > ($length * 0.4) || $numberCount > ($length * 0.4) || $signCount > ($length * 0.4)) {
-        //     $this->failures[] = 'No more than 40% of the password can be uppercase, lowercase, number, or special character';
-        // }
-
+        if ($repeatedCharacterPercentage > 40) {
+            $this->failures[] = 'No more than 40% of the password can be repeated characters';
+        }
         // No three characters or more can be a substring of first name, last name, or email
         $firstName = $this->firstName;
         $lastName = $this->lastName;
@@ -104,15 +139,15 @@ class CustomPasswordRule implements Rule
 
 
         // No substring of the password can be a common English dictionary word
-        // $dictionary = file_get_contents('path/to/your/dictionary.txt'); // Replace with the actual path
-        // $dictionaryWords = explode("\n", $dictionary);
+        $dictionaryPath = public_path('dictionary/dictionary.txt');
+        $dictionaryWords = File::lines($dictionaryPath);
 
-        // foreach ($dictionaryWords as $word) {
-        //     if (stripos($value, $word) !== false) {
-        //         $this->failures[] = 'No substring of the password can be a common English dictionary word';
-        //         break; // Break the loop once one dictionary word is found
-        //     }
-        // }
+        foreach ($dictionaryWords as $word) {
+            if (stripos($value, $word) !== false) {
+                $this->failures[] = 'No substring of the password can be a common English dictionary word';
+                break; // Break the loop once one dictionary word is found
+            }
+        }
 
         return empty($this->failures);
     }
