@@ -138,7 +138,7 @@
                 placeholderText: 'click to select a unit',
                 filterText: 'search',
                 labelText: 'Units',
-                caseSensitive: true,
+                caseSensitive: false,
             });
 
             $('body .trash_values:first').hide();

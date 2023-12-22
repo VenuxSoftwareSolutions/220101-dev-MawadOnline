@@ -61,21 +61,13 @@ class AttributeController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created resource in Database.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(AttributeRequest $request)
     {
-        // $attribute = new Attribute;
-        // $attribute->name = $request->name;
-        // $attribute->save();
-
-        // $attribute_translation = AttributeTranslation::firstOrNew(['lang' => env('DEFAULT_LANGUAGE'), 'attribute_id' => $attribute->id]);
-        // $attribute_translation->name = $request->name;
-        // $attribute_translation->save();
-        //dd($request->all());
         $attribute = $this->attributeService->store($request->all());
         if($attribute == null){
             flash(translate('Attribute name already existe'))->error();
@@ -140,8 +132,14 @@ class AttributeController extends Controller
             flash(translate('Attribute name already existe'))->error();
             return back();
         }else{
-            flash(translate('Attribute has been updated successfully'))->success();
-            return back();
+            if($attribute == "error"){
+                flash(translate('Something went wrong!'))->error();
+                return back();
+            }else{
+                flash(translate('Attribute has been updated successfully'))->success();
+                return back();
+            }
+
         }
     }
 
