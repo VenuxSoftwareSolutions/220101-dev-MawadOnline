@@ -20,11 +20,13 @@
         .removeRow {
             margin-bottom: 8px;
         }
-        .has-errors {
-    background-color: #f8d7da; /* Highlight color for errors */
-    color: #721c24; /* Text color for errors */
-}
 
+        .has-errors {
+            background-color: #f8d7da;
+            /* Highlight color for errors */
+            color: #721c24;
+            /* Text color for errors */
+        }
     </style>
 @endsection
 @section('content')
@@ -554,7 +556,7 @@
                                                 data-action="save-as-draft">Save as Draft</button>
 
                                             <button type="button" class="btn btn-primary fw-600 rounded-0"
-                                                {{-- onclick="switchTab('contact-person')" --}}>Next</button>
+                                                {{-- onclick="switchTab('contact-person')" --}}>Save and Continue</button>
 
                                         </div>
                                     </form>
@@ -629,7 +631,8 @@
                                                         <div class="form-group">
                                                             <label>{{ translate('Mobile Phone') }} <span
                                                                     class="text-primary">*</span></label>
-                                                            <small class="text-muted">Example: +971123456789</small>
+                                                            <small class="text-muted">Example: +971123456789 or
+                                                                00971123456789</small>
 
                                                             <input type="text" class="form-control rounded-0"
                                                                 placeholder="{{ translate('Mobile Phone') }}"
@@ -643,7 +646,7 @@
                                                             <label>{{ translate('Additional Mobile Phone') }} <span
                                                                     class="text-primary"></span><small
                                                                     class="text-muted">Example:
-                                                                    +971123456789</small></label>
+                                                                    +971123456789 or 00971123456789</small></label>
                                                             <input type="text" class="form-control rounded-0"
                                                                 placeholder="{{ translate('Additional Mobile Phone') }}"
                                                                 value="{{ $user->contact_people->additional_mobile_phone ?? '+971' }}"
@@ -677,7 +680,8 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label>{{ translate('Emirates ID - Number') }} <span
-                                                                    class="text-primary">*</span></label>
+                                                                    class="text-primary">*</span></label> <small class="text-muted">Example:123456789012345
+                                                                     </small>
                                                             <input type="text" class="form-control rounded-0"
                                                                 placeholder="{{ translate('Emirates ID - Number') }}"
                                                                 value="{{ $user->contact_people->emirates_id_number ?? '' }}"
@@ -764,7 +768,7 @@
                                                 data-action="save-as-draft">Save as Draft</button>
 
                                             <button type="button" class="btn btn-primary fw-600 rounded-0"
-                                                {{-- onclick="switchTab('warehouses')" --}}>Next</button>
+                                                {{-- onclick="switchTab('warehouses')" --}}>Save and Continue</button>
                                         </div>
                                     </form>
                                 </div>
@@ -783,96 +787,95 @@
 
                                             <div class="p-3">
 
-                                                    <div class="row warehouseRow" id="warehouseRows">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="warehouse_name">Warehouse Name<span
-                                                                        class="text-primary">*</span></label>
-                                                                <input type="text" class="form-control"
-                                                                   name="warehouse_name_add"  >
-
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="state">State/Emirate<span
-                                                                        class="text-primary">*</span></label>
-                                                                <select name="state_warehouse_add"
-                                                                    class="form-control rounded-0 emirateSelect"
-                                                                    id="emirateempire">
-                                                                    <option value="" selected>Please Choose !!
-                                                                    </option>
-                                                                    <option value="1">Abu dhabi</option>
-                                                                    <option value="2">Ajman</option>
-                                                                    <option value="3">Sharjah</option>
-                                                                    <option value="4">Dubai</option>
-                                                                    <option value="5">Fujairah</option>
-                                                                    <option value="6">ras al khaimah</option>
-                                                                    <option value="7">Umm Al-Quwain</option>
-
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="area">Area<span
-                                                                        class="text-primary">*</span></label>
-                                                                <select name="area_warehouse_add" class="form-control areaSelect"
-                                                                    >
-                                                                    <option value="" selected>Please Choose !!
-                                                                    </option>
-                                                                    <!-- Options for area -->
-                                                                </select>
-
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="street">Street<span
-                                                                        class="text-primary">*</span></label>
-                                                                <input type="text" class="form-control"
-                                                                  name="street_warehouse_add"   >
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="building">Building<span
-                                                                        class="text-primary">*</span></label>
-                                                                <input type="text" class="form-control"
-                                                                name="building_warehouse_add"    >
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="unit">Unit/Office No.<span
-                                                                        class="text-primary">*</span></label>
-                                                                <input type="text" class="form-control"
-                                                                 name="unit_add"   >
-                                                            </div>
-                                                        </div>
-
-
-                                                        <div class="col-auto ml-auto">
-                                                            <button type="button" class="btn btn-primary" id="addRow">Add
-                                                                Warehouses</button>
+                                                <div class="row warehouseRow" id="warehouseRows">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="warehouse_name">Warehouse Name<span
+                                                                    class="text-primary">*</span></label>
+                                                            <input type="text" class="form-control"
+                                                                name="warehouse_name_add">
 
                                                         </div>
                                                     </div>
-                                                    <table class="table mt-3" id="warehouseTable">
-                                                        <thead class="thead-dark">
-                                                            <tr>
-                                                                <th>Warehouse Name</th>
-                                                                <th>State/Emirate</th>
-                                                                <th>Area</th>
-                                                                <th>Street</th>
-                                                                <th>Building</th>
-                                                                <th>Unit/Office No.</th>
-                                                                <th>Action</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            @if (isset($user))
+
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="state">State/Emirate<span
+                                                                    class="text-primary">*</span></label>
+                                                            <select name="state_warehouse_add"
+                                                                class="form-control rounded-0 emirateSelect"
+                                                                id="emirateempire">
+                                                                <option value="" selected>Please Choose !!
+                                                                </option>
+                                                                <option value="1">Abu dhabi</option>
+                                                                <option value="2">Ajman</option>
+                                                                <option value="3">Sharjah</option>
+                                                                <option value="4">Dubai</option>
+                                                                <option value="5">Fujairah</option>
+                                                                <option value="6">ras al khaimah</option>
+                                                                <option value="7">Umm Al-Quwain</option>
+
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="area">Area<span
+                                                                    class="text-primary">*</span></label>
+                                                            <select name="area_warehouse_add"
+                                                                class="form-control areaSelect">
+                                                                <option value="" selected>Please Choose !!
+                                                                </option>
+                                                                <!-- Options for area -->
+                                                            </select>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="street">Street<span
+                                                                    class="text-primary">*</span></label>
+                                                            <input type="text" class="form-control"
+                                                                name="street_warehouse_add">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="building">Building<span
+                                                                    class="text-primary">*</span></label>
+                                                            <input type="text" class="form-control"
+                                                                name="building_warehouse_add">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="unit">Unit/Office No.<span
+                                                                    class="text-primary"></span></label>
+                                                            <input type="text" class="form-control" name="unit_add">
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class="col-auto ml-auto">
+                                                        <button type="button" class="btn btn-primary" id="addRow">Add
+                                                            Warehouses</button>
+
+                                                    </div>
+                                                </div>
+                                                <table class="table mt-3" id="warehouseTable">
+                                                    <thead class="thead-dark">
+                                                        <tr>
+                                                            <th>Warehouse Name</th>
+                                                            <th>State/Emirate</th>
+                                                            <th>Area</th>
+                                                            <th>Street</th>
+                                                            <th>Building</th>
+                                                            <th>Unit/Office No.</th>
+                                                            <th>Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @if (isset($user))
                                                             @foreach ($user->warehouses as $warehouse)
                                                                 <tr class="warehouseRow">
                                                                     <td><input value="{{ $warehouse->warehouse_name }}"
@@ -913,34 +916,37 @@
                                                                         <select class="form-control areaSelect"
                                                                             name="area_warehouse[]" required>
                                                                             @php
-                                                                                $areas=App\Models\Area::where('emirate_id',$warehouse->emirate_id)->get() ;
+                                                                                $areas = App\Models\Area::where('emirate_id', $warehouse->emirate_id)->get();
                                                                             @endphp
                                                                             <option value="" selected>Please Choose
                                                                                 !!</option>
-                                                                                @foreach ($areas as $area)
-                                                                                <option value="{{$area->id}}" @if ($area->id == $warehouse->area_id)
-                                                                                    selected
-                                                                                @endif >{{$area->name}}</option>
-                                                                                @endforeach
+                                                                            @foreach ($areas as $area)
+                                                                                <option value="{{ $area->id }}"
+                                                                                    @if ($area->id == $warehouse->area_id) selected @endif>
+                                                                                    {{ $area->name }}</option>
+                                                                            @endforeach
 
                                                                             <!-- Options for area -->
                                                                         </select>
                                                                     </td>
                                                                     <td><input type="text" class="form-control"
-                                                                        value="{{$warehouse->address_street}}" name="street_warehouse[]" required></td>
+                                                                            value="{{ $warehouse->address_street }}"
+                                                                            name="street_warehouse[]" required></td>
                                                                     <td><input type="text" class="form-control"
-                                                                        value="{{$warehouse->address_building}}"   name="building_warehouse[]" required></td>
+                                                                            value="{{ $warehouse->address_building }}"
+                                                                            name="building_warehouse[]" required></td>
                                                                     <td><input type="text" class="form-control"
-                                                                        value="{{$warehouse->address_unit}}"  name="unit_warehouse[]" required></td>
+                                                                            value="{{ $warehouse->address_unit }}"
+                                                                            name="unit_warehouse[]" required></td>
                                                                     <td><button type="button"
                                                                             class="btn btn-danger removeRow">Remove</button>
                                                                     </td>
                                                                 </tr>
                                                             @endforeach
-                                                            @endif
+                                                        @endif
 
-                                                        </tbody>
-                                                    </table>
+                                                    </tbody>
+                                                </table>
 
 
                                                 {{-- <div id="warehouseRowsContainer">
@@ -1150,7 +1156,7 @@
                                                 data-action="save-as-draft">Save as Draft</button>
 
                                             <button type="button" class="btn btn-primary fw-600 rounded-0"
-                                                {{--  onclick="switchTab('payout-info')" --}}>Next</button>
+                                                {{--  onclick="switchTab('payout-info')" --}}>Save and Continue</button>
                                         </div>
                                     </form>
                                 </div>
@@ -1302,6 +1308,16 @@
                     switchTab('business-info'); // Default to the first tab if stepNumber is not recognized
                     break;
             }
+            //             var errors = {
+            //     "area_warehouse.0": ["The area_warehouse.0 field is required."],
+            //     // ... other errors
+            // };
+
+            // // Extract the field name with the first error
+            // var firstErrorField = Object.keys(errors)[0];
+
+            // // Highlight the first input field in red
+            // $('[name="warehouse_name[]"]:nb(3)').css('border-color', 'red');
 
             // // Add Row
             // $('#addRow').on('click', function() {
@@ -1347,47 +1363,60 @@
             //         toastr.error('Cannot remove the last warehouse.');
             //     }
             // });
-            $('#addRow').on('click', function () {
+            $('#addRow').on('click', function() {
                 var warehouseName = $('input[name="warehouse_name_add"]').val();
-    var state = $('select[name="state_warehouse_add"]').val();
-    var stateText = $('select[name="state_warehouse_add"] option:selected').text();
-    var area = $('select[name="area_warehouse_add"]').val();
-    var areaText = $('select[name="area_warehouse_add"] option:selected').text();
-    var street = $('input[name="street_warehouse_add"]').val();
-    var building = $('input[name="building_warehouse_add"]').val();
-    var unit = $('input[name="unit_add"]').val();
-    // Check if any input is empty
-    if (!warehouseName || !state || !area || !street || !building || !unit) {
-        // Show toast with translated message
-        toastr.error('{{ translate("Please fill in all fields.") }}');
-        return; // Stop execution if any input is empty
-    }
-    const newRow = $('<tr>');
+                var state = $('select[name="state_warehouse_add"]').val();
+                var stateText = $('select[name="state_warehouse_add"] option:selected').text();
+                var area = $('select[name="area_warehouse_add"]').val();
+                var areaText = $('select[name="area_warehouse_add"] option:selected').text();
+                var street = $('input[name="street_warehouse_add"]').val();
+                var building = $('input[name="building_warehouse_add"]').val();
+                var unit = $('input[name="unit_add"]').val();
+                // Check if any input is empty
+                if (!warehouseName || !state || !area || !street || !building || !unit) {
+                    // Show toast with translated message
+                    toastr.error('{{ translate('Please fill in all fields.') }}');
+                    return; // Stop execution if any input is empty
+                }
+                const newRow = $('<tr>');
 
-    // Create cells
-    newRow.append('<td><input type="text" class="form-control" name="warehouse_name[]" value="' + warehouseName + '" required></td>');
-    newRow.append('<td><select required name="state_warehouse[]" class="form-control rounded-0 emirateSelect"><option value="' + state + '" selected>' + stateText + '</option></select></td>');
-    newRow.append('<td><select class="form-control areaSelect" name="area_warehouse[]" required><option value="' + area + '" selected>' + areaText + '</option></select></td>');
-    newRow.append('<td><input type="text" class="form-control" name="street_warehouse[]" value="' + street + '" required></td>');
-    newRow.append('<td><input type="text" class="form-control" name="building_warehouse[]" value="' + building + '" required></td>');
-    newRow.append('<td><input type="text" class="form-control" name="unit_warehouse[]" value="' + unit + '" required></td>');
-    newRow.append('<td><button type="button" class="btn btn-danger removeRow">Remove</button></td>');
+                // Create cells
+                newRow.append(
+                    '<td><input type="text" class="form-control" name="warehouse_name[]" value="' +
+                    warehouseName + '" required></td>');
+                newRow.append(
+                    '<td><select required name="state_warehouse[]" class="form-control rounded-0 emirateSelect"><option value="' +
+                    state + '" selected>' + stateText + '</option></select></td>');
+                newRow.append(
+                    '<td><select class="form-control areaSelect" name="area_warehouse[]" required><option value="' +
+                    area + '" selected>' + areaText + '</option></select></td>');
+                newRow.append(
+                    '<td><input type="text" class="form-control" name="street_warehouse[]" value="' +
+                    street + '" required></td>');
+                newRow.append(
+                    '<td><input type="text" class="form-control" name="building_warehouse[]" value="' +
+                    building + '" required></td>');
+                newRow.append(
+                    '<td><input type="text" class="form-control" name="unit_warehouse[]" value="' +
+                    unit + '" required></td>');
+                newRow.append(
+                    '<td><button type="button" class="btn btn-danger removeRow">Remove</button></td>');
 
-    $('#warehouseTable tbody').append(newRow);
+                $('#warehouseTable tbody').append(newRow);
 
-    // Clear input fields
-    $('input[name="warehouse_name_add"]').val('');
-    $('select[name="state_warehouse_add"]').val('');
-    $('select[name="area_warehouse_add"]').val('');
-    $('input[name="street_warehouse_add"]').val('');
-    $('input[name="building_warehouse_add"]').val('');
-    $('input[name="unit_add"]').val('');
-        });
+                // Clear input fields
+                $('input[name="warehouse_name_add"]').val('');
+                $('select[name="state_warehouse_add"]').val('');
+                $('select[name="area_warehouse_add"]').val('');
+                $('input[name="street_warehouse_add"]').val('');
+                $('input[name="building_warehouse_add"]').val('');
+                $('input[name="unit_add"]').val('');
+            });
 
-        // Add event listener for the "Remove" button
-        $(document).on('click', '.removeRow', function () {
-            $(this).closest('tr').remove();
-        });
+            // Add event listener for the "Remove" button
+            $(document).on('click', '.removeRow', function() {
+                $(this).closest('tr').remove();
+            });
 
             $('#registerTabs a').on('click', function(e) {
                 e.preventDefault();
@@ -1453,7 +1482,7 @@
                                 true) {
 
                                 $('#personal-info-tab, #code-verification-tab').addClass(
-                                'disabled');
+                                    'disabled');
                                 $('#personal-info, #code-verification').addClass('disabled');
 
                                 $('#registerTabs a[data-toggle="tab"]').on('click', function(e) {
@@ -1463,6 +1492,9 @@
 
                             // Switch to the next tab if the save operation is successful
                             if (response.success) {
+                                toastr.success(response
+                                .message); // Display success message using Toastr
+
                                 // switchTab('code-verification'); // Change the tab ID accordingly
                                 var nextTabId = form.data(
                                     'next-tab'
@@ -1470,7 +1502,9 @@
                                 // if (form.attr('id') != 'warehousesForm') {
                                 displayValidation(form);
                                 // }
-                                switchTab(nextTabId);
+                                if (!response.save_as_draft) {
+                                    switchTab(nextTabId);
+                                }
 
                             }
                         },
@@ -1489,14 +1523,22 @@
                                 var errors = xhr.responseJSON.errors;
 
                                 // Display validation errors in the form
-                                if (form.attr('id') != 'warehousesForm' && shouldContinue !=
+                                if (/* form.attr('id') != 'warehousesForm' && */ shouldContinue !=
                                     false) {
                                     displayValidationErrors(errors, form);
                                 }
-                                if (form.attr('id') == 'warehousesForm') {
-                                    toastr.error(
-                                    'Fill up the rest of the table for warehousesForm');
-                                }
+
+                                // if ((form).attr('id') == 'warehousesForm' && shouldContinue !=
+                                //     false) {
+                                //             // toastr.error('Please fill up the rest of the table for warehousesForm. Ensure that no field exceeds 128 characters.');
+
+                                //             displayValidationWhErrors(errors);
+                                //         }
+
+                                // if (form.attr('id') == 'warehousesForm') {
+                                //     toastr.error('Please fill up the rest of the table for warehousesForm. Ensure that no field exceeds 128 characters.');
+
+                                // }
                             }
 
                         }
@@ -1511,14 +1553,14 @@
 
                 // Iterate over each form and append its data to the main FormData object
                 $('#businessInfoForm, #contactPersonForm, #warehousesForm, #payoutInfoForm').each(
-            function() {
-                    var currentFormData = new FormData($(this)[0]);
+                    function() {
+                        var currentFormData = new FormData($(this)[0]);
 
-                    // Append each key-value pair from the current form data to the main form data
-                    for (var pair of currentFormData.entries()) {
-                        formData.append(pair[0], pair[1]);
-                    }
-                });
+                        // Append each key-value pair from the current form data to the main form data
+                        for (var pair of currentFormData.entries()) {
+                            formData.append(pair[0], pair[1]);
+                        }
+                    });
 
                 // Include the CSRF token in the headers
                 var csrfToken = $('meta[name="csrf-token"]').attr('content');
@@ -1566,17 +1608,26 @@
                         } else {
                             if (xhr.status === 403) {
                                 // Authorization failed
-                                toastr.error(xhr.responseJSON.message); // Display the error message
+                                toastr.error(xhr.responseJSON
+                                .message); // Display the error message
                             }
                             // Handle errors, e.g., show validation errors
                             var errors = xhr.responseJSON.errors;
 
                             // Display validation errors in the form
-                            $('#businessInfoForm, #contactPersonForm, #warehousesForm, #payoutInfoForm').each(
-            function() {
-                displayValidationErrors(errors, $(this));
+                            $('#businessInfoForm, #contactPersonForm, #payoutInfoForm, #warehousesForm')
+                                .each(
+                                    function() {
 
-                });
+                                        displayValidationErrors(errors, $(this));
+
+
+                                        // if ($(this).attr('id') == 'warehousesForm') {
+                                        //     // toastr.error('Please fill up the rest of the table for warehousesForm. Ensure that no field exceeds 128 characters.');
+
+                                        //     displayValidationWhErrors(errors);
+                                        // }
+                                    });
 
 
                         }
@@ -1584,6 +1635,44 @@
                     }
                 });
             });
+
+
+
+            function displayValidationWhErrors(errors) {
+                // Clear existing error messages
+                $('.error-message').remove();
+                var formTab = $('#warehouses-tab');
+
+                if (formTab.hasClass('has-errors')) {
+                    formTab.removeClass('has-errors');
+                }
+                // Display new error messages
+                $.each(errors, function(fieldName, messages) {
+                    // Correct the field name without escaping the dot
+                    var correctedFieldName = fieldName.split('.')[0].replace('[', '\\[').replace(']',
+                    '\\]');
+
+                    // Extract the index from the field name, e.g., "area_warehouse.0" => 0
+                    var index = parseInt(fieldName.split('.')[1]);
+
+
+                    var inputField = $('[name="' + correctedFieldName + '[]"]:eq(' + index + ')');
+
+                    inputField.addClass('is-invalid');
+
+                    var errorContainer = $('<div class="invalid-feedback"></div>');
+
+                    $.each(messages, function(key, message) {
+                        errorContainer.append('<strong>' + message + '</strong><br>');
+                    });
+
+                    inputField.closest('td').append(errorContainer);
+                    $('#warehouses-tab').addClass('has-errors');
+
+                });
+            }
+
+
 
             // $('#verifyCodeBtn').on('click', function () {
 
@@ -1663,14 +1752,31 @@
                 form.find('.is-invalid').removeClass('is-invalid');
                 form.find('.is-valid').removeClass('is-valid');
 
+                var formTab = $('#' + form.parent().attr('id') + "-tab");
+
+                if (formTab.hasClass('has-errors')) {
+                    formTab.removeClass('has-errors');
+                }
                 // Clear global validation error messages
                 $('#validation-errors').empty().hide();
                 // $("#registerTabs a").removeClass('has-errors');
+                //  $("#business-info-tab").removeClass('has-errors');
 
                 // Display new error messages
-                $.each(errors, function(field, messages) {
-                    var inputField = form.find('[name="' + field + '"]');
 
+                $.each(errors, function(field, messages) {
+                    if(form.attr('id') == "warehousesForm") {
+
+                        var correctedFieldName = field.split('.')[0].replace('[', '\\[').replace(']',
+                    '\\]');
+                    var index = parseInt(field.split('.')[1]);
+
+
+                    var inputField = $('[name="' + correctedFieldName + '[]"]:eq(' + index + ')');
+                    }
+                    else {
+                    var inputField = form.find('[name="' + field + '"]');
+                    }
                     var errorContainer = $('<div class="invalid-feedback"></div>');
 
                     $.each(messages, function(key, message) {
@@ -1687,21 +1793,22 @@
                     inputField.after(errorContainer);
 
                     form.find('.form-control').each(function() {
-                    var inputField = $(this);
+                        var inputField = $(this);
 
-                    if (inputField.hasClass('is-invalid')) {
-                         tabErreur=$(this).closest('.tab-pane').attr('id')
-                        $('#'+tabErreur+"-tab").addClass('has-errors');
+                        if (inputField.hasClass('is-invalid')) {
+                            tabErreur = $(this).closest('.tab-pane').attr('id')
+                            $('#' + tabErreur + "-tab").addClass('has-errors');
 
-                    }
-                });
+                        }
+                    });
                 });
 
                 // Highlight fields without errors
                 form.find('.form-control').each(function() {
                     var inputField = $(this);
 
-                    if (!inputField.hasClass('is-invalid') && inputField.val() !== '' || inputField.parent().find('a').hasClass('old_file')) {
+                    if (!inputField.hasClass('is-invalid') && inputField.val() !== '' || inputField.parent()
+                        .find('a').hasClass('old_file')) {
                         inputField.addClass('is-valid');
                     }
                 });
@@ -1986,7 +2093,7 @@
 
                 // Format the date as "dd mmm yyyy"
                 var formattedDate = dateObject.getDate() + ' ' + getMonthAbbreviation(dateObject
-                .getMonth()) + ' ' + dateObject.getFullYear();
+                    .getMonth()) + ' ' + dateObject.getFullYear();
 
                 // Display the formatted date
                 formattedDateElement.textContent = formattedDate;

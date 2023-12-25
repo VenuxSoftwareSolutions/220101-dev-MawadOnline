@@ -25,7 +25,7 @@ class UaeMobilePhone implements Rule
      */
     public function passes($attribute, $value)
     {
-        return preg_match('/^\+971\d{9}$/', $value);
+        return preg_match('/^(\+971|00971)\d{9}$/', $value);
     }
 
     /**

@@ -138,7 +138,7 @@ class ShopController extends Controller
 
 
             // Send the verification code to the user's email
-            // Mail::to($request->email)->send(new VerificationCodeEmail($verificationCode));
+            Mail::to($request->email)->send(new VerificationCodeEmail($verificationCode));
         }
         return response()->json(['success' => true, 'message' => 'Your success message']);
 
@@ -210,84 +210,113 @@ class ShopController extends Controller
             return response()->json(['loginFailed' => 'Your account is not verified.'], 403);
         }
         // Validation logic
-        $action = "save-as-draft"/* $request->input('action') */;
-
-        if (!$action) {
-            $validatedData = Validator::make(
-                $request->all(),
-                [
-                    'trade_name_english' => 'required|string|max:255',
-                    'trade_name_arabic' => 'required|string|max:255',
-                    'trade_license_doc' => !isset($request->trade_license_doc_old) ? 'required|file|mimes:pdf,jpeg,png,gif|max:5120' : '',
-                    'eshop_name_english' => 'required|string|max:255',
-                    'eshop_name_arabic' => 'required|string|max:255',
+        $validatedData = Validator::make($request->all(), [
+                    'trade_name_english' => 'nullable|string|max:128',
+                    'trade_name_arabic' => 'nullable|string|max:256',
+                    'eshop_name_english' => 'nullable|string|max:128',
+                    'eshop_name_arabic' => 'nullable|string|max:256',
                     'eshop_desc_en' => 'nullable|string',
                     'eshop_desc_ar' => 'nullable|string',
-                    'license_issue_date' => 'required|date',
-                    'license_expiry_date' => 'required|date|after:license_issue_date',
-                    'state' => 'required|exists:emirates,id',
-                    'area_id' => 'required|exists:areas,id',
-                    'street' => 'required|string|max:255',
-                    'building' => 'required|string|max:255',
-                    'unit' => 'nullable|string|max:255',
-                    'po_box' => 'nullable|string|max:255',
-                    'landline' => 'nullable|string|max:20',
-                    'vat_registered' => 'required|boolean',
-                    'vat_certificate' => $request->vat_registered == 1 && !isset($request->vat_certificate_old) ? 'required_if:vat_registered,1|file|mimes:pdf,jpeg,png,gif|max:5120' : '',
-                    'trn' => $request->vat_registered == 1 ? 'required_if:vat_registered,1|string|max:20' : '',
-                    'tax_waiver' => $request->vat_registered == 0 && !isset($request->tax_waiver_old)  ? 'required_if:vat_registered,0|file|mimes:pdf,jpeg,png,gif|max:5120' : '',
+                    'license_issue_date' => 'nullable|date',
+                    'license_expiry_date' => 'nullable|date|after:license_issue_date',
+                    'state' => 'nullable|exists:emirates,id',
+                    'area_id' => 'nullable|exists:areas,id',
+                    'street' => 'nullable|string|max:128',
+                    'building' => 'nullable|string|max:64',
+                    'unit' => 'nullable|string|max:64',
+                    'po_box' => 'nullable|string|max:32',
+                    'landline' => 'nullable|string|max:16',
+                    'vat_registered' => 'nullable|boolean',
+
+                    'trade_license_doc' => !isset($request->trade_license_doc_old) ? 'nullable|file|mimes:pdf,jpeg,png|max:5120' : '',
+                    'trn' => $request->vat_registered == 1 ? 'nullable|string|max:20' : '',
+                    'vat_certificate' => $request->vat_registered == 1 && !isset($request->vat_certificate_old) ? 'nullable|file|mimes:pdf,jpeg,png|max:5120' : '',
+                    'tax_waiver' => $request->vat_registered == 0 && !isset($request->tax_waiver_old)  ? 'nullable|file|mimes:pdf,jpeg,png|max:5120' : '',
                     'civil_defense_approval' => 'nullable|file|mimes:pdf,jpeg,png,gif|max:5120',
-                ],
-                [
-                    // Custom error messages
-                    'vat_certificate.required_if' => 'The VAT certificate is required when VAT is registered.',
-                    'vat_certificate.file' => 'The VAT certificate must be a file of type: pdf, doc, docx.',
-                    'vat_certificate.mimes' => 'The VAT certificate must be a file of type: pdf, doc, docx.',
-                    'trn.required_if' => 'The TRN is required when VAT is registered.',
-                    'trn.string' => 'The TRN must be a string.',
-                    'trn.max' => 'The TRN may not be greater than :max characters.',
-                    'tax_waiver.required_if' => 'The tax waiver certificate is required when VAT is not registered.',
-                    'tax_waiver.file' => 'The tax waiver certificate must be a file of type: pdf, doc, docx.',
-                    'tax_waiver.mimes' => 'The tax waiver certificate must be a file of type: pdf, doc, docx.',
-                    'area_id.required' => 'The area is required.',
-                    'area_id.exists' => 'Invalid area selected.',
-                ]
-            );
-            if ($validatedData->fails()) {
+                ]);
+                if ($validatedData->fails()) {
 
-                return response()->json(['errors' => $validatedData->errors()], 422);
-            }
-            $saveasdraft = false;
-        } else {
-            $validatedData = Validator::make($request->all(), [
-                'trade_name_english' => 'nullable|string|max:255',
-                'trade_name_arabic' => 'nullable|string|max:255',
-                'eshop_name_english' => 'nullable|string|max:255',
-                'eshop_name_arabic' => 'nullable|string|max:255',
-                'eshop_desc_en' => 'nullable|string',
-                'eshop_desc_ar' => 'nullable|string',
-                'license_issue_date' => 'nullable|date',
-                'license_expiry_date' => 'nullable|date|after:license_issue_date',
-                'state' => 'nullable|exists:emirates,id',
-                'area_id' => 'nullable|exists:areas,id',
-                'street' => 'nullable|string|max:255',
-                'building' => 'nullable|string|max:255',
-                'unit' => 'nullable|string|max:255',
-                'po_box' => 'nullable|string|max:255',
-                'landline' => 'nullable|string|max:20',
-                'vat_registered' => 'nullable|boolean',
+                    return response()->json(['errors' => $validatedData->errors()], 422);
+                }
+        $action =  $request->input('action') ;
+        // it indicates the "save as draft" action.
 
-                'trade_license_doc' => !isset($request->trade_license_doc_old) ? 'nullable|file|mimes:pdf,jpeg,png,gif|max:5120' : '',
-                'trn' => $request->vat_registered == 1 ? 'nullable|string|max:20' : '',
-                'vat_certificate' => $request->vat_registered == 1 && !isset($request->vat_certificate_old) ? 'nullable|file|mimes:pdf,jpeg,png,gif|max:5120' : '',
-                'tax_waiver' => $request->vat_registered == 0 && !isset($request->tax_waiver_old)  ? 'nullable|file|mimes:pdf,jpeg,png,gif|max:5120' : '',
-                'civil_defense_approval' => 'nullable|file|mimes:pdf,jpeg,png,gif|max:5120',
-            ]);
-            if ($validatedData->fails()) {
+        // if (!$action) {
+        //     $validatedData = Validator::make(
+        //         $request->all(),
+        //         [
+        //             'trade_name_english' => 'required|string|max:255',
+        //             'trade_name_arabic' => 'required|string|max:255',
+        //             'trade_license_doc' => !isset($request->trade_license_doc_old) ? 'required|file|mimes:pdf,jpeg,png,gif|max:5120' : '',
+        //             'eshop_name_english' => 'required|string|max:255',
+        //             'eshop_name_arabic' => 'required|string|max:255',
+        //             'eshop_desc_en' => 'nullable|string',
+        //             'eshop_desc_ar' => 'nullable|string',
+        //             'license_issue_date' => 'required|date',
+        //             'license_expiry_date' => 'required|date|after:license_issue_date',
+        //             'state' => 'required|exists:emirates,id',
+        //             'area_id' => 'required|exists:areas,id',
+        //             'street' => 'required|string|max:255',
+        //             'building' => 'required|string|max:255',
+        //             'unit' => 'nullable|string|max:255',
+        //             'po_box' => 'nullable|string|max:255',
+        //             'landline' => 'nullable|string|max:20',
+        //             'vat_registered' => 'required|boolean',
+        //             'vat_certificate' => $request->vat_registered == 1 && !isset($request->vat_certificate_old) ? 'required_if:vat_registered,1|file|mimes:pdf,jpeg,png,gif|max:5120' : '',
+        //             'trn' => $request->vat_registered == 1 ? 'required_if:vat_registered,1|string|max:20' : '',
+        //             'tax_waiver' => $request->vat_registered == 0 && !isset($request->tax_waiver_old)  ? 'required_if:vat_registered,0|file|mimes:pdf,jpeg,png,gif|max:5120' : '',
+        //             'civil_defense_approval' => 'nullable|file|mimes:pdf,jpeg,png,gif|max:5120',
+        //         ],
+        //         [
+        //             // Custom error messages
+        //             'vat_certificate.required_if' => 'The VAT certificate is required when VAT is registered.',
+        //             'vat_certificate.file' => 'The VAT certificate must be a file of type: pdf, doc, docx.',
+        //             'vat_certificate.mimes' => 'The VAT certificate must be a file of type: pdf, doc, docx.',
+        //             'trn.required_if' => 'The TRN is required when VAT is registered.',
+        //             'trn.string' => 'The TRN must be a string.',
+        //             'trn.max' => 'The TRN may not be greater than :max characters.',
+        //             'tax_waiver.required_if' => 'The tax waiver certificate is required when VAT is not registered.',
+        //             'tax_waiver.file' => 'The tax waiver certificate must be a file of type: pdf, doc, docx.',
+        //             'tax_waiver.mimes' => 'The tax waiver certificate must be a file of type: pdf, doc, docx.',
+        //             'area_id.required' => 'The area is required.',
+        //             'area_id.exists' => 'Invalid area selected.',
+        //         ]
+        //     );
+        //     if ($validatedData->fails()) {
 
-                return response()->json(['errors' => $validatedData->errors()], 422);
-            }
-        }
+        //         return response()->json(['errors' => $validatedData->errors()], 422);
+        //     }
+        //     $saveasdraft = false;
+        // } else {
+        //     $validatedData = Validator::make($request->all(), [
+        //         'trade_name_english' => 'nullable|string|max:255',
+        //         'trade_name_arabic' => 'nullable|string|max:255',
+        //         'eshop_name_english' => 'nullable|string|max:255',
+        //         'eshop_name_arabic' => 'nullable|string|max:255',
+        //         'eshop_desc_en' => 'nullable|string',
+        //         'eshop_desc_ar' => 'nullable|string',
+        //         'license_issue_date' => 'nullable|date',
+        //         'license_expiry_date' => 'nullable|date|after:license_issue_date',
+        //         'state' => 'nullable|exists:emirates,id',
+        //         'area_id' => 'nullable|exists:areas,id',
+        //         'street' => 'nullable|string|max:255',
+        //         'building' => 'nullable|string|max:255',
+        //         'unit' => 'nullable|string|max:255',
+        //         'po_box' => 'nullable|string|max:255',
+        //         'landline' => 'nullable|string|max:20',
+        //         'vat_registered' => 'nullable|boolean',
+
+        //         'trade_license_doc' => !isset($request->trade_license_doc_old) ? 'nullable|file|mimes:pdf,jpeg,png|max:5120' : '',
+        //         'trn' => $request->vat_registered == 1 ? 'nullable|string|max:20' : '',
+        //         'vat_certificate' => $request->vat_registered == 1 && !isset($request->vat_certificate_old) ? 'nullable|file|mimes:pdf,jpeg,png|max:5120' : '',
+        //         'tax_waiver' => $request->vat_registered == 0 && !isset($request->tax_waiver_old)  ? 'nullable|file|mimes:pdf,jpeg,png|max:5120' : '',
+        //         'civil_defense_approval' => 'nullable|file|mimes:pdf,jpeg,png,gif|max:5120',
+        //     ]);
+        //     if ($validatedData->fails()) {
+
+        //         return response()->json(['errors' => $validatedData->errors()], 422);
+        //     }
+        // }
 
         if ($request->input('vat_registered') == 1) {
 
@@ -338,7 +367,7 @@ class ShopController extends Controller
                 'trn' => isset($trn) ? $trn : null,
                 'tax_waiver' => isset($taxWaiverPath) ? $taxWaiverPath : null,
                 'civil_defense_approval' => $request->hasFile('civil_defense_approval') ?  $request->file('civil_defense_approval')->store('civil_defense_approvals') : $civil_defense_approval,
-                'saveasdraft' => $saveasdraft ?? true,
+                'saveasdraft' => isset($action) ? true : false,
 
             ]
         );
@@ -347,9 +376,17 @@ class ShopController extends Controller
             $user = Auth::user();
             $user->step_number = 3;
             $user->save();
+            return response()->json(['success' => true, 'message' => 'Business info stored successfully']);
+
+        }
+        else {
+            $user = Auth::user();
+            $user->step_number = 2;
+            $user->save();
+            return response()->json(['success' => true, 'message' => 'Drafts Business info saved successfully','save_as_draft' => true]);
+
         }
         // Return a response
-        return response()->json(['success' => true, 'message' => 'Business info stored successfully']);
     }
 
     public function storeContactPerson(Request $request)
@@ -363,51 +400,70 @@ class ShopController extends Controller
         if (!Auth::user()->email_verified_at) {
             return response()->json(['loginFailed' => 'Your account is not verified.'], 403);
         }
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'nullable|string|max:64',
+            'last_name' => 'nullable|string|max:64',
+            'email' => 'nullable|email',
+            'mobile_phone' => $request->input('mobile_phone') != '+971' ? ['nullable', 'string', 'max:16', new \App\Rules\UaeMobilePhone] :'',
+            'additional_mobile_phone' => $request->input('additional_mobile_phone') != '+971' ? ['nullable', 'string', 'max:16', new \App\Rules\UaeMobilePhone]:'',
+            'nationality' => 'nullable|string|max:255',
+            'date_of_birth' => 'nullable|date|before:-18 years',
+            'emirates_id_number' => ['nullable', 'string', 'max:15', 'regex:/^[0-9]{15}$/'],
+            'emirates_id_expiry_date' => 'nullable|date|after_or_equal:today',
+            'emirates_id_file' => !isset($request->emirates_id_file_old) ?  'nullable|file|mimes:pdf,jpeg,png|max:5120' : '',
+            'business_owner' => 'nullable|boolean',
+            'designation' => 'nullable|string|max:64',
 
-        $action ="save-as-draft" /* $request->input('action') */;
-
-        if (!$action) {
-            $validator = Validator::make($request->all(), [
-                'first_name' => 'required|string|max:64',
-                'last_name' => 'required|string|max:64',
-                'email' => 'required|email',
-                'mobile_phone' => ['required', 'string', 'max:20', new \App\Rules\UaeMobilePhone],
-                'additional_mobile_phone' => ['required', 'string', 'max:20', new \App\Rules\UaeMobilePhone],
-                'nationality' => 'required|string|max:255',
-                'date_of_birth' => 'required|date',
-                'emirates_id_number' => 'required|string|max:255',
-                'emirates_id_expiry_date' => 'required|date',
-                'emirates_id_file' => !isset($request->emirates_id_file_old) ?  'required|file|mimes:pdf,jpeg,png|max:5120' : '',
-                'business_owner' => 'required|boolean',
-                'designation' => 'required|string|max:255',
-
-            ]);
-            $saveasdraft = false;
-
-            if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors()], 422);
-            }
-        } else {
-
-            $validator = Validator::make($request->all(), [
-                'first_name' => 'nullable|string|max:64',
-                'last_name' => 'nullable|string|max:64',
-                'email' => 'nullable|email',
-                'mobile_phone' => ['nullable', 'string', 'max:20', new \App\Rules\UaeMobilePhone],
-                'additional_mobile_phone' => 'nullable|string|max:20',
-                'nationality' => 'nullable|string|max:255',
-                'date_of_birth' => 'nullable|date',
-                'emirates_id_number' => 'nullable|string|max:255',
-                'emirates_id_expiry_date' => 'nullable|date',
-                'emirates_id_file' => !isset($request->emirates_id_file_old) ?  'nullable|file|mimes:pdf,jpeg,png|max:5120' : '',
-                'business_owner' => 'nullable|boolean',
-                'designation' => 'nullable|string|max:255',
-
-            ]);
-            if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors()], 422);
-            }
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
         }
+
+        $action = $request->input('action') ;
+        // it indicates the "save as draft" action.
+
+        // if (!$action) {
+        //     $validator = Validator::make($request->all(), [
+        //         'first_name' => 'required|string|max:64',
+        //         'last_name' => 'required|string|max:64',
+        //         'email' => 'required|email',
+        //         'mobile_phone' => ['required', 'string', 'max:20', new \App\Rules\UaeMobilePhone],
+        //         'additional_mobile_phone' => ['required', 'string', 'max:20', new \App\Rules\UaeMobilePhone],
+        //         'nationality' => 'required|string|max:255',
+        //         'date_of_birth' => 'required|date',
+        //         'emirates_id_number' => 'required|string|max:255',
+        //         'emirates_id_expiry_date' => 'required|date',
+        //         'emirates_id_file' => !isset($request->emirates_id_file_old) ?  'required|file|mimes:pdf,jpeg,png|max:5120' : '',
+        //         'business_owner' => 'required|boolean',
+        //         'designation' => 'required|string|max:255',
+
+        //     ]);
+        //     $saveasdraft = false;
+
+        //     if ($validator->fails()) {
+        //         return response()->json(['errors' => $validator->errors()], 422);
+        //     }
+        // } else {
+
+        //     $validator = Validator::make($request->all(), [
+        //         'first_name' => 'nullable|string|max:64',
+        //         'last_name' => 'nullable|string|max:64',
+        //         'email' => 'nullable|email',
+        //         'mobile_phone' => ['nullable', 'string', 'max:20', new \App\Rules\UaeMobilePhone],
+        //         'additional_mobile_phone' => 'nullable|string|max:20',
+        //         'nationality' => 'nullable|string|max:255',
+        //         'date_of_birth' => 'nullable|date',
+        //         'emirates_id_number' => 'nullable|string|max:255',
+        //         'emirates_id_expiry_date' => 'nullable|date',
+        //         'emirates_id_file' => !isset($request->emirates_id_file_old) ?  'nullable|file|mimes:pdf,jpeg,png|max:5120' : '',
+        //         'business_owner' => 'nullable|boolean',
+        //         'designation' => 'nullable|string|max:255',
+
+        //     ]);
+        //     if ($validator->fails()) {
+        //         return response()->json(['errors' => $validator->errors()], 422);
+        //     }
+        // }
 
         // Handle file upload
         $emiratesIdFilePath = null;
@@ -426,8 +482,8 @@ class ShopController extends Controller
                 'first_name' => $request->input('first_name'),
                 'last_name' => $request->input('last_name'),
                 'email' => $request->input('email'),
-                'mobile_phone' => $request->input('mobile_phone'),
-                'additional_mobile_phone' => $request->input('additional_mobile_phone'),
+                'mobile_phone' =>   $request->input('mobile_phone') != "+971" ? $request->input('mobile_phone') : null,
+                'additional_mobile_phone' =>$request->input('additional_mobile_phone') != "+971" ? $request->input('additional_mobile_phone'): null,
                 'nationality' => $request->input('nationality'),
                 'date_of_birth' => $request->input('date_of_birth'),
                 'emirates_id_number' => $request->input('emirates_id_number'),
@@ -435,7 +491,7 @@ class ShopController extends Controller
                 'emirates_id_file_path' => $emiratesIdFilePath,
                 'business_owner' => $request->input('business_owner'),
                 'designation' => $request->input('designation'),
-                'saveasdraft' => $saveasdraft ?? true,
+                'saveasdraft' => isset($action) ? true : false,
 
                 // Add other fields as needed
             ]
@@ -445,10 +501,18 @@ class ShopController extends Controller
             $user = Auth::user();
             $user->step_number = 4;
             $user->save();
+            return response()->json(['success' => true, 'message' => 'Contact person stored successfully']);
+
+        }
+        else {
+            $user = Auth::user();
+            $user->step_number = 3;
+            $user->save();
+            return response()->json(['success' => true, 'message' => 'Drafts Contact person saved successfully','save_as_draft' => true]);
+
         }
 
         // Return a response
-        return response()->json(['success' => true, 'message' => 'Contact person stored successfully']);
     }
     public function verifyCode(Request $request)
     {
@@ -532,7 +596,7 @@ class ShopController extends Controller
             'expires_at' => $expirationTime,
         ]);
 
-        // Mail::to($request->email)->send(new VerificationCodeEmail($newVerificationCode));
+        Mail::to($request->email)->send(new VerificationCodeEmail($newVerificationCode));
         // Reset the attempt count when a new code is sent
         $request->session()->put('verification_attempts', 0);
 
@@ -562,39 +626,23 @@ class ShopController extends Controller
         if (!Auth::user()->email_verified_at) {
             return response()->json(['loginFailed' => 'Your account is not verified.'], 403);
         }
-        $action ="save-as-draft" /* $request->input('action') */;
+        $validator = Validator::make($request->all(), [
+            'warehouse_name.*' => 'nullable|max:128',
+            'state_warehouse.*' => 'nullable|max:128',
+            'area_warehouse.*' => 'nullable|max:128',
+            'street_warehouse.*' => 'nullable|max:128',
+            'building_warehouse.*' => 'nullable|max:64',
+            'unit_warehouse.*' => 'nullable|max:64',
+        ]);
 
-        if (!$action) {
-            $validator = Validator::make($request->all(), [
-                'warehouse_name.*' => 'required|max:128',
-                'state_warehouse.*' => 'required|max:128',
-                'area_warehouse.*' => 'required|max:128',
-                'street_warehouse.*' => 'required|max:128',
-                'building_warehouse.*' => 'required|max:128',
-                'unit_warehouse.*' => 'required|max:128',
-            ]);
-            $saveasdraft = false;
+        if ($validator->fails()) {
 
-            if ($validator->fails()) {
-
-                return response()->json(['errors' => $validator->errors()], 422);
-            }
+            return response()->json(['errors' => $validator->errors()], 422);
         }
-        else {
-            $validator = Validator::make($request->all(), [
-                'warehouse_name.*' => 'nullable|max:128',
-                'state_warehouse.*' => 'nullable|max:128',
-                'area_warehouse.*' => 'nullable|max:128',
-                'street_warehouse.*' => 'nullable|max:128',
-                'building_warehouse.*' => 'nullable|max:128',
-                'unit_warehouse.*' => 'nullable|max:128',
-            ]);
+        $action = $request->input('action');
+        // it indicates the "save as draft" action.
 
-            if ($validator->fails()) {
 
-                return response()->json(['errors' => $validator->errors()], 422);
-            }
-        }
 
         $user =  Auth::user();
 
@@ -613,7 +661,7 @@ class ShopController extends Controller
                     'address_street' => $request->street_warehouse[$key],
                     'address_building' => $request->building_warehouse[$key],
                     'address_unit' => $request->unit_warehouse[$key],
-                    'saveasdraft' => $saveasdraft ?? true,
+                    'saveasdraft' =>/*  $saveasdraft ?? true */ isset($action) ? true : false,
 
                 ]);
             }
@@ -622,10 +670,15 @@ class ShopController extends Controller
                 $user = Auth::user();
                 $user->step_number = 5;
                 $user->save();
+                return response()->json(['success' => true, 'message' => 'Warehouses stored successfully']);
             }
+            else {
+                $user = Auth::user();
+                $user->step_number = 4;
+                $user->save();
+                return response()->json(['success' => true, 'message' => 'Drafts Warehouses saved successfully','save_as_draft' => true]);
 
-            return response()->json(['success' => true, 'message' => 'Warehouses stored successfully']);
-
+            }
 
 
     }
@@ -641,37 +694,40 @@ class ShopController extends Controller
         if (!Auth::user()->email_verified_at) {
             return response()->json(['loginFailed' => 'Your account is not verified.'], 403);
         }
-        $action ="save-as-draft" /* $request->input('action') */;
+        // $action ="save-as-draft" /* $request->input('action') */;
 
-        if (!$action) {
-            $validator = Validator::make($request->all(), [
-                'bank_name' => 'required|string|max:128',
-                'account_name' => 'required|string|max:255',
-                'account_number' => 'required|string|max:255',
-                'iban' => 'required|string|max:255',
-                'swift_code' => 'required|string|max:255',
-                'iban_certificate' =>  !isset($request->iban_certificate_old) ?  'required|file|mimes:pdf,jpeg,png|max:5120' : '',
-            ], [
-                // Custom error messages if needed
-            ]);
-            $saveasdraft = false;
+        // if (!$action) {
+        //     $validator = Validator::make($request->all(), [
+        //         'bank_name' => 'required|string|max:128',
+        //         'account_name' => 'required|string|max:128',
+        //         'account_number' => 'required|string|max:30',
+        //         'iban' => 'required|string|max:34',
+        //         'swift_code' => 'required|string|max:16',
+        //         'iban_certificate' =>  !isset($request->iban_certificate_old) ?  'required|file|mimes:pdf,jpeg,png|max:5120' : '',
+        //     ], [
+        //         // Custom error messages if needed
+        //     ]);
+        //     $saveasdraft = false;
 
-            if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors()], 422);
-            }
-        } else {
+        //     if ($validator->fails()) {
+        //         return response()->json(['errors' => $validator->errors()], 422);
+        //     }
+        // } else {
             $validator = Validator::make($request->all(), [
                 'bank_name' => 'nullable|string|max:128',
-                'account_name' => 'nullable|string|max:255',
-                'account_number' => 'nullable|string|max:255',
-                'iban' => 'nullable|string|max:255',
-                'swift_code' => 'nullable|string|max:255',
+                'account_name' => 'nullable|string|max:128',
+                'account_number' => 'nullable|string|max:30',
+                'iban' => 'nullable|string|max:34',
+                'swift_code' => 'nullable|string|max:16',
                 'iban_certificate' =>  !isset($request->iban_certificate_old) ?  'nullable|file|mimes:pdf,jpeg,png|max:5120' : '',
             ]);
             if ($validator->fails()) {
                 return response()->json(['errors' => $validator->errors()], 422);
             }
-        }
+        // }
+        $action = $request->input('action');
+        // it indicates the "save as draft" action.
+
         $ibanCertificatePath = null;
         if (isset($request->iban_certificate_old) && !$request->hasFile('iban_certificate'))
             $ibanCertificatePath = $request->iban_certificate_old;
@@ -694,25 +750,30 @@ class ShopController extends Controller
                 'swift_code' => $request->swift_code,
                 // 'iban_certificate' => $request->file('iban_certificate')->store('iban_certificates'),
                 'iban_certificate' => $ibanCertificatePath,
-                'saveasdraft' => $saveasdraft ?? true,
+                'saveasdraft' =>/*  $saveasdraft ?? true */ isset($action) ? true : false,
 
             ]
         );
-        if (!$action) {
-            $user = Auth::user();
-            $user->step_number = 6;
-            if (
-                $user->business_information && $user->business_information->saveasdraft == 0  && $user->contact_people && $user->contact_people->saveasdraft == 0 && $user->payout_information && $user->payout_information->saveasdraft == 0 && count($user->warehouses) > 0  &&
-                !$user->warehouses->contains('saveasdraft', 1)
-            )
-                $user->steps = 1;
+        $user = Auth::user();
+        $user->step_number = 5;
+        $user->save();
+        return response()->json(['success' => true, 'message' => 'Drafts Payout information saved successfully','save_as_draft' => true]);
+
+        // if (!$action) {
+        //     $user = Auth::user();
+        //     $user->step_number = 6;
+        //     // if (
+        //     //     $user->business_information && $user->business_information->saveasdraft == 0  && $user->contact_people && $user->contact_people->saveasdraft == 0 && $user->payout_information && $user->payout_information->saveasdraft == 0 && count($user->warehouses) > 0  &&
+        //     //     !$user->warehouses->contains('saveasdraft', 1)
+        //     // )
+        //     //     $user->steps = 1;
 
 
-            $user->save();
-            return response()->json(['finish' => true, 'success' => true, 'message' => 'Payout information stored successfully']);
-        } else {
-            return response()->json(['success' => true, 'message' => 'Payout information stored successfully']);
-        }
+        //     $user->save();
+        //     return response()->json(['finish' => true, 'success' => true, 'message' => 'Payout information stored successfully']);
+        // } else {
+            // return response()->json(['success' => true, 'message' => 'Payout information stored successfully']);
+        // }
     }
 
     public function storeShopRegister(SellerRegistrationShopRequest $request) {
@@ -793,7 +854,7 @@ class ShopController extends Controller
                 'last_name' => $request->input('last_name'),
                 'email' => $request->input('email'),
                 'mobile_phone' => $request->input('mobile_phone'),
-                'additional_mobile_phone' => $request->input('additional_mobile_phone'),
+                'additional_mobile_phone' =>$request->input('additional_mobile_phone') != "+971" ? $request->input('additional_mobile_phone') : null,
                 'nationality' => $request->input('nationality'),
                 'date_of_birth' => $request->input('date_of_birth'),
                 'emirates_id_number' => $request->input('emirates_id_number'),
