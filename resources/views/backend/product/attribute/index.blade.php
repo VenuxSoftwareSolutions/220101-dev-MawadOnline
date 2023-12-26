@@ -31,6 +31,9 @@
                                 @role('Super Admin')
                                     <th>{{ translate('Activated') }}</th>
                                 @endrole
+                                @can('enabling_product_attribute')
+                                    <th>{{ translate('Activated') }}</th>
+                                @endcan
                                 <th class="text-right">{{ translate('Options') }}</th>
                             </tr>
                         </thead>

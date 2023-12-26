@@ -8,7 +8,7 @@
 @endphp
 
 <div class="aiz-titlebar text-left mt-2 mb-3">
-    <h5 class="mb-0 h6">{{translate('Attribute Information')}}</h5>
+    <h5 class="mb-0 h6">{{translate('Attribute Informations')}}</h5>
 </div>
 
 <div class="row">
@@ -57,11 +57,11 @@
                                                 <div class="form-group mb-3 col-12">
                                                     <label for="name">{{ translate('Value type') }}</label>
                                                     <select class="form-control" id="value_type" name="type_value">
-                                                        <option value="list" @if($attribute->type_value == "list") {{ 'selected' }} @endif>List of values</option>
-                                                        <option value="text" @if($attribute->type_value == "text") {{ 'selected' }} @endif>Text</option>
-                                                        <option value="color" @if($attribute->type_value == "color") {{ 'selected' }} @endif>Color</option>
-                                                        <option value="numeric" @if($attribute->type_value == "numeric") {{ 'selected' }} @endif>Numeric</option>
-                                                        <option value="boolean" @if($attribute->type_value == "boolean") {{ 'selected' }} @endif>Boolean</option>
+                                                        <option value="list" @if($attribute->type_value == "list") {{ 'selected' }} @endif>{{ translate('List of values')}}</option>
+                                                        <option value="text" @if($attribute->type_value == "text") {{ 'selected' }} @endif>{{ translate('Text')}}</option>
+                                                        <option value="color" @if($attribute->type_value == "color") {{ 'selected' }} @endif>{{ translate('Color')}}</option>
+                                                        <option value="numeric" @if($attribute->type_value == "numeric") {{ 'selected' }} @endif>{{ translate('Numeric')}}</option>
+                                                        <option value="boolean" @if($attribute->type_value == "boolean") {{ 'selected' }} @endif>{{ translate('Boolean')}}</option>
                                                     </select>
                                                 </div>
                                             @endif
@@ -183,23 +183,23 @@
 
                 var html_english = `<div class="row" style="width: 100%;margin-left: 1px;" id="bloc_english_${id_bloc}">
                                     <div class="form-group mb-3 col-10">
-                                        <label for="name" class="tagify-label">{{ translate('Values in english') }}</label>
+                                        <label for="name" class="tagify-label">{{ translate('Value in english') }}</label>
                                         <input name='values_english[]' class="form-control" autofocus>
                                     </div>
                                     <div class="col-1">
-                                        <i class="las la-plus add_values" style="margin-left: 5px; margin-top: 40px;" title="Add another values"></i>
-                                        <i class="las la-trash trash_values" data-language="english" data-id_bloc="${id_bloc}" style="margin-left: 5px; margin-top: 40px;" title="Delete this values"></i>
+                                        <i class="las la-plus add_values" style="margin-left: 5px; margin-top: 40px;" title="{{ translate('Add another values') }}"></i>
+                                        <i class="las la-trash trash_values" data-language="english" data-id_bloc="${id_bloc}" style="margin-left: 5px; margin-top: 40px;" title="{{ translate('Delete this value') }}"></i>
                                     </div>
                                 </div>`;
 
                 var html_arabic = `<div class="row" style="width: 100%;margin-left: 1px;" id="bloc_arabic_${id_bloc}">
                                     <div class="form-group mb-3 col-10">
-                                        <label for="name" class="tagify-label">{{ translate('Values in arabic') }}</label>
+                                        <label for="name" class="tagify-label">{{ translate('Value in arabic') }}</label>
                                         <input name='values_arabic[]' class="form-control" autofocus>
                                     </div>
                                     <div class="col-1">
-                                        <i class="las la-plus add_values" style="margin-left: 5px; margin-top: 40px;" title="Add another values"></i>
-                                        <i class="las la-trash trash_values" data-language="arabic" data-id_bloc="${id_bloc}" style="margin-left: 5px; margin-top: 40px;" title="Delete this values"></i>
+                                        <i class="las la-plus add_values" style="margin-left: 5px; margin-top: 40px;" title="{{ translate('Add another values') }}"></i>
+                                        <i class="las la-trash trash_values" data-language="arabic" data-id_bloc="${id_bloc}" style="margin-left: 5px; margin-top: 40px;" title="{{ translate('Delete this value') }}"></i>
                                     </div>
                                 </div>`;
                 $('.values_english').append(html_english);
@@ -215,7 +215,7 @@
                 if(link == undefined){
                    var id = $(this).data('id_bloc');
                     swal({
-                        title: "This value will be deleted in both English and Arabic sections!",
+                        title: "{{ translate('This value will be deleted in both English and Arabic sections!')}}",
                         type: "warning",
                         confirmButtonText: "Delete",
                         showCancelButton: true
@@ -232,14 +232,14 @@
 
                         } else if (result.dismiss === 'cancel') {
                             swal(
-                                'Cancelled',
-                                'Your deletion is undone',
+                                "{{ translate('Cancelled')}}",
+                                "{{ translate('Your deletion is undone')}}",
                                 'warning'
                             )
                         } else{
                             swal(
-                                'Error',
-                                'Something went wrong!',
+                                "{{ translate('Error')}}",
+                                "{{ translate('Something went wrong!')}}",
                                 'error'
                             )
                         }
@@ -269,7 +269,7 @@
                             if(dataResult.status == "failed used"){
                                 current.parent().parent().find('.form-control').attr('readonly', true);
                                 current.parent().parent().find('small').remove();
-                                current.parent().parent().find('.col-10').append('<small style="color:red">Cannot delete this value because is used in create product!</small>');
+                                current.parent().parent().find('.col-10').append("<small style='color:red'>{{ translate('Cannot delete this value because is used in product!')}}</small>");
                             }
 
                         }
@@ -277,9 +277,9 @@
 
                     function doSomethingWithValue(ids_to_delete, id_to_delete_from_another_language, current_id) {
                         swal({
-                            title: "Are you sure you want to delete?",
+                            title: "{{ translate('Are you sure you want to delete?')}}",
                             type: "warning",
-                            confirmButtonText: "Delete",
+                            confirmButtonText: "{{ translate('Delete') }}",
                             showCancelButton: true
                         })
                         .then((result) => {
@@ -296,22 +296,22 @@
                                         $('#id_bloc_' + current_id).remove();
                                         $('#id_bloc_' + id_to_delete_from_another_language).remove();
                                         swal(
-                                            'Delete',
-                                            'Your deletion is done successfully',
+                                            "{{ translate('Delete')}}",
+                                            "{{ translate('Your deletion is done successfully') }}",
                                             'success'
                                         )
                                     }
                                 })
                             } else if (result.dismiss === 'cancel') {
                                 swal(
-                                    'Cancelled',
-                                    'Your deletion is undone',
+                                    "{{ translate('Cancelled')}}",
+                                    "{{ translate('Your deletion is undone')}}",
                                     'warning'
                                 )
                             } else{
                                 swal(
-                                    'Error',
-                                    'Something went wrong!',
+                                    "{{ translate('Error')}}",
+                                    "{{ translate('Something went wrong!')}}",
                                     'error'
                                 )
                             }
@@ -335,6 +335,34 @@
                 }else{
                     $("div[class*='values_']").hide();
                     $("#unit").hide();
+                }
+            });
+
+            $('#value_type').on('click', function(){
+                var type_value = $(this).val();
+                var current = $(this);
+                var attribute_id = "{{ $attribute->id }}";
+
+                if(type_value == "list"){
+                    $.ajax({
+                        url: "{{route('search-attribute-has-values-used-by-type')}}",
+                        type: "GET",
+                        data: {
+                            attribute_id: attribute_id
+                        },
+                        cache: false,
+                        dataType: 'JSON',
+                        success: function(dataResult) {
+                            if(dataResult.status == "Exist"){
+                                current.attr('disabled', true);
+                                current.attr('readonly', true);
+                                current.attr('disabled', false);
+                                current.addClass('nonClickableSelect');
+                                current.parent().find('small').remove();
+                                current.parent().append('<small style="color:red">Cannot delete this value because is used in create product!</small>');
+                            }
+                        }
+                    })
                 }
             });
 

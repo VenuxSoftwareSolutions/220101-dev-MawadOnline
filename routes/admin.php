@@ -434,6 +434,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
 
         //search if value of attribute is used in create product
         Route::get('/attributes/search/value', 'search_value_is_used')->name('search-value-is-used');
+
+        //search if attribute has values used in product by type
+        Route::get('/attributes/search/values/by/type', 'search_values_is_used_by_type')->name('search-attribute-has-values-used-by-type');
     });
 
     //Product unites

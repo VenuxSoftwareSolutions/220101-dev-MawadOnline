@@ -8,7 +8,7 @@
 @endphp
 
 <div class="aiz-titlebar text-left mt-2 mb-3">
-    <h5 class="mb-0 h6">{{translate('Attribute Information')}}</h5>
+    <h5 class="mb-0 h6">{{translate('Attribute Informations')}}</h5>
 </div>
 
 <div class="row">
@@ -18,7 +18,7 @@
                 <ul class="nav nav-tabs nav-fill border-light">
                     @foreach (get_all_active_language() as $key => $language)
                     <li class="nav-item">
-                        <a class="nav-link text-reset @if ($language->code == "en") show active @else bg-soft-dark border-light border-left-0 @endif py-3" data-toggle="tab" href="#{{ $language->code }}">
+                        <a class="nav-link text-reset @if ($language->code == app()->getLocale()) show active @else bg-soft-dark border-light border-left-0 @endif py-3" data-toggle="tab" href="#{{ $language->code }}">
                             <img src="{{ static_asset('assets/img/flags/'.$language->code.'.png') }}" height="11" class="mr-1">
                             <span>{{$language->name}}</span>
                         </a>
@@ -33,10 +33,8 @@
                             $name = strtolower($language->name);
                             $titre_display = 'Display name in '.$name.' version';
                             $titre_discription = ucfirst($name).' description';
-                            $key_display = 'name_display_'.$name;
-                            $key_description = 'description_'.$name;
                         @endphp
-                            <div class="tab-pane @if ($language->code == "en") fade in active show @endif" id="{{ $language->code }}">
+                            <div class="tab-pane @if ($language->code == app()->getLocale()) fade in active show @endif" id="{{ $language->code }}">
                                 <div class="row">
                                     <div class="col-12 ">
                                         <div class="row">
@@ -44,7 +42,7 @@
                                                 <div class="form-group mb-3 col-12">
                                                     <label for="name">{{ translate('Name') }}</label>
                                                     <input type="text" id="name" name="name" class="form-control" required>
-                                                    <small style="color: red">The name should be unique. </small>
+                                                    <small style="color: red">{{ translate('The name should be unique.')}} </small>
                                                 </div>
                                             @endif
                                             <div class="form-group mb-3 col-12">
@@ -55,12 +53,12 @@
                                                 <div class="form-group mb-3 col-12">
                                                     <label for="name">{{ translate('Value type') }}</label>
                                                     <select class="form-control" id="value_type" name="type_value">
-                                                        <option value="" selected="true" disabled="disabled">Please choose type</option>
-                                                        <option value="list">List of values</option>
-                                                        <option value="text">Text</option>
-                                                        <option value="color">Color</option>
-                                                        <option value="numeric">Numeric</option>
-                                                        <option value="boolean">Boolean</option>
+                                                        <option value="" selected="true" disabled="disabled">{{ translate('Please choose type') }}</option>
+                                                        <option value="list">{{translate('List of values')}}</option>
+                                                        <option value="text">{{translate('Text')}}</option>
+                                                        <option value="color">{{translate('Color')}}</option>
+                                                        <option value="numeric">{{translate('Numeric')}}</option>
+                                                        <option value="boolean">{{translate('Boolean')}}</option>
                                                     </select>
                                                 </div>
                                             @endif
@@ -91,7 +89,13 @@
                                                     <select multiple name="units[]" id="shapes">
                                                         @if(count($units) > 0)
                                                             @foreach ($units as $key => $unit)
-                                                                <option value="{{ $unit->id }}">{{ $unit->name }}</option>
+                                                                <option value="{{ $unit->id }}">
+                                                                    @if (app()->getLocale() == "sa")
+                                                                        {{ $unit->getTranslation('name','ar',false) }}
+                                                                    @else
+                                                                        {{ $unit->name }}
+                                                                    @endif
+                                                                </option>
                                                             @endforeach
                                                         @endif
                                                     </select>
@@ -135,11 +139,13 @@
     <script>
         $( document ).ready(function() {
             var shapes = $('#shapes').filterMultiSelect({
-                placeholderText: 'click to select a unit',
-                filterText: 'search',
-                labelText: 'Units',
+                placeholderText: "{{ translate('click to select a unit') }}",
+                filterText: "{{ translate('Search') }}",
+                labelText: "{{ translate('Units') }}",
                 caseSensitive: false,
             });
+
+            $('body div[class="items dropdown-item"]').attr('dir', 'auto');
 
             $('body .trash_values:first').hide();
 
@@ -156,8 +162,8 @@
                                         <input name='values_english[]' class="form-control" autofocus>
                                     </div>
                                     <div class="col-1">
-                                        <i class="las la-plus add_values" style="margin-left: 5px; margin-top: 40px;" title="Add another values"></i>
-                                        <i class="las la-trash trash_values" data-language="english" data-id_bloc="${id_bloc}" style="margin-left: 5px; margin-top: 40px;" title="Delete this values"></i>
+                                        <i class="las la-plus add_values" style="margin-left: 5px; margin-top: 40px;" title="{{ translate('Add another values') }}"></i>
+                                        <i class="las la-trash trash_values" data-language="english" data-id_bloc="${id_bloc}" style="margin-left: 5px; margin-top: 40px;" title="{{ translate('Delete this value') }}"></i>
                                     </div>
                                 </div>`;
 
@@ -167,8 +173,8 @@
                                         <input name='values_arabic[]' class="form-control" autofocus>
                                     </div>
                                     <div class="col-1">
-                                        <i class="las la-plus add_values" style="margin-left: 5px; margin-top: 40px;" title="Add another values"></i>
-                                        <i class="las la-trash trash_values" data-language="arabic" data-id_bloc="${id_bloc}" style="margin-left: 5px; margin-top: 40px;" title="Delete this values"></i>
+                                        <i class="las la-plus add_values" style="margin-left: 5px; margin-top: 40px;" title="{{ translate('Add another values') }}"></i>
+                                        <i class="las la-trash trash_values" data-language="arabic" data-id_bloc="${id_bloc}" style="margin-left: 5px; margin-top: 40px;" title="{{ translate('Delete this value') }}"></i>
                                     </div>
                                 </div>`;
                 $('.values_english').append(html_english);
@@ -182,9 +188,9 @@
 
                 var id = $(this).data('id_bloc');
                 swal({
-                    title: "This value will be deleted in both English and Arabic sections!",
+                    title: "{{ translate('This value will be deleted in both English and Arabic sections!')}}",
                     type: "warning",
-                    confirmButtonText: "Delete",
+                    confirmButtonText: "{{ translate('Delete')}}",
                     showCancelButton: true
                 })
                 .then((result) => {
@@ -199,14 +205,14 @@
 
                     } else if (result.dismiss === 'cancel') {
                         swal(
-                            'Cancelled',
-                            'Your deletion is undone',
+                            "{{ translate('Cancelled')}}",
+                            "{{ translate('Your deletion is undone')}}",
                             'warning'
                         )
                     } else{
                         swal(
-                            'Error',
-                            'Something went wrong!',
+                            "{{ translate('Error')}}",
+                            "{{ translate('Something went wrong!')}}",
                             'error'
                         )
                     }

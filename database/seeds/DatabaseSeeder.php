@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use database\seeds\MigrationSeeder;
+use Database\seeds\MigrationSeeder;
+use Database\seeds\TranslateattributeSeeder;
+use Database\seeds\AddPermessionEnablingAttributeSeeder;
 
 
 class DatabaseSeeder extends Seeder
@@ -15,5 +17,7 @@ class DatabaseSeeder extends Seeder
     {
         // $this->call(UsersTableSeeder::class);
         $this->call(MigrationSeeder::class);
+        $this->call(TranslateattributeSeeder::class);
+        $this->call(AddPermessionEnablingAttributeSeeder::class);
     }
 }

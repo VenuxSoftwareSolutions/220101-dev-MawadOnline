@@ -12,6 +12,7 @@ use App\Models\ProductAttributeValues;
 use CoreComponentRepository;
 use App\Http\Requests\AttributeRequest;
 use App\Services\AttributeService;
+use Illuminate\Support\Facades\Auth;
 use Str;
 
 class AttributeController extends Controller
@@ -118,7 +119,6 @@ class AttributeController extends Controller
      */
     public function update(Request $request, $id)
     {
-
         $request->validate([
             'name' => ['required'],
             'display_name_english' => ['required' , 'max:128'],
@@ -180,6 +180,10 @@ class AttributeController extends Controller
     }
 
     public function delete_values(Request $request){
+        $request->validate([
+            'ids' => ['required'],
+        ]);
+
         if (str_contains($request->ids, '-')) {
             $ids = explode("-", $request->ids);
 
@@ -198,7 +202,26 @@ class AttributeController extends Controller
     }
 
     public function search_value_is_used(Request $request){
+        $request->validate([
+            'value_id' => ['required'],
+            'attribute_id' => ['attribute_id'],
+        ]);
+
         $check = ProductAttributeValues::where('id_attribute', $request->attribute_id)->where('id_values', $request->value_id)->get();
+
+        if(count($check) > 0){
+            return response()->json(['status'=>'Exist']);
+        }else{
+            return response()->json(['status'=>'Not exist']);
+        }
+    }
+
+    public function search_values_is_used_by_type(Request $request){
+        $request->validate([
+            'attribute_id' => ['required'],
+        ]);
+
+        $check = ProductAttributeValues::where('id_attribute', $request->attribute_id)->get();
 
         if(count($check) > 0){
             return response()->json(['status'=>'Exist']);
@@ -335,17 +358,23 @@ class AttributeController extends Controller
     }
 
     public function is_activated(Request $request){
-        $attribute = Attribute::find($request->id);
-        if ($attribute != null) {
-            if($request->status == "true"){
-                $attribute->is_activated = 1;
-                $attribute->save();
-            }else{
-                $attribute->is_activated = 0;
-                $attribute->save();
-            }
+        $user = Auth::user();
+        if(($user->getRoleNames()->first() == "Super Admin") || ($user->hasPermissionTo('enabling_product_attribute'))){
 
-            return response()->json(["status" => 'done'], 200);
+            $attribute = Attribute::find($request->id);
+            if ($attribute != null) {
+                if($request->status == "true"){
+                    $attribute->is_activated = 1;
+                    $attribute->save();
+                }else{
+                    $attribute->is_activated = 0;
+                    $attribute->save();
+                }
+
+                return response()->json(["status" => 'done'], 200);
+            }else{
+                return response()->json(["status" => 'failed'], 500);
+            }
         }else{
             return response()->json(["status" => 'failed'], 500);
         }
