@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SellerRegistrationRequest;
 use App\Http\Requests\SellerRegistrationShopRequest;
+use App\Http\Requests\StoreBusinessInfoRequest;
+use App\Http\Requests\StoreContactPersonRequest;
+use App\Http\Requests\StorePayoutInfoRequest;
+use App\Http\Requests\StoreWarehouseRequest;
 use App\Mail\VerificationCodeEmail;
 use App\Models\Area;
 use App\Models\BusinessInformation;
@@ -138,9 +142,9 @@ class ShopController extends Controller
 
 
             // Send the verification code to the user's email
-            Mail::to($request->email)->send(new VerificationCodeEmail($verificationCode));
+            // Mail::to($request->email)->send(new VerificationCodeEmail($verificationCode));
         }
-        return response()->json(['success' => true, 'message' => 'Your success message']);
+        return response()->json(['success' => true, 'message' => translate('Your account has been created successfully. Please check your email for verification.')]);
 
 
 
@@ -198,125 +202,14 @@ class ShopController extends Controller
     }
 
 
-    public function storeBusinessInfo(Request $request)
+    public function storeBusinessInfo(StoreBusinessInfoRequest $request)
     {
 
-        if (!Auth::check()) {
-            return response()->json(['loginFailed' => 'Login unsuccessful. Please create an account and confirm it.'], 401);
-        }
 
-        // Check if the user's account is not verified (assuming 'verified' is a column in the users table)
-        if (!Auth::user()->email_verified_at) {
-            return response()->json(['loginFailed' => 'Your account is not verified.'], 403);
-        }
-        // Validation logic
-        $validatedData = Validator::make($request->all(), [
-                    'trade_name_english' => 'nullable|string|max:128',
-                    'trade_name_arabic' => 'nullable|string|max:256',
-                    'eshop_name_english' => 'nullable|string|max:128',
-                    'eshop_name_arabic' => 'nullable|string|max:256',
-                    'eshop_desc_en' => 'nullable|string',
-                    'eshop_desc_ar' => 'nullable|string',
-                    'license_issue_date' => 'nullable|date',
-                    'license_expiry_date' => 'nullable|date|after:license_issue_date',
-                    'state' => 'nullable|exists:emirates,id',
-                    'area_id' => 'nullable|exists:areas,id',
-                    'street' => 'nullable|string|max:128',
-                    'building' => 'nullable|string|max:64',
-                    'unit' => 'nullable|string|max:64',
-                    'po_box' => 'nullable|string|max:32',
-                    'landline' => 'nullable|string|max:16',
-                    'vat_registered' => 'nullable|boolean',
-
-                    'trade_license_doc' => !isset($request->trade_license_doc_old) ? 'nullable|file|mimes:pdf,jpeg,png|max:5120' : '',
-                    'trn' => $request->vat_registered == 1 ? 'nullable|string|max:20' : '',
-                    'vat_certificate' => $request->vat_registered == 1 && !isset($request->vat_certificate_old) ? 'nullable|file|mimes:pdf,jpeg,png|max:5120' : '',
-                    'tax_waiver' => $request->vat_registered == 0 && !isset($request->tax_waiver_old)  ? 'nullable|file|mimes:pdf,jpeg,png|max:5120' : '',
-                    'civil_defense_approval' => 'nullable|file|mimes:pdf,jpeg,png,gif|max:5120',
-                ]);
-                if ($validatedData->fails()) {
-
-                    return response()->json(['errors' => $validatedData->errors()], 422);
-                }
         $action =  $request->input('action') ;
         // it indicates the "save as draft" action.
 
-        // if (!$action) {
-        //     $validatedData = Validator::make(
-        //         $request->all(),
-        //         [
-        //             'trade_name_english' => 'required|string|max:255',
-        //             'trade_name_arabic' => 'required|string|max:255',
-        //             'trade_license_doc' => !isset($request->trade_license_doc_old) ? 'required|file|mimes:pdf,jpeg,png,gif|max:5120' : '',
-        //             'eshop_name_english' => 'required|string|max:255',
-        //             'eshop_name_arabic' => 'required|string|max:255',
-        //             'eshop_desc_en' => 'nullable|string',
-        //             'eshop_desc_ar' => 'nullable|string',
-        //             'license_issue_date' => 'required|date',
-        //             'license_expiry_date' => 'required|date|after:license_issue_date',
-        //             'state' => 'required|exists:emirates,id',
-        //             'area_id' => 'required|exists:areas,id',
-        //             'street' => 'required|string|max:255',
-        //             'building' => 'required|string|max:255',
-        //             'unit' => 'nullable|string|max:255',
-        //             'po_box' => 'nullable|string|max:255',
-        //             'landline' => 'nullable|string|max:20',
-        //             'vat_registered' => 'required|boolean',
-        //             'vat_certificate' => $request->vat_registered == 1 && !isset($request->vat_certificate_old) ? 'required_if:vat_registered,1|file|mimes:pdf,jpeg,png,gif|max:5120' : '',
-        //             'trn' => $request->vat_registered == 1 ? 'required_if:vat_registered,1|string|max:20' : '',
-        //             'tax_waiver' => $request->vat_registered == 0 && !isset($request->tax_waiver_old)  ? 'required_if:vat_registered,0|file|mimes:pdf,jpeg,png,gif|max:5120' : '',
-        //             'civil_defense_approval' => 'nullable|file|mimes:pdf,jpeg,png,gif|max:5120',
-        //         ],
-        //         [
-        //             // Custom error messages
-        //             'vat_certificate.required_if' => 'The VAT certificate is required when VAT is registered.',
-        //             'vat_certificate.file' => 'The VAT certificate must be a file of type: pdf, doc, docx.',
-        //             'vat_certificate.mimes' => 'The VAT certificate must be a file of type: pdf, doc, docx.',
-        //             'trn.required_if' => 'The TRN is required when VAT is registered.',
-        //             'trn.string' => 'The TRN must be a string.',
-        //             'trn.max' => 'The TRN may not be greater than :max characters.',
-        //             'tax_waiver.required_if' => 'The tax waiver certificate is required when VAT is not registered.',
-        //             'tax_waiver.file' => 'The tax waiver certificate must be a file of type: pdf, doc, docx.',
-        //             'tax_waiver.mimes' => 'The tax waiver certificate must be a file of type: pdf, doc, docx.',
-        //             'area_id.required' => 'The area is required.',
-        //             'area_id.exists' => 'Invalid area selected.',
-        //         ]
-        //     );
-        //     if ($validatedData->fails()) {
 
-        //         return response()->json(['errors' => $validatedData->errors()], 422);
-        //     }
-        //     $saveasdraft = false;
-        // } else {
-        //     $validatedData = Validator::make($request->all(), [
-        //         'trade_name_english' => 'nullable|string|max:255',
-        //         'trade_name_arabic' => 'nullable|string|max:255',
-        //         'eshop_name_english' => 'nullable|string|max:255',
-        //         'eshop_name_arabic' => 'nullable|string|max:255',
-        //         'eshop_desc_en' => 'nullable|string',
-        //         'eshop_desc_ar' => 'nullable|string',
-        //         'license_issue_date' => 'nullable|date',
-        //         'license_expiry_date' => 'nullable|date|after:license_issue_date',
-        //         'state' => 'nullable|exists:emirates,id',
-        //         'area_id' => 'nullable|exists:areas,id',
-        //         'street' => 'nullable|string|max:255',
-        //         'building' => 'nullable|string|max:255',
-        //         'unit' => 'nullable|string|max:255',
-        //         'po_box' => 'nullable|string|max:255',
-        //         'landline' => 'nullable|string|max:20',
-        //         'vat_registered' => 'nullable|boolean',
-
-        //         'trade_license_doc' => !isset($request->trade_license_doc_old) ? 'nullable|file|mimes:pdf,jpeg,png|max:5120' : '',
-        //         'trn' => $request->vat_registered == 1 ? 'nullable|string|max:20' : '',
-        //         'vat_certificate' => $request->vat_registered == 1 && !isset($request->vat_certificate_old) ? 'nullable|file|mimes:pdf,jpeg,png|max:5120' : '',
-        //         'tax_waiver' => $request->vat_registered == 0 && !isset($request->tax_waiver_old)  ? 'nullable|file|mimes:pdf,jpeg,png|max:5120' : '',
-        //         'civil_defense_approval' => 'nullable|file|mimes:pdf,jpeg,png,gif|max:5120',
-        //     ]);
-        //     if ($validatedData->fails()) {
-
-        //         return response()->json(['errors' => $validatedData->errors()], 422);
-        //     }
-        // }
 
         if ($request->input('vat_registered') == 1) {
 
@@ -376,22 +269,22 @@ class ShopController extends Controller
             $user = Auth::user();
             $user->step_number = 3;
             $user->save();
-            return response()->json(['success' => true, 'message' => 'Business info stored successfully']);
+            return response()->json(['success' => true, 'message' => translate('Business info stored successfully')]);
 
         }
         else {
             $user = Auth::user();
             $user->step_number = 2;
             $user->save();
-            return response()->json(['success' => true, 'message' => 'Drafts Business info saved successfully','save_as_draft' => true]);
+            return response()->json(['success' => true, 'message' => translate('Draft Business info saved successfully'),'save_as_draft' => true]);
 
         }
         // Return a response
     }
 
-    public function storeContactPerson(Request $request)
+    public function storeContactPerson(StoreContactPersonRequest $request)
     {
-        if (!Auth::check()) {
+      /*   if (!Auth::check()) {
 
             return response()->json(['loginFailed' => 'Login unsuccessful. Please create an account and confirm it.'], 401);
         }
@@ -410,60 +303,18 @@ class ShopController extends Controller
             'date_of_birth' => 'nullable|date|before:-18 years',
             'emirates_id_number' => ['nullable', 'string', 'max:15', 'regex:/^[0-9]{15}$/'],
             'emirates_id_expiry_date' => 'nullable|date|after_or_equal:today',
-            'emirates_id_file' => !isset($request->emirates_id_file_old) ?  'nullable|file|mimes:pdf,jpeg,png|max:5120' : '',
+            'emirates_id_file' =>  'nullable|file|mimes:pdf,jpeg,png|max:5120' ,
             'business_owner' => 'nullable|boolean',
             'designation' => 'nullable|string|max:64',
 
         ]);
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
-        }
+        } */
 
         $action = $request->input('action') ;
         // it indicates the "save as draft" action.
 
-        // if (!$action) {
-        //     $validator = Validator::make($request->all(), [
-        //         'first_name' => 'required|string|max:64',
-        //         'last_name' => 'required|string|max:64',
-        //         'email' => 'required|email',
-        //         'mobile_phone' => ['required', 'string', 'max:20', new \App\Rules\UaeMobilePhone],
-        //         'additional_mobile_phone' => ['required', 'string', 'max:20', new \App\Rules\UaeMobilePhone],
-        //         'nationality' => 'required|string|max:255',
-        //         'date_of_birth' => 'required|date',
-        //         'emirates_id_number' => 'required|string|max:255',
-        //         'emirates_id_expiry_date' => 'required|date',
-        //         'emirates_id_file' => !isset($request->emirates_id_file_old) ?  'required|file|mimes:pdf,jpeg,png|max:5120' : '',
-        //         'business_owner' => 'required|boolean',
-        //         'designation' => 'required|string|max:255',
-
-        //     ]);
-        //     $saveasdraft = false;
-
-        //     if ($validator->fails()) {
-        //         return response()->json(['errors' => $validator->errors()], 422);
-        //     }
-        // } else {
-
-        //     $validator = Validator::make($request->all(), [
-        //         'first_name' => 'nullable|string|max:64',
-        //         'last_name' => 'nullable|string|max:64',
-        //         'email' => 'nullable|email',
-        //         'mobile_phone' => ['nullable', 'string', 'max:20', new \App\Rules\UaeMobilePhone],
-        //         'additional_mobile_phone' => 'nullable|string|max:20',
-        //         'nationality' => 'nullable|string|max:255',
-        //         'date_of_birth' => 'nullable|date',
-        //         'emirates_id_number' => 'nullable|string|max:255',
-        //         'emirates_id_expiry_date' => 'nullable|date',
-        //         'emirates_id_file' => !isset($request->emirates_id_file_old) ?  'nullable|file|mimes:pdf,jpeg,png|max:5120' : '',
-        //         'business_owner' => 'nullable|boolean',
-        //         'designation' => 'nullable|string|max:255',
-
-        //     ]);
-        //     if ($validator->fails()) {
-        //         return response()->json(['errors' => $validator->errors()], 422);
-        //     }
-        // }
 
         // Handle file upload
         $emiratesIdFilePath = null;
@@ -501,14 +352,14 @@ class ShopController extends Controller
             $user = Auth::user();
             $user->step_number = 4;
             $user->save();
-            return response()->json(['success' => true, 'message' => 'Contact person stored successfully']);
+            return response()->json(['success' => true, 'message' => translate('Contact person stored successfully')]);
 
         }
         else {
             $user = Auth::user();
             $user->step_number = 3;
             $user->save();
-            return response()->json(['success' => true, 'message' => 'Drafts Contact person saved successfully','save_as_draft' => true]);
+            return response()->json(['success' => true, 'message' => translate('Draft Contact person saved successfully'),'save_as_draft' => true]);
 
         }
 
@@ -518,7 +369,7 @@ class ShopController extends Controller
     {
 
         if (!$request->email) {
-            return response()->json(['loginFailed' => 'Please Register !!'], 422);
+            return response()->json(['message' => translate('Please Register !!')], 403);
         }
 
         // Validate the verification code
@@ -547,12 +398,12 @@ class ShopController extends Controller
                     // If the limit is reached, resend a new verification code
                     $this->resendCode($request);
                     $request->session()->put('verification_attempts', 0); // Reset attempt count
-                    return response()->json(['errors' => ['verification_code' => ['Invalid verification code. Please check your email for a new code.']]], 422);
+                    return response()->json(['errors' => ['verification_code' => [translate('Invalid verification code. Please check your email for a new code.')]]], 422);
                 }
 
                 $request->session()->put('verification_attempts', $attempts);
 
-                return response()->json(['errors' => ['verification_code' => ['Invalid verification code.']]], 422);
+                return response()->json(['errors' => ['verification_code' => [translate('Invalid verification code.')]]], 422);
             }
 
             // Reset the attempt count on successful verification
@@ -574,7 +425,7 @@ class ShopController extends Controller
         // ...
 
         // Return a JSON response as needed
-        return response()->json(['verif_login' => true, 'success' => true, 'message' => 'Verification successful']);
+        return response()->json(['verif_login' => true, 'success' => true, 'message' => translate('Verification successful')]);
     }
 
     // Add a method to resend the verification code
@@ -587,7 +438,7 @@ class ShopController extends Controller
         $expirationTime = now()->addMinutes(10); // Set expiration time to 10 minutes
 
         if (!$email) {
-            return response()->json(['loginFailed' => 'Please Register !!'], 422);
+            return response()->json(['message' => translate('Please Register !!')], 403);
         }
 
         VerificationCode::create([
@@ -596,11 +447,11 @@ class ShopController extends Controller
             'expires_at' => $expirationTime,
         ]);
 
-        Mail::to($request->email)->send(new VerificationCodeEmail($newVerificationCode));
+        // Mail::to($request->email)->send(new VerificationCodeEmail($newVerificationCode));
         // Reset the attempt count when a new code is sent
         $request->session()->put('verification_attempts', 0);
 
-        return response()->json(['success' => true, 'message' => 'Verification code resent successfully.']);
+        return response()->json(['success' => true, 'message' => translate('Verification code resent successfully.')]);
     }
     public function getArea($emirate_id = 0)
     {
@@ -614,31 +465,10 @@ class ShopController extends Controller
         return response()->json($empData);
     }
 
-    public function storeWarehouse(Request $request)
+    public function storeWarehouse(/* Request */StoreWarehouseRequest $request)
     {
 
-        if (!Auth::check()) {
 
-            return response()->json(['loginFailed' => 'Login unsuccessful. Please create an account and confirm it.'], 401);
-        }
-
-        // Check if the user's account is not verified (assuming 'verified' is a column in the users table)
-        if (!Auth::user()->email_verified_at) {
-            return response()->json(['loginFailed' => 'Your account is not verified.'], 403);
-        }
-        $validator = Validator::make($request->all(), [
-            'warehouse_name.*' => 'nullable|max:128',
-            'state_warehouse.*' => 'nullable|max:128',
-            'area_warehouse.*' => 'nullable|max:128',
-            'street_warehouse.*' => 'nullable|max:128',
-            'building_warehouse.*' => 'nullable|max:64',
-            'unit_warehouse.*' => 'nullable|max:64',
-        ]);
-
-        if ($validator->fails()) {
-
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
         $action = $request->input('action');
         // it indicates the "save as draft" action.
 
@@ -666,65 +496,30 @@ class ShopController extends Controller
                 ]);
             }
              }
+             else {
+                return response()->json(['success' => true, 'message' => translate('No Warehouses stored'),'save_as_draft' => isset($action) ? true :false,'infoMsg'=>true]);
+
+             }
             if (!$action) {
                 $user = Auth::user();
                 $user->step_number = 5;
                 $user->save();
-                return response()->json(['success' => true, 'message' => 'Warehouses stored successfully']);
+                return response()->json(['success' => true, 'message' => translate('Warehouses stored successfully')]);
             }
             else {
                 $user = Auth::user();
                 $user->step_number = 4;
                 $user->save();
-                return response()->json(['success' => true, 'message' => 'Drafts Warehouses saved successfully','save_as_draft' => true]);
+                return response()->json(['success' => true, 'message' => translate('Draft Warehouses saved successfully'),'save_as_draft' => true]);
 
             }
 
 
     }
 
-    public function storePayoutInfo(Request $request)
+    public function storePayoutInfo(StorePayoutInfoRequest $request)
     {
-        if (!Auth::check()) {
 
-            return response()->json(['loginFailed' => 'Login unsuccessful. Please create an account and confirm it.'], 401);
-        }
-
-        // Check if the user's account is not verified (assuming 'verified' is a column in the users table)
-        if (!Auth::user()->email_verified_at) {
-            return response()->json(['loginFailed' => 'Your account is not verified.'], 403);
-        }
-        // $action ="save-as-draft" /* $request->input('action') */;
-
-        // if (!$action) {
-        //     $validator = Validator::make($request->all(), [
-        //         'bank_name' => 'required|string|max:128',
-        //         'account_name' => 'required|string|max:128',
-        //         'account_number' => 'required|string|max:30',
-        //         'iban' => 'required|string|max:34',
-        //         'swift_code' => 'required|string|max:16',
-        //         'iban_certificate' =>  !isset($request->iban_certificate_old) ?  'required|file|mimes:pdf,jpeg,png|max:5120' : '',
-        //     ], [
-        //         // Custom error messages if needed
-        //     ]);
-        //     $saveasdraft = false;
-
-        //     if ($validator->fails()) {
-        //         return response()->json(['errors' => $validator->errors()], 422);
-        //     }
-        // } else {
-            $validator = Validator::make($request->all(), [
-                'bank_name' => 'nullable|string|max:128',
-                'account_name' => 'nullable|string|max:128',
-                'account_number' => 'nullable|string|max:30',
-                'iban' => 'nullable|string|max:34',
-                'swift_code' => 'nullable|string|max:16',
-                'iban_certificate' =>  !isset($request->iban_certificate_old) ?  'nullable|file|mimes:pdf,jpeg,png|max:5120' : '',
-            ]);
-            if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors()], 422);
-            }
-        // }
         $action = $request->input('action');
         // it indicates the "save as draft" action.
 
@@ -757,7 +552,7 @@ class ShopController extends Controller
         $user = Auth::user();
         $user->step_number = 5;
         $user->save();
-        return response()->json(['success' => true, 'message' => 'Drafts Payout information saved successfully','save_as_draft' => true]);
+        return response()->json(['success' => true, 'message' => translate('Draft Payout information saved successfully'),'save_as_draft' => true]);
 
         // if (!$action) {
         //     $user = Auth::user();
@@ -779,7 +574,7 @@ class ShopController extends Controller
     public function storeShopRegister(SellerRegistrationShopRequest $request) {
 
         if (!isset($request->warehouse_name)) {
-            return response()->json(['status' => 'error', 'message' => 'Please add at least one warehouse.']);
+            return response()->json(['status' => 'error', 'message' => translate('Please add at least one warehouse.')]);
         }
 
         if ($request->input('vat_registered') == 1) {
@@ -912,7 +707,7 @@ class ShopController extends Controller
         $user = Auth::user();
         $user->steps = 1;
         $user->save();
-        return response()->json(['finish' => true, 'success' => true, 'message' => 'Payout information stored successfully']);
+        return response()->json(['finish' => true, 'success' => true, 'message' => 'Shop stored successfully']);
 
 
     }

@@ -39,7 +39,7 @@ class SellerRegistrationShopRequest extends FormRequest
         return [
             'trade_name_english' => 'required|string|max:128',
             'trade_name_arabic' => 'required|string|max:256',
-            'trade_license_doc' => !$this->input('trade_license_doc_old') ? 'required|file|mimes:pdf,jpeg,png|max:5120' : '',
+            'trade_license_doc' => !$this->input('trade_license_doc_old') ? 'required|file|mimes:pdf,jpeg,png|max:5120' : 'nullable|file|mimes:pdf,jpeg,png|max:5120',
             'eshop_name_english' => 'required|string|max:128',
             'eshop_name_arabic' => 'required|string|max:256',
             'eshop_desc_en' => 'nullable|string',
@@ -54,9 +54,9 @@ class SellerRegistrationShopRequest extends FormRequest
             'po_box' => 'nullable|string|max:32',
             'landline' => 'nullable|string|max:16',
             'vat_registered' => 'required|boolean',
-            'vat_certificate' => $this->input('vat_registered') == 1 && !$this->input('vat_certificate_old') ? 'required_if:vat_registered,1|file|mimes:pdf,jpeg,png|max:5120' : '',
+            'vat_certificate' => $this->input('vat_registered') == 1 && !$this->input('vat_certificate_old') ? 'required_if:vat_registered,1|file|mimes:pdf,jpeg,png|max:5120' : 'nullable|file|mimes:pdf,jpeg,png|max:5120',
             'trn' => $this->input('vat_registered') == 1 ? 'required_if:vat_registered,1|string|max:20' : '',
-            'tax_waiver' => $this->input('vat_registered') == 0 && !$this->input('tax_waiver_old') ? 'required_if:vat_registered,0|file|mimes:pdf,jpeg,png|max:5120' : '',
+            'tax_waiver' => $this->input('vat_registered') == 0 && !$this->input('tax_waiver_old') ? 'required_if:vat_registered,0|file|mimes:pdf,jpeg,png|max:5120' : 'nullable|file|mimes:pdf,jpeg,png|max:5120',
             'civil_defense_approval' => 'nullable|file|mimes:pdf,jpeg,png|max:5120',
             'first_name' => 'required|string|max:64',
             'last_name' => 'required|string|max:64',
@@ -67,7 +67,7 @@ class SellerRegistrationShopRequest extends FormRequest
             'date_of_birth' => 'required|date|before:-18 years',
             'emirates_id_number' => ['required', 'string', 'max:15', 'regex:/^[0-9]{15}$/'],
             'emirates_id_expiry_date' => 'required|date|after_or_equal:today',
-            'emirates_id_file' => !$this->input('emirates_id_file_old') ? 'required|file|mimes:pdf,jpeg,png|max:5120' : '',
+            'emirates_id_file' => !$this->input('emirates_id_file_old') ? 'required|file|mimes:pdf,jpeg,png|max:5120' : 'nullable|file|mimes:pdf,jpeg,png|max:5120',
             'business_owner' => 'required|boolean',
             'designation' => 'required|string|max:64',
             'warehouse_name.*' => 'required|max:128',
@@ -81,7 +81,7 @@ class SellerRegistrationShopRequest extends FormRequest
             'account_number' => 'required|string|max:30',
             'iban' => 'required|string|max:34',
             'swift_code' => 'required|string|max:16',
-            'iban_certificate' => !$this->input('iban_certificate_old') ? 'required|file|mimes:pdf,jpeg,png|max:5120' : '',
+            'iban_certificate' => !$this->input('iban_certificate_old') ? 'required|file|mimes:pdf,jpeg,png|max:5120' : 'nullable|file|mimes:pdf,jpeg,png|max:5120',
         ];
     }
 

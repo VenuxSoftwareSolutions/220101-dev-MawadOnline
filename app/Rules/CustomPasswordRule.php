@@ -28,22 +28,22 @@ class CustomPasswordRule implements Rule
 
         // Minimum password length is 9 characters
         if (strlen($value) < 9) {
-            $this->failures[] = 'Minimum length of 9 characters';
+            $this->failures[] = translate('Minimum length of 9 characters') ;
         }
 
         // At least one uppercase letter
         if (!preg_match('/[A-Z]/', $value)) {
-            $this->failures[] = 'At least one uppercase letter';
+            $this->failures[] = translate('At least one uppercase letter');
         }
 
         // At least one lowercase letter
         if (!preg_match('/[a-z]/', $value)) {
-            $this->failures[] = 'At least one lowercase letter';
+            $this->failures[] = translate('At least one lowercase letter');
         }
 
         // At least one number and maximum 4 numbers
         if (!preg_match('/\d/', $value) || preg_match_all('/\d/', $value) > 4) {
-            $this->failures[] = 'At least one number and maximum of 4 numbers';
+            $this->failures[] = translate('At least one number and Max Four Numbers');
         }
         // Check for three consecutive characters or their reverses in the same case
             $patterns = [
@@ -59,25 +59,25 @@ class CustomPasswordRule implements Rule
             $reversedPatternRegex = implode('|', $reversedPatterns);
 
             if (preg_match("/$patternRegex|$reversedPatternRegex/i", $value)) {
-                $this->failures[] = 'No three consecutive characters or their reverses in the same case are allowed';
+                $this->failures[] = translate('No three consecutive characters or their reverses in the same case are allowed, Example efg,ZYX,LMN,cba');
             }
 
         if (!Str::contains($value, ['@', '#', '-', '+', '/', '=', '$', '!', '%', '*', '?', '&'])) {
-            $this->failures[] = 'At least one special character';
+            $this->failures[] = translate('At least one special character');
         }
 
-        // At least one sign
-        if (!preg_match('/[^a-zA-Z0-9]/', $value)) {
-            $this->failures[] = 'At least one special character';
-        }
+        // // At least one sign
+        // if (!preg_match('/[^a-zA-Z0-9]/', $value)) {
+        //     $this->failures[] = 'At least one special character';
+        // }
 
         // No space allowed
         if (strpos($value, ' ') !== false) {
-            $this->failures[] = 'No spaces allowed';
+            $this->failures[] = translate('No spaces allowed');
         }
 
         if (preg_match('/012|123|234|345|456|567|678|789|987|876|765|654|543|432|321|210/', $value)) {
-            $this->failures[] = 'No three consecutive numbers, Example 678,543,987';
+            $this->failures[] = translate('No three consecutive numbers, Example 678,543,789,987');
 
         }
 
@@ -95,7 +95,7 @@ class CustomPasswordRule implements Rule
         $repetitiveCharacterPercentage = ($repeatedCount / $length) * 100;
 
         if ($repetitiveCharacterPercentage > 40) {
-            $this->failures[] = 'No more than 40% repetitive characters.';
+            $this->failures[] = translate('No more than 40% of repeated characters');
         }
     //     // No three consecutive numbers allowed
     //     if (preg_match('/\d{3}/', $value)) {
@@ -110,13 +110,13 @@ class CustomPasswordRule implements Rule
 
 
         // // No more than 40% of the password can be uppercase, lowercase, number, or sign
-        $length = strlen($value);
-        $uniqueCharacters = count(array_count_values(str_split($value)));
-        $repeatedCharacterPercentage = ($length - $uniqueCharacters) / $length * 100;
+        // $length = strlen($value);
+        // $uniqueCharacters = count(array_count_values(str_split($value)));
+        // $repeatedCharacterPercentage = ($length - $uniqueCharacters) / $length * 100;
 
-        if ($repeatedCharacterPercentage > 40) {
-            $this->failures[] = 'No more than 40% of the password can be repeated characters';
-        }
+        // if ($repeatedCharacterPercentage > 40) {
+        //     $this->failures[] = 'No more than 40% of the password can be repeated characters';
+        // }
         // No three characters or more can be a substring of first name, last name, or email
         $firstName = $this->firstName;
         $lastName = $this->lastName;
@@ -132,7 +132,7 @@ class CustomPasswordRule implements Rule
 
             // Perform a case-insensitive check
             if (stripos($password, $substring) !== false) {
-                $this->failures[] = 'No three characters or more can be a substring of first name, last name, or email';
+                $this->failures[] = translate('No three characters or more can be a substring of first name, last name, or email') ;
                 break;  // Exit the loop if a failure is detected
             }
         }
@@ -144,7 +144,7 @@ class CustomPasswordRule implements Rule
 
         foreach ($dictionaryWords as $word) {
             if (stripos($value, $word) !== false) {
-                $this->failures[] = 'No substring of the password can be a common English dictionary word';
+                $this->failures[] = translate('No substring of the password can be a common English dictionary word');
                 break; // Break the loop once one dictionary word is found
             }
         }
@@ -154,6 +154,6 @@ class CustomPasswordRule implements Rule
 
     public function message()
     {
-        return 'The password must meet the following criteria: ' . implode(', ', $this->failures);
+        return translate('The password must meet the following criteria: ') . implode(', ', $this->failures);
     }
 }

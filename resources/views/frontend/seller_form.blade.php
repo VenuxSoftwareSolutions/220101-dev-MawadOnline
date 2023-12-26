@@ -46,28 +46,27 @@
                                 @if (!Auth::check() || (Auth::check() && !Auth::user()->email_verified_at))
                                     <li class="nav-item">
                                         <a class="nav-link active" id="personal-info-tab" data-toggle="tab"
-                                            href="#personal-info">Personal Info</a>
+                                            href="#personal-info">{{ translate('Personal Info') }}</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" id="code-verification-tab" data-toggle="tab"
-                                            href="#code-verification">Code Verification Email</a>
+                                            href="#code-verification">{{ translate('Code Verification Email') }}</a>
                                     </li>
                                 @endif
                                 <li class="nav-item">
                                     <a class="nav-link" id="business-info-tab" data-toggle="tab"
-                                        href="#business-info">Business Information</a>
+                                        href="#business-info">{{ translate('Business Information') }}</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" id="contact-person-tab" data-toggle="tab"
-                                        href="#contact-person">Contact Person</a>
+                                        href="#contact-person">{{ translate('Contact Person') }}</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" id="warehouses-tab" data-toggle="tab"
-                                        href="#warehouses">Warehouses</a>
+                                        href="#warehouses">{{ translate('Warehouses') }}</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="payout-info-tab" data-toggle="tab" href="#payout-info">Payout
-                                        Information</a>
+                                    <a class="nav-link" id="payout-info-tab" data-toggle="tab" href="#payout-info">{{ translate('Payout Information') }}</a>
                                 </li>
                             </ul>
                             <div class="tab-content" id="registerTabsContent">
@@ -134,7 +133,7 @@
                                             </div>
                                             <div class="text-right">
                                                 <button type="button" class="btn btn-primary fw-600 rounded-0"
-                                                    {{-- onclick="switchTab('code-verification')" --}}>Next</button>
+                                                    {{-- onclick="switchTab('code-verification')" --}}>{{ translate('Next') }}</button>
                                             </div>
                                         </form>
                                     </div>
@@ -159,17 +158,17 @@
                                                             placeholder="{{ translate('Enter Code') }}"
                                                             name="verification_code" required maxlength="6"
                                                             pattern="[0-9]{6}">
-                                                        <small class="text-muted">A 6-digit code has been sent to your
-                                                            email.</small>
+                                                        <small class="text-muted">{{ translate('A 6-digit code has been sent to your
+                                                            email.') }}</small>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="text-right">
                                                 <button id="verifyCodeBtn" type="button"
                                                     class="btn btn-primary fw-600 rounded-0"
-                                                    {{-- onclick="switchTab('business-info')" --}}>Next</button>
+                                                    {{-- onclick="switchTab('business-info')" --}}>{{ translate('Next') }}</button>
                                                 <button id="resendCodeBtn" type="button"
-                                                    class="btn btn-secondary fw-600 rounded-0">Resend Code</button>
+                                                    class="btn btn-secondary fw-600 rounded-0">{{ translate('Resend Code') }}</button>
 
                                             </div>
                                         </form>
@@ -216,9 +215,9 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label>{{ translate('Trade License Doc') }} <span
-                                                                    class="text-primary">*</span><small>Max file size is
+                                                                    class="text-primary">*</span><small>{{ translate('Max file size is
                                                                     5MB and accepted file types are PDF and image
-                                                                    formats.</small></label>
+                                                                    formats.') }}</small></label>
 
 
                                                             @if (isset($user) && isset($user->business_information) && $user->business_information->trade_license_doc)
@@ -312,10 +311,10 @@
                                                                         class="text-primary">*</span></label>
                                                                 <select required name="state"
                                                                     class="form-control rounded-0" id="emirateempire">
-                                                                    <option value="">Please Choose !!</option>
+                                                                    <option value="">{{ translate('Please Choose !!') }} </option>
                                                                     <option
                                                                         @if ($user->business_information->state == 1) selected @endif
-                                                                        value="1">Abu dhabi</option>
+                                                                        value="1">Abu Dhabi</option>
                                                                     <option
                                                                         @if ($user->business_information->state == 2) selected @endif
                                                                         value="2">Ajman</option>
@@ -330,7 +329,7 @@
                                                                         value="5">Fujairah</option>
                                                                     <option
                                                                         @if ($user->business_information->state == 6) selected @endif
-                                                                        value="6">ras al khaimah</option>
+                                                                        value="6">Ras Al Khaimah</option>
                                                                     <option
                                                                         @if ($user->business_information->state == 7) selected @endif
                                                                         value="7">Umm Al-Quwain</option>
@@ -367,14 +366,14 @@
                                                                         class="text-primary">*</span></label>
                                                                 <select required name="state"
                                                                     class="form-control rounded-0" id="emirateempire">
-                                                                    <option value="" selected>Please Choose !!
+                                                                    <option value="" selected>{{ translate('Please Choose !!') }}
                                                                     </option>
-                                                                    <option value="1">Abu dhabi</option>
+                                                                    <option value="1">Abu Dhabi</option>
                                                                     <option value="2">Ajman</option>
                                                                     <option value="3">Sharjah</option>
                                                                     <option value="4">Dubai</option>
                                                                     <option value="5">Fujairah</option>
-                                                                    <option value="6">ras al khaimah</option>
+                                                                    <option value="6">Ras Al Khaimah</option>
                                                                     <option value="7">Umm Al-Quwain</option>
 
                                                                 </select>
@@ -387,7 +386,7 @@
                                                                         class="text-primary">*</span></label>
                                                                 <select required name="area_id"
                                                                     class="form-control rounded-0" id="areaempire">
-                                                                    <option value="" selected>Please Choose !!
+                                                                    <option value="" selected>{{ translate('Please Choose !!') }}
                                                                     </option>
 
 
@@ -480,9 +479,9 @@
                                                     <div class="col-md-6" id="vatCertificateGroup">
                                                         <div class="form-group">
                                                             <label>{{ translate('Vat Certificate') }} <span
-                                                                    class="text-primary">*</span><small>Max file size is
+                                                                    class="text-primary">*</span><small>{{ translate('Max file size is
                                                                     5MB and accepted file types are PDF and image
-                                                                    formats.</small></label>
+                                                                    formats.') }}</small></label>
                                                             @if (isset($user) && isset($user->business_information) && $user->business_information->vat_certificate)
                                                                 <a class="old_file"
                                                                     href="{{ static_asset($user->business_information->vat_certificate) }}"
@@ -508,9 +507,9 @@
                                                     <div class="col-md-6" id="taxWaiverGroup" {{-- style="display: none;" --}}>
                                                         <div class="form-group">
                                                             <label>{{ translate('Tax Waiver Certificate') }} <span
-                                                                    class="text-primary">*</span><small>Max file size is
+                                                                    class="text-primary">*</span><small>{{ translate('Max file size is
                                                                     5MB and accepted file types are PDF and image
-                                                                    formats.</small></label>
+                                                                    formats.') }}</small></label>
                                                             @if (isset($user) && isset($user->business_information) && $user->business_information->tax_waiver)
                                                                 <a class="old_file"
                                                                     href="{{ static_asset($user->business_information->tax_waiver) }}"
@@ -524,10 +523,10 @@
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('Civil Denfense Approval') }} <span
-                                                                    class="text-primary"></span><small>Max file size is 5MB
-                                                                    and accepted file types are PDF and image
-                                                                    formats.</small></label>
+                                                            <label>{{ translate('Civil Defense Approval') }} <span
+                                                                    class="text-primary"></span><small>{{ translate('Max file size is
+                                                                        5MB and accepted file types are PDF and image
+                                                                        formats.') }}</small></label>
                                                             {{-- <input  type="file" class="form-control rounded-0"
                                                                 name="civil_defense_approval"> --}}
                                                             @if (isset($user) && isset($user->business_information) && $user->business_information->civil_defense_approval)
@@ -553,10 +552,10 @@
                                         <div class="text-right">
                                             <button type="button"
                                                 class="btn btn-secondary fw-600 rounded-0 save-as-draft"
-                                                data-action="save-as-draft">Save as Draft</button>
+                                                data-action="save-as-draft">{{ translate('Save as Draft') }}</button>
 
                                             <button type="button" class="btn btn-primary fw-600 rounded-0"
-                                                {{-- onclick="switchTab('contact-person')" --}}>Save and Continue</button>
+                                                {{-- onclick="switchTab('contact-person')" --}}>{{ translate('Save and Continue') }}</button>
 
                                         </div>
                                     </form>
@@ -631,7 +630,7 @@
                                                         <div class="form-group">
                                                             <label>{{ translate('Mobile Phone') }} <span
                                                                     class="text-primary">*</span></label>
-                                                            <small class="text-muted">Example: +971123456789 or
+                                                            <small class="text-muted">{{ translate('Example') }}: +971123456789 {{ translate('or') }}
                                                                 00971123456789</small>
 
                                                             <input type="text" class="form-control rounded-0"
@@ -645,8 +644,8 @@
                                                         <div class="form-group">
                                                             <label>{{ translate('Additional Mobile Phone') }} <span
                                                                     class="text-primary"></span><small
-                                                                    class="text-muted">Example:
-                                                                    +971123456789 or 00971123456789</small></label>
+                                                                    class="text-muted">{{ translate('Example') }}:
+                                                                    +971123456789 {{ translate('or') }} 00971123456789</small></label>
                                                             <input type="text" class="form-control rounded-0"
                                                                 placeholder="{{ translate('Additional Mobile Phone') }}"
                                                                 value="{{ $user->contact_people->additional_mobile_phone ?? '+971' }}"
@@ -680,7 +679,7 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label>{{ translate('Emirates ID - Number') }} <span
-                                                                    class="text-primary">*</span></label> <small class="text-muted">Example:123456789012345
+                                                                    class="text-primary">*</span></label> <small class="text-muted">{{ translate('Example') }}:123456789012345
                                                                      </small>
                                                             <input type="text" class="form-control rounded-0"
                                                                 placeholder="{{ translate('Emirates ID - Number') }}"
@@ -703,9 +702,9 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label>{{ translate('Emirates ID') }} <span
-                                                                    class="text-primary">*</span><small>Max file size is
-                                                                    5MB and accepted file types are PDF and image
-                                                                    formats.</small></label>
+                                                                    class="text-primary">*</span><small>{{ translate('Max file size is
+                                                                        5MB and accepted file types are PDF and image
+                                                                        formats.') }}</small></label>
                                                             @if (isset($user) && isset($user->contact_people) && $user->contact_people->emirates_id_file_path)
                                                                 <a class="old_file"
                                                                     href="{{ static_asset($user->contact_people->emirates_id_file_path) }}"
@@ -765,10 +764,10 @@
                                         <div class="text-right">
                                             <button type="button"
                                                 class="btn btn-secondary fw-600 rounded-0 save-as-draft"
-                                                data-action="save-as-draft">Save as Draft</button>
+                                                data-action="save-as-draft">{{ translate('Save as Draft') }}</button>
 
                                             <button type="button" class="btn btn-primary fw-600 rounded-0"
-                                                {{-- onclick="switchTab('warehouses')" --}}>Save and Continue</button>
+                                                {{-- onclick="switchTab('warehouses')" --}}>{{ translate('Save and Continue') }}</button>
                                         </div>
                                     </form>
                                 </div>
@@ -790,7 +789,7 @@
                                                 <div class="row warehouseRow" id="warehouseRows">
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label for="warehouse_name">Warehouse Name<span
+                                                            <label for="warehouse_name">{{ translate('Warehouse Name') }}<span
                                                                     class="text-primary">*</span></label>
                                                             <input type="text" class="form-control"
                                                                 name="warehouse_name_add">
@@ -800,12 +799,12 @@
 
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label for="state">State/Emirate<span
+                                                            <label for="state">{{ translate('State/Emirate') }}<span
                                                                     class="text-primary">*</span></label>
                                                             <select name="state_warehouse_add"
                                                                 class="form-control rounded-0 emirateSelect"
                                                                 id="emirateempire">
-                                                                <option value="" selected>Please Choose !!
+                                                                <option value="" selected>{{ translate('Please Choose !!') }}
                                                                 </option>
                                                                 <option value="1">Abu dhabi</option>
                                                                 <option value="2">Ajman</option>
@@ -820,11 +819,11 @@
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label for="area">Area<span
+                                                            <label for="area">{{ translate('Area') }}<span
                                                                     class="text-primary">*</span></label>
                                                             <select name="area_warehouse_add"
                                                                 class="form-control areaSelect">
-                                                                <option value="" selected>Please Choose !!
+                                                                <option value="" selected>{{ translate('Please Choose !!') }}
                                                                 </option>
                                                                 <!-- Options for area -->
                                                             </select>
@@ -833,7 +832,7 @@
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label for="street">Street<span
+                                                            <label for="street">{{ translate('Street') }}<span
                                                                     class="text-primary">*</span></label>
                                                             <input type="text" class="form-control"
                                                                 name="street_warehouse_add">
@@ -841,7 +840,7 @@
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label for="building">Building<span
+                                                            <label for="building">{{ translate('Building') }}<span
                                                                     class="text-primary">*</span></label>
                                                             <input type="text" class="form-control"
                                                                 name="building_warehouse_add">
@@ -849,7 +848,7 @@
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label for="unit">Unit/Office No.<span
+                                                            <label for="unit">{{ translate('Unit/Office No.') }}<span
                                                                     class="text-primary"></span></label>
                                                             <input type="text" class="form-control" name="unit_add">
                                                         </div>
@@ -857,21 +856,20 @@
 
 
                                                     <div class="col-auto ml-auto">
-                                                        <button type="button" class="btn btn-primary" id="addRow">Add
-                                                            Warehouses</button>
+                                                        <button type="button" class="btn btn-primary" id="addRow">{{ translate('Add Warehouse') }}</button>
 
                                                     </div>
                                                 </div>
                                                 <table class="table mt-3" id="warehouseTable">
                                                     <thead class="thead-dark">
                                                         <tr>
-                                                            <th>Warehouse Name</th>
-                                                            <th>State/Emirate</th>
-                                                            <th>Area</th>
-                                                            <th>Street</th>
-                                                            <th>Building</th>
-                                                            <th>Unit/Office No.</th>
-                                                            <th>Action</th>
+                                                            <th>{{ translate('Warehouse Name') }}</th>
+                                                            <th>{{ translate('State/Emirate') }}</th>
+                                                            <th>{{ translate('Area') }}</th>
+                                                            <th>{{ translate('Street') }}</th>
+                                                            <th>{{ translate('Building') }}</th>
+                                                            <th>{{ translate('Unit/Office No.') }}</th>
+                                                            <th>{{ translate('Action') }}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -886,11 +884,10 @@
                                                                         <select required name="state_warehouse[]"
                                                                             class="form-control rounded-0 emirateSelect"
                                                                             id="emirateempire">
-                                                                            <option value="" selected>Please Choose
-                                                                                !!</option>
+                                                                            <option value="" selected>{{ translate('Please Choose') }}</option>
                                                                             <option
                                                                                 @if ($warehouse->emirate_id == 1) selected @endif
-                                                                                value="1">Abu dhabi</option>
+                                                                                value="1">Abu Dhabi</option>
                                                                             <option
                                                                                 @if ($warehouse->emirate_id == 2) selected @endif
                                                                                 value="2">Ajman</option>
@@ -905,7 +902,7 @@
                                                                                 value="5">Fujairah</option>
                                                                             <option
                                                                                 @if ($warehouse->emirate_id == 6) selected @endif
-                                                                                value="6">ras al khaimah</option>
+                                                                                value="6">Ras Al Khaimah</option>
                                                                             <option
                                                                                 @if ($warehouse->emirate_id == 7) selected @endif
                                                                                 value="7">Umm Al-Quwain</option>
@@ -918,8 +915,7 @@
                                                                             @php
                                                                                 $areas = App\Models\Area::where('emirate_id', $warehouse->emirate_id)->get();
                                                                             @endphp
-                                                                            <option value="" selected>Please Choose
-                                                                                !!</option>
+                                                                            <option value="" selected>{{ translate('Please Choose') }}</option>
                                                                             @foreach ($areas as $area)
                                                                                 <option value="{{ $area->id }}"
                                                                                     @if ($area->id == $warehouse->area_id) selected @endif>
@@ -939,7 +935,7 @@
                                                                             value="{{ $warehouse->address_unit }}"
                                                                             name="unit_warehouse[]" required></td>
                                                                     <td><button type="button"
-                                                                            class="btn btn-danger removeRow">Remove</button>
+                                                                            class="btn btn-danger removeRow">{{ translate('Remove') }}</button>
                                                                     </td>
                                                                 </tr>
                                                             @endforeach
@@ -1153,10 +1149,10 @@
                                         <div class="text-right">
                                             <button type="button"
                                                 class="btn btn-secondary fw-600 rounded-0 save-as-draft"
-                                                data-action="save-as-draft">Save as Draft</button>
+                                                data-action="save-as-draft">{{ translate('Save as Draft') }}</button>
 
                                             <button type="button" class="btn btn-primary fw-600 rounded-0"
-                                                {{--  onclick="switchTab('payout-info')" --}}>Save and Continue</button>
+                                                {{--  onclick="switchTab('payout-info')" --}}>{{ translate('Save and Continue') }}</button>
                                         </div>
                                     </form>
                                 </div>
@@ -1232,9 +1228,9 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label>{{ translate('IBAN Certificate') }}<span
-                                                                    class="text-primary">*</span><small>Max file size is
-                                                                    5MB and accepted file types are PDF and image
-                                                                    formats.</small></label>
+                                                                    class="text-primary">*</span><small>{{ translate('Max file size is
+                                                                        5MB and accepted file types are PDF and image
+                                                                        formats.') }}</small></label>
                                                             @if (isset($user) && isset($user->payout_information) && $user->payout_information->iban_certificate)
                                                                 <a class="old_file"
                                                                     href="{{ static_asset($user->payout_information->iban_certificate) }}"
@@ -1254,11 +1250,10 @@
                                         <div class="text-right">
                                             <button type="button"
                                                 class="btn btn-secondary fw-600 rounded-0 save-as-draft"
-                                                data-action="save-as-draft">Save as Draft</button>
+                                                data-action="save-as-draft">{{ translate('Save as Draft') }}</button>
 
                                             <button id="registerShop" type="submit"
-                                                class="btn btn-primary fw-600 rounded-0">Register Your
-                                                Shop</button>
+                                                class="btn btn-primary fw-600 rounded-0">{{ translate('Register Your Shop') }}</button>
                                         </div>
                                     </form>
                                 </div>
@@ -1490,10 +1485,19 @@
                                 });
                             }
 
+
                             // Switch to the next tab if the save operation is successful
                             if (response.success) {
-                                toastr.success(response
+
+                                if(response.infoMsg) {
+                                    toastr.info(response
                                 .message); // Display success message using Toastr
+
+                                }else {
+                                    toastr.success(response
+                                .message); // Display success message using Toastr
+                                }
+
 
                                 // switchTab('code-verification'); // Change the tab ID accordingly
                                 var nextTabId = form.data(
@@ -1511,14 +1515,21 @@
                         error: function(xhr) {
                             if (xhr.status === 429) {
                                 // Too Many Attempts
-                                toastr.error('Too many attempts. Please try again later.');
+                                toastr.error("{{translate('Too many attempts. Please try again later.')}}");
                             } else {
-                                if (xhr.responseJSON.hasOwnProperty('loginFailed')) {
-                                    // Display login failure message using JavaScript
-                                    toastr.error(xhr.responseJSON.loginFailed);
-                                    shouldContinue = false;
+                                // if (xhr.responseJSON.hasOwnProperty('loginFailed')) {
+                                //     // Display login failure message using JavaScript
+                                //     toastr.error(xhr.responseJSON.loginFailed);
+                                //     shouldContinue = false;
 
-                                }
+                                // }
+                                if (xhr.status === 403) {
+                                // Authorization failed
+                                toastr.error(xhr.responseJSON
+                                .message); // Display the error message
+                                shouldContinue = false;
+
+                            }
                                 // Handle errors, e.g., show validation errors
                                 var errors = xhr.responseJSON.errors;
 
@@ -1604,13 +1615,14 @@
 
                         if (xhr.status === 429) {
                             // Too Many Attempts
-                            toastr.error('Too many attempts. Please try again later.');
+                            toastr.error("{{translate('Too many attempts. Please try again later.')}}");
                         } else {
                             if (xhr.status === 403) {
                                 // Authorization failed
                                 toastr.error(xhr.responseJSON
                                 .message); // Display the error message
                             }
+                            else {
                             // Handle errors, e.g., show validation errors
                             var errors = xhr.responseJSON.errors;
 
@@ -1629,7 +1641,7 @@
                                         // }
                                     });
 
-
+                                }
                         }
 
                     }
@@ -1729,9 +1741,11 @@
                             // Too Many Attempts
                             toastr.error('Too many attempts. Please try again later.');
                         } else {
-                            if (xhr.responseJSON.hasOwnProperty('loginFailed')) {
-                                // Display the error message using Toastr.js
-                                toastr.error(xhr.responseJSON.loginFailed);
+                            if (xhr.status === 403) {
+                                // Authorization failed
+                                toastr.error(xhr.responseJSON
+                                .message); // Display the error message
+
                             }
                         }
 
@@ -2004,22 +2018,22 @@
 
             // Password strength rules
             var rules = {
-                "Minimum length of 9 characters": password.length >= 9,
-                "At least one uppercase letter": /[A-Z]/.test(password),
-                "At least one lowercase letter": /[a-z]/.test(password),
+                "{{ translate('Minimum length of 9 characters') }}": password.length >= 9,
+                "{{ translate('At least one uppercase letter') }}": /[A-Z]/.test(password),
+                "{{ translate('At least one lowercase letter') }}": /[a-z]/.test(password),
                 // "At least one number": /\d/.test(password),
-                "At least one special character": /[@#-+/=$!%*?&]/.test(password),
-                "At least one number and Max Four Numbers": /^\D*(\d\D*){1,4}$/.test(password),
+                "{{ translate('At least one special character') }}": /[@#-+/=$!%*?&]/.test(password),
+                "{{ translate('At least one number and Max Four Numbers') }}": /^\D*(\d\D*){1,4}$/.test(password),
                 // maxConsecutiveChars: !/(.)\1\1/.test(password),
                 // maxPercentage: calculateMaxPercentage(password),
-                "No spaces allowed": !/\s/.test(password),
-                "No three consecutive numbers, Example 678,543,789,987": !
+                "{{ translate('No spaces allowed') }}": !/\s/.test(password),
+                "{{ translate('No three consecutive numbers, Example 678,543,789,987') }}": !
                     /(012|123|234|345|456|567|678|789|987|876|765|654|543|432|321|210)/.test(password),
-                "No three characters or more can be a substring of first name, last name, or email": !
+                "{{ translate('No three characters or more can be a substring of first name, last name, or email') }}": !
                     checkSubstring(password),
-                "No three consecutive characters or their reverses in the same case are allowed, Example efg,ZYX,LMN,cba":
+                "{{ translate('No three consecutive characters or their reverses in the same case are allowed, Example efg,ZYX,LMN,cba') }}":
                     !patternRegex.test(password),
-                "No more than 40% of repeated characters": repeatedCharacterPercentage <= 40
+                "{{ translate('No more than 40% of repeated characters') }}": repeatedCharacterPercentage <= 40
 
             };
 
