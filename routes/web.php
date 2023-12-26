@@ -114,6 +114,11 @@ Route::controller(HomeController::class)->group(function () {
     Route::post('/users/login/cart', 'cart_login')->name('cart.login.submit')->middleware('handle-demo-login');
     // Route::get('/new-page', 'new_page')->name('new_page');
 
+    Route::get('/business', function () {
+        return view('email.waitlist-email');
+    })->name('business');
+    Route::post('/send-waitlist-email', 'sendWaitlistEmail' )->name('send-waitlist-email');
+
 
     //Home Page
     Route::get('/', 'index')->name('home');
