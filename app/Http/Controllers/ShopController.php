@@ -86,26 +86,26 @@ class ShopController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(/* SellerRegistrationRequest */Request $request)
+    public function store(SellerRegistrationRequest  $request)
     {
 
-        $validator = Validator::make($request->all(), [
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => [
-                'required', 'email',
-                Rule::unique('users', 'email')->where(function ($query) {
-                    $query->whereNotNull('email_verified_at');
-                }),
-            ],
-            // 'password' => ['required', 'confirmed', new CustomPasswordRule],
-            'password' => ['required', 'confirmed', new CustomPasswordRule($request->input('first_name'), $request->input('last_name'), $request->input('email'))],
+        // $validator = Validator::make($request->all(), [
+        //     'first_name' => 'required|string|max:255',
+        //     'last_name' => 'required|string|max:255',
+        //     'email' => [
+        //         'required', 'email',
+        //         Rule::unique('users', 'email')->where(function ($query) {
+        //             $query->whereNotNull('email_verified_at');
+        //         }),
+        //     ],
+        //     // 'password' => ['required', 'confirmed', new CustomPasswordRule],
+        //     'password' => ['required', 'confirmed', new CustomPasswordRule($request->input('first_name'), $request->input('last_name'), $request->input('email'))],
 
-        ]);
+        // ]);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
+        // if ($validator->fails()) {
+        //     return response()->json(['errors' => $validator->errors()], 422);
+        // }
 
         // $user = new User;
         // $user->name = $request->first_name . " " . $request->last_name;
@@ -142,7 +142,7 @@ class ShopController extends Controller
 
 
             // Send the verification code to the user's email
-            // Mail::to($request->email)->send(new VerificationCodeEmail($verificationCode));
+            Mail::to($request->email)->send(new VerificationCodeEmail($verificationCode));
         }
         return response()->json(['success' => true, 'message' => translate('Your account has been created successfully. Please check your email for verification.')]);
 
@@ -447,7 +447,7 @@ class ShopController extends Controller
             'expires_at' => $expirationTime,
         ]);
 
-        // Mail::to($request->email)->send(new VerificationCodeEmail($newVerificationCode));
+        Mail::to($request->email)->send(new VerificationCodeEmail($newVerificationCode));
         // Reset the attempt count when a new code is sent
         $request->session()->put('verification_attempts', 0);
 

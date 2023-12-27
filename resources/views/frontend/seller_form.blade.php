@@ -602,7 +602,7 @@
                                                                     class="text-primary">*</span></label>
                                                             @php
                                                                 $lastName = null;
-                                                                if (isset($user->contact_people->last_name) && !empty($user->contact_people->first_name)) {
+                                                                if (isset($user->contact_people->last_name) && !empty($user->contact_people->last_name)) {
                                                                     $lastName = $user->contact_people->last_name;
                                                                 } elseif (isset($user->last_name)) {
                                                                     $lastName = $user->last_name;
@@ -619,10 +619,19 @@
                                                         <div class="form-group">
                                                             <label>{{ translate('Email') }} <span
                                                                     class="text-primary">*</span></label>
+                                                                    @php
+                                                                    $emailUser = null;
+                                                                    if (isset($user->contact_people->email) && !empty($user->contact_people->email)) {
+                                                                        $emailUser = $user->contact_people->email;
+                                                                    } elseif (isset($user->email)) {
+                                                                        $emailUser = $user->email;
+                                                                    }
+
+                                                                @endphp
                                                             <input type="email" class="form-control rounded-0"
                                                                 placeholder="{{ translate('Email') }}"
-                                                                value="{{ $user->contact_people->email ?? '' }}"
-                                                                name="email" required>
+
+                                                                value="{{ $emailUser }}" name="email" required>
 
                                                         </div>
                                                     </div>
