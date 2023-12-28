@@ -1,4 +1,4 @@
-<option value="0">{{ translate('No Parent') }}</option>
+<!--<option value="0">{{ translate('No Parent') }}</option>-->
 @foreach ($categories as $category)
     <option @if(old('parent_id') == $category->id) selected @endif value="{{ $category->id }}">{{ $category->getTranslation('name') }}</option>
     @foreach ($category->childrenCategories as $childCategory)

@@ -53,7 +53,8 @@
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label">{{translate('Parent Category')}}</label>
                         <div class="col-md-9">
-                            <select class="select2 form-control aiz-selectpicker" name="parent_id" data-toggle="select2" data-placeholder="Choose ..."data-live-search="true" data-selected="{{ $category->parent_id }}">
+                            <select class="select2 form-control aiz-selectpicker" id="selected_parent_id" name="parent_id" data-toggle="select2" data-placeholder="Choose ..."data-live-search="true" data-selected="{{ $category->parent_id }}"
+                                onchange="load_categories_attributes()">
                                 @include('backend.product.categories.categories_option', ['categories' => $categories]){{-- <option value="0">{{ translate('No Parent') }}</option>
                                 @foreach ($categories as $acategory)
                                     <option value="{{ $acategory->id }}">{{ $acategory->getTranslation('name') }}</option>
@@ -154,6 +155,15 @@
                             </select>
                         </div>
                     </div>
+                    <div class="form-group row  not-translatable">
+                        <label class="col-md-3 col-form-label">{{translate('Category Attributes')}}</label>
+                        <div class="col-md-9">
+                            <select class="select2 form-control aiz-selectpicker" id="category_attributes" name="category_attributes[]" data-toggle="select2" data-placeholder="Choose ..."data-live-search="true"  multiple>
+
+                            </select>
+                            <input type="hidden" value="{{ implode(',',$category_attributes->toArray())}}" id="category_has_attributes">
+                        </div>
+                    </div>
                     <div class="form-group mb-0 text-right">
                         <button type="submit" class="btn btn-primary">{{translate('Save')}}</button>
                     </div>
@@ -185,6 +195,52 @@
                 AIZ.plugins.bootstrapSelect('refresh');
             }
         });
+    }
+    document.addEventListener("DOMContentLoaded", function() {
+            // Your JavaScript code here
+            load_categories_attributes();
+        });
+    function load_categories_attributes(){
+        let parent_category = document.getElementById('selected_parent_id');
+        if(parent_category){
+
+            $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            type:"POST",
+            url:'{{ route('categories.categories-attributes') }}',
+
+
+            data:{
+                category_id: parent_category.value
+            },
+            success: function(data) {
+                let innerhtmlselect ='';
+                let myattributes =  document.querySelector('#category_has_attributes').value;
+                let myattributesarray = myattributes.split(',');
+                console.log(myattributesarray);
+                let founded = false;
+                data.forEach(element=>{
+                    myattributesarray.forEach(el=>{
+                        if(el==element.id){
+                            founded=true;
+                        }
+                    })
+                    if(founded==true){
+
+                        innerhtmlselect += '<option selected value="'+element.id+'">'+element.name+'</option>';
+                        founded = false;
+                    }else{
+                        innerhtmlselect += '<option value="'+element.id+'">'+element.name+'</option>';
+                    }
+                })
+
+                $('select[id="category_attributes"]').html(innerhtmlselect);
+                AIZ.plugins.bootstrapSelect('refresh');
+            }
+        });
+        }
     }
 </script>
 

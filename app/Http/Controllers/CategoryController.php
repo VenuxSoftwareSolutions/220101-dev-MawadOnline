@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attribute;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Product;
@@ -53,6 +54,28 @@ class CategoryController extends Controller
         return view('backend.product.categories.create', compact('categories', 'lang'));
     }
 
+    public function fetch_category_attribute(Request $request){
+        $parent = Category::find($request->category_id);
+        $expected_ids = [];
+        if($parent->parent_id!="0"){
+            $expected_ids = $this->getexpected_ids($parent);
+        }
+        /* if($parent){
+            $parent->categories_attributes
+        }
+        $category_attributes =Attribute::where(function())*/
+        return Attribute::whereNotIn('id',$expected_ids)->get();
+    }
+
+    public function getexpected_ids($categorie){
+        $ids = $categorie->categories_attributes()->pluck('attribute_id')->toArray();
+        if($categorie->parent_id!="0"){
+            $cat = Category::find($categorie->parent_id);
+            $ids = array_merge($ids,
+            $this->getexpected_ids($cat));
+        }
+        return $ids;
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -64,9 +87,13 @@ class CategoryController extends Controller
         if($request->featured == 'on'){
              $request->validate([
                 'cover_image' => 'required',
+                'parent_id' => 'not_in:0',
+            ]);
+        }else{
+            $request->validate([
+                'parent_id' => 'not_in:0',
             ]);
         }
-
         $category = new Category;
         $category->name = $request->name;
         $category->order_level = 0;
@@ -88,10 +115,10 @@ class CategoryController extends Controller
         }
 
         if ($request->slug != null) {
-            $category->slug = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->slug));
+            $category->slug = strtolower(reg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->slug)));
         }
         else {
-            $category->slug = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->name)).'-'.Str::random(5);
+            $category->slug = strtolower(preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->name)));
         }
         if ($request->commision_rate != null) {
             $category->commision_rate = $request->commision_rate;
@@ -100,6 +127,7 @@ class CategoryController extends Controller
         $category->save();
 
         $category->attributes()->sync($request->filtering_attributes);
+        $category->categories_attributes()->sync($request->category_attributes);
 
         foreach (get_all_active_language() as $key => $language){
             $category_translation = CategoryTranslation::firstOrNew(['lang' => $language->code, 'category_id' => $category->id]);
@@ -158,8 +186,8 @@ class CategoryController extends Controller
             ->whereNotIn('id', CategoryUtility::children_ids($category->id, true))->where('id', '!=' , $category->id)
             ->orderBy('name','asc')
             ->get();
-
-        return view('backend.product.categories.edit', compact('category', 'categories', 'lang'));
+        $category_attributes = $category->categories_attributes()->pluck('attribute_id');
+        return view('backend.product.categories.edit', compact('category', 'categories', 'lang','category_attributes'));
     }
 
     /**

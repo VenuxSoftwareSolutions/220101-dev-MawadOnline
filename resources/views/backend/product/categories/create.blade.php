@@ -13,7 +13,7 @@
             <ul class="nav nav-tabs nav-fill border-light">
                 @foreach (get_all_active_language() as $key => $language)
                 <li class="nav-item fa fa-hand-pointer-o language-switcher" id="my-active-lang-{{$language->code}}" data-lang-switcher="{{$language->code}}" >
-                    <div class="nav-link text-reset @if ($language->code == $lang) active @else bg-soft-dark border-light border-left-0 @endif py-3" href="">
+                    <div class="nav-link text-reset @if ($language->code == $lang) active @else @if($language->code !=env('DEFAULT_LANGUAGE'))bg-soft-dark @endif border-light border-left-0 @endif py-3" href="">
                         <img src="{{ static_asset('assets/img/flags/'.$language->code.'.png') }}" height="11" class="mr-1">
                         <span>{{$language->name}}</span>
                     </div>
@@ -25,6 +25,8 @@
                 switchers.forEach(element => {
 
                     element.addEventListener('click',function(){
+                        switchers.forEach(elm=>{elm.querySelector("div").classList.add('bg-soft-dark');});
+                        element.querySelector("div").classList.remove('bg-soft-dark');
                         let lang = element.getAttribute('data-lang-switcher');
                         let allswitchers = document.querySelectorAll('.language-switcher-tabs');
                         allswitchers.forEach(myelement=>{
@@ -69,7 +71,7 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 col-form-label">{{translate('Name')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
                                     <div class="col-md-9">
-                                        <input type="text" placeholder="{{__('Name '. ($language->code=='en'?'':$language->code))}}" id="name{{$language->code=='en'?'':'_'.$language->code}}" name="name{{$language->code=='en'?'':'_'.$language->code}}" class="form-control" required value="{{old('name'. ($language->code=='en'?'':'_'.$language->code))}}">
+                                        <input type="text" placeholder="{{translate('name_'.($language->code=='en'?'':$language->code))}}" id="name{{$language->code=='en'?'':'_'.$language->code}}" name="name{{$language->code=='en'?'':'_'.$language->code}}" class="form-control" required value="{{old('name'. ($language->code=='en'?'':'_'.$language->code))}}">
                                     </div>
                                 </div>
                             </div>
@@ -79,7 +81,7 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 col-form-label">{{translate('Description')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
                                     <div class="col-md-9">
-                                        <textarea rows="10" cols="30" type="text" placeholder="{{__('Description '. ($language->code=='en'?'':$language->code))}}" id="description{{$language->code=='en'?'':'_'.$language->code}}" name="description{{$language->code=='en'?'':'_'.$language->code}}" class="form-control" required>{{old('description'. ($language->code=='en'?'':'_'.$language->code))}}</textarea>
+                                        <textarea rows="10" cols="30" type="text" placeholder="{{translate('Description '. ($language->code=='en'?'':$language->code))}}" id="description{{$language->code=='en'?'':'_'.$language->code}}" name="description{{$language->code=='en'?'':'_'.$language->code}}" class="form-control" required>{{old('description'. ($language->code=='en'?'':'_'.$language->code))}}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -99,7 +101,8 @@
                     <div class="form-group row  not-translatable">
                         <label class="col-md-3 col-form-label">{{translate('Parent Category')}}</label>
                         <div class="col-md-9">
-                            <select  required class="select2 form-control aiz-selectpicker" id="selected_parent_id" name="parent_id" data-toggle="select2" data-placeholder="Choose ..." data-live-search="true">
+                            <select  required class="select2 form-control aiz-selectpicker" id="selected_parent_id" name="parent_id" data-toggle="select2" data-placeholder="Choose ..." data-live-search="true"
+                                onchange="load_categories_attributes()">
                                 @include('backend.product.categories.categories_option', ['categories' => $categories])
                                 {{-- <option value="0">{{ translate('No Parent') }}</option>
                                 @foreach ($categories as $category)
@@ -188,7 +191,7 @@
                             <div class="row">
                                 <label class="col-md-3 col-form-label">{{translate('Meta Description')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
                                 <div class="col-md-9">
-                                    <textarea name="meta_description{{$language->code=='en'?'':'_'.$language->code}}" rows="5"  placeholder="{{__('Meta Description '. ($language->code=='en'?'':$language->code))}}" class="form-control"> {{old('meta_description'. ($language->code=='en'?'':'_'.$language->code))}}</textarea>
+                                    <textarea name="meta_description{{$language->code=='en'?'':'_'.$language->code}}" rows="5"  placeholder="{{translate('Meta Description '. ($language->code=='en'?'':$language->code))}}" class="form-control"> {{old('meta_description'. ($language->code=='en'?'':'_'.$language->code))}}</textarea>
                                 </div>
                             </div>
                         </div>
@@ -208,6 +211,14 @@
                         </div>
                     @endif
                     <div class="form-group row  not-translatable">
+                        <label class="col-md-3 col-form-label">{{translate('Category Attributes')}}</label>
+                        <div class="col-md-9">
+                            <select class="select2 form-control aiz-selectpicker" id="category_attributes" name="category_attributes[]" data-toggle="select2" data-placeholder="Choose ..."data-live-search="true" multiple>
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row  not-translatable">
                         <label class="col-md-3 col-form-label">{{translate('Filtering Attributes')}}</label>
                         <div class="col-md-9">
                             <select class="select2 form-control aiz-selectpicker" name="filtering_attributes[]" data-toggle="select2" data-placeholder="Choose ..."data-live-search="true" multiple>
@@ -217,6 +228,7 @@
                             </select>
                         </div>
                     </div>
+
                     <div class="form-group row  not-translatable">
                         <label class="col-md-3 col-form-label">{{translate('featured')}}</label>
                         <div class="col-md-3">
@@ -256,6 +268,38 @@
                 AIZ.plugins.bootstrapSelect('refresh');
             }
         });
+    }
+    document.addEventListener("DOMContentLoaded", function() {
+            // Your JavaScript code here
+            load_categories_attributes();
+        });
+    function load_categories_attributes(){
+        let parent_category = document.getElementById('selected_parent_id');
+        if(parent_category){
+
+            $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            type:"POST",
+            url:'{{ route('categories.categories-attributes') }}',
+
+            //url:'/MawadOnline/admin/categories/categories-attributes/'+parent_category,
+
+            data:{
+                category_id: parent_category.value
+            },
+            success: function(data) {
+                console.log(data);
+                let innerhtmlselect ='';
+                data.forEach(element=>{
+                    innerhtmlselect += '<option value="'+element.id+'">'+element.name+'</option>';
+                })
+                $('select[id="category_attributes"]').html(innerhtmlselect);
+                AIZ.plugins.bootstrapSelect('refresh');
+            }
+        });
+        }
     }
 </script>
 
