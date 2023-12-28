@@ -2,7 +2,7 @@
     $value = null;
     isset($classes) ? $classes: $classes = null;
     $pc = \App\Models\Category::where('id', $category->parent_id)->first();
-    for ($i=0; $i < $category->level; $i++){
+    for ($i=1; $i < $category->level; $i++){
         $value .= '---/';
         $classes .=  ' mycat-'.$pc->id;
     }
