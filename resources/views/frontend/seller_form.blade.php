@@ -590,7 +590,7 @@
                                                                 }
 
                                                             @endphp
-                                                            <input type="text" class="form-control rounded-0"
+                                                            <input id="first_name_bi" type="text" class="form-control rounded-0"
                                                                 placeholder="{{ translate('First Name') }}"
                                                                 value="{{ $fistName }}" name="first_name" required>
 
@@ -611,7 +611,7 @@
                                                             @endphp
                                                             <input type="text" class="form-control rounded-0"
                                                                 placeholder="{{ translate('Last Name') }}"
-                                                                value="{{ $lastName }}" name="last_name" required>
+                                                               id="last_name_bi" value="{{ $lastName }}" name="last_name" required>
 
                                                         </div>
                                                     </div>
@@ -629,7 +629,7 @@
 
                                                                 @endphp
                                                             <input type="email" class="form-control rounded-0"
-                                                                placeholder="{{ translate('Email') }}"
+                                                               id="email_bi" placeholder="{{ translate('Email') }}"
 
                                                                 value="{{ $emailUser }}" name="email" required>
 
@@ -1476,6 +1476,12 @@
                             if (form.attr('id') == 'shop') {
                                 var email = $('#email').val();
                                 $('#emailAccount').val(email);
+                                firstName=$('#first_name').val();
+                                lastName=$('#last_name').val();
+                                $('#first_name_bi').val(firstName);
+                                $('#last_name_bi').val(lastName);
+                                $('#email_bi').val(email);
+
                             }
                             // Handle success, e.g., show a message
                             if (response.hasOwnProperty('finish') && response.finish === true) {
