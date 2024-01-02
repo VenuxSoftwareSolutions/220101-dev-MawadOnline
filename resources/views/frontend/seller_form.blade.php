@@ -1552,6 +1552,9 @@
                                 if (/* form.attr('id') != 'warehousesForm' && */ shouldContinue !=
                                     false) {
                                     displayValidationErrors(errors, form);
+                                    $(form).find('.is-invalid').first().focus();
+                                     // Display a general toast message
+                                    toastr.error("{{translate('Please review the form for errors.")}};
                                 }
 
                                 // if ((form).attr('id') == 'warehousesForm' && shouldContinue !=
@@ -1640,14 +1643,18 @@
                             else {
                             // Handle errors, e.g., show validation errors
                             var errors = xhr.responseJSON.errors;
-
+                            var  tabErrorFirst=false ;
                             // Display validation errors in the form
                             $('#businessInfoForm, #contactPersonForm, #payoutInfoForm, #warehousesForm')
                                 .each(
                                     function() {
 
-                                        displayValidationErrors(errors, $(this));
+                                        tabError=displayValidationErrors(errors, $(this));
+                                        if (tabError == false &&  tabErrorFirst ==false) {
+                                            tabErrorFirst=true ;
+                                            switchTab($(this).parent().attr('id'));
 
+                                        }
 
                                         // if ($(this).attr('id') == 'warehousesForm') {
                                         //     // toastr.error('Please fill up the rest of the table for warehousesForm. Ensure that no field exceeds 128 characters.');
@@ -1775,7 +1782,7 @@
 
 
             function displayValidationErrors(errors, form) {
-
+                var testValid=true ;
                 // Clear existing error messages and success styles
                 form.find('.invalid-feedback').remove();
                 form.find('.is-invalid').removeClass('is-invalid');
@@ -1794,6 +1801,8 @@
                 // Display new error messages
 
                 $.each(errors, function(field, messages) {
+
+
                     if(form.attr('id') == "warehousesForm") {
 
                         var correctedFieldName = field.split('.')[0].replace('[', '\\[').replace(']',
@@ -1839,9 +1848,12 @@
                     if (!inputField.hasClass('is-invalid') && inputField.val() !== '' || inputField.parent()
                         .find('a').hasClass('old_file')) {
                         inputField.addClass('is-valid');
+                    } else if(inputField.hasClass('is-invalid')) {
+                        testValid=false ;
                     }
-                });
 
+                });
+                return testValid ;
                 $('#validation-errors').html('Validation errors occurred. Please check the form.').show();
             }
 
@@ -1865,6 +1877,9 @@
 
                 $('#' + tabId + '-tab').addClass('active');
                 $('#' + tabId).addClass('show active');
+
+                // Focus on the first input with 'is-invalid' class within the active tab
+                $('#' + tabId).find('.is-invalid').first().focus();
             }
 
             $('#emirateempire').change(function() {
