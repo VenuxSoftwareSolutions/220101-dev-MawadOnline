@@ -68,7 +68,7 @@ Route::controller(UpdateController::class)->group(function () {
 
 Route::get('/admin', [AdminController::class, 'admin_dashboard'])->name('admin.dashboard')->middleware(['auth', 'admin', 'prevent-back-history']);
 Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-back-history']], function() {
-    
+
     // category
     Route::resource('categories', CategoryController::class);
     Route::controller(CategoryController::class)->group(function () {
@@ -77,7 +77,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::post('/categories/featured', 'updateFeatured')->name('categories.featured');
         Route::post('/categories/categoriesByType', 'categoriesByType')->name('categories.categories-by-type');
     });
-    
+
     // Brand
     Route::resource('brands', BrandController::class);
     Route::controller(BrandController::class)->group(function () {
@@ -103,7 +103,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::get('/products/duplicate/{id}', 'duplicate')->name('products.duplicate');
         Route::get('/products/destroy/{id}', 'destroy')->name('products.destroy');
         Route::post('/bulk-product-delete', 'bulk_product_delete')->name('bulk-product-delete');
-    
+
         Route::post('/products/sku_combination', 'sku_combination')->name('products.sku_combination');
         Route::post('/products/sku_combination_edit', 'sku_combination_edit')->name('products.sku_combination_edit');
         Route::post('/products/add-more-choice-option', 'add_more_choice_option')->name('products.add-more-choice-option');
@@ -120,7 +120,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
     Route::controller(ProductBulkUploadController::class)->group(function () {
         //Product Export
         Route::get('/product-bulk-export', 'export')->name('product_bulk_export.index');
-        
+
         //Product Bulk Upload
         Route::get('/product-bulk-upload/index', 'index')->name('product_bulk_upload.index');
         Route::post('/bulk-product-upload', 'bulk_upload')->name('bulk_product_upload');
@@ -132,7 +132,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
             Route::get('/seller', 'pdf_download_seller')->name('pdf.download_seller');
         });
     });
-    
+
     // Seller
     Route::resource('sellers', SellerController::class);
     Route::controller(SellerController::class)->group(function () {
@@ -233,7 +233,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::post('/currency/currency_edit', 'edit')->name('currency.edit');
         Route::post('/currency/update_status', 'update_status')->name('currency.update_status');
     });
-    
+
     //Tax
     Route::resource('tax', TaxController::class);
     Route::controller(TaxController::class)->group(function () {
@@ -241,7 +241,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::get('/tax/destroy/{id}', 'destroy')->name('tax.destroy');
         Route::post('tax-status', 'change_tax_status')->name('taxes.tax-status');
     });
-    
+
     // Language
     Route::resource('/languages', LanguageController::class);
     Route::controller(LanguageController::class)->group(function () {
@@ -257,7 +257,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::post('/languages/app-translations/key_value_store', 'storeAppTranlsation')->name('app-translations.store');
         Route::get('/languages/app-translations/export/{id}', 'exportARBFile')->name('app-translations.export');
     });
-    
+
 
     // website setting
     Route::group(['prefix' => 'website'], function() {
@@ -286,7 +286,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         // Add Permissiom
         Route::post('/roles/add_permission', 'add_permission')->name('roles.permission');
     });
-    
+
     // Staff
     Route::resource('staffs', StaffController::class);
     Route::get('/staffs/destroy/{id}', [StaffController::class, 'destroy'])->name('staffs.destroy');
@@ -301,13 +301,13 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::post('/flash_deals/product_discount', 'product_discount')->name('flash_deals.product_discount');
         Route::post('/flash_deals/product_discount_edit', 'product_discount_edit')->name('flash_deals.product_discount_edit');
     });
-    
+
     //Subscribers
     Route::controller(SubscriberController::class)->group(function () {
         Route::get('/subscribers', 'index')->name('subscribers.index');
         Route::get('/subscribers/destroy/{id}', 'destroy')->name('subscriber.destroy');
     });
-    
+
     // Order
     Route::resource('orders', OrderController::class);
     Route::controller(OrderController::class)->group(function () {
@@ -316,7 +316,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::get('/inhouse-orders', 'all_orders')->name('inhouse_orders.index');
         Route::get('/seller_orders', 'all_orders')->name('seller_orders.index');
         Route::get('orders_by_pickup_point', 'all_orders')->name('pick_up_point.index');
-        
+
         Route::get('/orders/{id}/show', 'show')->name('all_orders.show');
         Route::get('/inhouse-orders/{id}/show', 'show')->name('inhouse_orders.show');
         Route::get('/seller_orders/{id}/show', 'show')->name('seller_orders.show');
@@ -336,7 +336,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         //Delivery Boy Assign
         Route::post('/orders/delivery-boy-assign', 'assign_delivery_boy')->name('orders.delivery-boy-assign');
     });
-    
+
     Route::post('/pay_to_seller', [CommissionController::class, 'pay_to_seller'])->name('commissions.pay_to_seller');
 
     //Reports
@@ -366,7 +366,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
     Route::resource('coupon', CouponController::class);
     Route::controller(CouponController::class)->group(function () {
         Route::get('/coupon/destroy/{id}', 'destroy')->name('coupon.destroy');
-    
+
         //Coupon Form
         Route::post('/coupon/get_form', 'get_coupon_form')->name('coupon.get_coupon_form');
         Route::post('/coupon/get_form_edit', 'get_coupon_form_edit')->name('coupon.get_coupon_form_edit');
@@ -410,13 +410,13 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
     Route::controller(AttributeController::class)->group(function () {
         Route::get('/attributes/edit/{id}', 'edit')->name('attributes.edit');
         Route::get('/attributes/destroy/{id}', 'destroy')->name('attributes.destroy');
-    
+
         //Attribute Value
         Route::post('/store-attribute-value', 'store_attribute_value')->name('store-attribute-value');
         Route::get('/edit-attribute-value/{id}', 'edit_attribute_value')->name('edit-attribute-value');
         Route::post('/update-attribute-value/{id}', 'update_attribute_value')->name('update-attribute-value');
         Route::get('/destroy-attribute-value/{id}', 'destroy_attribute_value')->name('destroy-attribute-value');
-    
+
         //Colors
         Route::get('/colors', 'colors')->name('colors');
         Route::post('/colors/store', 'store_color')->name('colors.store');
@@ -481,7 +481,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::post('/bulk-uploaded-files-delete', 'bulk_uploaded_files_delete')->name('bulk-uploaded-files-delete');
         Route::get('/all-file', 'all_file');
     });
-    
+
     Route::get('/all-notification', [NotificationController::class, 'index'])->name('admin.all-notification');
 
     Route::get('/clear-cache', [AdminController::class, 'clearCache'])->name('cache.clear');
