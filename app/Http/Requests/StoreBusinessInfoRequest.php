@@ -18,12 +18,14 @@ class StoreBusinessInfoRequest extends FormRequest
         if (!Auth::check()) {
 
             throw new AuthorizationException(translate('Your account is not verified. Please create an account and confirm it.'));
+
             return false;
         }
 
         // Check if the user's account is not verified (assuming 'verified' is a column in the users table)
         if (!Auth::user()->email_verified_at) {
             throw new AuthorizationException(translate('Your account is not verified. Please create an account and confirm it.'));
+
             return false;
         }
         return true;

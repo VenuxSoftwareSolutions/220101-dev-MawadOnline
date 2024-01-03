@@ -66,7 +66,8 @@
                                         href="#warehouses">{{ translate('Warehouses') }}</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="payout-info-tab" data-toggle="tab" href="#payout-info">{{ translate('Payout Information') }}</a>
+                                    <a class="nav-link" id="payout-info-tab" data-toggle="tab"
+                                        href="#payout-info">{{ translate('Payout Information') }}</a>
                                 </li>
                             </ul>
                             <div class="tab-content" id="registerTabsContent">
@@ -158,12 +159,19 @@
                                                             placeholder="{{ translate('Enter Code') }}"
                                                             name="verification_code" required maxlength="6"
                                                             pattern="[0-9]{6}">
-                                                        <small class="text-muted">{{ translate('A 6-digit code has been sent to your
-                                                            email.') }}</small>
+                                                        <small
+                                                            class="text-muted">{{ translate('A 6-digit code has been sent to your
+                                                                                                                                                                                    email.') }}</small>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="text-right">
+                                                <!-- Previous Button -->
+                                                <button type="button" data-prv='personal-info'
+                                                    class="btn btn-info fw-600 rounded-0 prv-tab">
+                                                    {{ translate('Previous') }}
+                                                </button>
+
                                                 <button id="verifyCodeBtn" type="button"
                                                     class="btn btn-primary fw-600 rounded-0"
                                                     {{-- onclick="switchTab('business-info')" --}}>{{ translate('Next') }}</button>
@@ -216,8 +224,8 @@
                                                         <div class="form-group">
                                                             <label>{{ translate('Trade License Doc') }} <span
                                                                     class="text-primary">*</span><small>{{ translate('Max file size is
-                                                                    5MB and accepted file types are PDF and image
-                                                                    formats.') }}</small></label>
+                                                                                                                                                                                                            5MB and accepted file types are PDF and image
+                                                                                                                                                                                                            formats.') }}</small></label>
 
 
                                                             @if (isset($user) && isset($user->business_information) && $user->business_information->trade_license_doc)
@@ -311,7 +319,8 @@
                                                                         class="text-primary">*</span></label>
                                                                 <select required name="state"
                                                                     class="form-control rounded-0" id="emirateempire">
-                                                                    <option value="">{{ translate('Please Choose !!') }} </option>
+                                                                    <option value="">
+                                                                        {{ translate('Please Choose !!') }} </option>
                                                                     <option
                                                                         @if ($user->business_information->state == 1) selected @endif
                                                                         value="1">Abu Dhabi</option>
@@ -366,7 +375,8 @@
                                                                         class="text-primary">*</span></label>
                                                                 <select required name="state"
                                                                     class="form-control rounded-0" id="emirateempire">
-                                                                    <option value="" selected>{{ translate('Please Choose !!') }}
+                                                                    <option value="" selected>
+                                                                        {{ translate('Please Choose !!') }}
                                                                     </option>
                                                                     <option value="1">Abu Dhabi</option>
                                                                     <option value="2">Ajman</option>
@@ -386,7 +396,8 @@
                                                                         class="text-primary">*</span></label>
                                                                 <select required name="area_id"
                                                                     class="form-control rounded-0" id="areaempire">
-                                                                    <option value="" selected>{{ translate('Please Choose !!') }}
+                                                                    <option value="" selected>
+                                                                        {{ translate('Please Choose !!') }}
                                                                     </option>
 
 
@@ -480,8 +491,8 @@
                                                         <div class="form-group">
                                                             <label>{{ translate('Vat Certificate') }} <span
                                                                     class="text-primary">*</span><small>{{ translate('Max file size is
-                                                                    5MB and accepted file types are PDF and image
-                                                                    formats.') }}</small></label>
+                                                                                                                                                                                                            5MB and accepted file types are PDF and image
+                                                                                                                                                                                                            formats.') }}</small></label>
                                                             @if (isset($user) && isset($user->business_information) && $user->business_information->vat_certificate)
                                                                 <a class="old_file"
                                                                     href="{{ static_asset($user->business_information->vat_certificate) }}"
@@ -508,8 +519,8 @@
                                                         <div class="form-group">
                                                             <label>{{ translate('Tax Waiver Certificate') }} <span
                                                                     class="text-primary">*</span><small>{{ translate('Max file size is
-                                                                    5MB and accepted file types are PDF and image
-                                                                    formats.') }}</small></label>
+                                                                                                                                                                                                            5MB and accepted file types are PDF and image
+                                                                                                                                                                                                            formats.') }}</small></label>
                                                             @if (isset($user) && isset($user->business_information) && $user->business_information->tax_waiver)
                                                                 <a class="old_file"
                                                                     href="{{ static_asset($user->business_information->tax_waiver) }}"
@@ -525,8 +536,8 @@
                                                         <div class="form-group">
                                                             <label>{{ translate('Civil Defense Approval') }} <span
                                                                     class="text-primary"></span><small>{{ translate('Max file size is
-                                                                        5MB and accepted file types are PDF and image
-                                                                        formats.') }}</small></label>
+                                                                                                                                                                                                                5MB and accepted file types are PDF and image
+                                                                                                                                                                                                                formats.') }}</small></label>
                                                             {{-- <input  type="file" class="form-control rounded-0"
                                                                 name="civil_defense_approval"> --}}
                                                             @if (isset($user) && isset($user->business_information) && $user->business_information->civil_defense_approval)
@@ -590,7 +601,8 @@
                                                                 }
 
                                                             @endphp
-                                                            <input id="first_name_bi" type="text" class="form-control rounded-0"
+                                                            <input id="first_name_bi" type="text"
+                                                                class="form-control rounded-0"
                                                                 placeholder="{{ translate('First Name') }}"
                                                                 value="{{ $fistName }}" name="first_name" required>
 
@@ -611,7 +623,8 @@
                                                             @endphp
                                                             <input type="text" class="form-control rounded-0"
                                                                 placeholder="{{ translate('Last Name') }}"
-                                                               id="last_name_bi" value="{{ $lastName }}" name="last_name" required>
+                                                                id="last_name_bi" value="{{ $lastName }}"
+                                                                name="last_name" required>
 
                                                         </div>
                                                     </div>
@@ -619,18 +632,17 @@
                                                         <div class="form-group">
                                                             <label>{{ translate('Email') }} <span
                                                                     class="text-primary">*</span></label>
-                                                                    @php
-                                                                    $emailUser = null;
-                                                                    if (isset($user->contact_people->email) && !empty($user->contact_people->email)) {
-                                                                        $emailUser = $user->contact_people->email;
-                                                                    } elseif (isset($user->email)) {
-                                                                        $emailUser = $user->email;
-                                                                    }
+                                                            @php
+                                                                $emailUser = null;
+                                                                if (isset($user->contact_people->email) && !empty($user->contact_people->email)) {
+                                                                    $emailUser = $user->contact_people->email;
+                                                                } elseif (isset($user->email)) {
+                                                                    $emailUser = $user->email;
+                                                                }
 
-                                                                @endphp
+                                                            @endphp
                                                             <input type="email" class="form-control rounded-0"
-                                                               id="email_bi" placeholder="{{ translate('Email') }}"
-
+                                                                id="email_bi" placeholder="{{ translate('Email') }}"
                                                                 value="{{ $emailUser }}" name="email" required>
 
                                                         </div>
@@ -639,7 +651,8 @@
                                                         <div class="form-group">
                                                             <label>{{ translate('Mobile Phone') }} <span
                                                                     class="text-primary">*</span></label>
-                                                            <small class="text-muted">{{ translate('Example') }}: +971123456789 {{ translate('or') }}
+                                                            <small class="text-muted">{{ translate('Example') }}:
+                                                                +971123456789 {{ translate('or') }}
                                                                 00971123456789</small>
 
                                                             <input type="text" class="form-control rounded-0"
@@ -654,7 +667,8 @@
                                                             <label>{{ translate('Additional Mobile Phone') }} <span
                                                                     class="text-primary"></span><small
                                                                     class="text-muted">{{ translate('Example') }}:
-                                                                    +971123456789 {{ translate('or') }} 00971123456789</small></label>
+                                                                    +971123456789 {{ translate('or') }}
+                                                                    00971123456789</small></label>
                                                             <input type="text" class="form-control rounded-0"
                                                                 placeholder="{{ translate('Additional Mobile Phone') }}"
                                                                 value="{{ $user->contact_people->additional_mobile_phone ?? '+971' }}"
@@ -688,8 +702,9 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label>{{ translate('Emirates ID - Number') }} <span
-                                                                    class="text-primary">*</span></label> <small class="text-muted">{{ translate('Example') }}:123456789012345
-                                                                     </small>
+                                                                    class="text-primary">*</span></label> <small
+                                                                class="text-muted">{{ translate('Example') }}:123456789012345
+                                                            </small>
                                                             <input type="text" class="form-control rounded-0"
                                                                 placeholder="{{ translate('Emirates ID - Number') }}"
                                                                 value="{{ $user->contact_people->emirates_id_number ?? '' }}"
@@ -712,8 +727,8 @@
                                                         <div class="form-group">
                                                             <label>{{ translate('Emirates ID') }} <span
                                                                     class="text-primary">*</span><small>{{ translate('Max file size is
-                                                                        5MB and accepted file types are PDF and image
-                                                                        formats.') }}</small></label>
+                                                                                                                                                                                                                5MB and accepted file types are PDF and image
+                                                                                                                                                                                                                formats.') }}</small></label>
                                                             @if (isset($user) && isset($user->contact_people) && $user->contact_people->emirates_id_file_path)
                                                                 <a class="old_file"
                                                                     href="{{ static_asset($user->contact_people->emirates_id_file_path) }}"
@@ -771,6 +786,11 @@
                                         </div>
 
                                         <div class="text-right">
+                                            <!-- Previous Button -->
+                                            <button type="button" data-prv='business-info'
+                                                class="btn btn-info fw-600 rounded-0 prv-tab">
+                                                {{ translate('Previous') }}
+                                            </button>
                                             <button type="button"
                                                 class="btn btn-secondary fw-600 rounded-0 save-as-draft"
                                                 data-action="save-as-draft">{{ translate('Save as Draft') }}</button>
@@ -798,7 +818,8 @@
                                                 <div class="row warehouseRow" id="warehouseRows">
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label for="warehouse_name">{{ translate('Warehouse Name') }}<span
+                                                            <label
+                                                                for="warehouse_name">{{ translate('Warehouse Name') }}<span
                                                                     class="text-primary">*</span></label>
                                                             <input type="text" class="form-control"
                                                                 name="warehouse_name_add">
@@ -813,7 +834,8 @@
                                                             <select name="state_warehouse_add"
                                                                 class="form-control rounded-0 emirateSelect"
                                                                 id="emirateempire">
-                                                                <option value="" selected>{{ translate('Please Choose !!') }}
+                                                                <option value="" selected>
+                                                                    {{ translate('Please Choose !!') }}
                                                                 </option>
                                                                 <option value="1">Abu dhabi</option>
                                                                 <option value="2">Ajman</option>
@@ -832,7 +854,8 @@
                                                                     class="text-primary">*</span></label>
                                                             <select name="area_warehouse_add"
                                                                 class="form-control areaSelect">
-                                                                <option value="" selected>{{ translate('Please Choose !!') }}
+                                                                <option value="" selected>
+                                                                    {{ translate('Please Choose !!') }}
                                                                 </option>
                                                                 <!-- Options for area -->
                                                             </select>
@@ -865,7 +888,8 @@
 
 
                                                     <div class="col-auto ml-auto">
-                                                        <button type="button" class="btn btn-primary" id="addRow">{{ translate('Add Warehouse') }}</button>
+                                                        <button type="button" class="btn btn-primary"
+                                                            id="addRow">{{ translate('Add Warehouse') }}</button>
 
                                                     </div>
                                                 </div>
@@ -893,7 +917,8 @@
                                                                         <select required name="state_warehouse[]"
                                                                             class="form-control rounded-0 emirateSelect"
                                                                             id="emirateempire">
-                                                                            <option value="" selected>{{ translate('Please Choose') }}</option>
+                                                                            <option value="" selected>
+                                                                                {{ translate('Please Choose') }}</option>
                                                                             <option
                                                                                 @if ($warehouse->emirate_id == 1) selected @endif
                                                                                 value="1">Abu Dhabi</option>
@@ -924,7 +949,8 @@
                                                                             @php
                                                                                 $areas = App\Models\Area::where('emirate_id', $warehouse->emirate_id)->get();
                                                                             @endphp
-                                                                            <option value="" selected>{{ translate('Please Choose') }}</option>
+                                                                            <option value="" selected>
+                                                                                {{ translate('Please Choose') }}</option>
                                                                             @foreach ($areas as $area)
                                                                                 <option value="{{ $area->id }}"
                                                                                     @if ($area->id == $warehouse->area_id) selected @endif>
@@ -1156,6 +1182,12 @@
 
 
                                         <div class="text-right">
+                                            <!-- Previous Button -->
+                                            <button type="button" data-prv='contact-person'
+                                                class="btn btn-info fw-600 rounded-0 prv-tab">
+                                                {{ translate('Previous') }}
+                                            </button>
+
                                             <button type="button"
                                                 class="btn btn-secondary fw-600 rounded-0 save-as-draft"
                                                 data-action="save-as-draft">{{ translate('Save as Draft') }}</button>
@@ -1238,8 +1270,8 @@
                                                         <div class="form-group">
                                                             <label>{{ translate('IBAN Certificate') }}<span
                                                                     class="text-primary">*</span><small>{{ translate('Max file size is
-                                                                        5MB and accepted file types are PDF and image
-                                                                        formats.') }}</small></label>
+                                                                                                                                                                                                                5MB and accepted file types are PDF and image
+                                                                                                                                                                                                                formats.') }}</small></label>
                                                             @if (isset($user) && isset($user->payout_information) && $user->payout_information->iban_certificate)
                                                                 <a class="old_file"
                                                                     href="{{ static_asset($user->payout_information->iban_certificate) }}"
@@ -1257,6 +1289,12 @@
                                         </div>
 
                                         <div class="text-right">
+                                            <!-- Previous Button -->
+                                            <button type="button" data-prv='warehouses'
+                                                class="btn btn-info fw-600 rounded-0 prv-tab">
+                                                {{ translate('Previous') }}
+                                            </button>
+
                                             <button type="button"
                                                 class="btn btn-secondary fw-600 rounded-0 save-as-draft"
                                                 data-action="save-as-draft">{{ translate('Save as Draft') }}</button>
@@ -1367,6 +1405,14 @@
             //         toastr.error('Cannot remove the last warehouse.');
             //     }
             // });
+
+            $('.prv-tab').on('click', function() {
+                switchTab($(this).data('prv'));
+                var form = $(this).closest('form');
+                $(form).find('.is-invalid').first().focus();
+
+            });
+
             $('#addRow').on('click', function() {
                 var warehouseName = $('input[name="warehouse_name_add"]').val();
                 var state = $('select[name="state_warehouse_add"]').val();
@@ -1427,7 +1473,8 @@
                 $(this).tab('show');
             });
 
-            $('#registerTabsContent').find('.tab-pane button:not(#resendCodeBtn,#addRow,.removeRow,#registerShop)')
+            $('#registerTabsContent').find(
+                    '.tab-pane button:not(#resendCodeBtn,#addRow,.removeRow,#registerShop,.prv-tab)')
                 .on('click', function(e) {
                     // // Iterate over each warehouse row
 
@@ -1476,8 +1523,8 @@
                             if (form.attr('id') == 'shop') {
                                 var email = $('#email').val();
                                 $('#emailAccount').val(email);
-                                firstName=$('#first_name').val();
-                                lastName=$('#last_name').val();
+                                firstName = $('#first_name').val();
+                                lastName = $('#last_name').val();
                                 $('#first_name_bi').val(firstName);
                                 $('#last_name_bi').val(lastName);
                                 $('#email_bi').val(email);
@@ -1504,13 +1551,13 @@
                             // Switch to the next tab if the save operation is successful
                             if (response.success) {
 
-                                if(response.infoMsg) {
+                                if (response.infoMsg) {
                                     toastr.info(response
-                                .message); // Display success message using Toastr
+                                        .message); // Display success message using Toastr
 
-                                }else {
+                                } else {
                                     toastr.success(response
-                                .message); // Display success message using Toastr
+                                        .message); // Display success message using Toastr
                                 }
 
 
@@ -1530,7 +1577,9 @@
                         error: function(xhr) {
                             if (xhr.status === 429) {
                                 // Too Many Attempts
-                                toastr.error("{{translate('Too many attempts. Please try again later.')}}");
+                                toastr.error(
+                                    "{{ translate('Too many attempts. Please try again later.') }}"
+                                );
                             } else {
                                 // if (xhr.responseJSON.hasOwnProperty('loginFailed')) {
                                 //     // Display login failure message using JavaScript
@@ -1539,22 +1588,24 @@
 
                                 // }
                                 if (xhr.status === 403) {
-                                // Authorization failed
-                                toastr.error(xhr.responseJSON
-                                .message); // Display the error message
-                                shouldContinue = false;
+                                    // Authorization failed
+                                    toastr.error(xhr.responseJSON
+                                        .message); // Display the error message
+                                    shouldContinue = false;
 
-                            }
+                                }
                                 // Handle errors, e.g., show validation errors
                                 var errors = xhr.responseJSON.errors;
 
                                 // Display validation errors in the form
-                                if (/* form.attr('id') != 'warehousesForm' && */ shouldContinue !=
+                                if ( /* form.attr('id') != 'warehousesForm' && */ shouldContinue !=
                                     false) {
                                     displayValidationErrors(errors, form);
                                     $(form).find('.is-invalid').first().focus();
-                                     // Display a general toast message
-                                    toastr.error("{{translate('Please review the form for errors.")}};
+                                    // Display a general toast message
+                                    toastr.error(
+                                        "{{ translate('Please review the form for errors.') }}"
+                                    );
                                 }
 
                                 // if ((form).attr('id') == 'warehousesForm' && shouldContinue !=
@@ -1615,6 +1666,10 @@
                         if (response.status === 'error') {
                             // Display the error message
                             toastr.error(response.message);
+                            // Check if redirectWh exists and is true
+                            // if (response.redirectWh) {
+                            //     switchTab('warehouses');
+                            // }
                         }
                         // Switch to the next tab if the save operation is successful
                         if (response.success) {
@@ -1633,37 +1688,48 @@
 
                         if (xhr.status === 429) {
                             // Too Many Attempts
-                            toastr.error("{{translate('Too many attempts. Please try again later.')}}");
+                            toastr.error(
+                                "{{ translate('Too many attempts. Please try again later.') }}"
+                            );
                         } else {
                             if (xhr.status === 403) {
                                 // Authorization failed
                                 toastr.error(xhr.responseJSON
-                                .message); // Display the error message
-                            }
-                            else {
-                            // Handle errors, e.g., show validation errors
-                            var errors = xhr.responseJSON.errors;
-                            var  tabErrorFirst=false ;
-                            // Display validation errors in the form
-                            $('#businessInfoForm, #contactPersonForm, #payoutInfoForm, #warehousesForm')
-                                .each(
-                                    function() {
-
-                                        tabError=displayValidationErrors(errors, $(this));
-                                        if (tabError == false &&  tabErrorFirst ==false) {
-                                            tabErrorFirst=true ;
-                                            switchTab($(this).parent().attr('id'));
-
-                                        }
-
-                                        // if ($(this).attr('id') == 'warehousesForm') {
-                                        //     // toastr.error('Please fill up the rest of the table for warehousesForm. Ensure that no field exceeds 128 characters.');
-
-                                        //     displayValidationWhErrors(errors);
-                                        // }
-                                    });
-
+                                    .message); // Display the error message
+                                if (xhr.responseJSON
+                                    .message == "Please add at least one warehouse." || xhr
+                                    .responseJSON
+                                    .message == "الرجاء إضافة مستودع واحد على الأقل.") {
+                                    switchTab('warehouses');
                                 }
+                            } else {
+                                // Handle errors, e.g., show validation errors
+                                var errors = xhr.responseJSON.errors;
+                                var tabErrorFirst = false;
+                                // Display validation errors in the form
+                                $('#businessInfoForm, #contactPersonForm, #payoutInfoForm, #warehousesForm')
+                                    .each(
+                                        function() {
+
+                                            tabError = displayValidationErrors(errors, $(this));
+                                            if (tabError == false && tabErrorFirst == false) {
+                                                tabErrorFirst = true;
+                                                switchTab($(this).parent().attr('id'));
+                                                // Display a general toast message
+                                                toastr.error(
+                                                    "{{ translate('Please review the form for errors.') }}"
+                                                );
+
+                                            }
+
+                                            // if ($(this).attr('id') == 'warehousesForm') {
+                                            //     // toastr.error('Please fill up the rest of the table for warehousesForm. Ensure that no field exceeds 128 characters.');
+
+                                            //     displayValidationWhErrors(errors);
+                                            // }
+                                        });
+
+                            }
                         }
 
                     }
@@ -1672,39 +1738,39 @@
 
 
 
-            function displayValidationWhErrors(errors) {
-                // Clear existing error messages
-                $('.error-message').remove();
-                var formTab = $('#warehouses-tab');
+            // function displayValidationWhErrors(errors) {
+            //     // Clear existing error messages
+            //     $('.error-message').remove();
+            //     var formTab = $('#warehouses-tab');
 
-                if (formTab.hasClass('has-errors')) {
-                    formTab.removeClass('has-errors');
-                }
-                // Display new error messages
-                $.each(errors, function(fieldName, messages) {
-                    // Correct the field name without escaping the dot
-                    var correctedFieldName = fieldName.split('.')[0].replace('[', '\\[').replace(']',
-                    '\\]');
+            //     if (formTab.hasClass('has-errors')) {
+            //         formTab.removeClass('has-errors');
+            //     }
+            //     // Display new error messages
+            //     $.each(errors, function(fieldName, messages) {
+            //         // Correct the field name without escaping the dot
+            //         var correctedFieldName = fieldName.split('.')[0].replace('[', '\\[').replace(']',
+            //         '\\]');
 
-                    // Extract the index from the field name, e.g., "area_warehouse.0" => 0
-                    var index = parseInt(fieldName.split('.')[1]);
+            //         // Extract the index from the field name, e.g., "area_warehouse.0" => 0
+            //         var index = parseInt(fieldName.split('.')[1]);
 
 
-                    var inputField = $('[name="' + correctedFieldName + '[]"]:eq(' + index + ')');
+            //         var inputField = $('[name="' + correctedFieldName + '[]"]:eq(' + index + ')');
 
-                    inputField.addClass('is-invalid');
+            //         inputField.addClass('is-invalid');
 
-                    var errorContainer = $('<div class="invalid-feedback"></div>');
+            //         var errorContainer = $('<div class="invalid-feedback"></div>');
 
-                    $.each(messages, function(key, message) {
-                        errorContainer.append('<strong>' + message + '</strong><br>');
-                    });
+            //         $.each(messages, function(key, message) {
+            //             errorContainer.append('<strong>' + message + '</strong><br>');
+            //         });
 
-                    inputField.closest('td').append(errorContainer);
-                    $('#warehouses-tab').addClass('has-errors');
+            //         inputField.closest('td').append(errorContainer);
+            //         $('#warehouses-tab').addClass('has-errors');
 
-                });
-            }
+            //     });
+            // }
 
 
 
@@ -1766,7 +1832,7 @@
                             if (xhr.status === 403) {
                                 // Authorization failed
                                 toastr.error(xhr.responseJSON
-                                .message); // Display the error message
+                                    .message); // Display the error message
 
                             }
                         }
@@ -1782,7 +1848,7 @@
 
 
             function displayValidationErrors(errors, form) {
-                var testValid=true ;
+                var testValid = true;
                 // Clear existing error messages and success styles
                 form.find('.invalid-feedback').remove();
                 form.find('.is-invalid').removeClass('is-invalid');
@@ -1791,6 +1857,7 @@
                 var formTab = $('#' + form.parent().attr('id') + "-tab");
 
                 if (formTab.hasClass('has-errors')) {
+
                     formTab.removeClass('has-errors');
                 }
                 // Clear global validation error messages
@@ -1803,17 +1870,16 @@
                 $.each(errors, function(field, messages) {
 
 
-                    if(form.attr('id') == "warehousesForm") {
+                    if (form.attr('id') == "warehousesForm") {
 
                         var correctedFieldName = field.split('.')[0].replace('[', '\\[').replace(']',
-                    '\\]');
-                    var index = parseInt(field.split('.')[1]);
+                            '\\]');
+                        var index = parseInt(field.split('.')[1]);
 
 
-                    var inputField = $('[name="' + correctedFieldName + '[]"]:eq(' + index + ')');
-                    }
-                    else {
-                    var inputField = form.find('[name="' + field + '"]');
+                        var inputField = $('[name="' + correctedFieldName + '[]"]:eq(' + index + ')');
+                    } else {
+                        var inputField = form.find('[name="' + field + '"]');
                     }
                     var errorContainer = $('<div class="invalid-feedback"></div>');
 
@@ -1848,12 +1914,12 @@
                     if (!inputField.hasClass('is-invalid') && inputField.val() !== '' || inputField.parent()
                         .find('a').hasClass('old_file')) {
                         inputField.addClass('is-valid');
-                    } else if(inputField.hasClass('is-invalid')) {
-                        testValid=false ;
+                    } else if (inputField.hasClass('is-invalid')) {
+                        testValid = false;
                     }
 
                 });
-                return testValid ;
+                return testValid;
                 $('#validation-errors').html('Validation errors occurred. Please check the form.').show();
             }
 
@@ -1868,6 +1934,12 @@
                         inputField.addClass('is-valid');
                     }
                 });
+                var formTab = $('#' + form.parent().attr('id') + "-tab");
+
+                if (formTab.hasClass('has-errors')) {
+
+                    formTab.removeClass('has-errors');
+                }
             }
 
             function switchTab(tabId) {
@@ -2053,17 +2125,20 @@
                 "{{ translate('At least one lowercase letter') }}": /[a-z]/.test(password),
                 // "At least one number": /\d/.test(password),
                 "{{ translate('At least one special character') }}": /[@#-+/=$!%*?&]/.test(password),
-                "{{ translate('At least one number and Max Four Numbers') }}": /^\D*(\d\D*){1,4}$/.test(password),
+                "{{ translate('At least one number and Max Four Numbers') }}": /^\D*(\d\D*){1,4}$/.test(
+                    password),
                 // maxConsecutiveChars: !/(.)\1\1/.test(password),
                 // maxPercentage: calculateMaxPercentage(password),
                 "{{ translate('No spaces allowed') }}": !/\s/.test(password),
                 "{{ translate('No three consecutive numbers, Example 678,543,789,987') }}": !
                     /(012|123|234|345|456|567|678|789|987|876|765|654|543|432|321|210)/.test(password),
-                "{{ translate('No three characters or more can be a substring of first name, last name, or email') }}": !
+                "{{ translate('No three characters or more can be a substring of first name, last name, or email') }}":
+                    !
                     checkSubstring(password),
                 "{{ translate('No three consecutive characters or their reverses in the same case are allowed, Example efg,ZYX,LMN,cba') }}":
                     !patternRegex.test(password),
-                "{{ translate('No more than 40% of repeated characters') }}": repeatedCharacterPercentage <= 40
+                "{{ translate('No more than 40% of repeated characters') }}": repeatedCharacterPercentage <=
+                    40
 
             };
 

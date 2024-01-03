@@ -573,9 +573,9 @@ class ShopController extends Controller
 
     public function storeShopRegister(SellerRegistrationShopRequest $request) {
 
-        if (!isset($request->warehouse_name)) {
-            return response()->json(['status' => 'error', 'message' => translate('Please add at least one warehouse.')]);
-        }
+        // if (!isset($request->warehouse_name)) {
+        //     return response()->json(['status' => 'error', 'message' => translate('Please add at least one warehouse.'),'redirectWh'=>true]);
+        // }
 
         if ($request->input('vat_registered') == 1) {
 

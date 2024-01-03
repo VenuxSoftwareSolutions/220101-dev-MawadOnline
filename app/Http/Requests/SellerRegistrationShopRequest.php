@@ -17,15 +17,19 @@ class SellerRegistrationShopRequest extends FormRequest
     {
         if (!Auth::check()) {
 
-            throw new AuthorizationException(__('Your account is not verified. Please create an account and confirm it.'));
+            throw new AuthorizationException(translate('Your account is not verified. Please create an account and confirm it.'));
             return false;
         }
 
         // Check if the user's account is not verified (assuming 'verified' is a column in the users table)
         if (!Auth::user()->email_verified_at) {
-            throw new AuthorizationException(__('Your account is not verified. Please create an account and confirm it.'));
+            throw new AuthorizationException(translate('Your account is not verified. Please create an account and confirm it.'));
             return false;
         }
+        if (!isset($this->warehouse_name)) {
+            throw new AuthorizationException(translate('Please add at least one warehouse.'));
+            return false;
+       }
         return true;
     }
 
