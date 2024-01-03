@@ -20,61 +20,77 @@ class AttributeService
         $trim_display_name_arabic = trim(preg_replace('/\s+/', ' ', $data['display_name_arabic']));
         $check = Attribute::where('name', $trim_name)->first();
         if($check == null){
-            $attribute = new Attribute();
-            $attribute->name = $trim_name;
-            $attribute->name_display_english = $trim_display_name_english;
-            $attribute->name_display_arabic = $trim_display_name_arabic;
-            $attribute->type_value = $data['type_value'];
-            $attribute->description_english = $data['description_english'];
-            $attribute->description_arabic = $data['description_arabic'];
-            $attribute->save();
+            try {
+                DB::beginTransaction();
+                $attribute = new Attribute();
+                $attribute->name = $trim_name;
+                $attribute->name_display_english = $trim_display_name_english;
+                $attribute->name_display_arabic = $trim_display_name_arabic;
+                $attribute->type_value = $data['type_value'];
+                $attribute->description_english = $data['description_english'];
+                $attribute->description_arabic = $data['description_arabic'];
+                $attribute->save();
 
-            $attribute_translation_english = new AttributeTranslation();
-            $attribute_translation_english->attribute_id = $attribute->id;
-            $attribute_translation_english->name = $trim_display_name_english;
-            $attribute_translation_english->lang = 'en';
-            $attribute_translation_english->save();
+                $attribute_translation_english = new AttributeTranslation();
+                $attribute_translation_english->attribute_id = $attribute->id;
+                $attribute_translation_english->name = $trim_display_name_english;
+                $attribute_translation_english->lang = 'en';
+                $attribute_translation_english->save();
 
-            $attribute_translation_arabic = new AttributeTranslation();
-            $attribute_translation_arabic->attribute_id = $attribute->id;
-            $attribute_translation_arabic->name = $trim_display_name_arabic;
-            $attribute_translation_arabic->lang = 'ar';
-            $attribute_translation_arabic->save();
+                $attribute_translation_arabic = new AttributeTranslation();
+                $attribute_translation_arabic->attribute_id = $attribute->id;
+                $attribute_translation_arabic->name = $trim_display_name_arabic;
+                $attribute_translation_arabic->lang = 'ar';
+                $attribute_translation_arabic->save();
 
-            if(($data['type_value'] == "numeric") && (count($data['units']) > 0)){
-                $units = array_filter($data['units']);
-                foreach($units as $unite){
-                    $attribute_unite = new AttributesUnity();
-                    $attribute_unite->attribute_id  = $attribute->id;
-                    $attribute_unite->unite_id  = $unite;
-                    $attribute_unite->save();
-                }
-            }
-
-            if($data['type_value'] == "list"){
-                $data_values_arabic = $data['values_arabic'];
-                $data_values_english = $data['values_english'];
-
-                if((count($data_values_english) > 0 ) && (count($data_values_arabic) > 0 ) && (count($data_values_arabic) == count($data_values_english))){
-                    foreach($data_values_english as $key => $values_english){
-                        if(($values_english != null) && ($data_values_arabic[$key] != null)){
-                            $attribute_value_english = new AttributeValue();
-                            $attribute_value_english->attribute_id = $attribute->id;
-                            $attribute_value_english->value = $values_english;
-                            $attribute_value_english->lang = 'en';
-                            $attribute_value_english->save();
-
-                            $attribute_value_arabic = new AttributeValue();
-                            $attribute_value_arabic->attribute_id = $attribute->id;
-                            $attribute_value_arabic->value = $data_values_arabic[$key];
-                            $attribute_value_arabic->lang = 'ar';
-                            $attribute_value_arabic->save();
+                if(($data['type_value'] == "numeric")){
+                    if(isset($data['units'])){
+                        if(count($data['units']) > 0){
+                            $units = array_filter($data['units']);
+                            foreach($units as $unite){
+                                $attribute_unite = new AttributesUnity();
+                                $attribute_unite->attribute_id  = $attribute->id;
+                                $attribute_unite->unite_id  = $unite;
+                                $attribute_unite->save();
+                            }
                         }
-
+                    }else{
+                        DB::rollBack();
+                        return $attribute['status'] = "error";
                     }
                 }
+
+                if($data['type_value'] == "list"){
+                    $data_values_arabic = $data['values_arabic'];
+                    $data_values_english = $data['values_english'];
+
+                    if((count($data_values_english) > 0 ) && (count($data_values_arabic) > 0 ) && (count($data_values_arabic) == count($data_values_english))){
+                        foreach($data_values_english as $key => $values_english){
+                            if(($values_english != null) && ($data_values_arabic[$key] != null)){
+                                $attribute_value_english = new AttributeValue();
+                                $attribute_value_english->attribute_id = $attribute->id;
+                                $attribute_value_english->value = $values_english;
+                                $attribute_value_english->lang = 'en';
+                                $attribute_value_english->save();
+
+                                $attribute_value_arabic = new AttributeValue();
+                                $attribute_value_arabic->attribute_id = $attribute->id;
+                                $attribute_value_arabic->value = $data_values_arabic[$key];
+                                $attribute_value_arabic->lang = 'ar';
+                                $attribute_value_arabic->save();
+                            }
+
+                        }
+                    }
+                };
+
+                DB::commit();
+                return $attribute;
+
+            } catch (\Throwable $th) {
+                DB::rollBack();
+                return $attribute['status'] = "error";
             }
-            return $attribute;
         }else{
             return null;
         }

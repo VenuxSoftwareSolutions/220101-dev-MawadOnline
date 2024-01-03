@@ -28,12 +28,11 @@
                                 <th>{{ translate('Name') }}</th>
                                 <th>{{ translate('Value type') }}</th>
                                 <th>{{ translate('Values') }}</th>
-                                @role('Super Admin')
-                                    <th>{{ translate('Activated') }}</th>
-                                @endrole
-                                @can('enabling_product_attribute')
-                                    <th>{{ translate('Activated') }}</th>
-                                @endcan
+                                @auth
+                                    @if (auth()->user()->hasRole('Super Admin') || auth()->user()->hasPermissionTo('enabling_product_attribute'))
+                                        <th>{{ translate('Activated') }}</th>
+                                    @endif
+                                @endauth
                                 <th class="text-right">{{ translate('Options') }}</th>
                             </tr>
                         </thead>

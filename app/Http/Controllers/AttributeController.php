@@ -73,6 +73,9 @@ class AttributeController extends Controller
         if($attribute == null){
             flash(translate('Attribute name already existe'))->error();
             return back();
+        }elseif($attribute == "error"){
+            flash(translate('You must choose a unite'))->error();
+            return back();
         }else{
             flash(translate('Attribute has been inserted successfully'))->success();
             return redirect()->route('attributes.index');

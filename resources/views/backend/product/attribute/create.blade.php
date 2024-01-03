@@ -37,6 +37,15 @@
                             <div class="tab-pane @if ($language->code == app()->getLocale()) fade in active show @endif" id="{{ $language->code }}">
                                 <div class="row">
                                     <div class="col-12 ">
+                                        @if ($errors->any())
+                                            <div class="alert alert-danger">
+                                                <ul>
+                                                    @foreach ($errors->all() as $error)
+                                                        <li>{{ $error }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        @endif
                                         <div class="row">
                                             @if ($language->code == "en")
                                                 <div class="form-group mb-3 col-12">
@@ -47,7 +56,7 @@
                                             @endif
                                             <div class="form-group mb-3 col-12">
                                                 <label for="name">{{ translate($titre_display) }}</label>
-                                                <input type="text"  id="name" name="display_name_{{ $name }}" class="form-control" required>
+                                                <input type="text"  id="name" name="display_name_{{ $name }}" class="form-control">
                                             </div>
                                             @if ($language->code == "en")
                                                 <div class="form-group mb-3 col-12">
