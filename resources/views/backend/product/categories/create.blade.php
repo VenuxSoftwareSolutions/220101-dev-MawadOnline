@@ -213,7 +213,7 @@
                     <div class="form-group row  not-translatable">
                         <label class="col-md-3 col-form-label">{{translate('Category Attributes')}}</label>
                         <div class="col-md-9">
-                            <select class="select2 form-control aiz-selectpicker" id="category_attributes" name="category_attributes[]" data-toggle="select2" data-placeholder="Choose ..."data-live-search="true" multiple>
+                            <select class="select2 form-control aiz-selectpicker" onchange="load_filtring_attributes()" id="category_attributes" name="category_attributes[]" data-toggle="select2" data-placeholder="Choose ..."data-live-search="true" multiple>
 
                             </select>
                         </div>
@@ -221,7 +221,7 @@
                     <div class="form-group row  not-translatable">
                         <label class="col-md-3 col-form-label">{{translate('Filtering Attributes')}}</label>
                         <div class="col-md-9">
-                            <select class="select2 form-control aiz-selectpicker" name="filtering_attributes[]" data-toggle="select2" data-placeholder="Choose ..."data-live-search="true" multiple>
+                            <select class="select2 form-control aiz-selectpicker" id="filtering_attributes" name="filtering_attributes[]" data-toggle="select2" data-placeholder="Choose ..."data-live-search="true" multiple>
                                 @foreach (\App\Models\Attribute::all() as $attribute)
                                     <option value="{{ $attribute->id }}">{{ $attribute->getTranslation('name') }}</option>
                                 @endforeach
@@ -270,9 +270,51 @@
         });
     }
     document.addEventListener("DOMContentLoaded", function() {
-            // Your JavaScript code here
             load_categories_attributes();
+            load_filtring_attributes();
         });
+    function load_filtring_attributes(){
+        let parent_category = document.getElementById('selected_parent_id');
+        if(parent_category){
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                type:"POST",
+                url:'{{ route('categories.parent-attributes') }}',
+
+                data:{
+                    category_id: parent_category.value
+                },
+                success: function(data) {
+                    let innerhtmlselect ='';
+                    data.forEach(element=>{
+                        innerhtmlselect += '<option value="'+element.id+'">'+element.name+'</option>';
+                    });
+                    /////////////////////////////////////////
+                    var selectElement = document.getElementById('category_attributes');
+                    var selectedOptionIds = [];
+
+                    for (var i = 0; i < selectElement.options.length; i++) {
+                        if (selectElement.options[i].selected) {
+                            var optionObject = {
+                                key: selectElement.options[i].value,
+                                value: selectElement.options[i].text
+                            };
+                            selectedOptionIds.push(optionObject);
+                            innerhtmlselect += '<option value="'+selectElement.options[i].value+'">'+selectElement.options[i].text+'</option>';
+                        }
+                    }
+                    console.log(selectedOptionIds);
+                    /////////////////////////////////////////
+                    $('select[id="filtering_attributes"]').html(innerhtmlselect);
+                    AIZ.plugins.bootstrapSelect('refresh');
+                }
+            });
+        }
+
+
+    }
     function load_categories_attributes(){
         let parent_category = document.getElementById('selected_parent_id');
         if(parent_category){
@@ -284,7 +326,6 @@
             type:"POST",
             url:'{{ route('categories.categories-attributes') }}',
 
-            //url:'/MawadOnline/admin/categories/categories-attributes/'+parent_category,
 
             data:{
                 category_id: parent_category.value
@@ -299,6 +340,37 @@
                 AIZ.plugins.bootstrapSelect('refresh');
             }
         });
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            type:"POST",
+            url:'{{ route('categories.parent-attributes') }}',
+
+            data:{
+                category_id: parent_category.value
+            },
+            success: function(data) {
+                let innerhtmlselect ='';
+                data.forEach(element=>{
+                    innerhtmlselect += '<option value="'+element.id+'">'+element.name+'</option>';
+                });
+                /////////////////////////////////////////
+                var selectElement = document.getElementById('category_attributes');
+                var selectedOptionIds = [];
+
+                for (var i = 0; i < selectElement.options.length; i++) {
+                    if (selectElement.options[i].selected) {
+                            innerhtmlselect += '<option value="'+selectElement.options[i].value+'">'+selectElement.options[i].text+'</option>';
+                        }
+                }
+                console.log(selectedOptionIds);
+                /////////////////////////////////////////
+                $('select[id="filtering_attributes"]').html(innerhtmlselect);
+                AIZ.plugins.bootstrapSelect('refresh');
+            }
+        });
+
         }
     }
 </script>

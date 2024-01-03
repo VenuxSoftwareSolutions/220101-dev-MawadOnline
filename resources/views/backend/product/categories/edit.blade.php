@@ -145,23 +145,25 @@
                             </div>
                         </div>
                     @endif
+
+                    <div class="form-group row  not-translatable">
+                        <label class="col-md-3 col-form-label">{{translate('Category Attributes')}}</label>
+                        <div class="col-md-9">
+                            <select class="select2 form-control aiz-selectpicker" onchange="load_filtring_attributes()"  id="category_attributes" name="category_attributes[]" data-toggle="select2" data-placeholder="Choose ..."data-live-search="true"  multiple>
+
+                            </select>
+                            <input type="hidden" value="{{ implode(',',$category_attributes->toArray())}}" id="category_has_attributes">
+                            <input type="hidden" value="{{ implode(',',$category_filtring_attributes->toArray())}}" id="category_filtring_attributes">
+                        </div>
+                    </div>
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label">{{translate('Filtering Attributes')}}</label>
                         <div class="col-md-9">
-                            <select class="select2 form-control aiz-selectpicker" name="filtering_attributes[]" data-toggle="select2" data-placeholder="Choose ..."data-live-search="true" data-selected="{{ $category->attributes->pluck('id') }}" multiple>
+                            <select class="select2 form-control aiz-selectpicker"  id="filtering_attributes"  name="filtering_attributes[]" data-toggle="select2" data-placeholder="Choose ..."data-live-search="true" data-selected="{{ $category->attributes->pluck('id') }}" multiple>
                                 @foreach (\App\Models\Attribute::all() as $attribute)
                                     <option value="{{ $attribute->id }}">{{ $attribute->getTranslation('name') }}</option>
                                 @endforeach
                             </select>
-                        </div>
-                    </div>
-                    <div class="form-group row  not-translatable">
-                        <label class="col-md-3 col-form-label">{{translate('Category Attributes')}}</label>
-                        <div class="col-md-9">
-                            <select class="select2 form-control aiz-selectpicker" id="category_attributes" name="category_attributes[]" data-toggle="select2" data-placeholder="Choose ..."data-live-search="true"  multiple>
-
-                            </select>
-                            <input type="hidden" value="{{ implode(',',$category_attributes->toArray())}}" id="category_has_attributes">
                         </div>
                     </div>
                     <div class="form-group mb-0 text-right">
@@ -199,7 +201,73 @@
     document.addEventListener("DOMContentLoaded", function() {
             // Your JavaScript code here
             load_categories_attributes();
+            load_filtring_attributes();
         });
+    function load_filtring_attributes(){
+        let parent_category = document.getElementById('selected_parent_id');
+        if(parent_category){
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                type:"POST",
+                url:'{{ route('categories.parent-attributes') }}',
+
+                data:{
+                    category_id: parent_category.value
+                },
+                success: function(data) {
+                    let innerhtmlselect ='';
+                    let myattributes =  document.querySelector('#category_filtring_attributes').value;
+                    let myattributesarray = myattributes.split(',');
+                    let founded = false;
+                        data.forEach(element=>{
+                            myattributesarray.forEach(el=>{
+                            if(el==element.id){
+                                founded=true;
+                            }
+                        })
+                        if(founded==true){
+
+                            innerhtmlselect += '<option selected value="'+element.id+'">'+element.name+'</option>';
+                            founded=false
+                        }else{
+                            innerhtmlselect += '<option  value="'+element.id+'">'+element.name+'</option>';
+
+                        }
+                    });
+                    /////////////////////////////////////////
+                    var selectElement = document.getElementById('category_attributes');
+                    var selectedOptionIds = [];
+                    let myfiltringattributes =  document.querySelector('#category_filtring_attributes').value;
+                    let myfiltringattributesarray = myfiltringattributes.split(',');
+                    for (var i = 0; i < selectElement.options.length; i++) {
+                        if (selectElement.options[i].selected) {
+
+                            myfiltringattributesarray.forEach(el=>{
+                            if(el==selectElement.options[i].value)
+                            {
+                                founded=true;
+                            }
+                        })
+                        if(founded==true){
+                            innerhtmlselect += '<option selected value="'+selectElement.options[i].value+'">'+selectElement.options[i].text+'</option>';
+                            founded=false;
+                        }else{
+                            innerhtmlselect += '<option value="'+selectElement.options[i].value+'">'+selectElement.options[i].text+'</option>';
+
+                        }
+                        }
+                    }
+                    /////////////////////////////////////////
+                    $('select[id="filtering_attributes"]').html(innerhtmlselect);
+                    AIZ.plugins.bootstrapSelect('refresh');
+                }
+            });
+        }
+
+
+    }
     function load_categories_attributes(){
         let parent_category = document.getElementById('selected_parent_id');
         if(parent_category){
@@ -219,7 +287,6 @@
                 let innerhtmlselect ='';
                 let myattributes =  document.querySelector('#category_has_attributes').value;
                 let myattributesarray = myattributes.split(',');
-                console.log(myattributesarray);
                 let founded = false;
                 data.forEach(element=>{
                     myattributesarray.forEach(el=>{
@@ -237,6 +304,66 @@
                 })
 
                 $('select[id="category_attributes"]').html(innerhtmlselect);
+                AIZ.plugins.bootstrapSelect('refresh');
+            }
+        });
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            type:"POST",
+            url:'{{ route('categories.parent-attributes') }}',
+
+            data:{
+                category_id: parent_category.value
+            },
+            success: function(data) {
+                let innerhtmlselect ='';
+                let myattributes =  document.querySelector('#category_filtring_attributes').value;
+                let myattributesarray = myattributes.split(',');
+                let founded = false;
+                data.forEach(element=>{
+                    myattributesarray.forEach(el=>{
+                        if(el==element.id){
+                            founded=true;
+                        }
+                    })
+                    if(founded==true){
+                        innerhtmlselect += '<option selected value="'+element.id+'">'+element.name+'</option>';
+                        founded=false
+                    }else{
+                        innerhtmlselect += '<option  value="'+element.id+'">'+element.name+'</option>';
+
+                    }
+
+                });
+
+                console.log(innerhtmlselect)
+                /////////////////////////////////////////
+                var selectElement = document.getElementById('category_attributes');
+                var selectedOptionIds = [];
+                let myfiltringattributes =  document.querySelector('#category_filtring_attributes').value;
+                let myfiltringattributesarray = myfiltringattributes.split(',');
+
+                for (var i = 0; i < selectElement.options.length; i++) {
+                    if (selectElement.options[i].selected) {
+
+                        myfiltringattributesarray.forEach(el=>{
+                            if(el==selectElement.options[i].value)
+                            {
+                                founded=true;
+                            }
+                        })
+                        if(founded==true){
+                            innerhtmlselect += '<option selected value="'+selectElement.options[i].value+'">'+selectElement.options[i].text+'</option>';
+                            founded=false;
+                        }else{
+                            innerhtmlselect += '<option  value="'+selectElement.options[i].value+'">'+selectElement.options[i].text+'</option>';
+                        }
+                        }
+                }
+                /////////////////////////////////////////
+                $('select[id="filtering_attributes"]').html(innerhtmlselect);
                 AIZ.plugins.bootstrapSelect('refresh');
             }
         });

@@ -66,6 +66,14 @@ class CategoryController extends Controller
         $category_attributes =Attribute::where(function())*/
         return Attribute::whereNotIn('id',$expected_ids)->get();
     }
+    public function fetch_parent_attribute(Request $request){
+        $parent = Category::find($request->category_id);
+        $expected_ids = [];
+        if($parent->parent_id!="0"){
+            $expected_ids = $this->getexpected_ids($parent);
+        }
+        return Attribute::whereIn('id',$expected_ids)->get();
+    }
 
     public function getexpected_ids($categorie){
         $ids = $categorie->categories_attributes()->pluck('attribute_id')->toArray();
@@ -187,7 +195,8 @@ class CategoryController extends Controller
             ->orderBy('name','asc')
             ->get();
         $category_attributes = $category->categories_attributes()->pluck('attribute_id');
-        return view('backend.product.categories.edit', compact('category', 'categories', 'lang','category_attributes'));
+        $category_filtring_attributes = $category->attributes()->pluck('attribute_id');
+        return view('backend.product.categories.edit', compact('category', 'categories', 'lang','category_attributes','category_filtring_attributes'));
     }
 
     /**
