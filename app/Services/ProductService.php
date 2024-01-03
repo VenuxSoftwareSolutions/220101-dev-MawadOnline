@@ -42,7 +42,7 @@ class ProductService
             $discount_end_date   = strtotime($date_var[1]);
         }
         unset($collection['date_range']);
-        
+
         if ($collection['meta_title'] == null) {
             $collection['meta_title'] = $collection['name'];
         }
@@ -83,7 +83,7 @@ class ProductService
         $options = ProductUtility::get_attribute_options($collection);
 
         $combinations = (new CombinationService())->generate_combination($options);
-        
+
         if (count($combinations) > 0) {
             foreach ($combinations as $key => $combination) {
                 $str = ProductUtility::get_combination_string($combination, $collection);
@@ -207,7 +207,7 @@ class ProductService
             $discount_end_date   = strtotime($date_var[1]);
         }
         unset($collection['date_range']);
-        
+
         if ($collection['meta_title'] == null) {
             $collection['meta_title'] = $collection['name'];
         }
@@ -226,7 +226,7 @@ class ProductService
         }
         unset($collection['lang']);
 
-        
+
         $shipping_cost = 0;
         if (isset($collection['shipping_type'])) {
             if ($collection['shipping_type'] == 'free') {
@@ -239,7 +239,7 @@ class ProductService
 
         $colors = json_encode(array());
         if (
-            isset($collection['colors_active']) && 
+            isset($collection['colors_active']) &&
             $collection['colors_active'] &&
             $collection['colors'] &&
             count($collection['colors']) > 0
@@ -247,68 +247,65 @@ class ProductService
             $colors = json_encode($collection['colors']);
         }
 
-        $options = ProductUtility::get_attribute_options($collection);
+        // $options = ProductUtility::get_attribute_options($collection);
 
-        $combinations = (new CombinationService())->generate_combination($options);
-        if (count($combinations) > 0) {
-            foreach ($combinations as $key => $combination) {
-                $str = ProductUtility::get_combination_string($combination, $collection);
+        // $combinations = (new CombinationService())->generate_combination($options);
+        // if (count($combinations) > 0) {
+        //     foreach ($combinations as $key => $combination) {
+        //         $str = ProductUtility::get_combination_string($combination, $collection);
 
-                unset($collection['price_' . str_replace('.', '_', $str)]);
-                unset($collection['sku_' . str_replace('.', '_', $str)]);
-                unset($collection['qty_' . str_replace('.', '_', $str)]);
-                unset($collection['img_' . str_replace('.', '_', $str)]);
-            }
-        }
+        //         unset($collection['price_' . str_replace('.', '_', $str)]);
+        //         unset($collection['sku_' . str_replace('.', '_', $str)]);
+        //         unset($collection['qty_' . str_replace('.', '_', $str)]);
+        //         unset($collection['img_' . str_replace('.', '_', $str)]);
+        //     }
+        // }
 
-        unset($collection['colors_active']);
+        // unset($collection['colors_active']);
 
-        $choice_options = array();
-        if (isset($collection['choice_no']) && $collection['choice_no']) {
-            $str = '';
-            $item = array();
-            foreach ($collection['choice_no'] as $key => $no) {
-                $str = 'choice_options_' . $no;
-                $item['attribute_id'] = $no;
-                $attribute_data = array();
-                // foreach (json_decode($request[$str][0]) as $key => $eachValue) {
-                foreach ($collection[$str] as $key => $eachValue) {
-                    // array_push($data, $eachValue->value);
-                    array_push($attribute_data, $eachValue);
-                }
-                unset($collection[$str]);
+        // $choice_options = array();
+        // if (isset($collection['choice_no']) && $collection['choice_no']) {
+        //     $str = '';
+        //     $item = array();
+        //     foreach ($collection['choice_no'] as $key => $no) {
+        //         $str = 'choice_options_' . $no;
+        //         $item['attribute_id'] = $no;
+        //         $attribute_data = array();
+        //         // foreach (json_decode($request[$str][0]) as $key => $eachValue) {
+        //         foreach ($collection[$str] as $key => $eachValue) {
+        //             // array_push($data, $eachValue->value);
+        //             array_push($attribute_data, $eachValue);
+        //         }
+        //         unset($collection[$str]);
 
-                $item['values'] = $attribute_data;
-                array_push($choice_options, $item);
-            }
-        }
+        //         $item['values'] = $attribute_data;
+        //         array_push($choice_options, $item);
+        //     }
+        // }
 
-        $choice_options = json_encode($choice_options, JSON_UNESCAPED_UNICODE);
+        // $choice_options = json_encode($choice_options, JSON_UNESCAPED_UNICODE);
 
-        if (isset($collection['choice_no']) && $collection['choice_no']) {
-            $attributes = json_encode($collection['choice_no']);
-            unset($collection['choice_no']);
-        } else {
-            $attributes = json_encode(array());
-        }
+        // if (isset($collection['choice_no']) && $collection['choice_no']) {
+        //     $attributes = json_encode($collection['choice_no']);
+        //     unset($collection['choice_no']);
+        // } else {
+        //     $attributes = json_encode(array());
+        // }
 
         unset($collection['button']);
-        
+
         $data = $collection->merge(compact(
             'discount_start_date',
             'discount_end_date',
             'shipping_cost',
             'slug',
-            'colors',
-            'choice_options',
-            'attributes',
         ))->toArray();
-        
+
         $product->update($data);
 
         return $product;
     }
-    
+
     public function product_duplicate_store($product)
     {
         $product_new = $product->replicate();

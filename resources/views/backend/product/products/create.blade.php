@@ -104,31 +104,15 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Gallery Images')}} <small>(600x600)</small></label>
                             <div class="col-md-8">
-                                <div class="input-group" data-toggle="aizuploader" data-type="image" data-multiple="true">
-                                    <div class="input-group-prepend">
-                                        <div class="input-group-text bg-soft-secondary font-weight-medium">{{ translate('Browse')}}</div>
-                                    </div>
-                                    <div class="form-control file-amount">{{ translate('Choose File') }}</div>
-                                    <input type="hidden" name="photos" class="selected-files">
-                                </div>
-                                <div class="file-preview box sm">
-                                </div>
-                                <small class="text-muted">{{translate('These images are visible in product details page gallery. Use 600x600 sizes images.')}}</small>
+                                <input type="file" class="dropify" name="photos[]" id="photoUpload" accept=".jpeg, .jpg, .png" multiple />
+                                <div id="dropifyUploadedFiles"></div>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <small>(300x300)</small></label>
                             <div class="col-md-8">
-                                <div class="input-group" data-toggle="aizuploader" data-type="image">
-                                    <div class="input-group-prepend">
-                                        <div class="input-group-text bg-soft-secondary font-weight-medium">{{ translate('Browse')}}</div>
-                                    </div>
-                                    <div class="form-control file-amount">{{ translate('Choose File') }}</div>
-                                    <input type="hidden" name="thumbnail_img" class="selected-files">
-                                </div>
-                                <div class="file-preview box sm">
-                                </div>
-                                <small class="text-muted">{{translate('This image is visible in all product box. Use 300x300 sizes image. Keep some blank space around main object of your image as we had to crop some edge in different devices to make it responsive.')}}</small>
+                                <input type="file" class="dropify" name="photosThumbnail[]" id="photoUploadThumbnail" accept=".jpeg, .jpg, .png" multiple />
+                                <div id="dropifyUploadedFilesThumbnail"></div>
                             </div>
                         </div>
                     </div>
@@ -303,19 +287,28 @@
                     <div class="card-header">
                         <h5 class="mb-0 h6">{{translate('PDF Specification')}}</h5>
                     </div>
-                    <div class="card-body">
-                        <div class="form-group row">
-                            <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('PDF Specification')}}</label>
-                            <div class="col-md-8">
-                                <div class="input-group" data-toggle="aizuploader" data-type="document">
-                                    <div class="input-group-prepend">
-                                        <div class="input-group-text bg-soft-secondary font-weight-medium">{{ translate('Browse')}}</div>
+                    <div class="card-body" id="documents_bloc">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Document name</label>
+                                    <input type="text" class="form-control" name="document_names[]">
+                                </div>
+                            </div>
+                            <div class="col-5">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Documnt</label>
+                                    <div class="input-group">
+                                        <div class="custom-file">
+                                          <input type="file" name="documents[]" class="custom-file-input file_input" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
+                                          <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+                                        </div>
                                     </div>
-                                    <div class="form-control file-amount">{{ translate('Choose File') }}</div>
-                                    <input type="hidden" name="pdf" class="selected-files">
                                 </div>
-                                <div class="file-preview box sm">
-                                </div>
+                            </div>
+                            <div class="col-2">
+                                <i class="las la-plus add_document" style="margin-left: 5px; margin-top: 40px;" title="Add another document"></i>
+                                <i class="las la-trash trash_document" style="margin-left: 5px; margin-top: 40px;" title="Delete this document"></i>
                             </div>
                         </div>
                     </div>
@@ -659,10 +652,255 @@
 
 <!-- Treeview js -->
 <script src="{{ static_asset('assets/js/hummingbird-treeview.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js" integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 
 <script type="text/javascript">
 
     $(document).ready(function() {
+        let dropifyInput = $('#photoUpload');
+        let originalInput = dropifyInput.clone(true);
+
+        let dropifyInputThumbnail = $('#photoUploadThumbnail');
+        let originalInputThumbnail = dropifyInputThumbnail.clone(true);
+
+        function removeDropify() {
+            dropifyInput.closest('.dropify-wrapper').find('.dropify-clear').remove();
+            dropifyInput.unwrap().siblings().remove();
+            dropifyInput.removeClass('dropify').removeAttr('data-plugin-init');
+            dropifyInput.val('');
+        }
+        function removeDropifyThumbnail() {
+            dropifyInputThumbnail.closest('.dropify-wrapper').find('.dropify-clear').remove();
+            dropifyInputThumbnail.unwrap().siblings().remove();
+            dropifyInputThumbnail.removeClass('dropify').removeAttr('data-plugin-init');
+            dropifyInputThumbnail.val('');
+        }
+
+        function initializeDropify() {
+            dropifyInput.dropify({
+                messages: {
+                    'default': 'Drag and drop a file here or click',
+                    'replace': 'Drag and drop or click to replace',
+                    'remove': 'Remove',
+                    'error': 'Ooops, something wrong happened.'
+                }
+            });
+        }
+        function initializeDropifyThumbnail() {
+            dropifyInputThumbnail.dropify({
+                messages: {
+                    'default': 'Drag and drop a file here or click',
+                    'replace': 'Drag and drop or click to replace',
+                    'remove': 'Remove',
+                    'error': 'Ooops, something wrong happened.'
+                }
+            });
+        }
+
+        initializeDropify();
+        initializeDropifyThumbnail();
+
+        $('body').on('change', '#photoUpload', function() {
+            let files = $(this)[0].files;
+            $('#dropifyUploadedFiles').empty();
+            if (files.length > 10) {
+                swal(
+                            'Cancelled',
+                            'Maximum 10 photos allowed.',
+                            'error'
+                        )
+                $(this).val('');
+                removeDropify();
+                dropifyInput.replaceWith(originalInput.clone(true));
+                dropifyInput = $('#photoUpload');
+                initializeDropify();
+            } else {
+                let exceedingFiles = [];
+
+                for (let i = 0; i < files.length; i++) {
+                    const fileSizeInMB = files[i].size / (1024 * 1024);
+                    if (fileSizeInMB > 2) {
+                        exceedingFiles.push(files[i].name);
+                    }
+                }
+
+                if (exceedingFiles.length > 0) {
+                    swal(
+                            'Cancelled',
+                            'Following files exceed 2MB limit: ' + exceedingFiles.join(', '),
+                            'error'
+                        )
+                    $(this).val('');
+                    removeDropify();
+                    dropifyInput.replaceWith(originalInput.clone(true));
+                    dropifyInput = $('#photoUpload');
+                    initializeDropify();
+                } else {
+                    let exceedingFilesDimension = [];
+
+                    for (let i = 0; i < files.length; i++) {
+                        let file = files[i];
+                        if (file.type.startsWith('image/')) {
+                            // Create a FileReader object to read the uploaded file
+                            let reader = new FileReader();
+
+                            // Closure to capture the file information
+                            reader.onload = function(event) {
+                                let img = new Image();
+                                img.src = event.target.result;
+
+                                // Check image dimensions after it's loaded
+                                img.onload = function() {
+                                    if (img.width > 1200 || img.height > 1200) {
+                                        exceedingFilesDimension.push(files[i].name);
+                                    }
+                                };
+                            };
+
+                            // Read the file as a data URL
+                            reader.readAsDataURL(file);
+                        }
+                    }
+                    setTimeout(function() {
+                        if (exceedingFilesDimension.length > 0) {
+                            swal(
+                                'Cancelled',
+                                'Following files exceed 2MB limit: ' + exceedingFilesDimension.join(', '),
+                                'error'
+                            )
+                            $(this).val('');
+                            removeDropify();
+                            dropifyInput.replaceWith(originalInput.clone(true));
+                            dropifyInput = $('#photoUpload');
+                            initializeDropify();
+                        }else{
+                            let uploadedFilesHTML = '<div class="row">';
+                            for (let i = 0; i < files.length; i++) {
+                                let file = files[i];
+                                if (file.type.startsWith('image/')) {
+                                    uploadedFilesHTML += `<div class="col-2"><img src="${URL.createObjectURL(file)}" alt="${file.name}" height="80" width="80" /></div>`; // Display image preview
+                                } else {
+                                    // Display icon for document type
+                                    uploadedFilesHTML += `<li><i class="fa fa-file-text-o"></i> ${file.name}</li>`;
+                                }
+                            }
+                            uploadedFilesHTML += '</div>';
+
+                            if ( !$(this).parent().parent().find('#dropifyUploadedFiles').length) {
+                                $(this).parent().parent().append('<div id="dropifyUploadedFiles"></div>');
+                                $('body #dropifyUploadedFiles').html(uploadedFilesHTML);
+                            }else{
+                                $('body #dropifyUploadedFiles').html(uploadedFilesHTML);
+                            }
+                        }
+                    }, 500);
+                }
+            }
+        });
+
+        $('body').on('change', '#photoUploadThumbnail', function() {
+            let files = $(this)[0].files;
+            $('#dropifyUploadedFilesThumbnail').empty();
+            if (files.length > 10) {
+                swal(
+                            'Cancelled',
+                            'Maximum 10 photos allowed.',
+                            'error'
+                        )
+                $(this).val('');
+                removeDropifyThumbnail();
+                dropifyInputThumbnail.replaceWith(originalInput.clone(true));
+                dropifyInputThumbnail = $('#photoUploadThumbnail');
+                initializeDropifyThumbnail();
+            } else {
+                let exceedingFiles = [];
+
+                for (let i = 0; i < files.length; i++) {
+                    const fileSizeInMB = files[i].size / (1024 * 1024);
+                    if (fileSizeInMB > 2) {
+                        exceedingFiles.push(files[i].name);
+                    }
+                }
+
+                if (exceedingFiles.length > 0) {
+                    swal(
+                            'Cancelled',
+                            'Following files exceed 2MB limit: ' + exceedingFiles.join(', '),
+                            'error'
+                        )
+                    $(this).val('');
+                    removeDropifyThumbnail();
+                    dropifyInputThumbnail.replaceWith(originalInputThumbnail.clone(true));
+                    dropifyInputThumbnail = $('#photoUploadThumbnail');
+                    initializeDropifyThumbnail();
+                } else {
+                    let uploadedFilesHTML = '<div class="row">';
+                    for (let i = 0; i < files.length; i++) {
+                        let file = files[i];
+                        if (file.type.startsWith('image/')) {
+                            uploadedFilesHTML += `<div class="col-2"><img src="${URL.createObjectURL(file)}" alt="${file.name}" height="80" width="80" /></div>`; // Display image preview
+                        } else {
+                            // Display icon for document type
+                            uploadedFilesHTML += `<li><i class="fa fa-file-text-o"></i> ${file.name}</li>`;
+                        }
+                    }
+                    uploadedFilesHTML += '</div>';
+
+                    if ( !$(this).parent().parent().find('#dropifyUploadedFilesThumbnail').length) {
+                        $(this).parent().parent().append('<div id="dropifyUploadedFilesThumbnail"></div>');
+                        $('body #dropifyUploadedFilesThumbnail').html(uploadedFilesHTML);
+                    }else{
+                        $('body #dropifyUploadedFilesThumbnail').html(uploadedFilesHTML);
+                    }
+                }
+            }
+        });
+
+
+        let fileInputCounter = 1;
+
+        $('body').on('click', '.dropify-clear', function(){
+            if($(this).parent().parent().parent().find('#dropifyUploadedFilesThumbnail').length) {
+                $('body #dropifyUploadedFilesThumbnail').empty();
+            }else{
+                $('body #dropifyUploadedFiles').empty();
+            }
+        });
+
+        $('body').on('change', '.file_input', function() {
+            let fileName = $(this).val().split('\\').pop();
+            $(this).next('.custom-file-label').addClass('selected').html(fileName);
+        });
+
+        $('body').on('click', '.add_document', function(){
+            var html_document = `<div class="row">
+                                <div class="col-5">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail">Document name</label>
+                                        <input type="text" class="form-control" name="document_names[]">
+                                    </div>
+                                </div>
+                                <div class="col-5">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail${fileInputCounter}">Documnt</label>
+                                        <div class="input-group">
+                                            <div class="custom-file">
+                                            <input type="file" name="documents[]" class="custom-file-input file_input" id="exampleInputEmail${fileInputCounter}" aria-describedby="inputGroupFileAddon04">
+                                            <label class="custom-file-label" for="exampleInputEmail${fileInputCounter}">Choose file</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <i class="las la-plus add_document" style="margin-left: 5px; margin-top: 40px;" title="Add another document"></i>
+                                    <i class="las la-trash trash_document" style="margin-left: 5px; margin-top: 40px;" title="Delete this document"></i>
+                                </div>
+                            </div>`;
+            $('#documents_bloc').append(html_document);
+            fileInputCounter++;
+        })
+
         $("#treeview").hummingbird();
 
         var main_id = '{{ old("category_id") }}';
@@ -678,7 +916,14 @@
         }
 
         $('#treeview input:radio[value='+main_id+']').prop('checked',true);
+
     });
+
+
+
+    $('body').on('click', '.trash_document', function(){
+        $(this).parent().parent().remove();
+    })
 
     $('form').bind('submit', function (e) {
 		if ( $(".action-btn").attr('attempted') == 'true' ) {
@@ -690,17 +935,17 @@
 		}
         // Disable the submit button while evaluating if the form should be submitted
         // $("button[type='submit']").prop('disabled', true);
-        
+
         // var valid = true;
 
         // if (!valid) {
             // e.preventDefault();
-            
+
             ////Reactivate the button if the form was not submitted
             // $("button[type='submit']").button.prop('disabled', false);
         // }
     });
-    
+
     $("[name=shipping_type]").on("change", function (){
         $(".flat_rate_shipping_div").hide();
 

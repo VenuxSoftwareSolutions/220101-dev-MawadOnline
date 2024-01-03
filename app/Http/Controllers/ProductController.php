@@ -24,6 +24,7 @@ use App\Services\ProductService;
 use App\Services\ProductTaxService;
 use App\Services\ProductFlashDealService;
 use App\Services\ProductStockService;
+use App\Services\ProductUploadsService;
 use Illuminate\Support\Facades\Notification;
 
 class ProductController extends Controller
@@ -32,17 +33,20 @@ class ProductController extends Controller
     protected $productTaxService;
     protected $productFlashDealService;
     protected $productStockService;
+    protected $productUploadsService;
 
     public function __construct(
         ProductService $productService,
         ProductTaxService $productTaxService,
         ProductFlashDealService $productFlashDealService,
-        ProductStockService $productStockService
+        ProductStockService $productStockService,
+        ProductUploadsService $productUploadsService,
     ) {
         $this->productService = $productService;
         $this->productTaxService = $productTaxService;
         $this->productFlashDealService = $productFlashDealService;
         $this->productStockService = $productStockService;
+        $this->productUploadsService = $productUploadsService;
 
         // Staff Permission Check
         $this->middleware(['permission:add_new_product'])->only('create');
@@ -201,15 +205,22 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ProductRequest $request)
+    public function store(Request $request)
     {
         $product = $this->productService->store($request->except([
             '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
         ]));
         $request->merge(['product_id' => $product->id]);
+        //dd($product);
 
         //Product categories
         $product->categories()->attach($request->category_ids);
+        if($request->document_names){
+            $data['document_names'] = $request->document_names;
+            $data['documents'] = $request->documents;
+            $data['product'] = $product;
+            $this->productUploadsService->store_documents($data);
+        }
 
         //VAT & Tax
         if ($request->tax_id) {
