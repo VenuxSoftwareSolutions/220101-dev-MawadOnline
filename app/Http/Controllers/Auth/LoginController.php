@@ -249,34 +249,66 @@ class LoginController extends Controller
      * Check user's role and redirect user based on their role
      * @return
      */
-    public function authenticated()
+    // public function authenticated()
+    // {
+    //     if (session('temp_user_id') != null) {
+    //         Cart::where('temp_user_id', session('temp_user_id'))
+    //             ->update(
+    //                 [
+    //                     'user_id' => auth()->user()->id,
+    //                     'temp_user_id' => null
+    //                 ]
+    //             );
+
+    //         Session::forget('temp_user_id');
+    //     }
+
+    //     if (auth()->user()->user_type == 'admin' || auth()->user()->user_type == 'staff') {
+    //         CoreComponentRepository::instantiateShopRepository();
+    //         return redirect()->route('admin.dashboard');
+    //     } elseif (auth()->user()->user_type == 'seller') {
+    //         return redirect()->route('seller.dashboard');
+    //     } else {
+
+    //         if (session('link') != null) {
+    //             return redirect(session('link'));
+    //         } else {
+    //             return redirect()->route('dashboard');
+    //         }
+    //     }
+    // }
+
+
+    public function authenticated(Request $request)
     {
+        // Handling Temporary User IDs for Cart
         if (session('temp_user_id') != null) {
             Cart::where('temp_user_id', session('temp_user_id'))
-                ->update(
-                    [
-                        'user_id' => auth()->user()->id,
-                        'temp_user_id' => null
-                    ]
-                );
-
+                ->update([
+                    'user_id' => auth()->user()->id,
+                    'temp_user_id' => null
+                ]);
+    
             Session::forget('temp_user_id');
         }
-
+    
+        // Redirecting Admins and Staff
         if (auth()->user()->user_type == 'admin' || auth()->user()->user_type == 'staff') {
             CoreComponentRepository::instantiateShopRepository();
             return redirect()->route('admin.dashboard');
-        } elseif (auth()->user()->user_type == 'seller') {
-            return redirect()->route('seller.dashboard');
-        } else {
+        }
+    
+        // Return an error for non-admin and non-staff users
+        else {
+            Auth::logout(); // Optional: log the user out
+            flash(translate('Invalid login credentials'))->error();
 
-            if (session('link') != null) {
-                return redirect(session('link'));
-            } else {
-                return redirect()->route('dashboard');
-            }
+            // Redirect back with an error message, or to a specific route
+            return redirect()->back();
+            // or return redirect('some_route')->withErrors(['error' => 'You do not have permission to access this area.']);
         }
     }
+    
 
     /**
      * Get the failed login response instance.
