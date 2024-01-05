@@ -1,0 +1,1359 @@
+﻿category name,category name ar,sub category name,sub category name ar,child category name,child category name ar
+Building Materials,مواد البناء,Concrete,الخرسانة,Ready-Mix Concrete,الخرسانة الجاهزة
+,,,,Precast Concrete,الخرسانة المسبقة الصنع
+,,,,Concrete Blocks,الكتل الخرسانية
+,,,,Concrete Admixtures,الخلطات الخرسانية
+,,,,Reinforced Concrete,الخرسانة المسلحة
+,,,,Lightweight Concrete,الخرسانة الخفيفة
+,,,,High-Performance Concrete,الخرسانة عالية الأداء
+,,,,Colored Concrete,الخرسانة الملونة
+,,,,Fiber-Reinforced Concrete,الخرسانة المدعمة بالألياف
+,,,,Concrete Repair Materials,مواد إصلاح الخرسانة
+,,Cement,الإسمنت,Portland Cement,الإسمنت البورتلاندي
+,,,,White Cement,الإسمنت الأبيض
+,,,,Hydraulic Cement,الإسمنت الهيدروليكي
+,,,,Blended Cement,الإسمنت الممزوج
+,,,,Non-Shrink Grout,الحشو الخرساني غير الانكماشي
+,,,,Masonry Cement,الإسمنت البنائي
+,,,,Oil-Well Cement,الإسمنت لآبار النفط
+,,,,Rapid Hardening Cement,الإسمنت سريع الصلادة
+,,,,Low Heat Cement,الإسمنت ذو الحرارة المنخفضة
+,,,,Sulfate Resisting Cement,الإسمنت مقاوم للكبريت
+,,Bricks and Blocks,الطوب والكتل,Clay Bricks,الطوب الطيني
+,,,,Concrete Blocks,الكتل الخرسانية
+,,,,Aerated Concrete Blocks,الكتل الخرسانية المفخخة
+,,,,Fire Bricks,الطوب الناري
+,,,,Stone Blocks,الكتل الحجرية
+,,,,Glass Blocks,الكتل الزجاجية
+,,,,Interlocking Blocks,الكتل المتداخلة
+,,,,Hollow Blocks,الكتل الفارغة
+,,,,Insulating Blocks,الكتل العازلة
+,,,,Decorative Blocks,الكتل الزخرفية
+,,Timber and Wood Products,منتجات الأخشاب والخشب,Hardwood,الأخشاب الصلبة
+,,,,Softwood,الأخشاب اللينة
+,,,,Plywood,الخشب الرقائقي
+,,,,MDF (Medium Density Fiberboard),الألواح الليفية عالية الكثافة
+,,,,Chipboard,الخشب الرقائقي
+,,,,Particle Board,الخشب الجسيم
+,,,,Veneers,الطبقات الرقيقة
+,,,,Engineered Wood,الخشب الهندسي
+,,,,Wood Beams,الجوائز الخشبية
+,,,,Timber Cladding,تغطية الخشب
+,,Steel and Metal Products,منتجات الصلب والمعادن,Structural Steel,الصلب الإنشائي
+,,,,Rebar,الحديد المرساة
+,,,,Steel Beams,الجوائز الصلبة
+,,,,Steel Plates,الأواصر الصلبة
+,,,,Steel Pipes,الأنابيب الصلبة
+,,,,Stainless Steel,الفولاذ المقاوم للصدأ
+,,,,Aluminum Products,منتجات الألمنيوم
+,,,,Metal Sheets,الألواح المعدنية
+,,,,Metal Mesh,الشبك المعدنية
+,,,,Metal Rods,القضبان المعدنية
+,,Aggregates,مواد الرصف,Crushed Stone,الحصى المكسرة
+,,,,Sand,الرمل
+,,,,Gravel,الزلط
+,,,,Recycled Concrete Aggregate,الحصى المعادة من الخرسانة
+,,,,Lightweight Aggregate,الحصى الخفيفة
+,,,,Coarse Aggregate,الحصى الخشنة
+,,,,Fine Aggregate,الحصى الناعمة
+,,,,Ballast,الرصيف
+,,,,Decorative Aggregate,الحصى الزخرفية
+,,,,Road Base Materials,مواد قاعدة الطريق
+,,Masonry and Cementitious Products,منتجات البناء والإسمنت,Mortar,الملاط
+,,,,Plaster,الجص
+,,,,Lime,الجير
+,,,,Stucco,السباكة
+,,,,Grout,الحشو
+,,,,Terrazzo,التيرازو
+,,,,Fiber Cement Panels,لوحات الألياف الإسمنتية
+,,,,Cement Boards,لوحات الإسمنت
+,,,,Masonry Adhesive,اللاصق البنائي
+,,,,Concrete Masonry Units (CMU),وحدات البناء الخرسانية (CMU)
+,,Insulation Materials,مواد العزل,Fiberglass Insulation,العزل الزجاجي
+,,,,Mineral Wool,الصوف المعدني
+,,,,Foam Board,لوحات العزل
+,,,,Reflective Insulation,العزل الانعكاسي
+,,,,Spray Foam,الرغوة الرشاشة
+,,,,Insulating Concrete Forms,نماذج الخرسانة العازلة
+,,,,Acoustic Insulation,العزل الصوتي
+,,,,Polyurethane Foam,العزل بالبولي يوريثان
+,,,,Polystyrene Foam,العزل بالبوليستيرين
+,,,,Cellulose Insulation,العزل بالسليلوز
+,,Roofing Materials,مواد السقف,Asphalt Shingles,القرميد الأسفلتي
+,,,,Metal Roofing,السقف المعدني
+,,,,Clay Tiles,القرميد الطيني
+,,,,Concrete Tiles,القرميد الخرساني
+,,,,Slate Roofing,القرميد الصوان
+,,,,Wood Shingles,القرميد الخشبي
+,,,,Roofing Membranes,الأغطية السقفية
+,,,,Green Roofs,الأسقف الخضراء
+,,,,Roofing Felt,الورق السقفي
+,,,,Roof Coatings,أغطية السقف
+,,Glass and Glazing,زجاج وزجاج,Tempered Glass,الزجاج المقسى
+,,,,Laminated Glass,الزجاج المصفح
+,,,,Insulated Glass Units,وحدات الزجاج العازل
+,,,,Float Glass,الزجاج العائم
+,,,,Tinted Glass,الزجاج الملون
+,,,,Reflective Glass,الزجاج العاكس
+,,,,Frosted Glass,الزجاج العاكس
+,,,,Wired Glass,الزجاج السلكي
+,,,,Smart Glass,الزجاج الذكي
+,,,,Fire-Rated Glass,الزجاج المقاوم للحريق
+,,Waterproofing and Damp Proofing Materials,مواد مقاومة للمياه ومواد عازلة,Liquid Membranes,الأغشية السائلة
+,,,,Sheet Membranes,الأغشية الصلبة
+,,,,Cementitious Waterproofing,العزل الإسمنتي
+,,,,Bituminous Coating,الطلاء البيتوميني
+,,,,Bituminous Membranes,الأغشية البيتومينية
+,,,,Water Repellent Coatings,طلاء مقاوم للماء
+,,,,Damp Proofing Rods,قضبان مانعة للرطوبة
+,,,,Vapor Barriers,حواجز بخارية
+,,,,Sealants,مواد مانعة للتسرب
+Tools and Machinery,أدوات وآلات,Hand Tools,أدوات يدوية,Hammers,مطارق
+,,,,Screwdrivers,مفكات
+,,,,Pliers,كماشات
+,,,,Wrenches,مفاتيح الربط
+,,,,Saws,مناشير
+,,,,Chisels,إزاميل
+,,,,Hand Planes,مساحات يدوية
+,,,,Measuring Tapes,متر قياس
+,,,,Levels,ميزان ماء
+,,,,Utility Knives,سكاكين متعددة الاستخدامات
+,,Power Tools,أدوات كهربائية,Drills,مثاقب
+,,,,Circular Saws,مناشير دائرية
+,,,,Jigsaws,مناشير ألغاز
+,,,,Sanders,صنفرات
+,,,,Grinders,مطاحن
+,,,,Impact Wrenches,مفتاح ضربة
+,,,,Nail Guns,مسدسات مسامير
+,,,,Rotary Tools,أدوات دوارة
+,,,,Oscillating Tools,أدوات متذبذبة
+,,,,Reciprocating Saws,مناشير ذهابا وإيابا
+,,Heavy Construction Machinery,آلات البناء الثقيلة,Excavators,حفارات
+,,,,Backhoe Loaders,لوادر ذات حفار
+,,,,Bulldozers,جرافات
+,,,,Cranes,رافعات
+,,,,Dump Trucks,شاحنات قلابة
+,,,,Compactors,مداحل
+,,,,Concrete Mixers,خلاطات الخرسانة
+,,,,Asphalt Pavers,رصفات الإسفلت
+,,,,Graders,معدات تسوية
+,,,,Trenchers,حفارات الخنادق
+,,Measuring and Layout Tools,أدوات القياس والتخطيط,Laser Levels,ميزان ليزر
+,,,,Tape Measures,متر قياس
+,,,,Theodolites,ثيودوليت
+,,,,Measuring Wheels,عجلات القياس
+,,,,Laser Distance Meters,أجهزة قياس المسافة بالليزر
+,,,,Total Stations,محطات شاملة
+,,,,Transit Levels,ميزان عبور
+,,,,Plumb Bobs,أوزان الرصاص
+,,,,Squares,مربعات
+,,,,Protractors,ناقلات الزوايا
+,,Workshop Machinery,آلات الورش,Table Saws,مناشير الطاولة
+,,,,Band Saws,مناشير شريطية
+,,,,Lathes,مخارط
+,,,,Milling Machines,ماكينات الطحن
+,,,,Drill Presses,مكابس الحفر
+,,,,Bench Grinders,مطاحن البنش
+,,,,Planers,مخططات
+,,,,Jointers,آلات الربط
+,,,,Dust Collectors,أجهزة جمع الغبار
+,,,,Air Compressors,ضواغط الهواء
+,,Pneumatic and Hydraulic Tools,أدوات هوائية وهيدروليكية,Air Compressors,ضواغط الهواء
+,,,,Pneumatic Drills,مثاقب هوائية
+,,,,Pneumatic Nailers,مسامير هوائية
+,,,,Pneumatic Staplers,دباسات هوائية
+,,,,Air Ratchets,مفاتيح الهواء
+,,,,Hydraulic Jacks,رافعات هيدروليكية
+,,,,Hydraulic Presses,مكابس هيدروليكية
+,,,,Air Sanders,صنفرات هوائية
+,,,,Hydraulic Hammers,مطارق هيدروليكية
+,,,,Air Impact Wrenches,مفتاح تأثير الهواء
+,,Safety Equipment for Tools and Machinery,معدات السلامة للأدوات والآلات,Safety Glasses,نظارات السلامة
+,,,,Ear Protection,حماية الأذن
+,,,,Dust Masks,أقنعة الغبار
+,,,,Safety Gloves,قفازات السلامة
+,,,,Hard Hats,خوذات السلامة
+,,,,Safety Boots,أحذية السلامة
+,,,,High Visibility Clothing,ملابس عالية الرؤية
+,,,,Respirators,أجهزة التنفس
+,,,,Fall Protection Equipment,معدات الحماية من السقوط
+,,,,Fire Extinguishers,طفايات الحريق
+,,Accessories and Consumables for Tools and Machinery,إكسسوارات ومواد استهلاكية للأدوات والآلات,Drill Bits,رؤوس الثقب
+,,,,Saw Blades,شفرات المنشار
+,,,,Grinding Discs,أقراص الطحن
+,,,,Sandpaper,ورق الصنفرة
+,,,,Batteries and Chargers,بطاريات وشواحن
+,,,,Tool Belts and Bags,أحزمة وحقائب الأدوات
+,,,,Lubricants and Oils,مواد التشحيم والزيوت
+,,,,Welding Rods,قضبان اللحام
+,,,,Air Tool Accessories,إكسسوارات الأدوات الهوائية
+,,,,Router Bits,رؤوس الراوتر
+,,Scaffolding and Ladders,سقالات وسلالم,Step Ladders,سلالم الخطوات
+,,,,Extension Ladders,سلالم قابلة للتمديد
+,,,,Folding Ladders,سلالم قابلة للطي
+,,,,Platform Ladders,سلالم ذات منصة
+,,,,Telescopic Ladders,سلالم تلسكوبية
+,,,,Scaffolding Towers,أبراج السقالات
+,,,,Scaffold Planks,ألواح السقالات
+,,,,Ladder Accessories,إكسسوارات السلالم
+,,,,Work Platforms,منصات العمل
+,,,,Scaffolding Safety Accessories,إكسسوارات الأمان للسقالات
+,,Material Handling Equipment,معدات مناولة المواد,Forklifts,رافعات شوكية
+,,,,Pallet Jacks,جاكات البالتات
+,,,,Hand Trucks,عربات يدوية
+,,,,Conveyor Belts,أحزمة ناقلة
+,,,,Hoists,رافعات
+,,,,Cranes,رافعات
+,,,,Dolly Carts,عربات دولي
+,,,,Material Lifts,رافعات المواد
+,,,,Warehouse Racking,رفوف المستودعات
+,,,,Storage Bins and Containers,حاويات وصناديق التخزين
+Plumbing,السباكة,Pipes and Fittings,الأنابيب والتجهيزات,PVC Pipes,أنابيب PVC
+,,,,Copper Pipes,أنابيب نحاسية
+,,,,PEX Tubing,أنابيب PEX
+,,,,Steel Pipes,أنابيب فولاذية
+,,,,Pipe Fittings,تجهيزات الأنابيب
+,,,,Pipe Couplings,وصلات الأنابيب
+,,,,Pipe Clamps,مشابك الأنابيب
+,,,,Pipe Brackets,أقواس الأنابيب
+,,,,Pipe Insulation,عزل الأنابيب
+,,,,Flexible Hoses,خراطيم مرنة
+,,Valves and Controls,الصمامات وأنظمة التحكم,Ball Valves,صمامات كروية
+,,,,Gate Valves,صمامات بوابية
+,,,,Check Valves,صمامات فحص
+,,,,Pressure Relief Valves,صمامات تخفيف الضغط
+,,,,Thermostatic Mixing Valves,صمامات خلط ترموستاتية
+,,,,Solenoid Valves,صمامات الملف اللولبي
+,,,,Butterfly Valves,صمامات فراشة
+,,,,Valve Actuators,مشغلات الصمامات
+,,,,Flow Control Valves,صمامات تحكم في تدفق
+,,,,Pressure Reducing Valves,صمامات تقليل الضغط
+,,Plumbing Fixtures,تركيبات السباكة,Faucets,صنابير
+,,,,Sinks,مغاسل
+,,,,Toilets,مراحيض
+,,,,Bathtubs,أحواض الاستحمام
+,,,,Shower Heads,رؤوس الدش
+,,,,Bidets,بيديه
+,,,,Urinals,مباول
+,,,,Drinking Fountains,نوافير الشرب
+,,,,Kitchen Fixtures,تجهيزات المطبخ
+,,,,Bathroom Accessories,إكسسوارات الحمام
+,,Water Heaters,سخانات الماء,Tankless Water Heaters,سخانات الماء بدون خزان
+,,,,Storage Water Heaters,سخانات الماء التخزينية
+,,,,Solar Water Heaters,سخانات الماء الشمسية
+,,,,Heat Pump Water Heaters,سخانات الماء بضخ الحرارة
+,,,,Gas Water Heaters,سخانات الماء الغازية
+,,,,Electric Water Heaters,سخانات الماء الكهربائية
+,,,,Hybrid Water Heaters,سخانات الماء الهجينة
+,,,,Commercial Water Heaters,سخانات الماء التجارية
+,,,,Water Heater Accessories,إكسسوارات سخانات الماء
+,,,,Water Heater Parts,أجزاء سخانات الماء
+,,Pumps and Accessories,المضخات والإكسسوارات,Sump Pumps,مضخات القاع
+,,,,Sewage Pumps,مضخات الصرف الصحي
+,,,,Booster Pumps,مضخات الدفع
+,,,,Circulator Pumps,مضخات الدوران
+,,,,Submersible Pumps,مضخات الغمر
+,,,,Pump Controllers,متحكمات المضخات
+,,,,Pump Filters,مرشحات المضخات
+,,,,Pump Flanges,فلنجات المضخات
+,,,,Expansion Tanks,خزانات التمدد
+,,,,Pump Fittings,تجهيزات المضخات
+,,Water Filtration and Treatment,ترشيح ومعالجة الماء,Water Filters,مرشحات الماء
+,,,,Reverse Osmosis Systems,أنظمة التناضح العكسي
+,,,,Water Softeners,ملينات الماء
+,,,,UV Water Purifiers,منقيات الماء بالأشعة فوق البنفسجية
+,,,,Sediment Filters,مرشحات الرواسب
+,,,,Carbon Filters,مرشحات الكربون
+,,,,Iron Removal Systems,أنظمة إزالة الحديد
+,,,,Water Treatment Chemicals,مواد كيميائية لمعالجة الماء
+,,,,Whole House Filters,مرشحات للمنزل بأكمله
+,,,,Filtration System Accessories,إكسسوارات نظام الترشيح
+,,Plumbing Tools and Equipment,أدوات ومعدات السباكة,Pipe Wrenches,مفاتيح الأنابيب
+,,,,Pipe Cutters,قاطعات الأنابيب
+,,,,Plumbing Snakes,أفاعي السباكة
+,,,,Pipe Threading Tools,أدوات توشيك الأنابيب
+,,,,Crimping Tools,أدوات الضغط
+,,,,Tubing Cutters,قاطعات الأنابيب
+,,,,Pipe Benders,مثنيات الأنابيب
+,,,,Drain Cleaning Equipment,أدوات تنظيف المجاري
+,,,,Plungers,مكبسات
+,,,,Inspection Cameras,كاميرات التفتيش
+,,Sealants and Adhesives,المواد المانعة للتسرب والمواد اللاصقة,Thread Sealant,مانع التسرب
+,,,,Pipe Sealant,لاصقات الأنابيب
+,,,,Silicone Sealants,السيليكون العازل
+,,,,Plumbing Epoxy,الإيبوكسي للسباكة
+,,,,Gasket Sealants,لاصقات الجوانات
+,,,,PVC Cement,الإسمنت PVC
+,,,,Pipe Joint Compound,مركب مفاصل الأنابيب
+,,,,Solvent Cement,الإسمنت اللواحقي
+,,,,Caulking,مواد الختم
+,,,,Adhesive Tape,شريط لاصق
+,,Insulation and Pipe Covers,العزل وأغطية الأنابيب,Foam Pipe Insulation,عزل الأنابيب بالفوم
+,,,,Fiberglass Pipe Insulation,عزل الأنابيب بالألياف الزجاجية
+,,,,Rubber Pipe Insulation,عزل الأنابيب بالمطاط
+,,,,Pipe Wrap Insulation,عزل لفائف الأنابيب
+,,,,Insulation Jackets,ستر العزل
+,,,,Pipe Sleeves,أغطية الأنابيب
+,,,,Heat Trace Cables,أسلاك تتبع الحرارة
+,,,,Pipe Covers,أغطية الأنابيب
+,,,,Insulation Boards,لوحات العزل
+,,,,Pipe Insulation Tape,شريط عزل الأنابيب
+,,Drainage and Waste Management,إدارة التصريف والنفايات,Floor Drains,صرف الأرضي
+,,,,Grease Traps,مصافي الدهون
+,,,,Septic Tanks,خزانات الصرف الصحي
+,,,,Drain Covers,أغطية الصرف
+,,,,Drain Grates,قواعد الصرف
+,,,,P-Traps,فخاخ الصرف
+,,,,S-Traps,صفائح الصرف
+,,,,Sewer Pipes,أنابيب الصرف
+,,,,Drainage Channels,قنوات التصريف
+,,,,Waste Disposal Units,وحدات التخلص من النفايات
+Electrical Supplies, اللوازم الكهربائية, Wiring and Cables, الأسلاك والكابلات, Electrical Wires, الأسلاك الكهربائية
+,,,, Coaxial Cables, كابلات محورية
+,,,, Ethernet Cables, كابلات إيثرنت
+,,,, Fiber Optic Cables, كابلات الألياف الضوئية
+,,,, Armored Cables, كابلات مدرعة
+,,,, Conduit Wires, أسلاك المواسير
+,,,, Speaker Wires, أسلاك السماعات
+,,,, Telephone Cables, كابلات الهاتف
+,,,, Low Voltage Cables, كابلات الجهد المنخفض
+,,,, Cable Conduits, مواسير الكابلات
+Electrical Supplies, اللوازم الكهربائية, Conduits and Fittings, المواسير والتجهيزات, PVC Conduits, مواسير PVC
+,,,, Metal Conduits, مواسير معدنية
+,,,, Flexible Conduits, مواسير مرنة
+,,,, Conduit Bodies, أجسام المواسير
+,,,, Conduit Connectors, وصلات المواسير
+,,,, Conduit Elbows, أكواع المواسير
+,,,, Junction Boxes, صناديق التوصيل
+,,,, Conduit Clamps, مشابك المواسير
+,,,, Conduit Bushings, واقيات المواسير
+,,,, Conduit Straps, أحزمة المواسير
+,,,, Light Switches, مفاتيح الإضاءة
+,,,, Power Outlets, مقابس الكهرباء
+,,,, Dimmer Switches, مفاتيح الديمر
+,,,, USB Outlets, مقابس USB
+,,,, Toggle Switches, مفاتيح التبديل
+,,,, GFCI Outlets, مقابس GFCI
+,,,, Weatherproof Switches, مفاتيح مقاومة للطقس
+,,,, Smart Switches, مفاتيح ذكية
+,,,, Push Button Switches, مفاتيح زر الضغط
+,,,, Decorative Switch Plates, أغطية مفاتيح الزينة
+,, Circuit Breakers and Distribution Boards, قواطع الدائرة ولوحات التوزيع, Miniature Circuit Breakers, قواطع الدائرة الصغيرة
+,,,, Molded Case Circuit Breakers, قواطع الدائرة ذات الحقيبة المصبوبة
+,,,, Earth Leakage Circuit Breakers, قواطع الدائرة لتسرب الأرض
+,,,, Distribution Panels, لوحات التوزيع
+,,,, Main Breakers, القواطع الرئيسية
+,,,, Sub Panels, الألواح الفرعية
+,,,, Surge Protectors, واقيات الصواعق
+,,,, Fuse Boxes, صناديق الفيوزات
+,,,, Safety Switches, مفاتيح الأمان
+,,,, Circuit Breaker Accessories, ملحقات قواطع الدائرة
+,, Lighting Controls and Accessories, تحكم الإضاءة وملحقاتها, Motion Sensors, أجهزة استشعار الحركة
+,,,, Photocells, الخلايا الضوئية
+,,,, Timer Switches, مفاتيح الوقت
+,,,, Dimmers, أجهزة تعتيم الإضاءة
+,,,, Lighting Contactors, مقاولو الإضاءة
+,,,, Light Sensors, أجهزة استشعار الضوء
+,,,, Wireless Lighting Controls, تحكم لاسلكي بالإضاءة
+,,,, Remote Control Switches, مفاتيح التحكم عن بعد
+,,,, Occupancy Sensors, أجهزة استشعار الاحتلال
+,,,, Lighting Control Panels, لوحات تحكم الإضاءة
+,, Transformers and Power Supplies, المحولات ومصادر الطاقة, Step-Up Transformers, محولات رفع الجهد
+,,,, Step-Down Transformers, محولات خفض الجهد
+,,,, Isolation Transformers, محولات العزل
+,,,, Power Converters, محولات الطاقة
+,,,, Voltage Regulators, منظمات الجهد
+,,,, AC to DC Converters, محولات من AC إلى DC
+,,,, UPS Systems, أنظمة UPS
+,,,, Battery Chargers, شواحن البطاريات
+,,,, Solar Inverters, محولات الطاقة الشمسية
+,,,, Power Adapters, محولات الطاقة
+,, Electrical Boxes and Enclosures, صناديق الكهرباء والحواجز, Junction Boxes, صناديق التوصيل
+,,,, Electrical Enclosures, الحواجز الكهربائية
+,,,, Weatherproof Boxes, صناديق مقاومة للطقس
+,,,, Outlet Boxes, صناديق المخارج
+,,,, Switch Boxes, صناديق المفاتيح
+,,,, Floor Boxes, صناديق الأرضية
+,,,, Ceiling Boxes, صناديق السقف
+,,,, Wall Mount Enclosures, حواجز التثبيت على الجدار
+,,,, Control Cabinets, خزانات التحكم
+,,,, Handheld Enclosures, حواجز محمولة باليد
+,,,, Multimeters, أجهزة قياس متعددة
+,,,, Voltage Testers, أجهزة اختبار الجهد
+,,,, Wire Strippers, أدوات تجريد الأسلاك
+,,,, Crimping Tools, أدوات الكبس
+,,,, Electrical Tape, شريط كهربائي
+,,,, Fish Tapes, أشرطة الصيد
+,,,, Cable Cutters, قاطعات الكابلات
+,,,, Pliers, كماشة
+,,,, Screwdrivers, مفكات
+,,,, Circuit Finders, أجهزة البحث عن الدوائر
+,, Cable Management Solutions, حلول إدارة الكابلات, Cable Trays, صواني الكابلات
+,,,, Cable Ties, ربطات الكابلات
+,,,, Cable Ducts, مجاري الكابلات
+,,,, Wire Looms, أنابيب تجميع الأسلاك
+,,,, Cable Glands, غدد الكابلات
+,,,, Cable Labels, ملصقات الكابلات
+,,,, Cord Covers, أغطية الأسلاك
+,,,, Cable Sleeves, أكمام الكابلات
+,,,, Cable Organizers, منظمات الكابلات
+,,,, Cable Clamps, مشابك الكابلات
+,, Safety and Protection Devices, أجهزة السلامة والحماية, Ground Fault Circuit Interrupters (GFCIs), مقاطع دائرة تسرب الأرض (GFCIs)
+,,,, Surge Protectors, واقيات الصواعق
+,,,, Insulated Gloves, قفازات معزولة
+,,,, Safety Mats, حصائر الأمان
+,,,, Arc Fault Circuit Interrupters (AFCIs), مقاطع دائرة قوس الخطأ (AFCIs)
+,,,, Voltage Detectors, كاشفات الجهد
+,,,, Lockout Devices, أجهزة القفل
+,,,, Electrical Safety Signs, لافتات السلامة الكهربائية
+,,,, Face Shields, واقيات الوجه
+,,,, Electrical Blankets, بطانيات كهربائية
+,, Renewable Energy Supplies, لوازم الطاقة المتجددة, Solar Panels, الألواح الشمسية
+,,,, Wind Turbines, توربينات الرياح
+,,,, Solar Inverters, محولات الطاقة الشمسية
+,,,, Solar Batteries, بطاريات شمسية
+,,,, Solar Charge Controllers, وحدات تحكم شحن الطاقة الشمسية
+,,,, Wind Generators, مولدات الرياح
+,,,, Solar Panel Mounts, تثبيتات الألواح الشمسية
+,,,, Hybrid Systems, أنظمة هجينة
+,,,, Solar Cables, كابلات شمسية
+,,,, Renewable Energy Meters, عدادات الطاقة المتجددة
+,, Home Automation and Smart Electrical Products, أتمتة المنزل ومنتجات الكهرباء الذكية, Smart Thermostats, ترموستاتات ذكية
+,,,, Smart Lighting Systems, أنظمة الإضاءة الذكية
+,,,, Home Automation Controllers, أجهزة تحكم أتمتة المنزل
+,,,, Smart Plugs, مقابس ذكية
+,,,, Smart Switches, مفاتيح ذكية
+,,,, Smart Sensors, أجهزة استشعار ذكية
+,,,, Wireless Doorbells, أجراس الأبواب اللاسلكية
+,,,, Smart Home Hubs, مراكز المنزل الذكي
+,,,, Wi-Fi Extenders, موسعات Wi-Fi
+,,,, Voice Control Systems, أنظمة التحكم الصوتي
+HVAC (Heating Ventilation and Air Conditioning), التدفئة والتهوية وتكييف الهواء, Heating Systems, أنظمة التدفئة, Furnaces, الأفران
+,,,, Boilers, الغلايات
+,,,, Heat Pumps, مضخات الحرارة
+,,,, Radiant Heating, التدفئة الإشعاعية
+,,,, Portable Heaters, سخانات محمولة
+,,,, Baseboard Heaters, سخانات القاعدة
+,,,, Unit Heaters, سخانات الوحدة
+,,,, Infrared Heaters, سخانات الأشعة تحت الحمراء
+,,,, Geothermal Heating, التدفئة الجيوحرارية
+,,,, Heating Controls, تحكمات التدفئة
+, التدفئة والتهوية وتكييف الهواء, Ventilation Equipment, معدات التهوية, Exhaust Fans, مراوح العادم
+,,,, Air Handlers, معالجات الهواء
+,,,, Ventilation Ducts, مجاري التهوية
+,,,, Air Curtains, ستائر الهواء
+,,,, Air Vents, فتحات الهواء
+,,,, ERV Systems, أنظمة ERV
+,,,, Attic Ventilators, مهويات العلية
+,,,, Ventilation Filters, فلاتر التهوية
+,,,, Louvers, مصاريع
+,,,, Dampers, مخمدات
+, التدفئة والتهوية وتكييف الهواء, Air Conditioning Units, وحدات تكييف الهواء, Central Air Conditioners, مكيفات الهواء المركزية
+,,,, Split Systems, أنظمة التقسيم
+,,,, Window Units, وحدات النوافذ
+,,,, Portable Air Conditioners, مكيفات الهواء المحمولة
+,,,, Ductless Mini-Splits, ميني سبليت بدون مجاري
+,,,, Packaged Terminal ACs (PTAC), مكيفات الهواء الطرفية المعبأة (PTAC)
+,,,, Evaporative Coolers, مبردات التبخر
+,,,, AC Compressors, ضواغط مكيف الهواء
+,,,, Condensing Units, وحدات التكثيف
+,,,, Air Conditioner Coils, ملفات مكيف الهواء
+, التدفئة والتهوية وتكييف الهواء, HVAC Controls and Thermostats, تحكمات وثرموستات HVAC, Programmable Thermostats, ثرموستات قابلة للبرمجة
+,,,, Smart Thermostats, ثرموستاتات ذكية
+,,,, HVAC Control Panels, لوحات تحكم HVAC
+,,,, Zone Control Systems, أنظمة التحكم بالمناطق
+,,,, Thermostat Sensors, حساسات الثرموستات
+,,,, Humidistats, جهاز قياس الرطوبة
+,,,, Variable Speed Controls, تحكمات السرعة المتغيرة
+,,,, Bypass Dampers, مخمدات التحويلة
+,,,, Wireless Thermostats, ثرموستاتات لاسلكية
+,,,, Temperature Controllers, أجهزة تحكم الحرارة
+, التدفئة والتهوية وتكييف الهواء, Ductwork and Accessories, القنوات وملحقاتها, Flexible Ducts, قنوات مرنة
+,,,, Metal Ducts, قنوات معدنية
+,,,, Duct Fittings, تجهيزات القنوات
+,,,, Duct Insulation, عزل القنوات
+,,,, Duct Sealing, ختم القنوات
+,,,, Duct Fans, مراوح القنوات
+,,,, Plenums, بلينوم
+,,,, Duct Supports, دعامات القنوات
+,,,, Air Diffusers, موزعات الهواء
+,,,, Duct Transitions, انتقالات القنوات
+, التدفئة والتهوية وتكييف الهواء, Filters and Purification Systems, فلاتر وأنظمة التنقية, HEPA Filters, فلاتر HEPA
+,,,, Electrostatic Filters, فلاتر كهربائية ساكنة
+,,,, Carbon Filters, فلاتر الكربون
+,,,, UV Air Purifiers, مطهرات الهواء بالأشعة فوق البنفسجية
+,,,, Air Scrubbers, مكانس الهواء
+,,,, Media Filters, فلاتر الوسائط
+,,,, Electronic Air Cleaners, أجهزة تنقية الهواء الإلكترونية
+,,,, Pre-Filters, فلاتر مسبقة
+,,,, Humidifiers, مرطبات الهواء
+,,,, Dehumidifiers, مزيلات الرطوبة
+, التدفئة والتهوية وتكييف الهواء, Refrigeration Components, مكونات التبريد, Refrigerant Gases, غازات التبريد
+,,,, Compressors, الضواغط
+,,,, Condensers, المكثفات
+,,,, Evaporators, المبخرات
+,,,, Refrigerant Lines, خطوط المبرد
+,,,, Expansion Valves, صمامات التمدد
+,,,, Refrigeration Controls, تحكمات التبريد
+,,,, Driers, المجففات
+,,,, Sight Glasses, نظارات المشاهدة
+,,,, Accumulators, الأكوام
+, التدفئة والتهوية وتكييف الهواء, Insulation and Sealing Materials, مواد العزل, Duct Insulation, عزل القنوات
+,,,, Foam Sealants, مانع تسرب الرغوة
+,,,, Weather Stripping, شرائط العزل الجوي
+,,,, Insulation Tape, شريط العزل
+,,,, Bubble Wrap Insulation, عزل الفقاعات
+,,,, Pipe Insulation, عزل الأنابيب
+,,,, Door Sweeps, مكانس الأبواب
+,,,, Window Insulation Kits, مجموعات عزل النوافذ
+,,,, Radiant Barriers, حواجز إشعاعية
+,,,, Insulating Foams, أرغوة العزل
+, التدفئة والتهوية وتكييف الهواء, HVAC Tools and Equipment, أدوات ومعدات HVAC, Manifold Gauges, أجهزة قياس المجمع
+,,,, HVAC Multimeters, مقاييس متعددة لـ HVAC
+,,,, Refrigerant Recovery Machines, آلات استرداد المبرد
+,,,, Leak Detectors, كواشف التسرب
+,,,, Crimping Tools, أدوات الكبس
+,,,, HVAC Vacuum Pumps, مضخات فراغ HVAC
+,,,, Flaring Tools, أدوات التوسيع
+,,,, Pipe Benders, آلات ثني الأنابيب
+,,,, HVAC Testing Instruments, أجهزة اختبار HVAC
+,,,, Duct Tools, أدوات القنوات
+, التدفئة والتهوية وتكييف الهواء, Portable Heating and Cooling Solutions, حلول التدفئة والتبريد المحمولة, Portable Heaters, سخانات محمولة
+,,,, Portable Air Conditioners, مكيفات هواء محمولة
+,,,, Portable Evaporative Coolers, مبردات تبخرية محمولة
+,,,, Portable Humidifiers, مرطبات محمولة
+,,,, Portable Dehumidifiers, مزيلات الرطوبة المحمولة
+,,,, Portable Fans, مراوح محمولة
+,,,, Space Heaters, سخانات الفضاء
+,,,, Tower Fans, مراوح برجية
+,,,, Window Fans, مراوح النوافذ
+,,,, Desk Fans, مراوح الطاولة
+, التدفئة والتهوية وتكييف الهواء, Chillers and Cooling Towers, التشيلرات وأبراج التبريد, Water Chillers, تشيلرات المياه
+,,,, Air-Cooled Chillers, تشيلرات تبريد بالهواء
+,,,, Cooling Towers, أبراج التبريد
+,,,, Chiller Units, وحدات التشيلر
+,,,, Heat Exchangers, مبادلات حرارية
+,,,, Cooling Tower Fans, مراوح أبراج التبريد
+,,,, Chillers with Heat Recovery, تشيلرات مع استعادة الحرارة
+,,,, Absorption Chillers, تشيلرات الامتصاص
+,,,, Cooling Tower Filtration, ترشيح أبراج التبريد
+,,,, Chiller Controls, تحكمات التشيلر
+, التدفئة والتهوية وتكييف الهواء, Energy Recovery and Ventilation Systems, أنظمة استعادة الطاقة والتهوية, Heat Recovery Ventilators (HRVs), مراوح استعادة الحرارة (HRVs)
+,,,, Energy Recovery Ventilators (ERVs), مراوح استعادة الطاقة (ERVs)
+,,,, Air-to-Air Exchangers, مبادلات هواء لهواء
+,,,, Exhaust Air Heat Pumps, مضخات حرارة الهواء العادم
+,,,, Energy Recovery Wheels, عجلات استعادة الطاقة
+,,,, Heat Pipes, أنابيب الحرارة
+,,,, Energy Recovery Filters, فلاتر استعادة الطاقة
+,,,, Cross Flow Exchangers, مبادلات تدفق متقاطع
+,,,, Rotary Heat Exchangers, مبادلات حرارية دوارة
+,,,, Plate Heat Exchangers, مبادلات حرارية صفيحية
+Safety and Security, السلامة والأمان, Personal Protective Equipment (PPE), معدات الحماية الشخصية, Safety Helmets, خوذات الأمان
+,,,, Safety Glasses, نظارات الأمان
+,,,, Ear Protection, حماية الأذن
+,,,, Respirators and Masks, أجهزة التنفس والأقنعة
+,,,, Safety Gloves, قفازات الأمان
+,,,, High-Visibility Clothing, ملابس ذات رؤية عالية
+,,,, Safety Boots, أحذية الأمان
+,,,, Protective Coveralls, بدلات الحماية
+,,,, Fall Protection Gear, معدات الحماية من السقوط
+,,,, Knee Pads, واقيات الركبة
+,, Security Cameras and Surveillance Systems, كاميرات الأمان وأنظمة المراقبة, CCTV Cameras, كاميرات CCTV
+,,,, IP Cameras, كاميرات IP
+,,,, Wireless Security Cameras, كاميرات الأمان اللاسلكية
+,,,, DVR Systems, أنظمة DVR
+,,,, NVR Systems, أنظمة NVR
+,,,, Security Monitors, شاشات الأمان
+,,,, Camera Lenses, عدسات الكاميرا
+,,,, Motion Detectors, كواشف الحركة
+,,,, Night Vision Cameras, كاميرات الرؤية الليلية
+,,,, Hidden Cameras, كاميرات مخفية
+,, Alarm Systems and Detectors, أنظمة الإنذار والكشف, Burglar Alarms, أجهزة إنذار السرقة
+,,,, Smoke Detectors, كاشفات الدخان
+,,,, Carbon Monoxide Detectors, كاشفات أول أكسيد الكربون
+,,,, Gas Leak Detectors, كاشفات تسرب الغاز
+,,,, Motion Sensor Alarms, أجهزة إنذار الحركة
+,,,, Glass Break Detectors, كاشفات كسر الزجاج
+,,,, Water Leak Detectors, كاشفات تسرب الماء
+,,,, Temperature Alarms, أجهزة إنذار درجة الحرارة
+,,,, Wireless Alarm Systems, أنظمة الإنذار اللاسلكية
+,,,, Sirens and Strobes, صفارات الإنذار والإضاءة الوامضة
+,, Fire Safety Equipment, معدات السلامة من الحرائق, Fire Extinguishers, طفايات الحريق
+,,,, Fire Blankets, بطانيات الحريق
+,,,, Fire Hose Reels, بكرات خراطيم الحريق
+,,,, Fire Suppression Systems, أنظمة إخماد الحرائق
+,,,, Smoke Alarms, أجهزة إنذار الدخان
+,,,, Fire Sprinkler Systems, أنظمة رشاشات الحريق
+,,,, Fire Axes, فؤوس الحريق
+,,,, Emergency Lighting, إضاءة الطوارئ
+,,,, Fire Escape Ladders, سلالم هروب الحريق
+,,,, Flame Detectors, كاشفات اللهب
+,, Safety Signage and Barriers, لافتات السلامة والحواجز, Hazard Warning Signs, لافتات تحذير الخطر
+,,,, Safety Cones, مخاريط السلامة
+,,,, Barricade Tape, شريط الحواجز
+,,,, Safety Barriers, حواجز السلامة
+,,,, Crowd Control Barriers, حواجز التحكم بالحشود
+,,,, Traffic Safety Signs, لافتات السلامة المرورية
+,,,, Emergency Exit Signs, لافتات الخروج الطارئ
+,,,, Floor Safety Signs, لافتات السلامة الأرضية
+,,,, Reflective Signs, لافتات عاكسة
+,,,, Safety Bollards, أعمدة السلامة
+,, First Aid and Emergency Kits, معدات الإسعافات الأولية والطوارئ, First Aid Kits, مجموعات الإسعافات الأولية
+,,,, Emergency Eyewash Stations, محطات غسل العين الطارئة
+,,,, Stretchers, نقالات
+,,,, Burn Kits, مجموعات علاج الحروق
+,,,, Trauma Kits, مجموعات الإصابات
+,,,, CPR Equipment, معدات الإنعاش القلبي الرئوي
+,,,, Splints, جبائر
+,,,, Emergency Blankets, بطانيات الطوارئ
+,,,, Defibrillators, أجهزة الصدمات الكهربائية
+,,,, First Aid Room Equipment, معدات غرفة الإسعافات الأولية
+,, Fall Protection Equipment, معدات الحماية من السقوط, Safety Harnesses, أحزمة الأمان
+,,,, Lanyards, أربطة
+,,,, Fall Arrest Systems, أنظمة الحماية من السقوط
+,,,, Safety Nets, شباك الأمان
+,,,, Anchorage Points, نقاط التثبيت
+,,,, Body Belts, أحزمة الجسم
+,,,, Rope Grabs, ماسكات الحبل
+,,,, Self-Retracting Lifelines, خطوط الحياة الانكماشية الذاتية
+,,,, Carabiners, كرابينات
+,,,, Fall Protection Kits, مجموعات الحماية من السقوط
+,, Lockout-Tagout Devices, أجهزة القفل والعلامات, Lockout Hasps, مشابك القفل
+,,,, Valve Lockouts, أقفال الصمامات
+,,,, Electrical Lockouts, أقفال الكهرباء
+,,,, Cable Lockouts, أقفال الكابلات
+,,,, Group Lockout Boxes, صناديق القفل الجماعي
+,,,, Lockout Tags, علامات القفل
+,,,, Padlocks, أقفال
+,,,, Circuit Breaker Lockouts, أقفال قواطع الدائرة
+,,,, Plug Lockouts, أقفال القابس
+,,,, Lockout Stations, محطات القفل
+,, Access Control Systems, أنظمة التحكم في الدخول, Electronic Keypads, لوحات المفاتيح الإلكترونية
+,,,, Card Readers, قارئات البطاقات
+,,,, Biometric Systems, أنظمة البيومترية
+,,,, Turnstiles, البوابات الدوارة
+,,,, Access Control Panels, لوحات التحكم في الدخول
+,,,, Door Controllers, أجهزة تحكم الأبواب
+,,,, Electromagnetic Locks, أقفال كهرومغناطيسية
+,,,, Exit Devices, أجهزة الخروج
+,,,, Visitor Management Systems, أنظمة إدارة الزوار
+,,,, Access Control Cards, بطاقات التحكم في الدخول
+,, Security Lighting and Floodlights, إضاءة الأمان والكشافات, Motion-Activated Lights, الأضواء المنشطة بالحركة
+,,,, LED Floodlights, كشافات LED
+,,,, Solar Security Lights, أضواء الأمان الشمسية
+,,,, Halogen Floodlights, كشافات الهالوجين
+,,,, Security Light Sensors, مستشعرات أضواء الأمان
+,,,, Perimeter Lighting, إضاءة المحيط
+,,,, Emergency Lights, أضواء الطوارئ
+,,,, Landscape Lighting, إضاءة المناظر الطبيعية
+,,,, Infrared Illuminators, مضيئات الأشعة تحت الحمراء
+,,,, Portable Work Lights, أضواء العمل المحمولة
+,, Safety Footwear and Clothing, أحذية وملابس السلامة, Steel Toe Boots, أحذية بأصابع فولاذية
+,,,, Safety Shoes, أحذية السلامة
+,,,, Protective Overalls, بدلات واقية
+,,,, High-Visibility Jackets, جاكيتات ذات رؤية عالية
+,,,, Safety Vests, سترات السلامة
+,,,, Chemical Resistant Clothing, ملابس مقاومة للمواد الكيميائية
+,,,, Heat Resistant Gloves, قفازات مقاومة للحرارة
+,,,, Anti-Static Footwear, أحذية مضادة للكهرباء الساكنة
+,,,, Cold Weather Workwear, ملابس العمل للطقس البارد
+,,,, Welding Apparel, ملابس اللحام
+,, Traffic Safety Products, منتجات السلامة المرورية, Traffic Cones, مخاريط المرور
+,,,, Speed Bumps, المطبات الصناعية
+,,,, Traffic Barricades, الحواجز المرورية
+,,,, Road Markers, علامات الطريق
+,,,, Parking Stops, موانع الركن
+,,,, Traffic Flags, أعلام المرور
+,,,, Reflective Tape, شريط عاكس
+,,,, Convex Mirrors, مرايا محدبة
+,,,, Pedestrian Crossing Signs, لافتات عبور المشاة
+,,,, Road Safety Vests, سترات السلامة الطرقية
+Finishing Materials, مواد التشطيب, Paints and Coatings, الدهانات والطلاءات, Interior Paints, دهانات داخلية
+,,,, Exterior Paints, دهانات خارجية
+,,,, Primers, أساسيات
+,,,, Wood Stains, بقع الخشب
+,,,, Sealers, مواد الختم
+,,,, Varnishes, الورنيشات
+,,,, Specialty Coatings, طلاءات متخصصة
+,,,, Roof Coatings, طلاءات الأسطح
+,,,, Waterproofing Paints, دهانات مقاومة للماء
+,,,, Masonry Paint, دهان البناء
+,, Tiles and Tiling Materials, بلاط ومواد البلاط, Ceramic Tiles, بلاط سيراميك
+,,,, Porcelain Tiles, بلاط بورسلين
+,,,, Stone Tiles, بلاط الحجر
+,,,, Glass Tiles, بلاط زجاجي
+,,,, Mosaic Tiles, بلاط الموزاييك
+,,,, Floor Tiles, بلاط الأرضيات
+,,,, Wall Tiles, بلاط الجدران
+,,,, Decorative Tiles, بلاط ديكوري
+,,,, Tile Adhesives, مواد لاصقة للبلاط
+,,,, Grouting Materials, مواد الجص
+,, Wallpapers and Wall Coverings, ورق جدران وتغطيات الجدار, Vinyl Wallpaper, ورق جدران من الفينيل
+,,,, Fabric Wallpaper, ورق جدران من القماش
+,,,, Paper Wallpaper, ورق جدران ورقي
+,,,, Textured Wallpaper, ورق جدران محكم
+,,,, Removable Wallpaper, ورق جدران قابل للإزالة
+,,,, Murals, جداريات
+,,,, Wall Panels, ألواح الجدار
+,,,, Wall Stickers, ملصقات الجدار
+,,,, Wallpaper Borders, حدود ورق الجدران
+,,,, Lining Paper, ورق البطانة
+,, Decorative Elements and Moldings, العناصر الزخرفية والقوالب, Crown Moldings, قوالب التاج
+,,,, Baseboards, ألواح القاعدة
+,,,, Chair Rails, قضبان الكراسي
+,,,, Wall Trims, تقليم الجدران
+,,,, Ceiling Medallions, ميداليات السقف
+,,,, Decorative Panels, الألواح الزخرفية
+,,,, Cornices, كورنيش
+,,,, Picture Rails, قضبان الصور
+,,,, Wainscoting Panels, ألواح الواجهات الخشبية
+,,,, Window Trims, تقليم النوافذ
+,, Kitchen and Bathroom Finishes, تشطيبات المطابخ والحمامات, Countertops,سطح المطبخ
+,,,, Backsplash Tiles, بلاط الحائط الخلفي
+,,,, Cabinet Finishes, تشطيبات الخزائن
+,,,, Sink Faucets, صنابير الحوض
+,,,, Shower Heads, رؤوس الدش
+,,,, Bathroom Vanities, تسريحات الحمام
+,,,, Kitchen Sinks, أحواض المطبخ
+,,,, Bathtub Surrounds, إطارات البانيو
+,,,, Toilet Fixtures, تجهيزات المراحيض
+,,,, Kitchen and Bathroom Hardware, أدوات المطابخ والحمامات
+,, Window Treatments, معالجات النوافذ, Curtains, ستائر
+,,,, Blinds, ستائر معتمة
+,,,, Shades, ظلال
+,,,, Shutters, مصاريع
+,,,, Drapes, الستائر الثقيلة
+,,,, Valences, فالنس
+,,,, Window Films, أفلام النوافذ
+,,,, Curtain Rods, أعمدة الستائر
+,,,, Motorized Window Treatments, معالجات النوافذ المؤتمتة
+,,,, Blackout Window Treatments, معالجات النوافذ للحجب الكامل
+,, Staircase Materials and Accessories, مواد وإكسسوارات السلالم, Stair Treads, درجات السلم
+,,,, Handrails, درابزينات
+,,,, Balusters, الدعامات
+,,,, Newel Posts, الأعمدة الرئيسية
+,,,, Riser Panels, لوحات الارتفاع
+,,,, Stair Nosing, حافة الدرج
+,,,, Stair Brackets, قواعد السلالم
+,,,, Railings, القضبان
+,,,, Spiral Staircases, السلالم الحلزونية
+,,,, Stair Skirting, تنورة الدرج
+,, Ceiling Finishes, تشطيبات السقف, Suspended Ceiling Tiles, بلاطات السقف المعلق
+,,,, Plasterboard, ألواح الجبس
+,,,, Decorative Beams, العوارض الزخرفية
+,,,, Ceiling Panels, ألواح السقف
+,,,, Acoustic Tiles, بلاط عازل للصوت
+,,,, Cove Lighting, الإضاءة المحيطة
+,,,, Ceiling Domes, قبب السقف
+,,,, Stretch Ceilings, السقوف الممتدة
+,,,, Coffered Ceilings, السقوف المتقاطعة
+,,,, Metal Ceiling Tiles, بلاطات سقف معدنية
+,, Interior Decorative Accessories, اكسسوارات الديكور الداخلي, Mirrors, مرايا
+,,,, Picture Frames, إطارات الصور
+,,,, Wall Art, فنون الجدار
+,,,, Vases, مزهريات
+,,,, Decorative Bowls, أوعية زخرفية
+,,,, Candle Holders, حاملات الشموع
+,,,, Wall Sconces, الشمعدانات الجدارية
+,,,, Ornaments, زينة
+,,,, Sculptures, تماثيل
+,,,, Decorative Trays, صواني الزينة
+,, Accent Furniture, أثاث زخرفي, Console Tables, طاولات الكونسول
+,,,, Accent Chairs, كراسي زخرفية
+,,,, Decorative Shelves, رفوف زخرفية
+,,,, Side Tables, طاولات جانبية
+,,,, Room Dividers, مقسمات الغرف
+,,,, Accent Cabinets, خزائن زخرفية
+,,,, Benches, مقاعد
+,,,, Plant Stands, حوامل النباتات
+,,,, Coffee Tables, طاولات القهوة
+,, Wall and Ceiling Panels, ألواح الجدران والأسقف, Wood Panels, ألواح خشبية
+,,,, Acoustic Panels, ألواح عازلة للصوت
+,,,, 3D Wall Panels, ألواح الجدران ثلاثية الأبعاد
+,,,, PVC Panels, ألواح PVC
+,,,, Fabric Panels, ألواح النسيج
+,,,, Metal Panels, ألواح معدنية
+,,,, Gypsum Panels, ألواح الجبس
+,,,, Glass Panels, ألواح زجاجية
+,,,, Stone Panels, ألواح الحجر
+,,,, Fiberboard Panels, ألواح الألياف
+Hardware and Fasteners, الأدوات والمثبتات, Nails, المسامير, Common Nails, مسامير عادية
+,,,, Finishing Nails, مسامير التشطيب
+,,,, Roofing Nails, مسامير التسقيف
+,,,, Masonry Nails, مسامير البناء
+,,,, Brad Nails, مسامير براد
+,,,, Panel Pins, دبابيس الألواح
+,,,, Flooring Nails, مسامير الأرضيات
+,,,, Siding Nails, مسامير الكسوة
+,,,, Double-Headed Nails, مسامير ذات رأسين
+,,,, Nail Anchors, مسامير مرساة
+,, Screws, البراغي, Wood Screws, براغي الخشب
+,,,, Machine Screws, براغي الآلات
+,,,, Drywall Screws, براغي الجدران الجافة
+,,,, Decking Screws, براغي التزيين
+,,,, Concrete Screws, براغي الخرسانة
+,,,, Self-Tapping Screws, براغي النفاذ الذاتي
+,,,, Hex Screws, براغي سداسية
+,,,, Security Screws, براغي الأمان
+,,,, Cabinet Screws, براغي الخزائن
+,,,, Anchoring Screws, براغي التثبيت
+,, Bolts and Nuts, البراغي والصواميل, Hex Bolts, براغي سداسية
+,,,, Carriage Bolts, براغي العربات
+,,,, Anchor Bolts, براغي المرساة
+,,,, Eye Bolts, براغي عينية
+,,,, U-Bolts, براغي على شكل حرف U
+,,,, Hex Nuts, صواميل سداسية
+,,,, Wing Nuts, صواميل الأجنحة
+,,,, Lock Nuts, صواميل القفل
+,,,, Flange Nuts, صواميل الفلنجة
+,,,, T-Nuts, صواميل على شكل حرف T
+,, Washers, الواشرات, Flat Washers, واشرات مسطحة
+,,,, Lock Washers, واشرات القفل
+,,,, Spring Washers, واشرات الزنبرك
+,,,, Belleville Washers, واشرات بلفيل
+,,,, Fender Washers, واشرات الحاجز
+,,,, Cup Washers, واشرات الكوب
+,,,, Insulating Washers, واشرات عازلة
+,,,, Countersunk Washers, واشرات غاطسة
+,,,, Wave Washers, واشرات موجية
+,,,, Sealing Washers, واشرات الختم
+,, Hinges, المفصلات, Butt Hinges, مفصلات الباب
+,,,, Piano Hinges, مفصلات البيانو
+,,,, Cabinet Hinges, مفصلات الخزائن
+,,,, Door Hinges, مفصلات الأبواب
+,,,, Concealed Hinges, مفصلات مخفية
+,,,, Spring Hinges, مفصلات الزنبرك
+,,,, Strap Hinges, مفصلات الشريط
+,,,, T-Hinges, مفصلات على شكل حرف T
+,,,, Continuous Hinges, مفصلات مستمرة
+,,,, Barrel Hinges, مفصلات برميلية
+,, Brackets and Braces, الدعامات والأقواس, Angle Brackets, دعامات زاوية
+,,,, Shelf Brackets, دعامات الرفوف
+,,,, L-Brackets, دعامات على شكل حرف L
+,,,, Corner Braces, أقواس الزاوية
+,,,, Flat Braces, أقواس مسطحة
+,,,, Mending Plates, صفائح الترميم
+,,,, Wall Mount Brackets, دعامات تثبيت الجدار
+,,,, Handrail Brackets, دعامات الدرابزين
+,,,, Countertop Brackets, دعامات سطح العمل
+,,,, Hanging Brackets, دعامات الشنق
+,, Anchors,مرتكزات, Expansion Anchors, إرتكازات التوسع
+,,,, Sleeve Anchors, إرتكازات الأكمام
+,,,, Wedge Anchors, إرتكازات الوتد
+,,,, Drop-In Anchors, إرتكازات الإسقاط
+,,,, Hollow Wall Anchors, إرتكازات الجدران الفارغة
+,,,, Toggle Bolts, براغي التبديل
+,,,, Concrete Anchors, إرتكازات الخرسانة
+,,,, Wall Plugs, سدادات الجدار
+,,,, Chemical Anchors, إرتكازات كيميائية
+,,,, Drywall Anchors, إرتكازات الجدران الجافة
+,, Rivets and Rivet Tools, البرشام وأدوات البرشام, Blind Rivets, برشام أعمى
+,,,, Solid Rivets, برشام صلب
+,,,, Pop Rivets, برشام بوب
+,,,, Rivet Nuts, صواميل البرشام
+,,,, Tubular Rivets, برشام أنبوبي
+,,,, Rivet Guns, مسدسات البرشام
+,,,, Hand Riveters, مبرشم يدوي
+,,,, Battery Riveters, مبرشم بالبطارية
+,,,, Rivet Squeezers, ضاغطات البرشام
+,,,, Threaded Insert Tools, أدوات الإدخال الملولبة
+,, Hooks and Eyes, الخطافات والعيون, Screw Hooks, خطافات براغي
+,,,, Cup Hooks, خطافات الكوب
+,,,, S-Hooks, خطافات على شكل حرف S
+,,,, Eye Bolts, براغي عينية
+,,,, Coat Hooks, خطافات المعاطف
+,,,, Utility Hooks, خطافات متعددة الاستخدامات
+,,,, Ceiling Hooks, خطافات السقف
+,,,, Cabin Hooks, خطافات الكابينة
+,,,, Hook and Eye Closures, إغلاقات الخطاف والعين
+,,,, Swivel Hooks, خطافات دوارة
+,, Fastening and Tying Products, منتجات التثبيت والربط, Cable Ties, ربطات الكابلات
+,,,, Wire, الأسلاك
+,,,, Rope, الحبال
+,,,, Velcro Straps, أحزمة الفيلكرو
+,,,, Bungee Cords, أسلاك البنجي
+,,,, Strapping Bands, أحزمة الربط
+,,,, Hose Clamps, مشابك الخراطيم
+,,,, Duct Tapes, أشرطة الأقنية
+,,,, Zip Ties, ربطات الزيب
+,,,, Tie Wraps, ربطات التعادل
+,, Door Hardware, أدوات الأبواب, Door Closers, مغلقات الأبواب
+,,,, Door Stoppers, موقفات الأبواب
+,,,, Door Knockers, طارقات الأبواب
+,,,, Kick Plates, ألواح الركل
+,,,, Door Levers, مقابض الأبواب
+,,,, Door Handles, مقابض الأبواب
+,,,, Door Locks, أقفال الأبواب
+,,,, Door Hinges, مفصلات الأبواب
+,,,, Door Latches, مزاليج الأبواب
+,,,, Door Bolts, مسامير الأبواب
+,, Window Hardware, أدوات النوافذ, Window Locks, أقفال النوافذ
+,,,, Window Latches, مزاليج النوافذ
+,,,, Window Handles, مقابض النوافذ
+,,,, Sash Balances, توازنات الشريط
+,,,, Casement Stays, دعامات الإطار المتحرك
+,,,, Window Rollers, بكرات النافذة
+,,,, Window Cranks, مقابض النوافذ
+,,,, Window Chains, سلاسل النافذة
+,,,, Window Screens, شاشات النافذة
+,,,, Window Fasteners, مثبتات النافذة
+Lighting and Electrical Fixtures, إضاءة وتركيبات كهربائية, Indoor Lighting Fixtures, تركيبات الإضاءة الداخلية, Ceiling Lights, أضواء السقف
+,,,, Chandeliers, الثريات
+,,,, Pendant Lights, الأضواء المعلقة
+,,,, Wall Sconces, الشمعدانات الجدارية
+,,,, Recessed Lighting, الإضاءة المخفية
+,,,, Track Lighting, الإضاءة المسارية
+,,,, Flush Mount Lights, أضواء التركيب المسطح
+,,,, Table Lamps, مصابيح الطاولة
+,,,, Floor Lamps, مصابيح الأرضية
+,,,, Under-Cabinet Lighting, إضاءة تحت الخزانة
+,, Outdoor Lighting, الإضاءة الخارجية, Floodlights, كشافات
+,,,, Landscape Lighting, إضاءة المناظر الطبيعية
+,,,, Pathway Lights, أضواء الممرات
+,,,, Wall-Mounted Outdoor Lights, الأضواء الخارجية المثبتة على الجدران
+,,,, Security Lights, أضواء الأمان
+,,,, Garden Lights, أضواء الحدائق
+,,,, Post Lights, أضواء العمود
+,,,, Deck Lights, أضواء السطح
+,,,, Outdoor Lanterns, الفوانيس الخارجية
+,,,, Solar Outdoor Lights, الأضواء الشمسية الخارجية
+,, Lamps, المصابيح, Table Lamps, مصابيح الطاولة
+,,,, Floor Lamps, مصابيح الأرضية
+,,,, Desk Lamps, مصابيح المكتب
+,,,, Bedside Lamps, مصابيح جانب السرير
+,,,, Arc Lamps, المصابيح المقوسة
+,,,, Torchiere Lamps, مصابيح تورشيير
+,,,, Buffet Lamps, مصابيح بوفيه
+,,,, Swing Arm Lamps, مصابيح ذراع متأرجحة
+,,,, Clamp Lamps, مصابيح بمشبك
+,,,, Tripod Lamps, مصابيح ثلاثية القوائم
+,, LED Panels and Strips, لوحات وشرائط LED, LED Panel Lights, أضواء لوحة LED
+,,,, LED Strip Lights, أضواء شريط LED
+,,,, LED Light Bars, شرائط إضاءة LED
+,,,, Recessed LED Panels, لوحات LED المخفية
+,,,, Surface Mounted LED Panels, لوحات LED المثبتة على السطح
+,,,, Flexible LED Strips, شرائط LED المرنة
+,,,, RGB LED Strips, شرائط LED RGB
+,,,, LED Tape Lights, أضواء شريط LED اللاصق
+,,,, Waterproof LED Strips, شرائط LED مقاومة للماء
+,,,, LED Strip Connectors, موصلات شريط LED
+,, Switches and Dimmers, المفاتيح والخافتات, Light Switches, مفاتيح الإضاءة
+,,,, Dimmer Switches, مفاتيح الخافتة
+,,,, Smart Switches, مفاتيح ذكية
+,,,, Rocker Switches, مفاتيح الروكر
+,,,, Toggle Switches, مفاتيح التبديل
+,,,, Rotary Dimmers, خافتات دوارة
+,,,, Slide Dimmers, خافتات سلايد
+,,,, Touch Dimmers, خافتات باللمس
+,,,, Remote Control Dimmers, خافتات بالتحكم عن بعد
+,,,, Motion Sensor Switches, مفاتيح استشعار الحركة
+,, Sockets and Outlets, المقابس والمخارج, Power Outlets, مخارج الطاقة
+,,,, USB Outlets, مخارج USB
+,,,, Smart Outlets, مخارج ذكية
+,,,, GFCI Outlets, مخارج GFCI
+,,,, Duplex Outlets, مخارج مزدوجة
+,,,, Decorative Outlets, مخارج زخرفية
+,,,, Floor Outlets, مخارج الأرضيات
+,,,, Weatherproof Outlets, مخارج مقاومة للطقس
+,,,, Tamper-Resistant Outlets, مخارج مقاومة للتلاعب
+,,,, Recessed Outlets, مخارج مخفية
+,, Emergency and Safety Lighting, الإضاءة الطارئة والسلامة, Emergency Lights, أضواء الطوارئ
+,,,, Exit Signs, علامات الخروج
+,,,, Emergency Lighting Units, وحدات الإضاءة الطارئة
+,,,, Safety Lighting, إضاءة السلامة
+,,,, Backup Lights, أضواء الاحتياط
+,,,, Pathway Marking Lights, أضواء تحديد الممرات
+,,,, Stairway Lighting, إضاءة السلالم
+,,,, Emergency Floodlights, كشافات الطوارئ
+,,,, Photoluminescent Lights, أضواء فوتولومينسنت
+,,,, Evacuation Lighting, إضاءة الإخلاء
+,, Track and Rail Lighting, إضاءة السكة والقضبان, Track Lighting Systems, أنظمة إضاءة السكة
+,,,, Rail Lighting Kits, مجموعات إضاءة القضبان
+,,,, Track Heads, رؤوس السكة
+,,,, Pendant Track Lights, أضواء السكة المعلقة
+,,,, Flexible Track Lighting, إضاءة السكة المرنة
+,,,, Monorail Lighting, إضاءة القطار الأحادي
+,,,, LED Track Lights, أضواء السكة LED
+,,,, Linear Track Lighting, إضاءة السكة الخطية
+,,,, Spotlight Tracks, مسارات الكشاف
+,,,, Track Lighting Connectors, موصلات إضاءة السكة
+,, Under-Cabinet and Task Lighting, إضاءة تحت الخزانة وإضاءة المهام, Under-Cabinet Lights, أضواء تحت الخزانة
+,,,, LED Puck Lights, أضواء LED النوع Puck
+,,,, Strip Lights, أضواء الشريط
+,,,, Task Lamps, مصابيح المهام
+,,,, Cabinet Spotlights, كشافات الخزانة
+,,,, Linkable Under-Cabinet Lights, أضواء تحت الخزانة القابلة للربط
+,,,, Battery Operated Under-Cabinet Lights, أضواء تحت الخزانة التي تعمل بالبطارية
+,,,, Hardwired Under-Cabinet Lights, أضواء تحت الخزانة السلكية
+,,,, Portable Task Lights, أضواء المهام المحمولة
+,,,, Magnetic Task Lights, أضواء المهام المغناطيسية
+,, Architectural and Decorative Lighting, الإضاءة المعمارية والزخرفية, Cove Lighting, إضاءة الكوف
+,,,, Wall Grazing Lights, أضواء التمشيط الجداري
+,,,, Artistic Light Installations, تركيبات الإضاءة الفنية
+,,,, Accent Lighting, إضاءة الأكسنت
+,,,, Decorative Ceiling Lights, أضواء السقف الزخرفية
+,,,, Architectural Wall Lights, أضواء الجدار المعمارية
+,,,, LED Profiles, ملامح LED
+,,,, Light Sculptures, منحوتات الضوء
+,,,, Decorative Pendant Lights, أضواء معلقة زخرفية
+,,,, Illuminated Panels, لوحات مضاءة
+,, Electrical Accessories, ملحقات كهربائية, Wire Connectors, وصلات الأسلاك
+,,,, Electrical Tape, شريط كهربائي
+,,,, Junction Boxes, صناديق التوصيل
+,,,, Mounting Hardware, أدوات التثبيت
+,,,, Cable Ties, ربطات الكابلات
+,,,, Electrical Conduits, مواسير كهربائية
+,,,, Switch Plates, ألواح المفاتيح
+,,,, Outlet Covers, أغطية المخارج
+,,,, Wire Management Systems, أنظمة إدارة الأسلاك
+,,,, Electrical Boxes, صناديق كهربائية
+,, Smart Lighting Solutions, حلول الإضاءة الذكية, Smart Bulbs, لمبات ذكية
+,,,, Connected Lighting Systems, أنظمة الإضاءة المتصلة
+,,,, Smart Light Controllers, أجهزة تحكم ذكية للإضاءة
+,,,, App-Controlled Lighting, إضاءة تحكم بها عبر التطبيق
+,,,, Voice-Controlled Lighting, إضاءة بالتحكم الصوتي
+,,,, Smart Light Strips, شرائط الإضاءة الذكية
+,,,, Wi-Fi Enabled Lighting, إضاءة ممكّنة بالواي فاي
+,,,, Bluetooth Lighting Systems, أنظمة الإضاءة بلوتوث
+,,,, Smart Light Switches, مفاتيح الإضاءة الذكية
+,,,, Smart Outdoor Lighting, إضاءة خارجية ذكية
+Landscaping and Outdoor, تنسيق الحدائق والمساحات الخارجية, Outdoor Tiles and Pavers, بلاط ومرصوفات خارجية, Concrete Pavers, مرصوفات خرسانية
+,,,, Natural Stone Tiles, بلاط الحجر الطبيعي
+,,,, Terracotta Tiles, بلاط التراكوتا
+,,,, Porcelain Outdoor Tiles, بلاط خارجي من البورسلان
+,,,, Interlocking Pavers, مرصوفات متشابكة
+,,,, Rubber Pavers, مرصوفات مطاطية
+,,,, Wood Deck Tiles, بلاط خشبي للأرضيات الخارجية
+,,,, Composite Decking, أرضيات خارجية مركبة
+,,,, Grass Pavers, مرصوفات بالعشب
+,,,, Permeable Pavers, مرصوفات نافذة
+,, Garden Tools and Equipment, أدوات ومعدات الحدائق, Lawnmowers, جزازات العشب
+,,,, Pruning Shears, مقصات التقليم
+,,,, Hedge Trimmers, ماكينات تشذيب الأسيجة
+,,,, Garden Rakes, مذرات الحدائق
+,,,, Shovels, مجارف
+,,,, Spades, مساحات
+,,,, Garden Hoes, معاول الحدائق
+,,,, Wheelbarrows, عربات يدوية
+,,,, Cultivators, أدوات الحرث
+,,,, Leaf Blowers, منافيخ الأوراق
+,, Plants and Planting Materials, النباتات ومواد الزراعة, Outdoor Plants, نباتات خارجية
+,,,, Shrubs, الشجيرات
+,,,, Trees, الأشجار
+,,,, Seeds, البذور
+,,,, Bulbs, البصيلات
+,,,, Soil, التربة
+,,,, Compost, السماد
+,,,, Mulch, المهاد
+,,,, Planters, حاويات الزراعة
+,,,, Fertilizers, الأسمدة
+,, Outdoor Furniture, أثاث خارجي, Patio Sets, أطقم الفناء
+,,,, Outdoor Benches, مقاعد خارجية
+,,,, Hammocks, الأراجيح
+,,,, Garden Chairs, كراسي الحديقة
+,,,, Outdoor Tables, طاولات خارجية
+,,,, Sun Loungers, كراسي الاستلقاء تحت الشمس
+,,,, Umbrellas, مظلات
+,,,, Outdoor Sofas, أرائك خارجية
+,,,, Swing Seats, مقاعد الأرجوحة
+,,,, Picnic Tables, طاولات النزهة
+,, Irrigation Systems, أنظمة الري, Sprinkler Systems, أنظمة الرشاشات
+,,,, Drip Irrigation Kits, مجموعات الري بالتنقيط
+,,,, Garden Hoses, خراطيم الحديقة
+,,,, Watering Cans, علب الري
+,,,, Hose Reels, بكرات الخرطوم
+,,,, Irrigation Controllers, أجهزة تحكم الري
+,,,, Sprinkler Heads, رؤوس الرشاشات
+,,,, Irrigation Valves, صمامات الري
+,,,, Soaker Hoses, خراطيم النقع
+,,,, Rain Barrels, براميل جمع مياه الأمطار
+,, Outdoor Lighting, إضاءة خارجية, Garden Lights, أضواء الحديقة
+,,,, Path Lights, أضواء الممرات
+,,,, Floodlights, كشافات
+,,,, Solar Lights, أضواء الطاقة الشمسية
+,,,, Landscape Spotlights, كشافات المناظر الطبيعية
+,,,, Deck Lights, أضواء الأرضيات الخارجية
+,,,, Bollard Lights, أضواء العوازل
+,,,, Outdoor Wall Lights, أضواء الجدران الخارجية
+,,,, Post Lights, أضواء الأعمدة
+,,,, Motion Sensor Lights, أضواء استشعار الحركة
+,, Landscaping Materials, مواد تنسيق الحدائق, Decorative Stones, الأحجار الزخرفية
+,,,, Gravel, الحصى
+,,,, Bark Chips, رقائق اللحاء
+,,,, Edging Materials, مواد التحديد الحدودي
+,,,, Landscape Fabric, قماش تنسيق الحدائق
+,,,, Retaining Walls, جدران الاستناد
+,,,, Paving Stones, حجارة الرصف
+,,,, Garden Borders, حدود الحديقة
+,,,, Lawn Edging, تحديد حدود العشب
+,,,, Ground Cover Materials, مواد تغطية الأرض
+,, Garden Decor and Accessories, ديكورات وإكسسوارات الحديقة, Garden Statues, تماثيل الحديقة
+,,,, Water Fountains, نوافير المياه
+,,,, Bird Baths, أحواض الطيور
+,,,, Decorative Planters, أواني الزراعة الزخرفية
+,,,, Wind Chimes, أجراس الرياح
+,,,, Garden Ornaments, زينة الحديقة
+,,,, Wind Spinners, دوارات الرياح
+,,,, Garden Mirrors, مرايا الحديقة
+,,,, Outdoor Clocks, ساعات خارجية
+,,,, Weather Vanes, دوارات الطقس
+,, Fencing and Decking Materials, مواد السياج والتزيين, Wood Fencing, السياج الخشبي
+,,,, Composite Decking, التزيين المركب
+,,,, Vinyl Fencing, السياج الفينيل
+,,,, Metal Railings, الدرابزين المعدني
+,,,, Bamboo Fencing, السياج الخيزراني
+,,,, Deck Boards, ألواح التزيين
+,,,, Fence Panels, ألواح السياج
+,,,, Deck Tiles, بلاط التزيين
+,,,, Lattice Panels, ألواح الشبك
+,,,, Fencing Posts, أعمدة السياج
+,, Pest Control and Plant Protection, مكافحة الآفات وحماية النباتات, Insecticides, المبيدات الحشرية
+,,,, Herbicides, المبيدات العشبية
+,,,, Fungicides, المبيدات الفطرية
+,,,, Pest Traps, مصائد الآفات
+,,,, Bird Netting, شبكات الطيور
+,,,, Rodent Control, مكافحة القوارض
+,,,, Mosquito Repellents, طارد البعوض
+,,,, Plant Covers, أغطية النباتات
+,,,, Garden Fencing, سياج الحديقة
+,,,, Slug and Snail Barriers, حواجز الرخويات والحلزونات
+,, Sheds and Outdoor Storage, أكشاك وتخزين خارجي, Garden Sheds, أكشاك الحدائق
+,,,, Storage Boxes, صناديق التخزين
+,,,, Greenhouses, البيوت الزجاجية
+,,,, Tool Sheds, أكشاك الأدوات
+,,,, Bike Sheds, أكشاك الدراجات
+,,,, Garbage Can Storage, تخزين صناديق القمامة
+,,,, Deck Boxes, صناديق التزيين
+,,,, Outdoor Cabinets, خزائن خارجية
+,,,, Firewood Storage, تخزين الحطب
+,,,, Garden Storage Benches, مقاعد تخزين الحديقة
+,, Water Features and Ponds, ميزات المياه والبرك, Garden Ponds, برك الحدائق
+,,,, Fountains, نوافير
+,,,, Pond Pumps, مضخات البرك
+,,,, Waterfalls, شلالات
+,,,, Pond Liners, بطانات البرك
+,,,, Pond Filters, مرشحات البرك
+,,,, Water Spitters, رشاشات الماء
+,,,, Pond Lighting, إضاءة البرك
+,,,, Pond Plants, نباتات البرك
+,,,, Pond Skimmers, مزيلات الشوائب من البرك
+Construction Services,خدمات البناء و الهندسة, Architectural and Engineering Services, خدمات الهندسة المعمارية والهندسية, Building Design, تصميم المباني
+,,,, Structural Engineering, الهندسة الإنشائية
+,,,, MEP Engineering,هندسة إليكتروميكانيكية
+,,,, Architectural Rendering, العرض المعماري
+,,,, Interior Design Services, خدمات التصميم الداخلي
+,,,, Landscape Architecture, هندسة المناظر الطبيعية
+,,,, Urban Planning, التخطيط العمراني
+,,,, Environmental Consulting, الاستشارات البيئية
+,,,, Building Inspections, تفتيش المباني
+,,,, Project Feasibility Studies, دراسات جدوى المشروع
+,, Contracting Services, خدمات المقاولات, General Contracting, المقاولات العامة
+,,,, Specialty Contracting, المقاولات المتخصصة
+,,,, Design-Build Services, خدمات التصميم والبناء
+,,,, Construction Management, إدارة البناء
+,,,, Demolition Services, خدمات الهدم
+,,,, Renovation and Remodeling, تجديد وتحويل
+,,,, Earthwork and Excavation, أعمال الحفر والتراب
+,,,, Commercial Contracting, المقاولات التجارية
+,,,, Residential Construction, البناء السكني
+,,,, Infrastructure Development, تطوير البنية التحتية
+,, Project Management Services, خدمات إدارة المشاريع, Project Planning and Scheduling, تخطيط وجدولة المشاريع
+,,,, Budget Management, إدارة الميزانية
+,,,, Quality Control, مراقبة الجودة
+,,,, Risk Management, إدارة المخاطر
+,,,, Contract Administration, إدارة العقود
+,,,, Site Supervision, الإشراف على الموقع
+,,,, Procurement Management, إدارة التوريد
+,,,, Health and Safety Management, إدارة الصحة والسلامة
+,,,, Project Reporting and Documentation, تقارير المشروع والتوثيق
+,,,, Stakeholder Coordination, تنسيق أصحاب المصلحة
+,, Consultancy Services, خدمات الاستشارات, Construction Management Consulting, استشارات إدارة البناء
+,,,, Environmental Consulting, الاستشارات البيئية
+,,,, Building Compliance Consulting, استشارات الامتثال للمباني
+,,,, Cost Consulting and Quantity Surveying, استشارات التكلفة ومسح الكميات
+,,,, Project Feasibility Studies, دراسات جدوى المشروع
+,,,, Risk Assessment and Safety Consulting, استشارات تقييم المخاطر والسلامة
+,,,, Engineering Consulting, استشارات هندسية
+,,,, Sustainable Building Practices Consulting, استشارات الممارسات البنائية المستدامة
+,,,, Design Consulting, استشارات التصميم
+,,,, Technology and Innovation Advisory, الاستشارات التقنية والابتكار
+,, Inspection and Quality Control Services, خدمات التفتيش ومراقبة الجودة, Building Code Compliance Inspections, تفتيش الامتثال لقانون البناء
+,,,, Construction Site Safety Inspections, تفتيش سلامة موقع البناء
+,,,, Materials Testing and Analysis, اختبار المواد وتحليلها
+,,,, Structural Inspections, التفتيش الإنشائي
+,,,, Quality Assurance Audits, تدقيق ضمان الجودة
+,,,, Environmental Compliance Inspections, تفتيش الامتثال البيئي
+,,,, Welding and Fabrication Inspections, تفتيش اللحام والتصنيع
+,,,, Electrical System Inspections, تفتيش الأنظمة الكهربائية
+,,,, Plumbing and HVAC Inspections, تفتيش السباكة وأنظمة التدفئة والتهوية وتكييف الهواء
+,,,, Roofing and Waterproofing Inspections, تفتيش الأسطح والعزل المائي
+,, Safety and Compliance Services, خدمات السلامة والامتثال, Construction Safety Training, تدريب سلامة البناء
+,,,, Health and Safety Audits, تدقيق الصحة والسلامة
+,,,, Compliance Consulting, الاستشارات التنظيمية
+,,,, Risk Assessment Services, خدمات تقييم المخاطر
+,,,, Safety Program Development, تطوير برنامج السلامة
+,,,, OSHA Compliance Consulting, الاستشارات في الامتثال لـ OSHA
+,,,, Emergency Response Planning, تخطيط الاستجابة للطوارئ
+,,,, Construction Safety Certification, شهادات سلامة البناء
+,,,, PPE Consulting, استشارات معدات الحماية الشخصية
+,,,, Environmental Health and Safety Management, إدارة الصحة والسلامة البيئية
+,, Interior Design Services, خدمات التصميم الداخلي, Residential Interior Design, تصميم داخلي سكني
+,,,, Commercial Interior Design, تصميم داخلي تجاري
+,,,, Space Planning and Layout, تخطيط وتصميم المساحات
+,,,, Material and Finish Selection, اختيار المواد والتشطيبات
+,,,, Color Consulting, استشارات الألوان
+,,,, Furniture Selection and Placement, اختيار وترتيب الأثاث
+,,,, Lighting Design, تصميم الإضاءة
+,,,, Custom Furniture and Cabinetry Design, تصميم الأثاث والخزائن حسب الطلب
+,,,, Window Treatments and Soft Furnishings, معالجات النوافذ والمفروشات الناعمة
+,,,, Art and Accessory Selection, اختيار الفنون والإكسسوارات
+,, Landscaping Design Services, خدمات تصميم المناظر الطبيعية, Garden Design, تصميم الحدائق
+,,,, Hardscaping Design, تصميم الهاردسكيب
+,,,, Water Feature Design, تصميم ميزات المياه
+,,,, Landscape Lighting Design, تصميم إضاءة المناظر الطبيعية
+,,,, Xeriscaping and Drought-Tolerant Landscapes, زيريسكيب وتصميم المناظر الطبيعية المقاومة للجفاف
+,,,, Outdoor Living Space Design, تصميم المساحات الخارجية الحية
+,,,, Green Roof and Living Wall Design, تصميم الأسطح الخضراء والجدران الحية
+,,,, Ecological and Sustainable Landscaping, تصميم المناظر الطبيعية البيئية والمستدامة
+,,,, Landscape Master Planning, التخطيط الرئيسي للمناظر الطبيعية
+,,,, Seasonal Landscaping and Color Planning, تخطيط تنسيق الحدائق والألوان الموسمية
+,, Sustainability and Green Building Services, خدمات الاستدامة والبناء الأخضر, Energy Efficiency Consulting, استشارات كفاءة الطاقة
+,,,, Eco-Friendly Material Selection, اختيار المواد الصديقة للبيئة
+,,,, LEED Certification Consulting, استشارات شهادة LEED
+,,,, Green Building Design, تصميم المباني الخضراء
+,,,, Renewable Energy Solutions, حلول الطاقة المتجددة
+,,,, Sustainable Urban Development, التطوير الحضري المستدام
+,,,, Water Conservation Strategies, استراتيجيات توفير المياه
+,,,, Waste Reduction and Management, تقليل النفايات وإدارتها
+,,,, Indoor Environmental Quality Improvement, تحسين جودة البيئة الداخلية
+,,,, Carbon Footprint Analysis, تحليل البصمة الكربونية
+,, Real Estate Development and Planning Services, خدمات تطوير وتخطيط العقارات, Market Analysis, تحليل السوق
+,,,, Feasibility Studies, دراسات الجدوى
+,,,, Land Acquisition Consulting, الاستشارات في اقتناء الأراضي
+,,,, Urban and Regional Planning, التخطيط الحضري والإقليم
+,,,, Project Conceptualization, تصور المشروع
+,,,, Financial Planning and Investment Analysis, التخطيط المالي وتحليل الاستثمار
+,,,, Zoning and Regulatory Compliance, الامتثال التنظيمي وتقسيم المناطق
+,,,, Sustainable Development Consulting, استشارات التطوير المستدام
+,,,, Public-Private Partnership Coordination, تنسيق الشراكات العامة والخاصة
+,,,, Community Engagement and Consultation, التفاعل مع المجتمع والاستشارة
+Construction Technology and Software, تكنولوجيا وبرمجيات البناء, Construction Management Software, برمجيات إدارة البناء, Project Management Platforms, منصات إدارة المشاريع
+,,,, Scheduling and Timeline Tools, أدوات الجدولة والتوقيت
+,,,, Budgeting and Cost Management Applications, تطبيقات التقدير المالي وإدارة التكاليف
+,,,, Collaboration and Communication Platforms, منصات التعاون والتواصل
+,,,, Document Management Systems, أنظمة إدارة المستندات
+,,,, Resource Allocation and Planning Software, برمجيات تخصيص وتخطيط الموارد
+,,,, Quality Assurance and Compliance Tracking, تتبع ضمان الجودة والامتثال
+,,,, Risk Management Software, برمجيات إدارة المخاطر
+,,,, BIM (Building Information Modeling) Tools, أدوات BIM (نمذجة معلومات البناء)
+,,,, Mobile Construction Management Apps, تطبيقات إدارة البناء المحمولة
+,, Design and CAD Software, برمجيات التصميم و CAD, Architectural Design Software, برمجيات التصميم المعماري
+,,,, 3D Modeling Software, برمجيات النمذجة ثلاثية الأبعاد
+,,,, CAD (Computer-Aided Drafting) Programs, برامج CAD (الرسم بمساعدة الكمبيوتر)
+,,,, BIM (Building Information Modeling) Software, برمجيات BIM (نمذجة معلومات البناء)
+,,,, Landscape Design Software, برمجيات تصميم المناظر الطبيعية
+,,,, Structural Engineering Software, برمجيات الهندسة الإنشائية
+,,,, Interior Design Software, برمجيات التصميم الداخلي
+,,,, Electrical Design Software, برمجيات التصميم الكهربائي
+,,,, Plumbing and HVAC Design Tools, أدوات تصميم السباكة و HVAC
+,,,, Civil Engineering Software, برمجيات الهندسة المدنية
+,, Building Information Modeling (BIM) Solutions, حلول نمذجة معلومات البناء (BIM), 3D BIM Modeling Software, برمجيات نمذجة BIM ثلاثية الأبعاد
+,,,, 4D BIM (Scheduling), BIM البُعد الرابع (الجدولة)
+,,,, 5D BIM (Cost Estimation), BIM البُعد الخامس (تقدير التكلفة)
+,,,, BIM Collaboration Platforms, منصات التعاون في BIM
+,,,, BIM for Facility Management, BIM لإدارة المنشآت
+,,,, BIM Compliance and Standards Software, برمجيات معايير وامتثال BIM
+,,,, BIM for Sustainability Analysis, BIM لتحليل الاستدامة
+,,,, BIM Asset Management, إدارة الأصول في BIM
+,,,, BIM Visualization and Rendering Tools, أدوات تصور وعرض BIM
+,,,, BIM for MEP,BIM للأعمال الميكانيكية والكهربائية والسباكة
+,, Estimation and Costing Software, برمجيات التقدير وتكلفة البناء, Construction Cost Estimation Software, برمجيات تقدير تكلفة البناء
+,,,, Bid Management Software, برمجيات إدارة العطاءات
+,,,, Quantity Takeoff Tools, أدوات حساب الكميات
+,,,, Budget Tracking and Reporting, تتبع الميزانية وإعداد التقارير
+,,,, Value Engineering Software, برمجيات هندسة القيمة
+,,,, Project Financial Forecasting, التنبؤ المالي للمشروع
+,,,, Labor Cost Estimation, تقدير تكلفة العمالة
+,,,, Material Pricing and Sourcing Software, برمجيات تسعير ومصادر المواد
+,,,, Cost Database Management, إدارة قاعدة بيانات التكلفة
+,,,, Risk Analysis and Management Tools, أدوات تحليل وإدارة المخاطر
+,, Compliance and Safety Management Software, برمجيات إدارة الامتثال والسلامة, Safety Protocol Management Tools, أدوات إدارة بروتوكولات السلامة
+,,,, Compliance Documentation Software, برمجيات توثيق الامتثال
+,,,, Regulatory Adherence Tracking, تتبع الالتزام التنظيمي
+,,,, Incident Reporting and Analysis Systems, أنظمة تقرير وتحليل الحوادث
+,,,, Risk Assessment and Mitigation Software, برمجيات تقييم وتخفيف المخاطر
+,,,, Training and Certification Management, إدارة التدريب والشهادات
+,,,, Environmental Compliance Software, برمجيات الامتثال البيئي
+,,,, Health and Safety Auditing Tools, أدوات تدقيق الصحة والسلامة
+,,,, Construction Permit Management, إدارة تصاريح البناء
+,,,, OSHA Compliance Solutions, حلول الامتثال لـ OSHA
+,, Asset and Inventory Management Software, برمجيات إدارة الأصول والمخزون, Equipment Tracking Systems, أنظمة تتبع المعدات
+,,,, Material Inventory Management, إدارة جرد المواد
+,,,, Tool Tracking Software, برمجيات تتبع الأدوات
+,,,, Fleet Management Solutions, حلول إدارة الأسطول
+,,,, Warehouse Management Systems, أنظمة إدارة المستودعات
+,,,, Resource Allocation Tools, أدوات تخصيص الموارد
+,,,, Asset Lifecycle Management, إدارة دورة حياة الأصول
+,,,, Supply Chain Management Software, برمجيات إدارة سلسلة التوريد
+,,,, Preventive Maintenance Scheduling, جدولة الصيانة الوقائية
+,,,, Work Order Management Systems, أنظمة إدارة أوامر العمل
+,, Virtual Reality (VR) and Augmented Reality (AR) Applications, تطبيقات الواقع الافتراضي (VR) والواقع المعزز (AR), Immersive Project Visualization, تصور المشروع التفاعلي
+,,,, AR for On-Site Visualization, الواقع المعزز لتصور الموقع
+,,,, VR Training Simulations, محاكاة التدريب بالواقع الافتراضي
+,,,, Design and Blueprint Review in AR/VR, مراجعة التصميم والمخططات في الواقع الافتراضي/المعزز
+,,,, Virtual Walkthroughs for Clients, جولات افتراضية للعملاء
+,,,, AR for Equipment Operation Training, الواقع المعزز لتدريب على تشغيل المعدات
+,,,, VR Collaboration Tools, أدوات التعاون بالواقع الافتراضي
+,,,, Safety and Hazard Awareness in VR, الوعي بالسلامة والمخاطر في الواقع الافتراضي
+,,,, Maintenance and Repair Training in AR, التدريب على الصيانة والإصلاح في الواقع المعزز
+,,,, AR for Quality Inspection, الواقع المعزز لفحص الجودة
+,, Environmental Impact Assessment Tools, أدوات تقييم الأثر البيئي, Environmental Modeling Software, برمجيات نمذجة البيئة
+,,,, Carbon Footprint Calculators, حاسبات البصمة الكربونية
+,,,, Water Usage and Management Analysis, تحليل استخدام وإدارة المياه
+,,,, Energy Consumption Estimation Software, برمجيات تقدير استهلاك الطاقة
+,,,, Waste Management and Reduction Tools, أدوات إدارة وتقليل النفايات
+,,,, Air Quality Analysis Tools, أدوات تحليل جودة الهواء
+,,,, Noise Pollution Assessment Software, برمجيات تقييم تلوث الضوضاء
+,,,, Sustainable Material Selection Tools, أدوات اختيار المواد المستدامة
+,,,, Ecosystem Impact Modeling, نمذجة تأثير النظام البيئي
+,,,, Green Building Compliance Software, برمجيات الامتثال للمباني الخضراء
+,, Real Estate and Property Management Software, برمجيات إدارة العقارات والممتلكات, Property Portfolio Management, إدارة محفظة العقارات
+,,,, Lease Management and Tracking, إدارة وتتبع الإيجارات
+,,,, Facility and Maintenance Management, إدارة المرافق والصيانة
+,,,, Tenant and Rental Management, إدارة المستأجرين والإيجارات
+,,,, Property Accounting Software, برمجيات المحاسبة العقارية
+,,,, Building Automation Systems, أنظمة أتمتة المباني
+,,,, Real Estate CRM Systems, أنظمة CRM العقارية
+,,,, Market Analysis and Valuation Tools, أدوات تحليل السوق وتقييم العقارات
+,,,, Inventory and Asset Tracking, تتبع المخزون والأصول
+,,,, Real Estate Transaction Management, إدارة معاملات العقارات
+,, Collaborative Platforms and Communication Tools, منصات التعاون وأدوات الاتصال, Project Collaboration Software, برمجيات التعاون في المشاريع
+,,,, Team Communication Platforms, منصات اتصال الفريق
+,,,, Document Management and Sharing, إدارة ومشاركة المستندات
+,,,, Task and Workflow Management Tools, أدوات إدارة المهام وسير العمل
+,,,, File Synchronization and Cloud Storage, تزامن الملفات وتخزين السحاب
+,,,, Mobile Collaboration Apps, تطبيقات التعاون المحمول
+,,,, Integrated Messaging Systems, أنظمة المراسلة المتكاملة
+,,,, Online Meeting and Conferencing Tools, أدوات الاجتماعات والمؤتمرات عبر الإنترنت
+,,,, Digital Whiteboards and Brainstorming Tools, السبورات الرقمية وأدوات العصف الذهني
+,,,, Client Communication Portals, بوابات التواصل مع العملاء
+,, GIS and Mapping Software, برمجيات نظم المعلومات الجغرافية والخرائط, Site Analysis GIS Tools, أدوات نظم المعلومات الجغرافية لتحليل المواقع
+,,,, Land Use Planning Software, برمجيات تخطيط استخدام الأراضي
+,,,, Geospatial Data Visualization, تصور البيانات الجغرافية المكانية
+,,,, 3D Terrain Modeling, نمذجة التضاريس ثلاثية الأبعاد
+,,,, Infrastructure Mapping and Management, رسم الخرائط وإدارة البنية التحتية
+,,,, Environmental Impact Analysis GIS, نظم المعلومات الجغرافية لتحليل الأثر البيئي
+,,,, Urban and Regional Planning Tools, أدوات التخطيط الحضري والإقليمي
+,,,, Utility and Asset Mapping, رسم خرائط المرافق والأصول
+,,,, GPS Integration for Site Surveys, دمج نظام GPS لمسوحات الموقع
+,,,, Remote Sensing and Aerial Imagery Analysis, الاستشعار عن بعد وتحليل الصور الجوية
+,, Mobile Applications for Construction, تطبيقات الهاتف المحمول للبناء, On-Site Project Management Apps, تطبيقات إدارة المشاريع في الموقع
+,,,, Data Collection and Reporting Tools, أدوات جمع البيانات والتقارير
+,,,, Construction Documentation Apps, تطبيقات توثيق البناء
+,,,, Safety Inspection and Compliance Apps, تطبيقات التفتيش على السلامة والامتثال
+,,,, Time Tracking and Workforce Management, تتبع الوقت وإدارة القوى العاملة
+,,,, Material and Inventory Management, إدارة المواد والمخزون
+,,,, Task and Workflow Coordination Apps, تطبيقات تنسيق المهام وسير العمل
+,,,, Communication and Collaboration Platforms, منصات الاتصال والتعاون
+,,,,Quality Control and Punch List Apps,تطبيقات مراقبة الجودة
+,,,,Building Information Modeling (BIM) Mobile Apps,تطبيقات الهاتف المحمول لنمذجة معلومات البناء (BIM).
