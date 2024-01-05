@@ -21,7 +21,7 @@
             <ul class="aiz-side-nav-list" id="search-menu">
             </ul>
             <ul class="aiz-side-nav-list" id="main-menu" data-toggle="aiz-side-menu">
-                
+
                 {{-- Dashboard --}}
                 @can('admin_dashboard')
                     <li class="aiz-side-nav-item">
@@ -149,7 +149,7 @@
                                     </li>
                                 @endcan
                             @endif
-                            
+
                             @can('product_bulk_import')
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('product_bulk_upload.index') }}" class="aiz-side-nav-link" >
@@ -182,6 +182,11 @@
                                 <li class="aiz-side-nav-item">
                                     <a href="{{route('attributes.index')}}" class="aiz-side-nav-link {{ areActiveRoutes(['attributes.index','attributes.create','attributes.edit','attributes.show','edit-attribute-value'.''])}}">
                                         <span class="aiz-side-nav-text">{{translate('Attribute')}}</span>
+                                    </a>
+                                </li>
+                                <li class="aiz-side-nav-item">
+                                    <a href="{{route('units.index')}}" class="aiz-side-nav-link {{ areActiveRoutes(['units.index','units.create','units.edit','units.show'])}}">
+                                        <span class="aiz-side-nav-text">{{translate('Units')}}</span>
                                     </a>
                                 </li>
                             @endcan
@@ -383,7 +388,7 @@
                                     </li>
                                 @endcan
                             @endif
-                            
+
                             @can('view_pickup_point_orders')
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('pick_up_point.index') }}" class="aiz-side-nav-link {{ areActiveRoutes(['pick_up_point.index','pick_up_point.order_show'])}}">
@@ -508,7 +513,7 @@
                                             <span class="aiz-side-nav-text">{{translate('Refund Configuration')}}</span>
                                         </a>
                                     </li>
-                                @endcan  
+                                @endcan
                             </ul>
                         </li>
                     @endcanany
@@ -709,7 +714,7 @@
                         </ul>
                     </li>
                 @endcanany
-                
+
                 <!--Blog System-->
                 @canany(['view_blogs','view_blog_categories'])
                     <li class="aiz-side-nav-item">
@@ -833,7 +838,7 @@
                                     </a>
                                 </li>
                             @endcan
-                            
+
                             @can('view_all_product_conversations')
                                 @php
                                     $conversation = \App\Models\Conversation::where('receiver_id', Auth::user()->id)->where('receiver_viewed', '1')->get();
@@ -852,7 +857,7 @@
                                     <li class="aiz-side-nav-item">
                                         <a href="{{ route('product_query.index') }}"
                                             class="aiz-side-nav-link {{ areActiveRoutes(['product_query.index','product_query.show']) }}">
-                                            <span class="aiz-side-nav-text">{{ translate('Product Queries') }}</span>                           
+                                            <span class="aiz-side-nav-text">{{ translate('Product Queries') }}</span>
                                         </a>
                                     </li>
                                 @endcan
@@ -977,7 +982,7 @@
                                         </a>
                                     </li>
                                 @endcan
-                                
+
                                 @if(get_setting('classified_product') == 1 && auth()->user()->can('view_all_offline_customer_package_payments'))
                                     <li class="aiz-side-nav-item">
                                         <a href="{{ route('offline_customer_package_payment_request.index') }}" class="aiz-side-nav-link">
@@ -1193,7 +1198,7 @@
                             @endcan
                             @can('edit_website_page')
                                 <li class="aiz-side-nav-item">
-                                    <a href="{{ route('custom-pages.edit', ['id'=>'home', 'lang'=>env('DEFAULT_LANGUAGE'), 'page'=>'home']) }}" 
+                                    <a href="{{ route('custom-pages.edit', ['id'=>'home', 'lang'=>env('DEFAULT_LANGUAGE'), 'page'=>'home']) }}"
                                         class="aiz-side-nav-link {{ (url()->current() == url('/admin/website/custom-pages/edit/home')) ? 'active' : '' }}">
                                         <span class="aiz-side-nav-text">{{translate('Homepage Settings')}}</span>
                                     </a>

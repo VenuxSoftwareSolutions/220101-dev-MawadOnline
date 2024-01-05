@@ -7441,7 +7441,8 @@ input[type="number"] {
 .dropdown-item.active,
 .dropdown-item:hover,
 .dropdown-item:active {
-    color: #fff !important;
+    /* color: #fff !important; */
+    color: #fff ;
     background-color: var(--primary);
 }
 
@@ -11358,7 +11359,7 @@ ul.apps a:hover i{
 .hov-animate-outline:hover::after {
     border-bottom-color: var(--primary);
     border-left-color: var(--primary);
-    transition: 
+    transition:
       height 0.3s ease-out,
       width 0.3s ease-out 0.3s;
 }
@@ -11859,7 +11860,7 @@ ul.apps a:hover i{
         padding-right: 16px;
         padding-left: 16px;
     }
-    
+
     .image-show-overlay .overlay-img{
         padding-left: 20%;
         padding-right: 20%;

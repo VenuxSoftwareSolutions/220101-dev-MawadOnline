@@ -24,9 +24,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.min.css">
 
     <!-- aiz core css -->
     <link rel="stylesheet" href="{{ static_asset('assets/css/vendors.css') }}">
+    <link rel="stylesheet" href="{{ static_asset('assets/css/tagify.css') }}">
+
     @if (\App\Models\Language::where('code', Session::get('locale', Config::get('app.locale')))->first()->rtl == 1)
         <link rel="stylesheet" href="{{ static_asset('assets/css/bootstrap-rtl.min.css') }}">
     @endif
@@ -87,6 +90,28 @@
             border-top-right-radius: 4px !important;
             border-bottom-right-radius: 4px !important;
         }
+
+        .color-input{
+            display: inline-block !important;
+            width: 92%;
+        }
+
+        .tagify-label{
+            display: block !important;
+        }
+
+        .tagify-input{
+            width: 100%;
+        }
+
+        .add:hover{
+            cursor: pointer;
+        }
+
+        .trash:hover{
+            cursor: pointer;
+        }
+
     </style>
     <script>
         var AIZ = AIZ || {};
@@ -114,6 +139,8 @@
         }
     </script>
 
+    <link rel="stylesheet" href="{{ static_asset('assets/css/filter_multi_select.css') }}">
+
 </head>
 
 <body class="">
@@ -140,7 +167,7 @@
     <script src="{{ static_asset('assets/js/aiz-core.js?v=') }}{{ rand(1000,9999) }}"></script>
 
     @yield('script')
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.all.min.js"></script>
     <script type="text/javascript">
         @foreach (session('flash_notification', collect())->toArray() as $message)
             AIZ.plugins.notify('{{ $message['level'] }}', '{{ $message['message'] }}');

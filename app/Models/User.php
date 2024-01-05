@@ -25,7 +25,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'address', 'city', 'postal_code', 'phone', 'country', 'provider_id', 'email_verified_at', 'verification_code'
+        'name', 'email','user_type','first_name','last_name' ,'password', 'address', 'city', 'postal_code', 'phone', 'country', 'provider_id', 'email_verified_at', 'verification_code'
     ];
 
     /**
@@ -157,4 +157,22 @@ class User extends Authenticatable implements MustVerifyEmail
     public function userCoupon(){
         return $this->hasOne(UserCoupon::class);
     }
+    public function business_information() {
+        return $this->hasOne(BusinessInformation::class);
+
+    }
+    public function contact_people() {
+        return $this->hasOne(ContactPerson::class);
+
+    }
+    public function payout_information() {
+        return $this->hasOne(PayoutInformation::class);
+
+    }
+
+    public function warehouses() {
+        return $this->hasMany(Warehouse::class);
+
+    }
+
 }

@@ -153,7 +153,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="text-center border-top">
                             <a href="{{ route('admin.all-notification') }}" class="text-reset d-block py-2">
                                 {{ translate('View All Notifications') }}
@@ -202,7 +202,7 @@
                         role="button" aria-haspopup="false" aria-expanded="false">
                         <span class="d-flex align-items-center">
                             <span class="d-none d-md-block">
-                                <span class="d-block fw-500">{{ Auth::user()->name }}</span>
+                                <span class="d-block fw-500">{{ Auth::user()->name }} </span>
                                 <span class="d-block small opacity-60 text-right">{{ Auth::user()->user_type }}</span>
                             </span>
                             <span class="size-40px rounded-content overflow-hidden ml-md-2">

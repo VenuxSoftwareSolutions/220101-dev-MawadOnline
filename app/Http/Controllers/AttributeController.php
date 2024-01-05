@@ -7,12 +7,18 @@ use App\Models\Attribute;
 use App\Models\Color;
 use App\Models\AttributeTranslation;
 use App\Models\AttributeValue;
+use App\Models\Unity;
 use CoreComponentRepository;
+use App\Http\Requests\AttributeRequest;
+use App\Services\AttributeService;
 use Str;
 
 class AttributeController extends Controller
 {
-    public function __construct() {
+    protected $attributeService;
+
+    public function __construct(AttributeService $attributeService) {
+        $this->attributeService = $attributeService;
         // Staff Permission Check
         $this->middleware(['permission:view_product_attributes'])->only('index');
         $this->middleware(['permission:edit_product_attribute'])->only('edit');
@@ -47,6 +53,10 @@ class AttributeController extends Controller
      */
     public function create()
     {
+        $units = Unity::all();
+        return view('backend.product.attribute.create', [
+            'units' => $units
+        ]);
     }
 
     /**
@@ -55,18 +65,25 @@ class AttributeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(AttributeRequest $request)
     {
-        $attribute = new Attribute;
-        $attribute->name = $request->name;
-        $attribute->save();
+        // $attribute = new Attribute;
+        // $attribute->name = $request->name;
+        // $attribute->save();
 
-        $attribute_translation = AttributeTranslation::firstOrNew(['lang' => env('DEFAULT_LANGUAGE'), 'attribute_id' => $attribute->id]);
-        $attribute_translation->name = $request->name;
-        $attribute_translation->save();
+        // $attribute_translation = AttributeTranslation::firstOrNew(['lang' => env('DEFAULT_LANGUAGE'), 'attribute_id' => $attribute->id]);
+        // $attribute_translation->name = $request->name;
+        // $attribute_translation->save();
+        //dd($request->all());
+        $attribute = $this->attributeService->store($request->all());
+        if($attribute == null){
+            flash(translate('Attribute name already existe'))->error();
+            return back();
+        }else{
+            flash(translate('Attribute has been inserted successfully'))->success();
+            return redirect()->route('attributes.index');
+        }
 
-        flash(translate('Attribute has been inserted successfully'))->success();
-        return redirect()->route('attributes.index');
     }
 
     /**
@@ -161,10 +178,10 @@ class AttributeController extends Controller
     public function update_attribute_value(Request $request, $id)
     {
         $attribute_value = AttributeValue::findOrFail($id);
-        
+
         $attribute_value->attribute_id = $request->attribute_id;
         $attribute_value->value = ucfirst($request->value);
-        
+
         $attribute_value->save();
 
         flash(translate('Attribute value has been updated successfully'))->success();
@@ -175,12 +192,12 @@ class AttributeController extends Controller
     {
         $attribute_values = AttributeValue::findOrFail($id);
         AttributeValue::destroy($id);
-        
+
         flash(translate('Attribute value has been deleted successfully'))->success();
         return redirect()->route('attributes.show', $attribute_values->attribute_id);
 
     }
-    
+
     public function colors(Request $request) {
         $sort_search = null;
         $colors = Color::orderBy('created_at', 'desc');
@@ -193,7 +210,7 @@ class AttributeController extends Controller
 
         return view('backend.product.color.index', compact('colors', 'sort_search'));
     }
-    
+
     public function store_color(Request $request) {
         $request->validate([
             'name' => 'required',
@@ -202,13 +219,13 @@ class AttributeController extends Controller
         $color = new Color;
         $color->name = Str::replace(' ', '', $request->name);
         $color->code = $request->code;
-        
+
         $color->save();
 
         flash(translate('Color has been inserted successfully'))->success();
         return redirect()->route('colors');
     }
-    
+
     public function edit_color(Request $request, $id)
     {
         $color = Color::findOrFail($id);
@@ -229,23 +246,40 @@ class AttributeController extends Controller
         $request->validate([
             'code' => 'required|unique:colors,code,'.$color->id,
         ]);
-        
+
         $color->name = Str::replace(' ', '', $request->name);
         $color->code = $request->code;
-        
+
         $color->save();
 
         flash(translate('Color has been updated successfully'))->success();
         return back();
     }
-    
+
     public function destroy_color($id)
     {
         Color::destroy($id);
-        
+
         flash(translate('Color has been deleted successfully'))->success();
         return redirect()->route('colors');
 
     }
-    
+
+    public function is_activated(Request $request){
+        $attribute = Attribute::find($request->id);
+        if ($attribute != null) {
+            if($request->status == "true"){
+                $attribute->is_activated = 1;
+                $attribute->save();
+            }else{
+                $attribute->is_activated = 0;
+                $attribute->save();
+            }
+
+            return response()->json(["status" => 'done'], 200);
+        }else{
+            return response()->json(["status" => 'failed'], 500);
+        }
+    }
+
 }
