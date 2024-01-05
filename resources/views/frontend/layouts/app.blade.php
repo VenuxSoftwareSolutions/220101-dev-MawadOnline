@@ -161,6 +161,11 @@
             border-radius: 0 !important;
         }
 
+        .tagify.tagify--focus{
+            border-width: 2px;
+            border-color: var(--primary);
+        }
+
         #map{
             width: 100%;
             height: 250px;
@@ -236,6 +241,9 @@
         @include('frontend.inc.footer')
 
     </div>
+
+    <!-- Floating Buttons -->
+    @include('frontend.inc.floating_buttons')
 
     @if (env("DEMO_MODE") == "On")
         <!-- demo nav -->
@@ -763,7 +771,7 @@
                     $('.email-form-group').removeClass('d-none');
                     $('input[name=phone]').val(null);
                     isPhoneShown = false;
-                    $(el).html('*{{ translate('Use Phone Instead') }}');
+                    $(el).html('*{{ translate('Use Phone Number Instead') }}');
                 } else {
                     $('.phone-form-group').removeClass('d-none');
                     $('.email-form-group').addClass('d-none');
@@ -772,7 +780,8 @@
                     $(el).html('<i>*{{ translate('Use Email Instead') }}</i>');
                 }
             }
-        </script> @endif
+        </script> 
+    @endif
 
     <script>
         var acc = document.getElementsByClassName("aiz-accordion-heading");
@@ -787,6 +796,12 @@
                     panel.style.maxHeight = panel.scrollHeight + "px";
                 }
             });
+        }
+    </script>
+
+    <script>
+        function showFloatingButtons() {
+            document.querySelector('.floating-buttons-section').classList.toggle('show');;
         }
     </script>
 

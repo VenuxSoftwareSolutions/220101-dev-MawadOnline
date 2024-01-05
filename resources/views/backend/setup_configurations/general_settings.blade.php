@@ -46,7 +46,7 @@
                                     <input type="hidden" name="system_logo_black" value="{{ get_setting('system_logo_black') }}" class="selected-files">
                                 </div>
                                 <div class="file-preview box sm"></div>
-                                <small>{{ translate('Will be used in admin panel topbar in mobile + Admin login page') }}</small>
+                                <small>{{ translate('Will be used in Admin login page, Seller login page & Delivery Boy login page') }}</small>
                             </div>
                         </div>
                         <div class="form-group row">

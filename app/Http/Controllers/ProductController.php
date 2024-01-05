@@ -25,6 +25,8 @@ use App\Services\ProductTaxService;
 use App\Services\ProductFlashDealService;
 use App\Services\ProductStockService;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\URL;
 
 class ProductController extends Controller
 {
@@ -352,7 +354,9 @@ class ProductController extends Controller
 
         Artisan::call('view:clear');
         Artisan::call('cache:clear');
-
+        if($request->has('tab') && $request->tab != null){
+            return Redirect::to(URL::previous() . "#" . $request->tab);
+        }
         return back();
     }
 

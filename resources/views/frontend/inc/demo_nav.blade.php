@@ -42,6 +42,7 @@
     <div class="aiz-demo-content">
         <div class="px-2rem">
             <div class="row gutters-16">
+                <!-- Main Demo -->
                 <div class="col-md-6 my-3">
                     <div class="demo-img-content">
                         <a href="https://demo.activeitzone.com/ecommerce/" target="_blank" class="h-100 w-100">
@@ -50,6 +51,7 @@
                     </div>
                     <p class="demo-title">{{ translate('Active eCommerce Main Demo') }}</p>
                 </div>
+                <!-- Grocery Store -->
                 <div class="col-md-6 my-3">
                     <div class="demo-img-content">
                         <a href="https://demo.activeitzone.com/ecommerce-grocery/" target="_blank" class="h-100 w-100">
@@ -58,6 +60,7 @@
                     </div>
                     <p class="demo-title">{{ translate('Grocery Store') }}</p>
                 </div>
+                <!-- Electronics Shop -->
                 <div class="col-md-6 my-3">
                     <div class="demo-img-content">
                         <a href="https://demo.activeitzone.com/ecommerce-electronics/" target="_blank" class="h-100 w-100">
@@ -66,6 +69,7 @@
                     </div>
                     <p class="demo-title">{{ translate('Electronics Shop') }}</p>
                 </div>
+                <!-- Fashion Store -->
                 <div class="col-md-6 my-3">
                     <div class="demo-img-content">
                         <a href="https://demo.activeitzone.com/ecommerce-fashion/" target="_blank" class="h-100 w-100">
@@ -74,6 +78,7 @@
                     </div>
                     <p class="demo-title">{{ translate('Fashion Store') }}</p>
                 </div>
+                <!-- Automobile Store -->
                 <div class="col-md-6 my-3">
                     <div class="demo-img-content">
                         <a href="https://demo.activeitzone.com/ecommerce-automobile/" target="_blank" class="h-100 w-100">
@@ -82,6 +87,25 @@
                     </div>
                     <p class="demo-title">{{ translate('Automobile Store') }}</p>
                 </div>
+                <!-- Furniture Store -->
+                <div class="col-md-6 my-3">
+                    <div class="demo-img-content">
+                        <a href="https://demo.activeitzone.com/ecommerce-furniture/" target="_blank" class="h-100 w-100">
+                            <img src="{{ static_asset('assets/img/demo/demo_thumb_furniture.png') }}">
+                        </a>
+                    </div>
+                    <p class="demo-title">{{ translate('Furniture Store') }}</p>
+                </div>
+                <!-- Medical Store -->
+                <div class="col-md-6 my-3">
+                    <div class="demo-img-content">
+                        <a href="https://demo.activeitzone.com/ecommerce-medical/" target="_blank" class="h-100 w-100">
+                            <img src="{{ static_asset('assets/img/demo/demo_thumb_medical.png') }}">
+                        </a>
+                    </div>
+                    <p class="demo-title">{{ translate('Medical Store') }}</p>
+                </div>
+                <!-- Demo content -->
                 <div class="col-md-6 my-3">
                     <div class="demo-img-content">
                         <div class="h-100 w-100 d-flex justify-content-center align-items-center">

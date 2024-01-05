@@ -52,9 +52,9 @@
     								<textarea class="form-control" name="footer_description" rows="6" placeholder="Type.." >{{ get_setting('footer_description',null,$lang); }}</textarea>
     							</div>
 								<!-- Update Button -->
-    							<div class="text-right">
-    								<button type="submit" class="btn btn-primary">{{ translate('Update') }}</button>
-    							</div>
+								<div class="mt-4 text-right">
+									<button type="submit" class="btn btn-success w-230px btn-md rounded-2 fs-14 fw-700 shadow-success">{{ translate('Update') }}</button>
+								</div>
     						</form>
     					</div>
     				</div>
@@ -103,9 +103,9 @@
                                     <input type="text" class="form-control" placeholder="http://" name="app_store_link" value="{{ get_setting('app_store_link') }}">
                                 </div>
 								<!-- Update Button -->
-    							<div class="text-right">
-    								<button type="submit" class="btn btn-primary">{{ translate('Update') }}</button>
-    							</div>
+								<div class="mt-4 text-right">
+									<button type="submit" class="btn btn-success w-230px btn-md rounded-2 fs-14 fw-700 shadow-success">{{ translate('Update') }}</button>
+								</div>
     						</form>
     					</div>
     				</div>
@@ -139,9 +139,9 @@
     								<input type="text" class="form-control" placeholder="{{ translate('Email') }}" name="contact_email" value="{{ get_setting('contact_email') }}">
     							</div>
 								<!-- Update Button -->
-    							<div class="text-right">
-    								<button type="submit" class="btn btn-primary">{{ translate('Update') }}</button>
-    							</div>
+								<div class="mt-4 text-right">
+									<button type="submit" class="btn btn-success w-230px btn-md rounded-2 fs-14 fw-700 shadow-success">{{ translate('Update') }}</button>
+								</div>
     						</form>
     					</div>
     				</div>
@@ -222,9 +222,9 @@
     								</button>
     							</div>
 								<!-- Update Button -->
-    							<div class="text-right">
-    								<button type="submit" class="btn btn-primary">{{ translate('Update') }}</button>
-    							</div>
+								<div class="mt-4 text-right">
+									<button type="submit" class="btn btn-success w-230px btn-md rounded-2 fs-14 fw-700 shadow-success">{{ translate('Update') }}</button>
+								</div>
     						</form>
     					</div>
     				</div>
@@ -374,9 +374,9 @@
                 </div>
 
 				<!-- Update Button -->
-                <div class="text-right">
-                    <button type="submit" class="btn btn-primary">{{ translate('Update') }}</button>
-                </div>
+				<div class="mt-4 text-right">
+					<button type="submit" class="btn btn-success w-230px btn-md rounded-2 fs-14 fw-700 shadow-success">{{ translate('Update') }}</button>
+				</div>
             </div>
         </form>
 	</div>

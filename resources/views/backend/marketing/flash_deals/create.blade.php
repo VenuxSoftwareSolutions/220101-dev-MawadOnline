@@ -17,7 +17,7 @@
                             <input type="text" placeholder="{{translate('Title')}}" id="name" name="title" class="form-control" required>
                         </div>
                     </div>
-                    <div class="form-group row">
+                    {{-- <div class="form-group row">
                         <label class="col-sm-3 control-label" for="background_color">{{translate('Background Color')}} <small>({{ translate('Hexa-code') }})</small></label>
                         <div class="col-sm-9">
                             <input type="text" placeholder="{{translate('#FFFFFF')}}" id="background_color" name="background_color" class="form-control" required>
@@ -32,7 +32,7 @@
                                 <option value="dark">{{translate('Dark')}}</option>
                             </select>
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Banner')}}</label>
                         <div class="col-md-9">
