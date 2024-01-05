@@ -49,21 +49,28 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Unit')}} <span class="text-danger">*</span></label>
+                            <label class="col-md-3 col-from-label">{{translate('Unit of Sale')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
                                 <input type="text" class="form-control" name="unit" value="{{ old('unit') }}" placeholder="{{ translate('Unit (e.g. KG, Pc etc)') }}" required>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Weight')}} <small>({{ translate('In Kg') }})</small></label>
+                            <label class="col-md-3 col-from-label">{{translate('Country of origin')}}</label>
                             <div class="col-md-8">
-                                <input type="number" class="form-control" name="weight" step="0.01" value="0.00" placeholder="0.00">
+                                <div class="form-item">
+                                    <input id="country_selector" type="text">
+                                    <label for="country_selector" style="display:none;">Select a country here...</label>
+                                </div>
+                                <div class="form-item" style="display:none;">
+                                    <input type="text" id="country_selector_code" name="country_code" data-countrycodeinput="1" readonly="readonly" placeholder="Selected country code will appear here" />
+                                    <label for="country_selector_code">...and the selected country code will be updated here</label>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Minimum Purchase Qty')}} <span class="text-danger">*</span></label>
+                            <label class="col-md-3 col-from-label">{{translate('Manufacturer')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="number" lang="en" class="form-control" name="min_qty" value="1" min="1" required>
+                                <input type="text" class="form-control" name="manufacturer" value="{{ old('manufacturer') }}" placeholder="Manufacturer" required>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -71,6 +78,15 @@
                             <div class="col-md-8">
                                 <input type="text" class="form-control aiz-tag-input" name="tags[]" placeholder="{{ translate('Type and hit enter to add a tag') }}">
                                 <small class="text-muted">{{translate('This is used for search. Input those words by which cutomer can find this product.')}}</small>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 col-from-label">{{translate('Show Stock Quantity')}}</label>
+                            <div class="col-md-8">
+                                <label class="aiz-switch aiz-switch-success mb-0">
+                                    <input type="checkbox" name="stock_visibility_state" value="1" checked="checked">
+                                    <span></span>
+                                </label>
                             </div>
                         </div>
 
@@ -102,15 +118,15 @@
                     </div>
                     <div class="card-body">
                         <div class="form-group row">
-                            <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Gallery Images')}} <small>(600x600)</small></label>
-                            <div class="col-md-8">
-                                <input type="file" class="dropify" name="photos[]" id="photoUpload" accept=".jpeg, .jpg, .png" multiple />
+                            <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Gallery Images')}} <small>(1280x1280)</small></label>
+                            <div class="col-md-8" id="bloc_photos">
+                                <input type="file" class="dropify" name="main_photos[]" id="photoUpload" accept=".jpeg, .jpg, .png" multiple />
                                 <div id="dropifyUploadedFiles"></div>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <small>(300x300)</small></label>
-                            <div class="col-md-8">
+                            <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <small>(400x400)</small></label>
+                            <div class="col-md-8" id="bloc_thumbnails">
                                 <input type="file" class="dropify" name="photosThumbnail[]" id="photoUploadThumbnail" accept=".jpeg, .jpg, .png" multiple />
                                 <div id="dropifyUploadedFilesThumbnail"></div>
                             </div>
@@ -127,7 +143,6 @@
                             <div class="col-md-8">
                                 <select class="form-control aiz-selectpicker" name="video_provider" id="video_provider">
                                     <option value="youtube" @selected(old('video_provider') == 'youtube')>{{translate('Youtube')}}</option>
-                                    <option value="dailymotion" @selected(old('video_provider') == 'dailymotion')>{{translate('Dailymotion')}}</option>
                                     <option value="vimeo" @selected(old('video_provider') == 'vimeo')>{{translate('Vimeo')}}</option>
                                 </select>
                             </div>
@@ -278,7 +293,9 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Description')}}</label>
                             <div class="col-md-8">
-                                <textarea class="aiz-text-editor" name="description">{{ old('description') }}</textarea>
+                                <textarea id="summernote" name="editordata"></textarea>
+                                <div id="charCount">Remaining characters: 512</div>
+                                <input type="hidden" id="hidden_value" value="">
                             </div>
                         </div>
                     </div>
@@ -446,7 +463,7 @@
                     </div>
                 </div>
 
-                <div class="card">
+                {{-- <div class="card">
                     <div class="card-header">
                         <h5 class="mb-0 h6">
                             {{translate('Stock Visibility State')}}
@@ -486,7 +503,7 @@
                         </div>
 
                     </div>
-                </div>
+                </div> --}}
 
                 <div class="card">
                     <div class="card-header">
@@ -649,14 +666,48 @@
 @endsection
 
 @section('script')
-
 <!-- Treeview js -->
 <script src="{{ static_asset('assets/js/hummingbird-treeview.js') }}"></script>
+<script src="{{ static_asset('assets/js/countrySelect.min.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js" integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 
 <script type="text/javascript">
+    $(document).ready(function() {
+        $('#summernote').summernote();
+        $("#country_selector").countrySelect({
+				responsiveDropdown: true,
+				preferredCountries: ['ae']
+			});
 
+        //A text-field for “Product Short Description”. Maximum length is 512 characters
+        $('#summernote').on("summernote.change", function (e) {
+            //Get the text in textarea with tags
+            let htmlContent = $('#summernote').summernote('code');
+            //Extract the text from code summernote
+            let textContent = $(htmlContent).text();
+            let maxLength = 512;
+            let charactersLeft = maxLength - textContent.length;
+
+            //Check if difference between maxlength and text is greater than 0
+            if (charactersLeft >= 0) {
+                if($('#hidden_value').val() != ''){
+                    $('#hidden_value').val('');
+                }
+                var message = "<p>Remaining characters: <span style='color: red'>" + charactersLeft + "</span></p>"
+                $('#charCount').html(message);
+            } else {
+                let trimmedText = '<p>' + textContent.substr(0, maxLength) + '</p>';
+                if($('#hidden_value').val() == ''){
+                    $('#hidden_value').val(trimmedText);
+                }
+                $("#summernote").summernote("code", $('#hidden_value').val());
+            }
+        });
+    });
+</script>
+<script>
     $(document).ready(function() {
         let dropifyInput = $('#photoUpload');
         let originalInput = dropifyInput.clone(true);
@@ -766,7 +817,7 @@
                         if (exceedingFilesDimension.length > 0) {
                             swal(
                                 'Cancelled',
-                                'Following files exceed 2MB limit: ' + exceedingFilesDimension.join(', '),
+                                'Following files exceeded 1200px width or height limit: ' + exceedingFilesDimension.join(', '),
                                 'error'
                             )
                             $(this).val('');
@@ -786,9 +837,10 @@
                                 }
                             }
                             uploadedFilesHTML += '</div>';
+                            console.log('name :', $(this).prop('name'));
 
-                            if ( !$(this).parent().parent().find('#dropifyUploadedFiles').length) {
-                                $(this).parent().parent().append('<div id="dropifyUploadedFiles"></div>');
+                            if ($('body #dropifyUploadedFiles').length === 0) {
+                                $("#bloc_photos").append('<div id="dropifyUploadedFiles"></div>');
                                 $('body #dropifyUploadedFiles').html(uploadedFilesHTML);
                             }else{
                                 $('body #dropifyUploadedFiles').html(uploadedFilesHTML);
@@ -817,8 +869,7 @@
                 let exceedingFiles = [];
 
                 for (let i = 0; i < files.length; i++) {
-                    const fileSizeInMB = files[i].size / (1024 * 1024);
-                    if (fileSizeInMB > 2) {
+                    if (files[i].size > 512 * 1024) {
                         exceedingFiles.push(files[i].name);
                     }
                 }
@@ -826,7 +877,7 @@
                 if (exceedingFiles.length > 0) {
                     swal(
                             'Cancelled',
-                            'Following files exceed 2MB limit: ' + exceedingFiles.join(', '),
+                            'Images must be width and height between 300px and 400px: ' + exceedingFiles.join(', '),
                             'error'
                         )
                     $(this).val('');
@@ -835,24 +886,66 @@
                     dropifyInputThumbnail = $('#photoUploadThumbnail');
                     initializeDropifyThumbnail();
                 } else {
-                    let uploadedFilesHTML = '<div class="row">';
+                    let exceedingFilesDimension = [];
+
                     for (let i = 0; i < files.length; i++) {
                         let file = files[i];
                         if (file.type.startsWith('image/')) {
-                            uploadedFilesHTML += `<div class="col-2"><img src="${URL.createObjectURL(file)}" alt="${file.name}" height="80" width="80" /></div>`; // Display image preview
-                        } else {
-                            // Display icon for document type
-                            uploadedFilesHTML += `<li><i class="fa fa-file-text-o"></i> ${file.name}</li>`;
+                            // Create a FileReader object to read the uploaded file
+                            let reader = new FileReader();
+
+                            // Closure to capture the file information
+                            reader.onload = function(event) {
+                                let img = new Image();
+                                img.src = event.target.result;
+
+                                // Check image dimensions after it's loaded
+                                img.onload = function() {
+                                    if (img.width > 400 || img.width < 300 || img.height > 400 || img.height < 300) {
+                                        exceedingFilesDimension.push(files[i].name);
+                                    }
+                                };
+                            };
+
+                            // Read the file as a data URL
+                            reader.readAsDataURL(file);
                         }
                     }
-                    uploadedFilesHTML += '</div>';
 
-                    if ( !$(this).parent().parent().find('#dropifyUploadedFilesThumbnail').length) {
-                        $(this).parent().parent().append('<div id="dropifyUploadedFilesThumbnail"></div>');
-                        $('body #dropifyUploadedFilesThumbnail').html(uploadedFilesHTML);
-                    }else{
-                        $('body #dropifyUploadedFilesThumbnail').html(uploadedFilesHTML);
-                    }
+                    setTimeout(function() {
+                        if (exceedingFilesDimension.length > 0) {
+                            swal(
+                                'Cancelled',
+                                'Following files exceed 2MB limit: ' + exceedingFilesDimension.join(', '),
+                                'error'
+                            )
+                            $(this).val('');
+                            removeDropify();
+                            dropifyInput.replaceWith(originalInput.clone(true));
+                            dropifyInput = $('#photoUpload');
+                            initializeDropify();
+                        }else{
+
+                            let uploadedFilesHTML = '<div class="row">';
+                            for (let i = 0; i < files.length; i++) {
+                                let file = files[i];
+                                if (file.type.startsWith('image/')) {
+                                    uploadedFilesHTML += `<div class="col-2"><img src="${URL.createObjectURL(file)}" alt="${file.name}" height="80" width="80" /></div>`; // Display image preview
+                                } else {
+                                    // Display icon for document type
+                                    uploadedFilesHTML += `<li><i class="fa fa-file-text-o"></i> ${file.name}</li>`;
+                                }
+                            }
+                            uploadedFilesHTML += '</div>';
+
+                            if ($(this).parent().parent().find('#dropifyUploadedFilesThumbnail').length == 0) {
+                                $("#bloc_thumbnails").append('<div id="dropifyUploadedFilesThumbnail"></div>');
+                                $('body #dropifyUploadedFilesThumbnail').html(uploadedFilesHTML);
+                            }else{
+                                $('body #dropifyUploadedFilesThumbnail').html(uploadedFilesHTML);
+                            }
+                        }
+                    }, 500);
                 }
             }
         });

@@ -292,6 +292,12 @@ class ProductService
         //     $attributes = json_encode(array());
         // }
 
+        if(isset($collection['stock_visibility_state'])){
+            $collection['stock_visibility_state'] ="quantity";
+        }else{
+            $collection['stock_visibility_state'] ="hide";
+        }
+
         unset($collection['button']);
 
         $data = $collection->merge(compact(

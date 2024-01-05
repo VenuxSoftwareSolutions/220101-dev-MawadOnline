@@ -207,19 +207,23 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        dd($request->all());
         $product = $this->productService->store($request->except([
             '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
         ]));
         $request->merge(['product_id' => $product->id]);
-        //dd($product);
 
         //Product categories
         $product->categories()->attach($request->category_ids);
+
+        //Upload documents, images and thumbnails
         if($request->document_names){
             $data['document_names'] = $request->document_names;
             $data['documents'] = $request->documents;
             $data['product'] = $product;
-            $this->productUploadsService->store_documents($data);
+            $data['main_photos'] = $request->main_photos;
+            $data['photosThumbnail'] = $request->photosThumbnail;
+            $this->productUploadsService->store_uploads($data);
         }
 
         //VAT & Tax

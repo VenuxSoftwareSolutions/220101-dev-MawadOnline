@@ -30,17 +30,32 @@
     <link rel="stylesheet" href="{{ static_asset('assets/css/vendors.css') }}">
     <link rel="stylesheet" href="{{ static_asset('assets/css/tagify.css') }}">
 
+
     @if (\App\Models\Language::where('code', Session::get('locale', Config::get('app.locale')))->first()->rtl == 1)
         <link rel="stylesheet" href="{{ static_asset('assets/css/bootstrap-rtl.min.css') }}">
     @endif
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.css" integrity="sha512-In/+MILhf6UMDJU4ZhDL0R0fEpsp4D3Le23m6+ujDWXwl3whwpucJG1PEmI3B07nyJx+875ccs+yX2CqQJUxUw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{{ static_asset('assets/css/aiz-core.css?v=') }}{{ rand(1000,9999) }}">
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ static_asset('assets/css/countrySelect.css') }}">
     <style>
         /* Override Dropify's default message font size */
         .dropify-wrapper .dropify-message p {
             font-size: 13px !important; /* Adjust the font size as needed */
         }
-        
+
+        .country-select {
+            width: 100%;
+        }
+
+        .country-select.inside input, .country-select.inside input[type=text] {
+            width: 100%;
+            height: calc(1.3125rem + 1.2rem + 2px);
+            border: 1px solid #e4e5eb;
+            color: #898b92;
+
+        }
+
     </style>
     <style>
         :root {
