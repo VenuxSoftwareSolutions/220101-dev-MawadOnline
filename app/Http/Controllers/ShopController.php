@@ -76,7 +76,9 @@ class ShopController extends Controller
                 return view('frontend.seller_form', compact('step_number', "user"));
             }
         } else {
-            return view('auth.'.get_setting('authentication_layout_select').'.seller_registration');
+            return view('frontend.seller_form');
+
+      //      return view('auth.'.get_setting('authentication_layout_select').'.seller_registration');
         }
     }
 
