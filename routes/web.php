@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AizUploadController;
+use App\Http\Controllers\Auth\CustomerLoginController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\SellerLoginController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CartController;
@@ -160,6 +162,12 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/track-your-order', 'trackOrder')->name('orders.track');
 });
 
+Route::controller(CustomerLoginController::class)->group(function () {
+    Route::post('/users/login/login_user', 'login')->name('user.login_user')->middleware('handle-demo-login');
+});
+Route::controller(SellerLoginController::class)->group(function () {
+    Route::post('/seller/login/login_seller', 'login')->name('seller.login_seller')->middleware('handle-demo-login');
+});
 // Language Switch
 Route::post('/language', [LanguageController::class, 'changeLanguage'])->name('language.change');
 
