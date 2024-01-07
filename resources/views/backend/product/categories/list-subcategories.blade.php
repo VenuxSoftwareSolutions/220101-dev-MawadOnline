@@ -40,7 +40,7 @@
     </td>
     <td>{{ $category->order_level }}</td>
     <td>{{ $category->level }}</td>
-    <td>
+    <!--<td>
         @if($category->banner != null)
             <img src="{{ uploaded_asset($category->banner) }}" alt="{{translate('Banner')}}" class="h-50px">
         @else
@@ -55,7 +55,7 @@
         @else
             —
         @endif
-    </td>
+    </td>-->
     <td>
         @if($category->icon != null)
             <img src="{{ uploaded_asset($category->cover_image) }}" alt="{{translate('Cover Image')}}" class="h-50px">
