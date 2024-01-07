@@ -12,7 +12,14 @@
         <div class="card">
             <ul class="nav nav-tabs nav-fill border-light">
                 @foreach (get_all_active_language() as $key => $language)
-                <li class="nav-item fa fa-hand-pointer-o language-switcher" id="my-active-lang-{{$language->code}}" data-lang-switcher="{{$language->code}}" >
+                <li class="nav-item fa fa-hand-pointer-o language-switcher" id="my-active-lang-{{$language->code}}" data-lang-switcher="{{$language->code}}"
+                    style="
+                    @if($errors->has($language->code=='en' ? 'name'. '':'name'.'_'.$language->code) ||
+                    $errors->has($language->code=='en' ? 'description'. '':'description'.'_'.$language->code)
+                    )
+                    border:1px solid red
+                    @endif
+                    ">
                     <div class="nav-link text-reset @if ($language->code == $lang) active @else @if($language->code !=env('DEFAULT_LANGUAGE'))bg-soft-dark @endif border-light border-left-0 @endif py-3" href="">
                         <img src="{{ static_asset('assets/img/flags/'.$language->code.'.png') }}" height="11" class="mr-1">
                         <span>{{$language->name}}</span>
@@ -65,14 +72,24 @@
                 	@csrf
                     @foreach (get_all_active_language() as $key => $language)
 
-                        <div class="form-group row language-switcher-tabs" data-lang-switcher="{{$language->code}}" style="@if($language->code!='en')display:none @endif">
+                        <div class="form-group row language-switcher-tabs " data-lang-switcher="{{$language->code}}"
+                            style="@if($language->code!='en')display:none @endif
+                            ">
                             <div class="col-md-12">
 
                                 <div class="form-group row">
                                     <label class="col-md-3 col-form-label">{{translate('Name')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
                                     <div class="col-md-9">
-                                        <input type="text" placeholder="{{translate('name_'.($language->code=='en'?'':$language->code))}}" id="name{{$language->code=='en'?'':'_'.$language->code}}" name="name{{$language->code=='en'?'':'_'.$language->code}}" class="form-control" required value="{{old('name'. ($language->code=='en'?'':'_'.$language->code))}}">
+                                        <input type="text" placeholder="{{translate('name_'.($language->code=='en'?'':$language->code))}}" id="name{{$language->code=='en'?'':'_'.$language->code}}" name="name{{$language->code=='en'?'':'_'.$language->code}}" class="form-control"  value="{{old('name'. ($language->code=='en'?'':'_'.$language->code))}}">
+                                        <div class="mt-3">
+                                            @if($errors->has($language->code=='en' ? 'name'. '':'name'.'_'.$language->code))
+                                                <span class="alert alert-danger" role="alert">
+                                                    {{ translate($errors->get($language->code=='en' ? 'name'. '':'name'.'_'.$language->code)[0]) }}
+                                                </span>
+                                            @endif
+                                        </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -81,7 +98,16 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 col-form-label">{{translate('Description')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
                                     <div class="col-md-9">
-                                        <textarea rows="10" cols="30" type="text" placeholder="{{translate('Description '. ($language->code=='en'?'':$language->code))}}" id="description{{$language->code=='en'?'':'_'.$language->code}}" name="description{{$language->code=='en'?'':'_'.$language->code}}" class="form-control" required>{{old('description'. ($language->code=='en'?'':'_'.$language->code))}}</textarea>
+                                        <textarea rows="10" cols="30" type="text" placeholder="{{translate('Description '. ($language->code=='en'?'':$language->code))}}" id="description{{$language->code=='en'?'':'_'.$language->code}}" name="description{{$language->code=='en'?'':'_'.$language->code}}" class="form-control" >{{old('description'. ($language->code=='en'?'':'_'.$language->code))}}</textarea>
+
+                                        <div class="mt-3">
+                                            @if($errors->has($language->code=='en' ? 'description'. '':'description'.'_'.$language->code))
+                                            <span class="alert alert-danger" role="alert">
+                                                {{ translate($errors->get($language->code=='en' ? 'description'. '':'description'.'_'.$language->code)[0]) }}
+                                            </span>
+
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -125,7 +151,7 @@
                             <small>{{translate('Higher number has high priority')}}</small>
                         </div>
                     </div>
-                    <div class="form-group row  not-translatable">
+                    <!--<div class="form-group row  not-translatable">
                         <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Banner')}} <small>({{ translate('200x200') }})</small></label>
                         <div class="col-md-9">
                             <div class="input-group" data-toggle="aizuploader" data-type="image">
@@ -152,7 +178,7 @@
                             <div class="file-preview box sm">
                             </div>
                         </div>
-                    </div>
+                    </div>-->
                     <div class="form-group row  not-translatable">
                         <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Cover Image')}} <small>({{ translate('360x360') }})</small></label>
                         <div class="col-md-9">
@@ -164,8 +190,11 @@
                                 <input type="hidden" name="cover_image" class="selected-files">
                             </div>
                             <br>
-                            <div>@if($errors->has('cover_image'))
-                                <span class="alert alert-danger" role="alert">{{ translate('Cover Image is required')}}</span>@endif</div>
+                            <div>
+                                @if($errors->has('cover_image'))
+                                <span class="alert alert-danger" role="alert">{{ translate('Cover Image is required')}}</span>
+                                @endif
+                            </div>
 
                             <div class="file-preview box sm">
                             </div>

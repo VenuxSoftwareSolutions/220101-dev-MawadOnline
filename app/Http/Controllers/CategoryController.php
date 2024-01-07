@@ -69,16 +69,16 @@ class CategoryController extends Controller
     public function fetch_parent_attribute(Request $request){
         $parent = Category::find($request->category_id);
         $expected_ids = [];
-        if($parent->parent_id!="0"){
+        if($parent?->parent_id!="0"){
             $expected_ids = $this->getexpected_ids($parent);
         }
         return Attribute::whereIn('id',$expected_ids)->get();
     }
 
     public function getexpected_ids($categorie){
-        $ids = $categorie->categories_attributes()->pluck('attribute_id')->toArray();
-        if($categorie->parent_id!="0"){
-            $cat = Category::find($categorie->parent_id);
+        $ids = $categorie?->categories_attributes()->pluck('attribute_id')->toArray();
+        if($categorie?->parent_id!="0" && $categorie){
+            $cat = Category::find($categorie?->parent_id);
             $ids = array_merge($ids,
             $this->getexpected_ids($cat));
         }
@@ -92,16 +92,23 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        if($request->featured == 'on'){
-             $request->validate([
-                'cover_image' => 'required',
-                'parent_id' => 'not_in:0',
-            ]);
-        }else{
-            $request->validate([
-                'parent_id' => 'not_in:0',
-            ]);
+        $validationaray = [];
+        foreach (get_all_active_language() as $key => $language){
+            $langcode =  $language->code=='en'? '': '_'.$language->code;
+            $length =  $language->code=='en'? 60: 110;
+            $validationaray = array_merge($validationaray,
+                ['name'.$langcode => 'required|unique:category_translations,name|max:'.$length, 'description'.$langcode  => 'required']
+            );
         }
+        array_merge($validationaray, [ 'digital'=>'required']);
+        if($request->featured == 'on'){
+            $validationaray = array_merge($validationaray,['cover_image' => 'required','parent_id' => 'not_in:0']);
+        }else{
+            $validationaray = array_merge($validationaray,['parent_id' => 'not_in:0']);
+        }
+
+        $request->validate($validationaray);
+
         $category = new Category;
         $category->name = $request->name;
         $category->order_level = 0;
@@ -109,8 +116,8 @@ class CategoryController extends Controller
             $category->order_level = $request->order_level;
         }
         $category->digital = $request->digital;
-        $category->banner = $request->banner;
-        $category->icon = $request->icon;
+        $category->banner = $request->cover_image;//$request->banner;
+        $category->icon = $request->cover_image;//$request->icon;
         $category->cover_image = $request->cover_image;
         $category->meta_title = $request->meta_title;
         $category->meta_description = $request->meta_description;
