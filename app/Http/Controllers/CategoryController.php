@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attribute;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Product;
@@ -42,16 +43,47 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request,)
     {
+        $lang = $request->lang;
         $categories = Category::where('parent_id', 0)
             ->where('digital', 0)
             ->with('childrenCategories')
             ->get();
 
-        return view('backend.product.categories.create', compact('categories'));
+        return view('backend.product.categories.create', compact('categories', 'lang'));
     }
 
+    public function fetch_category_attribute(Request $request){
+        $parent = Category::find($request->category_id);
+        $expected_ids = [];
+        if($parent->parent_id!="0"){
+            $expected_ids = $this->getexpected_ids($parent);
+        }
+        /* if($parent){
+            $parent->categories_attributes
+        }
+        $category_attributes =Attribute::where(function())*/
+        return Attribute::whereNotIn('id',$expected_ids)->get();
+    }
+    public function fetch_parent_attribute(Request $request){
+        $parent = Category::find($request->category_id);
+        $expected_ids = [];
+        if($parent?->parent_id!="0"){
+            $expected_ids = $this->getexpected_ids($parent);
+        }
+        return Attribute::whereIn('id',$expected_ids)->get();
+    }
+
+    public function getexpected_ids($categorie){
+        $ids = $categorie?->categories_attributes()->pluck('attribute_id')->toArray();
+        if($categorie?->parent_id!="0" && $categorie){
+            $cat = Category::find($categorie?->parent_id);
+            $ids = array_merge($ids,
+            $this->getexpected_ids($cat));
+        }
+        return $ids;
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -60,6 +92,23 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
+        $validationaray = [];
+        foreach (get_all_active_language() as $key => $language){
+            $langcode =  $language->code=='en'? '': '_'.$language->code;
+            $length =  $language->code=='en'? 60: 110;
+            $validationaray = array_merge($validationaray,
+                ['name'.$langcode => 'required|unique:category_translations,name|max:'.$length, 'description'.$langcode  => 'required']
+            );
+        }
+        array_merge($validationaray, [ 'digital'=>'required']);
+        if($request->featured == 'on'){
+            $validationaray = array_merge($validationaray,['cover_image' => 'required','parent_id' => 'not_in:0']);
+        }else{
+            $validationaray = array_merge($validationaray,['parent_id' => 'not_in:0']);
+        }
+
+        $request->validate($validationaray);
+
         $category = new Category;
         $category->name = $request->name;
         $category->order_level = 0;
@@ -67,8 +116,8 @@ class CategoryController extends Controller
             $category->order_level = $request->order_level;
         }
         $category->digital = $request->digital;
-        $category->banner = $request->banner;
-        $category->icon = $request->icon;
+        $category->banner = $request->cover_image;//$request->banner;
+        $category->icon = $request->cover_image;//$request->icon;
         $category->cover_image = $request->cover_image;
         $category->meta_title = $request->meta_title;
         $category->meta_description = $request->meta_description;
@@ -81,10 +130,10 @@ class CategoryController extends Controller
         }
 
         if ($request->slug != null) {
-            $category->slug = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->slug));
+            $category->slug = strtolower(reg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->slug)));
         }
         else {
-            $category->slug = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->name)).'-'.Str::random(5);
+            $category->slug = strtolower(preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->name)));
         }
         if ($request->commision_rate != null) {
             $category->commision_rate = $request->commision_rate;
@@ -93,10 +142,33 @@ class CategoryController extends Controller
         $category->save();
 
         $category->attributes()->sync($request->filtering_attributes);
+        $category->categories_attributes()->sync($request->category_attributes);
 
-        $category_translation = CategoryTranslation::firstOrNew(['lang' => env('DEFAULT_LANGUAGE'), 'category_id' => $category->id]);
+        foreach (get_all_active_language() as $key => $language){
+            $category_translation = CategoryTranslation::firstOrNew(['lang' => $language->code, 'category_id' => $category->id]);
+            $prefixlang = $language->code==env('DEFAULT_LANGUAGE') ? '' : '_'.$language->code;
+            $attribute = 'name'.$prefixlang;
+            $category_translation->name = $request->$attribute;
+            $attribute = 'description'.$prefixlang;
+            $category_translation->description = $request->$attribute;
+            $attribute = 'meta_title'.$prefixlang;
+            $category_translation->meta_title = $request->$attribute;
+            $attribute = 'meta_description'.$prefixlang;
+            $category_translation->meta_description = $request->$attribute;
+            $category_translation->save();
+        }
+        /*$category_translation = CategoryTranslation::firstOrNew(['lang' => env('DEFAULT_LANGUAGE'), 'category_id' => $category->id]);
         $category_translation->name = $request->name;
+        $category_translation->description = $request->description;
+        $category_translation->meta_title = $request->meta_title;
+        $category_translation->meta_description = $request->meta_description;
         $category_translation->save();
+        $category_translation = CategoryTranslation::firstOrNew(['lang' => 'sa', 'category_id' => $category->id]);
+        $category_translation->name = $request->name_sa;
+        $category_translation->description = $request->description_sa;
+        $category_translation->meta_title = $request->meta_title_ar;
+        $category_translation->meta_description = $request->meta_description_ar;
+        $category_translation->save();*/
 
         flash(translate('Category has been inserted successfully'))->success();
         return redirect()->route('categories.index');
@@ -129,8 +201,9 @@ class CategoryController extends Controller
             ->whereNotIn('id', CategoryUtility::children_ids($category->id, true))->where('id', '!=' , $category->id)
             ->orderBy('name','asc')
             ->get();
-
-        return view('backend.product.categories.edit', compact('category', 'categories', 'lang'));
+        $category_attributes = $category->categories_attributes()->pluck('attribute_id');
+        $category_filtring_attributes = $category->attributes()->pluck('attribute_id');
+        return view('backend.product.categories.edit', compact('category', 'categories', 'lang','category_attributes','category_filtring_attributes'));
     }
 
     /**
@@ -194,6 +267,9 @@ class CategoryController extends Controller
 
         $category_translation = CategoryTranslation::firstOrNew(['lang' => $request->lang, 'category_id' => $category->id]);
         $category_translation->name = $request->name;
+        $category_translation->description = $request->description;
+        $category_translation->meta_title = $request->meta_title;
+        $category_translation->meta_description = $request->meta_description;
         $category_translation->save();
 
         Cache::forget('featured_categories');

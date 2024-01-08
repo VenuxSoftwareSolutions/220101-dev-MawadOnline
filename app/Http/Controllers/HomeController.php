@@ -51,10 +51,10 @@ class HomeController extends Controller
             return Category::with('bannerImage')->where('featured', 1)->get();
         });
 
-        return view('frontend.'.get_setting('homepage_select').'.index', compact('featured_categories','lang'));
+        return view('frontend.'.get_setting('homepage_select').'.index', compact('featured_categories'));
         
     }
-    
+
     public function load_todays_deal_section()
     {
         $todays_deal_products = filter_products(Product::where('todays_deal', '1'))->get();
@@ -66,7 +66,7 @@ class HomeController extends Controller
         $newest_products = Cache::remember('newest_products', 3600, function () {
             return filter_products(Product::latest())->limit(12)->get();
         });
-        
+
         return view('frontend.'.get_setting('homepage_select').'.partials.newest_products_section', compact('newest_products'));
     }
 
@@ -258,7 +258,7 @@ class HomeController extends Controller
         if (!Auth::check()) {
             session(['link' => url()->current()]);
         }
-        
+
         $detailedProduct  = Product::with('reviews', 'brand', 'stocks', 'user', 'user.shop')->where('auction_product', 0)->where('slug', $slug)->where('approved', 1)->first();
 
         if ($detailedProduct != null && $detailedProduct->published) {
@@ -421,7 +421,7 @@ class HomeController extends Controller
     public function all_categories(Request $request)
     {
         $categories = Category::with('childrenCategories')->where('parent_id', 0)->orderBy('order_level', 'desc')->get();
-        
+
         // dd($categories);
         return view('frontend.all_category', compact('categories'));
     }

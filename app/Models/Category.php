@@ -31,7 +31,7 @@ class Category extends Model
     {
         return $this->belongsToMany(Product::class, 'product_categories');
     }
-    
+
     public function bannerImage(){
     	return $this->belongsTo(Upload::class, 'banner');
     }
@@ -63,5 +63,10 @@ class Category extends Model
     public function sizeChart()
     {
         return $this->belongsTo(SizeChart::class, 'id', 'category_id');
+    }
+    
+    public function categories_attributes()
+    {
+        return $this->belongsToMany(Attribute::class, 'categories_has_attributes', 'category_id', 'attribute_id');
     }
 }
