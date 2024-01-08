@@ -420,7 +420,7 @@ class HomeController extends Controller
 
     public function all_categories(Request $request)
     {
-        $categories = Category::with('childrenCategories')->where('parent_id', 0)->orderBy('order_level', 'desc')->get();
+        $categories = Category::with('childrenCategories')->where('parent_id', 0)->orderBy('order_level', 'asc')->get();
 
         // dd($categories);
         return view('frontend.all_category', compact('categories'));

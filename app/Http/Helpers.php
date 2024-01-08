@@ -1883,7 +1883,7 @@ if (!function_exists('get_level_zero_categories')) {
     function get_level_zero_categories()
     {
         $categories_query = Category::query()->with(['coverImage', 'catIcon']);
-        return $categories_query->where('level', 0)->orderBy('order_level', 'desc')->get();
+        return $categories_query->where('level', 1)->orderBy('order_level', 'asc')->get();
     }
 }
 

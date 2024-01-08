@@ -129,7 +129,7 @@ class CategorySeeder extends Seeder
 
         $lastMainCategoryId = null;
         $lastSubCategoryId = null;
-
+        $i=1;
         // Iterate through each row in the CSV
         foreach ($csv as $row) {
             // Check if it's a new main category
@@ -142,8 +142,10 @@ class CategorySeeder extends Seeder
                     'name' => $categoryName,
                     'slug' => $categorySlug,
                     'parent_id' => 0,
-                    // ... other fields
+                    'order_level'=>$i,
+                    'level' => 1,
                 ]);
+                $i++;
 
                 $lastMainCategoryId = $category->id;
                 $lastSubCategoryId = null; // Reset last subcategory ID
