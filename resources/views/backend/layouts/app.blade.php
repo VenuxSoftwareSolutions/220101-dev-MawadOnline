@@ -112,6 +112,10 @@
             cursor: pointer;
         }
 
+        .nonClickableSelect {
+            pointer-events: none;
+        }
+
     </style>
     <script>
         var AIZ = AIZ || {};

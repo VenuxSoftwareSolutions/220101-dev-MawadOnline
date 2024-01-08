@@ -8,9 +8,11 @@ use App\Models\Color;
 use App\Models\AttributeTranslation;
 use App\Models\AttributeValue;
 use App\Models\Unity;
+use App\Models\ProductAttributeValues;
 use CoreComponentRepository;
 use App\Http\Requests\AttributeRequest;
 use App\Services\AttributeService;
+use Illuminate\Support\Facades\Auth;
 use Str;
 
 class AttributeController extends Controller
@@ -60,24 +62,19 @@ class AttributeController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created resource in Database.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(AttributeRequest $request)
     {
-        // $attribute = new Attribute;
-        // $attribute->name = $request->name;
-        // $attribute->save();
-
-        // $attribute_translation = AttributeTranslation::firstOrNew(['lang' => env('DEFAULT_LANGUAGE'), 'attribute_id' => $attribute->id]);
-        // $attribute_translation->name = $request->name;
-        // $attribute_translation->save();
-        //dd($request->all());
         $attribute = $this->attributeService->store($request->all());
         if($attribute == null){
             flash(translate('Attribute name already existe'))->error();
+            return back();
+        }elseif($attribute == "error"){
+            flash(translate('You must choose a unite'))->error();
             return back();
         }else{
             flash(translate('Attribute has been inserted successfully'))->success();
@@ -112,7 +109,8 @@ class AttributeController extends Controller
     {
         $lang      = $request->lang;
         $attribute = Attribute::findOrFail($id);
-        return view('backend.product.attribute.edit', compact('attribute','lang'));
+        $units = Unity::all();
+        return view('backend.product.attribute.edit', compact('attribute','lang', 'units'));
     }
 
     /**
@@ -124,18 +122,115 @@ class AttributeController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $attribute = Attribute::findOrFail($id);
-        if($request->lang == env("DEFAULT_LANGUAGE")){
-          $attribute->name = $request->name;
+        $request->validate([
+            'name' => ['required'],
+            'display_name_english' => ['required' , 'max:128'],
+            'display_name_arabic' => ['required' , 'max:64'],
+            'type_value' => ['required' , 'max:128']
+        ]);
+
+        $attribute = $this->attributeService->update($request->all());
+
+        if($attribute == null){
+            flash(translate('Attribute name already existe'))->error();
+            return back();
+        }else{
+            if($attribute == "error"){
+                flash(translate('Something went wrong!'))->error();
+                return back();
+            }else{
+                flash(translate('Attribute has been updated successfully'))->success();
+                return back();
+            }
+
         }
-        $attribute->save();
+    }
 
-        $attribute_translation = AttributeTranslation::firstOrNew(['lang' => $request->lang, 'attribute_id' => $attribute->id]);
-        $attribute_translation->name = $request->name;
-        $attribute_translation->save();
+    public function get_id_to_delete_value($id, $language){
+        $value = AttributeValue::find($id);
+        $values_english = AttributeValue::where('attribute_id', $value->attribute_id)->where('lang', 'en')->get();
+        $values_arabic = AttributeValue::where('attribute_id', $value->attribute_id)->where('lang', 'ar')->get();
+        $values_english_ids = AttributeValue::where('attribute_id', $value->attribute_id)->where('lang', 'en')->pluck('id')->toArray();
+        $values_arabic_ids = AttributeValue::where('attribute_id', $value->attribute_id)->where('lang', 'ar')->pluck('id')->toArray();
+        if($language == 'arabic'){
+            $key = array_search($id,$values_arabic_ids);
+            if($key != null){
+                $id_to_delete = $values_english[$key]->id;
+                $check_first_value = ProductAttributeValues::where('id_attribute', $value->attribute_id)->where('id_values', $id)->get();
+                $check_second_value = ProductAttributeValues::where('id_attribute', $value->attribute_id)->where('id_values', $values_english[$key]->id)->get();
+                if((count($check_first_value) > 0) || (count($check_second_value) > 0)){
+                    return response()->json(['status' => 'failed used', 'id_to_delete' => '']);
+                }
+                return response()->json(['status' => 'done', 'id_to_delete' => $id_to_delete]);
+            }else{
+                return response()->json(['status' => 'failed', 'id_to_delete' => '']);
+            }
+        }else{
+            $key = array_search($id,$values_english_ids);
+            if($key != null){
+                $id_to_delete = $values_arabic[$key]->id;
+                $check_first_value = ProductAttributeValues::where('id_attribute', $value->attribute_id)->where('id_values', $id)->get();
+                $check_second_value = ProductAttributeValues::where('id_attribute', $value->attribute_id)->where('id_values', $values_arabic[$key]->id)->get();
+                if((count($check_first_value) > 0) || (count($check_second_value) > 0)){
+                    return response()->json(['status' => 'failed used', 'id_to_delete' => '']);
+                }
+                return response()->json(['status' => 'done', 'id_to_delete' => $id_to_delete]);
+            }else{
+                return response()->json(['status' => 'failed', 'id_to_delete' => '']);
+            }
+        }
 
-        flash(translate('Attribute has been updated successfully'))->success();
-        return back();
+    }
+
+    public function delete_values(Request $request){
+        $request->validate([
+            'ids' => ['required'],
+        ]);
+
+        if (str_contains($request->ids, '-')) {
+            $ids = explode("-", $request->ids);
+
+            $values1 = AttributeValue::find($ids[0]);
+            if ($values1 != null) {
+                $values1->delete();
+            }
+
+            $values2 = AttributeValue::find($ids[1]);
+            if ($values2 != null) {
+                $values2->delete();
+            }
+            return response()->json(['status' => 'done']);
+
+        }
+    }
+
+    public function search_value_is_used(Request $request){
+        $request->validate([
+            'value_id' => ['required'],
+            'attribute_id' => ['attribute_id'],
+        ]);
+
+        $check = ProductAttributeValues::where('id_attribute', $request->attribute_id)->where('id_values', $request->value_id)->get();
+
+        if(count($check) > 0){
+            return response()->json(['status'=>'Exist']);
+        }else{
+            return response()->json(['status'=>'Not exist']);
+        }
+    }
+
+    public function search_values_is_used_by_type(Request $request){
+        $request->validate([
+            'attribute_id' => ['required'],
+        ]);
+
+        $check = ProductAttributeValues::where('id_attribute', $request->attribute_id)->get();
+
+        if(count($check) > 0){
+            return response()->json(['status'=>'Exist']);
+        }else{
+            return response()->json(['status'=>'Not exist']);
+        }
     }
 
     /**
@@ -266,17 +361,23 @@ class AttributeController extends Controller
     }
 
     public function is_activated(Request $request){
-        $attribute = Attribute::find($request->id);
-        if ($attribute != null) {
-            if($request->status == "true"){
-                $attribute->is_activated = 1;
-                $attribute->save();
-            }else{
-                $attribute->is_activated = 0;
-                $attribute->save();
-            }
+        $user = Auth::user();
+        if(($user->getRoleNames()->first() == "Super Admin") || ($user->hasPermissionTo('enabling_product_attribute'))){
 
-            return response()->json(["status" => 'done'], 200);
+            $attribute = Attribute::find($request->id);
+            if ($attribute != null) {
+                if($request->status == "true"){
+                    $attribute->is_activated = 1;
+                    $attribute->save();
+                }else{
+                    $attribute->is_activated = 0;
+                    $attribute->save();
+                }
+
+                return response()->json(["status" => 'done'], 200);
+            }else{
+                return response()->json(["status" => 'failed'], 500);
+            }
         }else{
             return response()->json(["status" => 'failed'], 500);
         }

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\AttributeValue;
+use App\Models\AttributesUnity;
 use App;
 
 class Attribute extends Model
@@ -21,6 +23,21 @@ class Attribute extends Model
 
     public function attribute_values() {
         return $this->hasMany(AttributeValue::class);
+    }
+
+    public function attribute_values_color() {
+        $values_color = AttributeValue::where('attribute_id', $this->id)->whereNotNull('color_code')->get();
+        return $values_color;
+    }
+
+    public function attribute_values_list($lang_code) {
+        $values_list = AttributeValue::where('attribute_id', $this->id)->where('lang', $lang_code)->whereNull('color_code')->get();
+        return $values_list;
+    }
+
+    public function get_attribute_units(){
+        $units = AttributesUnity::where('attribute_id', $this->id)->pluck('unite_id')->toArray();
+        return $units;
     }
 
 }

@@ -4,11 +4,11 @@
 <div class="aiz-titlebar text-left mt-2 mb-3">
     <div class="row align-items-center">
         <div class="col-auto">
-            <h1 class="h3">{{translate('All unites')}}</h1>
+            <h1 class="h3">{{translate('All units')}}</h1>
         </div>
         <div class="col text-right">
             <a href="{{ route('units.create') }}" class="btn btn-circle btn-info">
-                <span>{{translate('Add New unite')}}</span>
+                <span>{{translate('Add New unit')}}</span>
             </a>
         </div>
     </div>
@@ -18,7 +18,7 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0 h6">{{ translate('Unites') }}</h5>
+                    <h5 class="mb-0 h6">{{ translate('Units') }}</h5>
                 </div>
                 <div class="card-body">
                     <table class="table aiz-table mb-0">

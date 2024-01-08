@@ -28,9 +28,11 @@
                                 <th>{{ translate('Name') }}</th>
                                 <th>{{ translate('Value type') }}</th>
                                 <th>{{ translate('Values') }}</th>
-                                @role('Super Admin')
-                                    <th>{{ translate('Activated') }}</th>
-                                @endrole
+                                @auth
+                                    @if (auth()->user()->hasRole('Super Admin') || auth()->user()->hasPermissionTo('enabling_product_attribute'))
+                                        <th>{{ translate('Activated') }}</th>
+                                    @endif
+                                @endauth
                                 <th class="text-right">{{ translate('Options') }}</th>
                             </tr>
                         </thead>
@@ -88,28 +90,20 @@
                                         @endif
 
                                     </td>
-                                    @role('Super Admin')
+                                    @can('enabling_product_attribute')
                                         <td>
                                             <label class="aiz-switch aiz-switch-success mb-0">
                                                 <input class="activated" data-id="{{ $attribute->id }}" type="checkbox" @if($attribute->is_activated == 1) {{ "checked" }} @endif >
                                                 <span class="slider round"></span>
                                             </label>
                                         </td>
-                                    @endrole
+                                    @endcan
                                     <td class="text-right">
                                         @can('edit_product_attribute')
                                             <a class="btn btn-soft-primary btn-icon btn-circle btn-sm"
                                                 href="{{ route('attributes.edit', ['id' => $attribute->id, 'lang' => env('DEFAULT_LANGUAGE')]) }}"
                                                 title="{{ translate('Edit') }}">
                                                 <i class="las la-edit"></i>
-                                            </a>
-                                        @endcan
-                                        @can('delete_product_attribute')
-                                            <a href="#"
-                                                class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete"
-                                                data-href="{{ route('attributes.destroy', $attribute->id) }}"
-                                                title="{{ translate('Delete') }}">
-                                                <i class="las la-trash"></i>
                                             </a>
                                         @endcan
                                     </td>
@@ -187,6 +181,11 @@
                             'Your deletion is undone',
                             'warning'
                         )
+                        if(current.is(":checked") == true ){
+                            current.prop("checked", false);
+                        }else{
+                            current.prop("checked", true);
+                        }
                     }
                 })
             })

@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::table('attributes', function (Blueprint $table) {
             $table->string('name_display_english')->after('name');
             $table->string('name_display_arabic')->after('name_display_english');
-            $table->string('type_value')->after('name_display_arabic');
+            $table->string('type_value')->after('name_display_arabic')->nullable();
             $table->text('description_english')->after('type_value')->nullable();
             $table->text('description_arabic')->after('description_english')->nullable();
             $table->unsignedBigInteger('id_unites')->after('description_arabic')->nullable();
