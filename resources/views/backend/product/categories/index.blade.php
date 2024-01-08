@@ -36,13 +36,14 @@
         <table class="table aiz-table mb-0">
             <thead>
                 <tr>
+                    <th data-breakpoints="lg"></th>
                     <th data-breakpoints="lg">#</th>
                     <th>{{translate('Name')}}</th>
                     <th data-breakpoints="lg">{{ translate('Parent Category') }}</th>
                     <th data-breakpoints="lg">{{ translate('Order Level') }}</th>
                     <th data-breakpoints="lg">{{ translate('Level') }}</th>
-                    <th data-breakpoints="lg">{{translate('Banner')}}</th>
-                    <th data-breakpoints="lg">{{translate('Icon')}}</th>
+                    <!--<th data-breakpoints="lg">{{translate('Banner')}}</th>
+                    <th data-breakpoints="lg">{{translate('Icon')}}</th>-->
                     <th data-breakpoints="lg">{{translate('Cover Image')}}</th>
                     <th data-breakpoints="lg">{{translate('Featured')}}</th>
                     <th data-breakpoints="lg">{{translate('Commission')}}</th>
@@ -52,7 +53,13 @@
             <tbody>
                 @foreach($categories as $key => $category)
                     <tr>
-                        <td>{{ ($key+1) + ($categories->currentPage() - 1)*$categories->perPage() }}</td>
+                        <td>
+
+                        @if(count($category->childrenCategories)>0)
+                            <button id="mycatbutton-{{$category->id}}" style="border: 0px" onclick="expandmysubcategories({{$category->id}})">></button>
+                        @endif
+                        </td>
+                        <td> {{$category->id}}-{{ ($key+1) + ($categories->currentPage() - 1)*$categories->perPage() }}</td>
                         <td class="d-flex align-items-center">
                             {{ $category->getTranslation('name') }}
                             @if($category->digital == 1)
@@ -71,7 +78,7 @@
                         </td>
                         <td>{{ $category->order_level }}</td>
                         <td>{{ $category->level }}</td>
-                        <td>
+                        <!--<td>
                             @if($category->banner != null)
                                 <img src="{{ uploaded_asset($category->banner) }}" alt="{{translate('Banner')}}" class="h-50px">
                             @else
@@ -86,7 +93,7 @@
                             @else
                                 —
                             @endif
-                        </td>
+                        </td>-->
                         <td>
                             @if($category->icon != null)
                                 <img src="{{ uploaded_asset($category->cover_image) }}" alt="{{translate('Cover Image')}}" class="h-50px">
@@ -114,6 +121,9 @@
                             @endcan
                         </td>
                     </tr>
+                    @foreach ($category->childrenCategories as $childCategory)
+                        @include('backend.product.categories.list-subcategories', ['category' => $childCategory,'parent'=>$category])
+                    @endforeach
                 @endforeach
             </tbody>
         </table>
@@ -147,6 +157,19 @@
                     AIZ.plugins.notify('danger', '{{ translate('Something went wrong') }}');
                 }
             });
+        }
+        function expandmysubcategories(id){
+            let expandrows = document.querySelectorAll('.mycat-'+id);
+            let myhideaction = document.getElementById('hide-'+id);
+
+            if(expandrows && myhideaction){
+                expandrows.forEach(element => {
+                    if(element){
+                        element.style.display=myhideaction.value;
+                    }
+                });
+                myhideaction.value=='none' ? myhideaction.value='' : myhideaction.value='none';
+            }
         }
     </script>
 @endsection
