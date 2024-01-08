@@ -29,6 +29,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Auth\Events\PasswordReset;
 use App\Mail\SecondEmailVerifyMailManager;
+use App\Mail\WaitlistApplication;
+use App\Mail\WaitlistUserApplication;
 use App\Models\BusinessSetting;
 use App\Models\Cart;
 use Artisan;
@@ -770,4 +772,25 @@ class HomeController extends Controller
         $products = filter_products(Product::where('added_by', 'admin'))->with('taxes')->paginate(12)->appends(request()->query());
         return view('frontend.inhouse_products', compact('products'));
     }
+
+
+    public function sendWaitlistEmail(Request $request)
+    {
+
+        $name=$request->name;
+        $email=$request->email;
+        $role=$request->role;
+        if (isset($request->subscribeNewsletter)) {
+            $subscribeNewsletter="yes";
+        }else{
+            $subscribeNewsletter="no";
+        }
+
+         //   Mail::to()->send(new WaitlistApplication($name, $email, $role, $subscribeNewsletter));
+
+            Mail::to($email)->send(new WaitlistUserApplication($name));
+
+            return Redirect::back();
+    }
+
 }
