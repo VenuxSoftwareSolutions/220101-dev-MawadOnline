@@ -21,9 +21,9 @@ class DatabaseSeeder extends Seeder
     {
         // $this->call(UsersTableSeeder::class);
         // $this->call(MigrationSeeder::class);
-        // $this->call(EmirateSeeder::class);
-        // $this->call(AreasTableSeeder::class);
-        // // $this->call(TranslationsTableSeeder::class);
+         $this->call(EmirateSeeder::class);
+         $this->call(AreasTableSeeder::class);
+     //  $this->call(TranslationsTableSeeder::class);
         // $this->call(TranslationsTableSeeder::class);
         $this->call(TranslationsRegisterVendorPart2::class);
 
