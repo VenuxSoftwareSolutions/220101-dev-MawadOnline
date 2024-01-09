@@ -502,9 +502,7 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label>{{ translate('Civil Defense Approval') }} <span
-                                                                    class="text-primary"></span><small>{{ translate('Max file size is
-                                                                                                                                                                                                                5MB and accepted file types are PDF and image
-                                                                                                                                                                                                                formats.') }}</small></label>
+                                                                    class="text-primary"></span><small>{{ translate('Max file size is 5MB and accepted file types are PDF and image formats.') }}</small></label>
                                                             {{-- <input  type="file" class="form-control rounded-0"
                                                                 name="civil_defense_approval"> --}}
                                                             @if (isset($user) && isset($user->business_information) && $user->business_information->civil_defense_approval)
