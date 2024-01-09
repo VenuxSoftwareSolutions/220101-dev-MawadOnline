@@ -28,7 +28,7 @@
                                 <!-- Login form -->
                                 <div class="pt-3">
                                     <div class="">
-                                        <form class="form-default" role="form" action="{{ route('login') }}" method="POST">
+                                        <form class="form-default" role="form" action="{{ route('seller.login_seller') }}" method="POST">
                                             @csrf
                                             
                                             <div class="form-group">
