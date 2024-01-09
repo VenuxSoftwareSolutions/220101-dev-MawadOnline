@@ -65,60 +65,6 @@
                 </li>
             </ul>
         </div>
-    @endif
-    <form class="form form-horizontal mar-top" action="{{route('products.store')}}" method="POST" enctype="multipart/form-data" id="choice_form">
-        <div class="row gutters-5">
-            <div class="col-lg-8">
-                @csrf
-                <input type="hidden" name="added_by" value="admin">
-                <div class="card">
-
-                    <div class="card-header">
-                        <h5 class="mb-0 h6">{{translate('Product Information')}}</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Product Name')}} <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control" name="name" value="{{ old('name') }}" placeholder="{{ translate('Product Name') }}" onchange="update_sku()" required>
-                            </div>
-                        </div>
-                        <div class="form-group row" id="brand">
-                            <label class="col-md-3 col-from-label">{{translate('Brand')}}</label>
-                            <div class="col-md-8">
-                                <select class="form-control aiz-selectpicker" name="brand_id" id="brand_id" data-live-search="true">
-                                    <option value="">{{ translate('Select Brand') }}</option>
-                                    @foreach (\App\Models\Brand::all() as $brand)
-                                    <option value="{{ $brand->id }}" @selected(old('brand_id') == $brand->id)>{{ $brand->getTranslation('name') }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Unit')}} <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control" name="unit" value="{{ old('unit') }}" placeholder="{{ translate('Unit (e.g. KG, Pc etc)') }}" required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Weight')}} <small>({{ translate('In Kg') }})</small></label>
-                            <div class="col-md-8">
-                                <input type="number" class="form-control" name="weight" step="0.01" value="0.00" placeholder="0.00">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Minimum Purchase Qty')}} <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="number" lang="en" class="form-control" name="min_qty" value="1" min="1" required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Tags')}} <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control aiz-tag-input" name="tags[]" placeholder="{{ translate('Type and hit enter to add a tag') }}">
-                                <small class="text-muted">{{translate('This is used for search. Input those words by which cutomer can find this product.')}}</small>
-                            </div>
-                        </div>
 
         <!-- tab content -->
         <div class="flex-grow-1 p-sm-3 p-lg-2rem mb-2rem mb-md-0">
@@ -791,17 +737,17 @@
 		}
         // Disable the submit button while evaluating if the form should be submitted
         // $("button[type='submit']").prop('disabled', true);
-
+        
         // var valid = true;
 
         // if (!valid) {
             // e.preventDefault();
-
+            
             ////Reactivate the button if the form was not submitted
             // $("button[type='submit']").button.prop('disabled', false);
         // }
     });
-
+    
     $("[name=shipping_type]").on("change", function (){
         $(".flat_rate_shipping_div").hide();
 

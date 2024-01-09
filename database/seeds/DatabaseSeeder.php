@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
         // $this->call(EmirateSeeder::class);
         // $this->call(AreasTableSeeder::class);
         // $this->call(TranslationsTableSeeder::class);
-        $this->call(AddPermessionEnablingAttributeSeeder::class);
+        $this->call(TranslationsTableSeeder::class);
 
     //    $this->call(CategorySeeder::class);
     }
