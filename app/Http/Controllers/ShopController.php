@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App;
 use App\Http\Requests\SellerRegistrationRequest;
 use App\Http\Requests\SellerRegistrationShopRequest;
 use App\Http\Requests\StoreBusinessInfoRequest;
@@ -16,6 +17,7 @@ use App\Models\Shop;
 use App\Models\User;
 use App\Models\BusinessSetting;
 use App\Models\ContactPerson;
+use App\Models\Emirate;
 use App\Models\PayoutInformation;
 use App\Models\VerificationCode;
 use App\Models\Warehouse;
@@ -57,6 +59,7 @@ class ShopController extends Controller
     public function create(Request $request)
     {
 
+        $emirates=Emirate::all() ;
 
         if (Auth::check()) {
             if ((Auth::user()->user_type == 'admin' || Auth::user()->user_type == 'customer')) {
@@ -68,15 +71,16 @@ class ShopController extends Controller
                 // return back();
                 return redirect()->route('dashboard');
             }
+
             if (Auth::user()->user_type == 'seller' && Auth::user()->steps == 0) {
                 $user = Auth::user();
                 $step_number = Auth::user()->step_number;
 
                 flash(translate('You need to complete all steps to create a vendor account.'))->error();
-                return view('frontend.seller_form', compact('step_number', "user"));
+                return view('frontend.seller_form', compact('step_number', "user","emirates"));
             }
         } else {
-            return view('frontend.seller_form');
+            return view('frontend.seller_form',compact('emirates'));
 
       //      return view('auth.'.get_setting('authentication_layout_select').'.seller_registration');
         }
@@ -463,7 +467,12 @@ class ShopController extends Controller
             ->select('id', 'name')
             ->where('emirate_id', $emirate_id)
             ->get();
+            $currentLang = App::getLocale(); // Get the current language
 
+            foreach ($empData['data'] as $area) {
+                // Check current language and get the appropriate translation
+                $area->name_translated = $area->getTranslation('name', $currentLang);
+            }
         return response()->json($empData);
     }
 

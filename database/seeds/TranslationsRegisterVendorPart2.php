@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use DB;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -15,10 +16,24 @@ class TranslationsRegisterVendorPart2 extends Seeder
     public function run()
     {
         $translations = [
-            ['sa', 'please_review_the_form_for_errors', 'يرجى مراجعة النموذج بحثًا عن الأخطاء'],
-            ['sa', 'previous', 'السابق'],
+            ['ae', 'please_review_the_form_for_errors', 'يرجى مراجعة النموذج بحثًا عن الأخطاء'],
+            ['ae', 'previous', 'السابق'],
+            ['ae', 'login_to_seller', 'تسجيل الدخول إلى البائع'],
+            ['ae', 'become_a_seller_', 'كن بائعًا'],
+            ['ae', 'a_6digit_code', 'تم إرسال رمز مكون من 6 أرقام إلى بريدك الإلكتروني.'],
+            ['en', 'a_6digit_code', 'A 6-digit code has been sent to your email.'],
+
 
         ] ;
+        foreach ($translations as $translation) {
+            DB::table('translations')->insert([
+
+                'lang' => $translation[0],
+                'lang_key' => $translation[1],
+                'lang_value' => $translation[2],
+
+            ]);
+        }
 
     }
 }

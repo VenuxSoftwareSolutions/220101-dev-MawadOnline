@@ -160,8 +160,7 @@
                                                             name="verification_code" required maxlength="6"
                                                             pattern="[0-9]{6}">
                                                         <small
-                                                            class="text-muted">{{ translate('A 6-digit code has been sent to your
-                                                                                                                                                                                    email.') }}</small>
+                                                            class="text-muted">{{ translate('a_6digit_code') }}</small>
                                                     </div>
                                                 </div>
                                             </div>
@@ -169,7 +168,7 @@
                                                 <!-- Previous Button -->
                                                 <button type="button" data-prv='personal-info'
                                                     class="btn btn-info fw-600 rounded-0 prv-tab">
-                                                    {{ translate('Previous') }}
+                                                    {{ translate('previous') }}
                                                 </button>
 
                                                 <button id="verifyCodeBtn" type="button"
@@ -223,9 +222,7 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label>{{ translate('Trade License Doc') }} <span
-                                                                    class="text-primary">*</span><small>{{ translate('Max file size is
-                                                                                                                                                                                                            5MB and accepted file types are PDF and image
-                                                                                                                                                                                                            formats.') }}</small></label>
+                                                                    class="text-primary">*</span><small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small></label>
 
 
                                                             @if (isset($user) && isset($user->business_information) && $user->business_information->trade_license_doc)
@@ -317,33 +314,15 @@
                                                             <div class="form-group">
                                                                 <label>{{ translate('State/Emirate') }} <span
                                                                         class="text-primary">*</span></label>
-                                                                <select required name="state"
-                                                                    class="form-control rounded-0" id="emirateempire">
-                                                                    <option value="">
-                                                                        {{ translate('Please Choose !!') }} </option>
-                                                                    <option
-                                                                        @if ($user->business_information->state == 1) selected @endif
-                                                                        value="1">Abu Dhabi</option>
-                                                                    <option
-                                                                        @if ($user->business_information->state == 2) selected @endif
-                                                                        value="2">Ajman</option>
-                                                                    <option
-                                                                        @if ($user->business_information->state == 3) selected @endif
-                                                                        value="3">Sharjah</option>
-                                                                    <option
-                                                                        @if ($user->business_information->state == 4) selected @endif
-                                                                        value="4">Dubai</option>
-                                                                    <option
-                                                                        @if ($user->business_information->state == 5) selected @endif
-                                                                        value="5">Fujairah</option>
-                                                                    <option
-                                                                        @if ($user->business_information->state == 6) selected @endif
-                                                                        value="6">Ras Al Khaimah</option>
-                                                                    <option
-                                                                        @if ($user->business_information->state == 7) selected @endif
-                                                                        value="7">Umm Al-Quwain</option>
+                                                                        <select required name="state" class="form-control rounded-0" id="emirateempire">
+                                                                            <option value="">{{ translate('please_choose') }}</option>
+                                                                            @foreach ($emirates as $emirate)
+                                                                                <option value="{{ $emirate->id }}" @if (isset($user) && $user->business_information->state == $emirate->id) selected @endif>
+                                                                                    {{ $emirate->name }}
+                                                                                </option>
+                                                                            @endforeach
+                                                                        </select>
 
-                                                                </select>
 
                                                             </div>
                                                         </div>
@@ -356,8 +335,7 @@
                                                                     @php
                                                                         $areas = App\Models\Area::where('emirate_id', $user->business_information->state)->get();
                                                                     @endphp
-                                                                    <option value="" selected>Please Choose
-                                                                        !!</option>
+                                                                    <option value="" selected>{{ translate('please_choose') }}</option>
                                                                     @foreach ($areas as $area)
                                                                         <option value="{{ $area->id }}"
                                                                             @if ($area->id == $user->business_information->area_id) selected @endif>
@@ -373,20 +351,13 @@
                                                             <div class="form-group">
                                                                 <label>{{ translate('State/Emirate') }} <span
                                                                         class="text-primary">*</span></label>
-                                                                <select required name="state"
-                                                                    class="form-control rounded-0" id="emirateempire">
-                                                                    <option value="" selected>
-                                                                        {{ translate('Please Choose !!') }}
-                                                                    </option>
-                                                                    <option value="1">Abu Dhabi</option>
-                                                                    <option value="2">Ajman</option>
-                                                                    <option value="3">Sharjah</option>
-                                                                    <option value="4">Dubai</option>
-                                                                    <option value="5">Fujairah</option>
-                                                                    <option value="6">Ras Al Khaimah</option>
-                                                                    <option value="7">Umm Al-Quwain</option>
+                                                                        <select required name="state" class="form-control rounded-0" id="emirateempire">
+                                                                            <option value="" selected>{{ translate('please_choose') }}</option>
+                                                                            @foreach ($emirates as $emirate)
+                                                                                <option value="{{ $emirate->id }}">{{ $emirate->name }}</option>
+                                                                            @endforeach
+                                                                        </select>
 
-                                                                </select>
 
                                                             </div>
                                                         </div>
@@ -397,7 +368,7 @@
                                                                 <select required name="area_id"
                                                                     class="form-control rounded-0" id="areaempire">
                                                                     <option value="" selected>
-                                                                        {{ translate('Please Choose !!') }}
+                                                                        {{ translate('please_choose') }}
                                                                     </option>
 
 
@@ -490,9 +461,7 @@
                                                     <div class="col-md-6" id="vatCertificateGroup">
                                                         <div class="form-group">
                                                             <label>{{ translate('Vat Certificate') }} <span
-                                                                    class="text-primary">*</span><small>{{ translate('Max file size is
-                                                                                                                                                                                                            5MB and accepted file types are PDF and image
-                                                                                                                                                                                                            formats.') }}</small></label>
+                                                                    class="text-primary">*</span><small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small></label>
                                                             @if (isset($user) && isset($user->business_information) && $user->business_information->vat_certificate)
                                                                 <a class="old_file"
                                                                     href="{{ static_asset($user->business_information->vat_certificate) }}"
@@ -518,9 +487,7 @@
                                                     <div class="col-md-6" id="taxWaiverGroup" {{-- style="display: none;" --}}>
                                                         <div class="form-group">
                                                             <label>{{ translate('Tax Waiver Certificate') }} <span
-                                                                    class="text-primary">*</span><small>{{ translate('Max file size is
-                                                                                                                                                                                                            5MB and accepted file types are PDF and image
-                                                                                                                                                                                                            formats.') }}</small></label>
+                                                                    class="text-primary">*</span><small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small></label>
                                                             @if (isset($user) && isset($user->business_information) && $user->business_information->tax_waiver)
                                                                 <a class="old_file"
                                                                     href="{{ static_asset($user->business_information->tax_waiver) }}"
@@ -726,9 +693,8 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label>{{ translate('Emirates ID') }} <span
-                                                                    class="text-primary">*</span><small>{{ translate('Max file size is
-                                                                                                                                                                                                                5MB and accepted file types are PDF and image
-                                                                                                                                                                                                                formats.') }}</small></label>
+                                                                    class="text-primary">*</span><small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}
+                                                                                 </small></label>
                                                             @if (isset($user) && isset($user->contact_people) && $user->contact_people->emirates_id_file_path)
                                                                 <a class="old_file"
                                                                     href="{{ static_asset($user->contact_people->emirates_id_file_path) }}"
@@ -831,21 +797,14 @@
                                                         <div class="form-group">
                                                             <label for="state">{{ translate('State/Emirate') }}<span
                                                                     class="text-primary">*</span></label>
-                                                            <select name="state_warehouse_add"
-                                                                class="form-control rounded-0 emirateSelect"
-                                                                id="emirateempire">
-                                                                <option value="" selected>
-                                                                    {{ translate('Please Choose !!') }}
-                                                                </option>
-                                                                <option value="1">Abu dhabi</option>
-                                                                <option value="2">Ajman</option>
-                                                                <option value="3">Sharjah</option>
-                                                                <option value="4">Dubai</option>
-                                                                <option value="5">Fujairah</option>
-                                                                <option value="6">ras al khaimah</option>
-                                                                <option value="7">Umm Al-Quwain</option>
+                                                                    <select name="state_warehouse_add" class="form-control rounded-0 emirateSelect" id="emirateempire">
+                                                                        <option value="" selected>{{ translate('please_choose') }}</option>
+                                                                        @foreach ($emirates as $emirate)
+                                                                            <option value="{{ $emirate->id }}">{{ $emirate->name }}</option>
+                                                                        @endforeach
+                                                                    </select>
 
-                                                            </select>
+
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
@@ -855,7 +814,7 @@
                                                             <select name="area_warehouse_add"
                                                                 class="form-control areaSelect">
                                                                 <option value="" selected>
-                                                                    {{ translate('Please Choose !!') }}
+                                                                    {{ translate('please_choose') }}
                                                                 </option>
                                                                 <!-- Options for area -->
                                                             </select>
@@ -914,34 +873,15 @@
                                                                             name="warehouse_name[]" required></td>
                                                                     <td>
 
-                                                                        <select required name="state_warehouse[]"
-                                                                            class="form-control rounded-0 emirateSelect"
-                                                                            id="emirateempire">
-                                                                            <option value="" selected>
-                                                                                {{ translate('Please Choose') }}</option>
-                                                                            <option
-                                                                                @if ($warehouse->emirate_id == 1) selected @endif
-                                                                                value="1">Abu Dhabi</option>
-                                                                            <option
-                                                                                @if ($warehouse->emirate_id == 2) selected @endif
-                                                                                value="2">Ajman</option>
-                                                                            <option
-                                                                                @if ($warehouse->emirate_id == 3) selected @endif
-                                                                                value="3">Sharjah</option>
-                                                                            <option
-                                                                                @if ($warehouse->emirate_id == 4) selected @endif
-                                                                                value="4">Dubai</option>
-                                                                            <option
-                                                                                @if ($warehouse->emirate_id == 5) selected @endif
-                                                                                value="5">Fujairah</option>
-                                                                            <option
-                                                                                @if ($warehouse->emirate_id == 6) selected @endif
-                                                                                value="6">Ras Al Khaimah</option>
-                                                                            <option
-                                                                                @if ($warehouse->emirate_id == 7) selected @endif
-                                                                                value="7">Umm Al-Quwain</option>
-
+                                                                        <select required name="state_warehouse[]" class="form-control rounded-0 emirateSelect" id="emirateempire">
+                                                                            <option value="" selected>{{ translate('please_choose') }}</option>
+                                                                            @foreach ($emirates as $emirate)
+                                                                                <option value="{{ $emirate->id }}" @if ($warehouse->emirate_id == $emirate->id) selected @endif>
+                                                                                    {{ $emirate->name }}
+                                                                                </option>
+                                                                            @endforeach
                                                                         </select>
+
                                                                     </td>
                                                                     <td>
                                                                         <select class="form-control areaSelect"
@@ -950,7 +890,7 @@
                                                                                 $areas = App\Models\Area::where('emirate_id', $warehouse->emirate_id)->get();
                                                                             @endphp
                                                                             <option value="" selected>
-                                                                                {{ translate('Please Choose') }}</option>
+                                                                                {{ translate('please_choose') }}</option>
                                                                             @foreach ($areas as $area)
                                                                                 <option value="{{ $area->id }}"
                                                                                     @if ($area->id == $warehouse->area_id) selected @endif>
@@ -1269,9 +1209,7 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label>{{ translate('IBAN Certificate') }}<span
-                                                                    class="text-primary">*</span><small>{{ translate('Max file size is
-                                                                                                                                                                                                                5MB and accepted file types are PDF and image
-                                                                                                                                                                                                                formats.') }}</small></label>
+                                                                    class="text-primary">*</span><small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small></label>
                                                             @if (isset($user) && isset($user->payout_information) && $user->payout_information->iban_certificate)
                                                                 <a class="old_file"
                                                                     href="{{ static_asset($user->payout_information->iban_certificate) }}"
@@ -1979,7 +1917,7 @@
                             for (var i = 0; i < len; i++) {
 
                                 var id = response['data'][i].id;
-                                var name = response['data'][i].name;
+                                var name = response['data'][i].name_translated;
 
                                 var option = "<option value='" + id + "'>" + name + "</option>";
 
@@ -2043,7 +1981,7 @@
                         // Update the options in the area select
                         areaSelect.empty();
                         areaSelect.append(
-                            '<option value="" selected>Please Choose !!</option>');
+                            '<option value="" selected>{{ translate('please_choose') }}</option>');
 
                         // Add options based on the response
                         // $.each(response, function(index, area) {
@@ -2060,7 +1998,7 @@
                             for (var i = 0; i < len; i++) {
 
                                 var id = response['data'][i].id;
-                                var name = response['data'][i].name;
+                                var name = response['data'][i].name_translated;
 
                                 var option = "<option value='" + id + "'>" + name + "</option>";
 
