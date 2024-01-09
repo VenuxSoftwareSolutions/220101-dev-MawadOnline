@@ -35,6 +35,6 @@ class UaeMobilePhone implements Rule
      */
     public function message()
     {
-        return 'The :attribute must be a valid UAE mobile phone number with the country code +971.';
+        return translate('the_mobile_phone_number_must_be_a_valid_uae_number_including_the_country_code_971');
     }
 }
