@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use AizPackages\CombinationGenerate\Services\CombinationService;
 use App\Models\UploadProducts;
 use Illuminate\Support\Facades\DB;
 use Intervention\Image\Facades\Image;

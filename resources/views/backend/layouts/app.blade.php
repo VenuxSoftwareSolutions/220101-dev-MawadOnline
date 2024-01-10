@@ -38,6 +38,7 @@
     <link rel="stylesheet" href="{{ static_asset('assets/css/aiz-core.css?v=') }}{{ rand(1000,9999) }}">
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ static_asset('assets/css/countrySelect.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         /* Override Dropify's default message font size */
         .dropify-wrapper .dropify-message p {
@@ -54,6 +55,15 @@
             border: 1px solid #e4e5eb;
             color: #898b92;
 
+        }
+
+        .icon-delete-pricing{
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 14px;
+        }
+        .fa-regular{
+            color:red
         }
 
     </style>

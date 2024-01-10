@@ -36,12 +36,12 @@ class ProductService
         $collection['tags'] = implode(',', $tags);
         $discount_start_date = null;
         $discount_end_date   = null;
-        if ($collection['date_range'] != null) {
-            $date_var               = explode(" to ", $collection['date_range']);
-            $discount_start_date = strtotime($date_var[0]);
-            $discount_end_date   = strtotime($date_var[1]);
-        }
-        unset($collection['date_range']);
+        // if ($collection['date_range'] != null) {
+        //     $date_var               = explode(" to ", $collection['date_range']);
+        //     $discount_start_date = strtotime($date_var[0]);
+        //     $discount_end_date   = strtotime($date_var[1]);
+        // }
+        // unset($collection['date_range']);
 
         if ($collection['meta_title'] == null) {
             $collection['meta_title'] = $collection['name'];
@@ -80,50 +80,56 @@ class ProductService
             $colors = json_encode($collection['colors']);
         }
 
-        $options = ProductUtility::get_attribute_options($collection);
+        // $options = ProductUtility::get_attribute_options($collection);
 
-        $combinations = (new CombinationService())->generate_combination($options);
+        // $combinations = (new CombinationService())->generate_combination($options);
 
-        if (count($combinations) > 0) {
-            foreach ($combinations as $key => $combination) {
-                $str = ProductUtility::get_combination_string($combination, $collection);
+        // if (count($combinations) > 0) {
+        //     foreach ($combinations as $key => $combination) {
+        //         $str = ProductUtility::get_combination_string($combination, $collection);
 
-                unset($collection['price_' . str_replace('.', '_', $str)]);
-                unset($collection['sku_' . str_replace('.', '_', $str)]);
-                unset($collection['qty_' . str_replace('.', '_', $str)]);
-                unset($collection['img_' . str_replace('.', '_', $str)]);
-            }
-        }
+        //         unset($collection['price_' . str_replace('.', '_', $str)]);
+        //         unset($collection['sku_' . str_replace('.', '_', $str)]);
+        //         unset($collection['qty_' . str_replace('.', '_', $str)]);
+        //         unset($collection['img_' . str_replace('.', '_', $str)]);
+        //     }
+        // }
 
-        unset($collection['colors_active']);
+        // unset($collection['colors_active']);
 
-        $choice_options = array();
-        if (isset($collection['choice_no']) && $collection['choice_no']) {
-            $str = '';
-            $item = array();
-            foreach ($collection['choice_no'] as $key => $no) {
-                $str = 'choice_options_' . $no;
-                $item['attribute_id'] = $no;
-                $attribute_data = array();
-                // foreach (json_decode($request[$str][0]) as $key => $eachValue) {
-                foreach ($collection[$str] as $key => $eachValue) {
-                    // array_push($data, $eachValue->value);
-                    array_push($attribute_data, $eachValue);
-                }
-                unset($collection[$str]);
+        // $choice_options = array();
+        // if (isset($collection['choice_no']) && $collection['choice_no']) {
+        //     $str = '';
+        //     $item = array();
+        //     foreach ($collection['choice_no'] as $key => $no) {
+        //         $str = 'choice_options_' . $no;
+        //         $item['attribute_id'] = $no;
+        //         $attribute_data = array();
+        //         // foreach (json_decode($request[$str][0]) as $key => $eachValue) {
+        //         foreach ($collection[$str] as $key => $eachValue) {
+        //             // array_push($data, $eachValue->value);
+        //             array_push($attribute_data, $eachValue);
+        //         }
+        //         unset($collection[$str]);
 
-                $item['values'] = $attribute_data;
-                array_push($choice_options, $item);
-            }
-        }
+        //         $item['values'] = $attribute_data;
+        //         array_push($choice_options, $item);
+        //     }
+        // }
 
-        $choice_options = json_encode($choice_options, JSON_UNESCAPED_UNICODE);
+        // $choice_options = json_encode($choice_options, JSON_UNESCAPED_UNICODE);
 
-        if (isset($collection['choice_no']) && $collection['choice_no']) {
-            $attributes = json_encode($collection['choice_no']);
-            unset($collection['choice_no']);
-        } else {
-            $attributes = json_encode(array());
+        // if (isset($collection['choice_no']) && $collection['choice_no']) {
+        //     $attributes = json_encode($collection['choice_no']);
+        //     unset($collection['choice_no']);
+        // } else {
+        //     $attributes = json_encode(array());
+        // }
+
+        if(isset($collection['stock_visibility_state'])){
+            $collection['stock_visibility_state'] ="quantity";
+        }else{
+            $collection['stock_visibility_state'] ="hide";
         }
 
         $published = 1;
@@ -150,16 +156,12 @@ class ProductService
         $data = $collection->merge(compact(
             'user_id',
             'approved',
-            'discount_start_date',
-            'discount_end_date',
             'shipping_cost',
             'slug',
             'colors',
-            'choice_options',
-            'attributes',
             'published',
         ))->toArray();
-
+        
         return Product::create($data);
     }
 
@@ -292,11 +294,7 @@ class ProductService
         //     $attributes = json_encode(array());
         // }
 
-        if(isset($collection['stock_visibility_state'])){
-            $collection['stock_visibility_state'] ="quantity";
-        }else{
-            $collection['stock_visibility_state'] ="hide";
-        }
+
 
         unset($collection['button']);
 

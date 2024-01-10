@@ -1,4 +1,10 @@
 @extends('backend.layouts.app')
+<style>
+    .div-btn{
+        display: flex;
+        justify-content: center;
+    }
+</style>
 
 @section('content')
 
@@ -135,6 +141,71 @@
                 </div>
                 <div class="card">
                     <div class="card-header">
+                        <h5 class="mb-0 h6">{{translate('Pricing Configuration')}}</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="bloc_pricing_configuration">
+                            <div>
+                                <div class="row qty-stock">
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">{{ translate('From Quantity') }}</label>
+                                            <input type="number" class="form-control min-qty" name="from[]">
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">{{ translate('To Quantity') }}</label>
+                                            <input type="number" class="form-control max-qty" name="to[]">
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">{{ translate('Unit Price (VAT Exclusive)') }}</label>
+                                            <input type="number" class="form-control" name="unit_price[]">
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">{{ translate('Discount(Start/End)') }}</label>
+                                            <input type="text" class="form-control aiz-date-range" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">{{ translate('Discount Type') }}</label>
+                                            <select class="form-control aiz-selectpicker discount_type" name="discount_type[]">
+                                                <option value="" disabled selected>{{translate('Choose type')}}</option>
+                                                <option value="amount" @selected(old('discount_type') == 'amount')>{{translate('Flat')}}</option>
+                                                <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">{{ translate('Discount Amount') }}</label>
+                                            <input type="number" class="form-control discount_amount" name="discount_amount[]">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">{{ translate('Discount Percentage') }}</label>
+                                            <input type="number" class="form-control discount_percentage" name="discount_percentage[]">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row div-btn">
+                            <button type="button" name="button" class="btn btn-primary" id="btn-add-pricing">Add another pricing configuration</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
                         <h5 class="mb-0 h6">{{translate('Product Videos')}}</h5>
                     </div>
                     <div class="card-body">
@@ -202,7 +273,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card">
+                {{-- <div class="card">
                     <div class="card-header">
                         <h5 class="mb-0 h6">{{translate('Product price + stock')}}</h5>
                     </div>
@@ -284,7 +355,7 @@
 
                         </div>
                     </div>
-                </div>
+                </div> --}}
                 <div class="card">
                     <div class="card-header">
                         <h5 class="mb-0 h6">{{translate('Product Description')}}</h5>
@@ -293,7 +364,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Description')}}</label>
                             <div class="col-md-8">
-                                <textarea id="summernote" name="editordata"></textarea>
+                                <textarea id="summernote" name="description"></textarea>
                                 <div id="charCount">Remaining characters: 512</div>
                                 <input type="hidden" id="hidden_value" value="">
                             </div>
@@ -317,7 +388,7 @@
                                     <label for="exampleInputEmail1">Documnt</label>
                                     <div class="input-group">
                                         <div class="custom-file">
-                                          <input type="file" name="documents[]" class="custom-file-input file_input" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
+                                          <input type="file" name="documents[]" accept=".pdf,.png,.jpg,.pln,.dwg,.dxf,.gsm,.stl,.rfa,.rvt,.ifc,.3ds,.max,.obj,.fbx,.skp,.rar,.zip" class="custom-file-input file_input" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
                                           <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
                                         </div>
                                     </div>
@@ -655,7 +726,7 @@
                         <button type="submit" name="button" value="unpublish" class="btn btn-primary action-btn">{{ translate('Save & Unpublish') }}</button>
                     </div>
                     <div class="btn-group" role="group" aria-label="Second group">
-                        <button type="submit" name="button" value="publish" class="btn btn-success action-btn">{{ translate('Save & Publish') }}</button>
+                        <button type="button" name="button" value="publish" class="btn btn-success action-btn" id="save">{{ translate('Save & Publish') }}</button>
                     </div>
                 </div>
             </div>
@@ -705,10 +776,156 @@
                 $("#summernote").summernote("code", $('#hidden_value').val());
             }
         });
+
+        $('#save').click(function() {
+            let overlapFound = false; // Flag to track if any overlaps are found
+
+            var valuesMinQtyArray = [];
+            var valuesMaxQtyArray = [];
+            $('body .min-qty').each(function() {
+                // Get the value of each input field and push it to the array
+                valuesMinQtyArray.push($(this).val());
+            });
+
+            $('body .max-qty').each(function() {
+                // Get the value of each input field and push it to the array
+                valuesMaxQtyArray.push($(this).val());
+            });
+
+            //check if there is any overlaps
+            for (let i = 0; i < valuesMinQtyArray.length; i++) {
+                var minVal = parseFloat(valuesMinQtyArray[i]); //get current min value to compare with other value
+                var maxVal = parseFloat(valuesMaxQtyArray[i]); //get current max value to compare with other value
+                for (let j = 0; j < valuesMinQtyArray.length; j++) {
+                    if(i == j){
+                        continue;
+                    }else{
+                        var otherMinVal = parseFloat(valuesMinQtyArray[j]);
+                        var otherMaxVal = parseFloat(valuesMaxQtyArray[j]);
+
+                        if (minVal >= otherMinVal && minVal <= otherMaxVal) { //check if min value exist in another interval
+                            $('body .min-qty').eq(i).css('border-color', 'red');
+                            swal(
+                                'Cancelled',
+                                'Overlap found',
+                                'error'
+                            )
+                            overlapFound = true;
+                        }
+
+                        if(maxVal >= otherMinVal && maxVal <= otherMaxVal){ //check if max value exist in another interval
+                            $('body .max-qty').eq(i).css('border-color', 'red');
+                            swal(
+                                'Cancelled',
+                                'Overlap found',
+                                'error'
+                            )
+                            overlapFound = true;
+                        }
+                    }
+                }
+
+            }
+
+            // add another ligne in pricing configuration when not any overlaps are found
+            if(overlapFound == false){
+                $('#choice_form').submit();
+            }
+        });
+
+
+        $('#btn-add-pricing').click(() => {
+            var html_to_add = `
+                            <div>
+                                <hr>
+                                <div class="icon-delete-pricing">
+                                    <i class="fa-regular fa-circle-xmark fa-fw fa-2xl"></i>
+                                </div>
+                                <div class="row qty-stock">
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">{{ translate('From Quantity') }}</label>
+                                            <input type="number" class="form-control min-qty" name="from[]">
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">{{ translate('To Quantity') }}</label>
+                                            <input type="number" class="form-control max-qty" name="to[]">
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">{{ translate('Unit Price (VAT Exclusive)') }}</label>
+                                            <input type="number" class="form-control" name="unit_price[]">
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">{{ translate('Discount(Start/End)') }}</label>
+                                            <input type="text" class="form-control aiz-date-range" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-format="DD-MM-Y HH:mm:ss" data-separator=" to " autocomplete="off">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">{{ translate('Discount Type') }}</label>
+                                            <select class="form-control aiz-selectpicker discount_type" name="discount_type[]">
+                                                <option value="" disabled selected>{{translate('Choose type')}}</option>
+                                                <option value="amount" @selected(old('discount_type') == 'amount')>{{translate('Flat')}}</option>
+                                                <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">{{ translate('Discount Amount') }}</label>
+                                            <input type="number" class="form-control discount_amount" name="discount_amount[]">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">{{ translate('Discount Percentage') }}</label>
+                                            <input type="number" class="form-control discount_percentage" name="discount_percentage[]">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            `;
+                $('#bloc_pricing_configuration').append(html_to_add);
+                $('body .aiz-date-range:last').daterangepicker({
+                    timePicker: true,
+                    locale: {
+                        format: 'YYYY-MM-DD HH:mm:ss',
+                        separator : " to "
+                    },
+                });
+                AIZ.plugins.bootstrapSelect('refresh');
+
+        });
+
+        $('body').on('click', '.fa-circle-xmark', function(){
+            $(this).parent().parent().remove();
+        })
+
+        $('body').on('change', '.discount_type', function(){
+            if($(this).val() == "amount"){
+                $(this).parent().parent().parent().parent().find('.discount_amount').prop('readonly', false);
+                $(this).parent().parent().parent().parent().find('.discount_percentage').prop('readonly', true);
+                $(this).parent().parent().parent().parent().find('.discount_percentage').val('');
+            }
+            if($(this).val() == "percent"){
+                $(this).parent().parent().parent().parent().find('.discount_amount').prop('readonly', true);
+                $(this).parent().parent().parent().parent().find('.discount_percentage').prop('readonly', false);
+                $(this).parent().parent().parent().parent().find('.discount_amount').val('');
+            }
+        })
     });
 </script>
 <script>
     $(document).ready(function() {
+
         let dropifyInput = $('#photoUpload');
         let originalInput = dropifyInput.clone(true);
 
@@ -862,7 +1079,7 @@
                         )
                 $(this).val('');
                 removeDropifyThumbnail();
-                dropifyInputThumbnail.replaceWith(originalInput.clone(true));
+                dropifyInputThumbnail.replaceWith(dropifyInputThumbnail.clone(true));
                 dropifyInputThumbnail = $('#photoUploadThumbnail');
                 initializeDropifyThumbnail();
             } else {
@@ -877,7 +1094,7 @@
                 if (exceedingFiles.length > 0) {
                     swal(
                             'Cancelled',
-                            'Images must be width and height between 300px and 400px: ' + exceedingFiles.join(', '),
+                            'Following files exceed 512Ko limit: ' + exceedingFiles.join(', '),
                             'error'
                         )
                     $(this).val('');
@@ -916,14 +1133,14 @@
                         if (exceedingFilesDimension.length > 0) {
                             swal(
                                 'Cancelled',
-                                'Following files exceed 2MB limit: ' + exceedingFilesDimension.join(', '),
+                                'Please upload images with dimensions between 300px and 400px for both width and height: ' + exceedingFilesDimension.join(', '),
                                 'error'
                             )
                             $(this).val('');
-                            removeDropify();
-                            dropifyInput.replaceWith(originalInput.clone(true));
-                            dropifyInput = $('#photoUpload');
-                            initializeDropify();
+                            removeDropifyThumbnail();
+                            dropifyInputThumbnail.replaceWith(originalInputThumbnail.clone(true));
+                            dropifyInputThumbnail = $('#photoUploadThumbnail');
+                            initializeDropifyThumbnail();
                         }else{
 
                             let uploadedFilesHTML = '<div class="row">';
@@ -938,10 +1155,11 @@
                             }
                             uploadedFilesHTML += '</div>';
 
-                            if ($(this).parent().parent().find('#dropifyUploadedFilesThumbnail').length == 0) {
+                            if ($('body #dropifyUploadedFilesThumbnail').length == 0) {
                                 $("#bloc_thumbnails").append('<div id="dropifyUploadedFilesThumbnail"></div>');
                                 $('body #dropifyUploadedFilesThumbnail').html(uploadedFilesHTML);
                             }else{
+                                console.log('existe')
                                 $('body #dropifyUploadedFilesThumbnail').html(uploadedFilesHTML);
                             }
                         }
@@ -962,8 +1180,43 @@
         });
 
         $('body').on('change', '.file_input', function() {
-            let fileName = $(this).val().split('\\').pop();
-            $(this).next('.custom-file-label').addClass('selected').html(fileName);
+            var file = $(this)[0].files[0]; // Get the file object
+            if (file) {
+                var maxSize = 15 * 1024 * 1024; // 15MB in bytes
+                var fileSize = file.size; // Get the file size in bytes
+
+                if (fileSize > maxSize) {
+                    swal(
+                        'Cancelled',
+                        'File size exceeds 15MB.',
+                        'error'
+                        )
+                } else {
+                    $('.file_input').each(function() {
+                        var files = $(this)[0].files;
+
+                        for (var i = 0; i < files.length; i++) {
+                            totalSize += files[i].size;
+                        }
+                    });
+
+                    if (totalSize > maxSize) {
+                        // If combined file size exceeds the limit, show an error message or take necessary action
+                        swal(
+                            'Cancelled',
+                            'Total file size exceeds 25MB. Please select smaller files.',
+                            'error'
+                            )
+                        // Reset the file inputs to prevent exceeding the limit
+                        $(this).val('');
+                    } else {
+                        let fileName = $(this).val().split('\\').pop();
+                        $(this).next('.custom-file-label').addClass('selected').html(fileName);
+                    }
+                }
+            } else {
+                console.log('No file selected.');
+            }
         });
 
         $('body').on('click', '.add_document', function(){
