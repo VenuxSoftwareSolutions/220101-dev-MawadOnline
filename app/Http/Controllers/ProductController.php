@@ -24,6 +24,8 @@ use App\Services\ProductService;
 use App\Services\ProductTaxService;
 use App\Services\ProductFlashDealService;
 use App\Services\ProductStockService;
+use App\Services\ProductUploadsService;
+use App\Services\ProductPricingService;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
@@ -34,17 +36,23 @@ class ProductController extends Controller
     protected $productTaxService;
     protected $productFlashDealService;
     protected $productStockService;
+    protected $productUploadsService;
+    protected $productPricingService;
 
     public function __construct(
         ProductService $productService,
         ProductTaxService $productTaxService,
         ProductFlashDealService $productFlashDealService,
-        ProductStockService $productStockService
+        ProductStockService $productStockService,
+        ProductUploadsService $productUploadsService,
+        ProductPricingService $productPricingService,
     ) {
         $this->productService = $productService;
         $this->productTaxService = $productTaxService;
         $this->productFlashDealService = $productFlashDealService;
         $this->productStockService = $productStockService;
+        $this->productUploadsService = $productUploadsService;
+        $this->productPricingService = $productPricingService;
 
         // Staff Permission Check
         $this->middleware(['permission:add_new_product'])->only('create');
@@ -203,15 +211,39 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ProductRequest $request)
+    public function store(Request $request)
     {
+        //dd($request->all());
         $product = $this->productService->store($request->except([
-            '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
+            'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', 'discount_percentage', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type','from', 'to', 'unit_price', 'discount_type', 'discount_amount', 'discount_amount'
         ]));
+
         $request->merge(['product_id' => $product->id]);
 
         //Product categories
         $product->categories()->attach($request->category_ids);
+
+        //Upload documents, images and thumbnails
+        if($request->document_names){
+            $data['document_names'] = $request->document_names;
+            $data['documents'] = $request->documents;
+            $data['product'] = $product;
+            $data['main_photos'] = $request->main_photos;
+            $data['photosThumbnail'] = $request->photosThumbnail;
+            $this->productUploadsService->store_uploads($data);
+        }
+
+        //Pricing configuration
+        $this->productPricingService->store([
+            "from" => $request->from,
+            "to" => $request->to,
+            "unit_price" => $request->unit_price,
+            "date_range_pricing" => $request->date_range_pricing,
+            "discount_type" => $request->discount_type,
+            "discount_amount" => $request->discount_amount,
+            "discount_percentage" => $request->discount_percentage,
+            "product" => $product
+        ]);
 
         //VAT & Tax
         if ($request->tax_id) {
