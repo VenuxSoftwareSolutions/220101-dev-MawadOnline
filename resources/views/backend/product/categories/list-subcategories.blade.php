@@ -1,34 +1,34 @@
-@php
-    $value = null;
-    isset($classes) ? $classes: $classes = null;
-    $pc = \App\Models\Category::where('id', $category->parent_id)->first();
-    for ($i=1; $i < $category->level; $i++){
-        $value .= '---/';
-        $classes .=  ' mycat-'.$pc->id;
-    }
-@endphp
-<tr class="{{$classes}}" style="display: none">
-    <td></td>
-    <td>
-        @if(count($category->childrenCategories)>0)
-            <button id="mycatbutton-{{$category->id}}" style="border: 0px" onclick="expandmysubcategories({{$category->id}})">></button>
-        @endif
-        <input type="hidden" value="" id="hide-{{$pc->id}}">
-    </td>
 
-    <td class="d-flex align-items-center">
-        <span style="clear: both;
-        display: inline-block;
-        overflow: hidden;
-        white-space: nowrap;">
 
-            {{ $value." " }} {{ $category->getTranslation('name') }}
-        </span>
+@foreach($categories as $category)
+<tr  id="level-{{$category->id}}" class="subcategories-{{$category->parent_id}} {{$classes}}" style="" related-to="{{$category->parent_id}}" >
+
+
+
+    <td class="d-flex  align-items-center">
+        <div class="d-flex flex-container">
+                @for($i=1;$i<$level;$i++)
+
+                <div class="flex-item" style="color:white">--</div>
+                @endfor
+                <div class="flex-item">
+                    @if(count($category->childrenCategories)>0)
+                    <button id="mycatbutton-{{$category->id}}" data-expand="close" style="border: 0px" onclick="expandmysubcategories({{$category->id}})" >></button>
+                    @else
+                    <div class="flex-item" style="color:white">----</div>
+
+                    @endif
+                </div>
+                <div class="flex-item"  style="color:white">--</div>
+                <div class="flex-item">{{ $category->getTranslation('name') }}</div>
+            <!-- Add more divs as needed -->
+          </div>
+
         @if($category->digital == 1)
             <img src="{{ static_asset('assets/img/digital_tag.png') }}" alt="{{translate('Digital')}}" class="ml-2 h-25px" style="cursor: pointer;" title="DIgital">
         @endif
     </td>
-    <td>
+    <td style="display: table-cell;">
         @php
             $parent = \App\Models\Category::where('id', $category->parent_id)->first();
         @endphp
@@ -38,39 +38,24 @@
             —
         @endif
     </td>
-    <td>{{ $category->order_level }}</td>
-    <td>{{ $category->level }}</td>
-    <!--<td>
-        @if($category->banner != null)
-            <img src="{{ uploaded_asset($category->banner) }}" alt="{{translate('Banner')}}" class="h-50px">
-        @else
-            —
-        @endif
-    </td>
-    <td>
-        @if($category->icon != null)
-            <span class="avatar avatar-square avatar-xs">
-                <img src="{{ uploaded_asset($category->icon) }}" alt="{{translate('icon')}}">
-            </span>
-        @else
-            —
-        @endif
-    </td>-->
-    <td>
+    <td style="display: table-cell;">{{ $category->order_level }}</td>
+    <td style="display: table-cell;">{{ $category->level }}</td>
+
+    <td style="display: table-cell;">
         @if($category->icon != null)
             <img src="{{ uploaded_asset($category->cover_image) }}" alt="{{translate('Cover Image')}}" class="h-50px">
         @else
             —
         @endif
     </td>
-    <td>
+    <td style="display: table-cell;">
         <label class="aiz-switch aiz-switch-success mb-0">
             <input type="checkbox" onchange="update_featured(this)" value="{{ $category->id }}" <?php if($category->featured == 1) echo "checked";?>>
             <span></span>
         </label>
     </td>
-    <td>{{ $category->commision_rate }} %</td>
-    <td class="text-right">
+    <td style="display: table-cell;">{{ $category->commision_rate }} %</td>
+    <td style="display: table-cell;" class="text-right footable-last-visible" >
         @can('edit_product_category')
             <a class="btn btn-soft-primary btn-icon btn-circle btn-sm" href="{{route('categories.edit', ['id'=>$category->id, 'lang'=>env('DEFAULT_LANGUAGE')] )}}" title="{{ translate('Edit') }}">
                 <i class="las la-edit"></i>
@@ -83,6 +68,5 @@
         @endcan
     </td>
 </tr>
-@foreach($category->childrenCategories as $childCategory)
-@include('backend.product.categories.list-subcategories', ['category' => $childCategory,'parent'=>$category,'classes'=>$classes])
+
 @endforeach

@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\CategoryTranslation;
 use App\Utility\CategoryUtility;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Str;
 use Cache;
 
@@ -27,20 +28,78 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
+        $intermidiateparent = [];
+        $mycategory_ids = [];
         $sort_search =null;
-        $categories = Category::where('parent_id','=',0)->orderBy('order_level', 'desc');
-        if ($request->has('search')){
-            $sort_search = $request->search;
-            $categories = $categories->where('name', 'like', '%'.$sort_search.'%')
-            ->orwhereHas('childrenCategories',function($query)use($sort_search){
-                $query->where('name','like', '%'.$sort_search.'%');
-            })
-            ;
+        if (!$request->has('search') || $request->search==''){
+            $categories = Category::where('parent_id','=',1)->with(['childrenCategories'])->orderBy('order_level', 'desc');
+            $categories = $categories->paginate(50);
         }
-        $categories = $categories->paginate(15);
-        return view('backend.product.categories.index', compact('categories', 'sort_search'));
-    }
+        else
+        {
+            $sort_search = $request->search;
+            $mycategories = Category::where('name', 'like', '%'.$sort_search.'%')->with(['childrenCategories'])->orderBy('order_level', 'desc');
 
+            $mycategories = $mycategories->get();
+            foreach($mycategories as  $category){
+
+                 array_push($intermidiateparent,$category->parent_id);
+                $intermidiateparent = array_merge($intermidiateparent,$this->categorygetparents($category->parent_id));
+                foreach($category->childrenCategories as $child){
+
+                    array_push($mycategory_ids,$child->id);
+                }
+                array_push($mycategory_ids,$category->id);
+            }
+           // dd( $intermidiateparent);
+            $categories = Category::whereIn('id',$intermidiateparent)->where('parent_id','=',1)->paginate(100);
+        }
+
+        $intermidiateparent_tostring = implode(',',$intermidiateparent);
+        $mycategory_ids_tostring = implode(',',$mycategory_ids);
+        return view('backend.product.categories.index', compact('categories', 'sort_search','intermidiateparent_tostring','mycategory_ids_tostring'));
+    }
+    public function categorygetparents($id){
+        $category = Category::find($id);
+        $emptyarray = [];
+        if($category->parent_id!=0){
+             array_push($emptyarray,$category->parent_id);
+            return array_merge( $emptyarray,    $this->categorygetparents($category->parent_id));
+        }
+        return [];
+
+    }
+    public function getsubcategories(Request $request)
+    {
+        if($request->searchablestring=='')
+        $categories =  Category::where('parent_id','=',$request->id)->with('childrenCategories')->get();
+        else
+        {
+            $mycategory_ids = explode(',',$request->mycategory_ids);
+            $myintermidiateparent = explode(',',$request->intermidiateparent);
+
+            $categories= Category::where('parent_id','=',$request->id)
+            ->whereIn('id',array_merge($myintermidiateparent,$mycategory_ids))
+
+            ->with('childrenCategories')//,function($q)use($mycategory_ids,$myintermidiateparent){$q->whereIn('id',array_merge($myintermidiateparent,$mycategory_ids));})
+            ->get();
+
+        }
+        $classes = $request->classes;
+        $level = 0;
+        if(count($categories)>0){
+            $level = $this->getlevelcategory($categories[0]);
+        }
+        return view('backend.product.categories.list-subcategories', ['categories'=>$categories,'level'=>$level,'classes'=>$classes]);
+    }
+    private function getlevelcategory($category){
+        $level= 0;
+        if($category->parent_id!=0){
+            $level++;
+            $level += $this->getlevelcategory(Category::find($category->parent_id));
+        }
+        return $level;
+    }
     /**
      * Show the form for creating a new resource.
      *
