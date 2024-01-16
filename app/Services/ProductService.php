@@ -50,9 +50,9 @@ class ProductService
             $collection['meta_description'] = strip_tags($collection['description']);
         }
 
-        if ($collection['meta_img'] == null) {
-            $collection['meta_img'] = $collection['thumbnail_img'];
-        }
+        // if ($collection['meta_img'] == null) {
+        //     $collection['meta_img'] = $collection['thumbnail_img'];
+        // }
 
 
         $shipping_cost = 0;
@@ -161,7 +161,7 @@ class ProductService
             'colors',
             'published',
         ))->toArray();
-        
+
         return Product::create($data);
     }
 

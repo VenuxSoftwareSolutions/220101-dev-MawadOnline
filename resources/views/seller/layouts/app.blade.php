@@ -26,6 +26,42 @@
     <link rel="stylesheet" href="{{ static_asset('assets/css/bootstrap-rtl.min.css') }}">
     @endif
 	<link rel="stylesheet" href="{{ static_asset('assets/css/aiz-seller.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.css" integrity="sha512-In/+MILhf6UMDJU4ZhDL0R0fEpsp4D3Le23m6+ujDWXwl3whwpucJG1PEmI3B07nyJx+875ccs+yX2CqQJUxUw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ static_asset('assets/css/countrySelect.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* Override Dropify's default message font size */
+        .dropify-wrapper .dropify-message p {
+            font-size: 13px !important; /* Adjust the font size as needed */
+        }
+
+        .country-select {
+            width: 100%;
+        }
+
+        .country-select.inside input, .country-select.inside input[type=text] {
+            width: 100%;
+            height: calc(1.3125rem + 1.2rem + 2px);
+            border: 1px solid #e4e5eb;
+            color: #898b92;
+
+        }
+
+        .icon-delete-pricing{
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 14px;
+        }
+        .fa-regular{
+            color:red
+        }
+
+        .div-btn{
+            display: flex;
+            justify-content: center;
+        }
+    </style>
 
     <style>
         body {
@@ -105,7 +141,7 @@
             e.stopPropagation()
             $(this).tab('show')
         })
-        
+
         if ($('#lang-change').length > 0) {
             $('#lang-change .dropdown-menu a').each(function() {
                 $(this).on('click', function(e){
@@ -147,6 +183,7 @@
 			}
         }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.all.min.js"></script>
 
 </body>
 </html>

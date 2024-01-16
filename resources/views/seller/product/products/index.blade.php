@@ -18,7 +18,7 @@
                       <i class="las la-upload la-2x text-white"></i>
                   </span>
                   <div class="px-3 pt-3 pb-3">
-                      <div class="h4 fw-700 text-center">{{ max(0, auth()->user()->shop->product_upload_limit - auth()->user()->products()->count()) }}</div>
+                      {{-- <div class="h4 fw-700 text-center">{{ max(0, auth()->user()->shop->product_upload_limit - auth()->user()->products()->count()) }}</div> --}}
                       <div class="opacity-50 text-center">{{  translate('Remaining Uploads') }}</div>
                   </div>
                 </div>
@@ -38,7 +38,8 @@
 
         @if (addon_is_activated('seller_subscription'))
         @php
-            $seller_package = \App\Models\SellerPackage::find(Auth::user()->shop->seller_package_id);
+            // $seller_package = \App\Models\SellerPackage::find(Auth::user()->shop->seller_package_id);
+            $seller_package = null;
         @endphp
         <div class="col-md-4">
             <a href="{{ route('seller.seller_packages_list') }}" class="text-center bg-white shadow-sm hov-shadow-lg text-center d-block p-3 rounded">
@@ -194,14 +195,14 @@
             if(this.checked) {
                 // Iterate each checkbox
                 $('.check-one:checkbox').each(function() {
-                    this.checked = true;                        
+                    this.checked = true;
                 });
             } else {
                 $('.check-one:checkbox').each(function() {
-                    this.checked = false;                       
+                    this.checked = false;
                 });
             }
-          
+
         });
 
         function update_featured(el){
