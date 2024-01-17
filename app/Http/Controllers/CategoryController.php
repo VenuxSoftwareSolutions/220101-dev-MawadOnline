@@ -264,6 +264,7 @@ class CategoryController extends Controller
         $category->save();
 
         $category->attributes()->sync($request->filtering_attributes);
+        $category->categories_attributes()->sync($request->category_attributes);
 
         $category_translation = CategoryTranslation::firstOrNew(['lang' => $request->lang, 'category_id' => $category->id]);
         $category_translation->name = $request->name;
