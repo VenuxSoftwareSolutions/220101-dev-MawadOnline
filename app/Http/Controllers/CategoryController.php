@@ -46,7 +46,7 @@ class CategoryController extends Controller
     public function create(Request $request,)
     {
         $lang = $request->lang;
-        $categories = Category::where('parent_id', 0)
+        $categories = Category::where('parent_id', 1)
             ->where('digital', 0)
             ->with('childrenCategories')
             ->get();
@@ -57,7 +57,7 @@ class CategoryController extends Controller
     public function fetch_category_attribute(Request $request){
         $parent = Category::find($request->category_id);
         $expected_ids = [];
-        if($parent->parent_id!="0"){
+        if($parent?->parent_id!="0"){
             $expected_ids = $this->getexpected_ids($parent);
         }
         /* if($parent){
@@ -76,7 +76,7 @@ class CategoryController extends Controller
     }
 
     public function getexpected_ids($categorie){
-        $ids = $categorie?->categories_attributes()->pluck('attribute_id')->toArray();
+        $ids = $categorie?->categories_attributes()->pluck('attribute_id')->toArray() ?? [];
         if($categorie?->parent_id!="0" && $categorie){
             $cat = Category::find($categorie?->parent_id);
             $ids = array_merge($ids,
@@ -231,7 +231,7 @@ class CategoryController extends Controller
 
         $previous_level = $category->level;
 
-        if ($request->parent_id != "0") {
+        if ($request->parent_id != "0" && $request->parent_id!=null) {
             $category->parent_id = $request->parent_id;
 
             $parent = Category::find($request->parent_id);
