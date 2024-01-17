@@ -33,11 +33,9 @@
         </form>
     </div>
     <div class="card-body">
-        <table class="table aiz-table mb-0">
+        <table class="table aiz-table mb-0" id="categories-table">
             <thead>
                 <tr>
-                    <th data-breakpoints="lg"></th>
-                    <th data-breakpoints="lg">#</th>
                     <th>{{translate('Name')}}</th>
                     <th data-breakpoints="lg">{{ translate('Parent Category') }}</th>
                     <th data-breakpoints="lg">{{ translate('Order Level') }}</th>
@@ -52,15 +50,13 @@
             </thead>
             <tbody>
                 @foreach($categories as $key => $category)
-                    <tr>
-                        <td>
+                    <tr id="level-{{$category->id}}">
 
-                        @if(count($category->childrenCategories)>0)
-                            <button id="mycatbutton-{{$category->id}}" style="border: 0px" onclick="expandmysubcategories({{$category->id}})">></button>
-                        @endif
-                        </td>
-                        <td> {{$category->id}}-{{ ($key+1) + ($categories->currentPage() - 1)*$categories->perPage() }}</td>
+
                         <td class="d-flex align-items-center">
+                            @if(count($category->childrenCategories)>0)
+                                <button id="mycatbutton-{{$category->id}}" style="border: 0px" data-expand="close" onclick="expandmysubcategories({{$category->id}})">></button>
+                             @endif
                             {{ $category->getTranslation('name') }}
                             @if($category->digital == 1)
                                 <img src="{{ static_asset('assets/img/digital_tag.png') }}" alt="{{translate('Digital')}}" class="ml-2 h-25px" style="cursor: pointer;" title="DIgital">
@@ -78,22 +74,7 @@
                         </td>
                         <td>{{ $category->order_level }}</td>
                         <td>{{ $category->level }}</td>
-                        <!--<td>
-                            @if($category->banner != null)
-                                <img src="{{ uploaded_asset($category->banner) }}" alt="{{translate('Banner')}}" class="h-50px">
-                            @else
-                                —
-                            @endif
-                        </td>
-                        <td>
-                            @if($category->icon != null)
-                                <span class="avatar avatar-square avatar-xs">
-                                    <img src="{{ uploaded_asset($category->icon) }}" alt="{{translate('icon')}}">
-                                </span>
-                            @else
-                                —
-                            @endif
-                        </td>-->
+
                         <td>
                             @if($category->icon != null)
                                 <img src="{{ uploaded_asset($category->cover_image) }}" alt="{{translate('Cover Image')}}" class="h-50px">
@@ -121,13 +102,14 @@
                             @endcan
                         </td>
                     </tr>
-                    @foreach ($category->childrenCategories as $childCategory)
-                        @include('backend.product.categories.list-subcategories', ['category' => $childCategory,'parent'=>$category])
-                    @endforeach
+
+
                 @endforeach
             </tbody>
         </table>
         <div class="aiz-pagination">
+            <input type="hidden" value="{{$intermidiateparent_tostring}}" id="intermidiateparent" name="intermidiateparent">
+            <input type="hidden" value="{{$mycategory_ids_tostring}}" id="mycategory_ids" name="mycategory_ids">
             {{ $categories->appends(request()->input())->links() }}
         </div>
     </div>
@@ -141,6 +123,7 @@
 
 
 @section('script')
+
     <script type="text/javascript">
         function update_featured(el){
             if(el.checked){
@@ -158,18 +141,116 @@
                 }
             });
         }
-        function expandmysubcategories(id){
-            let expandrows = document.querySelectorAll('.mycat-'+id);
-            let myhideaction = document.getElementById('hide-'+id);
 
-            if(expandrows && myhideaction){
-                expandrows.forEach(element => {
-                    if(element){
-                        element.style.display=myhideaction.value;
+
+
+        function expandmysubcategories(id){
+
+            let rightsvg = arrowdown();
+            let downsvg = arrowright();
+            let state = document.getElementById('mycatbutton-'+id);
+            var target = state.closest("tr"); // Find the closest parent <tr> element
+
+            if (target) {
+            var currentClass = target.className;
+            }
+            if(state && state.getAttribute('data-expand')=="close"){
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    type:"POST",
+                    url:'{{ route('categories.getsubcategories') }}',
+                    data:{
+                    id: id,
+                    classes : currentClass,
+                    intermidiateparent : document.getElementById('intermidiateparent').value,
+                    mycategory_ids : document.getElementById('mycategory_ids').value,
+                    searchablestring : document.getElementById('search').value
+                    },
+                    success: function(response) {
+                            $(response).insertAfter($('tr#level-'+id).closest('tr#level-'+id));
+                            state.innerHTML  = downsvg;
                     }
                 });
-                myhideaction.value=='none' ? myhideaction.value='' : myhideaction.value='none';
+                state.setAttribute('data-expand','open');
+
+            }else{
+                if(state && state.getAttribute('data-expand')=="open"){
+                    let subcategories = document.querySelectorAll('.subcategories-'+id);
+                    if(subcategories.length>0 && subcategories[0].style !== undefined && subcategories[0].style.display == "none"){
+                        subcategories.forEach(element => {
+                            if(element.getAttribute('related-to')==id){
+                                element.style.display ='';
+                                state.innerHTML  = downsvg;
+                            }
+
+                        });
+                    }else{
+                        subcategories.forEach(element => {
+
+                            if(element.getAttribute('related-to')==id)
+                            {
+                                element.style.display = "none";
+                                state.innerHTML  = rightsvg;
+                            }else{
+                                element.style.display = "none";
+                                let buttonsubcat= document.getElementById('mycatbutton-'+element.getAttribute('related-to'));
+                                if(buttonsubcat){
+                                    buttonsubcat.innerHTML = rightsvg;
+                                }
+                            }
+                        });
+
+                    }
+                }
             }
+
         }
+
+
+        function arrowdown(){
+            return '<?xml version=\"1.0\" encoding=\"iso-8859-1\"?><svg fill=\"#000000\" height=\"8px\" width=\"8px\" version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" 	 viewBox=\"0 0 330 330\" xml:space=\"preserve\"><path id=\"XMLID_222_\" d=\"M250.606,154.389l-150-149.996c-5.857-5.858-15.355-5.858-21.213,0.001	c-5.857,5.858-5.857,15.355,0.001,21.213l139.393,139.39L79.393,304.394c-5.857,5.858-5.857,15.355,0.001,21.213	C82.322,328.536,86.161,330,90,330s7.678-1.464,10.607-4.394l149.999-150.004c2.814-2.813,4.394-6.628,4.394-10.606	C255,161.018,253.42,157.202,250.606,154.389z\"/></svg>';
+        }
+        function arrowright(){
+            return '<?xml version=\"1.0\" encoding=\"iso-8859-1\"?><svg fill=\"#000000\" height=\"8px\" width=\"8px\" version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"  viewBox=\"0 0 330 330\" xml:space=\"preserve\"><path id=\"XMLID_225_\" d=\"M325.607,79.393c-5.857-5.857-15.355-5.858-21.213,0.001l-139.39,139.393L25.607,79.393	c-5.857-5.857-15.355-5.858-21.213,0.001c-5.858,5.858-5.858,15.355,0,21.213l150.004,150c2.813,2.813,6.628,4.393,10.606,4.393	s7.794-1.581,10.606-4.394l149.996-150C331.465,94.749,331.465,85.251,325.607,79.393z\"/></svg>';
+
+        }
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if(document.getElementById('search').value!=''){
+
+
+
+                var checkCount = 0;
+
+                function checkButtons() {
+                    var buttonsWithAttribute = document.querySelectorAll('button[data-expand]');
+
+                    buttonsWithAttribute.forEach(function(button) {
+                        //if(button.getAttribute('data-expand')=='close')
+                        //button.click();
+                    });
+
+                    // Increment the check count
+                    checkCount++;
+
+                    // Check if the maximum number of checks (7 times) has been reached
+                    if (checkCount >= 7) {
+                        clearInterval(intervalId); // Stop the interval
+                        console.log('Maximum number of checks reached.');
+                    }
+                }
+
+                // Set an interval to check the buttons every 5 seconds
+                var intervalId = setInterval(checkButtons, 2000);
+
+                // Run the initial check immediately
+                checkButtons();
+            }
+
+        });
+
     </script>
 @endsection
