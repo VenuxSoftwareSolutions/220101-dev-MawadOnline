@@ -89,11 +89,11 @@
         }
 
         .plus {
-            background-image: url(https://img.icons8.com/color/48/000000/plus.png);
+            background-image: url(https://img.icons8.com/android/24/plus.png);
         }
 
         .minus {
-            background-image: url(https://img.icons8.com/color/48/000000/minus.png);
+            background-image: url(https://img.icons8.com/material-rounded/24/minus.png);
         }
 
         ul {

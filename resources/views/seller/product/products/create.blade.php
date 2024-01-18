@@ -450,11 +450,22 @@
                                         <span>{{ $category->getTranslation('name') }} </span>
                                         <ul id="bs_l_1" class="sub_ul" style="display: none">
                                             @foreach ($category->childrenCategories as $childCategory)
-                                                <li id="bf_1">
-                                                    <span class="plus">&nbsp;</span>
-                                                    <input type="checkbox" id="c_bf_1" />
-                                                    <span>{{ $childCategory->getTranslation('name') }} </span>
-                                                </li>
+                                                @if (count($childCategory->childrenCategories) > 0)
+                                                    <li id="bf_1">
+                                                        <span class="plus">&nbsp;</span>
+                                                        <span>{{ $childCategory->getTranslation('name') }} </span>
+                                                        <ul id="bf_l_1" style="display: none" class="inner_ul">
+                                                            @foreach ($childCategory->childrenCategories as $childrenCategorie)
+                                                                <li id="io_1"><input type="radio" name="categorie_id" id="c_io_1" /><span>{{ $childrenCategorie->getTranslation('name') }}</span></li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </li>
+                                                @else
+                                                    <li id="bf_1">
+                                                        <input type="radio" name="categorie_id" id="c_bf_1" />
+                                                        <span>{{ $childCategory->getTranslation('name') }} </span>
+                                                    </li>
+                                                @endif
                                             @endforeach
                                         </ul>
                                     </li>
