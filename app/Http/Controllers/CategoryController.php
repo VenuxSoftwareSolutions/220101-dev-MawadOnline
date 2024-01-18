@@ -264,6 +264,7 @@ class CategoryController extends Controller
             ->whereNotIn('id', CategoryUtility::children_ids($category->id, true))->where('id', '!=' , $category->id)
             ->orderBy('name','asc')
             ->get();
+
         $category_attributes = $category->categories_attributes()->pluck('attribute_id');
         $category_filtring_attributes = $category->attributes()->pluck('attribute_id');
         return view('backend.product.categories.edit', compact('category', 'categories', 'lang','category_attributes','category_filtring_attributes'));
