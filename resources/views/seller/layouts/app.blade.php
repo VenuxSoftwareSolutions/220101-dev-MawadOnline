@@ -27,7 +27,7 @@
     @endif
 	<link rel="stylesheet" href="{{ static_asset('assets/css/aiz-seller.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.css" integrity="sha512-In/+MILhf6UMDJU4ZhDL0R0fEpsp4D3Le23m6+ujDWXwl3whwpucJG1PEmI3B07nyJx+875ccs+yX2CqQJUxUw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+
     <link rel="stylesheet" href="{{ static_asset('assets/css/countrySelect.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
@@ -79,6 +79,47 @@
             z-index: 100000;
         }
 
+        .plus, .minus {
+            display: inline-block;
+    background-repeat: no-repeat;
+    background-size: 16px 16px !important;
+    width: 16px;
+    height: 16px;
+            /*vertical-align: middle;*/
+        }
+
+        .plus {
+            background-image: url(https://img.icons8.com/color/48/000000/plus.png);
+        }
+
+        .minus {
+            background-image: url(https://img.icons8.com/color/48/000000/minus.png);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0px 0px 0px 20px;
+        }
+
+            ul.inner_ul li:before {
+                content: "├";
+                font-size: 18px;
+                margin-left: -11px;
+                margin-top: -5px;
+                vertical-align: middle;
+                float: left;
+                width: 8px;
+                color: #41424e;
+            }
+
+            ul.inner_ul li:last-child:before {
+                content: "└";
+            }
+
+        .inner_ul {
+            padding: 0px 0px 0px 35px;
+        }
+
     </style>
 	<script>
     	var AIZ = AIZ || {};
@@ -105,7 +146,7 @@
             files: '{{ translate('Files') }}',
         }
 	</script>
-
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
 </head>
 <body class="">
 

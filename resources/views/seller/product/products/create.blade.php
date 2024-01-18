@@ -442,13 +442,22 @@
                         </h6>
                     </div>
                     <div class="card-body">
-                        <div class="h-300px overflow-auto c-scrollbar-light">
-                            <ul class="hummingbird-treeview-converter list-unstyled" data-checkbox-name="category_ids[]" data-radio-name="category_id">
-                                @foreach ($categories as $category)
-                                <li id="{{ $category->id }}">{{ $category->getTranslation('name') }}</li>
-                                    @foreach ($category->childrenCategories as $childCategory)
-                                        @include('backend.product.products.child_category', ['child_category' => $childCategory])
-                                    @endforeach
+                        <div class="tree_main">
+                            <ul id="bs_main" class="main_ul">
+                                @foreach ($categories as $key => $category)
+                                    <li id="bs_{{ $category->id }}">
+                                        <span class="plus">&nbsp;</span>
+                                        <span>{{ $category->getTranslation('name') }} </span>
+                                        <ul id="bs_l_1" class="sub_ul" style="display: none">
+                                            @foreach ($category->childrenCategories as $childCategory)
+                                                <li id="bf_1">
+                                                    <span class="plus">&nbsp;</span>
+                                                    <input type="checkbox" id="c_bf_1" />
+                                                    <span>{{ $childCategory->getTranslation('name') }} </span>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </li>
                                 @endforeach
                             </ul>
                         </div>
@@ -729,10 +738,84 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js" integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+<script>
+    $(document).ready(function () {
+    $(".plus").click(function () {
+        $(this).toggleClass("minus").siblings("ul").toggle();
+    })
+
+    $("input[type=checkbox]").click(function () {
+        //alert($(this).attr("id"));
+        //var sp = $(this).attr("id");
+        //if (sp.substring(0, 4) === "c_bs" || sp.substring(0, 4) === "c_bf") {
+            $(this).siblings("ul").find("input[type=checkbox]").prop('checked', $(this).prop('checked'));
+        //}
+    })
+
+    $("input[type=checkbox]").change(function () {
+        var sp = $(this).attr("id");
+        if (sp.substring(0, 4) === "c_io") {
+            var ff = $(this).parents("ul[id^=bf_l]").attr("id");
+            if ($('#' + ff + ' > li input[type=checkbox]:checked').length == $('#' + ff + ' > li input[type=checkbox]').length) {
+                $('#' + ff).siblings("input[type=checkbox]").prop('checked', true);
+                check_fst_lvl(ff);
+            }
+            else {
+                $('#' + ff).siblings("input[type=checkbox]").prop('checked', false);
+                check_fst_lvl(ff);
+            }
+        }
+
+        if (sp.substring(0, 4) === "c_bf") {
+            var ss = $(this).parents("ul[id^=bs_l]").attr("id");
+            if ($('#' + ss + ' > li input[type=checkbox]:checked').length == $('#' + ss + ' > li input[type=checkbox]').length) {
+                $('#' + ss).siblings("input[type=checkbox]").prop('checked', true);
+                check_fst_lvl(ss);
+            }
+            else {
+                $('#' + ss).siblings("input[type=checkbox]").prop('checked', false);
+                check_fst_lvl(ss);
+            }
+        }
+    });
+
+})
+
+function check_fst_lvl(dd) {
+    //var ss = $('#' + dd).parents("ul[id^=bs_l]").attr("id");
+    var ss = $('#' + dd).parent().closest("ul").attr("id");
+    if ($('#' + ss + ' > li input[type=checkbox]:checked').length == $('#' + ss + ' > li input[type=checkbox]').length) {
+        //$('#' + ss).siblings("input[id^=c_bs]").prop('checked', true);
+        $('#' + ss).siblings("input[type=checkbox]").prop('checked', true);
+    }
+    else {
+        //$('#' + ss).siblings("input[id^=c_bs]").prop('checked', false);
+        $('#' + ss).siblings("input[type=checkbox]").prop('checked', false);
+    }
+
+}
+
+function pageLoad() {
+    $(".plus").click(function () {
+        $(this).toggleClass("minus").siblings("ul").toggle();
+    })
+}
+</script>
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#summernote').summernote();
+        $('#summernote').summernote({
+            callbacks: {
+                onMediaUpload: function(files) {
+                    alert('done');
+                    // Check the file size before uploading
+                    if (files[0].size > (1 * 1024)) { // 1 MB (you can adjust this value)
+                        alert('File size exceeds the limit');
+                        return;
+                    }
+                }
+            }
+        });
         $("#country_selector").countrySelect({
 				responsiveDropdown: true,
 				preferredCountries: ['ae']
