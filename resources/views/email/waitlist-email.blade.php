@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Mawad</title>
+    <title>MawadOnline | Online Constrcution Materials, Services & Equipement</title>
     <!-- Fav Icon -->
     <link rel="icon" type="image/png" href="images/favicon.png">
     <!-- Stylesheets -->
@@ -32,18 +32,17 @@
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav">
                             <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="#">Why Mawad</a>
+                                <a class="nav-link active" aria-current="page" href="#why-mawad">Why Mawad</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">How it Works</a>
+                                <a class="nav-link" href="#how-it-works">How it Works</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Exclusive Offer</a>
+                                <a class="nav-link" href="#exclusive-offer">Exclusive Offer</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Waitlist</a>
+                                <a class="nav-link" href="#waitlist">Waitlist</a>
                             </li>
-
                         </ul>
                     </div>
                 </div>
@@ -62,12 +61,13 @@
                         make informed choices and transact with peace of mind.</p>
                 </div>
                 <div class="buttons-slider">
-                    <a class="btn1-slider" href="">Join our waitlist</a>
-                    <a class="btn2-slider" href="">Speak with our team</a>
+                    <a class="btn1-slider" href="#waitlist">Join our waitlist</a>
+                    <a class="btn2-slider" href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ3j7k5dpUNzwV6JhvPr0EElvJcamwSmLmP7f26wHhAUcUz6OvvodIwqPtjij8Vx3uybYawSDA8Z " target="_blank">
+                        Speak with our team</a>
                 </div>
             </div>
         </section>
-        <section class="why-MawadOnline">
+        <section id="why-mawad" class="why-MawadOnline">
             <h2 class="titre-section2">Why MawadOnline</h2>
             <div class="blocs-section2">
                 <div class="bloc1">
@@ -133,11 +133,11 @@
                 </div>
             </div>
             <div class="btn-section2">
-                <a href="#">Join our waitlist</a>
+                <a href="#waitlist">Join our waitlist</a>
             </div>
         </section>
 
-        <section class="How-It-Works">
+        <section id="how-it-works" class="How-It-Works">
             <div class="container-fluid">
                 <div class="title-section3">How It Works</div>
                 <div class="blocs-section3">
@@ -230,7 +230,7 @@
             </div>
         </section>
 
-        <section class="Exclusive-Launch-Offer">
+        <section id="exclusive-offer" class="Exclusive-Launch-Offer">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-6">
@@ -239,18 +239,18 @@
                             <div class="boxes-number-section4">
                                 <div class="box-num-section4">
                                     <div class="p-num-section4">For first</div>
-                                    <div class="num-section4">200</div>
+                                    <div class="num-section4">50</div>
                                     <div class="p-num-section4">members</div>
                                 </div>
                                 <div class="box-num-section4">
                                     <div class="p-num-section4">Enjoy</div>
-                                    <div class="num-section4">10%</div>
+                                    <div class="num-section4">5%</div>
                                     <div class="p-num-section4">discount on first 5 orders</div>
                                 </div>
                             </div>
                             <div class="p-left-section4">Get early bird access to all of our upcoming features.</div>
                             <div class="p-left-section4">Secure your spot and enjoy these exclusive benefits.</div>
-                            <div class="btn-left-section4"><a href="#">Join Now</a></div>
+                            <div class="btn-left-section4"><a href="#waitlist">Join Now</a></div>
                         </div>
                     </div>
                     <div class="col-lg-6">
@@ -261,55 +261,24 @@
                 </div>
             </div>
         </section>
-        <form action="{{ route('send-waitlist-email') }}" method="post">
-            @csrf
-            <section class="Join-The-Waitlist">
+
+            <section id="waitlist" class="Join-The-Waitlist">
                 <div class="container-fluid">
                     <div class="row flex-section5">
-                        <div class="col-lg-6">
-                            <div class="bloc-left-section5">
-                                <div class="title-left-section5">Join The Waitlist</div>
-                                <div class="p-left-section5">Be a part of the future of construction in the UAE.</div>
-                                <div class="p-left-section5">Sign up for the waitlist to be among the first to access
-                                    the platform.</div>
+                    <div class="col-lg-6">
+                    <div class="form-left-section5">
+                                <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSeomLStrYQMs574ydWDQgYqagDUmxK96cx1RfYwPlWnoZyiLA/viewform?embedded=true" width="100%" height="1850" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
 
-                                <div class="form-left-section5">
-                                    <div class="champ1">
-                                        <label>Name</label>
-                                        <input type="text" id="name" name="name" placeholder="Enter name" required/>
-                                    </div>
-                                    <div class="champ2">
-                                        <label>Email</label>
-                                        <input type="email" id="email" name="email" placeholder="Enter email" required>
-                                    </div>
-                                    <div class="champ3">
-                                        <input type="hidden" name="role" class="role">
-                                        <label>Are you buying or selling construction materials and equipment?</label>
-                                        <div class="btn-form-section5">
-                                            <input type="button" id="buyer-role" value="I’m a buyer">
-                                            <input type="button" id="seller-role" value="I’m a seller">
-                                        </div>
-                                    </div>
-                                    <div class="champ4">
-                                        <input type="checkbox" id="check-regles" name="check-regles">
-                                        <label for="check-regles"> UAE Data protection check if needed (to subscribe to
-                                            the newsletter and offers)</label>
-                                    </div>
-                                    <div class="btn-submit-section5">
-                                        <input type="submit" value="Join Now" style="background:none;border:0;color:white">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="image-right-section5">
-                                <img src="{{ asset('public/home_page/images/Yellow-black-excavator-1.jpg')}}">
-                            </div>
+                    </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="image-right-section5">
+                            <img src="{{ asset('public/home_page/images/Yellow-black-excavator-1.jpg')}}">
                         </div>
                     </div>
                 </div>
+                </div>
             </section>
-        </form>
 
 
     </main>
@@ -343,6 +312,27 @@
             });
         });
 
+    </script>
+
+    <!--  Hotjar Tracking Code for  -->
+    <script>
+        (function(h,o,t,j,a,r){
+            h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+            h._hjSettings={hjid:3827924,hjsv:6};
+            a=o.getElementsByTagName('head')[0];
+            r=o.createElement('script');r.async=1;
+            r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+            a.appendChild(r);
+        })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+    </script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DK3MV3V7W4"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-DK3MV3V7W4');
     </script>
 </body>
 

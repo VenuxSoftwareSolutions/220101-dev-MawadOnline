@@ -7,7 +7,7 @@
          font-display: swap;
          font-style: normal;
   }
-  
+
   @font-face {
     font-family: 'Satoshi-Bold';
     src: url('../fonts/Satoshi-Bold.woff2') format('woff2'),
@@ -229,36 +229,57 @@ h2.titre-section2 {
 }
 
 .blocs-section2 {
-    height: 394px; 
-    flex-direction: column; 
-    justify-content: flex-start; 
-    align-items: flex-start; 
-    gap: 24px; 
+    height: 394px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 24px;
+    display: flex
+}
+.blocs-section-2 {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 24px;
     display: flex
 }
 
 .bloc1 {
-    align-self: stretch; 
-    justify-content: flex-start; 
-    align-items: flex-start; 
-    gap: 16px; 
+    align-self: stretch;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 16px;
     display: inline-flex
 }
 .box {
-    flex: 1 1 0; 
-    align-self: stretch; 
-    padding-left: 24px; 
-    padding-right: 24px; 
-    padding-top: 16px; 
-    padding-bottom: 16px; 
-    background: white; 
-    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.05); 
-    border-radius: 10px; 
-    flex-direction: column; 
-    justify-content: center; 
-    align-items: center; 
-    gap: 24px; 
+    flex: 1 1 0;
+    align-self: stretch;
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    background: white;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
     display: inline-flex
+}
+.box-2 {
+    align-self: stretch;
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    background: white;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 24px;
 }
 .title-box {
     align-self: stretch;
@@ -269,10 +290,38 @@ h2.titre-section2 {
     font-weight: 700;
     word-wrap: break-word;
 }
+.title-box-2 {
+    align-self: stretch;
+    text-align: left;
+    color: #141414;
+    font-size: 18px;
+    font-family: 'Satoshi-Bold';
+    font-weight: 700;
+    word-wrap: break-word;
+}
 .p-box {
     align-self: stretch;
     text-align: center;
     color: #5B5858;
+    font-size: 16px;
+    font-family: 'Satoshi-Medium';
+    font-weight: 500;
+    word-wrap: break-word;
+}
+.p-box-2 {
+    padding-left: 40px;
+    align-self: stretch;
+    text-align: left;
+    color: #494444;
+    font-size: 16px;
+    font-family: 'Satoshi-Medium';
+    font-weight: 500;
+    word-wrap: break-word;
+}
+.p-box-3 {
+    align-self: stretch;
+    text-align: left;
+    color: #494444;
     font-size: 16px;
     font-family: 'Satoshi-Medium';
     font-weight: 500;
@@ -289,7 +338,6 @@ h2.titre-section2 {
 }
 .content-box {
     align-self: stretch;
-    height: 76px;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -579,6 +627,7 @@ section.Join-The-Waitlist:before {
 .image-right-section5 {
     position: relative;
     margin-left: 156px;
+    top: -610px;
 }
 
 .image-right-section5 img {
@@ -704,7 +753,7 @@ input[type='checkbox']:checked {
         padding-right: 17px;
         padding-top: 16px;
         padding-bottom: 36px;
-   
+
     }
     .title-box {
         line-height: 23px;
@@ -742,7 +791,7 @@ input[type='checkbox']:checked {
     .bloc2-right {
         gap: 19px;
     }
-    .bloc1-left { 
+    .bloc1-left {
         gap: 15px;
     }
     section.How-It-Works {
@@ -763,7 +812,7 @@ input[type='checkbox']:checked {
     display: table;
     margin: 77px auto 0;
     }
-    
+
     .image-right-section4 img {
         height: auto;
     }
@@ -799,7 +848,7 @@ input[type='checkbox']:checked {
     .title-bloc1-left {
         font-size: 28px;
     }
-  
+
 }
 
 @media screen and (max-width: 768px) {
@@ -810,7 +859,7 @@ input[type='checkbox']:checked {
         width: 45%;
         margin: 0 17px 27px;
     }
-  
+
 }
 
 @media screen and (max-width: 700px) {
@@ -825,7 +874,7 @@ input[type='checkbox']:checked {
         gap: 40px;
     }
     .buttons-slider a.btn2-slider {
-        width: 100%; 
+        width: 100%;
     }
     .buttons-slider a.btn1-slider {
         width: 100%;
@@ -1025,5 +1074,5 @@ input[type='checkbox']:checked {
     section.Join-The-Waitlist {
         padding: 80px 4px;
     }
-    
+
 }
