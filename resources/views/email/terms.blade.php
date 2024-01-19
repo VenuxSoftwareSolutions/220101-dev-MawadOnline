@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>MawadOnline | Terms and Conditions</title>
     <!-- Fav Icon -->
-    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="icon" type="image/png" href="{{ uploaded_asset(get_setting('site_icon')) }}">
     <!-- Stylesheets -->
 
     <link href="{{ asset('public/home_page/css/bootstrap.min.css')}}" rel="stylesheet">
