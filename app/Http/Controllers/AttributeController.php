@@ -148,37 +148,43 @@ class AttributeController extends Controller
 
     public function get_id_to_delete_value($id, $language){
         $value = AttributeValue::find($id);
-        $values_english = AttributeValue::where('attribute_id', $value->attribute_id)->where('lang', 'en')->get();
-        $values_arabic = AttributeValue::where('attribute_id', $value->attribute_id)->where('lang', 'ar')->get();
-        $values_english_ids = AttributeValue::where('attribute_id', $value->attribute_id)->where('lang', 'en')->pluck('id')->toArray();
-        $values_arabic_ids = AttributeValue::where('attribute_id', $value->attribute_id)->where('lang', 'ar')->pluck('id')->toArray();
-        if($language == 'arabic'){
-            $key = array_search($id,$values_arabic_ids);
-            if($key != null){
-                $id_to_delete = $values_english[$key]->id;
-                $check_first_value = ProductAttributeValues::where('id_attribute', $value->attribute_id)->where('id_values', $id)->get();
-                $check_second_value = ProductAttributeValues::where('id_attribute', $value->attribute_id)->where('id_values', $values_english[$key]->id)->get();
-                if((count($check_first_value) > 0) || (count($check_second_value) > 0)){
-                    return response()->json(['status' => 'failed used', 'id_to_delete' => '']);
-                }
-                return response()->json(['status' => 'done', 'id_to_delete' => $id_to_delete]);
-            }else{
-                return response()->json(['status' => 'failed', 'id_to_delete' => '']);
-            }
-        }else{
-            $key = array_search($id,$values_english_ids);
-            if($key != null){
-                $id_to_delete = $values_arabic[$key]->id;
-                $check_first_value = ProductAttributeValues::where('id_attribute', $value->attribute_id)->where('id_values', $id)->get();
-                $check_second_value = ProductAttributeValues::where('id_attribute', $value->attribute_id)->where('id_values', $values_arabic[$key]->id)->get();
-                if((count($check_first_value) > 0) || (count($check_second_value) > 0)){
-                    return response()->json(['status' => 'failed used', 'id_to_delete' => '']);
-                }
-                return response()->json(['status' => 'done', 'id_to_delete' => $id_to_delete]);
-            }else{
-                return response()->json(['status' => 'failed', 'id_to_delete' => '']);
-            }
+        $check_first_value = ProductAttributeValues::where('id_attribute', $value->attribute_id)->where('id_values', $id)->get();
+        if(count($check_first_value) > 0){
+            return response()->json(['status' => 'failed used', 'id_to_delete' => '']);
         }
+
+        return response()->json(['status' => 'done', 'id_to_delete' => $id]);
+        // $values_english = AttributeValue::where('attribute_id', $value->attribute_id)->where('lang', 'en')->get();
+        // $values_arabic = AttributeValue::where('attribute_id', $value->attribute_id)->where('lang', 'ar')->get();
+        // $values_english_ids = AttributeValue::where('attribute_id', $value->attribute_id)->where('lang', 'en')->pluck('id')->toArray();
+        // $values_arabic_ids = AttributeValue::where('attribute_id', $value->attribute_id)->where('lang', 'ar')->pluck('id')->toArray();
+        // if($language == 'arabic'){
+        //     $key = array_search($id,$values_arabic_ids);
+        //     if($key != null){
+        //         $id_to_delete = $values_english[$key]->id;
+        //         $check_first_value = ProductAttributeValues::where('id_attribute', $value->attribute_id)->where('id_values', $id)->get();
+        //         $check_second_value = ProductAttributeValues::where('id_attribute', $value->attribute_id)->where('id_values', $values_english[$key]->id)->get();
+        //         if((count($check_first_value) > 0) || (count($check_second_value) > 0)){
+        //             return response()->json(['status' => 'failed used', 'id_to_delete' => '']);
+        //         }
+
+        //     }else{
+        //         return response()->json(['status' => 'failed', 'id_to_delete' => '']);
+        //     }
+        // }else{
+        //     $key = array_search($id,$values_english_ids);
+        //     if($key != null){
+        //         $id_to_delete = $values_arabic[$key]->id;
+        //         $check_first_value = ProductAttributeValues::where('id_attribute', $value->attribute_id)->where('id_values', $id)->get();
+        //         $check_second_value = ProductAttributeValues::where('id_attribute', $value->attribute_id)->where('id_values', $values_arabic[$key]->id)->get();
+        //         if((count($check_first_value) > 0) || (count($check_second_value) > 0)){
+        //             return response()->json(['status' => 'failed used', 'id_to_delete' => '']);
+        //         }
+        //         return response()->json(['status' => 'done', 'id_to_delete' => $id_to_delete]);
+        //     }else{
+        //         return response()->json(['status' => 'failed', 'id_to_delete' => '']);
+        //     }
+        // }
 
     }
 
