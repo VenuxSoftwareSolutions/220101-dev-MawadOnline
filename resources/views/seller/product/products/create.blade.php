@@ -227,41 +227,83 @@
                     <div class="card-body">
                         <div class="form-group row gutters-5">
                             <div class="col-md-3">
-                                <input type="text" class="form-control" value="{{translate('Colors')}}" disabled>
+                                <input type="text" class="form-control" value="{{translate('Attributes')}}" disabled>
                             </div>
-                            <div class="col-md-8">
-                                <select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" name="colors[]" id="colors" multiple disabled>
-                                    @foreach (\App\Models\Color::orderBy('name', 'asc')->get() as $key => $color)
-                                    <option  value="{{ $color->code }}" data-content="<span><span class='size-15px d-inline-block mr-2 rounded border' style='background:{{ $color->code }}'></span><span>{{ $color->name }}</span></span>"></option>
-                                    @endforeach
+                            <div class="col-md-8" id="attributes_bloc">
+                                <select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" name="attributes" id="attributes" multiple disabled data-placeholder="{{ translate('Choose Attributes') }}">
+
                                 </select>
                             </div>
                             <div class="col-md-1">
                                 <label class="aiz-switch aiz-switch-success mb-0">
-                                    <input value="1" type="checkbox" name="colors_active">
+                                    <input value="1" type="checkbox" name="activate_attributes">
                                     <span></span>
                                 </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group row gutters-5">
-                            <div class="col-md-3">
-                                <input type="text" class="form-control" value="{{translate('Attributes')}}" disabled>
-                            </div>
-                            <div class="col-md-8">
-                                <select name="choice_attributes[]" id="choice_attributes" class="form-control aiz-selectpicker" data-selected-text-format="count" data-live-search="true" multiple data-placeholder="{{ translate('Choose Attributes') }}">
-                                    @foreach (\App\Models\Attribute::all() as $key => $attribute)
-                                    <option value="{{ $attribute->id }}">{{ $attribute->getTranslation('name') }}</option>
-                                    @endforeach
-                                </select>
                             </div>
                         </div>
                         <div>
                             <p>{{ translate('Choose the attributes of this product and then input values of each attribute') }}</p>
                             <br>
                         </div>
+                        <div id="variant_informations">
+                            <h3 class="mb-3">Variant informations</h3>
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control" value="{{translate('Variant SKU')}}" disabled>
+                                </div>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="sku">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control" value="{{translate('Variant Photos')}}" disabled>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="custom-file mb-3">
+                                        <input type="file" class="custom-file-input" id="customFile" multiple>
+                                        <label class="custom-file-label" for="customFile">Choose files</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control" value="{{translate('Variant Pricing')}}" disabled>
+                                </div>
+                                <div class="col-md-8">
+                                    <label class="aiz-switch aiz-switch-success mb-0">
+                                        <input value="1" type="checkbox" name="activate_variant_pricing">
+                                        <span></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control" value="{{translate('Variant Shipping')}}" disabled>
+                                </div>
+                                <div class="col-md-8">
+                                    <label class="aiz-switch aiz-switch-success mb-0">
+                                        <input value="1" type="checkbox" name="activate_variant_shipping">
+                                        <span></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control" value="{{translate('Low-Stock Warning')}}" disabled>
+                                </div>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="low_stock_warning">
+                                </div>
+                            </div>
+                            <div id="bloc_attributes">
 
-                        <div class="customer_choice_options" id="customer_choice_options">
+                            </div>
+                        </div>
+                        <div class="row div-btn">
+                            <button type="button" name="button" class="btn btn-primary" id="btn-create-variant">Create variant</button>
+                        </div>
+                        <div id="bloc_variants_created">
 
                         </div>
                     </div>
@@ -456,13 +498,13 @@
                                                         <span>{{ $childCategory->getTranslation('name') }} </span>
                                                         <ul id="bf_l_1" style="display: none" class="inner_ul">
                                                             @foreach ($childCategory->childrenCategories as $childrenCategorie)
-                                                                <li id="io_1"><input type="radio" name="categorie_id" id="c_io_1" /><span>{{ $childrenCategorie->getTranslation('name') }}</span></li>
+                                                                <li id="io_1"><input type="radio" name="category_ids" id="c_io_1" class="radio-category" value="{{ $childrenCategorie->id }}" /><span>{{ $childrenCategorie->getTranslation('name') }}</span></li>
                                                             @endforeach
                                                         </ul>
                                                     </li>
                                                 @else
                                                     <li id="bf_1">
-                                                        <input type="radio" name="categorie_id" id="c_bf_1" />
+                                                        <input type="radio" name="category_ids" class="radio-category" value="{{ $childCategory->id }}" id="c_bf_1" />
                                                         <span>{{ $childCategory->getTranslation('name') }} </span>
                                                     </li>
                                                 @endif
@@ -751,70 +793,71 @@
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 <script>
     $(document).ready(function () {
-    $(".plus").click(function () {
-        $(this).toggleClass("minus").siblings("ul").toggle();
+        $(".plus").click(function () {
+            $(this).toggleClass("minus").siblings("ul").toggle();
+        })
     })
 
-    $("input[type=checkbox]").click(function () {
-        //alert($(this).attr("id"));
-        //var sp = $(this).attr("id");
-        //if (sp.substring(0, 4) === "c_bs" || sp.substring(0, 4) === "c_bf") {
-            $(this).siblings("ul").find("input[type=checkbox]").prop('checked', $(this).prop('checked'));
-        //}
-    })
-
-    $("input[type=checkbox]").change(function () {
-        var sp = $(this).attr("id");
-        if (sp.substring(0, 4) === "c_io") {
-            var ff = $(this).parents("ul[id^=bf_l]").attr("id");
-            if ($('#' + ff + ' > li input[type=checkbox]:checked').length == $('#' + ff + ' > li input[type=checkbox]').length) {
-                $('#' + ff).siblings("input[type=checkbox]").prop('checked', true);
-                check_fst_lvl(ff);
-            }
-            else {
-                $('#' + ff).siblings("input[type=checkbox]").prop('checked', false);
-                check_fst_lvl(ff);
-            }
+    function check_fst_lvl(dd) {
+        //var ss = $('#' + dd).parents("ul[id^=bs_l]").attr("id");
+        var ss = $('#' + dd).parent().closest("ul").attr("id");
+        if ($('#' + ss + ' > li input[type=checkbox]:checked').length == $('#' + ss + ' > li input[type=checkbox]').length) {
+            //$('#' + ss).siblings("input[id^=c_bs]").prop('checked', true);
+            $('#' + ss).siblings("input[type=checkbox]").prop('checked', true);
+        }
+        else {
+            //$('#' + ss).siblings("input[id^=c_bs]").prop('checked', false);
+            $('#' + ss).siblings("input[type=checkbox]").prop('checked', false);
         }
 
-        if (sp.substring(0, 4) === "c_bf") {
-            var ss = $(this).parents("ul[id^=bs_l]").attr("id");
-            if ($('#' + ss + ' > li input[type=checkbox]:checked').length == $('#' + ss + ' > li input[type=checkbox]').length) {
-                $('#' + ss).siblings("input[type=checkbox]").prop('checked', true);
-                check_fst_lvl(ss);
-            }
-            else {
-                $('#' + ss).siblings("input[type=checkbox]").prop('checked', false);
-                check_fst_lvl(ss);
-            }
-        }
-    });
-
-})
-
-function check_fst_lvl(dd) {
-    //var ss = $('#' + dd).parents("ul[id^=bs_l]").attr("id");
-    var ss = $('#' + dd).parent().closest("ul").attr("id");
-    if ($('#' + ss + ' > li input[type=checkbox]:checked').length == $('#' + ss + ' > li input[type=checkbox]').length) {
-        //$('#' + ss).siblings("input[id^=c_bs]").prop('checked', true);
-        $('#' + ss).siblings("input[type=checkbox]").prop('checked', true);
-    }
-    else {
-        //$('#' + ss).siblings("input[id^=c_bs]").prop('checked', false);
-        $('#' + ss).siblings("input[type=checkbox]").prop('checked', false);
     }
 
-}
-
-function pageLoad() {
-    $(".plus").click(function () {
-        $(this).toggleClass("minus").siblings("ul").toggle();
-    })
-}
+    function pageLoad() {
+        $(".plus").click(function () {
+            $(this).toggleClass("minus").siblings("ul").toggle();
+        })
+    }
 </script>
 
 <script type="text/javascript">
     $(document).ready(function() {
+        $('#variant_informations').hide();
+        $('#btn-create-variant').hide();
+
+        $('body input[name="activate_attributes"]').on('change', function() {
+            if (!$('body input[name="activate_attributes"]').is(':checked')) {
+                $('body #attributes').val('');
+                $('body #attributes').prop('disabled', true);
+                $('#variant_informations').hide();
+                $('#btn-create-variant').hide();
+                AIZ.plugins.bootstrapSelect('refresh');
+            } else {
+                if ($('.radio-category:checked').length > 0) {
+                    if ($('#attributes option').length > 0) {
+                        $('body #attributes').prop('disabled', false);
+                        $('#variant_informations').show();
+                        $('#btn-create-variant').show();
+                        AIZ.plugins.bootstrapSelect('refresh');
+                    } else {
+                        $('body input[name="activate_attributes"]').prop('checked', false);
+                        swal(
+                            'Cancelled',
+                            "You are unable to enable the variant option because the selected category lacks any attributes.",
+                            'error'
+                        )
+                    }
+                } else {
+                    $('body input[name="activate_attributes"]').prop('checked', false);
+                    swal(
+                            'Cancelled',
+                            'Select a category before activating the variant option.',
+                            'error'
+                        )
+                }
+
+            }
+        });
+
         $('#summernote').summernote({
             callbacks: {
                 onMediaUpload: function(files) {
@@ -827,6 +870,54 @@ function pageLoad() {
                 }
             }
         });
+
+        $("body").on("click", '.radio-category', function() {
+            var categorie_id = $(this).val();
+
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                type:"GET",
+                url:'{{ route('seller.products.getAttributeCategorie') }}',
+                data:{
+                    id: categorie_id
+                },
+                success: function(data) {
+                    if(data.html != ""){
+                        $('#attributes_bloc').html(data.html);
+                    }else{
+                        $('#attributes_bloc').html('<select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" name="attributes" id="attributes" multiple disabled data-placeholder="{{ translate("No attributes found") }}"></select>');
+                    }
+
+                    AIZ.plugins.bootstrapSelect('refresh');
+                }
+            });
+        });
+
+        $('body').on('change', '#attributes', function() {
+            var ids_attributes = $(this).val();
+
+            if(ids_attributes != ""){
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    type:"GET",
+                    url:'{{ route('seller.products.getAttributes') }}',
+                    data:{
+                        ids: ids_attributes
+                    },
+                    success: function(data) {
+                        if(data.html != ""){
+                            $('body #bloc_attributes').html(data.html);
+                            AIZ.plugins.bootstrapSelect('refresh');
+                        }
+                    }
+                });
+            }
+        })
+
         $("#country_selector").countrySelect({
 				responsiveDropdown: true,
 				preferredCountries: ['ae']

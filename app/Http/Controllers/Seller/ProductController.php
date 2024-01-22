@@ -7,13 +7,17 @@ use App\Http\Requests\ProductRequest;
 use Illuminate\Http\Request;
 use App\Models\AttributeValue;
 use App\Models\Cart;
+use App\Models\Color;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Unity;
 use App\Models\ProductTax;
 use App\Models\ProductTranslation;
 use App\Models\Wishlist;
 use App\Models\User;
+use App\Models\Attribute;
 use App\Notifications\ShopProductNotification;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Combinations;
 use Artisan;
@@ -74,7 +78,7 @@ class ProductController extends Controller
                 return back();
             }
         }
-        $categories = Category::where('parent_id', 0)
+        $categories = Category::where('level', 1)
             ->with('childrenCategories')
             ->get();
             //dd($categories);
@@ -150,6 +154,111 @@ class ProductController extends Controller
         Artisan::call('cache:clear');
 
         return redirect()->route('seller.products');
+    }
+
+    public function getAttributeCategorie(Request $request){
+        $current_categorie = Category::find($request->id);
+        $parents = [];
+        if($current_categorie->parent_id == 0){
+            array_push($parents, $current_categorie->id);
+        }else{
+            array_push($parents, $current_categorie->id);
+            while($current_categorie->parent_id != 0) {
+                $parent = Category::where('id',$current_categorie->parent_id)->first();
+                array_push($parents, $parent->id);
+                $current_categorie = $parent;
+            }
+        }
+
+        $attributes_ids = [];
+        $attributes = [];
+        $html = "";
+        if(count($parents) > 0){
+            $attributes_ids = DB::table('categories_has_attributes')->whereIn('category_id', $parents)->pluck('attribute_id')->toArray();
+            if(count($attributes_ids) > 0){
+                $attributes = Attribute::whereIn('id',$attributes_ids)->get();
+                if(count($attributes) > 0){
+                    $html .= '<select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" name="attributes" id="attributes" multiple disabled>';
+                    foreach ($attributes as $key=>$attribute){
+                        $html .= "<option  value='".$attribute->id."'>". $attribute->getTranslation('name') ."</option>";
+                    }
+                    $html .= "</select>";
+                }
+            }
+        }
+
+        return response()->json([
+            "html" => $html
+        ]);
+
+    }
+
+    public function getAttributes(Request $request){
+        $attributes = Attribute::whereIn('id', $request->ids)->get();
+
+        $html = '';
+        if(count($attributes) > 0){
+            foreach($attributes as $attribute){
+                $html .= '<div class="row mb-3">
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" value="'.translate($attribute->getTranslation('name')).'" disabled>
+                    </div>';
+
+                switch ($attribute->type_value) {
+                    case "text":
+                        $html .= '<div class="col-md-8">
+                                    <input type="text" class="form-control" name="attribute-'. $attribute->id .'">
+                                </div>';
+                        break;
+                    case "list":
+                        $values = $attribute->attribute_values_list(app()->getLocale());
+                        $options = '<div class="col-md-8"><select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count">';
+                        foreach ($values as $key=>$value){
+                            $options .= "<option  value='".$value->id."'>". $value->value ."</option>";
+                        }
+                        $options .= "</select></div>";
+                        $html .= $options;
+                        break;
+                    case "color":
+                        $colors = Color::orderBy('name', 'asc')->get();
+                        $html .= '<div class="col-md-8">
+                        <select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count">';
+                            foreach ($colors as $key => $color){
+                                $html .= '<option value="' . $color->code . '" data-content="<span><span class=\'size-15px d-inline-block mr-2 rounded border\' style=\'background:' . $color->code . '\'></span><span>' . $color->name . '</span></span>"></option>';
+                            }
+                        $html .= '</select></div>';
+                        break;
+                    case "numeric":
+                        $units_id = $attribute->get_attribute_units();
+                        $units = Unity::whereIn('id', $units_id)->get();
+                        $options = '<select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count">';
+                        foreach ($units as $key=>$unit){
+                            $options .= "<option  value='".$unit->id."'>". $unit->name ."</option>";
+                        }
+                        $options .= "</select>";
+                        $html .= '<div class="col-md-8"><div class="row"><div class="col-6">
+                                    <input type="number" class="form-control" name="attribute-'. $attribute->id .'"></div><div class="col-6">'.$options.'
+                                </div></div>';
+                        break;
+                    case "boolean":
+                            $html .= '<div class="col-md-8" style="padding-top: 10px">
+                                        <label style="margin-right: 15px">
+                                            <input type="radio" name="attribute-boolean" value="yes">Yes
+                                        </label>
+                                        <label>
+                                            <input type="radio" name="attribute-boolean" value="no"> No
+                                        </label>
+                                    </div>';
+                            break;
+                }
+            }
+
+            $html .= '</div>';
+        }
+
+        return response()->json([
+            'html' => $html
+        ]);
     }
 
     public function edit(Request $request, $id)

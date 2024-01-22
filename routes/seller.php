@@ -24,6 +24,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
         Route::get('/product/create', 'create')->name('products.create');
         Route::post('/products/store/', 'store')->name('products.store');
         Route::get('/product/{id}/edit', 'edit')->name('products.edit');
+        Route::get('/getAttributeCategorie', 'getAttributeCategorie')->name('products.getAttributeCategorie');
+        Route::get('/getAttributes', 'getAttributes')->name('products.getAttributes');
         Route::post('/products/update/{product}', 'update')->name('products.update');
         Route::get('/products/duplicate/{id}', 'duplicate')->name('products.duplicate');
         Route::post('/products/sku_combination', 'sku_combination')->name('products.sku_combination');
