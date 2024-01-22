@@ -13,6 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
+
         Schema::table('attribute_values', function (Blueprint $table) {
             $table->string('lang')->after('color_code')->nullable();
         });
@@ -25,6 +26,7 @@ return new class extends Migration
      */
     public function down()
     {
+
         Schema::table('attribute_values', function (Blueprint $table) {
             //
         });

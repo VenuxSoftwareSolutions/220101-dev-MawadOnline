@@ -23,6 +23,7 @@ use App\Http\Controllers\CustomerProductController;
 use App\Http\Controllers\DigitalProductController;
 use App\Http\Controllers\FlashDealController;
 use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\MeasurementPointsController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
@@ -38,6 +39,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\SellerWithdrawRequestController;
+use App\Http\Controllers\SizeChartController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\SubscriberController;
@@ -74,9 +76,12 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
     Route::resource('categories', CategoryController::class);
     Route::controller(CategoryController::class)->group(function () {
         Route::get('/categories/edit/{id}', 'edit')->name('categories.edit');
+        Route::post('/categories/getsubcategories', 'getsubcategories')->name('categories.getsubcategories');
         Route::get('/categories/destroy/{id}', 'destroy')->name('categories.destroy');
         Route::post('/categories/featured', 'updateFeatured')->name('categories.featured');
         Route::post('/categories/categoriesByType', 'categoriesByType')->name('categories.categories-by-type');
+        Route::post('/categories/categories-attributes', 'fetch_category_attribute')->name('categories.categories-attributes');
+        Route::post('/categories/parent-attributes', 'fetch_parent_attribute')->name('categories.parent-attributes');
     });
 
     // Brand
@@ -267,6 +272,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
             Route::get('/header', 'header')->name('website.header');
             Route::get('/appearance', 'appearance')->name('website.appearance');
             Route::get('/select-homepage', 'select_homepage')->name('website.select-homepage');
+            Route::get('/authentication-layout-settings', 'authentication_layout_settings')->name('website.authentication-layout-settings');
             Route::get('/pages', 'pages')->name('website.pages');
         });
 
@@ -366,6 +372,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
     //Coupons
     Route::resource('coupon', CouponController::class);
     Route::controller(CouponController::class)->group(function () {
+        Route::post('/coupon/update-status', 'updateStatus')->name('coupon.update_status');
         Route::get('/coupon/destroy/{id}', 'destroy')->name('coupon.destroy');
 
         //Coupon Form
@@ -439,6 +446,14 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::get('/attributes/search/values/by/type', 'search_values_is_used_by_type')->name('search-attribute-has-values-used-by-type');
     });
 
+    // Size Chart
+    Route::resource('size-charts', SizeChartController::class );
+    Route::get('/size-charts/destroy/{id}',  [SizeChartController::class, 'destroy'])->name('size-charts.destroy');
+    Route::post('size-charts/get-combination',   [SizeChartController::class, 'get_combination'])->name('size-charts.get-combination');
+
+    // Measurement Points
+    Route::resource('measurement-points', MeasurementPointsController::class );
+    Route::get('/measurement-points/destroy/{id}',  [MeasurementPointsController::class, 'destroy'])->name('measurement-points.destroy');
     //Product unites
     Route::resource('units', UnityController::class);
 

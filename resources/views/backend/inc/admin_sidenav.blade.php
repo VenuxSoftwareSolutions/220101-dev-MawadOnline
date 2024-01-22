@@ -197,6 +197,30 @@
                                     </a>
                                 </li>
                             @endcan
+                            @canany(['view_size_charts', 'view_measurement_points'])
+                                <li class="aiz-side-nav-item">
+                                    <a href="javascript:void(0);" class="aiz-side-nav-link">
+                                        <span class="aiz-side-nav-text">{{translate('Size Guide')}}</span>
+                                        <span class="aiz-side-nav-arrow"></span>
+                                    </a>
+                                    <ul class="aiz-side-nav-list level-3">
+                                        @can('view_size_charts')
+                                        <li class="aiz-side-nav-item">
+                                            <a href="{{ route('size-charts.index') }}" class="aiz-side-nav-link {{ areActiveRoutes(['size-charts.index', 'size-charts.create', 'size-charts.edit'])}}">
+                                                <span class="aiz-side-nav-text">{{translate('Size Chart')}}</span>
+                                            </a>
+                                        </li>
+                                        @endcan
+                                        @can('view_measurement_points')
+                                        <li class="aiz-side-nav-item">
+                                            <a href="{{ route('measurement-points.index') }}" class="aiz-side-nav-link">
+                                                <span class="aiz-side-nav-text">{{translate('Measurement Points')}}</span>
+                                            </a>
+                                        </li>
+                                        @endcan
+                                    </ul>
+                                </li>
+                            @endcan
                             @can('view_product_reviews')
                                 <li class="aiz-side-nav-item">
                                     <a href="{{route('reviews.index')}}" class="aiz-side-nav-link">
@@ -1151,7 +1175,7 @@
                 @endif
 
                 <!-- Website Setup -->
-                @canany(['header_setup','footer_setup','view_all_website_pages','website_appearance'])
+                @canany(['header_setup','footer_setup','view_all_website_pages','website_appearance','authentication_layout_settings'])
                     <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link {{ areActiveRoutes(['website.footer', 'website.header'])}}" >
                             <div class="aiz-side-nav-icon">
@@ -1177,6 +1201,13 @@
                                     <a href="{{ route('custom-pages.edit', ['id'=>'home', 'lang'=>env('DEFAULT_LANGUAGE'), 'page'=>'home']) }}"
                                         class="aiz-side-nav-link {{ (url()->current() == url('/admin/website/custom-pages/edit/home')) ? 'active' : '' }}">
                                         <span class="aiz-side-nav-text">{{translate('Homepage Settings')}}</span>
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('authentication_layout_settings')
+                                <li class="aiz-side-nav-item">
+                                    <a href="{{ route('website.authentication-layout-settings') }}" class="aiz-side-nav-link">
+                                        <span class="aiz-side-nav-text">{{translate('Authentication Layout & Settings')}}</span>
                                     </a>
                                 </li>
                             @endcan
@@ -1228,13 +1259,13 @@
                             <span class="aiz-side-nav-arrow"></span>
                         </a>
                         <ul class="aiz-side-nav-list level-2">
-                            @can('general_settings')
+                            {{-- @can('general_settings')
                                 <li class="aiz-side-nav-item">
                                     <a href="{{route('general_setting.index')}}" class="aiz-side-nav-link">
                                         <span class="aiz-side-nav-text">{{translate('General Settings')}}</span>
                                     </a>
                                 </li>
-                            @endcan
+                            @endcan --}}
                             @can('features_activation')
                                 <li class="aiz-side-nav-item">
                                     <a href="{{route('activation.index')}}" class="aiz-side-nav-link">

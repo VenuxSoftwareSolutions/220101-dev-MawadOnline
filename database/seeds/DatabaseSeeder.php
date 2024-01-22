@@ -1,9 +1,13 @@
 <?php
 
+use Database\Seeders\AreasTableSeeder;
+use Database\Seeders\EmirateSeeder;
+use Database\Seeders\TranslationsRegisterVendorPart2;
+use Database\Seeders\TranslationsTableSeeder;
+use Database\seeds\AddPermessionEnablingAttributeSeeder;
+use Database\seeds\CategorySeeder;
 use Illuminate\Database\Seeder;
 use Database\seeds\MigrationSeeder;
-use Database\seeds\TranslateattributeSeeder;
-use Database\seeds\AddPermessionEnablingAttributeSeeder;
 
 
 class DatabaseSeeder extends Seeder
@@ -16,8 +20,12 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // $this->call(UsersTableSeeder::class);
-        $this->call(MigrationSeeder::class);
-        $this->call(TranslateattributeSeeder::class);
-        $this->call(AddPermessionEnablingAttributeSeeder::class);
+        // $this->call(MigrationSeeder::class);
+    //     $this->call(EmirateSeeder::class);
+     //    $this->call(AreasTableSeeder::class);
+     //  $this->call(TranslationsTableSeeder::class);
+        // $this->call(TranslationsTableSeeder::class);
+      //  $this->call(TranslationsRegisterVendorPart2::class);
+        $this->call(CategorySeeder::class);
     }
 }

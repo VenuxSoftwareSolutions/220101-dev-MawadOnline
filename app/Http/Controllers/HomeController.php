@@ -29,6 +29,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Auth\Events\PasswordReset;
 use App\Mail\SecondEmailVerifyMailManager;
+use App\Mail\WaitlistApplication;
+use App\Mail\WaitlistUserApplication;
 use App\Models\BusinessSetting;
 use App\Models\Cart;
 use Artisan;
@@ -44,6 +46,7 @@ class HomeController extends Controller
      */
     public function index()
     {
+        $lang = get_system_language() ? get_system_language()->code : null;
         $featured_categories = Cache::rememberForever('featured_categories', function () {
             return Category::with('bannerImage')->where('featured', 1)->get();
         });
@@ -51,7 +54,7 @@ class HomeController extends Controller
         return view('frontend.'.get_setting('homepage_select').'.index', compact('featured_categories'));
         
     }
-    
+
     public function load_todays_deal_section()
     {
         $todays_deal_products = filter_products(Product::where('todays_deal', '1'))->get();
@@ -63,7 +66,7 @@ class HomeController extends Controller
         $newest_products = Cache::remember('newest_products', 3600, function () {
             return filter_products(Product::latest())->limit(12)->get();
         });
-        
+
         return view('frontend.'.get_setting('homepage_select').'.partials.newest_products_section', compact('newest_products'));
     }
 
@@ -82,7 +85,8 @@ class HomeController extends Controller
         if (!addon_is_activated('auction')) {
             return;
         }
-        return view('auction.frontend.auction_products_section');
+        $lang = get_system_language() ? get_system_language()->code : null;
+        return view('auction.frontend.'.get_setting('homepage_select').'.auction_products_section', compact('lang'));
     }
 
     public function load_home_categories_section()
@@ -102,11 +106,12 @@ class HomeController extends Controller
         }
 
         if(Route::currentRouteName() == 'seller.login' && get_setting('vendor_system_activation') == 1){
-            return view('frontend.seller_login');
-        }else if(Route::currentRouteName() == 'deliveryboy.login' && addon_is_activated('delivery_boy')){
-            return view('frontend.deliveryboy_login');
+            return view('auth.'.get_setting('authentication_layout_select').'.seller_login');
         }
-        return view('frontend.user_login');
+        else if(Route::currentRouteName() == 'deliveryboy.login' && addon_is_activated('delivery_boy')){
+            return view('auth.'.get_setting('authentication_layout_select').'.deliveryboy_login');
+        }
+        return view('auth.'.get_setting('authentication_layout_select').'.user_login');
     }
 
     public function registration(Request $request)
@@ -130,7 +135,7 @@ class HomeController extends Controller
             } catch (\Exception $e) {
             }
         }
-        return view('frontend.user_registration');
+        return view('auth.'.get_setting('authentication_layout_select').'.user_registration');
     }
 
     public function cart_login(Request $request)
@@ -253,7 +258,7 @@ class HomeController extends Controller
         if (!Auth::check()) {
             session(['link' => url()->current()]);
         }
-        
+
         $detailedProduct  = Product::with('reviews', 'brand', 'stocks', 'user', 'user.shop')->where('auction_product', 0)->where('slug', $slug)->where('approved', 1)->first();
 
         if ($detailedProduct != null && $detailedProduct->published) {
@@ -415,8 +420,8 @@ class HomeController extends Controller
 
     public function all_categories(Request $request)
     {
-        $categories = Category::with('childrenCategories')->where('parent_id', 0)->orderBy('order_level', 'desc')->get();
-        
+        $categories = Category::with('childrenCategories')->where('parent_id', 0)->orderBy('order_level', 'asc')->get();
+
         // dd($categories);
         return view('frontend.all_category', compact('categories'));
     }
@@ -698,7 +703,6 @@ class HomeController extends Controller
 
     public function reset_password_with_code(Request $request)
     {
-
         if (($user = User::where('email', $request->email)->where('verification_code', $request->code)->first()) != null) {
             if ($request->password == $request->password_confirmation) {
                 $user->password = Hash::make($request->password);
@@ -715,11 +719,11 @@ class HomeController extends Controller
                 return redirect()->route('home');
             } else {
                 flash(translate("Password and confirm password didn't match"))->warning();
-                return view('auth.passwords.reset');
+                return view('auth.'.get_setting('authentication_layout_select').'.reset_password');
             }
         } else {
             flash(translate("Verification code mismatch"))->error();
-            return view('auth.passwords.reset');
+            return view('auth.'.get_setting('authentication_layout_select').'.reset_password');
         }
     }
 
@@ -768,4 +772,25 @@ class HomeController extends Controller
         $products = filter_products(Product::where('added_by', 'admin'))->with('taxes')->paginate(12)->appends(request()->query());
         return view('frontend.inhouse_products', compact('products'));
     }
+
+
+    public function sendWaitlistEmail(Request $request)
+    {
+
+        $name=$request->name;
+        $email=$request->email;
+        $role=$request->role;
+        if (isset($request->subscribeNewsletter)) {
+            $subscribeNewsletter="yes";
+        }else{
+            $subscribeNewsletter="no";
+        }
+
+         //   Mail::to()->send(new WaitlistApplication($name, $email, $role, $subscribeNewsletter));
+
+            Mail::to($email)->send(new WaitlistUserApplication($name));
+
+            return Redirect::back();
+    }
+
 }

@@ -45,7 +45,7 @@
                                 <span class="fs-14 text-light">{{ translate('Rating') }}</span>
                             </p>
                             <h3 class="mb-0 text-white fs-30">
-                                {{ Auth::user()->shop->rating }}
+                                {{-- {{ Auth::user()->shop->rating }} --}}
                             </h3>
 
                         </div>
@@ -179,7 +179,7 @@
                     $date = date('Y-m-d');
                     $days_ago_30 = date('Y-m-d', strtotime('-30 days', strtotime($date)));
                     $days_ago_60 = date('Y-m-d', strtotime('-60 days', strtotime($date)));
-                    
+
                     $orderTotal = \App\Models\Order::where('seller_id', Auth::user()->id)
                         ->where('payment_status', 'paid')
                         ->where('created_at', '>=', $days_ago_30)
@@ -419,7 +419,7 @@
             @endif
             <div
                 class="card mb-0 @if (addon_is_activated('seller_subscription')) px-4 py-5 @else p-5 h-100 @endif d-flex align-items-center justify-content-center">
-                @if (Auth::user()->shop->verification_status == 0)
+                {{-- @if (Auth::user()->shop->verification_status == 0)
                     <div class="my-n4 py-1 text-center">
                         <img src="{{ static_asset('assets/img/non_verified.png') }}" alt=""
                             class="w-xxl-130px w-90px d-block">
@@ -430,7 +430,7 @@
                     <div class="my-2 py-1">
                         <img src="{{ static_asset('assets/img/verified.png') }}" alt="" width="">
                     </div>
-                @endif
+                @endif --}}
             </div>
         </div>
     </div>

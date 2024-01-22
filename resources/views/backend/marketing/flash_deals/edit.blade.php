@@ -31,7 +31,7 @@
                             <input type="text" placeholder="{{translate('Title')}}" id="name" name="title" value="{{ $flash_deal->getTranslation('title', $lang) }}" class="form-control" required>
                         </div>
                     </div>
-                    <div class="form-group row">
+                    {{-- <div class="form-group row">
                         <label class="col-sm-3 col-from-label" for="background_color">{{translate('Background Color')}}<small>({{ translate('Hexa-code') }})</small></label>
                         <div class="col-sm-9">
                             <input type="text" placeholder="{{translate('#0000ff')}}" id="background_color" name="background_color" value="{{ $flash_deal->background_color }}" class="form-control" required>
@@ -46,7 +46,7 @@
                                 <option value="dark" @if ($flash_deal->text_color == 'dark') selected @endif>{{translate('Dark')}}</option>
                             </select>
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Banner')}}</label>
                         <div class="col-md-9">

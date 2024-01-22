@@ -13,6 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
+
         Schema::create('attributes_units', function (Blueprint $table) {
             $table->id();
             $table->foreignId('unite_id')->constrained('unites');
@@ -29,6 +30,7 @@ return new class extends Migration
      */
     public function down()
     {
+
         Schema::dropIfExists('attributes_units');
     }
 };

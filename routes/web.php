@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AizUploadController;
+use App\Http\Controllers\Auth\CustomerLoginController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\SellerLoginController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CartController;
@@ -46,6 +48,7 @@ use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\SupportTicketController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\SizeChartController;
 
 /*
   |--------------------------------------------------------------------------
@@ -114,6 +117,14 @@ Route::controller(HomeController::class)->group(function () {
     Route::post('/users/login/cart', 'cart_login')->name('cart.login.submit')->middleware('handle-demo-login');
     // Route::get('/new-page', 'new_page')->name('new_page');
 
+    Route::get('/terms-and-conditions', function () {
+        return view('email.terms');
+    })->name('terms-and-conditions');
+    Route::get('/business', function () {
+        return view('email.waitlist-email');
+    })->name('business');
+    Route::post('/send-waitlist-email', 'sendWaitlistEmail' )->name('send-waitlist-email');
+
 
     //Home Page
     Route::get('/', 'index')->name('home');
@@ -159,12 +170,20 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/track-your-order', 'trackOrder')->name('orders.track');
 });
 
+Route::controller(CustomerLoginController::class)->group(function () {
+    Route::post('/users/login/login_user', 'login')->name('user.login_user')->middleware('handle-demo-login');
+});
+Route::controller(SellerLoginController::class)->group(function () {
+    Route::post('/seller/login/login_seller', 'login')->name('seller.login_seller')->middleware('handle-demo-login');
+});
 // Language Switch
 Route::post('/language', [LanguageController::class, 'changeLanguage'])->name('language.change');
 
 // Currency Switch
 Route::post('/currency', [CurrencyController::class, 'changeCurrency'])->name('currency.change');
 
+// Size Chart Show
+Route::get('/size-charts-show/{id}', [SizeChartController::class, 'show'])->name('size-charts-show');
 
 Route::get('/sitemap.xml', function () {
     return base_path('sitemap.xml');
@@ -207,7 +226,7 @@ Route::controller(MercadopagoController::class)->group(function () {
     Route::any('/mercadopago/payment/done', 'paymentstatus')->name('mercadopago.done');
     Route::any('/mercadopago/payment/cancel', 'callback')->name('mercadopago.cancel');
 });
-//Mercadopago 
+//Mercadopago
 
 // SSLCOMMERZ Start
 Route::controller(SslcommerzController::class)->group(function () {
@@ -356,6 +375,15 @@ Route::group(['middleware' => ['auth']], function () {
 });
 
 Route::resource('shops', ShopController::class)->middleware('handle-demo-login');
+Route::post('verify-code', [ShopController::class,"verifyCode"])->name('verify.code')->middleware('throttle:5,1');
+Route::post('/shops/business_info', [ShopController::class, 'storeBusinessInfo'])->name('shops.business_info');
+Route::post('/resend-code', [ShopController::class,"resendCode"])->name('resend.code')->middleware('throttle:15,1');
+Route::get('/getArea/{id}', [ShopController::class,"getArea"])->name('get.area');
+Route::post('/shops/contact_person', [ShopController::class, 'storeContactPerson'])->name('shops.contact_person');
+Route::post('/shops/warehouse', [ShopController::class, 'storeWarehouse'])->name('shops.warehouses');
+Route::post('/shops/payout_info', [ShopController::class, 'storePayoutInfo'])->name('shops.payout_info');
+Route::post('/shops/register', [ShopController::class, 'storeShopRegister'])->name('shops.register');
+
 
 Route::get('/instamojo/payment/pay-success', [InstamojoController::class, 'success'])->name('instamojo.success');
 

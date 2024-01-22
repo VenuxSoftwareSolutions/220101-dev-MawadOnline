@@ -1,0 +1,8 @@
+<p>We wanted to inform you that a new request from Mr./Mrs. {{ $name }} has been received and added to the waitlist for further review.</p>
+<br>
+<p>Email: {{ $email }}</p>
+<p>Role: {{ $role }}</p>
+<p>Subscribe to Newsletter: {{ $subscribeNewsletter }}</p>
+
+
+

@@ -14,8 +14,6 @@ INSERT INTO `business_settings` (`id`, `type`, `value`, `lang`, `created_at`, `u
         (NULL, 'todays_deal_banner_text_color', 'light', NULL, current_timestamp(), current_timestamp()),
         (NULL, 'coupon_background_image', NULL, NULL, current_timestamp(), current_timestamp());
 
-COMMIT;
-
 UPDATE `business_settings` SET `value` = '8' WHERE `business_settings`.`type` = 'current_version';
 
 COMMIT;
