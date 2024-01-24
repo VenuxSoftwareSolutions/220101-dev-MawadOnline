@@ -315,22 +315,22 @@
                                             </div>
                                             <div class="champ2">
                                                 <label><b>Where do you work</b>? Or, if you're the CEO of 'Your Living Room,' that's cool too!
-                                                    <span class="required">*</span></label>
+                                                    </span></label>
                                                 <input type="text" id="work" name="work" placeholder="Enter work " >
                                             </div>
                                             <div class="champ2">
                                                 <label>Your <b>job title</b>, because we know you're not just another Office Ninja
-                                                    <span class="required">*</span></label>
+                                                   </span></label>
                                                 <input type="text" id="job" name="job" placeholder="Enter job title" >
                                             </div>
                                             <div class="champ2">
                                                 <label><b>Where are you located</b>? Don't worry, we won't send a construction crew to your backyard...unless you want us to?
-                                                    <span class="required">*</span></label>
+                                                    </span></label>
                                                 <input type="text" id="location" name="location" placeholder="Enter location" >
                                             </div>
                                             <div class="champ2">
                                                 <label><b>Anything else you'd like to share</b>? Your favorite construction pun, perhaps?
-                                                    <span class="required">*</span></label>
+                                                    </span></label>
                                                 <input type="text" id="info" name="info" placeholder="Enter your answer">
                                             </div>
                                             <div class="champ4">
