@@ -150,6 +150,25 @@
                                 @endcan
                             @endif
 
+                            {{-- <li class="aiz-side-nav-item">
+                                <a href="javascript:void(0);" class="aiz-side-nav-link">
+                                    <span class="aiz-side-nav-text">{{__('stock.Inventory Management')}}</span>
+                                    <span class="aiz-side-nav-arrow"></span>
+                                </a>
+                                <ul class="aiz-side-nav-list level-3">
+                                    <li class="aiz-side-nav-item">
+                                        <a href="{{ route('stocks.index') }}" class="aiz-side-nav-link">
+                                            <span class="aiz-side-nav-text">{{__('stock.Add/Remove stock')}}</span>
+                                        </a>
+                                    </li>
+                                    <li class="aiz-side-nav-item">
+                                        <a href="{{ route('stock.operation.report') }}" class="aiz-side-nav-link">
+                                            <span class="aiz-side-nav-text">{{__('stock.Stock Operation Details')}}</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li> --}}
+
                             @can('product_bulk_import')
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('product_bulk_upload.index') }}" class="aiz-side-nav-link" >

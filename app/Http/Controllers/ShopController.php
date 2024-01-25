@@ -25,12 +25,14 @@ use Auth;
 use Hash;
 use App\Notifications\EmailVerificationNotification;
 use App\Rules\CustomPasswordRule;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Notification;
 use Mail;
 use Session;
 use Storage;
 use Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\File;
 
 class ShopController extends Controller
 {
@@ -252,8 +254,8 @@ class ShopController extends Controller
                 'eshop_name' => ['en' => $request->eshop_name_english, 'ar' => $request->eshop_name_arabic],
                 'eshop_desc' => ['en' => $request->eshop_desc_en, 'ar' => $request->eshop_desc_ar],
                 'trade_license_doc' => $request->hasFile('trade_license_doc') ?  $request->file('trade_license_doc')->store('trade_license_doc') : $trade_license_doc/* $request->file('trade_license_doc')->store('trade_license_docs') */,
-                'license_issue_date' => $request->license_issue_date,
-                'license_expiry_date' => $request->license_expiry_date,
+                'license_issue_date' => $request->license_issue_date ? Carbon::createFromFormat('d M Y', $request->license_issue_date)->format('Y-m-d') : null,
+                'license_expiry_date' => /* $request->license_expiry_date, */$request->license_expiry_date ? Carbon::createFromFormat('d M Y', $request->license_expiry_date)->format('Y-m-d') : null,
                 'state' => $request->state,
                 'area_id' => $request->area_id,
                 'street' => $request->street,
@@ -342,9 +344,9 @@ class ShopController extends Controller
                 'mobile_phone' =>   $request->input('mobile_phone') != "+971" ? $request->input('mobile_phone') : null,
                 'additional_mobile_phone' =>$request->input('additional_mobile_phone') != "+971" ? $request->input('additional_mobile_phone'): null,
                 'nationality' => $request->input('nationality'),
-                'date_of_birth' => $request->input('date_of_birth'),
+                'date_of_birth' => $request->input('date_of_birth') ? Carbon::createFromFormat('d M Y', $request->input('date_of_birth'))->format('Y-m-d') : null,
                 'emirates_id_number' => $request->input('emirates_id_number'),
-                'emirates_id_expiry_date' => $request->input('emirates_id_expiry_date'),
+                'emirates_id_expiry_date' => /* $request->input('emirates_id_expiry_date'), */$request->input('emirates_id_expiry_date') ? Carbon::createFromFormat('d M Y', $request->input('emirates_id_expiry_date'))->format('Y-m-d') : null,
                 'emirates_id_file_path' => $emiratesIdFilePath,
                 'business_owner' => $request->input('business_owner'),
                 'designation' => $request->input('designation'),
@@ -440,13 +442,16 @@ class ShopController extends Controller
 
         $email = $request->input('email');
 
-        $newVerificationCode = rand(100000, 999999);
-        $expirationTime = now()->addMinutes(10); // Set expiration time to 10 minutes
+
 
         if (!$email) {
             return response()->json(['message' => translate('Please Register !!')], 403);
         }
+        // Delete existing verification codes for this email
+        VerificationCode::where('email', $email)->delete();
 
+        $newVerificationCode = rand(100000, 999999);
+        $expirationTime = now()->addMinutes(10); // Set expiration time to 10 minutes
         VerificationCode::create([
             'email' => $email,
             'code' => $newVerificationCode,
@@ -623,8 +628,8 @@ class ShopController extends Controller
                 'eshop_name' => ['en' => $request->eshop_name_english, 'ar' => $request->eshop_name_arabic],
                 'eshop_desc' => ['en' => $request->eshop_desc_en, 'ar' => $request->eshop_desc_ar],
                 'trade_license_doc' => $request->hasFile('trade_license_doc') ?  $request->file('trade_license_doc')->store('trade_license_doc') : $trade_license_doc/* $request->file('trade_license_doc')->store('trade_license_docs') */,
-                'license_issue_date' => $request->license_issue_date,
-                'license_expiry_date' => $request->license_expiry_date,
+                'license_issue_date' => /* $request->license_issue_date */Carbon::createFromFormat('d M Y', $request->license_issue_date)->format('Y-m-d'),
+                'license_expiry_date' => /* $request->license_expiry_date */Carbon::createFromFormat('d M Y', $request->license_expiry_date)->format('Y-m-d'),
                 'state' => $request->state,
                 'area_id' => $request->area_id,
                 'street' => $request->street,
@@ -662,9 +667,9 @@ class ShopController extends Controller
                 'mobile_phone' => $request->input('mobile_phone'),
                 'additional_mobile_phone' =>$request->input('additional_mobile_phone') != "+971" ? $request->input('additional_mobile_phone') : null,
                 'nationality' => $request->input('nationality'),
-                'date_of_birth' => $request->input('date_of_birth'),
+                'date_of_birth' => /* $request->input('date_of_birth') */  Carbon::createFromFormat('d M Y', $request->input('date_of_birth'))->format('Y-m-d') ,
                 'emirates_id_number' => $request->input('emirates_id_number'),
-                'emirates_id_expiry_date' => $request->input('emirates_id_expiry_date'),
+                'emirates_id_expiry_date' => /* $request->input('emirates_id_expiry_date'), */Carbon::createFromFormat('d M Y', $request->input('emirates_id_expiry_date'))->format('Y-m-d'),
                 'emirates_id_file_path' => $emiratesIdFilePath,
                 'business_owner' => $request->input('business_owner'),
                 'designation' => $request->input('designation'),
@@ -734,6 +739,12 @@ class ShopController extends Controller
         //
     }
 
+    public function getWords() {
+
+        $dictionaryPath = public_path('dictionary/dictionary.txt') ;
+        $words = File::lines($dictionaryPath);
+        return response()->json($words);
+    }
     /**
      * Show the form for editing the specified resource.
      *

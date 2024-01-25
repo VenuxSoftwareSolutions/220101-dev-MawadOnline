@@ -1,4 +1,8 @@
 @extends('frontend.layouts.app')
+@php
+use Carbon\Carbon;
+@endphp
+
 @section('style')
     <style>
         #password-strength {
@@ -26,6 +30,9 @@
             /* Highlight color for errors */
             color: #721c24;
             /* Text color for errors */
+        }
+        .countrypicker {
+            width: 100% !important
         }
     </style>
 @endsection
@@ -291,10 +298,10 @@
                                                                     class="text-primary">*</span>
                                                             </label>
 
-                                                            <input required type="date" class="form-control rounded-0"
+                                                            <input required type="{{-- date --}}text" class="datepicker form-control rounded-0"
                                                                 placeholder="{{ translate('License Issue Date') }}"
                                                                 id="license_issue_date"
-                                                                value="{{ $user->business_information->license_issue_date ?? '' }}"
+                                                                value="{{ isset($user->business_information->license_issue_date) ? Carbon::createFromFormat('Y-m-d', $user->business_information->license_issue_date)->format('d M Y') : '' }}"
                                                                 name="license_issue_date">
                                                         </div>
                                                     </div>
@@ -303,8 +310,9 @@
                                                             <label>{{ translate('License Expiry Date') }} <span
                                                                     class="text-primary">*</span></label>
 
-                                                            <input required type="date" class="form-control rounded-0"
-                                                                value="{{ $user->business_information->license_expiry_date ?? '' }}"
+                                                            <input required type="text" class="datepicker form-control rounded-0"
+                                                                {{-- value="{{ $user->business_information->license_expiry_date ?? '' }}" --}}
+                                                                value="{{ isset($user->business_information->license_expiry_date) ? Carbon::createFromFormat('Y-m-d', $user->business_information->license_expiry_date)->format('d M Y') : '' }}"
                                                                 placeholder="{{ translate('License Expiry Date') }}"
                                                                 name="license_expiry_date">
                                                         </div>
@@ -620,7 +628,7 @@
                                                                 +971123456789 {{ translate('or') }}
                                                                 00971123456789</small>
 
-                                                            <input type="text" class="form-control rounded-0"
+                                                            <input type="text" dir="auto" class="form-control rounded-0"
                                                                 placeholder="{{ translate('Mobile Phone') }}"
                                                                 value="{{ $user->contact_people->mobile_phone ?? '+971' }}"
                                                                 name="mobile_phone" required>
@@ -634,7 +642,7 @@
                                                                     class="text-muted">{{ translate('Example') }}:
                                                                     +971123456789 {{ translate('or') }}
                                                                     00971123456789</small></label>
-                                                            <input type="text" class="form-control rounded-0"
+                                                            <input type="text" dir="auto" class="form-control rounded-0"
                                                                 placeholder="{{ translate('Additional Mobile Phone') }}"
                                                                 value="{{ $user->contact_people->additional_mobile_phone ?? '+971' }}"
                                                                 name="additional_mobile_phone">
@@ -646,7 +654,7 @@
                                                             <label>{{ translate('Nationality') }} <span
                                                                     class="text-primary">*</span></label>
                                                             <br>
-                                                            <select title="{{ translate('Select Nationality') }}"
+                                                            <select  title="{{ translate('Select Nationality') }}"
                                                                 name="nationality" class="selectpicker countrypicker"
                                                                 @if (isset($user->contact_people) && !empty($user->contact_people->nationality)) data-default="{{ $user->contact_people->nationality }}" @else data-default="" @endif
                                                                 data-flag="true"></select>
@@ -657,9 +665,11 @@
                                                         <div class="form-group">
                                                             <label>{{ translate('Date Of Birth') }} <span
                                                                     class="text-primary">*</span></label>
-                                                            <input type="date" class="form-control rounded-0"
+                                                            <input type="text" class="datepicker form-control rounded-0"
                                                                 placeholder="{{ translate('Date Of Birth') }}"
-                                                                value="{{ $user->contact_people->date_of_birth ?? '' }}"
+                                                                {{-- value="{{ $user->contact_people->date_of_birth ?? '' }}" --}}
+                                                                value="{{ isset($user->contact_people->date_of_birth) ? Carbon::createFromFormat('Y-m-d', $user->contact_people->date_of_birth)->format('d M Y') : '' }}"
+
                                                                 name="date_of_birth" required>
 
                                                         </div>
@@ -681,9 +691,11 @@
                                                         <div class="form-group">
                                                             <label>{{ translate('Emirates ID - Expiry Date') }} <span
                                                                     class="text-primary">*</span></label>
-                                                            <input type="date" class="form-control rounded-0"
+                                                            <input type="text" class="datepicker form-control rounded-0"
                                                                 placeholder="{{ translate('Emirates ID - Expiry Date') }}"
-                                                                value="{{ $user->contact_people->emirates_id_expiry_date ?? '' }}"
+                                                                {{-- value="{{ $user->contact_people->emirates_id_expiry_date ?? '' }}" --}}
+                                                                value="{{ isset($user->contact_people->emirates_id_expiry_date) ? Carbon::createFromFormat('Y-m-d', $user->contact_people->emirates_id_expiry_date)->format('d M Y') : '' }}"
+
                                                                 required name="emirates_id_expiry_date">
 
                                                         </div>
@@ -2074,7 +2086,9 @@
                 "{{ translate('No three consecutive characters or their reverses in the same case are allowed, Example efg,ZYX,LMN,cba') }}":
                     !patternRegex.test(password),
                 "{{ translate('No more than 40% of repeated characters') }}": repeatedCharacterPercentage <=
-                    40
+                    40,
+                "{{ translate('No substring of the password can be a common English dictionary word') }}": !containsDictionaryWord(password, dictionaryWords),
+
 
             };
 
@@ -2099,6 +2113,30 @@
                 strengthMeter.removeClass('valid');
             }
         });
+
+        // No substring of the password can be a common English dictionary word
+
+        let dictionaryWords=[] ;
+
+                $.ajax({
+            url: '{{route("get.words")}}', // Make sure this URL matches your Laravel route
+            method: 'GET',
+            success: function(data) {
+                dictionaryWords = data;
+            },
+            error: function(error) {
+                console.error("Error fetching dictionary words", error);
+            }
+        });
+
+        function containsDictionaryWord(password,dictionaryWords) {
+            for(let word of dictionaryWords) {
+                if(password.toLowerCase().includes(word.toLowerCase())){
+                        return true ;
+                }
+            }
+            return false ;
+        }
 
         function calculateMaxPercentage(password) {
             // Calculate the percentage of lowercase, uppercase, numbers, and special characters
@@ -2131,7 +2169,7 @@
             return false;
         }
     </script>
-    <script>
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Get the input element
             var inputElement = document.getElementById('license_issue_date');
@@ -2160,8 +2198,8 @@
                 return months[monthIndex];
             }
         });
-    </script>
-    <script>
+    </script> --}}
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Get all date input elements
             var dateInputs = document.querySelectorAll('input[type="date"]');
@@ -2176,6 +2214,9 @@
 
                 // Add a class or style to the new span as needed
                 newSpan.classList.add('text-muted'); // Add your custom class here
+
+                // Set the dir attribute to auto for automatic text direction
+                newSpan.setAttribute('dir', 'auto');
 
                 // Append the new span after the label
                 inputElement.parentNode.appendChild(newSpan);
@@ -2203,5 +2244,17 @@
                 return months[monthIndex];
             }
         });
+
+
+    </script> --}}
+    <script>
+        $(document).ready(function() {
+            $('.datepicker').datepicker({
+                dateFormat: 'dd M yy', // Setting the display format
+                changeYear: true,      // Enable year dropdown
+                 yearRange: "-100:+10"  // Optional: specify the range of years available
+            });
+        });
     </script>
+
 @endsection

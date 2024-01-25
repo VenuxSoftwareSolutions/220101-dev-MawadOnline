@@ -42,6 +42,7 @@ use App\Http\Controllers\SellerWithdrawRequestController;
 use App\Http\Controllers\SizeChartController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\StateController;
+use App\Http\Controllers\StockController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\SupportTicketController;
 use App\Http\Controllers\TaxController;
@@ -113,6 +114,19 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::post('/products/sku_combination_edit', 'sku_combination_edit')->name('products.sku_combination_edit');
         Route::post('/products/add-more-choice-option', 'add_more_choice_option')->name('products.add-more-choice-option');
     });
+
+    //   // Stocks
+    //   Route::controller(StockController::class)->group(function () {
+    //     Route::get('/stocks', [StockController::class, 'index'])->name('stocks.index');
+    //     Route::post('/save-inventory-record', 'saveRecord')->name('save.inventory.record');
+    //     Route::post('/add-remove-stock', 'storeAddRemoveStock')->name('stock.add_remove');
+    //     Route::post('/inventory/check', 'checkInventory')->name('inventory.check');
+    //     Route::get('/export-stock', 'export')->name('stocks.export');
+    //     Route::get('/stock-operation-report', 'stockOperationReport')->name('stock.operation.report');
+    //     Route::get('/stock-details/search', [StockController::class, 'searchStockDetails'])->name('stock.search');
+
+
+    // }) ;
 
     // Digital Product
     Route::resource('digitalproducts', DigitalProductController::class);

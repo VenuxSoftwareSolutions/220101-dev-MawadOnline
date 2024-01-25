@@ -63,6 +63,26 @@
                     </ul>
                 </li>
                 <li class="aiz-side-nav-item">
+                    <a href="#" class="aiz-side-nav-link">
+                        <i class="fas fa-warehouse fa-2xs aiz-side-nav-icon	"></i>
+                        <span class="aiz-side-nav-text">{{ __('stock.Inventory Management') }}</span>
+                        <span class="aiz-side-nav-arrow"></span>
+                    </a>
+                    <!--Submenu-->
+                    <ul class="aiz-side-nav-list level-2">
+                        <li class="aiz-side-nav-item">
+                            <a href="{{ route('seller.stocks.index') }}" class="aiz-side-nav-link">
+                                <span class="aiz-side-nav-text">{{__('stock.Add/Remove stock')}}</span>
+                            </a>
+                        </li>
+                        <li class="aiz-side-nav-item">
+                            <a href="{{ route('seller.stock.operation.report') }}" class="aiz-side-nav-link">
+                                <span class="aiz-side-nav-text">{{__('stock.Stock Operation Details')}}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="aiz-side-nav-item">
                     <a href="{{ route('seller.uploaded-files.index') }}"
                         class="aiz-side-nav-link {{ areActiveRoutes(['seller.uploaded-files.index', 'seller.uploads.create']) }}">
                         <i class="las la-folder-open aiz-side-nav-icon"></i>
