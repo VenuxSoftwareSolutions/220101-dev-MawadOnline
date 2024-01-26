@@ -37,8 +37,8 @@ class StorePayoutInfoRequest extends FormRequest
     public function rules()
     {
         return [
-            'bank_name' => 'nullable|string|max:128',
-            'account_name' => 'nullable|string|max:128',
+            'bank_name' => 'nullable|string|max:128|regex:/\D/',
+            'account_name' => 'nullable|string|max:128|regex:/\D/',
             'account_number' => 'nullable|string|max:30',
             'iban' => 'nullable|string|max:34',
             'swift_code' => 'nullable|string|max:16',

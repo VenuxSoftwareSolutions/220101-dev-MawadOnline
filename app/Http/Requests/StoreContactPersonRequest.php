@@ -37,8 +37,8 @@ class StoreContactPersonRequest extends FormRequest
     public function rules()
     {
         return [
-            'first_name' => 'nullable|string|max:64',
-            'last_name' => 'nullable|string|max:64',
+            'first_name' => 'nullable|string|max:64|regex:/\D/',
+            'last_name' => 'nullable|string|max:64|regex:/\D/',
             'email' => 'nullable|email',
             'mobile_phone' => $this->input('mobile_phone') != '+971' ? ['nullable', 'string', 'max:16', new \App\Rules\UaeMobilePhone] :'',
             'additional_mobile_phone' => $this->input('additional_mobile_phone') != '+971' ? ['nullable', 'string', 'max:16', new \App\Rules\UaeMobilePhone]:'',
@@ -48,7 +48,7 @@ class StoreContactPersonRequest extends FormRequest
             'emirates_id_expiry_date' => 'nullable|date|after_or_equal:today',
             'emirates_id_file' => /* !isset($this->emirates_id_file_old) ? */  'nullable|file|mimes:pdf,jpeg,png|max:5120' /* : '' */,
             'business_owner' => 'nullable|boolean',
-            'designation' => 'nullable|string|max:64',
+            'designation' => 'nullable|string|max:64|regex:/\D/',
         ];
     }
 }
