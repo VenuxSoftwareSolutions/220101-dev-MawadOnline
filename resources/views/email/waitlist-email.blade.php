@@ -41,7 +41,7 @@
         <nav class="navbar top-nav navbar-expand-lg">
             <div class="header-top">
                 <div class="logo">
-                    <a class="logo-brand" href="#"><img src="{{ asset('public/home_page/images/MawadLogo.png')}}"></a>
+                    <a class="logo-brand" href="{{route('home')}}"><img src="{{ asset('public/home_page/images/MawadLogo.png')}}"></a>
                 </div>
                 <div class="nav-menu nav-mobile">
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -292,45 +292,42 @@
                                         <div class="p-left-section5">Greetings, future construction trendsetter! </div>
                                         <div class="p-left-section5">If we had a brick for every time someone wanted to join our waitlist, we'd have... well, a lot of bricks. But enough about bricks – let's talk about you!</div>
                                         <div class="p-left-section5">At MawadOnline, we're as excited as a cement mixer at a dance-off to have you on board.
-                                            By joining our waitlist, you're not just signing up; you're joining an exclusive club of anticipation enthusiasts.
+                                            By joining our waitlist, you're not just signing up, you're joining an exclusive club of anticipation enthusiasts.
                                              Get ready for VIP access to upcoming events, product launches, and top-secret construction shenanigans.</div>
                                         <div class="p-left-section5">Stay ahead of the curve, connect with fellow industry aficionados, and be the first to experience what's on the horizon.
                                             Join our waitlist today, and together, we'll continue to build the future, one hilarious construction-themed moment at a time.</div>
 
                                         <div class="form-left-section5">
                                             <div class="champ1">
-                                                <label>What shall we call you?<b> Your full name</b> , please. We promise we won't use it for secret handshakes.
-                                                    <span class="required">*</span></label>
+                                                <label>What shall we call you?<b> Your full name</b> , please. We promise we won't use it for secret handshakes.<span class="required">*</span></label>
                                                 <input type="text" id="name" name="name" placeholder="Enter name" required>
                                             </div>
                                             <div class="champ2">
-                                                <label>Your <b>email</b>, the one that's not hiding in the spam folder, please.
-                                                    <span class="required">*</span></label>
+                                                <label>Your <b>email</b>, the one that's not hiding in the spam folder, please.<span class="required">*</span></label>
                                                 <input type="email" id="email" name="email" placeholder="Enter email" required>
                                             </div>
                                             <div class="champ2">
-                                                <label>Your <b>phone number</b> (in case we need to wake you up for an exciting opportunity).
-                                                    <span class="required">*</span></label>
+                                                <label>Your <b>phone number</b> (in case we need to wake you up for an exciting opportunity).<span class="required">*</span></label>
                                                 <input type="text" id="phone" name="phone" placeholder="Enter phone number" required>
                                             </div>
                                             <div class="champ2">
                                                 <label><b>Where do you work</b>? Or, if you're the CEO of 'Your Living Room,' that's cool too!
-                                                    </span></label>
+                                                </label>
                                                 <input type="text" id="work" name="work" placeholder="Enter work " >
                                             </div>
                                             <div class="champ2">
                                                 <label>Your <b>job title</b>, because we know you're not just another Office Ninja
-                                                   </span></label>
+                                                </label>
                                                 <input type="text" id="job" name="job" placeholder="Enter job title" >
                                             </div>
                                             <div class="champ2">
                                                 <label><b>Where are you located</b>? Don't worry, we won't send a construction crew to your backyard...unless you want us to?
-                                                    </span></label>
+                                                </label>
                                                 <input type="text" id="location" name="location" placeholder="Enter location" >
                                             </div>
                                             <div class="champ2">
                                                 <label><b>Anything else you'd like to share</b>? Your favorite construction pun, perhaps?
-                                                    </span></label>
+                                                </label>
                                                 <input type="text" id="info" name="info" placeholder="Enter your answer">
                                             </div>
                                             <div class="champ4">
