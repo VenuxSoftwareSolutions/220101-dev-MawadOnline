@@ -52,7 +52,7 @@ class HomeController extends Controller
         });
 
         return view('frontend.'.get_setting('homepage_select').'.index', compact('featured_categories'));
-        
+
     }
 
     public function load_todays_deal_section()
@@ -776,17 +776,22 @@ class HomeController extends Controller
 
     public function sendWaitlistEmail(Request $request)
     {
-
         $name=$request->name;
         $email=$request->email;
-        $role=$request->role;
+        $phone=$request->phone;
+        $work=$request->work;
+        $job=$request->job;
+        $location=$request->location;
+        $info=$request->info;
         if (isset($request->subscribeNewsletter)) {
             $subscribeNewsletter="yes";
         }else{
             $subscribeNewsletter="no";
         }
 
-         //   Mail::to()->send(new WaitlistApplication($name, $email, $role, $subscribeNewsletter));
+
+
+            Mail::to('amine.abdmouleh@hypergroup.com.tn')->send(new WaitlistApplication($name, $email ,$phone ,$work ,$job ,$location ,$info, $subscribeNewsletter ));
 
             Mail::to($email)->send(new WaitlistUserApplication($name));
 

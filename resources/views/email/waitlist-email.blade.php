@@ -14,6 +14,25 @@
     <link href="{{ asset('public/home_page/css/style.css')}}" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
+    <style>
+.container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding-top: 100%; /* 1:1 Aspect Ratio */
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+</style>
 </head>
 
 
@@ -262,23 +281,78 @@
             </div>
         </section>
 
-            <section id="waitlist" class="Join-The-Waitlist">
-                <div class="container-fluid">
-                    <div class="row flex-section5">
-                    <div class="col-lg-6">
-                    <div class="form-left-section5">
-                                <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSeomLStrYQMs574ydWDQgYqagDUmxK96cx1RfYwPlWnoZyiLA/viewform?embedded=true" width="100%" height="1850" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+                <form action="{{ route('send-waitlist-email') }}" method="post">
+                    @csrf
+                    <section id="waitlist" class="Join-The-Waitlist">
+                        <div class="container-fluid">
+                            <div class="row flex-section5">
+                                <div class="col-lg-6">
+                                    <div class="bloc-left-section5">
+                                        <div class="title-left-section5">Join the MawadOnline Waitlist</div>
+                                        <div class="p-left-section5">Greetings, future construction trendsetter! </div>
+                                        <div class="p-left-section5">If we had a brick for every time someone wanted to join our waitlist, we'd have... well, a lot of bricks. But enough about bricks – let's talk about you!</div>
+                                        <div class="p-left-section5">At MawadOnline, we're as excited as a cement mixer at a dance-off to have you on board.
+                                            By joining our waitlist, you're not just signing up; you're joining an exclusive club of anticipation enthusiasts.
+                                             Get ready for VIP access to upcoming events, product launches, and top-secret construction shenanigans.</div>
+                                        <div class="p-left-section5">Stay ahead of the curve, connect with fellow industry aficionados, and be the first to experience what's on the horizon.
+                                            Join our waitlist today, and together, we'll continue to build the future, one hilarious construction-themed moment at a time.</div>
 
-                    </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="image-right-section5">
-                            <img src="{{ asset('public/home_page/images/Yellow-black-excavator-1.jpg')}}">
+                                        <div class="form-left-section5">
+                                            <div class="champ1">
+                                                <label>What shall we call you?<b> Your full name</b> , please. We promise we won't use it for secret handshakes.
+                                                    <span class="required">*</span></label>
+                                                <input type="text" id="name" name="name" placeholder="Enter name" required>
+                                            </div>
+                                            <div class="champ2">
+                                                <label>Your <b>email</b>, the one that's not hiding in the spam folder, please.
+                                                    <span class="required">*</span></label>
+                                                <input type="email" id="email" name="email" placeholder="Enter email" required>
+                                            </div>
+                                            <div class="champ2">
+                                                <label>Your <b>phone number</b> (in case we need to wake you up for an exciting opportunity).
+                                                    <span class="required">*</span></label>
+                                                <input type="text" id="phone" name="phone" placeholder="Enter phone number" required>
+                                            </div>
+                                            <div class="champ2">
+                                                <label><b>Where do you work</b>? Or, if you're the CEO of 'Your Living Room,' that's cool too!
+                                                    </span></label>
+                                                <input type="text" id="work" name="work" placeholder="Enter work " >
+                                            </div>
+                                            <div class="champ2">
+                                                <label>Your <b>job title</b>, because we know you're not just another Office Ninja
+                                                   </span></label>
+                                                <input type="text" id="job" name="job" placeholder="Enter job title" >
+                                            </div>
+                                            <div class="champ2">
+                                                <label><b>Where are you located</b>? Don't worry, we won't send a construction crew to your backyard...unless you want us to?
+                                                    </span></label>
+                                                <input type="text" id="location" name="location" placeholder="Enter location" >
+                                            </div>
+                                            <div class="champ2">
+                                                <label><b>Anything else you'd like to share</b>? Your favorite construction pun, perhaps?
+                                                    </span></label>
+                                                <input type="text" id="info" name="info" placeholder="Enter your answer">
+                                            </div>
+                                            <div class="champ4">
+                                                <input type="checkbox" id="check-regles" name="check-regles">
+                                                <label for="check-regles"><a href="{{route('terms-and-conditions')}}" target="_blank"> UAE Data protection check if needed (to subscribe to
+                                                    the newsletter and offers)</a></label>
+                                            </div>
+                                            <div class="btn-submit-section5">
+                                                <input type="submit" value="Join Now" name="subscribeNewsletter" style="background:none;border:0;color:white;font-family: 'Prompt-medium';">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="image-right-section5">
+                                        <img src="{{ asset('public/home_page/images/Yellow-black-excavator-1.jpg')}}">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                </div>
-            </section>
+                    </section>
+                </form>
 
 
     </main>
@@ -287,32 +361,6 @@
     </footer>
 
     <script src="public/home_page/js/bootstrap.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $("#buyer-role").click(function () {
-            let role = $(this).val();
-            var buyerButton = document.getElementById('buyer-role');
-            buyerButton.style.backgroundColor = '#C97649';
-            buyerButton.style.color = 'white';
-            var sellerButton = document.getElementById('seller-role');
-            sellerButton.style.backgroundColor = 'white';
-            sellerButton.style.color = '#C97649';
-            $(".role").val("Buyer");
-            });
-
-            $("#seller-role").click(function () {
-            let role = $(this).val();
-            var sellerButton = document.getElementById('seller-role');
-            sellerButton.style.backgroundColor = '#C97649';
-            sellerButton.style.color = 'white';
-            var buyerButton = document.getElementById('buyer-role');
-            buyerButton.style.backgroundColor = 'white';
-            buyerButton.style.color = '#C97649';
-            $(".role").val("Seller");
-            });
-        });
-
-    </script>
 
     <!--  Hotjar Tracking Code for  -->
     <script>
