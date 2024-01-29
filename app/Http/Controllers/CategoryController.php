@@ -14,7 +14,8 @@ use Cache;
 
 class CategoryController extends Controller
 {
-    public function __construct() {
+    public function __construct()
+    {
         // Staff Permission Check
         $this->middleware(['permission:view_product_categories'])->only('index');
         $this->middleware(['permission:add_product_category'])->only('create');
@@ -31,71 +32,68 @@ class CategoryController extends Controller
     {
         $intermidiateparent = [];
         $mycategory_ids = [];
-        $sort_search =null;
-        if (!$request->has('search') || $request->search==''){
-            $categories = Category::where('parent_id','=',1)->with(['childrenCategories'])->orderBy('order_level', 'desc');
+        $sort_search = null;
+        if (!$request->has('search') || $request->search == '') {
+            $categories = Category::where('parent_id', '=', 1)->with(['childrenCategories'])->orderBy('order_level', 'desc');
             $categories = $categories->paginate(50);
-        }
-        else
-        {
+        } else {
             $sort_search = $request->search;
-            $mycategories = Category::where('name', 'like', '%'.$sort_search.'%')->with(['childrenCategories'])->orderBy('order_level', 'desc');
+            $mycategories = Category::where('name', 'like', '%' . $sort_search . '%')->with(['childrenCategories'])->orderBy('order_level', 'desc');
 
             $mycategories = $mycategories->get();
-            foreach($mycategories as  $category){
+            foreach ($mycategories as  $category) {
 
-                 array_push($intermidiateparent,$category->parent_id);
-                $intermidiateparent = array_merge($intermidiateparent,$this->categorygetparents($category->parent_id));
-                foreach($category->childrenCategories as $child){
+                array_push($intermidiateparent, $category->parent_id);
+                $intermidiateparent = array_merge($intermidiateparent, $this->categorygetparents($category->parent_id));
+                foreach ($category->childrenCategories as $child) {
 
-                    array_push($mycategory_ids,$child->id);
+                    array_push($mycategory_ids, $child->id);
                 }
-                array_push($mycategory_ids,$category->id);
+                array_push($mycategory_ids, $category->id);
             }
-           // dd( $intermidiateparent);
-            $categories = Category::whereIn('id',$intermidiateparent)->where('parent_id','=',1)->paginate(100);
+            // dd( $intermidiateparent);
+            $categories = Category::whereIn('id', $intermidiateparent)->where('parent_id', '=', 1)->paginate(100);
         }
 
-        $intermidiateparent_tostring = implode(',',$intermidiateparent);
-        $mycategory_ids_tostring = implode(',',$mycategory_ids);
-        return view('backend.product.categories.index', compact('categories', 'sort_search','intermidiateparent_tostring','mycategory_ids_tostring'));
+        $intermidiateparent_tostring = implode(',', $intermidiateparent);
+        $mycategory_ids_tostring = implode(',', $mycategory_ids);
+        return view('backend.product.categories.index', compact('categories', 'sort_search', 'intermidiateparent_tostring', 'mycategory_ids_tostring'));
     }
-    public function categorygetparents($id){
+    public function categorygetparents($id)
+    {
         $category = Category::find($id);
         $emptyarray = [];
-        if($category->parent_id!=0){
-             array_push($emptyarray,$category->parent_id);
-            return array_merge( $emptyarray,    $this->categorygetparents($category->parent_id));
+        if ($category->parent_id != 0) {
+            array_push($emptyarray, $category->parent_id);
+            return array_merge($emptyarray,    $this->categorygetparents($category->parent_id));
         }
         return [];
-
     }
     public function getsubcategories(Request $request)
     {
-        if($request->searchablestring=='')
-        $categories =  Category::where('parent_id','=',$request->id)->with('childrenCategories')->get();
-        else
-        {
-            $mycategory_ids = explode(',',$request->mycategory_ids);
-            $myintermidiateparent = explode(',',$request->intermidiateparent);
+        if ($request->searchablestring == '')
+            $categories =  Category::where('parent_id', '=', $request->id)->with('childrenCategories')->get();
+        else {
+            $mycategory_ids = explode(',', $request->mycategory_ids);
+            $myintermidiateparent = explode(',', $request->intermidiateparent);
 
-            $categories= Category::where('parent_id','=',$request->id)
-            ->whereIn('id',array_merge($myintermidiateparent,$mycategory_ids))
+            $categories = Category::where('parent_id', '=', $request->id)
+                ->whereIn('id', array_merge($myintermidiateparent, $mycategory_ids))
 
-            ->with('childrenCategories')//,function($q)use($mycategory_ids,$myintermidiateparent){$q->whereIn('id',array_merge($myintermidiateparent,$mycategory_ids));})
-            ->get();
-
+                ->with('childrenCategories') //,function($q)use($mycategory_ids,$myintermidiateparent){$q->whereIn('id',array_merge($myintermidiateparent,$mycategory_ids));})
+                ->get();
         }
         $classes = $request->classes;
         $level = 0;
-        if(count($categories)>0){
+        if (count($categories) > 0) {
             $level = $this->getlevelcategory($categories[0]);
         }
-        return view('backend.product.categories.list-subcategories', ['categories'=>$categories,'level'=>$level,'classes'=>$classes]);
+        return view('backend.product.categories.list-subcategories', ['categories' => $categories, 'level' => $level, 'classes' => $classes]);
     }
-    private function getlevelcategory($category){
-        $level= 0;
-        if($category->parent_id!=0){
+    private function getlevelcategory($category)
+    {
+        $level = 0;
+        if ($category->parent_id != 0) {
             $level++;
             $level += $this->getlevelcategory(Category::find($category->parent_id));
         }
@@ -109,41 +107,52 @@ class CategoryController extends Controller
     public function create(Request $request,)
     {
         $lang = $request->lang;
-        $categories = Category::where('parent_id', 1)
-            ->where('digital', 0)
-            ->with('childrenCategories')
-            ->get();
 
-        return view('backend.product.categories.create', compact('categories', 'lang'));
+        $categories = Cache::get('categories_children');
+        if (isset($categories)) {
+            return view('backend.product.categories.create', compact('categories', 'lang'));
+        } else {
+            $categories = Category::where('parent_id', 1)
+                ->where('digital', 0)
+                ->with('childrenCategories')
+                ->get();
+
+            return view('backend.product.categories.create', compact('categories', 'lang'));
+        }
     }
 
-    public function fetch_category_attribute(Request $request){
+    public function fetch_category_attribute(Request $request)
+    {
         $parent = Category::find($request->category_id);
         $expected_ids = [];
-        if($parent?->parent_id!="0"){
+        if ($parent?->parent_id != "0") {
             $expected_ids = $this->getexpected_ids($parent);
         }
         /* if($parent){
             $parent->categories_attributes
         }
         $category_attributes =Attribute::where(function())*/
-        return Attribute::whereNotIn('id',$expected_ids)->get();
+        return Attribute::whereNotIn('id', $expected_ids)->get();
     }
-    public function fetch_parent_attribute(Request $request){
+    public function fetch_parent_attribute(Request $request)
+    {
         $parent = Category::find($request->category_id);
         $expected_ids = [];
-        if($parent?->parent_id!="0"){
+        if ($parent?->parent_id != "0") {
             $expected_ids = $this->getexpected_ids($parent);
         }
-        return Attribute::whereIn('id',$expected_ids)->get();
+        return Attribute::whereIn('id', $expected_ids)->get();
     }
 
-    public function getexpected_ids($categorie){
+    public function getexpected_ids($categorie)
+    {
         $ids = $categorie?->categories_attributes()->pluck('attribute_id')->toArray() ?? [];
-        if($categorie?->parent_id!="0" && $categorie){
+        if ($categorie?->parent_id != "0" && $categorie) {
             $cat = Category::find($categorie?->parent_id);
-            $ids = array_merge($ids,
-            $this->getexpected_ids($cat));
+            $ids = array_merge(
+                $ids,
+                $this->getexpected_ids($cat)
+            );
         }
         return $ids;
     }
@@ -156,18 +165,19 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $validationaray = [];
-        foreach (get_all_active_language() as $key => $language){
-            $langcode =  $language->code=='en'? '': '_'.$language->code;
-            $length =  $language->code=='en'? 60: 110;
-            $validationaray = array_merge($validationaray,
-                ['name'.$langcode => 'required|unique:category_translations,name|max:'.$length, 'description'.$langcode  => 'required']
+        foreach (get_all_active_language() as $key => $language) {
+            $langcode =  $language->code == 'en' ? '' : '_' . $language->code;
+            $length =  $language->code == 'en' ? 60 : 110;
+            $validationaray = array_merge(
+                $validationaray,
+                ['name' . $langcode => 'required|unique:category_translations,name|max:' . $length, 'description' . $langcode  => 'required']
             );
         }
-        array_merge($validationaray, [ 'digital'=>'required']);
-        if($request->featured == 'on'){
-            $validationaray = array_merge($validationaray,['cover_image' => 'required','parent_id' => 'not_in:0']);
-        }else{
-            $validationaray = array_merge($validationaray,['parent_id' => 'not_in:0']);
+        array_merge($validationaray, ['digital' => 'required']);
+        if ($request->featured == 'on') {
+            $validationaray = array_merge($validationaray, ['cover_image' => 'required', 'parent_id' => 'not_in:0']);
+        } else {
+            $validationaray = array_merge($validationaray, ['parent_id' => 'not_in:0']);
         }
 
         $request->validate($validationaray);
@@ -175,12 +185,12 @@ class CategoryController extends Controller
         $category = new Category;
         $category->name = $request->name;
         $category->order_level = 0;
-        if($request->order_level != null) {
+        if ($request->order_level != null) {
             $category->order_level = $request->order_level;
         }
         $category->digital = $request->digital;
-        $category->banner = $request->cover_image;//$request->banner;
-        $category->icon = $request->cover_image;//$request->icon;
+        $category->banner = $request->cover_image; //$request->banner;
+        $category->icon = $request->cover_image; //$request->icon;
         $category->cover_image = $request->cover_image;
         $category->meta_title = $request->meta_title;
         $category->meta_description = $request->meta_description;
@@ -189,13 +199,12 @@ class CategoryController extends Controller
             $category->parent_id = $request->parent_id;
 
             $parent = Category::find($request->parent_id);
-            $category->level = $parent->level + 1 ;
+            $category->level = $parent->level + 1;
         }
 
         if ($request->slug != null) {
             $category->slug = strtolower(reg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->slug)));
-        }
-        else {
+        } else {
             $category->slug = strtolower(preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->name)));
         }
         if ($request->commision_rate != null) {
@@ -207,16 +216,16 @@ class CategoryController extends Controller
         $category->attributes()->sync($request->filtering_attributes);
         $category->categories_attributes()->sync($request->category_attributes);
 
-        foreach (get_all_active_language() as $key => $language){
+        foreach (get_all_active_language() as $key => $language) {
             $category_translation = CategoryTranslation::firstOrNew(['lang' => $language->code, 'category_id' => $category->id]);
-            $prefixlang = $language->code==env('DEFAULT_LANGUAGE') ? '' : '_'.$language->code;
-            $attribute = 'name'.$prefixlang;
+            $prefixlang = $language->code == env('DEFAULT_LANGUAGE') ? '' : '_' . $language->code;
+            $attribute = 'name' . $prefixlang;
             $category_translation->name = $request->$attribute;
-            $attribute = 'description'.$prefixlang;
+            $attribute = 'description' . $prefixlang;
             $category_translation->description = $request->$attribute;
-            $attribute = 'meta_title'.$prefixlang;
+            $attribute = 'meta_title' . $prefixlang;
             $category_translation->meta_title = $request->$attribute;
-            $attribute = 'meta_description'.$prefixlang;
+            $attribute = 'meta_description' . $prefixlang;
             $category_translation->meta_description = $request->$attribute;
             $category_translation->save();
         }
@@ -261,13 +270,13 @@ class CategoryController extends Controller
         $categories = Category::where('parent_id', 0)
             ->where('digital', $category->digital)
             ->with('childrenCategories')
-            ->whereNotIn('id', CategoryUtility::children_ids($category->id, true))->where('id', '!=' , $category->id)
-            ->orderBy('name','asc')
+            ->whereNotIn('id', CategoryUtility::children_ids($category->id, true))->where('id', '!=', $category->id)
+            ->orderBy('name', 'asc')
             ->get();
 
         $category_attributes = $category->categories_attributes()->pluck('attribute_id');
         $category_filtring_attributes = $category->attributes()->pluck('attribute_id');
-        return view('backend.product.categories.edit', compact('category', 'categories', 'lang','category_attributes','category_filtring_attributes'));
+        return view('backend.product.categories.edit', compact('category', 'categories', 'lang', 'category_attributes', 'category_filtring_attributes'));
     }
 
     /**
@@ -280,10 +289,10 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         $category = Category::findOrFail($id);
-        if($request->lang == env("DEFAULT_LANGUAGE")){
+        if ($request->lang == env("DEFAULT_LANGUAGE")) {
             $category->name = $request->name;
         }
-        if($request->order_level != null) {
+        if ($request->order_level != null) {
             $category->order_level = $request->order_level;
         }
         $category->digital = $request->digital;
@@ -295,29 +304,26 @@ class CategoryController extends Controller
 
         $previous_level = $category->level;
 
-        if ($request->parent_id != "0" && $request->parent_id!=null) {
+        if ($request->parent_id != "0" && $request->parent_id != null) {
             $category->parent_id = $request->parent_id;
 
             $parent = Category::find($request->parent_id);
-            $category->level = $parent->level + 1 ;
-        }
-        else{
+            $category->level = $parent->level + 1;
+        } else {
             $category->parent_id = 0;
             $category->level = 0;
         }
 
-        if($category->level > $previous_level){
+        if ($category->level > $previous_level) {
             CategoryUtility::move_level_down($category->id);
-        }
-        elseif ($category->level < $previous_level) {
+        } elseif ($category->level < $previous_level) {
             CategoryUtility::move_level_up($category->id);
         }
 
         if ($request->slug != null) {
             $category->slug = strtolower($request->slug);
-        }
-        else {
-            $category->slug = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->name)).'-'.Str::random(5);
+        } else {
+            $category->slug = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->name)) . '-' . Str::random(5);
         }
 
 
@@ -387,5 +393,39 @@ class CategoryController extends Controller
             ->get();
 
         return view('backend.product.categories.categories_option', compact('categories'));
+    }
+
+
+    public function getCategoriesTree()
+    {
+
+        $categories = Cache::get('categories_children');
+        if (isset($categories)) {
+            return response()->json($categories);
+        } else {
+            $categories = Category::with('childrenCategories')->where('parent_id', 0)->get();
+            return response()->json($this->formatCategoriesForSelect2($categories));
+        }
+    }
+
+
+    private function formatCategoriesForSelect2($categories, $depth = 0)
+    {
+        $formatted = [];
+        foreach ($categories as $category) {
+            $formattedCategory = [
+                'id' => $category->id,
+                'text' => str_repeat('-', $depth) . $category->name,
+            ];
+            if ($category->childrenCategories->isNotEmpty()) {
+                $formattedCategory['children'] = $this->formatCategoriesForSelect2($category->childrenCategories, $depth + 1);
+            }
+
+            $formatted[] = $formattedCategory;
+        }
+
+        Cache::put('categories_children', $formatted, 60 * 24 * 15);
+
+        return $formatted;
     }
 }

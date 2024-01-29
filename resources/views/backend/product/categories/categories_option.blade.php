@@ -1,7 +1,7 @@
-<!--<option value="0">{{ translate('No Parent') }}</option>-->
 @foreach ($categories as $category)
-    <option @if(old('parent_id') == $category->id) selected @endif value="{{ $category->id }}">{{ $category->getTranslation('name') }}</option>
-    @foreach ($category->childrenCategories as $childCategory)
-        @include('categories.child_category', ['child_category' => $childCategory])
-    @endforeach
+    <option value="{{ $category['id'] }}">{{ $category['text'] }}</option>
+
+    @if(!empty($category['children']))
+        @include('backend.product.categories.categories_option', ['categories' => $category['children']])
+    @endif
 @endforeach

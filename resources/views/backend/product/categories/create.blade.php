@@ -129,14 +129,10 @@
                         <div class="col-md-9">
                             <select  required class="select2 form-control aiz-selectpicker" id="selected_parent_id" name="parent_id" data-toggle="select2" data-placeholder="Choose ..." data-live-search="true"
                                 onchange="load_categories_attributes()">
-                                @include('backend.product.categories.categories_option', ['categories' => $categories])
-                                {{-- <option value="0">{{ translate('No Parent') }}</option>
-                                @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->getTranslation('name') }}</option>
-                                    @foreach ($category->childrenCategories as $childCategory)
-                                        @include('categories.child_category', ['child_category' => $childCategory])
-                                    @endforeach
-                                @endforeach --}}
+                               
+                                        @include('backend.product.categories.categories_option', ['categories' => $categories])
+                                 
+
                             </select>
                         </div>
                     </div>
