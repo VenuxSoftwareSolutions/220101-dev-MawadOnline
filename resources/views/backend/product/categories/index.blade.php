@@ -38,11 +38,11 @@
                 <tr>
                     <th>{{translate('Name')}}</th>
                     <th data-breakpoints="lg">{{ translate('Parent Category') }}</th>
-                    <th data-breakpoints="lg">{{ translate('Order Level') }}</th>
+                    <th data-breakpoints="lg">{{ translate('order_level') }}</th>
                     <th data-breakpoints="lg">{{ translate('Level') }}</th>
                     <!--<th data-breakpoints="lg">{{translate('Banner')}}</th>
                     <th data-breakpoints="lg">{{translate('Icon')}}</th>-->
-                    <th data-breakpoints="lg">{{translate('Cover Image')}}</th>
+                    <th data-breakpoints="lg">{{translate('cover_image')}}</th>
                     <th data-breakpoints="lg">{{translate('Featured')}}</th>
                     <th data-breakpoints="lg">{{translate('Commission')}}</th>
                     <th width="10%" class="text-right">{{translate('Options')}}</th>

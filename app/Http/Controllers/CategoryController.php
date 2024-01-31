@@ -34,12 +34,12 @@ class CategoryController extends Controller
         $mycategory_ids = [];
         $sort_search = null;
         if (!$request->has('search') || $request->search == '') {
-            $categories = Category::where('parent_id', '=', 1)->with(['childrenCategories'])->orderBy('order_level', 'desc');
+            $categories = Category::where('parent_id', '=', 0)->with(['childrenCategories'])->orderBy('order_level', 'asc');
             $categories = $categories->paginate(50);
         } else {
             $sort_search = $request->search;
-            $mycategories = Category::where('name', 'like', '%' . $sort_search . '%')->with(['childrenCategories'])->orderBy('order_level', 'desc');
-
+            $mycategories = Category::where('name', 'like', '%' . $sort_search . '%')->with(['childrenCategories'])->orderBy('order_level', 'asc');
+            
             $mycategories = $mycategories->get();
             foreach ($mycategories as  $category) {
 
@@ -71,6 +71,7 @@ class CategoryController extends Controller
     }
     public function getsubcategories(Request $request)
     {
+        $keyword = $request->searchablestring;
         if ($request->searchablestring == '')
             $categories =  Category::where('parent_id', '=', $request->id)->with('childrenCategories')->get();
         else {
@@ -81,7 +82,10 @@ class CategoryController extends Controller
                 ->whereIn('id', array_merge($myintermidiateparent, $mycategory_ids))
 
                 ->with('childrenCategories') //,function($q)use($mycategory_ids,$myintermidiateparent){$q->whereIn('id',array_merge($myintermidiateparent,$mycategory_ids));})
-                ->get();
+                ->get() ->map(function ($row) use ($keyword) {
+                    $row->name = preg_replace('/(' . $keyword . ')/i', "<b style=background-color:yellow>$1</b>", $row->name);
+                    return $row;
+                });
         }
         $classes = $request->classes;
         $level = 0;
