@@ -72,21 +72,21 @@
             <div class="blocs-section2">
                 <div class="bloc1">
                     <div class="box">
-                        <div class="icon-box"><img src="{{ asset('public/home_page/images/shop 1.svg')}}"></div>
+                        <div class="icon-box"><img src="{{ asset('public/home_page/images/Shop.svg')}}"></div>
                         <div class="content-box">
                             <div class="title-box">Shop what you need, when you need it</div>
                             <div class="p-box">Our marketplace is available 24/7</div>
                         </div>
                     </div>
                     <div class="box">
-                        <div class="icon-box"><img src="{{ asset('public/home_page/images/time 1.svg')}}"></div>
+                        <div class="icon-box"><img src="{{ asset('public/home_page/images/Time.svg')}}"></div>
                         <div class="content-box">
                             <div class="title-box">Save Time</div>
                             <div class="p-box">No more time wasting time navigating hundreds of websites</div>
                         </div>
                     </div>
                     <div class="box">
-                        <div class="icon-box"><img src="{{ asset('public/home_page/images/choice 2.svg')}}"></div>
+                        <div class="icon-box"><img src="{{ asset('public/home_page/images/choices.svg')}}"></div>
                         <div class="content-box">
                             <div class="title-box">Make informed choices</div>
                             <div class="p-box">Compare prices and read reviews to make better business decisions.</div>
@@ -94,7 +94,7 @@
                     </div>
 
                     <div class="box">
-                        <div class="icon-box"><img src="{{ asset('public/home_page/images/need 1.svg')}}"></div>
+                        <div class="icon-box"><img src="{{ asset('public/home_page/images/need.svg')}}"></div>
                         <div class="content-box">
                             <div class="title-box">Order exactly what you need</div>
                             <div class="p-box">Order quantities that match your project needs</div>
@@ -103,28 +103,28 @@
                 </div>
                 <div class="bloc1">
                     <div class="box">
-                        <div class="icon-box"><img src="{{ asset('public/home_page/images/certified 1.svg')}}"></div>
+                        <div class="icon-box"><img src="{{ asset('public/home_page/images/Purchase.svg')}}"></div>
                         <div class="content-box">
                             <div class="title-box">Purchase with a peace of mind</div>
                             <div class="p-box">Only vetted sellers and certified products</div>
                         </div>
                     </div>
                     <div class="box">
-                        <div class="icon-box"><img src="{{ asset('public/home_page/images/delivery 1.svg')}}"></div>
+                        <div class="icon-box"><img src="{{ asset('public/home_page/images/delivery.svg')}}"></div>
                         <div class="content-box">
                             <div class="title-box">Enjoy swift deliveries</div>
                             <div class="p-box">Fast deliveries with real-time tracking & updates</div>
                         </div>
                     </div>
                     <div class="box">
-                        <div class="icon-box"><img src="{{ asset('public/home_page/images/chart 1.svg')}}"></div>
+                        <div class="icon-box"><img src="{{ asset('public/home_page/images/chart.svg')}}"></div>
                         <div class="content-box">
                             <div class="title-box">Get clear insights</div>
                             <div class="p-box">Get quick insights into your orders.</div>
                         </div>
                     </div>
                     <div class="box">
-                        <div class="icon-box"><img src="{{ asset('public/home_page/images/transactions 1.svg')}}"></div>
+                        <div class="icon-box"><img src="{{ asset('public/home_page/images/transactions.svg')}}"></div>
                         <div class="content-box">
                             <div class="title-box">Track your transactions </div>
                             <div class="p-box">View purchases, receipts & invoices any time</div>
