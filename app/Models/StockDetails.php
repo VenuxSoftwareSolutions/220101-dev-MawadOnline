@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class StockDetails extends Model
 {
-    use HasFactory;
+    const OPERATION_TYPE_ADDITION = 'Stock addition';
+    const OPERATION_TYPE_REMOVAL = 'Stock removal';
 
     protected $fillable = [
         'operation_type', 'variant_id', 'warehouse_id',
