@@ -38,13 +38,14 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
 
          // Stocks
       Route::controller(StockController::class)->group(function () {
-        Route::get('/stocks', [StockController::class, 'index'])->name('seller.stocks.index');
+        Route::get('/stocks', [StockController::class, 'index'])->name('stocks.index');
         Route::post('/save-inventory-record', 'saveRecord')->name('save.inventory.record');
         Route::post('/add-remove-stock', 'storeAddRemoveStock')->name('stock.add_remove');
         Route::post('/inventory/check', 'checkInventory')->name('inventory.check');
         Route::get('/export-stock', 'export')->name('stocks.export');
         Route::get('/stock-operation-report', 'stockOperationReport')->name('stock.operation.report');
         Route::get('/stock-details/search', [StockController::class, 'searchStockDetails'])->name('stock.search');
+
 
     }) ;
 
