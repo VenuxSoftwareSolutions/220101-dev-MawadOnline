@@ -14,25 +14,6 @@
     <link href="{{ asset('public/home_page/css/style.css')}}" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-    <style>
-.container {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-  padding-top: 100%; /* 1:1 Aspect Ratio */
-}
-
-.responsive-iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
-}
-</style>
 </head>
 
 
@@ -41,7 +22,7 @@
         <nav class="navbar top-nav navbar-expand-lg">
             <div class="header-top">
                 <div class="logo">
-                    <a class="logo-brand" href="#"><img src="{{ asset('public/home_page/images/MawadLogo.png')}}"></a>
+                    <a class="logo-brand" href="{{route('home')}}"><img class="logo-image" src="{{ asset('public/home_page/images/MawadLogo.png')}}"></a>
                 </div>
                 <div class="nav-menu nav-mobile">
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -91,21 +72,21 @@
             <div class="blocs-section2">
                 <div class="bloc1">
                     <div class="box">
-                        <div class="icon-box"><img src="{{ asset('public/home_page/images/shop 1.svg')}}"></div>
+                        <div class="icon-box"><img src="{{ asset('public/home_page/images/Shop.svg')}}"></div>
                         <div class="content-box">
                             <div class="title-box">Shop what you need, when you need it</div>
                             <div class="p-box">Our marketplace is available 24/7</div>
                         </div>
                     </div>
                     <div class="box">
-                        <div class="icon-box"><img src="{{ asset('public/home_page/images/time 1.svg')}}"></div>
+                        <div class="icon-box"><img src="{{ asset('public/home_page/images/Time.svg')}}"></div>
                         <div class="content-box">
                             <div class="title-box">Save Time</div>
                             <div class="p-box">No more time wasting time navigating hundreds of websites</div>
                         </div>
                     </div>
                     <div class="box">
-                        <div class="icon-box"><img src="{{ asset('public/home_page/images/choice 2.svg')}}"></div>
+                        <div class="icon-box"><img src="{{ asset('public/home_page/images/choices.svg')}}"></div>
                         <div class="content-box">
                             <div class="title-box">Make informed choices</div>
                             <div class="p-box">Compare prices and read reviews to make better business decisions.</div>
@@ -113,7 +94,7 @@
                     </div>
 
                     <div class="box">
-                        <div class="icon-box"><img src="{{ asset('public/home_page/images/need 1.svg')}}"></div>
+                        <div class="icon-box"><img src="{{ asset('public/home_page/images/need.svg')}}"></div>
                         <div class="content-box">
                             <div class="title-box">Order exactly what you need</div>
                             <div class="p-box">Order quantities that match your project needs</div>
@@ -122,28 +103,28 @@
                 </div>
                 <div class="bloc1">
                     <div class="box">
-                        <div class="icon-box"><img src="{{ asset('public/home_page/images/certified 1.svg')}}"></div>
+                        <div class="icon-box"><img src="{{ asset('public/home_page/images/Purchase.svg')}}"></div>
                         <div class="content-box">
                             <div class="title-box">Purchase with a peace of mind</div>
                             <div class="p-box">Only vetted sellers and certified products</div>
                         </div>
                     </div>
                     <div class="box">
-                        <div class="icon-box"><img src="{{ asset('public/home_page/images/delivery 1.svg')}}"></div>
+                        <div class="icon-box"><img src="{{ asset('public/home_page/images/delivery.svg')}}"></div>
                         <div class="content-box">
                             <div class="title-box">Enjoy swift deliveries</div>
                             <div class="p-box">Fast deliveries with real-time tracking & updates</div>
                         </div>
                     </div>
                     <div class="box">
-                        <div class="icon-box"><img src="{{ asset('public/home_page/images/chart 1.svg')}}"></div>
+                        <div class="icon-box"><img src="{{ asset('public/home_page/images/chart.svg')}}"></div>
                         <div class="content-box">
                             <div class="title-box">Get clear insights</div>
                             <div class="p-box">Get quick insights into your orders.</div>
                         </div>
                     </div>
                     <div class="box">
-                        <div class="icon-box"><img src="{{ asset('public/home_page/images/transactions 1.svg')}}"></div>
+                        <div class="icon-box"><img src="{{ asset('public/home_page/images/transactions.svg')}}"></div>
                         <div class="content-box">
                             <div class="title-box">Track your transactions </div>
                             <div class="p-box">View purchases, receipts & invoices any time</div>
@@ -288,50 +269,39 @@
                             <div class="row flex-section5">
                                 <div class="col-lg-6">
                                     <div class="bloc-left-section5">
-                                        <div class="title-left-section5">Join the MawadOnline Waitlist</div>
-                                        <div class="p-left-section5">Greetings, future construction trendsetter! </div>
-                                        <div class="p-left-section5">If we had a brick for every time someone wanted to join our waitlist, we'd have... well, a lot of bricks. But enough about bricks – let's talk about you!</div>
-                                        <div class="p-left-section5">At MawadOnline, we're as excited as a cement mixer at a dance-off to have you on board.
-                                            By joining our waitlist, you're not just signing up; you're joining an exclusive club of anticipation enthusiasts.
-                                             Get ready for VIP access to upcoming events, product launches, and top-secret construction shenanigans.</div>
-                                        <div class="p-left-section5">Stay ahead of the curve, connect with fellow industry aficionados, and be the first to experience what's on the horizon.
-                                            Join our waitlist today, and together, we'll continue to build the future, one hilarious construction-themed moment at a time.</div>
-
+                                        <div class="title-left-section5">Join MawadOnline Waitlist</div>
                                         <div class="form-left-section5">
                                             <div class="champ1">
-                                                <label>What shall we call you?<b> Your full name</b> , please. We promise we won't use it for secret handshakes.
-                                                    <span class="required">*</span></label>
+                                                <label>Name<span class="required">*</span></label>
                                                 <input type="text" id="name" name="name" placeholder="Enter name" required>
                                             </div>
                                             <div class="champ2">
-                                                <label>Your <b>email</b>, the one that's not hiding in the spam folder, please.
-                                                    <span class="required">*</span></label>
+                                                <label>Email<span class="required">*</span></label>
                                                 <input type="email" id="email" name="email" placeholder="Enter email" required>
                                             </div>
                                             <div class="champ2">
-                                                <label>Your <b>phone number</b> (in case we need to wake you up for an exciting opportunity).
-                                                    <span class="required">*</span></label>
+                                                <label>Phone number<span class="required">*</span></label>
                                                 <input type="text" id="phone" name="phone" placeholder="Enter phone number" required>
                                             </div>
                                             <div class="champ2">
-                                                <label><b>Where do you work</b>? Or, if you're the CEO of 'Your Living Room,' that's cool too!
-                                                    </span></label>
-                                                <input type="text" id="work" name="work" placeholder="Enter work " >
+                                                <label>Work base
+                                                </label>
+                                                <input type="text" id="work" name="work" placeholder="Enter work base " >
                                             </div>
                                             <div class="champ2">
-                                                <label>Your <b>job title</b>, because we know you're not just another Office Ninja
-                                                   </span></label>
+                                                <label>Job title
+                                                </label>
                                                 <input type="text" id="job" name="job" placeholder="Enter job title" >
                                             </div>
                                             <div class="champ2">
-                                                <label><b>Where are you located</b>? Don't worry, we won't send a construction crew to your backyard...unless you want us to?
-                                                    </span></label>
+                                                <label>Location
+                                                </label>
                                                 <input type="text" id="location" name="location" placeholder="Enter location" >
                                             </div>
                                             <div class="champ2">
-                                                <label><b>Anything else you'd like to share</b>? Your favorite construction pun, perhaps?
-                                                    </span></label>
-                                                <input type="text" id="info" name="info" placeholder="Enter your answer">
+                                                <label>Comments
+                                                </label>
+                                                <textarea id="info" placeholder="Comments" name="info"></textarea>
                                             </div>
                                             <div class="champ4">
                                                 <input type="checkbox" id="check-regles" name="check-regles">
