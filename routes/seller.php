@@ -38,7 +38,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
 
          // Stocks
       Route::controller(StockController::class)->group(function () {
-        Route::get('/stocks', [StockController::class, 'index'])->name('stocks.index');
+        Route::get('/stocks','index')->name('stocks.index');
         Route::post('/save-inventory-record', 'saveRecord')->name('save.inventory.record');
         Route::post('/add-remove-stock', 'storeAddRemoveStock')->name('stock.add_remove');
         Route::post('/inventory/check', 'checkInventory')->name('inventory.check');
