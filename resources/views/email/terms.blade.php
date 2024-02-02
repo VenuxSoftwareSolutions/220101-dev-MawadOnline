@@ -22,7 +22,8 @@
         <nav class="navbar top-nav navbar-expand-lg">
             <div class="header-top">
                 <div class="logo">
-                    <a class="logo-brand" href="{{route('home')}}"><img src="{{ asset('public/home_page/images/MawadLogo.png')}}"></a>
+                    <a class="logo-brand" href="{{ route('home') }}"><img class="logo-image"
+                            src="{{ asset('public/home_page/images/MawadLogo1.png') }}"></a>
                 </div>
                 <div class="nav-menu nav-mobile">
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
