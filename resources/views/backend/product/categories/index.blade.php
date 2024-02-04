@@ -229,8 +229,8 @@
                     var buttonsWithAttribute = document.querySelectorAll('button[data-expand]');
 
                     buttonsWithAttribute.forEach(function(button) {
-                        //if(button.getAttribute('data-expand')=='close')
-                        //button.click();
+                        if(button.getAttribute('data-expand')=='close')
+                        button.click();
                     });
 
                     // Increment the check count
@@ -244,10 +244,11 @@
                 }
 
                 // Set an interval to check the buttons every 5 seconds
-                var intervalId = setInterval(checkButtons, 2000);
+                var intervalId = setInterval(checkButtons, 5000);
 
                 // Run the initial check immediately
-                checkButtons();
+                setTimeout(checkButtons(), 5000);
+
             }
 
         });
