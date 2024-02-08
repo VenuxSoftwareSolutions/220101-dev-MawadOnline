@@ -127,7 +127,7 @@
                     <div class="form-group row  not-translatable">
                         <label class="col-md-3 col-form-label">{{translate('Parent Category')}}</label>
                         <div class="col-md-9">
-                            <select  required class="select2 form-control aiz-selectpicker" id="selected_parent_id" name="parent_id" data-toggle="select2" data-placeholder="Choose ..." data-live-search="true"
+                            <select  class="select2 form-control aiz-selectpicker" id="selected_parent_id" name="parent_id" data-toggle="select2" data-placeholder="Choose ..." data-live-search="true"
                                 onchange="load_categories_attributes()">
                                
                                         @include('backend.product.categories.categories_option', ['categories' => $categories])

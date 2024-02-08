@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\CategoryTranslation;
 use App\Utility\CategoryUtility;
+use Auth;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Str;
 use Cache;
@@ -23,6 +24,139 @@ class CategoryController extends Controller
         $this->middleware(['permission:delete_product_category'])->only('destroy');
     }
 
+
+
+    /**
+     * Fetches categories based on the provided request.
+     *
+     * @param Request $request the request object
+     * @return JsonResponse
+     */
+    public function fetchCategories(Request $request)
+    {
+        $formattedCategories = Cache::get('categories_children');
+        if($request->has("search") && !empty($request->search['value'])) {
+            $searchResults = $this->searchAndHighlightCategory($formattedCategories, $request->search['value']);
+            return response()->json(['data' => $searchResults]);
+        }
+        if (isset($formattedCategories)) {
+            return response()->json(['data' => $formattedCategories]);
+        } else {
+            $parentId = $request->input('parent_id', 0); // Default to fetching top-level categories
+
+            $categories = Category::where('parent_id', $parentId)->get();
+
+            $formattedCategories = $this->formatCategories($categories);
+
+            return response()->json(['data' => $formattedCategories]);
+        }
+    }
+
+    /**
+     * Search and highlight the specified search term within the given categories.
+     *
+     * @param array $categories The array of categories to search within.
+     * @param string $searchTerm The term to search for within the categories.
+     * @param string $highlightStartTag The starting tag for highlighting the search term (default: '<mark>').
+     * @param string $highlightEndTag The ending tag for highlighting the search term (default: '</mark>').
+     * @return array The array of categories with the search term highlighted.
+     */
+    public function searchAndHighlightCategory($categories, $searchTerm, $highlightStartTag = '<mark>', $highlightEndTag = '</mark>') {
+        $result = [];
+        
+        foreach ($categories as $category) {
+            $hasMatch = false;
+            // Check if current category name contains the search term
+            if (stripos($category['name'], $searchTerm) !== false) {
+                // Highlight the search term within the name
+                $category['name'] = preg_replace("/($searchTerm)/i", "$highlightStartTag$1$highlightEndTag", $category['name']);
+                $hasMatch = true;
+            }
+            
+            // If the category has children, search within the children recursively
+            if (!empty($category['children'])) {
+                $searchedChildren = $this->searchAndHighlightCategory($category['children'], $searchTerm, $highlightStartTag, $highlightEndTag);
+                if (!empty($searchedChildren)) {
+                    $category['children'] = $searchedChildren;
+                    $hasMatch = true; // There's a match in the children
+                }
+            }
+            
+            // If a match is found in the current category or any of its children, add it to the result
+            if ($hasMatch) {
+                $result[] = $category;
+            }
+        }
+        
+        return $result;
+    }
+
+    /**
+     * Format the categories for display in a hierarchical structure.
+     *
+     * @param array $categories The categories to be formatted
+     * @param int $level The nesting level of the categories
+     * @param int $parentId The parent category ID
+     * @return array The formatted categories
+     */
+
+    protected function formatCategories($categories, $level = 0, $parentId = 0)
+    {
+        $formatted = [];
+        foreach ($categories as $category) {
+            // Check if the category has children
+            $hasChildren = $category->childrenCategories()->exists();
+            $parentCategoryName = $category->parent ? $category->parent->name : null;
+    
+            // Check permissions for the current user on this category
+            $canEdit = auth()->user()->can('edit_product_category', $category);
+            $canDelete = auth()->user()->can('delete_product_category', $category);
+    
+            // Generate URLs for edit and delete actions
+            $editUrl = $canEdit ? route('categories.edit', ['id' => $category->id, 'lang' => app()->getLocale()]) : null;
+            $deleteUrl = $canDelete ? route('categories.destroy', $category->id) : null;
+    
+            // Initialize the formatted category
+            $formattedCategory = [
+                'DT_RowId' => (string)$category->id,
+                'id' => $category->id,
+                'level' => $level,
+                'key' => (string)$category->id,
+                'parent' => $parentId,
+                'order_level' => $category->order_level,
+                'cover_image' => $category->cover_image,
+                'commision_rate' => $category->commision_rate,
+                'cat_level' => $category->level,
+                'featured' => $category->featured,
+                'parentName' => $parentCategoryName,
+                'name' => $category->name,
+                'value' => 0,
+                'hasChildren' => $hasChildren,
+                'can_edit' => $canEdit,
+                'can_delete' => $canDelete,
+                'edit_url' => $editUrl,
+                'delete_url' => $deleteUrl,
+                'children' => [] // Add a 'children' key for nesting
+            ];
+    
+            // If the category has children, fetch and format them
+            if ($hasChildren) {
+                $children = $category->childrenCategories()->get();
+                $formattedCategory['children'] = $this->formatCategories($children, $level + 1, $category->id);
+            }
+    
+            $formatted[] = $formattedCategory;
+        }
+    
+        // Optionally, you might want to cache the top-level categories separately to avoid caching the whole tree every time.
+        if ($level === 0) {
+            Cache::put('categories_children', $formatted, 60 * 24 * 15); // Adjust the cache key/name as necessary
+        }
+    
+        return $formatted;
+    }
+    
+
     /**
      * Display a listing of the resource.
      *
@@ -30,79 +164,13 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $intermidiateparent = [];
-        $mycategory_ids = [];
-        $sort_search = null;
-        if (!$request->has('search') || $request->search == '') {
-            $categories = Category::where('parent_id', '=', 0)->with(['childrenCategories'])->orderBy('order_level', 'asc');
-            $categories = $categories->paginate(50);
-        } else {
-            $sort_search = $request->search;
-            $mycategories = Category::where('name', 'like', '%' . $sort_search . '%')->with(['childrenCategories'])->orderBy('order_level', 'asc');
-            
-            $mycategories = $mycategories->get();
-            foreach ($mycategories as  $category) {
-
-                array_push($intermidiateparent, $category->parent_id);
-                $intermidiateparent = array_merge($intermidiateparent, $this->categorygetparents($category->parent_id));
-                foreach ($category->childrenCategories as $child) {
-
-                    array_push($mycategory_ids, $child->id);
-                }
-                array_push($mycategory_ids, $category->id);
-            }
-            // dd( $intermidiateparent);
-            $categories = Category::whereIn('id', $intermidiateparent)->where('parent_id', '=', 1)->paginate(100);
-        }
-
-        $intermidiateparent_tostring = implode(',', $intermidiateparent);
-        $mycategory_ids_tostring = implode(',', $mycategory_ids);
-        return view('backend.product.categories.index', compact('categories', 'sort_search', 'intermidiateparent_tostring', 'mycategory_ids_tostring'));
+        return view('backend.product.categories.index');
     }
-    public function categorygetparents($id)
-    {
-        $category = Category::find($id);
-        $emptyarray = [];
-        if ($category->parent_id != 0) {
-            array_push($emptyarray, $category->parent_id);
-            return array_merge($emptyarray,    $this->categorygetparents($category->parent_id));
-        }
-        return [];
-    }
-    public function getsubcategories(Request $request)
-    {
-        $keyword = $request->searchablestring;
-        if ($request->searchablestring == '')
-            $categories =  Category::where('parent_id', '=', $request->id)->with('childrenCategories')->get();
-        else {
-            $mycategory_ids = explode(',', $request->mycategory_ids);
-            $myintermidiateparent = explode(',', $request->intermidiateparent);
 
-            $categories = Category::where('parent_id', '=', $request->id)
-                ->whereIn('id', array_merge($myintermidiateparent, $mycategory_ids))
+    
 
-                ->with('childrenCategories') //,function($q)use($mycategory_ids,$myintermidiateparent){$q->whereIn('id',array_merge($myintermidiateparent,$mycategory_ids));})
-                ->get() ->map(function ($row) use ($keyword) {
-                    $row->name = preg_replace('/(' . $keyword . ')/i', "<b style=background-color:yellow>$1</b>", $row->name);
-                    return $row;
-                });
-        }
-        $classes = $request->classes;
-        $level = 0;
-        if (count($categories) > 0) {
-            $level = $this->getlevelcategory($categories[0]);
-        }
-        return view('backend.product.categories.list-subcategories', ['categories' => $categories, 'level' => $level, 'classes' => $classes]);
-    }
-    private function getlevelcategory($category)
-    {
-        $level = 0;
-        if ($category->parent_id != 0) {
-            $level++;
-            $level += $this->getlevelcategory(Category::find($category->parent_id));
-        }
-        return $level;
-    }
+    
+  
     /**
      * Show the form for creating a new resource.
      *
@@ -138,6 +206,7 @@ class CategoryController extends Controller
         $category_attributes =Attribute::where(function())*/
         return Attribute::whereNotIn('id', $expected_ids)->get();
     }
+
     public function fetch_parent_attribute(Request $request)
     {
         $parent = Category::find($request->category_id);
@@ -199,11 +268,13 @@ class CategoryController extends Controller
         $category->meta_title = $request->meta_title;
         $category->meta_description = $request->meta_description;
 
-        if ($request->parent_id != "0") {
+        if ($request->parent_id != "0" && $request->parent_id != null) {
             $category->parent_id = $request->parent_id;
 
             $parent = Category::find($request->parent_id);
             $category->level = $parent->level + 1;
+        }else{
+            $category->level = 0;
         }
 
         if ($request->slug != null) {
@@ -217,9 +288,11 @@ class CategoryController extends Controller
 
         $category->save();
 
+
+
+       
         $category->attributes()->sync($request->filtering_attributes);
         $category->categories_attributes()->sync($request->category_attributes);
-
         foreach (get_all_active_language() as $key => $language) {
             $category_translation = CategoryTranslation::firstOrNew(['lang' => $language->code, 'category_id' => $category->id]);
             $prefixlang = $language->code == env('DEFAULT_LANGUAGE') ? '' : '_' . $language->code;
@@ -245,6 +318,7 @@ class CategoryController extends Controller
         $category_translation->meta_title = $request->meta_title_ar;
         $category_translation->meta_description = $request->meta_description_ar;
         $category_translation->save();*/
+        Cache::forget('categories_children');
 
         flash(translate('Category has been inserted successfully'))->success();
         return redirect()->route('categories.index');
@@ -375,7 +449,7 @@ class CategoryController extends Controller
 
         CategoryUtility::delete_category($id);
         Cache::forget('featured_categories');
-
+        Cache::forget('categories_children');
         flash(translate('Category has been deleted successfully'))->success();
         return redirect()->route('categories.index');
     }
@@ -386,6 +460,7 @@ class CategoryController extends Controller
         $category->featured = $request->status;
         $category->save();
         Cache::forget('featured_categories');
+        Cache::forget('categories_children');
         return 1;
     }
 
@@ -400,36 +475,21 @@ class CategoryController extends Controller
     }
 
 
+
     public function getCategoriesTree()
     {
+        $categories = Category::select('categories.id', 'categories.name', 'categories.parent_id as parentId', 'parent.name as parentName', 'categories.icon', 'categories.order_level', 'categories.level', 'categories.featured')
+            ->leftJoin('categories as parent', 'categories.parent_id', '=', 'parent.id')
+            ->get()
+            ->each(function ($category) {
+                // Assuming you have a method to get the URL for the icon
+                $category->iconUrl = $category->icon ? url('path/to/icons/' . $category->icon) : null;
 
-        $categories = Cache::get('categories_children');
-        if (isset($categories)) {
-            return response()->json($categories);
-        } else {
-            $categories = Category::with('childrenCategories')->where('parent_id', 0)->get();
-            return response()->json($this->formatCategoriesForSelect2($categories));
-        }
-    }
+                // Check permissions for each category
+                $category->canEdit = Auth::user()->can('edit_product_category', $category);
+                $category->canDelete = Auth::user()->can('delete_product_category', $category);
+            });
 
-
-    private function formatCategoriesForSelect2($categories, $depth = 0)
-    {
-        $formatted = [];
-        foreach ($categories as $category) {
-            $formattedCategory = [
-                'id' => $category->id,
-                'text' => str_repeat('-', $depth) . $category->name,
-            ];
-            if ($category->childrenCategories->isNotEmpty()) {
-                $formattedCategory['children'] = $this->formatCategoriesForSelect2($category->childrenCategories, $depth + 1);
-            }
-
-            $formatted[] = $formattedCategory;
-        }
-
-        Cache::put('categories_children', $formatted, 60 * 24 * 15);
-
-        return $formatted;
+        return response()->json($categories);
     }
 }
