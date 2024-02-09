@@ -4,7 +4,7 @@
     <div class="aiz-titlebar mt-2 mb-4">
         <div class="row align-items-center">
             <div class="col-md-6">
-                <h1 class="h3">{{ translate('Add Your Product') }}</h1>
+                <h1 class="h3">{{ translate('Draft add Product') }}</h1>
             </div>
         </div>
     </div>
@@ -33,7 +33,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Product Name')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" name="name" value="{{ old('name') }}" placeholder="{{ translate('Product Name') }}" onchange="update_sku()" >
+                                <input type="text" class="form-control" name="name" value="{{ $product->name }}" placeholder="{{ translate('Product Name') }}" >
                             </div>
                         </div>
                         <div class="form-group row" id="brand">
@@ -42,7 +42,7 @@
                                 <select class="form-control aiz-selectpicker" name="brand_id" id="brand_id" data-live-search="true">
                                     <option value="">{{ translate('Select Brand') }}</option>
                                     @foreach (\App\Models\Brand::all() as $brand)
-                                    <option value="{{ $brand->id }}" @selected(old('brand_id') == $brand->id)>{{ $brand->getTranslation('name') }}</option>
+                                    <option value="{{ $brand->id }}" @selected($product->brand_id == $brand->id)>{{ $brand->getTranslation('name') }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -50,7 +50,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Unit of Sale')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" name="unit" value="{{ old('unit') }}" placeholder="{{ translate('Unit (e.g. KG, Pc etc)') }}" >
+                                <input type="text" class="form-control" name="unit" value="{{ $product->unit }}" placeholder="{{ translate('Unit (e.g. KG, Pc etc)') }}" >
                             </div>
                         </div>
                         <div class="form-group row">
@@ -69,20 +69,20 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Manufacturer')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" name="manufacturer" value="{{ old('manufacturer') }}" placeholder="Manufacturer" >
+                                <input type="text" class="form-control" name="manufacturer" value="{{ $product->manufacturer }}" placeholder="Manufacturer" >
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Tags')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control aiz-tag-input" name="tags[]" placeholder="{{ translate('Type and hit enter to add a tag') }}">
+                                <input type="text" class="form-control aiz-tag-input" value="{{ $product->tags }}" name="tags[]" placeholder="{{ translate('Type and hit enter to add a tag') }}">
                                 <small class="text-muted">{{translate('This is used for search. Input those words by which cutomer can find this product.')}}</small>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Short description')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <textarea class="form-control" name="short_description" id="short_description"></textarea>
+                                <textarea class="form-control" name="short_description" id="short_description">{{ $product->short_description }}</textarea>
                                 <div id="charCountShortDescription">Remaining characters: 512</div>
                             </div>
                         </div>
@@ -90,7 +90,7 @@
                             <label class="col-md-3 col-from-label">{{translate('Show Stock Quantity')}}</label>
                             <div class="col-md-8">
                                 <label class="aiz-switch aiz-switch-success mb-0">
-                                    <input type="checkbox" name="stock_visibility_state" value="1" checked="checked">
+                                    <input type="checkbox" name="stock_visibility_state" value="1" @if( $product->stock_visibility_state == 1) checked="checked" @endif>
                                     <span></span>
                                 </label>
                             </div>
@@ -110,7 +110,7 @@
                             <label class="col-md-3 col-from-label">{{translate('Refundable')}}</label>
                             <div class="col-md-8">
                                 <label class="aiz-switch aiz-switch-success mb-0">
-                                    <input type="checkbox" name="refundable" checked value="1">
+                                    <input type="checkbox" name="refundable" @if($product->refundable == 1) checked @endif>
                                     <span></span>
                                 </label>
                             </div>
@@ -128,14 +128,34 @@
                             <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Gallery Images')}} <small>(1280x1280)</small></label>
                             <div class="col-md-8" id="bloc_photos">
                                 <input type="file" class="dropify" name="main_photos[]" id="photoUpload" accept=".jpeg, .jpg, .png" multiple />
-                                <div id="dropifyUploadedFiles"></div>
+                                <div id="dropifyUploadedFiles">
+                                    @if(count($product->getImagesProduct()) > 0)
+                                        <div class="row">
+                                            @foreach ($product->getImagesProduct() as $image)
+                                                <div class="col-2">
+                                                    <img src="{{ asset('/public/'.$image->path) }}" height="80" width="80" />
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <small>(400x400)</small></label>
                             <div class="col-md-8" id="bloc_thumbnails">
                                 <input type="file" class="dropify" name="photosThumbnail[]" id="photoUploadThumbnail" accept=".jpeg, .jpg, .png" multiple />
-                                <div id="dropifyUploadedFilesThumbnail"></div>
+                                <div id="dropifyUploadedFilesThumbnail">
+                                    @if(count($product->getThumbnailsProduct()) > 0)
+                                        <div class="row">
+                                            @foreach ($product->getThumbnailsProduct() as $image)
+                                                <div class="col-2">
+                                                    <img src="{{ asset('/public/'.$image->path) }}" height="80" width="80" />
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -173,25 +193,62 @@
                                     </tr>
                                 </thead>
                                 <tbody id="bloc_pricing_configuration">
-                                    <tr>
-                                        <td><input type="number" name="from[]" class="form-control min-qty" id=""></td>
-                                        <td><input type="number" name="to[]" class="form-control max-qty" id=""></td>
-                                        <td><input type="number" name="unit_price[]" class="form-control unit-price-variant" id=""></td>
-                                        <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
-                                        <td>
-                                            <select class="form-control discount_type" name="discount_type[]">
-                                                <option value="" disabled selected>{{translate('Choose type')}}</option>
-                                                <option value="amount" @selected(old('discount_type') == 'amount')>{{translate('Flat')}}</option>
-                                                <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
-                                            </select>
-                                        </td>
-                                        <td><input type="number" class="form-control discount_amount" name="discount_amount[]"></td>
-                                        <td><input type="number" class="form-control discount_percentage" name="discount_percentage[]"></td>
-                                        <td>
-                                            <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                            <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
-                                        </td>
-                                    </tr>
+                                    @if(count($product->getPricingConfiguration()) > 0)
+                                        @foreach ($product->getPricingConfiguration() as $pricing)
+                                            <tr>
+                                                <td><input type="number" name="from[]" class="form-control min-qty" id="" value="{{ $pricing->from }}"></td>
+                                                <td><input type="number" name="to[]" class="form-control max-qty" id="" value="{{ $pricing->to }}"></td>
+                                                <td><input type="number" name="unit_price[]" class="form-control unit-price-variant" id="" value="{{ $pricing->unit_price }}"></td>
+                                                @php
+                                                    $date_range = '';
+                                                    if($pricing->discount_start_datetime){
+                                                        $start_date = new DateTime($pricing->discount_start_datetime);
+                                                        $start_date_formatted = $start_date->format('d-m-Y H:i:s');
+
+                                                        $end_date = new DateTime($pricing->discount_end_datetime);
+                                                        $end_date_formatted = $end_date->format('d-m-Y H:i:s');
+
+                                                        $date_range = $start_date_formatted.' to '.$end_date_formatted;
+                                                    }
+                                                @endphp
+                                                <td><input type="text" class="form-control aiz-date-range discount-range" value="{{ $date_range }}" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
+                                                <td>
+                                                    <select class="form-control discount_type" name="discount_type[]">
+                                                        <option value="" disabled selected>{{translate('Choose type')}}</option>
+                                                        <option value="amount" @selected($pricing->discount_type == 'amount')>{{translate('Flat')}}</option>
+                                                        <option value="percent" @selected($pricing->discount_type == 'percent')>{{translate('Percent')}}</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="number" class="form-control discount_amount" value="{{ $pricing->discount_amount }}" name="discount_amount[]"></td>
+                                                <td><input type="number" class="form-control discount_percentage" value="{{ $pricing->discount_percentage }}" name="discount_percentage[]"></td>
+                                                <td>
+                                                    <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
+                                                    <i class="las la-trash delete_pricing_canfiguration" data-pricing_id="{{ $pricing->id }}" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td><input type="number" name="from[]" class="form-control min-qty" id=""></td>
+                                            <td><input type="number" name="to[]" class="form-control max-qty" id=""></td>
+                                            <td><input type="number" name="unit_price[]" class="form-control unit-price-variant" id=""></td>
+                                            <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
+                                            <td>
+                                                <select class="form-control discount_type" name="discount_type[]">
+                                                    <option value="" disabled selected>{{translate('Choose type')}}</option>
+                                                    <option value="amount" @selected(old('discount_type') == 'amount')>{{translate('Flat')}}</option>
+                                                    <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
+                                                </select>
+                                            </td>
+                                            <td><input type="number" class="form-control discount_amount" name="discount_amount[]"></td>
+                                            <td><input type="number" class="form-control discount_percentage" name="discount_percentage[]"></td>
+                                            <td>
+                                                <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
+                                                <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                            </td>
+                                        </tr>
+                                    @endif
+
                                 </tbody>
                               </table>
                         </div>
@@ -219,7 +276,7 @@
                                 <input type="text" class="form-control" value="{{translate('Sample description')}}" disabled>
                             </div>
                             <div class="col-md-8">
-                                <textarea class="form-control" name="sample_description"></textarea>
+                                <textarea class="form-control" name="sample_description">{{ $product->sample_description }}</textarea>
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -227,7 +284,7 @@
                                 <input type="text" class="form-control" value="{{translate('Sample price')}}" disabled>
                             </div>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" name="sample_price">
+                                <input type="text" class="form-control" name="sample_price" value="{{ $product->sample_price }}">
                             </div>
                         </div>
                     </div>
@@ -242,15 +299,15 @@
                             <label class="col-md-3 col-from-label">{{translate('Video Provider')}}</label>
                             <div class="col-md-8">
                                 <select class="form-control aiz-selectpicker" name="video_provider" id="video_provider">
-                                    <option value="youtube" @selected(old('video_provider') == 'youtube')>{{translate('Youtube')}}</option>
-                                    <option value="vimeo" @selected(old('video_provider') == 'vimeo')>{{translate('Vimeo')}}</option>
+                                    <option value="youtube" @selected($product->video_provider == 'youtube')>{{translate('Youtube')}}</option>
+                                    <option value="vimeo" @selected($product->video_provider == 'vimeo')>{{translate('Vimeo')}}</option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Video Link')}}</label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" name="video_link" value="{{ old('video_link') }}" placeholder="{{ translate('Video Link') }}">
+                                <input type="text" class="form-control" name="video_link" value="{{ $product->video_link }}" placeholder="{{ translate('Video Link') }}">
                                 <small class="text-muted">{{translate("Use proper link without extra parameter. Don't use short share link/embeded iframe code.")}}</small>
                             </div>
                         </div>
@@ -283,13 +340,13 @@
                                                         <span>{{ $childCategory->getTranslation('name') }} </span>
                                                         <ul id="bf_l_1" style="display: none" class="inner_ul">
                                                             @foreach ($childCategory->childrenCategories as $childrenCategorie)
-                                                                <li id="io_1"><input type="radio" name="category_ids" id="c_io_1" class="radio-category" value="{{ $childrenCategorie->id }}" /><span>{{ $childrenCategorie->getTranslation('name') }}</span></li>
+                                                                <li id="io_1"><input type="radio" name="category_ids" id="c_io_1" class="radio-category" @if($product_category != null) @if($product_category->category_id == $childrenCategorie->id) checked @endif @endif value="{{ $childrenCategorie->id }}" /><span>{{ $childrenCategorie->getTranslation('name') }}</span></li>
                                                             @endforeach
                                                         </ul>
                                                     </li>
                                                 @else
                                                     <li id="bf_1">
-                                                        <input type="radio" name="category_ids" class="radio-category" value="{{ $childCategory->id }}" id="c_bf_1" />
+                                                        <input type="radio" name="category_ids" class="radio-category" @if($product_category != null) @if($product_category->category_id == $childrenCategorie->id) checked @endif @endif value="{{ $childCategory->id }}" id="c_bf_1" />
                                                         <span>{{ $childCategory->getTranslation('name') }} </span>
                                                     </li>
                                                 @endif
@@ -312,13 +369,17 @@
                                 <input type="text" class="form-control" value="{{translate('Attributes')}}" disabled>
                             </div>
                             <div class="col-md-8" id="attributes_bloc">
-                                <select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" id="attributes" multiple disabled data-placeholder="{{ translate('Choose Attributes') }}">
-
+                                <select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" id="attributes" multiple @if((count($product->getChildrenProducts()) == 0) || (count($attributes) == 0)) disabled @endif data-placeholder="{{ translate('Choose Attributes') }}">
+                                    @if(count($attributes) > 0)
+                                        @foreach ($attributes as $attribute)
+                                            <option  value="{{ $attribute->id }}" @selected(in_array($attribute->id, $variants_attributes_ids_attributes))>{{ $attribute->getTranslation('name') }}</option>
+                                        @endforeach
+                                    @endif
                                 </select>
                             </div>
                             <div class="col-md-1">
                                 <label class="aiz-switch aiz-switch-success mb-0">
-                                    <input value="1" type="checkbox" name="activate_attributes">
+                                    <input value="1" type="checkbox" name="activate_attributes" @if((count($product->getChildrenProducts()) > 0) && (count($attributes) > 0)) checked @endif>
                                     <span></span>
                                 </label>
                             </div>
@@ -453,6 +514,9 @@
                     <div class="card-body">
                         <div class="row">
                             <div id="general_attributes"></div>
+                            <div class="row">
+                                @include('seller.product.products.general_attributes', ['attributes' => $attributes, 'general_attributes_ids_attributes' => $general_attributes_ids_attributes, 'general_attributes' => $general_attributes])
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -465,7 +529,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Description')}}</label>
                             <div class="col-md-8">
-                                <textarea class="aiz-text-editor" name="description"></textarea>
+                                <textarea class="aiz-text-editor" name="description">{{ $product->description }}</textarea>
                                 <div id="charCount">Remaining characters: 512</div>
                                 <input type="hidden" id="hidden_value" value="">
                             </div>
@@ -478,29 +542,33 @@
                         <h5 class="mb-0 h6">{{translate('PDF Specification')}}</h5>
                     </div>
                     <div class="card-body" id="documents_bloc">
-                        <div class="row">
-                            <div class="col-5">
-                                <div class="form-group">
-                                    <label for="exampleInputEmail1">Document name</label>
-                                    <input type="text" class="form-control" name="document_names[]">
-                                </div>
-                            </div>
-                            <div class="col-5">
-                                <div class="form-group">
-                                    <label for="exampleInputEmail1">Document</label>
-                                    <div class="input-group">
-                                        <div class="custom-file">
-                                          <input type="file" name="documents[]" accept=".pdf,.png,.jpg,.pln,.dwg,.dxf,.gsm,.stl,.rfa,.rvt,.ifc,.3ds,.max,.obj,.fbx,.skp,.rar,.zip" class="custom-file-input file_input" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
-                                          <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+                        @if(count($product->getDocumentsProduct()) > 0)
+                            @foreach ($product->getDocumentsProduct() as $document)
+                                <div class="row">
+                                    <div class="col-5">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Document name</label>
+                                            <input type="text" class="form-control" name="document_names[]" value="{{ $document->document_name }}">
                                         </div>
                                     </div>
+                                    <div class="col-5">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Document</label>
+                                            <div class="input-group">
+                                                <div class="custom-file">
+                                                <input type="file" name="documents[]" accept=".pdf,.png,.jpg,.pln,.dwg,.dxf,.gsm,.stl,.rfa,.rvt,.ifc,.3ds,.max,.obj,.fbx,.skp,.rar,.zip" class="custom-file-input file_input" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
+                                                <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <i class="las la-plus add_document" style="margin-left: 5px; margin-top: 40px;" title="Add another document"></i>
+                                        <i class="las la-trash trash_document" style="margin-left: 5px; margin-top: 40px;" title="Delete this document"></i>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-2">
-                                <i class="las la-plus add_document" style="margin-left: 5px; margin-top: 40px;" title="Add another document"></i>
-                                <i class="las la-trash trash_document" style="margin-left: 5px; margin-top: 40px;" title="Delete this document"></i>
-                            </div>
-                        </div>
+                            @endforeach
+                        @endif
                     </div>
                 </div>
                 {{-- Bloc SEO Meta --}}
@@ -512,13 +580,13 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Meta Title')}}</label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" name="meta_title" value="{{ old('meta_title') }}" placeholder="{{ translate('Meta Title') }}">
+                                <input type="text" class="form-control" name="meta_title" value="{{ $product->meta_title }}" placeholder="{{ translate('Meta Title') }}">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Description')}}</label>
                             <div class="col-md-8">
-                                <textarea name="meta_description" rows="8" class="form-control">{{ old('meta_description') }}</textarea>
+                                <textarea name="meta_description" rows="8" class="form-control">{{ $product->meta_description }}</textarea>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -902,7 +970,7 @@
 
         $("#country_selector").countrySelect({
             responsiveDropdown: true,
-            preferredCountries: ['ae']
+            defaultCountry:"{{ $product->country_code }}"
         });
 
         //A text-field for “Product Short Description”. Maximum length is 512 characters

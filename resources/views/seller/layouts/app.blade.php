@@ -53,13 +53,30 @@
             justify-content: flex-end;
             margin-bottom: 14px;
         }
-        .fa-regular{
+        /* .fa-regular{
             color:red
-        }
+        } */
 
         .div-btn{
             display: flex;
+            width: 100%;
             justify-content: center;
+        }
+
+        #bloc_pricing_configuration_variant{
+            width: 94%;
+            margin-left: 19px;
+            margin-top: 21px;
+        }
+
+        #bloc_sample_pricing_configuration_variant{
+            width: 94%;
+            margin-left: 19px;
+            margin-top: 21px;
+        }
+
+        #general_attributes{
+            width: 100%;
         }
     </style>
 
@@ -81,11 +98,10 @@
 
         .plus, .minus {
             display: inline-block;
-    background-repeat: no-repeat;
-    background-size: 16px 16px !important;
-    width: 16px;
-    height: 16px;
-            /*vertical-align: middle;*/
+            background-repeat: no-repeat;
+            background-size: 16px 16px !important;
+            width: 16px;
+            height: 16px;
         }
 
         .plus {
@@ -96,25 +112,31 @@
             background-image: url(https://img.icons8.com/material-rounded/24/minus.png);
         }
 
+        .square-variant{
+            float: right;
+            margin-top: -29px;
+            color: black;
+        }
+
         ul {
             list-style: none;
             padding: 0px 0px 0px 20px;
         }
 
-            ul.inner_ul li:before {
-                content: "├";
-                font-size: 18px;
-                margin-left: -11px;
-                margin-top: -5px;
-                vertical-align: middle;
-                float: left;
-                width: 8px;
-                color: #41424e;
-            }
+        ul.inner_ul li:before {
+            content: "├";
+            font-size: 18px;
+            margin-left: -11px;
+            margin-top: -5px;
+            vertical-align: middle;
+            float: left;
+            width: 8px;
+            color: #41424e;
+        }
 
-            ul.inner_ul li:last-child:before {
-                content: "└";
-            }
+        ul.inner_ul li:last-child:before {
+            content: "└";
+        }
 
         .inner_ul {
             padding: 0px 0px 0px 35px;

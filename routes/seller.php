@@ -34,6 +34,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
         Route::post('/products/seller/featured', 'updateFeatured')->name('products.featured');
         Route::post('/products/published', 'updatePublished')->name('products.published');
         Route::get('/products/destroy/{id}', 'destroy')->name('products.destroy');
+        Route::get('/products/draft/{id}', 'draft')->name('products.draft');
         Route::post('/products/bulk-delete', 'bulk_product_delete')->name('products.bulk-delete');
     });
 

@@ -100,6 +100,7 @@
                                 <th data-breakpoints="md">{{ translate('Approval')}}</th>
                             @endif
                             <th data-breakpoints="md">{{ translate('Published')}}</th>
+                            <th data-breakpoints="md">{{ translate('Draft')}}</th>
                             <th data-breakpoints="md">{{ translate('Featured')}}</th>
                             <th data-breakpoints="md" class="text-right">{{ translate('Options')}}</th>
                         </tr>
@@ -152,23 +153,104 @@
                                     </label>
                                 </td>
                                 <td>
+                                    @if ($product->is_draft == 1)
+                                        <span class="badge badge-inline badge-info">{{ translate('Yes')}}</span>
+                                    @else
+                                        <span class="badge badge-inline badge-success">{{ translate('No')}}</span>
+                                    @endif
+                                </td>
+                                <td>
                                     <label class="aiz-switch aiz-switch-success mb-0">
                                         <input onchange="update_featured(this)" value="{{ $product->id }}" type="checkbox" <?php if($product->seller_featured == 1) echo "checked";?> >
                                         <span class="slider round"></span>
                                     </label>
                                 </td>
                                 <td class="text-right">
-                                <a class="btn btn-soft-info btn-icon btn-circle btn-sm" href="{{route('seller.products.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')])}}" title="{{ translate('Edit') }}">
-                                    <i class="las la-edit"></i>
-                                </a>
-                                <a href="{{route('seller.products.duplicate', $product->id)}}" class="btn btn-soft-success btn-icon btn-circle btn-sm"  title="{{ translate('Duplicate') }}">
-                                    <i class="las la-copy"></i>
-                                </a>
-                                <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('seller.products.destroy', $product->id)}}" title="{{ translate('Delete') }}">
-                                    <i class="las la-trash"></i>
-                                </a>
-                            </td>
+                                    @if ($product->is_draft == 1)
+                                    <a class="btn btn-soft-info btn-icon btn-circle btn-sm" href="{{route('seller.products.draft', $product->id)}}" title="{{ translate('Edit draft product') }}">
+                                        <i class="fa-regular fa-file"></i>
+                                    </a>
+                                    @endif
+                                    <a class="btn btn-soft-info btn-icon btn-circle btn-sm" href="{{route('seller.products.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')])}}" title="{{ translate('Edit') }}">
+                                        <i class="las la-edit"></i>
+                                    </a>
+                                    <a href="{{route('seller.products.duplicate', $product->id)}}" class="btn btn-soft-success btn-icon btn-circle btn-sm"  title="{{ translate('Duplicate') }}">
+                                        <i class="las la-copy"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('seller.products.destroy', $product->id)}}" title="{{ translate('Delete') }}">
+                                        <i class="las la-trash"></i>
+                                    </a>
+                                </td>
                             </tr>
+                            @if((count($product->getChildrenProducts()) > 0) && ($product->is_draft == 0))
+                                @foreach ($product->getChildrenProducts() as $children)
+                                    <tr>
+                                        <td>
+                                            <div class="form-group d-inline-block">
+                                                <label class="aiz-checkbox">
+                                                    <input type="checkbox" class="check-one" name="id[]" value="{{$children->id}}">
+                                                    <span class="aiz-square-check"></span>
+                                                </label>
+                                            </div>
+                                        </td>
+                                        <td >
+                                            <a href="{{ route('product', $children->slug) }}" style="margin-left: 34px !important" target="_blank" class="text-reset">
+                                                {{ $children->getTranslation('name') }}
+                                            </a>
+                                        </td>
+                                        {{-- <td>
+                                            @if ($product->main_category != null)
+                                                {{ $product->main_category->getTranslation('name') }}
+                                            @endif
+                                        </td> --}}
+                                        <td>
+                                            @php
+                                                $qty = 0;
+                                                foreach ($children->stocks as $key => $stock) {
+                                                    $qty += $stock->qty;
+                                                }
+                                                echo $qty;
+                                            @endphp
+                                        </td>
+                                        <td>{{ $children->unit_price }}</td>
+                                        @if(get_setting('product_approve_by_admin') == 1)
+                                            <td>
+                                                @if ($children->approved == 1)
+                                                    <span class="badge badge-inline badge-success">{{ translate('Approved')}}</span>
+                                                @else
+                                                    <span class="badge badge-inline badge-info">{{ translate('Pending')}}</span>
+                                                @endif
+                                            </td>
+                                        @endif
+                                        <td>
+                                            <label class="aiz-switch aiz-switch-success mb-0">
+                                                <input onchange="update_published(this)" value="{{ $children->id }}" type="checkbox" <?php if($children->published == 1) echo "checked";?> >
+                                                <span class="slider round"></span>
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-inline badge-success">{{ translate('No')}}</span>
+                                        </td>
+                                        <td>
+                                            <label class="aiz-switch aiz-switch-success mb-0">
+                                                <input onchange="update_featured(this)" value="{{ $children->id }}" type="checkbox" <?php if($children->seller_featured == 1) echo "checked";?> >
+                                                <span class="slider round"></span>
+                                            </label>
+                                        </td>
+                                        <td class="text-right">
+                                            <a class="btn btn-soft-info btn-icon btn-circle btn-sm" href="{{route('seller.products.edit', ['id'=>$children->id, 'lang'=>env('DEFAULT_LANGUAGE')])}}" title="{{ translate('Edit') }}">
+                                                <i class="las la-edit"></i>
+                                            </a>
+                                            <a href="{{route('seller.products.duplicate', $children->id)}}" class="btn btn-soft-success btn-icon btn-circle btn-sm"  title="{{ translate('Duplicate') }}">
+                                                <i class="las la-copy"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('seller.products.destroy', $children->id)}}" title="{{ translate('Delete') }}">
+                                                <i class="las la-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endif
                         @endforeach
                     </tbody>
                 </table>
