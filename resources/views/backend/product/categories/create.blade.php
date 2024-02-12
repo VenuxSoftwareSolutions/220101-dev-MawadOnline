@@ -6,7 +6,52 @@
     CoreComponentRepository::instantiateShopRepository();
     CoreComponentRepository::initializeCache();
 @endphp
+<style>
+.spinner-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.7);
+  z-index: 10;
+}
+.spinner-border {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  vertical-align: text-bottom;
+  border: 0.25em solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spinner-border .75s linear infinite;
+}
 
+@keyframes spinner-border {
+  to { transform: rotate(360deg); }
+}
+
+
+</style>
+
+<style>
+    
+#banner-message {
+  background: #fff;
+  border-radius: 4px;
+  padding: 20px;
+  font-size: 25px;
+  text-align: center;
+  transition: all 0.2s;
+  margin: 0 auto;
+  width: 600px;
+}
+
+.select2-results__option {
+  padding-left: 0 !important;
+}
+</style>
 <div class="row">
     <div class="col-lg-8 mx-auto">
         <div class="card">
@@ -80,7 +125,7 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 col-form-label">{{translate('Name')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
                                     <div class="col-md-9">
-                                        <input type="text" placeholder="{{translate('name_'.($language->code=='en'?'':$language->code))}}" id="name{{$language->code=='en'?'':'_'.$language->code}}" name="name{{$language->code=='en'?'':'_'.$language->code}}" class="form-control"  value="{{old('name'. ($language->code=='en'?'':'_'.$language->code))}}">
+                                        <input type="text" placeholder="{{translate('name_'.$language->code)}}" id="name{{$language->code=='en'?'':'_'.$language->code}}" name="name{{$language->code=='en'?'':'_'.$language->code}}" class="form-control"  value="{{old('name'. ($language->code=='en'?'':'_'.$language->code))}}">
                                         <div class="mt-3">
                                             @if($errors->has($language->code=='en' ? 'name'. '':'name'.'_'.$language->code))
                                                 <span class="alert alert-danger" role="alert">
@@ -124,16 +169,14 @@
                             </select>
                         </div>
                     </div>
+
+                  
                     <div class="form-group row  not-translatable">
                         <label class="col-md-3 col-form-label">{{translate('Parent Category')}}</label>
                         <div class="col-md-9">
-                            <select  class="select2 form-control aiz-selectpicker" id="selected_parent_id" name="parent_id" data-toggle="select2" data-placeholder="Choose ..." data-live-search="true"
-                                onchange="load_categories_attributes()">
-                               
-                                        @include('backend.product.categories.categories_option', ['categories' => $categories])
-                                 
-
-                            </select>
+                        <select id="tree1" class="form-control" name="parent_id">
+                            
+                        </select>
                         </div>
                     </div>
 
@@ -272,8 +315,10 @@
 @endsection
 
 @section('script')
+<script src="{{asset('/public/js/selecttree.js') }}"></script>
 
 <script type="text/javascript">
+
     function categoriesByType(val){
         $('select[name="parent_id"]').html('');
 
@@ -294,11 +339,14 @@
             }
         });
     }
+    
     document.addEventListener("DOMContentLoaded", function() {
             load_categories_attributes();
             load_filtring_attributes();
         });
-    function load_filtring_attributes(){
+    
+    
+        function load_filtring_attributes(){
         let parent_category = document.getElementById('selected_parent_id');
         if(parent_category){
             $.ajax({
@@ -398,6 +446,54 @@
 
         }
     }
+
+
+
+$(document).ready(function() {
+  // Fetch data from the server
+  $.ajax({
+    url: '{{ route('categories.fetchCategories') }}', // Your endpoint to fetch hierarchical data
+    type: 'GET', // or 'POST', depending on your server setup
+    dataType: 'json', // expecting JSON data
+    success: function(data) {
+      // Assuming 'data' is an array of objects with 'id', 'text', and 'parent' keys
+      appendOptionsHierarchically($('#tree1'), data.data);
+       // Show the spinner before initializing select2
+
+      $("#tree1").select2tree(); // Initialize select2tree after populating data
+    },
+    error: function(xhr, status, error) {
+      console.error("Error fetching tree data:", error);
+    }
+  });
+});
+
+function appendOptionsHierarchically($select, data, parent = "", depth = 0, maxDepth = 3) {
+    // Check if the current depth exceeds the maximum depth allowed
+    if (depth > maxDepth) {
+        return; // Stop the recursion if the depth limit is exceeded
+    }
+
+    data.forEach(function(item) {
+        // Create an option element for the current item
+        var $option = $('<option></option>', {
+            value: item.id,
+            text: item.name,
+            'data-parent': parent
+        });
+        
+        // Append the current option to the select element
+        $select.append($option);
+        
+        // If the current item has children, recursively append them with incremented depth
+        if (item.children && item.children.length > 0) {
+            appendOptionsHierarchically($select, item.children, item.id, depth + 1, maxDepth);
+        }
+    });
+}
+
+
+
 </script>
 
 @endsection
