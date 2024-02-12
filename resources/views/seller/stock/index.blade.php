@@ -57,7 +57,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="quantity">{{ __('stock.Quantity') }}<span class="text-primary">*</span></label>
-                        <input required type="number" class="form-control" id="quantity" name="quantity" placeholder="{{__('stock.Enter quantity')}}">
+                        <input min="1" required type="number" class="form-control" id="quantity" name="quantity" placeholder="{{__('stock.Enter quantity')}}">
                     </div>
                 </div>
 
@@ -183,6 +183,16 @@
             @if (session('success'))
                 <div class="alert alert-success">
                     {{session('success')}}
+                </div>
+            @endif
+
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error )
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
             @endif
             <table class="table aiz-table mb-0">

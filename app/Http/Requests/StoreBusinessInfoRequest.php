@@ -46,7 +46,7 @@ class StoreBusinessInfoRequest extends FormRequest
             'eshop_desc_en' => 'nullable|string|regex:/\D/',
             'eshop_desc_ar' => 'nullable|string|regex:/\D/',
             'license_issue_date' => 'nullable|date',
-            'license_expiry_date' => 'nullable|date|after:license_issue_date',
+            'license_expiry_date' => 'nullable|date|after_or_equal:today|after_or_equal:license_issue_date',
             'state' => 'nullable|exists:emirates,id',
             'area_id' => 'nullable|exists:areas,id',
             'street' => 'nullable|string|max:128|regex:/\D/',
