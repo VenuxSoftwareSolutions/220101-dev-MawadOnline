@@ -85,6 +85,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::post('/categories/parent-attributes', 'fetch_parent_attribute')->name('categories.parent-attributes');
         Route::get('/categories-tree', 'getCategoriesTree')->name('categories-tree');
         Route::get('/fetchAll', 'fetchCategories')->name('categories.fetchCategories');
+        Route::get('/jstree', 'jstree')->name('categories.jstree');
+
     });
 
     // Brand

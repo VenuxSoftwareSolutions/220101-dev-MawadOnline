@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCategoryRequest;
 use App\Models\Attribute;
 use Illuminate\Http\Request;
 use App\Models\Category;
@@ -12,6 +13,9 @@ use Auth;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Str;
 use Cache;
+use Doctrine\DBAL\Query\QueryException;
+use Exception;
+use Log;
 
 class CategoryController extends Controller
 {
@@ -24,6 +28,28 @@ class CategoryController extends Controller
         $this->middleware(['permission:delete_product_category'])->only('destroy');
     }
 
+    public function jstree(Request $request)
+    {
+        $parentId = $request->input('id');
+
+        if ($parentId == '#' || is_null($parentId)) {
+            // Fetch top-level nodes. For instance, where 'parent_id' is null or 0
+            $nodes = Category::where('parent_id', 0)->get();
+        } else {
+            // Fetch children of $parentId
+            $nodes = Category::where('parent_id', $parentId)->get();
+        }
+
+        $data = $nodes->map(function ($node) {
+            return [
+                'id' => $node->id,
+                'text' => $node->name,
+                'children' => $node->childrenCategories()->count() > 0 // or any logic to determine if the node has children
+            ];
+        })->toArray();
+
+        return response()->json($data);
+    }
 
 
     /**
@@ -35,7 +61,7 @@ class CategoryController extends Controller
     public function fetchCategories(Request $request)
     {
         $formattedCategories = Cache::get('categories_children');
-        if($request->has("search") && !empty($request->search['value'])) {
+        if ($request->has("search") && !empty($request->search['value'])) {
             $searchResults = $this->searchAndHighlightCategory($formattedCategories, $request->search['value']);
             return response()->json(['data' => $searchResults]);
         }
@@ -61,9 +87,10 @@ class CategoryController extends Controller
      * @param string $highlightEndTag The ending tag for highlighting the search term (default: '</mark>').
      * @return array The array of categories with the search term highlighted.
      */
-    public function searchAndHighlightCategory($categories, $searchTerm, $highlightStartTag = '<mark>', $highlightEndTag = '</mark>') {
+    public function searchAndHighlightCategory($categories, $searchTerm, $highlightStartTag = '<mark>', $highlightEndTag = '</mark>')
+    {
         $result = [];
-        
+
         foreach ($categories as $category) {
             $hasMatch = false;
             // Check if current category name contains the search term
@@ -72,7 +99,7 @@ class CategoryController extends Controller
                 $category['name'] = preg_replace("/($searchTerm)/i", "$highlightStartTag$1$highlightEndTag", $category['name']);
                 $hasMatch = true;
             }
-            
+
             // If the category has children, search within the children recursively
             if (!empty($category['children'])) {
                 $searchedChildren = $this->searchAndHighlightCategory($category['children'], $searchTerm, $highlightStartTag, $highlightEndTag);
@@ -81,13 +108,13 @@ class CategoryController extends Controller
                     $hasMatch = true; // There's a match in the children
                 }
             }
-            
+
             // If a match is found in the current category or any of its children, add it to the result
             if ($hasMatch) {
                 $result[] = $category;
             }
         }
-        
+
         return $result;
     }
 
@@ -107,22 +134,22 @@ class CategoryController extends Controller
             // Check if the category has children
             $hasChildren = $category->childrenCategories()->exists();
             $parentCategoryName = $category->parent ? $category->parent->name : null;
-    
+
             // Check permissions for the current user on this category
             $canEdit = auth()->user()->can('edit_product_category', $category);
             $canDelete = auth()->user()->can('delete_product_category', $category);
-    
+
             // Generate URLs for edit and delete actions
             $editUrl = $canEdit ? route('categories.edit', ['id' => $category->id, 'lang' => app()->getLocale()]) : null;
             $deleteUrl = $canDelete ? route('categories.destroy', $category->id) : null;
-    
+
             // Initialize the formatted category
             $formattedCategory = [
                 'DT_RowId' => (string)$category->id,
-                'id' => $category->id,
+                'id' => (string)$category->id,
                 'level' => $level,
                 'key' => (string)$category->id,
-                'parent' => $parentId,
+                'parent' => (string)$parentId,
                 'order_level' => $category->order_level,
                 'cover_image' => $category->cover_image,
                 'commision_rate' => $category->commision_rate,
@@ -138,24 +165,24 @@ class CategoryController extends Controller
                 'delete_url' => $deleteUrl,
                 'children' => [] // Add a 'children' key for nesting
             ];
-    
+
             // If the category has children, fetch and format them
             if ($hasChildren) {
                 $children = $category->childrenCategories()->get();
                 $formattedCategory['children'] = $this->formatCategories($children, $level + 1, $category->id);
             }
-    
+
             $formatted[] = $formattedCategory;
         }
-    
+
         // Optionally, you might want to cache the top-level categories separately to avoid caching the whole tree every time.
         if ($level === 0) {
             Cache::put('categories_children', $formatted, 60 * 24 * 15); // Adjust the cache key/name as necessary
         }
-    
+
         return $formatted;
     }
-    
+
 
     /**
      * Display a listing of the resource.
@@ -167,10 +194,7 @@ class CategoryController extends Controller
         return view('backend.product.categories.index');
     }
 
-    
 
-    
-  
     /**
      * Show the form for creating a new resource.
      *
@@ -180,17 +204,7 @@ class CategoryController extends Controller
     {
         $lang = $request->lang;
 
-        $categories = Cache::get('categories_children');
-        if (isset($categories)) {
-            return view('backend.product.categories.create', compact('categories', 'lang'));
-        } else {
-            $categories = Category::where('parent_id', 1)
-                ->where('digital', 0)
-                ->with('childrenCategories')
-                ->get();
-
-            return view('backend.product.categories.create', compact('categories', 'lang'));
-        }
+        return view('backend.product.categories.create', compact('lang'));
     }
 
     public function fetch_category_attribute(Request $request)
@@ -235,93 +249,59 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
-        $validationaray = [];
-        foreach (get_all_active_language() as $key => $language) {
-            $langcode =  $language->code == 'en' ? '' : '_' . $language->code;
-            $length =  $language->code == 'en' ? 60 : 110;
-            $validationaray = array_merge(
-                $validationaray,
-                ['name' . $langcode => 'required|unique:category_translations,name|max:' . $length, 'description' . $langcode  => 'required']
-            );
+        try {
+            $category = new Category;
+            $category->name = $request->name;
+            $category->order_level = $request->order_level ?? 0;
+            $category->digital = $request->digital;
+            $category->banner = $request->cover_image;
+            $category->icon = $request->cover_image;
+            $category->cover_image = $request->cover_image;
+            $category->meta_title = $request->meta_title;
+            $category->meta_description = $request->meta_description;
+
+            if ($request->parent_id != "0" && $request->parent_id != null) {
+                $category->parent_id = $request->parent_id;
+                $parent = Category::find($request->parent_id);
+                $category->level = $parent->level + 1;
+            } else {
+                $category->level = 0;
+            }
+
+            $category->slug = $request->slug ? strtolower(preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->slug))) : strtolower(preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->name)));
+
+            $category->commision_rate = $request->commision_rate ?? 0;
+
+            $category->save();
+
+            $category->attributes()->sync($request->filtering_attributes);
+            $category->categories_attributes()->sync($request->category_attributes);
+
+            foreach (get_all_active_language() as $key => $language) {
+                $langPrefix = $language->code == env('DEFAULT_LANGUAGE') ? '' : '_' . $language->code;
+                $categoryTranslation = CategoryTranslation::firstOrNew(['lang' => $language->code, 'category_id' => $category->id]);
+                $categoryTranslation->name = $request['name' . $langPrefix];
+                $categoryTranslation->description = $request['description' . $langPrefix];
+                $categoryTranslation->meta_title = $request['meta_title' . $langPrefix];
+                $categoryTranslation->meta_description = $request['meta_description' . $langPrefix];
+                $categoryTranslation->save();
+            }
+
+            Cache::forget('categories_children');
+
+            flash(translate('Category has been inserted successfully'))->success();
+            return redirect()->route('categories.index');
+        } catch (QueryException $e) {
+            // Handle database related errors
+            Log::error($e->getMessage());
+            return back()->withErrors('There was a problem saving the category. Please try again.')->withInput();
+        } catch (Exception $e) {
+            // Handle general errors
+            Log::error($e->getMessage());
+            return back()->withErrors('An unexpected error occurred. Please try again.')->withInput();
         }
-        array_merge($validationaray, ['digital' => 'required']);
-        if ($request->featured == 'on') {
-            $validationaray = array_merge($validationaray, ['cover_image' => 'required', 'parent_id' => 'not_in:0']);
-        } else {
-            $validationaray = array_merge($validationaray, ['parent_id' => 'not_in:0']);
-        }
-
-        $request->validate($validationaray);
-
-        $category = new Category;
-        $category->name = $request->name;
-        $category->order_level = 0;
-        if ($request->order_level != null) {
-            $category->order_level = $request->order_level;
-        }
-        $category->digital = $request->digital;
-        $category->banner = $request->cover_image; //$request->banner;
-        $category->icon = $request->cover_image; //$request->icon;
-        $category->cover_image = $request->cover_image;
-        $category->meta_title = $request->meta_title;
-        $category->meta_description = $request->meta_description;
-
-        if ($request->parent_id != "0" && $request->parent_id != null) {
-            $category->parent_id = $request->parent_id;
-
-            $parent = Category::find($request->parent_id);
-            $category->level = $parent->level + 1;
-        }else{
-            $category->level = 0;
-        }
-
-        if ($request->slug != null) {
-            $category->slug = strtolower(reg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->slug)));
-        } else {
-            $category->slug = strtolower(preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->name)));
-        }
-        if ($request->commision_rate != null) {
-            $category->commision_rate = $request->commision_rate;
-        }
-
-        $category->save();
-
-
-
-       
-        $category->attributes()->sync($request->filtering_attributes);
-        $category->categories_attributes()->sync($request->category_attributes);
-        foreach (get_all_active_language() as $key => $language) {
-            $category_translation = CategoryTranslation::firstOrNew(['lang' => $language->code, 'category_id' => $category->id]);
-            $prefixlang = $language->code == env('DEFAULT_LANGUAGE') ? '' : '_' . $language->code;
-            $attribute = 'name' . $prefixlang;
-            $category_translation->name = $request->$attribute;
-            $attribute = 'description' . $prefixlang;
-            $category_translation->description = $request->$attribute;
-            $attribute = 'meta_title' . $prefixlang;
-            $category_translation->meta_title = $request->$attribute;
-            $attribute = 'meta_description' . $prefixlang;
-            $category_translation->meta_description = $request->$attribute;
-            $category_translation->save();
-        }
-        /*$category_translation = CategoryTranslation::firstOrNew(['lang' => env('DEFAULT_LANGUAGE'), 'category_id' => $category->id]);
-        $category_translation->name = $request->name;
-        $category_translation->description = $request->description;
-        $category_translation->meta_title = $request->meta_title;
-        $category_translation->meta_description = $request->meta_description;
-        $category_translation->save();
-        $category_translation = CategoryTranslation::firstOrNew(['lang' => 'sa', 'category_id' => $category->id]);
-        $category_translation->name = $request->name_sa;
-        $category_translation->description = $request->description_sa;
-        $category_translation->meta_title = $request->meta_title_ar;
-        $category_translation->meta_description = $request->meta_description_ar;
-        $category_translation->save();*/
-        Cache::forget('categories_children');
-
-        flash(translate('Category has been inserted successfully'))->success();
-        return redirect()->route('categories.index');
     }
 
     /**
