@@ -428,7 +428,26 @@ CoreComponentRepository::initializeCache();
             to = setTimeout(function() {
                 var v = $('#search_input').val();
                 lastSearchTerm = v;
-                $('#jstree').jstree(true).search(v);
+                $.ajax({
+                    url: "{{ route('categories.jstreeSearch') }}", // Replace with your actual API endpoint
+                    type: 'GET', // Or 'POST', depending on your API
+                    dataType: 'json', // Expected data format from API
+                    data: {
+                        searchTerm: v // Send the search term to your API
+                    },
+                    success: function(response) {
+                        console.log(response)
+                        // Assuming 'response' contains the data to update the jstree
+                        // You will need to process 'response' to fit your jstree's data format
+                        
+                        // Example: clear the existing jstree and populate with new data
+                        $('#jstree').jstree(true).settings.core.data = response;
+                        $('#jstree').jstree(true).refresh();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error during search API call:", status, error);
+                    }
+                });
             }, 250);
         });
     });

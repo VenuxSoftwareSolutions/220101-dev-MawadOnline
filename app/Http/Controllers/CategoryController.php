@@ -28,6 +28,86 @@ class CategoryController extends Controller
         $this->middleware(['permission:delete_product_category'])->only('destroy');
     }
 
+    public function jstreeSearch(Request $request)
+    {
+        $searchTerm = $request->input('searchTerm');
+        $formattedCategories = Cache::get('categories_tree');
+
+        if(isset($formattedCategories))
+        {
+            $data = $this->searchAndHighlightCategoryJstree($formattedCategories, $searchTerm);
+
+        }else{
+            $categories = Category::where('parent_id', 0)->get();
+
+            $data = $this->jsTreeFormat($categories);
+        }
+        // Assuming you fetch your categories from a database or another source
+        // Highlight and filter categories based on the search term
+        $highlightedCategories = $this->searchAndHighlightCategoryJstree($data, $searchTerm);
+
+        // Return the search result
+        return response()->json($highlightedCategories);
+    }
+
+
+    public function jstreeFormat($categories = null, $level = 0, $parentId = 0)
+    {
+        $formatted = [];
+        foreach ($categories as $category) {
+            // Check if the category has children
+            $hasChildren = $category->childrenCategories()->exists();
+
+            // Initialize the formatted category
+            $formattedCategory = [
+                'id' => (string)$category->id,
+                'text' => $category->name,
+                'level'=> $level,
+                'children' => [] // Add a 'children' key for nesting
+            ];
+
+            // If the category has children, fetch and format them
+            if ($hasChildren) {
+                $children = $category->childrenCategories()->get();
+                $formattedCategory['children'] = $this->jstreeFormat($children, $level + 1, $category->id);
+            }
+
+            $formatted[] = $formattedCategory;
+        }
+
+        // Optionally, you might want to cache the top-level categories separately to avoid caching the whole tree every time.
+        if ($level === 0) {
+            Cache::put('categories_tree', $formatted, 60 * 24 * 15); // Adjust the cache key/name as necessary
+        }
+
+        return $formatted;
+    }
+
+    public function searchAndHighlightCategoryJstree($categories, $searchTerm, $highlightStartTag = '<mark>', $highlightEndTag = '</mark>')
+    {
+        $result = [];
+        foreach ($categories as $category) {
+            $hasMatch = false;
+            if (stripos($category['text'], $searchTerm) !== false) {
+                $category['text'] = preg_replace("/($searchTerm)/i", "$highlightStartTag$1$highlightEndTag", $category['text']);
+                $hasMatch = true;
+            }
+
+            if (!empty($category['children'])) {
+                $searchedChildren = $this->searchAndHighlightCategoryJstree($category['children'], $searchTerm, $highlightStartTag, $highlightEndTag);
+                if (!empty($searchedChildren)) {
+                    $category['children'] = $searchedChildren;
+                    $hasMatch = true;
+                }
+            }
+
+            if ($hasMatch) {
+                $result[] = $category;
+            }
+        }
+        return $result;
+    }
+
     public function jstree(Request $request)
     {
         $parentId = $request->input('id');
@@ -40,6 +120,7 @@ class CategoryController extends Controller
             $nodes = Category::where('parent_id', $parentId)->get();
         }
 
+        // Map the nodes to the format required by JSTree
         $data = $nodes->map(function ($node) {
             return [
                 'id' => $node->id,
@@ -48,6 +129,8 @@ class CategoryController extends Controller
             ];
         })->toArray();
 
+
+        // Return the response
         return response()->json($data);
     }
 
