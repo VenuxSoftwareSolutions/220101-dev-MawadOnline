@@ -780,7 +780,7 @@ class HomeController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|regex:/^[\pL\s]+$/u',
             'email' => 'required|email',
-            'phone' => 'required|numeric|digits:8',
+            'phone' => 'required|numeric|digits:10',
             'work' => 'nullable|regex:/^[\pL\s]+$/u',
             'job' => 'nullable|regex:/^[\pL\s]+$/u',
             'location' => 'nullable|regex:/^[\pL\s]+$/u',
