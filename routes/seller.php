@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AizUploadController;
+use App\Http\Controllers\Seller\SellerRoleController;
+use App\Http\Controllers\Seller\SellerStaffController;
 
 //Upload
 Route::group(['prefix' => 'seller', 'middleware' => ['seller', 'verified', 'user', 'prevent-back-history'], 'as' => 'seller.'], function () {
@@ -16,9 +18,11 @@ Route::group(['prefix' => 'seller', 'middleware' => ['seller', 'verified', 'user
 Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller', 'middleware' => ['seller', 'verified', 'user', 'prevent-back-history'], 'as' => 'seller.'], function () {
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'index')->name('dashboard');
+
     });
 
     // Product
+
     Route::controller(ProductController::class)->group(function () {
         Route::get('/products', 'index')->name('products');
         Route::get('/product/create', 'create')->name('products.create');
@@ -147,5 +151,19 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
         Route::get('/all-notification', 'index')->name('all-notification');
     });
 
+        Route::controller(SellerStaffController::class)->group(function () {
+        Route::resource('staffs', SellerStaffController::class);
+        Route::get('/staffs/destroy/{id}', [SellerStaffController::class, 'destroy'])->name('staffs.destroy');
+    });
+
+
+    Route::controller(SellerRoleController::class)->group(function () {
+        Route::resource('roles', SellerRoleController::class);
+        Route::get('/roles/edit/{id}', 'edit')->name('roles.edit');
+        Route::get('/roles/destroy/{id}', 'destroy')->name('roles.destroy');
+
+        // Add Permissiom
+        Route::post('/roles/add_permission', 'add_permission')->name('roles.permission');
+    });
 });
 

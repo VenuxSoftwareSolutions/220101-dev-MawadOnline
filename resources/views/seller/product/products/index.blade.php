@@ -18,7 +18,7 @@
                       <i class="las la-upload la-2x text-white"></i>
                   </span>
                   <div class="px-3 pt-3 pb-3">
-                      <div class="h4 fw-700 text-center">{{ max(0, auth()->user()->shop->product_upload_limit - auth()->user()->products()->count()) }}</div>
+                      {{-- <div class="h4 fw-700 text-center">{{ max(0, auth()->user()->shop->product_upload_limit - auth()->user()->products()->count()) }}</div> --}}
                       <div class="opacity-50 text-center">{{  translate('Remaining Uploads') }}</div>
                   </div>
                 </div>
@@ -26,17 +26,19 @@
         @endif
 
         <div class="col-md-4 mx-auto mb-3" >
+            @can('seller_create_product')
             <a href="{{ route('seller.products.create')}}">
-              <div class="p-3 rounded mb-3 c-pointer text-center bg-white shadow-sm hov-shadow-lg has-transition">
-                  <span class="size-60px rounded-circle mx-auto bg-secondary d-flex align-items-center justify-content-center mb-3">
-                      <i class="las la-plus la-3x text-white"></i>
-                  </span>
-                  <div class="fs-18 text-primary">{{ translate('Add New Product') }}</div>
-              </div>
-            </a>
+                <div class="p-3 rounded mb-3 c-pointer text-center bg-white shadow-sm hov-shadow-lg has-transition">
+                    <span class="size-60px rounded-circle mx-auto bg-secondary d-flex align-items-center justify-content-center mb-3">
+                        <i class="las la-plus la-3x text-white"></i>
+                    </span>
+                    <div class="fs-18 text-primary">{{ translate('Add New Product') }}</div>
+                </div>
+              </a>
+            @endcan
         </div>
 
-        @if (addon_is_activated('seller_subscription'))
+        {{-- @if (addon_is_activated('seller_subscription'))
         @php
             $seller_package = \App\Models\SellerPackage::find(Auth::user()->shop->seller_package_id);
         @endphp
@@ -52,7 +54,7 @@
                 <div class="btn btn-outline-primary py-1">{{ translate('Upgrade Package')}}</div>
             </a>
         </div>
-        @endif
+        @endif --}}
 
     </div>
 
@@ -194,14 +196,14 @@
             if(this.checked) {
                 // Iterate each checkbox
                 $('.check-one:checkbox').each(function() {
-                    this.checked = true;                        
+                    this.checked = true;
                 });
             } else {
                 $('.check-one:checkbox').each(function() {
-                    this.checked = false;                       
+                    this.checked = false;
                 });
             }
-          
+
         });
 
         function update_featured(el){

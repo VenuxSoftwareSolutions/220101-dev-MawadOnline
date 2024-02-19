@@ -11,6 +11,13 @@ use Auth;
 
 class ConversationController extends Controller
 {
+    public function __construct()
+    {
+        // Staff Permission Check
+        $this->middleware(['permission:seller_view_conversations'])->only('index');
+    }
+
+
     /**
      * Display a listing of the resource.
      *
@@ -87,5 +94,5 @@ class ConversationController extends Controller
 
         return back();
     }
-    
+
 }

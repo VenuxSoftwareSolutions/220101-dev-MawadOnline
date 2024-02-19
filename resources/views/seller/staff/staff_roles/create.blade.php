@@ -1,13 +1,13 @@
-@extends('backend.layouts.app')
+@extends('seller.layouts.app')
 
-@section('content')
+@section('panel_content')
 
 <div class="col-lg-12 mx-auto">
     <div class="card">
         <div class="card-header">
             <h5 class="mb-0 h6">{{translate('Role Information')}}</h5>
         </div>
-        <form action="{{ route('roles.store') }}" method="POST">
+        <form action="{{ route('seller.roles.store') }}" method="POST">
             @csrf
             <div class="card-body">
                 <div class="form-group row">
@@ -21,7 +21,10 @@
                 </div>
                 <br>
                 @php
-                    $permission_groups =  \App\Models\Permission::all()->groupBy('section');
+                    $user = Auth::user();
+                    $role= \App\Models\Staff::where('user_id',$user->id)->first()->role;
+                    $permission_groups=$role->permissions->groupBy('section');
+                   // $permission_groups =  \App\Models\Permission::all()->groupBy('section');
                     $addons = array("offline_payment", "club_point", "pos_system", "paytm", "seller_subscription", "otp_system", "refund_request", "affiliate_system", "african_pg", "delivery_boy", "auction", "wholesale");
                 @endphp
                 @foreach ($permission_groups as $key => $permission_group)

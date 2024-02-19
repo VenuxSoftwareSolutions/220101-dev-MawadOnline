@@ -27,41 +27,50 @@
                         <span class="aiz-side-nav-text">{{ translate('Dashboard') }}</span>
                     </a>
                 </li>
-                <li class="aiz-side-nav-item">
-                    <a href="#" class="aiz-side-nav-link">
-                        <i class="las la-shopping-cart aiz-side-nav-icon"></i>
-                        <span class="aiz-side-nav-text">{{ translate('Products') }}</span>
-                        <span class="aiz-side-nav-arrow"></span>
-                    </a>
-                    <!--Submenu-->
-                    <ul class="aiz-side-nav-list level-2">
-                        <li class="aiz-side-nav-item">
-                            <a href="{{ route('seller.products') }}"
-                                class="aiz-side-nav-link {{ areActiveRoutes(['seller.products', 'seller.products.create', 'seller.products.edit']) }}">
-                                <span class="aiz-side-nav-text">{{ translate('Products') }}</span>
-                            </a>
-                        </li>
-
-                        <li class="aiz-side-nav-item">
-                            <a href="{{ route('seller.product_bulk_upload.index') }}"
-                                class="aiz-side-nav-link {{ areActiveRoutes(['product_bulk_upload.index']) }}">
-                                <span class="aiz-side-nav-text">{{ translate('Product Bulk Upload') }}</span>
-                            </a>
-                        </li>
-                        <li class="aiz-side-nav-item">
-                            <a href="{{ route('seller.digitalproducts') }}"
-                                class="aiz-side-nav-link {{ areActiveRoutes(['seller.digitalproducts', 'seller.digitalproducts.create', 'seller.digitalproducts.edit']) }}">
-                                <span class="aiz-side-nav-text">{{ translate('Digital Products') }}</span>
-                            </a>
-                        </li>
-                        <li class="aiz-side-nav-item">
-                            <a href="{{ route('seller.reviews') }}"
-                                class="aiz-side-nav-link {{ areActiveRoutes(['seller.reviews']) }}">
-                                <span class="aiz-side-nav-text">{{ translate('Product Reviews') }}</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+                @canany(['seller_show_product', 'seller_product_bulk_import','seller_show_digital_products','seller_view_product_reviews'])
+                    <li class="aiz-side-nav-item">
+                        <a href="#" class="aiz-side-nav-link">
+                            <i class="las la-shopping-cart aiz-side-nav-icon"></i>
+                            <span class="aiz-side-nav-text">{{ translate('Products') }}</span>
+                            <span class="aiz-side-nav-arrow"></span>
+                        </a>
+                        <!--Submenu-->
+                        <ul class="aiz-side-nav-list level-2">
+                            @can('seller_show_product')
+                            <li class="aiz-side-nav-item">
+                                <a href="{{ route('seller.products') }}"
+                                    class="aiz-side-nav-link {{ areActiveRoutes(['seller.products', 'seller.products.create', 'seller.products.edit']) }}">
+                                    <span class="aiz-side-nav-text">{{ translate('Products') }}</span>
+                                </a>
+                            </li>
+                            @endcan
+                            @can('seller_product_bulk_import')
+                            <li class="aiz-side-nav-item">
+                                <a href="{{ route('seller.product_bulk_upload.index') }}"
+                                    class="aiz-side-nav-link {{ areActiveRoutes(['product_bulk_upload.index']) }}">
+                                    <span class="aiz-side-nav-text">{{ translate('Product Bulk Upload') }}</span>
+                                </a>
+                            </li>
+                            @endcan
+                            @can('seller_show_digital_products')
+                            <li class="aiz-side-nav-item">
+                                <a href="{{ route('seller.digitalproducts') }}"
+                                    class="aiz-side-nav-link {{ areActiveRoutes(['seller.digitalproducts', 'seller.digitalproducts.create', 'seller.digitalproducts.edit']) }}">
+                                    <span class="aiz-side-nav-text">{{ translate('Digital Products') }}</span>
+                                </a>
+                            </li>
+                            @endcan
+                            @can('seller_view_product_reviews')
+                            <li class="aiz-side-nav-item">
+                                <a href="{{ route('seller.reviews') }}"
+                                    class="aiz-side-nav-link {{ areActiveRoutes(['seller.reviews']) }}">
+                                    <span class="aiz-side-nav-text">{{ translate('Product Reviews') }}</span>
+                                </a>
+                            </li>
+                            @endcan
+                        </ul>
+                    </li>
+                @endcanany
                 <li class="aiz-side-nav-item">
                     <a href="{{ route('seller.uploaded-files.index') }}"
                         class="aiz-side-nav-link {{ areActiveRoutes(['seller.uploaded-files.index', 'seller.uploads.create']) }}">
@@ -70,26 +79,31 @@
                     </a>
                 </li>
                 @if (addon_is_activated('seller_subscription'))
-                    <li class="aiz-side-nav-item">
-                        <a href="#" class="aiz-side-nav-link">
-                            <i class="las la-shopping-cart aiz-side-nav-icon"></i>
-                            <span class="aiz-side-nav-text">{{ translate('Package') }}</span>
-                            <span class="aiz-side-nav-arrow"></span>
-                        </a>
-                        <ul class="aiz-side-nav-list level-2">
-                            <li class="aiz-side-nav-item">
-                                <a href="{{ route('seller.seller_packages_list') }}" class="aiz-side-nav-link">
-                                    <span class="aiz-side-nav-text">{{ translate('Packages') }}</span>
-                                </a>
-                            </li>
-
-                            <li class="aiz-side-nav-item">
-                                <a href="{{ route('seller.packages_payment_list') }}" class="aiz-side-nav-link">
-                                    <span class="aiz-side-nav-text">{{ translate('Purchase Packages') }}</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+                    @canany(['seller_view_package_list', 'seller_view_all_packages'])
+                        <li class="aiz-side-nav-item">
+                            <a href="#" class="aiz-side-nav-link">
+                                <i class="las la-shopping-cart aiz-side-nav-icon"></i>
+                                <span class="aiz-side-nav-text">{{ translate('Package') }}</span>
+                                <span class="aiz-side-nav-arrow"></span>
+                            </a>
+                            <ul class="aiz-side-nav-list level-2">
+                                @can('seller_view_package_list')
+                                <li class="aiz-side-nav-item">
+                                    <a href="{{ route('seller.seller_packages_list') }}" class="aiz-side-nav-link">
+                                        <span class="aiz-side-nav-text">{{ translate('Packages') }}</span>
+                                    </a>
+                                </li>
+                                @endcan
+                                @can('seller_view_all_packages')
+                                <li class="aiz-side-nav-item">
+                                    <a href="{{ route('seller.packages_payment_list') }}" class="aiz-side-nav-link">
+                                        <span class="aiz-side-nav-text">{{ translate('Purchase Packages') }}</span>
+                                    </a>
+                                </li>
+                                @endcan
+                            </ul>
+                        </li>
+                    @endcanany
                 @endif
                 @if (get_setting('coupon_system') == 1)
                     <li class="aiz-side-nav-item">
@@ -161,55 +175,64 @@
                         </ul>
                     </li>
                 @endif
-
-                <li class="aiz-side-nav-item">
-                    <a href="{{ route('seller.orders.index') }}"
-                        class="aiz-side-nav-link {{ areActiveRoutes(['seller.orders.index', 'seller.orders.show']) }}">
-                        <i class="las la-money-bill aiz-side-nav-icon"></i>
-                        <span class="aiz-side-nav-text">{{ translate('Orders') }}</span>
-                    </a>
-                </li>
-                @if (addon_is_activated('refund_request'))
+                @can('seller_view_all_orders')
                     <li class="aiz-side-nav-item">
-                        <a href="{{ route('seller.vendor_refund_request') }}"
-                            class="aiz-side-nav-link {{ areActiveRoutes(['seller.vendor_refund_request', 'reason_show']) }}">
-                            <i class="las la-backward aiz-side-nav-icon"></i>
-                            <span class="aiz-side-nav-text">{{ translate('Received Refund Request') }}</span>
+                        <a href="{{ route('seller.orders.index') }}"
+                            class="aiz-side-nav-link {{ areActiveRoutes(['seller.orders.index', 'seller.orders.show']) }}">
+                            <i class="las la-money-bill aiz-side-nav-icon"></i>
+                            <span class="aiz-side-nav-text">{{ translate('Orders') }}</span>
                         </a>
                     </li>
+                @endcan
+                @if (addon_is_activated('refund_request'))
+                    @can('seller_view_all_refund_request')
+                        <li class="aiz-side-nav-item">
+                            <a href="{{ route('seller.vendor_refund_request') }}"
+                                class="aiz-side-nav-link {{ areActiveRoutes(['seller.vendor_refund_request', 'reason_show']) }}">
+                                <i class="las la-backward aiz-side-nav-icon"></i>
+                                <span class="aiz-side-nav-text">{{ translate('Received Refund Request') }}</span>
+                            </a>
+                        </li>
+                    @endcan
                 @endif
+                @can('seller_shop_settings')
+                    <li class="aiz-side-nav-item">
+                        <a href="{{ route('seller.shop.index') }}"
+                            class="aiz-side-nav-link {{ areActiveRoutes(['seller.shop.index']) }}">
+                            <i class="las la-cog aiz-side-nav-icon"></i>
+                            <span class="aiz-side-nav-text">{{ translate('Shop Setting') }}</span>
+                        </a>
+                    </li>
+                @endcan
 
+                @can('seller_shop_payment_history')
+                    <li class="aiz-side-nav-item">
+                        <a href="{{ route('seller.payments.index') }}"
+                            class="aiz-side-nav-link {{ areActiveRoutes(['seller.payments.index']) }}">
+                            <i class="las la-history aiz-side-nav-icon"></i>
+                            <span class="aiz-side-nav-text">{{ translate('Payment History') }}</span>
+                        </a>
+                    </li>
+                @endcan
 
-                <li class="aiz-side-nav-item">
-                    <a href="{{ route('seller.shop.index') }}"
-                        class="aiz-side-nav-link {{ areActiveRoutes(['seller.shop.index']) }}">
-                        <i class="las la-cog aiz-side-nav-icon"></i>
-                        <span class="aiz-side-nav-text">{{ translate('Shop Setting') }}</span>
-                    </a>
-                </li>
+                @can('seller_view_withdraw_requests')
+                    <li class="aiz-side-nav-item">
+                        <a href="{{ route('seller.money_withdraw_requests.index') }}"
+                            class="aiz-side-nav-link {{ areActiveRoutes(['seller.money_withdraw_requests.index']) }}">
+                            <i class="las la-money-bill-wave-alt aiz-side-nav-icon"></i>
+                            <span class="aiz-side-nav-text">{{ translate('Money Withdraw') }}</span>
+                        </a>
+                    </li>
+                @endcan
 
-                <li class="aiz-side-nav-item">
-                    <a href="{{ route('seller.payments.index') }}"
-                        class="aiz-side-nav-link {{ areActiveRoutes(['seller.payments.index']) }}">
-                        <i class="las la-history aiz-side-nav-icon"></i>
-                        <span class="aiz-side-nav-text">{{ translate('Payment History') }}</span>
-                    </a>
-                </li>
-
-                <li class="aiz-side-nav-item">
-                    <a href="{{ route('seller.money_withdraw_requests.index') }}"
-                        class="aiz-side-nav-link {{ areActiveRoutes(['seller.money_withdraw_requests.index']) }}">
-                        <i class="las la-money-bill-wave-alt aiz-side-nav-icon"></i>
-                        <span class="aiz-side-nav-text">{{ translate('Money Withdraw') }}</span>
-                    </a>
-                </li>
-
-                <li class="aiz-side-nav-item">
-                    <a href="{{ route('seller.commission-history.index') }}" class="aiz-side-nav-link">
-                        <i class="las la-file-alt aiz-side-nav-icon"></i>
-                        <span class="aiz-side-nav-text">{{ translate('Commission History') }}</span>
-                    </a>
-                </li>
+                @can('seller_view_commission_history')
+                    <li class="aiz-side-nav-item">
+                        <a href="{{ route('seller.commission-history.index') }}" class="aiz-side-nav-link">
+                            <i class="las la-file-alt aiz-side-nav-icon"></i>
+                            <span class="aiz-side-nav-text">{{ translate('Commission History') }}</span>
+                        </a>
+                    </li>
+                @endcan
 
                 @if (get_setting('conversation_system') == 1)
                     @php
@@ -217,16 +240,18 @@
                             ->where('sender_viewed', 0)
                             ->get();
                     @endphp
-                    <li class="aiz-side-nav-item">
-                        <a href="{{ route('seller.conversations.index') }}"
-                            class="aiz-side-nav-link {{ areActiveRoutes(['seller.conversations.index', 'seller.conversations.show']) }}">
-                            <i class="las la-comment aiz-side-nav-icon"></i>
-                            <span class="aiz-side-nav-text">{{ translate('Conversations') }}</span>
-                            @if (count($conversation) > 0)
-                                <span class="badge badge-success">({{ count($conversation) }})</span>
-                            @endif
-                        </a>
-                    </li>
+                    @can('seller_view_conversations')
+                        <li class="aiz-side-nav-item">
+                            <a href="{{ route('seller.conversations.index') }}"
+                                class="aiz-side-nav-link {{ areActiveRoutes(['seller.conversations.index', 'seller.conversations.show']) }}">
+                                <i class="las la-comment aiz-side-nav-icon"></i>
+                                <span class="aiz-side-nav-text">{{ translate('Conversations') }}</span>
+                                @if (count($conversation) > 0)
+                                    <span class="badge badge-success">({{ count($conversation) }})</span>
+                                @endif
+                            </a>
+                        </li>
+                    @endcan
                 @endif
 
                 @if (get_setting('product_query_activation') == 1)
@@ -246,16 +271,48 @@
                         ->where('user_id', Auth::user()->id)
                         ->count();
                 @endphp
-                <li class="aiz-side-nav-item">
-                    <a href="{{ route('seller.support_ticket.index') }}"
-                        class="aiz-side-nav-link {{ areActiveRoutes(['seller.support_ticket.index']) }}">
-                        <i class="las la-atom aiz-side-nav-icon"></i>
-                        <span class="aiz-side-nav-text">{{ translate('Support Ticket') }}</span>
-                        @if ($support_ticket > 0)
-                            <span class="badge badge-inline badge-success">{{ $support_ticket }}</span>
-                        @endif
-                    </a>
-                </li>
+                @can('seller_view_support_tickets')
+                    <li class="aiz-side-nav-item">
+                        <a href="{{ route('seller.support_ticket.index') }}"
+                            class="aiz-side-nav-link {{ areActiveRoutes(['seller.support_ticket.index']) }}">
+                            <i class="las la-atom aiz-side-nav-icon"></i>
+                            <span class="aiz-side-nav-text">{{ translate('Support Ticket') }}</span>
+                            @if ($support_ticket > 0)
+                                <span class="badge badge-inline badge-success">{{ $support_ticket }}</span>
+                            @endif
+                        </a>
+                    </li>
+                @endcan
+
+                @canany(['seller_view_staff_roles', 'seller_view_all_staffs'])
+                    <li class="aiz-side-nav-item">
+                        <a href="#" class="aiz-side-nav-link">
+                            <i class="las la-shopping-cart aiz-side-nav-icon"></i>
+                            <span class="aiz-side-nav-text">{{ translate('Staffs') }}</span>
+                            <span class="aiz-side-nav-arrow"></span>
+                        </a>
+                        <!--Submenu-->
+                        <ul class="aiz-side-nav-list level-2">
+                            @can('seller_view_all_staffs')
+                                <li class="aiz-side-nav-item">
+                                    <a href="{{ route('seller.staffs.index') }}"
+                                    class="aiz-side-nav-link {{ areActiveRoutes(['seller.staffs.index', 'seller.staffs.create', 'seller.staffs.edit'])}}">
+                                        <span class="aiz-side-nav-text">{{ translate('All staffs') }}</span>
+                                    </a>
+                                </li>
+                            @endcan
+
+                            @can('seller_view_staff_roles')
+                                <li class="aiz-side-nav-item">
+                                    <a href="{{route('seller.roles.index')}}"
+                                    class="aiz-side-nav-link {{ areActiveRoutes(['seller.roles.index', 'seller.roles.create', 'seller.roles.edit'])}}">
+                                        <span class="aiz-side-nav-text">{{ translate('Staff permissions') }}</span>
+                                    </a>
+                                </li>
+                            @endcan
+                        </ul>
+                    </li>
+                @endcanany
 
             </ul><!-- .aiz-side-nav -->
         </div><!-- .aiz-side-nav-wrap -->

@@ -12,6 +12,12 @@ use Excel;
 
 class ProductBulkUploadController extends Controller
 {
+    public function __construct() {
+        $this->middleware(['permission:seller_product_bulk_import'])->only('index');
+        $this->middleware(['permission:seller_product_bulk_export'])->only('export');
+
+    }
+
     public function index()
     {
         if(Auth::user()->shop->verification_status){
@@ -47,7 +53,7 @@ class ProductBulkUploadController extends Controller
             $import = new ProductsImport;
             Excel::import($import, request()->file('bulk_file'));
         }
-        
+
         return back();
     }
 

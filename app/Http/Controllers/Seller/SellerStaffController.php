@@ -1,21 +1,24 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Seller;
 
-use Illuminate\Http\Request;
-use App\Models\Staff;
+use Auth;
+use Hash;
 use App\Models\Role;
 use App\Models\User;
-use Hash;
+use App\Models\Staff;
+use Illuminate\Http\Request;
+use App\Mail\SellerStaffMail;
+use Illuminate\Support\Facades\Mail;
 
-class StaffController extends Controller
+class SellerStaffController extends Controller
 {
     public function __construct() {
         // Staff Permission Check
-        $this->middleware(['permission:view_all_staffs'])->only('index');
-        $this->middleware(['permission:add_staff'])->only('create');
-        $this->middleware(['permission:edit_staff'])->only('edit');
-        $this->middleware(['permission:delete_staff'])->only('destroy');
+        $this->middleware(['permission:seller_view_all_staffs'])->only('index');
+        $this->middleware(['permission:seller_add_staff'])->only('create');
+        $this->middleware(['permission:seller_edit_staff'])->only('edit');
+        $this->middleware(['permission:seller_delete_staff'])->only('destroy');
     }
 
     /**
@@ -25,8 +28,8 @@ class StaffController extends Controller
      */
     public function index()
     {
-        $staffs = Staff::where('seller_id',null)->paginate(10);
-        return view('backend.staff.staffs.index', compact('staffs'));
+        $staffs = Staff::where('seller_id',Auth::user()->id)->paginate(10);
+        return view('seller.staff.staffs.index', compact('staffs'));
     }
 
     /**
@@ -36,8 +39,8 @@ class StaffController extends Controller
      */
     public function create()
     {
-        $roles = Role::where('id','!=',1)->where('guard_name','web')->orderBy('id', 'desc')->get();
-        return view('backend.staff.staffs.create', compact('roles'));
+        $roles = Role::whereIn('seller_id',[1,Auth::user()->id])->orderBy('id', 'desc')->get();
+        return view('seller.staff.staffs.create', compact('roles'));
     }
 
     /**
@@ -48,21 +51,27 @@ class StaffController extends Controller
      */
     public function store(Request $request)
     {
+        $url = url('/seller/login');
+        $vendor=Auth::user();
         if(User::where('email', $request->email)->first() == null){
             $user = new User;
-            $user->name = $request->name;
+            $user->name = $request->first_name.' '.$request->last_name;
             $user->email = $request->email;
             $user->phone = $request->mobile;
-            $user->user_type = "staff";
-            $user->password = Hash::make($request->password);
+            $user->user_type = "seller";
+            $password=$this->generatePassword(12);
+            $user->password = Hash::make($password);
             if($user->save()){
                 $staff = new Staff;
                 $staff->user_id = $user->id;
+                $staff->seller_id = $vendor->id;
                 $staff->role_id = $request->role_id;
-                $user->assignRole(Role::findOrFail($request->role_id)->name);
+                $role=Role::findOrFail($request->role_id);
+                $user->assignRole($role->name);
                 if($staff->save()){
+                    Mail::to($user->email)->send(new SellerStaffMail($user, $role, $password, $vendor , $url));
                     flash(translate('Staff has been inserted successfully'))->success();
-                    return redirect()->route('staffs.index');
+                    return redirect()->route('seller.staffs.index');
                 }
             }
         }
@@ -71,6 +80,21 @@ class StaffController extends Controller
         return back();
     }
 
+    public function generatePassword($length = 12) {
+        $uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $lowercase = 'abcdefghijklmnopqrstuvwxyz';
+        $numbers = '0123456789';
+        $specialChars = '!@#$%^&*()-_+=\/{}[]|';
+
+        $allChars = $uppercase . $lowercase . $numbers . $specialChars;
+        $password = '';
+
+        for ($i = 0; $i < $length; $i++) {
+            $password .= $allChars[rand(0, strlen($allChars) - 1)];
+        }
+
+        return $password;
+    }
     /**
      * Display the specified resource.
      *
@@ -91,8 +115,8 @@ class StaffController extends Controller
     public function edit($id)
     {
         $staff = Staff::findOrFail(decrypt($id));
-        $roles = $roles = Role::where('id','!=',1)->orderBy('id', 'desc')->get();
-        return view('backend.staff.staffs.edit', compact('staff', 'roles'));
+        $roles = $roles = Role::where('seller_id','!=',null)->orderBy('id', 'desc')->get();
+        return view('seller.staff.staffs.edit', compact('staff', 'roles'));
     }
 
     /**
@@ -117,7 +141,7 @@ class StaffController extends Controller
             if($staff->save()){
                 $user->syncRoles(Role::findOrFail($request->role_id)->name);
                 flash(translate('Staff has been updated successfully'))->success();
-                return redirect()->route('staffs.index');
+                return redirect()->route('seller.staffs.index');
             }
         }
 
@@ -136,7 +160,7 @@ class StaffController extends Controller
         User::destroy(Staff::findOrFail($id)->user->id);
         if(Staff::destroy($id)){
             flash(translate('Staff has been deleted successfully'))->success();
-            return redirect()->route('staffs.index');
+            return redirect()->route('seller.staffs.index');
         }
 
         flash(translate('Something went wrong'))->error();
