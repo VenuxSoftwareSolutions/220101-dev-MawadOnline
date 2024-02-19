@@ -217,11 +217,18 @@ class SearchController extends Controller
         $case1 = $query . '%';
         $case2 = '%' . $query . '%';
 
+        //vulnerable code
+        // $products_query->orderByRaw("CASE 
+        //         WHEN name LIKE '$case1' THEN 1 
+        //         WHEN name LIKE '$case2' THEN 2 
+        //         ELSE 3 
+        //         END");
         $products_query->orderByRaw("CASE 
-                WHEN name LIKE '$case1' THEN 1 
-                WHEN name LIKE '$case2' THEN 2 
-                ELSE 3 
-                END");
+        WHEN name LIKE ? THEN 1 
+        WHEN name LIKE ? THEN 2 
+        ELSE 3 
+        END", [$query . '%', '%' . $query . '%']);
+
         $products = $products_query->limit(3)->get();
 
         $categories = Category::where('name', 'like', '%' . $query . '%')->get()->take(3);

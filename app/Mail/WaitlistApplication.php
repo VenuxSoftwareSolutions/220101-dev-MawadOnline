@@ -13,15 +13,24 @@ class WaitlistApplication extends Mailable
 
     public $name;
     public $email;
-    public $role;
+    public $phone;
+    public $work;
+    public $job;
+    public $location;
+    public $info;
     public $subscribeNewsletter;
 
-    public function __construct($name, $email, $role, $subscribeNewsletter)
+    public function __construct($name, $email ,$phone ,$work ,$job ,$location ,$info, $subscribeNewsletter )
     {
         $this->name = $name;
         $this->email = $email;
-        $this->role = $role;
+        $this->phone = $phone;
+        $this->work = $work;
+        $this->job = $job;
+        $this->location = $location;
+        $this->info = $info;
         $this->subscribeNewsletter = $subscribeNewsletter;
+
     }
 
     public function build()
@@ -32,7 +41,11 @@ class WaitlistApplication extends Mailable
             ->with([
                 'name' => $this->name,
                 'email' => $this->email,
-                'role' => $this->role,
+                'phone' => $this->phone,
+                'work' => $this->work,
+                'job' => $this->job,
+                'location' => $this->location,
+                'info' => $this->info,
                 'subscribeNewsletter' => $this->subscribeNewsletter,
             ]);
     }

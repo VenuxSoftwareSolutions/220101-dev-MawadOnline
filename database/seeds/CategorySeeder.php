@@ -124,6 +124,14 @@ class CategorySeeder extends Seeder
 
     public function run()
     {
+        $root_category = Category::firstOrCreate([
+            'name' => "root",
+            'slug' => "root",
+            'parent_id' => 0,
+            'order_level'=>0,
+            'level' => 0,
+            'digital'=>0
+        ]);
         $csv = Reader::createFromPath('database/data/categories.csv');
         $csv->setHeaderOffset(0);
 
@@ -141,7 +149,7 @@ class CategorySeeder extends Seeder
                 $category = Category::firstOrCreate([
                     'name' => $categoryName,
                     'slug' => $categorySlug,
-                    'parent_id' => 0,
+                    'parent_id' => $root_category->id,
                     'order_level'=>$i,
                     'level' => 1,
                 ]);
@@ -167,7 +175,7 @@ class CategorySeeder extends Seeder
                     'name' => $subCategoryName,
                     'slug' => $subCategorySlug,
                     'parent_id' => $lastMainCategoryId, // Use last main category ID
-                    // ... other fields
+                    'level' => 2,
                 ]);
 
                 $lastSubCategoryId = $subCategory->id; // Update last subcategory ID
@@ -189,7 +197,7 @@ class CategorySeeder extends Seeder
                     'name' => $childCategoryName,
                     'slug' => $childCategorySlug,
                     'parent_id' => $lastSubCategoryId ? $lastSubCategoryId : $lastMainCategoryId,
-                    // ... other fields
+                    'level' => 2,
                 ]);
 
                 $childCategory_translation = CategoryTranslation::firstOrCreate([

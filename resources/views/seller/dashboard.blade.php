@@ -387,7 +387,7 @@
                         <div class="card-title">
                             <h6 class="mb-0">{{ translate('Purchased Package') }}</h6>
                         </div>
-                        {{-- @if (Auth::user()->shop->seller_package)
+                        @if (isset(Auth::user()->shop->seller_package))
                             <div class="d-flex">
                                 <div class="col-3">
                                     <img src="{{ uploaded_asset(Auth::user()->shop->seller_package->logo) }}"

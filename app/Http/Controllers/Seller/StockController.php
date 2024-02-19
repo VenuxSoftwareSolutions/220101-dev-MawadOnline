@@ -132,7 +132,7 @@ class StockController extends Controller
         StockDetails::create($stockDetailsData);
 
         // Redirect back or return a response
-        return redirect()->route('seller.stocks.index')->with('success', __('stock.inventory_record_saved'));
+        return redirect()->back()->with('success', __('stock.inventory_record_saved'));
     }
 
 

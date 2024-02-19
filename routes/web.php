@@ -117,6 +117,9 @@ Route::controller(HomeController::class)->group(function () {
     Route::post('/users/login/cart', 'cart_login')->name('cart.login.submit')->middleware('handle-demo-login');
     // Route::get('/new-page', 'new_page')->name('new_page');
 
+    Route::get('/terms-and-conditions', function () {
+        return view('email.terms');
+    })->name('terms-and-conditions');
     Route::get('/business', function () {
         return view('email.waitlist-email');
     })->name('business');
