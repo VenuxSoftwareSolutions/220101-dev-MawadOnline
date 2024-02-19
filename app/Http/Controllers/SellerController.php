@@ -9,9 +9,12 @@ use App\Models\Shop;
 use App\Models\Product;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\VendorStatusHistory;
+use App\Notifications\CustomStatusNotification;
 use Illuminate\Support\Facades\Hash;
 use App\Notifications\EmailVerificationNotification;
 use App\Notifications\ShopVerificationNotification;
+use App\Notifications\VendorStatusChangedNotification;
 use Cache;
 use Illuminate\Support\Facades\Notification;
 
@@ -36,28 +39,30 @@ class SellerController extends Controller
      */
     public function index(Request $request)
     {
-        $sort_search = null;
-        $approved = null;
-        $shops = Shop::whereIn('user_id', function ($query) {
-            $query->select('id')
-                ->from(with(new User)->getTable());
-        })->latest();
+        // $sort_search = null;
+        // $approved = null;
+        // $shops = Shop::whereIn('user_id', function ($query) {
+        //     $query->select('id')
+        //         ->from(with(new User)->getTable());
+        // })->latest();
 
-        if ($request->has('search')) {
-            $sort_search = $request->search;
-            $user_ids = User::where('user_type', 'seller')->where(function ($user) use ($sort_search) {
-                $user->where('name', 'like', '%' . $sort_search . '%')->orWhere('email', 'like', '%' . $sort_search . '%');
-            })->pluck('id')->toArray();
-            $shops = $shops->where(function ($shops) use ($user_ids) {
-                $shops->whereIn('user_id', $user_ids);
-            });
-        }
-        if ($request->approved_status != null) {
-            $approved = $request->approved_status;
-            $shops = $shops->where('verification_status', $approved);
-        }
-        $shops = $shops->paginate(15);
-        return view('backend.sellers.index', compact('shops', 'sort_search', 'approved'));
+        // if ($request->has('search')) {
+        //     $sort_search = $request->search;
+        //     $user_ids = User::where('user_type', 'seller')->where(function ($user) use ($sort_search) {
+        //         $user->where('name', 'like', '%' . $sort_search . '%')->orWhere('email', 'like', '%' . $sort_search . '%');
+        //     })->pluck('id')->toArray();
+        //     $shops = $shops->where(function ($shops) use ($user_ids) {
+        //         $shops->whereIn('user_id', $user_ids);
+        //     });
+        // }
+        // if ($request->approved_status != null) {
+        //     $approved = $request->approved_status;
+        //     $shops = $shops->where('verification_status', $approved);
+        // }
+        // $shops = $shops->paginate(15);
+        // return view('backend.sellers.index', compact('shops', 'sort_search', 'approved'));
+        $sellers = User::where('user_type', 'seller')->get() ;
+        return view('backend.sellers.index', compact('sellers'));
     }
 
     /**
@@ -291,4 +296,133 @@ class SellerController extends Controller
         $shop->user->save();
         return back();
     }
+    public function approve($id,Request $request)
+    {
+        $seller = User::findOrFail($id);
+        $oldStatus = $seller->status;
+        if($request->value == "Enabled")
+            $seller->status = 'Enabled';
+        else
+             $seller->status = 'Pending Approval';
+
+        $seller->save();
+
+        // Log the status change
+        if($request->value == "Enabled")
+            $this->logStatusChange($seller, 'Enabled');
+        else
+            $this->logStatusChange($seller, 'Pending Approval');
+
+    // Send an email notification to the seller with old and new status
+    $seller->notify(new VendorStatusChangedNotification($oldStatus, $seller->status));
+    Notification::send($seller, new CustomStatusNotification($oldStatus, $seller->status));
+
+
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.vendor_approved_successfully'),
+            'status' => $seller->status
+        ]);
+
+    }
+
+    public function resubmitRegistration($id)
+    {
+        $seller = User::findOrFail($id);
+        $oldStatus = $seller->status;
+
+        // Update status and other necessary fields
+        $seller->status = 'Rejected'; // Change status to "Pending Approval"
+        $seller->save();
+
+        // Optionally, you can also log this status change in the status history table
+        $this->logStatusChange($seller, 'Rejected');
+        // Send an email notification to the seller with old and new status
+        $seller->notify(new VendorStatusChangedNotification($oldStatus, $seller->status));
+        Notification::send($seller, new CustomStatusNotification($oldStatus, $seller->status));
+
+        // Redirect the user back or to any other page
+        return response()->json(['success' => true]);
+    }
+
+       // Helper method to log status change
+       private function logStatusChange($seller, $status)
+       {
+           $statusHistory = new VendorStatusHistory();
+           $statusHistory->vendor_id = $seller->id;
+           $statusHistory->status = $status;
+           $statusHistory->save();
+       }
+
+       public function suspend($id, Request $request)
+        {
+            $vendor = User::findOrFail($id);
+            $oldStatus = $vendor->status;
+            // Update vendor's status to "Suspended"
+            $vendor->status = 'Suspended';
+            $vendor->save();
+
+            // Store suspension details in the database
+            $suspension = new VendorStatusHistory();
+            $suspension->vendor_id = $vendor->id;
+            $suspension->reason = $request->input('reason');
+            $suspension->suspension_reason = $request->input('reason_title');
+            $suspension->details = $request->input('reason_details');
+            $suspension->status = "Suspended";
+            $suspension->save();
+            // Send an email notification to the seller with old and new status
+            $vendor->notify(new VendorStatusChangedNotification($oldStatus, $vendor->status));
+            Notification::send($vendor, new CustomStatusNotification($oldStatus, $vendor->status));
+
+            // Return JSON response indicating success
+            return response()->json(['success' => true]);
+        }
+
+        public function pendingClosure($id)
+        {
+            $vendor = User::findOrFail($id);
+            $oldStatus = $vendor->status;
+
+            // Update vendor's status to "Pending Closure"
+            $vendor->status = 'Pending Closure';
+            $vendor->save();
+            // Optionally, you can also log this status change in the status history table
+            $this->logStatusChange($vendor, 'Pending Closure');
+            // Send an email notification to the seller with old and new status
+            $vendor->notify(new VendorStatusChangedNotification($oldStatus, $vendor->status));
+            Notification::send($vendor, new CustomStatusNotification($oldStatus, $vendor->status));
+
+            // Return success response
+            return response()->json(['success' => true]);
+        }
+        public function close($id)
+        {
+            $vendor = User::findOrFail($id);
+            $oldStatus = $vendor->status;
+
+            // Update vendor's status to "Closed"
+            $vendor->status = 'Closed';
+            $vendor->save();
+            $this->logStatusChange($vendor, 'Closed');
+            // Send an email notification to the seller with old and new status
+            $vendor->notify(new VendorStatusChangedNotification($oldStatus, $vendor->status));
+            Notification::send($vendor, new CustomStatusNotification($oldStatus, $vendor->status));
+
+            // Return success response
+            return response()->json(['success' => true]);
+        }
+
+        public function getStatusHistory(Request $request, $vendorId)
+        {
+            // Fetch the vendor status history from the database
+            $history = VendorStatusHistory::where('vendor_id', $vendorId)
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            // Return the history as JSON response
+            return response()->json(['history' => $history]);
+        }
+
+
+
 }

@@ -277,6 +277,10 @@
                                                                     </span>
                                                                 </a>
                                                             @endif
+                                                        @elseif ($notification->type == 'App\Notifications\CustomStatusNotification')
+                                                        <span class="ml-2">
+                                                            {{ $notification->data['message'] }}
+                                                        </span>
                                                         @endif
                                                     </li>
                                                 @empty

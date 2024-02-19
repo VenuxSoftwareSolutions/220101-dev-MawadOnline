@@ -165,6 +165,16 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::post('/sellers/payment_modal', 'payment_modal')->name('sellers.payment_modal');
         Route::post('/sellers/profile_modal', 'profile_modal')->name('sellers.profile_modal');
         Route::post('/sellers/approved', 'updateApproved')->name('sellers.approved');
+        // Route for resubmitting vendor registration
+        Route::post('/seller/{id}/resubmit-registration', [SellerController::class, 'resubmitRegistration'])
+        ->name('resubmit.registration');
+        Route::post('vendors/{id}/approve', 'approve')->name('vendors.approve');
+        Route::post('vendors/{id}/suspend', 'suspend')->name('vendors.suspend');
+        Route::post('vendors/{id}/pending-closure', 'pendingClosure')->name('vendors.pending-closure');
+        Route::post('/vendors/{id}/close', 'close')->name('vendors.close');
+        Route::get('/vendors/{vendorId}/status-history', 'getStatusHistory')->name('vendors.status-history');
+
+
     });
 
     // Seller Payment

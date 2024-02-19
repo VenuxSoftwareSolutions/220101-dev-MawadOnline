@@ -2254,6 +2254,7 @@ use Carbon\Carbon;
                 changeYear: true,      // Enable year dropdown
                  yearRange: "-100:+10"  // Optional: specify the range of years available
             });
+
         });
     </script>
 
