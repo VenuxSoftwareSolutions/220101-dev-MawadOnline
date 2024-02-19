@@ -128,8 +128,8 @@ CoreComponentRepository::initializeCache();
                     <div class="form-group row  not-translatable">
                         <label class="col-md-3 col-form-label">{{translate('Parent Category')}}</label>
                         <div class="col-md-9">
-                                <input type="text" id="search_input" class="form-control" placeholder="Search">
-                                <div class="h-300px overflow-auto c-scrollbar-light">
+                            <input type="text" id="search_input" class="form-control" placeholder="Search">
+                            <div class="h-300px overflow-auto c-scrollbar-light">
 
                                 <div id="jstree"></div>
                             </div>
@@ -383,18 +383,11 @@ CoreComponentRepository::initializeCache();
 
 <script>
     $(function() {
-        var lastSearchTerm = null; // Keep track of the last search term
 
         $('#jstree').jstree({
             'core': {
                 'data': {
-                    "url": function(node) {
-                        return "{{ route('categories.jstree') }}";
-                        if (lastSearchTerm) {
-                            url += "?search=" + lastSearchTerm;
-                        }
-                        return url;
-                    },
+                    "url": "{{ route('categories.jstree') }}",
                     "data": function(node) {
                         return {
                             "id": node.id
@@ -419,38 +412,55 @@ CoreComponentRepository::initializeCache();
             }
         });
 
-        // Search configuration
-        var to = false;
+       
+
+    });
+
+
+     // Search configuration
+     var to = false;
         $('#search_input').keyup(function() {
             if (to) {
                 clearTimeout(to);
             }
             to = setTimeout(function() {
                 var v = $('#search_input').val();
-                lastSearchTerm = v;
-                $.ajax({
-                    url: "{{ route('categories.jstreeSearch') }}", // Replace with your actual API endpoint
-                    type: 'GET', // Or 'POST', depending on your API
-                    dataType: 'json', // Expected data format from API
-                    data: {
-                        searchTerm: v // Send the search term to your API
+                if (v === "") {
+                    lastSearchTerm = null;
+                     // Explicitly reset the URL for the initial data load
+                    $('#jstree').jstree(true).settings.core.data.url = "{{ route('categories.jstree') }}";
+
+                    $('#jstree').jstree(true).settings.core.data.data = function(node) {
+                        return {
+                            "id": node.id
+                        };
                     },
-                    success: function(response) {
-                        console.log(response)
-                        // Assuming 'response' contains the data to update the jstree
-                        // You will need to process 'response' to fit your jstree's data format
-                        
-                        // Example: clear the existing jstree and populate with new data
-                        $('#jstree').jstree(true).settings.core.data = response;
-                        $('#jstree').jstree(true).refresh();
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Error during search API call:", status, error);
-                    }
-                });
+                    $('#jstree').jstree(false, true).refresh(); // Refresh the tree to load initial data
+                } else {
+                    lastSearchTerm = v;
+                    $.ajax({
+                        url: "{{ route('categories.jstreeSearch') }}", // Your actual API endpoint
+                        type: 'GET', // Or 'POST', depending on your API
+                        dataType: 'json', // Expected data format from API
+                        data: {
+                            searchTerm: v // Send the search term to your API
+                        },
+                        success: function(response) {
+                            console.log(response);
+                            // Assuming 'response' contains the data to update the jstree
+                            // You will need to process 'response' to fit your jstree's data format
+
+                            // Example: clear the existing jstree and populate with new data
+                            $('#jstree').jstree(true).settings.core.data = response;
+                            $('#jstree').jstree(true).refresh();
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error during search API call:", status, error);
+                        }
+                    });
+                }
             }, 250);
         });
-    });
 </script>
 
 
