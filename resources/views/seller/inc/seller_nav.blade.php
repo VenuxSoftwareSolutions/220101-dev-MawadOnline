@@ -59,7 +59,7 @@
                                     <a class="nav-link" data-toggle="tab" data-type="seller"
                                         href="#payouts-notifications" role="tab" id="sellers-tab">{{ translate('Payouts') }}</a>
                                 </li>
-                                
+
                             </ul>
                             <div class="tab-content">
                                 <div class="tab-pane active" id="orders-notifications" role="tabpanel">

@@ -7,6 +7,8 @@ use Hash;
 use Mail;
 use Cache;
 use Cookie;
+use Artisan;
+use App\Models\Cart;
 use App\Models\Page;
 use App\Models\Shop;
 use App\Models\User;
@@ -22,20 +24,19 @@ use Illuminate\Support\Str;
 use App\Models\ProductQuery;
 use Illuminate\Http\Request;
 use App\Models\AffiliateConfig;
+use App\Models\BusinessSetting;
 use App\Models\CustomerPackage;
 use App\Utility\CategoryUtility;
+use App\Mail\WaitlistApplication;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
+use App\Mail\WaitlistUserApplication;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Facades\Validator;
 use App\Mail\SecondEmailVerifyMailManager;
-use App\Mail\WaitlistApplication;
-use App\Mail\WaitlistUserApplication;
-use App\Models\BusinessSetting;
-use App\Models\Cart;
-use Artisan;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\URL;
 
 class HomeController extends Controller
 {
@@ -52,7 +53,7 @@ class HomeController extends Controller
         });
 
         return view('frontend.'.get_setting('homepage_select').'.index', compact('featured_categories'));
-        
+
     }
 
     public function load_todays_deal_section()
@@ -776,21 +777,41 @@ class HomeController extends Controller
 
     public function sendWaitlistEmail(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|regex:/^[\pL\s]+$/u',
+            'email' => 'required|email',
+            'phone' => 'required|numeric|digits:10',
+            'work' => 'nullable|regex:/^[\pL\s]+$/u',
+            'job' => 'nullable|regex:/^[\pL\s]+$/u',
+            'location' => 'nullable|regex:/^[\pL\s]+$/u',
+            'info' => 'nullable|string',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()
+                        ->withErrors($validator)
+                        ->withInput();
+        }
 
         $name=$request->name;
         $email=$request->email;
-        $role=$request->role;
+        $phone=$request->phone;
+        $work=$request->work;
+        $job=$request->job;
+        $location=$request->location;
+        $info=$request->info;
         if (isset($request->subscribeNewsletter)) {
             $subscribeNewsletter="yes";
         }else{
             $subscribeNewsletter="no";
         }
 
-         //   Mail::to()->send(new WaitlistApplication($name, $email, $role, $subscribeNewsletter));
+
+
+            Mail::to('amine.abdmouleh@hypergroup.com.tn')->send(new WaitlistApplication($name, $email ,$phone ,$work ,$job ,$location ,$info, $subscribeNewsletter ));
 
             Mail::to($email)->send(new WaitlistUserApplication($name));
 
-            return Redirect::back();
+            return Redirect::back()->with('success', 'Your request to join MawadOnline Waitlist has been submitted successfully!');
     }
 
 }

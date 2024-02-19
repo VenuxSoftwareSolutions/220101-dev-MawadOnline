@@ -11,12 +11,12 @@
 </div>
 
 <div class="card">
-    <form class="" id="sort_sellers" action="" method="GET">
-        <div class="card-header row gutters-5">
+    {{-- <form class="" id="sort_sellers" action="" method="GET"> --}}
+        {{-- <div class="card-header row gutters-5">
             <div class="col">
                 <h5 class="mb-md-0 h6">{{ translate('Sellers') }}</h5>
             </div>
-            
+
             @can('delete_seller')
                 <div class="dropdown mb-2 mb-md-0">
                     <button class="btn border dropdown-toggle" type="button" data-toggle="dropdown">
@@ -27,7 +27,7 @@
                     </div>
                 </div>
             @endcan
-            
+
             <div class="col-md-3 ml-auto">
                 <select class="form-control aiz-selectpicker" name="approved_status" id="approved_status" onchange="sort_sellers()">
                     <option value="">{{translate('Filter by Approval')}}</option>
@@ -40,13 +40,13 @@
                   <input type="text" class="form-control" id="search" name="search"@isset($sort_search) value="{{ $sort_search }}" @endisset placeholder="{{ translate('Type name or email & Enter') }}">
                 </div>
             </div>
-        </div>
-    
+        </div> --}}
+
         <div class="card-body">
-            <table class="table aiz-table mb-0">
+            {{-- <table class="table aiz-table mb-0">
                 <thead>
                 <tr>
-                    
+
                     <th>
                         @if(auth()->user()->can('delete_seller'))
                             <div class="form-group">
@@ -101,10 +101,10 @@
                         </td>
                         <td>
                             <label class="aiz-switch aiz-switch-success mb-0">
-                                <input 
+                                <input
                                     @can('approve_seller') onchange="update_approved(this)" @endcan
-                                    value="{{ $shop->id }}" type="checkbox" 
-                                    <?php if($shop->verification_status == 1) echo "checked";?> 
+                                    value="{{ $shop->id }}" type="checkbox"
+                                    <?php if($shop->verification_status == 1) echo "checked";?>
                                     @cannot('approve_seller') disabled @endcan
                                 >
                                 <span class="slider round"></span>
@@ -183,9 +183,76 @@
             </table>
             <div class="aiz-pagination">
               {{ $shops->appends(request()->input())->links() }}
-            </div>
+            </div> --}}
+            <table class="table aiz-table mb-0">
+                <thead>
+                    <tr>
+                        <th>{{__('Email Address')}}</th>
+                        <th>{{__('Approval')}}</th>
+                        <th>{{ __('Status') }}</th>
+                        <th width="10%">{{__('Options')}}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ( $sellers as $seller )
+                        <tr>
+                            <td>{{ $seller->email }}</td>
+                            <td>
+                                <!-- Approval status column with toggle switch -->
+                                <label class="aiz-switch aiz-switch-success mb-0">
+                                    <input id="vendor-checkbox-{{ $seller->id }}" type="checkbox" class="approval-checkbox" data-vendor-id="{{ $seller->id }}" <?php if($seller->status == 'Enabled') echo "checked";?> onchange="updateSettings(this, 'vendor_approval', {{ $seller->id }})">
+                                    <span class="slider round"></span>
+                                </label>
+                            </td>
+
+                            <td id="status-{{ $seller->id}}"> {{$seller->status}}
+                                {{-- @if($seller->status == 'Rejected')
+                                    <span class="badge bg-danger">{{ __('Rejected') }}</span>
+                                @elseif($seller->steps == 0)
+                                    <span class="badge bg-info">{{ __('Draft') }}</span>
+                                @else
+                                    <span class="badge bg-warning">{{ __('Pending Approval') }}</span>
+                                @endif --}}
+                            </td>
+                            <td>
+                                <!-- Options column -->
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Actions
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                        {{-- Resubmit Registration --}}
+                                        <button type="button" class="dropdown-item btn btn-primary resubmit-registration" data-vendor-id="{{ $seller->id }}">
+                                            Resubmit Registration
+                                        </button>
+
+                                        {{-- Suspend Vendor --}}
+                                        <button type="button" class="dropdown-item btn btn-danger suspend-vendor-btn" data-vendor-id="{{ $seller->id }}">Suspend Vendor</button>
+
+                                        {{-- Pending Closure --}}
+                                        <button type="button" class="dropdown-item btn btn-warning pending-closure-btn" data-vendor-id="{{ $seller->id }}">Pending Closure</button>
+
+                                        {{-- Close Vendor --}}
+                                        <button type="button" class="dropdown-item btn btn-danger close-vendor-btn" data-vendor-id="{{ $seller->id }}">Close Vendor</button>
+
+                                        {{-- View Status History --}}
+                                        <button type="button" class="dropdown-item btn btn-info view-status-history-btn" data-vendor-id="{{ $seller->id }}">
+                                            View Status History
+                                        </button>
+                                    </div>
+                                </div>
+
+
+                            </td>
+                        </tr>
+
+                        @endforeach
+
+
+                    </tbody>
+            </table>
         </div>
-    </form>
+    {{-- </form> --}}
 </div>
 
 @endsection
@@ -256,21 +323,30 @@
 @endsection
 
 @section('script')
+  <!-- DataTables Buttons extension -->
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+<!-- Include SweetAlert library -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript">
         $(document).on("change", ".check-all", function() {
             if(this.checked) {
                 // Iterate each checkbox
                 $('.check-one:checkbox').each(function() {
-                    this.checked = true;                        
+                    this.checked = true;
                 });
             } else {
                 $('.check-one:checkbox').each(function() {
-                    this.checked = false;                       
+                    this.checked = false;
                 });
             }
-          
+
         });
-        
+
         function show_seller_payment_modal(id){
             $.post('{{ route('sellers.payment_modal') }}',{_token:'{{ @csrf_token() }}', id:id}, function(data){
                 $('#payment_modal #payment-modal-content').html(data);
@@ -318,7 +394,7 @@
             $('#confirm-unban').modal('show', {backdrop: 'static'});
             document.getElementById('confirmationunban').setAttribute('href' , url);
         }
-        
+
         function bulk_delete() {
             var data = new FormData($('#sort_sellers')[0]);
             $.ajax({
@@ -340,4 +416,259 @@
         }
 
     </script>
+
+<script type="text/javascript">
+    // JavaScript function
+    function updateSettings(el, type, vendorId) {
+        // Determine the value based on whether the checkbox is checked or not
+        var value = $(el).is(':checked') ? 'Enabled' : 'Disabled';
+
+        // Send a POST request to update the vendor's approval status
+
+        $.post("{{ route('vendors.approve', ':id') }}".replace(':id', vendorId), {_token:'{{ csrf_token() }}', type:type, value:value}, function(data){
+            // Handle the response from the server
+            if(data.success){
+                AIZ.plugins.notify('success', '{{ translate('Vendor approval status updated successfully') }}');
+                $('#status-' + vendorId).text(data.status); // Update the status cell with the new status
+
+            }
+            else{
+                AIZ.plugins.notify('danger', 'Something went wrong');
+            }
+        });
+    }
+        // Function to uncheck checkbox by vendorId
+        function uncheckCheckboxByVendorId(vendorId) {
+
+        // Construct the ID of the checkbox using the vendorId variable
+        var checkboxId = "vendor-checkbox-" + vendorId;
+
+        // Uncheck the checkbox with the constructed ID
+        $("#" + checkboxId).prop("checked", false);
+    }
+</script>
+<!-- JavaScript code to handle suspension -->
+<script>
+    $(document).on('click', '.suspend-vendor-btn', function () {
+        var vendorId = $(this).data('vendor-id');
+
+        // Display SweetAlert modal
+        Swal.fire({
+            title: 'Select Suspension Reason',
+            input: 'select',
+            inputOptions: {
+                'Fraud': 'Fraud',
+                'Violation of Policies': 'Violation of Policies',
+                'Non-compliance': 'Non-compliance',
+                'Legal Issues': 'Legal Issues',
+                'Non-payment': 'Non-payment',
+                'IT Security Concerns': 'IT Security Concerns'
+            },
+            inputPlaceholder: 'Select a reason',
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'You need to select a reason';
+                }
+            },
+            html: '<input id="reason-title" class="swal2-input" placeholder="Reason Title">' +
+                  '<textarea id="reason-details" class="swal2-textarea" placeholder="Reason Details"></textarea>',
+            showCancelButton: true,
+            confirmButtonText: 'Suspend',
+            showLoaderOnConfirm: true,
+            preConfirm: () => {
+                // AJAX request to suspend the vendor
+                return $.ajax({
+                    url: "{{ route('vendors.suspend', ':id') }}".replace(':id', vendorId),
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        reason: $('#swal2-select').val(),
+                        reason_title: $('#reason-title').val(),
+                        reason_details: $('#reason-details').val()
+                    }
+                });
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Show success message
+                Swal.fire('Vendor Suspended', 'The vendor has been suspended successfully', 'success');
+                $('#status-' + vendorId).text('Suspended');
+                uncheckCheckboxByVendorId(vendorId);
+
+
+            }
+        });
+    });
+</script>
+<!-- JavaScript code to handle status change -->
+<script>
+    $(document).on('click', '.pending-closure-btn', function () {
+        var vendorId = $(this).data('vendor-id');
+
+        // Display SweetAlert confirmation dialog
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This will suspend the vendor with the intention of closing. Are you sure you want to proceed?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, suspend it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Trigger AJAX request to change status to "Pending Closure"
+                $.ajax({
+                    url: "{{ route('vendors.pending-closure', ':id') }}".replace(':id', vendorId),
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(data) {
+                        // Show success message
+                        Swal.fire('Vendor Suspended', 'The vendor has been suspended with pending closure successfully', 'success');
+                        $('#status-' + vendorId).text('Pending Closure');
+                        uncheckCheckboxByVendorId(vendorId);
+
+
+                    },
+                    error: function(xhr, status, error) {
+                        // Show error message
+                        Swal.fire('Error', 'Failed to suspend the vendor. Please try again later.', 'error');
+                    }
+                });
+            }
+        });
+    });
+</script>
+<script>
+    $(document).on('click', '.close-vendor-btn', function () {
+        var vendorId = $(this).data('vendor-id');
+
+        // Display SweetAlert confirmation dialog
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This will close the vendor\'s e-shop. Are you sure you want to proceed?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, close it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Trigger AJAX request to change status to "Closed"
+                $.ajax({
+                    url: "{{ route('vendors.close', ':id') }}".replace(':id', vendorId),
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(data) {
+                        // Show success message
+                        Swal.fire('Vendor Closed', 'The vendor\'s e-shop has been closed successfully', 'success');
+                        $('#status-' + vendorId).text('Closed');
+                        uncheckCheckboxByVendorId(vendorId);
+
+                    },
+                    error: function(xhr, status, error) {
+                        // Show error message
+                        Swal.fire('Error', 'Failed to close the vendor\'s e-shop. Please try again later.', 'error');
+                    }
+                });
+            }
+        });
+    });
+</script>
+<script>
+    $(document).on('click', '.resubmit-registration', function() {
+        var vendorId = $(this).data('vendor-id');
+
+        // Display SweetAlert confirmation dialog
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This will resubmit the vendor\'s registration. Are you sure you want to proceed?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, resubmit it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // AJAX request to resubmit registration
+                $.ajax({
+                    url: "{{ route('resubmit.registration', ':id') }}".replace(':id', vendorId),
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire('Success', response.message, 'success');
+                            $('#status-' + vendorId).text('Rejected');
+                            uncheckCheckboxByVendorId(vendorId);
+
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire('Error', 'Failed to resubmit registration. Please try again later.', 'error');
+                    }
+                });
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        // Fetch and display vendor status history when a button is clicked
+            $(document).on('click', '.view-status-history-btn', function() {
+
+            var vendorId = $(this).data('vendor-id');
+
+            // AJAX request to fetch vendor status history
+            $.ajax({
+                url: "{{ route('vendors.status-history', ':id') }}".replace(':id', vendorId),
+                method: 'GET',
+                success: function(response) {
+               // Format the history data for display in a table
+                var historyHtml = '<table class="table"><thead><tr><th>Status</th><th>Reason</th><th>Suspension Reason</th><th>Details</th><th>Date</th></tr></thead><tbody>';
+                $.each(response.history, function(index, item) {
+                    // Format the date using JavaScript
+                    var formattedDate = new Date(item.created_at).toLocaleString();
+
+                    // Check if the details are null and display an empty string if true
+                    var details = item.details !== null ? item.details : "";
+                    var reason = item.reason !== null ? item.reason : "";
+                    var suspension_reason = item.suspension_reason !== null ? item.suspension_reason : "";
+
+                    historyHtml += '<tr><td>' + item.status + '</td><td>' + reason + '</td><td>' + suspension_reason + '</td><td>' + details + '</td><td>' + formattedDate + '</td></tr>';
+                });
+                historyHtml += '</tbody></table>';
+
+                // Display the history using SweetAlert with customized width
+                Swal.fire({
+                    title: 'Vendor Status History',
+                    html: historyHtml,
+                    icon: 'info',
+                    customClass: {
+                        container: 'swal2-container-custom', // Custom class to apply custom styling
+                    },
+                    width: '70%', // Customize the width of the SweetAlert dialog box
+                    confirmButtonText: 'Close' // Optionally, customize the confirm button text
+                });
+
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire('Error', 'Failed to fetch vendor status history. Please try again later.', 'error');
+                }
+            });
+        });
+        $('.aiz-table').DataTable({
+            "order": [[0, "asc"]], // Sort by first column in descending order
+
+        });
+
+    });
+</script>
 @endsection

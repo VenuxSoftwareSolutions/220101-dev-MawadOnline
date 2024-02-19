@@ -17,7 +17,7 @@
             </ul>
 
             {{ $notifications->links() }}
-            
+
         </div>
     </form>
 </div>

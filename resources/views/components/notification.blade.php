@@ -27,15 +27,15 @@
                         @if ($is_linkable)
                             </a>
                         @endif
-                        
+
                         {{ translate(' has been ' . ucfirst(str_replace('_', ' ', $notification->data['status']))) }}
-                        
+
                     @elseif ($notification->type == 'App\Notifications\ShopVerificationNotification')
                         @if ($user_type == 'admin')
                             @if ($is_linkable)
                                 <a href="{{ route('sellers.show_verification_request', $notification->data['id']) }}">
                             @endif
-                            {{ $notification->data['name'] }}: 
+                            {{ $notification->data['name'] }}:
                             @if ($is_linkable)
                                 </a>
                             @endif
@@ -44,7 +44,7 @@
                         @endif
                         {{ translate('verification request has been '.$notification->data['status']) }}
                     @elseif ($notification->type == 'App\Notifications\ShopProductNotification')
-                        @php 
+                        @php
                             $product_id     = $notification->data['id'];
                             $product_type   = $notification->data['type'];
                             $product_name   = $notification->data['name'];
@@ -55,7 +55,7 @@
                                         ? route('products.seller.edit', ['id'=>$product_id, 'lang'=>$lang])
                                         : route('digitalproducts.edit', ['id'=>$product_id, 'lang'=>$lang] ))
                                     : ( $product_type == 'physical'
-                                        ? route('seller.products.edit', ['id'=>$product_id, 'lang'=>$lang]) 
+                                        ? route('seller.products.edit', ['id'=>$product_id, 'lang'=>$lang])
                                         : route('seller.digitalproducts.edit',  ['id'=>$product_id, 'lang'=>$lang] ));
                         @endphp
 
@@ -65,14 +65,14 @@
                         @else
                             {{ $product_name }}
                         @endif
-                        
+
                         {{ translate(' is').' '.$notification->data['status'] }}
                     @elseif ($notification->type == 'App\Notifications\PayoutNotification')
-                        @php 
+                        @php
                             $route = $user_type == 'admin'
                                     ? ( $notification->data['status'] == 'pending' ? route('withdraw_requests_all') : route('sellers.payment_histories'))
                                     : ( $notification->data['status'] == 'pending' ? route('seller.money_withdraw_requests.index') : route('seller.payments.index'));
-                            
+
                         @endphp
 
                          {{ $user_type == 'admin' ? $notification->data['name'].': ' : translate('Your') }}
@@ -82,6 +82,12 @@
                              {{ translate('payment') }}
                          @endif
                          {{ single_price($notification->data['payment_amount']).' '.translate('is').' '.translate($notification->data['status']) }}
+
+                    @elseif ($notification->type == 'App\Notifications\CustomStatusNotification' && isset($notification->data['message']))
+                    <!-- Access notification data -->
+                        {{ $notification->data['message'] }}
+                    @else
+                        <!-- Handle other notification types -->
                     @endif
                 </p>
                 <small class="text-muted">

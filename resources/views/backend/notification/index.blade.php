@@ -19,10 +19,8 @@
                     </div>
                     <div class="card-body">
                         <ul class="list-group list-group-flush">
-                           
-                            <x-notification :notifications="$notifications" is_linkable/>
-                            
-                        </ul>
+                              <x-notification :notifications="$notifications" is_linkable/>
+                          </ul>
 
                         {{ $notifications->links() }}
                     </div>
