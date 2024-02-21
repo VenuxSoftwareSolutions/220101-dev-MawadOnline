@@ -12,15 +12,17 @@ class VendorStatusChangedNotification extends Notification implements ShouldQueu
     use Queueable;
     protected $oldStatus;
     protected $newStatus;
+    protected $suspendedDetail ;
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($oldStatus, $newStatus)
+    public function __construct($oldStatus, $newStatus,$suspendedDetail=null)
     {
         $this->oldStatus = $oldStatus;
         $this->newStatus = $newStatus;
+        $this->suspendedDetail=$suspendedDetail ;
     }
 
     /**
@@ -50,6 +52,7 @@ class VendorStatusChangedNotification extends Notification implements ShouldQueu
                 'oldStatus' => $this->oldStatus,
                 'newStatus' => $this->newStatus,
                 'logo' => $logo,
+                'suspendedDetail' => $this->suspendedDetail
             ]);
     }
 

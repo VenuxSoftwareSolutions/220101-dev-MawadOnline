@@ -45,10 +45,10 @@
                         @if ($suspendedStatusHistory)
                         <!-- Display suspension reason and details -->
                         <div class="suspension-reason">
-                            <p>{{ __('messages.reason') . $suspendedStatusHistory->reason }}</p>
+                            <p>{{ __('messages.reason') . $suspendedStatusHistory->suspension_reason }}</p>
                             <p>{{ __('messages.details') . $suspendedStatusHistory->details }}</p>
                         </div>
-                        <!-- Map suspension reasons to icons -->
+                        {{-- <!-- Map suspension reasons to icons -->
                         @php
                             $reasonsIcons = [
                                 'Fraud' => 'fa-exclamation-triangle',
@@ -65,7 +65,7 @@
                                 <i class="fas {{ $reasonsIcons[$suspendedStatusHistory->reason] }}"></i>
                                 <span>{{ __('messages.reason') . $suspendedStatusHistory->reason }}</span>
                             </div>
-                        @endif
+                        @endif --}}
                     @endif
                 @endif
                 </div>

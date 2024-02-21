@@ -371,8 +371,8 @@ class SellerController extends Controller
             $suspension->status = "Suspended";
             $suspension->save();
             // Send an email notification to the seller with old and new status
-            $vendor->notify(new VendorStatusChangedNotification($oldStatus, $vendor->status));
-            Notification::send($vendor, new CustomStatusNotification($oldStatus, $vendor->status));
+            $vendor->notify(new VendorStatusChangedNotification($oldStatus, $vendor->status,$request->input('reason_details')));
+            Notification::send($vendor, new CustomStatusNotification($oldStatus, $vendor->status,$suspension->suspension_reason));
 
             // Return JSON response indicating success
             return response()->json(['success' => true]);
@@ -418,9 +418,11 @@ class SellerController extends Controller
             $history = VendorStatusHistory::where('vendor_id', $vendorId)
                 ->orderBy('created_at', 'desc')
                 ->get();
-
+            $vendor_email= User::find($vendorId) ? User::find($vendorId)->email : "" ;
             // Return the history as JSON response
-            return response()->json(['history' => $history]);
+            // return response()->json(['history' => $history]);
+            return view('backend.sellers.status_history',compact('history','vendor_email'));
+
         }
 
 

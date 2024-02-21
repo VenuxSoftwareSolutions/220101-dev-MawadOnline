@@ -9,6 +9,23 @@
             width: 200px;
             height: auto;
         }
+        .suspension-details {
+            background-color: #f8f9fa;
+            border: 1px solid #ced4da;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .suspension-reason {
+            font-weight: bold;
+            color: #dc3545; /* Red color for emphasis */
+        }
+
+        .suspension-message {
+            margin-top: 5px;
+            color: #6c757d; /* Gray color for additional information */
+        }
+
     </style>
 </head>
 <body>
@@ -21,7 +38,8 @@
                 {{-- <p>{{ __('messages.reason') }}: {{ $suspendedStatusHistory->reason }}</p>
                 <p>{{ __('messages.details') }}: {{ $suspendedStatusHistory->details }}</p>
                 <h1 class="fw-600 h4">{{ __('messages.suspended') }}</h1> --}}
-                <p>{{ __('messages.suspended') }}</p>
+                <span class="suspension-reason">{{$suspendedDetail}}</span>
+                <p class="suspension-message">{{ __('messages.due_to_reason_above') }} {{ __('messages.suspended') }}</p>
 
             </div>
         @elseif ($newStatus == 'Pending Approval')

@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Auth;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SellerRegistrationShopRequest extends FormRequest
 {
@@ -40,6 +41,8 @@ class SellerRegistrationShopRequest extends FormRequest
      */
     public function rules()
     {
+        $user_id = Auth::id(); // Retrieve the authenticated user's ID
+
         return [
             'trade_name_english' => 'required|string|max:128|regex:/\D/',
             'trade_name_arabic' => 'required|string|max:256|regex:/\D/',
@@ -64,7 +67,13 @@ class SellerRegistrationShopRequest extends FormRequest
             'civil_defense_approval' => 'nullable|file|mimes:pdf,jpeg,png|max:5120',
             'first_name' => 'required|string|max:64|regex:/\D/',
             'last_name' => 'required|string|max:64|regex:/\D/',
-            'email' => 'required|email',
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('contact_people')->where(function ($query) use ($user_id) {
+                    return $query->where('user_id', '<>', $user_id);
+                }),
+            ],
             'mobile_phone' => ['required', 'string', 'max:16', new \App\Rules\UaeMobilePhone],
             'additional_mobile_phone' =>$this->input('additional_mobile_phone') != '+971' ? ['nullable', 'string', 'max:16', new \App\Rules\UaeMobilePhone]:'',
             'nationality' => 'required|string|max:255',

@@ -12,12 +12,12 @@
 
 <div class="card">
     {{-- <form class="" id="sort_sellers" action="" method="GET"> --}}
-        {{-- <div class="card-header row gutters-5">
+        <div class="card-header row gutters-5">
             <div class="col">
                 <h5 class="mb-md-0 h6">{{ translate('Sellers') }}</h5>
             </div>
 
-            @can('delete_seller')
+            {{-- @can('delete_seller')
                 <div class="dropdown mb-2 mb-md-0">
                     <button class="btn border dropdown-toggle" type="button" data-toggle="dropdown">
                         {{translate('Bulk Action')}}
@@ -39,8 +39,8 @@
                 <div class="form-group mb-0">
                   <input type="text" class="form-control" id="search" name="search"@isset($sort_search) value="{{ $sort_search }}" @endisset placeholder="{{ translate('Type name or email & Enter') }}">
                 </div>
-            </div>
-        </div> --}}
+            </div> --}}
+        </div>
 
         <div class="card-body">
             {{-- <table class="table aiz-table mb-0">
@@ -184,26 +184,31 @@
             <div class="aiz-pagination">
               {{ $shops->appends(request()->input())->links() }}
             </div> --}}
-            <table class="table aiz-table mb-0">
+            <table id="myTable" {{-- class="table aiz-table mb-0" --}}>
                 <thead>
                     <tr>
-                        <th>{{__('Email Address')}}</th>
-                        <th>{{__('Approval')}}</th>
-                        <th>{{ __('Status') }}</th>
-                        <th width="10%">{{__('Options')}}</th>
+                        <th>{{__('messages.email_address')}}</th>
+                        <th>{{__('messages.approval')}}</th>
+                        <th>{{ __('messages.status') }}</th>
+                        <th width="10%">{{__('messages.options')}}</th>
                     </tr>
                     </thead>
                     <tbody>
                         @foreach ( $sellers as $seller )
                         <tr>
                             <td>{{ $seller->email }}</td>
+
                             <td>
+                                @if ($seller->status != "Draft")
                                 <!-- Approval status column with toggle switch -->
                                 <label class="aiz-switch aiz-switch-success mb-0">
                                     <input id="vendor-checkbox-{{ $seller->id }}" type="checkbox" class="approval-checkbox" data-vendor-id="{{ $seller->id }}" <?php if($seller->status == 'Enabled') echo "checked";?> onchange="updateSettings(this, 'vendor_approval', {{ $seller->id }})">
                                     <span class="slider round"></span>
                                 </label>
+                                @endif
                             </td>
+
+
 
                             <td id="status-{{ $seller->id}}"> {{$seller->status}}
                                 {{-- @if($seller->status == 'Rejected')
@@ -215,33 +220,42 @@
                                 @endif --}}
                             </td>
                             <td>
+                                @if ($seller->status != "Draft")
                                 <!-- Options column -->
                                 <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Actions
+                                    {{-- <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        {{ __('messages.actions') }}
+                                    </button> --}}
+                                    <button type="button" class="btn btn-sm btn-circle btn-soft-primary btn-icon dropdown-toggle no-arrow" data-toggle="dropdown" href="javascript:void(0);" role="button" aria-haspopup="false" aria-expanded="false">
+                                        <i class="las la-ellipsis-v"></i>
                                     </button>
-                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                    {{-- <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton"> --}}
+                                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-xs">
+
                                         {{-- Resubmit Registration --}}
-                                        <button type="button" class="dropdown-item btn btn-primary resubmit-registration" data-vendor-id="{{ $seller->id }}">
-                                            Resubmit Registration
+                                        <button type="button" class="dropdown-item {{-- btn btn-primary --}} resubmit-registration" data-vendor-id="{{ $seller->id }}">
+                                            {{ __('messages.resubmit_registration') }}
                                         </button>
 
                                         {{-- Suspend Vendor --}}
-                                        <button type="button" class="dropdown-item btn btn-danger suspend-vendor-btn" data-vendor-id="{{ $seller->id }}">Suspend Vendor</button>
+                                        <button type="button" class="dropdown-item {{-- btn btn-danger --}} suspend-vendor-btn" data-vendor-id="{{ $seller->id }}">   {{ __('messages.suspend_vendor') }}</button>
 
                                         {{-- Pending Closure --}}
-                                        <button type="button" class="dropdown-item btn btn-warning pending-closure-btn" data-vendor-id="{{ $seller->id }}">Pending Closure</button>
+                                        <button type="button" class="dropdown-item {{-- btn btn-warning --}} pending-closure-btn" data-vendor-id="{{ $seller->id }}">{{ __('messages.pending_closure_op') }}</button>
 
                                         {{-- Close Vendor --}}
-                                        <button type="button" class="dropdown-item btn btn-danger close-vendor-btn" data-vendor-id="{{ $seller->id }}">Close Vendor</button>
+                                        <button type="button" class="dropdown-item {{-- btn btn-danger --}} close-vendor-btn" data-vendor-id="{{ $seller->id }}">{{ __('messages.close_vendor') }}</button>
 
                                         {{-- View Status History --}}
-                                        <button type="button" class="dropdown-item btn btn-info view-status-history-btn" data-vendor-id="{{ $seller->id }}">
-                                            View Status History
-                                        </button>
+                                        {{-- <button type="button" class="dropdown-item btn btn-info view-status-history-btn" data-vendor-id="{{ $seller->id }}">
+                                            {{ __('messages.view_status_history') }}
+                                        </button> --}}
+                                        <a href="{{route('vendors.status-history',$seller->id)}}" class="dropdown-item" >
+                                            {{ __('messages.view_status_history') }}
+                                        </a>
                                     </div>
                                 </div>
-
+                                @endif
 
                             </td>
                         </tr>
@@ -509,12 +523,12 @@
         // Display SweetAlert confirmation dialog
         Swal.fire({
             title: 'Are you sure?',
-            text: 'This will suspend the vendor with the intention of closing. Are you sure you want to proceed?',
+            text: 'This will mark the vendor for pending closure. Are you sure you want to proceed?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, suspend it!'
+            confirmButtonText: 'Yes, pending closure!'
         }).then((result) => {
             if (result.isConfirmed) {
                 // Trigger AJAX request to change status to "Pending Closure"
@@ -526,7 +540,7 @@
                     },
                     success: function(data) {
                         // Show success message
-                        Swal.fire('Vendor Suspended', 'The vendor has been suspended with pending closure successfully', 'success');
+                        Swal.fire('Vendor Suspended with Pending Closure', 'The vendor has been successfully suspended with pending closure.', 'success');
                         $('#status-' + vendorId).text('Pending Closure');
                         uncheckCheckboxByVendorId(vendorId);
 
@@ -534,7 +548,7 @@
                     },
                     error: function(xhr, status, error) {
                         // Show error message
-                        Swal.fire('Error', 'Failed to suspend the vendor. Please try again later.', 'error');
+                        Swal.fire('Error', 'Failed to pending closure the vendor. Please try again later.', 'error');
                     }
                 });
             }
@@ -664,7 +678,7 @@
                 }
             });
         });
-        $('.aiz-table').DataTable({
+        $('#myTable').DataTable({
             "order": [[0, "asc"]], // Sort by first column in descending order
 
         });
