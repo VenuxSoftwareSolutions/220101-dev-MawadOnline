@@ -1474,7 +1474,7 @@
                 @endcanany
 
                 <!-- Staffs -->
-                @canany(['view_all_staffs','view_staff_roles'])
+                @canany(['view_all_staffs','view_staff_roles','view_seller_staff_roles'])
                     <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link">
                             <div class="aiz-side-nav-icon">
@@ -1504,7 +1504,14 @@
                             @can('view_staff_roles')
                                 <li class="aiz-side-nav-item">
                                     <a href="{{route('roles.index')}}" class="aiz-side-nav-link {{ areActiveRoutes(['roles.index', 'roles.create', 'roles.edit'])}}">
-                                        <span class="aiz-side-nav-text">{{translate('Staff permissions')}}</span>
+                                        <span class="aiz-side-nav-text">{{translate('Admin staff permissions')}}</span>
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('view_seller_staff_roles')
+                                <li class="aiz-side-nav-item">
+                                    <a href="{{route('roles.seller.index')}}" class="aiz-side-nav-link {{ areActiveRoutes(['roles.seller.index', 'roles.seller.create', 'roles.edit'])}}">
+                                        <span class="aiz-side-nav-text">{{translate('Seller staff permissions')}}</span>
                                     </a>
                                 </li>
                             @endcan

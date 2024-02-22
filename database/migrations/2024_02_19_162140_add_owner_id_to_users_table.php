@@ -13,9 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('role', function (Blueprint $table) {
-            $table->unsignedBigInteger('seller_id')->nullable();
-            $tabe->foreign('seller_id')->references('id')->on('users')->onDelete('set null');
+        Schema::table('users', function (Blueprint $table) {
+            $table->unsignedBigInteger('owner_id')->nullable();
         });
     }
 
@@ -26,7 +25,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('role', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             //
         });
     }

@@ -16,7 +16,9 @@ class RoleController extends Controller
     {
         // Staff Permission Check
         $this->middleware(['permission:view_staff_roles'])->only('index');
+        $this->middleware(['permission:view_seller_staff_roles'])->only('indexSellerRoles');
         $this->middleware(['permission:add_staff_role'])->only('create');
+        $this->middleware(['permission:add_seller_staff_role'])->only('createSellerRole');
         $this->middleware(['permission:edit_staff_role'])->only('edit');
         $this->middleware(['permission:delete_staff_role'])->only('destroy');
     }
@@ -28,11 +30,18 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles = Role::where('id', '!=', 1)->paginate(10);
+        $roles = Role::where('id', '!=', 1)->where('seller_id',0)->paginate(10);
         return view('backend.staff.staff_roles.index', compact('roles'));
 
         // $roles = Role::paginate(10);
         // return view('backend.staff.staff_roles.index', compact('roles'));
+    }
+
+    public function indexSellerRoles()
+    {
+        $roles = Role::where('id', '!=', 1)->where('seller_id',1)->paginate(10);
+        return view('backend.staff.staff_roles.seller_roles', compact('roles'));
+
     }
 
     /**
@@ -46,6 +55,16 @@ class RoleController extends Controller
     }
 
     /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function createSellerRole()
+    {
+        return view('backend.staff.staff_roles.create_seller_roles');
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -54,7 +73,17 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         // dd($request->permissions);
-        $role = Role::create(['name' => $request->name]);
+        if($request->seller){
+            $seller_id = $request->seller;
+        }
+        else{
+            $seller_id = 0 ;
+        }
+        $role = Role::create([
+            'name' => $request->name,
+            'seller_id' => $seller_id,
+            'description' => $request->description
+        ]);
         $role->givePermissionTo($request->permissions);
 
         $role_translation = RoleTranslation::firstOrNew(['lang' => env('DEFAULT_LANGUAGE'), 'role_id' => $role->id]);
@@ -102,6 +131,7 @@ class RoleController extends Controller
         if ($request->lang == env("DEFAULT_LANGUAGE")) {
             $role->name = $request->name;
         }
+        $role->description = $request->description;
         $role->syncPermissions($request->permissions);
         $role->save();
 

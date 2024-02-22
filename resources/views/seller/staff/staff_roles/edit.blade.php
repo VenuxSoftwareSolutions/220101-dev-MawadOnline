@@ -27,7 +27,20 @@
                     <label class="col-md-3 col-from-label" for="name">{{translate('Name')}} <i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
                     <div class="col-md-9">
                         @php $roleForTranslation = \App\Models\Role::where('id',$role->id)->first(); @endphp
-                        <input type="text" placeholder="{{translate('Name')}}" id="name" name="name" class="form-control" value="{{ $roleForTranslation->getTranslation('name', $lang) }}" required>
+                        <input type="text" placeholder="{{translate('Name')}}" id="name" name="name" class="form-control"
+                        value="{{ $roleForTranslation->getTranslation('name', $lang) }}" required
+                        @if ($role->seller_id == 1)
+                            disabled
+                        @endif >
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-3 col-from-label" for="name">{{translate('Description')}}</label>
+                    <div class="col-md-9">
+                        <textarea placeholder="{{translate('Description')}}" id="description" name="description" class="form-control"
+                        @if ($role->seller_id == 1)
+                            disabled
+                        @endif  >{{$role->description}}</textarea>
                     </div>
                 </div>
                 <div class="card-header">
@@ -53,7 +66,15 @@
                     @endphp
                     @if($show_permission_group)
                         <ul class="list-group mb-4">
-                            <li class="list-group-item bg-light" aria-current="true">{{ translate(Str::headline($permission_group[0]['section'])) }}</li>
+                            <li class="list-group-item bg-light d-flex " aria-current="true">
+                                <div class="mr-4">{{ translate(Str::headline($permission_group[0]['section'])) }}</div>
+
+                                <!-- Add checkbox for selecting/deselecting all permissions in this group -->
+                                <label class="aiz-switch aiz-switch-success">
+                                    <input type="checkbox" class="form-control demo-sw select-all-permissions" data-group="{{ $permission_group[0]['section'] }}">
+                                    <span class="slider round"></span>
+                                </label>
+                            </li>
                             <li class="list-group-item">
                                 <div class="row">
                                     @foreach ($permission_group as $key => $permission)
@@ -61,7 +82,7 @@
                                             <div class="p-2 border mt-1 mb-2">
                                                 <label class="control-label d-flex">{{ translate(Str::headline($permission->name))}}</label>
                                                 <label class="aiz-switch aiz-switch-success">
-                                                    <input type="checkbox" name="permissions[]" class="form-control demo-sw" value="{{ $permission->id }}"
+                                                    <input type="checkbox" name="permissions[]" class="form-control demo-sw {{$permission_group[0]['section']}}" value="{{ $permission->id }}"
                                                         @if ($role->hasPermissionTo($permission->name))
                                                             checked
                                                         @endif
@@ -90,3 +111,15 @@
 </div>
 
 @endsection
+
+@section('script')
+ <script>
+    $(document).ready(function() {
+        // Handle click event for select all checkboxes
+        $(document).on('click', '.select-all-permissions', function() {
+            var group = $(this).data('group');
+            $('.'+group).prop('checked',$(this).prop('checked'));
+        });
+    });
+</script>
+ @endsection

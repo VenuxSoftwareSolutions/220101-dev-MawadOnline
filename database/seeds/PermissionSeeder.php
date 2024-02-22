@@ -249,6 +249,90 @@ class PermissionSeeder extends Seeder
             'section' => 'seller_conversations',
             'guard_name' => 'web'
         ]);
+        Permission::create([
+            'id' => '256',
+            'name' => 'view_seller_staff_roles',
+            'section' => 'staff',
+            'guard_name' => 'web'
+        ]);
+        Permission::create([
+            'id' => '257',
+            'name' => 'add_seller_staff_role',
+            'section' => 'staff',
+            'guard_name' => 'web'
+        ]);
+        Permission::create([
+            'id' => '258',
+            'name' => 'seller_add_inventory',
+            'section' => 'seller_inventory',
+            'guard_name' => 'web'
+        ]);
+        Permission::create([
+            'id' => '259',
+            'name' => 'seller_edit_or_remove_inventory',
+            'section' => 'seller_inventory',
+            'guard_name' => 'web'
+        ]);
+        Permission::create([
+            'id' => '260',
+            'name' => 'seller_inventory_history',
+            'section' => 'seller_inventory',
+            'guard_name' => 'web'
+        ]);
+        Permission::create([
+            'id' => '261',
+            'name' => 'seller_view_all_coupons',
+            'section' => 'seller_coupons',
+            'guard_name' => 'web'
+        ]);
+        Permission::create([
+            'id' => '262',
+            'name' => 'seller_add_coupon',
+            'section' => 'seller_coupons',
+            'guard_name' => 'web'
+        ]);
+        Permission::create([
+            'id' => '263',
+            'name' => 'seller_edit_coupon',
+            'section' => 'seller_coupons',
+            'guard_name' => 'web'
+        ]);
+        Permission::create([
+            'id' => '264',
+            'name' => 'seller_delete_coupon',
+            'section' => 'seller_coupons',
+            'guard_name' => 'web'
+        ]);
+        Permission::create([
+            'id' => '265',
+            'name' => 'seller_view_all_wholesale_products',
+            'section' => 'seller_wholesale_products',
+            'guard_name' => 'web'
+        ]);
+        Permission::create([
+            'id' => '266',
+            'name' => 'seller_add_wholesale_product',
+            'section' => 'seller_wholesale_products',
+            'guard_name' => 'web'
+        ]);
+        Permission::create([
+            'id' => '267',
+            'name' => 'seller_edit_wholesale_product',
+            'section' => 'seller_wholesale_products',
+            'guard_name' => 'web'
+        ]);
+        Permission::create([
+            'id' => '268',
+            'name' => 'seller_delete_wholesale_product',
+            'section' => 'seller_wholesale_products',
+            'guard_name' => 'web'
+        ]);
+        Permission::create([
+            'id' => '269',
+            'name' => 'seller_view_product_query',
+            'section' => 'seller_product_query',
+            'guard_name' => 'web'
+        ]);
 
     }
 }

@@ -15,6 +15,14 @@ use Illuminate\Http\Request;
 
 class StockController extends Controller
 {
+    public function __construct()
+    {
+        // Staff Permission Check
+        $this->middleware(['permission:seller_add_inventory'])->only('index');
+        $this->middleware(['permission:seller_edit_or_remove_inventory'])->only('storeAddRemoveStock');
+        $this->middleware(['permission:seller_inventory_history'])->only('stockOperationReport');
+    }
+
     // public function index(Request $request)
     // {
 

@@ -10,6 +10,7 @@ use App\Models\Staff;
 use Illuminate\Http\Request;
 use App\Mail\SellerStaffMail;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 class SellerStaffController extends Controller
 {
@@ -51,14 +52,30 @@ class SellerStaffController extends Controller
      */
     public function store(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required|regex:/^[\pL\s]+$/u',
+            'last_name' => 'required|regex:/^[\pL\s]+$/u',
+            'email' => 'required|email',
+            'mobile' => 'required|numeric|digits:10',
+        ]);
+
+        if ($validator->fails()) {
+            flash(translate($validator->errors()->first()))->error();
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
         $url = url('/seller/login');
         $vendor=Auth::user();
         if(User::where('email', $request->email)->first() == null){
             $user = new User;
             $user->name = $request->first_name.' '.$request->last_name;
+            $user->first_name = $request->first_name;
+            $user->last_name = $request->last_name;
             $user->email = $request->email;
             $user->phone = $request->mobile;
             $user->user_type = "seller";
+            $user->step_number = 0;
+            $user->owner_id = $vendor->id;
             $password=$this->generatePassword(12);
             $user->password = Hash::make($password);
             if($user->save()){

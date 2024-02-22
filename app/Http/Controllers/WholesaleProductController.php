@@ -24,6 +24,10 @@ class WholesaleProductController extends Controller
         $this->middleware(['permission:add_wholesale_product'])->only('product_create_admin');
         $this->middleware(['permission:edit_wholesale_product'])->only('product_edit_admin');
         $this->middleware(['permission:delete_wholesale_product'])->only('product_destroy_admin');
+        $this->middleware(['permission:seller_view_all_wholesale_products'])->only('wholesale_products_list_seller');
+        $this->middleware(['permission:seller_add_wholesale_product'])->only('product_create_seller');
+        $this->middleware(['permission:seller_edit_wholesale_product'])->only('product_edit_seller');
+        $this->middleware(['permission:seller_delete_wholesale_product'])->only('product_destroy_seller');
     }
 
     public function all_wholesale_products(Request $request)
@@ -106,7 +110,7 @@ class WholesaleProductController extends Controller
             $products = $products->where('user_id', $request->user_id);
             $seller_id = $request->user_id;
         }
-        
+
         if ($request->type != null){
             $var = explode(",", $request->type);
             $col_name = $var[0];
@@ -125,7 +129,7 @@ class WholesaleProductController extends Controller
         return view('wholesale.products.index', compact('products','type', 'col_name', 'query', 'sort_search','seller_id'));
     }
 
-    // Wholesale Products list in Seller panel 
+    // Wholesale Products list in Seller panel
     public function wholesale_products_list_seller(Request $request)
     {
         $sort_search = null;
@@ -159,7 +163,7 @@ class WholesaleProductController extends Controller
             ->with('childrenCategories')
             ->get();
         return view('wholesale.products.create', compact('categories'));
-   
+
     }
 
     public function product_create_seller()
@@ -180,7 +184,7 @@ class WholesaleProductController extends Controller
                 }
             }
             return view('wholesale.frontend.seller_products.create', compact('categories'));
-        }     
+        }
     }
 
     /**
@@ -190,7 +194,7 @@ class WholesaleProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function product_store_admin(WholesaleProductRequest $request)
-    { 
+    {
         $product = (new WholesaleService)->store($request->except([
             '_token', 'button', 'flat_shipping_cost', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
         ]));
@@ -236,7 +240,7 @@ class WholesaleProductController extends Controller
                 return back();
             }
         }
-       
+
         $product = (new WholesaleService)->store($request->except([
             '_token', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
         ]));
@@ -244,7 +248,7 @@ class WholesaleProductController extends Controller
 
         //Product categories
         $product->categories()->attach($request->category_ids);
-        
+
         //VAT & Tax
         if ($request->tax_id) {
             (new productTaxService)->store($request->only([
@@ -262,7 +266,7 @@ class WholesaleProductController extends Controller
 
         Artisan::call('view:clear');
         Artisan::call('cache:clear');
-        
+
         return redirect()->route('seller.wholesale_products_list');
     }
 
@@ -299,11 +303,11 @@ class WholesaleProductController extends Controller
             ->where('digital', 0)
             ->with('childrenCategories')
             ->get();
-            
+
         return view('wholesale.frontend.seller_products.edit', compact('product', 'categories', 'tags','lang'));
     }
 
-   
+
     public function product_update_admin(WholesaleProductRequest $request, $id)
     {
         (new WholesaleService)->update($request, $id);
@@ -334,7 +338,7 @@ class WholesaleProductController extends Controller
     {
         (new WholesaleService)->destroy($id);
         flash(translate('Product has been deleted successfully'))->success();
-            
+
         Artisan::call('view:clear');
         Artisan::call('cache:clear');
         return back();
@@ -344,7 +348,7 @@ class WholesaleProductController extends Controller
     {
         (new WholesaleService)->destroy($id);
         flash(translate('Product has been deleted successfully'))->success();
-            
+
         Artisan::call('view:clear');
         Artisan::call('cache:clear');
         return back();

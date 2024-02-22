@@ -110,9 +110,13 @@ class SellerRoleController extends Controller
     public function update(Request $request, $id)
     {
         $role = Role::findOrFail($id);
+        if($role->seller_id == 1 || $role->seller_id == 0){
+            return back();
+        }
         if ($request->lang == env("DEFAULT_LANGUAGE")) {
             $role->name = $request->name;
         }
+        $role->description= $request->description ;
         $role->syncPermissions($request->permissions);
         $role->save();
 
