@@ -343,9 +343,9 @@
                                     <div class="champ4">
                                         <input type="checkbox" id="check-regles" name="check-regles" required>
                                         <label for="check-regles"><a href="{{ route('terms-and-conditions') }}"
-                                                target="_blank"> UAE Data protection check if needed (to subscribe to
-                                                the newsletter and offers)</a></label>
+                                                target="_blank"> I agree to receive newsletter and offers</a></label>
                                     </div>
+                                    <br>
                                     <div class="btn-submit-section5">
                                         <input type="submit" value="Join Now" name="subscribeNewsletter"
                                             style="background:none;border:0;color:white;font-family: 'Prompt-medium';">
