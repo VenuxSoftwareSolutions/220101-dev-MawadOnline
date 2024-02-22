@@ -41,8 +41,8 @@ class SellerRegistrationRequest extends FormRequest
 
         // return $rules;
         return [
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255|regex:/\D/',
+            'last_name' => 'required|string|max:255|regex:/\D/',
             'email' => [
                 'required', 'email',
                 Rule::unique('users', 'email')->where(function ($query) {

@@ -73,6 +73,8 @@
     <link rel="stylesheet" href="{{ static_asset('assets/css/aiz-core.css?v=') }}{{ rand(1000, 9999) }}">
     <link rel="stylesheet" href="{{ static_asset('assets/css/custom-style.css') }}">
     <link rel="stylesheet" href="{{ static_asset('assets/css/bootstrap-select-country.min.css') }}">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
      @yield('style')
 
     <script>
@@ -324,6 +326,7 @@
     <script src="{{ static_asset('assets/js/aiz-core.js?v=') }}{{ rand(1000, 9999) }}"></script>
 
     <script src="{{ static_asset('assets/js/bootstrap-select-country.min.js') }}"></script>
+    <script src="//code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 
 
     @if (get_setting('facebook_chat') == 1)
@@ -455,33 +458,47 @@
             search();
         });
 
-        function search(){
-            var searchKey = $('#search').val();
-            if(searchKey.length > 0){
-                $('body').addClass("typed-search-box-shown");
+        function escapeHtml(text) {
+    var map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+}
 
-                $('.typed-search-box').removeClass('d-none');
-                $('.search-preloader').removeClass('d-none');
-                $.post('{{ route('search.ajax') }}', { _token: AIZ.data.csrf, search:searchKey}, function(data){
-                    if(data == '0'){
-                        // $('.typed-search-box').addClass('d-none');
-                        $('#search-content').html(null);
-                        $('.typed-search-box .search-nothing').removeClass('d-none').html('{{ translate('Sorry, nothing found for') }} <strong>"'+searchKey+'"</strong>');
-                        $('.search-preloader').addClass('d-none');
 
-                    }
-                    else{
-                        $('.typed-search-box .search-nothing').addClass('d-none').html(null);
-                        $('#search-content').html(data);
-                        $('.search-preloader').addClass('d-none');
-                    }
-                });
+      function search(){
+    var searchKey = $('#search').val();
+    var escapedSearchKey = escapeHtml(searchKey); // Escape HTML entities
+
+    if(escapedSearchKey.length > 0){
+        $('body').addClass("typed-search-box-shown");
+
+        $('.typed-search-box').removeClass('d-none');
+        $('.search-preloader').removeClass('d-none');
+        $.post('{{ route('search.ajax') }}', { _token: AIZ.data.csrf, search:escapedSearchKey}, function(data){
+            if(data == '0'){
+                // $('.typed-search-box').addClass('d-none');
+                $('#search-content').html(null);
+                $('.typed-search-box .search-nothing').removeClass('d-none').html('{{ translate('Sorry, nothing found for') }} <strong>"'+escapedSearchKey+'"</strong>');
+                $('.search-preloader').addClass('d-none');
+
             }
-            else {
-                $('.typed-search-box').addClass('d-none');
-                $('body').removeClass("typed-search-box-shown");
+            else{
+                $('.typed-search-box .search-nothing').addClass('d-none').html(null);
+                $('#search-content').html(data);
+                $('.search-preloader').addClass('d-none');
             }
-        }
+        });
+    }
+    else {
+        $('.typed-search-box').addClass('d-none');
+        $('body').removeClass("typed-search-box-shown");
+    }
+}
 
         $(".aiz-user-top-menu").on("mouseover", function (event) {
             $(".hover-user-top-menu").addClass('active');
@@ -782,7 +799,7 @@
                     $(el).html('<i>*{{ translate('Use Email Instead') }}</i>');
                 }
             }
-        </script> 
+        </script>
     @endif
 
     <script>
