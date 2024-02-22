@@ -780,38 +780,34 @@ class HomeController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|regex:/^[\pL\s]+$/u',
             'email' => 'required|email',
-            'phone' => 'required|numeric|digits:10',
+            // Updated phone validation rule to match the specified formats
+            'phone' => ['required', 'regex:/^(?:(?:\+9715|009715)\d{2}\s?\d{2}\s?\d{2}\s?\d{2}|05\d\s?\d{3}\s?\d{2}\s?\d{2})$/'],
             'work' => 'nullable|regex:/^[\pL\s]+$/u',
             'job' => 'nullable|regex:/^[\pL\s]+$/u',
             'location' => 'nullable|regex:/^[\pL\s]+$/u',
             'info' => 'nullable|string',
         ]);
+    
         if ($validator->fails()) {
             return redirect()->back()
                         ->withErrors($validator)
                         ->withInput();
         }
-
-        $name=$request->name;
-        $email=$request->email;
-        $phone=$request->phone;
-        $work=$request->work;
-        $job=$request->job;
-        $location=$request->location;
-        $info=$request->info;
-        if (isset($request->subscribeNewsletter)) {
-            $subscribeNewsletter="yes";
-        }else{
-            $subscribeNewsletter="no";
-        }
-
-
-
-            Mail::to('amine.abdmouleh@hypergroup.com.tn')->send(new WaitlistApplication($name, $email ,$phone ,$work ,$job ,$location ,$info, $subscribeNewsletter ));
-
-            Mail::to($email)->send(new WaitlistUserApplication($name));
-
-            return Redirect::back()->with('success', 'Your request to join MawadOnline Waitlist has been submitted successfully!');
+    
+        $name = $request->name;
+        $email = $request->email;
+        $phone = $request->phone;
+        $work = $request->work;
+        $job = $request->job;
+        $location = $request->location;
+        $info = $request->info;
+        $subscribeNewsletter = $request->has('subscribeNewsletter') ? "yes" : "no";
+    
+        Mail::to('email@example.com')->send(new WaitlistApplication($name, $email, $phone, $work, $job, $location, $info, $subscribeNewsletter));
+    
+        Mail::to($email)->send(new WaitlistUserApplication($name));
+    
+        return Redirect::back()->with('success', 'Your request to join the waitlist has been submitted successfully!');
     }
-
+    
 }
