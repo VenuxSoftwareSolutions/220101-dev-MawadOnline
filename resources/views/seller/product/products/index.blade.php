@@ -166,17 +166,12 @@
                                     </label>
                                 </td>
                                 <td class="text-right">
-                                    @if ($product->is_draft == 1)
-                                    <a class="btn btn-soft-info btn-icon btn-circle btn-sm" href="{{route('seller.products.draft', $product->id)}}" title="{{ translate('Edit draft product') }}">
-                                        <i class="fa-regular fa-file"></i>
-                                    </a>
-                                    @endif
                                     <a class="btn btn-soft-info btn-icon btn-circle btn-sm" href="{{route('seller.products.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')])}}" title="{{ translate('Edit') }}">
                                         <i class="las la-edit"></i>
                                     </a>
-                                    <a href="{{route('seller.products.duplicate', $product->id)}}" class="btn btn-soft-success btn-icon btn-circle btn-sm"  title="{{ translate('Duplicate') }}">
+                                    {{-- <a href="{{route('seller.products.duplicate', $product->id)}}" class="btn btn-soft-success btn-icon btn-circle btn-sm"  title="{{ translate('Duplicate') }}">
                                         <i class="las la-copy"></i>
-                                    </a>
+                                    </a> --}}
                                     <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('seller.products.destroy', $product->id)}}" title="{{ translate('Delete') }}">
                                         <i class="las la-trash"></i>
                                     </a>
@@ -198,11 +193,6 @@
                                                 {{ $children->getTranslation('name') }}
                                             </a>
                                         </td>
-                                        {{-- <td>
-                                            @if ($product->main_category != null)
-                                                {{ $product->main_category->getTranslation('name') }}
-                                            @endif
-                                        </td> --}}
                                         <td>
                                             @php
                                                 $qty = 0;
@@ -238,12 +228,12 @@
                                             </label>
                                         </td>
                                         <td class="text-right">
-                                            <a class="btn btn-soft-info btn-icon btn-circle btn-sm" href="{{route('seller.products.edit', ['id'=>$children->id, 'lang'=>env('DEFAULT_LANGUAGE')])}}" title="{{ translate('Edit') }}">
+                                            {{-- <a class="btn btn-soft-info btn-icon btn-circle btn-sm" href="{{route('seller.products.edit', ['id'=>$children->id, 'lang'=>env('DEFAULT_LANGUAGE')])}}" title="{{ translate('Edit') }}">
                                                 <i class="las la-edit"></i>
                                             </a>
                                             <a href="{{route('seller.products.duplicate', $children->id)}}" class="btn btn-soft-success btn-icon btn-circle btn-sm"  title="{{ translate('Duplicate') }}">
                                                 <i class="las la-copy"></i>
-                                            </a>
+                                            </a> --}}
                                             <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('seller.products.destroy', $children->id)}}" title="{{ translate('Delete') }}">
                                                 <i class="las la-trash"></i>
                                             </a>

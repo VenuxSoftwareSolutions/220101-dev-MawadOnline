@@ -69,7 +69,19 @@
             margin-top: 21px;
         }
 
+        .bloc_pricing_configuration_variant{
+            width: 94%;
+            margin-left: 19px;
+            margin-top: 21px;
+        }
+
         #bloc_sample_pricing_configuration_variant{
+            width: 94%;
+            margin-left: 19px;
+            margin-top: 21px;
+        }
+
+        .bloc_sample_pricing_configuration_variant{
             width: 94%;
             margin-left: 19px;
             margin-top: 21px;
@@ -77,6 +89,25 @@
 
         #general_attributes{
             width: 100%;
+        }
+
+        .font-size-icon{
+            font-size: 23px;
+        }
+
+        .container-img{
+            position: relative;
+        }
+
+        .icon-delete-image{
+            position: absolute;
+            color: red;
+            top: 0;
+            right: -11px;
+        }
+
+        .icon-delete-image:hover{
+            cursor: pointer;
         }
     </style>
 

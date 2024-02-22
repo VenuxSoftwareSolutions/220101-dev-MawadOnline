@@ -17,6 +17,7 @@ use App\Models\BusinessInformation;
 use App\Models\ProductTranslation;
 use App\Models\ProductAttributeValues;
 use App\Models\Wishlist;
+use App\Models\UploadProducts;
 use App\Models\User;
 use App\Models\Attribute;
 use App\Notifications\ShopProductNotification;
@@ -64,12 +65,6 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $search = null;
-        // $products = Product::where('user_id', Auth::user()->id)->where('digital', 0)->where('auction_product', 0)->where('wholesale_product', 0)->orderBy('created_at', 'desc');
-        // if ($request->has('search')) {
-        //     $search = $request->search;
-        //     $products = $products->where('name', 'like', '%' . $search . '%');
-        // }
-        // $products = $products->paginate(10);
         $products = Product::where('user_id', Auth::user()->id)->where(function ($query) {
             $query->where('is_draft', '=', 1)
             ->where('parent_id', 0);
@@ -92,72 +87,27 @@ class ProductController extends Controller
     }
 
     public function draft($id){
-        $product = Product::find($id);
-        $colors = Color::orderBy('name', 'asc')->get();
-        $product_category = ProductCategory::where('product_id', $id)->first();
-        $vat_user = BusinessInformation::where('user_id', Auth::user()->id)->first();
-        $categories = Category::where('level', 1)
-            ->with('childrenCategories')
-            ->get();
-        $attributes = [];
-        $childrens = [];
-        $childrens_ids = [];
-        $variants_attributes = [];
-        $general_attributes = [];
-        $variants_attributes_ids_attributes = [];
-        $general_attributes_ids_attributes = [];
-        if($product->is_parent = 1){
-            $childrens = Product::where('parent_id', $id)->get();
-            $childrens_ids = Product::where('parent_id', $id)->pluck('id')->toArray();
-            $variants_attributes = ProductAttributeValues::whereIn('id_products', $childrens_ids)->where('is_variant', 1)->get();
-            $general_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->get();
-            $variants_attributes_ids_attributes = ProductAttributeValues::whereIn('id_products', $childrens_ids)->where('is_variant', 1)->pluck('id_attribute')->toArray();
-            $general_attributes_ids_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->pluck('id_attribute')->toArray();
-            $data_general_attributes = [];
-            if(count($general_attributes) > 0){
-                foreach ($general_attributes as $general_attribute){
-                    $data_general_attributes[$general_attribute->id_attribute] = $general_attribute;
-                }
-            }
-        }
-        if($product_category != null){
-            $categorie = Category::find($product_category->category_id);
-            $current_categorie = $categorie;
-
-            $parents = [];
-            if($current_categorie->parent_id == 0){
-                array_push($parents, $current_categorie->id);
-            }else{
-                array_push($parents, $current_categorie->id);
-                while($current_categorie->parent_id != 0) {
-                    $parent = Category::where('id',$current_categorie->parent_id)->first();
-                    array_push($parents, $parent->id);
-                    $current_categorie = $parent;
-                }
-            }
-
-            if(count($parents) > 0){
-                $attributes_ids = DB::table('categories_has_attributes')->whereIn('category_id', $parents)->pluck('attribute_id')->toArray();
-                if(count($attributes_ids) > 0){
-                    $attributes = Attribute::whereIn('id',$attributes_ids)->get();
-                }
-            }
-        }
         
-        return view('seller.product.products.draft', [
-            'product' => $product,
-            'vat_user' => $vat_user,
-            'categories' => $categories,
-            'product_category' => $product_category,
-            'attributes' => $attributes,
-            'childrens' => $childrens,
-            'childrens_ids' => $childrens_ids,
-            'variants_attributes' => $variants_attributes,
-            'variants_attributes_ids_attributes' => $variants_attributes_ids_attributes,
-            'general_attributes_ids_attributes' => $general_attributes_ids_attributes,
-            'general_attributes' => $data_general_attributes,
-            'colors' => $colors
-        ]);
+    }
+
+    public function delete_image(Request $request){
+        $image = UploadProducts::find($request->id);
+        if($image != null){
+            if(file_exists(public_path($image->path))){
+                unlink(public_path($image->path));
+            }
+
+            $image->delete();
+
+            return response()->json([
+                'status' => 'success'
+            ]);
+        }else{
+            return response()->json([
+                'status' => 'failed'
+            ]);
+        }
+
     }
 
     public function create(Request $request)
@@ -179,14 +129,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-       // dd($request->all());
-        if (addon_is_activated('seller_subscription')) {
-            if (!seller_package_validity_check()) {
-                flash(translate('Please upgrade your package.'))->warning();
-                return redirect()->route('seller.products');
-            }
-        }
-
+        //dd($request->all());
         $product = $this->productService->store($request->except([
             'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
         ]));
@@ -214,47 +157,55 @@ class ProductController extends Controller
             $this->productUploadsService->store_uploads($data);
         }
 
-        //Pricing configuration
-        // $this->productPricingService->store([
-        //     "from" => $request->from,
-        //     "to" => $request->to,
-        //     "unit_price" => $request->unit_price,
-        //     "date_range_pricing" => $request->date_range_pricing,
-        //     "discount_type" => $request->discount_type,
-        //     "discount_amount" => $request->discount_amount,
-        //     "discount_percentage" => $request->discount_percentage,
-        //     "product" => $product
-        // ]);
-
-        //VAT & Tax
-        if ($request->tax_id) {
-            $this->productTaxService->store($request->only([
-                'tax_id', 'tax', 'tax_type', 'product_id'
-            ]));
-        }
-
-        //Product Stock
-        $this->productStockService->store($request->only([
-            'colors_active', 'colors', 'choice_no', 'unit_price', 'sku', 'current_stock', 'product_id'
-        ]), $product);
-
-        // Product Translations
-        $request->merge(['lang' => env('DEFAULT_LANGUAGE')]);
-        ProductTranslation::create($request->only([
-            'lang', 'name', 'unit', 'description', 'product_id'
-        ]));
-
-        if (get_setting('product_approve_by_admin') == 1) {
-            $users = User::findMany([auth()->user()->id, User::where('user_type', 'admin')->first()->id]);
-            Notification::send($users, new ShopProductNotification('physical', $product));
-        }
-
         flash(translate('Product has been inserted successfully'))->success();
 
         Artisan::call('view:clear');
         Artisan::call('cache:clear');
 
         return redirect()->route('seller.products');
+    }
+
+    public function store_draft(Request $request){
+        //dd($request->all());
+        $parent = Product::find($request->product_id);
+        if($parent != null){
+            $product = $this->productService->draft($request->except([
+                'category_ids', 'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
+            ]), $parent);
+
+            //Product categories
+            if($product->is_parent == 1){
+                $products = Product::where('parent_id', $product->id)->get();
+                if(count($products) > 0){
+                    foreach($products as $child){
+                        $child->categories()->attach($request->category_ids);
+                    }
+                }
+            }
+            $product->categories()->attach($request->category_ids);
+
+            //Upload documents, images and thumbnails
+            $data['document_names'] = $request->document_names;
+            $data['documents'] = $request->documents;
+            $data['product'] = $product;
+            $data['main_photos'] = $request->main_photos;
+            $data['photosThumbnail'] = $request->photosThumbnail;
+            $data['old_documents'] = $request->old_documents;
+            $data['old_document_names'] = $request->old_document_names;
+            $this->productUploadsService->store_uploads($data);
+            
+
+            flash(translate('Product has been inserted successfully'))->success();
+
+            Artisan::call('view:clear');
+            Artisan::call('cache:clear');
+
+            return redirect()->route('seller.products');
+
+        }else{
+            return redirect()->back();
+        }
+        
     }
 
     public function getAttributeCategorie(Request $request){
@@ -283,7 +234,7 @@ class ProductController extends Controller
                     $html .= '<select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" id="attributes" multiple disabled>';
                     foreach ($attributes as $key=>$attribute){
                         $html .= "<option  value='".$attribute->id."'>". $attribute->getTranslation('name') ."</option>";
-                        $html_attributes_generale .= '<div class="row mb-3">
+                        $html_attributes_generale .= '<div class="row attribute-variant-'. $attribute->id .' mb-3">
                         <div class="col-md-3">
                             <input type="text" class="form-control" value="'.translate($attribute->getTranslation('name')).'" disabled>
                         </div>';
@@ -322,7 +273,7 @@ class ProductController extends Controller
                                 $options .= "</select>";
                                 $html_attributes_generale .= '<div class="col-md-8"><div class="row"><div class="col-6">
                                             <input type="number" class="form-control attributes" name="attribute_generale-'.$attribute->id.'"></div><div class="col-6">'.$options.'
-                                        </div></div>';
+                                        </div></div></div>';
                                 break;
                             case "boolean":
                                 $html_attributes_generale .= '<div class="col-md-8" style="padding-top: 10px">
@@ -354,12 +305,14 @@ class ProductController extends Controller
     public function getAttributes(Request $request){
         if($request->ids != null){
             $attributes = Attribute::whereIn('id', $request->ids)->get();
-            $attributes_not_selected = array_diff($request->allValues, $request->ids);
         }else{
             $attributes = [];
-            $attributes_not_selected = array_diff($request->allValues, []);
         }
-
+        if($request->selected != null){
+            $attributes_not_selected = array_diff($request->allValues, $request->selected);
+        }else{
+            $attributes_not_selected = array_diff($request->allValues, []);
+        }        
 
         $attributes_generale = Attribute::whereIn('id', $attributes_not_selected)->get();
 
@@ -367,7 +320,7 @@ class ProductController extends Controller
         $html_attributes_generale = '';
         if(count($attributes) > 0){
             foreach($attributes as $attribute){
-                $html .= '<div class="row mb-3">
+                $html .= '<div class="row mb-3 attribute-variant-'. $attribute->id .'">
                         <div class="col-md-3">
                             <input type="text" class="form-control" value="'.translate($attribute->getTranslation('name')).'" disabled>
                         </div>';
@@ -411,10 +364,10 @@ class ProductController extends Controller
                     case "boolean":
                         $html .= '<div class="col-md-8" style="padding-top: 10px">
                                     <label style="margin-right: 15px">
-                                        <input type="radio" class="attributes" data-id_attributes="'.$attribute->id.'" name="boolean" value="yes">Yes
+                                        <input type="radio" class="attributes" data-id_attributes="'.$attribute->id.'" value="yes">Yes
                                     </label>
                                     <label>
-                                        <input type="radio" class="attributes" data-id_attributes="'.$attribute->id.'" name="boolean" value="no"> No
+                                        <input type="radio" class="attributes" data-id_attributes="'.$attribute->id.'" value="no"> No
                                     </label>
                                 </div>';
                         break;
@@ -427,19 +380,19 @@ class ProductController extends Controller
         if(count($attributes_generale) > 0){
             foreach($attributes_generale as $attribute_generale){
                 $html_attributes_generale .= '<div class="row mb-3">
-                        <div class="col-md-3">
+                        <div class="col-md-3 attribute-variant-'. $attribute_generale->id .'">
                             <input type="text" class="form-control" value="'.translate($attribute_generale->getTranslation('name')).'" disabled>
                         </div>';
 
                 switch ($attribute_generale->type_value) {
                     case "text":
-                        $html_attributes_generale .= '<div class="col-md-8">
+                        $html_attributes_generale .= '<div class="col-md-8 attribute-variant-'. $attribute_generale->id .'">
                                     <input type="text" class="form-control attributes" name="attribute_generale-'.$attribute_generale->id.'">
                                 </div>';
                         break;
                     case "list":
                         $values = $attribute_generale->attribute_values_list(app()->getLocale());
-                        $options = '<div class="col-md-8"><select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" name="attribute_generale-'.$attribute_generale->id.'">';
+                        $options = '<div class="col-md-8 attribute-variant-'. $attribute_generale->id .'"><select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" name="attribute_generale-'.$attribute_generale->id.'">';
                         foreach ($values as $key=>$value){
                             $options .= "<option  value='".$value->id."'>". $value->value ."</option>";
                         }
@@ -448,7 +401,7 @@ class ProductController extends Controller
                         break;
                     case "color":
                         $colors = Color::orderBy('name', 'asc')->get();
-                        $html_attributes_generale .= '<div class="col-md-8">
+                        $html_attributes_generale .= '<div class="col-md-8 attribute-variant-'. $attribute_generale->id .'">
                         <select class="form-control attributes aiz-selectpicker" name="attribute_generale-'.$attribute_generale->id.'" data-type="color" data-live-search="true" data-selected-text-format="count">';
                             foreach ($colors as $key => $color){
                                 $html_attributes_generale .= '<option value="' . $color->code . '" data-content="<span><span class=\'size-15px d-inline-block mr-2 rounded border\' style=\'background:' . $color->code . '\'></span><span>' . $color->name . '</span></span>"></option>';
@@ -463,12 +416,12 @@ class ProductController extends Controller
                             $options .= "<option  value='".$unit->id."'>". $unit->name ."</option>";
                         }
                         $options .= "</select>";
-                        $html_attributes_generale .= '<div class="col-md-8"><div class="row"><div class="col-6">
+                        $html_attributes_generale .= '<div class="col-md-8 attribute-variant-'. $attribute_generale->id .'"><div class="row"><div class="col-6">
                                     <input type="number" class="form-control attributes" name="attribute_generale-'.$attribute_generale->id.'"></div><div class="col-6">'.$options.'
                                 </div></div>';
                         break;
                     case "boolean":
-                        $html_attributes_generale .= '<div class="col-md-8" style="padding-top: 10px">
+                        $html_attributes_generale .= '<div class="col-md-8 attribute-variant-'. $attribute_generale->id .'" style="padding-top: 10px">
                                     <label style="margin-right: 15px">
                                         <input type="radio" class="attributes" name="attribute_generale-'.$attribute_generale->id.'" name="boolean" value="yes">Yes
                                     </label>
@@ -493,17 +446,104 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        if (Auth::user()->id != $product->user_id) {
-            flash(translate('This product is not yours.'))->warning();
-            return back();
-        }
+        // if (Auth::user()->id != $product->user_id) {
+        //     flash(translate('This product is not yours.'))->warning();
+        //     return back();
+        // }
 
-        $lang = $request->lang;
-        $tags = json_decode($product->tags);
-        $categories = Category::where('parent_id', 0)
-            ->where('digital', 0)
+        // $lang = $request->lang;
+        // $tags = json_decode($product->tags);
+        // $categories = Category::where('parent_id', 0)
+        //     ->where('digital', 0)
+        //     ->with('childrenCategories')
+        //     ->get();
+        $product = Product::find($id);
+        $colors = Color::orderBy('name', 'asc')->get();
+        $product_category = ProductCategory::where('product_id', $id)->first();
+        $vat_user = BusinessInformation::where('user_id', Auth::user()->id)->first();
+        $categories = Category::where('level', 1)
             ->with('childrenCategories')
             ->get();
+        $attributes = [];
+        $childrens = [];
+        $childrens_ids = [];
+        $variants_attributes = [];
+        $general_attributes = [];
+        $variants_attributes_ids_attributes = [];
+        $general_attributes_ids_attributes = [];
+        if($product != null){
+            if($product->is_parent = 1){
+                $childrens = Product::where('parent_id', $id)->get();
+                $childrens_ids = Product::where('parent_id', $id)->pluck('id')->toArray();
+                $variants_attributes = ProductAttributeValues::whereIn('id_products', $childrens_ids)->where('is_variant', 1)->get();
+                $general_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->get();
+                $variants_attributes_ids_attributes = ProductAttributeValues::whereIn('id_products', $childrens_ids)->where('is_variant', 1)->pluck('id_attribute')->toArray();
+                $general_attributes_ids_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->pluck('id_attribute')->toArray();
+                $data_general_attributes = [];
+                if(count($general_attributes) > 0){
+                    foreach ($general_attributes as $general_attribute){
+                        $data_general_attributes[$general_attribute->id_attribute] = $general_attribute;
+                    }
+                }
+            }
+            if($product_category != null){
+                $categorie = Category::find($product_category->category_id);
+                $current_categorie = $categorie;
+    
+                $parents = [];
+                if($current_categorie->parent_id == 0){
+                    array_push($parents, $current_categorie->id);
+                }else{
+                    array_push($parents, $current_categorie->id);
+                    while($current_categorie->parent_id != 0) {
+                        $parent = Category::where('id',$current_categorie->parent_id)->first();
+                        array_push($parents, $parent->id);
+                        $current_categorie = $parent;
+                    }
+                }
+    
+                if(count($parents) > 0){
+                    $attributes_ids = DB::table('categories_has_attributes')->whereIn('category_id', $parents)->pluck('attribute_id')->toArray();
+                    if(count($attributes_ids) > 0){
+                        $attributes = Attribute::whereIn('id',$attributes_ids)->get();
+                    }
+                }
+            }
+
+            if($product->is_draft == 1){
+                return view('seller.product.products.draft', [
+                    'product' => $product,
+                    'vat_user' => $vat_user,
+                    'categories' => $categories,
+                    'product_category' => $product_category,
+                    'attributes' => $attributes,
+                    'childrens' => $childrens,
+                    'childrens_ids' => $childrens_ids,
+                    'variants_attributes' => $variants_attributes,
+                    'variants_attributes_ids_attributes' => $variants_attributes_ids_attributes,
+                    'general_attributes_ids_attributes' => $general_attributes_ids_attributes,
+                    'general_attributes' => $data_general_attributes,
+                    'colors' => $colors
+                ]);
+            }else{
+                return view('seller.product.products.edit', [
+                    'product' => $product,
+                    'vat_user' => $vat_user,
+                    'categories' => $categories,
+                    'product_category' => $product_category,
+                    'attributes' => $attributes,
+                    'childrens' => $childrens,
+                    'childrens_ids' => $childrens_ids,
+                    'variants_attributes' => $variants_attributes,
+                    'variants_attributes_ids_attributes' => $variants_attributes_ids_attributes,
+                    'general_attributes_ids_attributes' => $general_attributes_ids_attributes,
+                    'general_attributes' => $data_general_attributes,
+                    'colors' => $colors
+                ]);
+            }                
+        }else{
+            abort(404);
+        }
         return view('seller.product.products.edit', compact('product', 'categories', 'tags', 'lang'));
     }
 

@@ -20,10 +20,11 @@
         </div>
     @endif
 
-    <form class="" action="{{route('seller.products.store')}}" method="POST" enctype="multipart/form-data" id="choice_form">
+    <form class="" action="{{route('seller.products.store_draft')}}" method="POST" enctype="multipart/form-data" id="choice_form">
         <div class="row gutters-5">
             <div class="col-lg-12">
                 @csrf
+                <input type="hidden" name="product_id" value="{{ $product->id }}">
                 {{-- Bloc Product Information --}}
                 <div class="card">
                     <div class="card-header">
@@ -128,15 +129,14 @@
                             <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Gallery Images')}} <small>(1280x1280)</small></label>
                             <div class="col-md-8" id="bloc_photos">
                                 <input type="file" class="dropify" name="main_photos[]" id="photoUpload" accept=".jpeg, .jpg, .png" multiple />
-                                <div id="dropifyUploadedFiles">
+                                <div class="row mt-3" id="dropifyUploadedFiles">
                                     @if(count($product->getImagesProduct()) > 0)
-                                        <div class="row">
-                                            @foreach ($product->getImagesProduct() as $image)
-                                                <div class="col-2">
-                                                    <img src="{{ asset('/public/'.$image->path) }}" height="80" width="80" />
-                                                </div>
-                                            @endforeach
-                                        </div>
+                                        @foreach ($product->getImagesProduct() as $image)
+                                            <div class="col-2 container-img">
+                                                <img src="{{ asset('/public/'.$image->path) }}" height="120" width="120" />
+                                                <i class="fa-regular fa-circle-xmark fa-fw fa-lg icon-delete-image" title="delete this image" data-image_id="{{ $image->id }}"></i>
+                                            </div>
+                                        @endforeach
                                     @endif
                                 </div>
                             </div>
@@ -145,15 +145,14 @@
                             <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <small>(400x400)</small></label>
                             <div class="col-md-8" id="bloc_thumbnails">
                                 <input type="file" class="dropify" name="photosThumbnail[]" id="photoUploadThumbnail" accept=".jpeg, .jpg, .png" multiple />
-                                <div id="dropifyUploadedFilesThumbnail">
+                                <div class="row mt-3" id="dropifyUploadedFilesThumbnail">
                                     @if(count($product->getThumbnailsProduct()) > 0)
-                                        <div class="row">
-                                            @foreach ($product->getThumbnailsProduct() as $image)
-                                                <div class="col-2">
-                                                    <img src="{{ asset('/public/'.$image->path) }}" height="80" width="80" />
-                                                </div>
-                                            @endforeach
-                                        </div>
+                                        @foreach ($product->getThumbnailsProduct() as $image)
+                                            <div class="col-2 container-img">
+                                                <img src="{{ asset('/public/'.$image->path) }}" height="120" width="120" />
+                                                <i class="fa-regular fa-circle-xmark fa-fw fa-lg icon-delete-image" title="delete this image" data-image_id="{{ $image->id }}"></i>
+                                            </div>
+                                        @endforeach
                                     @endif
                                 </div>
                             </div>
@@ -214,13 +213,13 @@
                                                 <td><input type="text" class="form-control aiz-date-range discount-range" value="{{ $date_range }}" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                                 <td>
                                                     <select class="form-control discount_type" name="discount_type[]">
-                                                        <option value="" disabled selected>{{translate('Choose type')}}</option>
+                                                        <option value="" selected>{{translate('Choose type')}}</option>
                                                         <option value="amount" @selected($pricing->discount_type == 'amount')>{{translate('Flat')}}</option>
                                                         <option value="percent" @selected($pricing->discount_type == 'percent')>{{translate('Percent')}}</option>
                                                     </select>
                                                 </td>
-                                                <td><input type="number" class="form-control discount_amount" value="{{ $pricing->discount_amount }}" name="discount_amount[]"></td>
-                                                <td><input type="number" class="form-control discount_percentage" value="{{ $pricing->discount_percentage }}" name="discount_percentage[]"></td>
+                                                <td><input type="number" class="form-control discount_amount" value="{{ $pricing->discount_amount }}" @if($pricing->discount_type != 'amount') readonly @endif name="discount_amount[]"></td>
+                                                <td><input type="number" class="form-control discount_percentage" value="{{ $pricing->discount_percentage }}" @if($pricing->discount_type != 'percent') readonly @endif name="discount_percentage[]"></td>
                                                 <td>
                                                     <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                                     <i class="las la-trash delete_pricing_canfiguration" data-pricing_id="{{ $pricing->id }}" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
@@ -235,7 +234,7 @@
                                             <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                             <td>
                                                 <select class="form-control discount_type" name="discount_type[]">
-                                                    <option value="" disabled selected>{{translate('Choose type')}}</option>
+                                                    <option value="" selected>{{translate('Choose type')}}</option>
                                                     <option value="amount" @selected(old('discount_type') == 'amount')>{{translate('Flat')}}</option>
                                                     <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                                 </select>
@@ -250,7 +249,7 @@
                                     @endif
 
                                 </tbody>
-                              </table>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -405,7 +404,7 @@
                                 </div>
                                 <div class="col-md-8">
                                     <div class="custom-file mb-3">
-                                        <input type="file" class="custom-file-input photos_variant" id="photos_variant" multiple>
+                                        <input type="file" class="custom-file-input photos_variant" id="photos_variant" accept=".jpeg, .jpg, .png" multiple>
                                         <label class="custom-file-label" for="photos_variant">Choose files</label>
                                     </div>
                                 </div>
@@ -481,7 +480,7 @@
                                 </div>
                                 <div class="col-md-8">
                                     <label class="aiz-switch aiz-switch-success mb-0">
-                                        <input value="1" type="checkbox" class="variant-sample-shipping">
+                                        <input value="1" type="checkbox" class="variant-sample-shipping" >
                                         <span></span>
                                     </label>
                                 </div>
@@ -495,14 +494,195 @@
                                 </div>
                             </div>
                             <div id="bloc_attributes">
-
+                                @if (count($product->getIdsAttributesChildren()) > 0)
+                                    @include('seller.product.products.attributes', ['attributes' => $attributes, 'variants_attributes_ids_attributes' => $product->getIdsAttributesChildren()])
+                                @endif
                             </div>
                         </div>
                         <div class="row div-btn">
                             <button type="button" name="button" class="btn btn-primary" id="btn-create-variant">Create variant</button>
                         </div>
                         <div id="bloc_variants_created">
+                            @if(count($product->getChildrenProductsDesc()) > 0)
+                                @php $key = count($product->getChildrenProductsDesc()) @endphp
+                                @foreach ($product->getChildrenProductsDesc() as $children)
+                                    <div data-id="{{ $children->id }}">
+                                        <h3 class="mb-3">Variant informations {{ $key }}</h3>
+                                        <hr>
+                                        <div class="row mb-3">
+                                            <div class="col-md-3">
+                                                <input type="text" class="form-control" value="{{translate('Variant SKU')}}" disabled>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <input type="text" class="form-control sku" id="sku" name="variant[sku][{{ $children->id }}]" value="{{ $children->sku }}" >
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-3">
+                                                <input type="text" class="form-control" value="{{translate('Variant Photos')}}" disabled>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="custom-file mb-3">
+                                                    <input type="file" class="custom-file-input photos_variant" name="variant[photo][{{ $children->id }}][]" id="photos_variant{{ $key }}" accept=".jpeg, .jpg, .png" multiple>
+                                                    <label class="custom-file-label" for="photos_variant{{ $key }}">Choose files</label>
+                                                </div>
+                                                @if(count($children->getImagesProduct()) > 0)
+                                                    <div class="row mt-3">
+                                                        @foreach ($children->getImagesProduct() as $image)
+                                                            <div class="col-2 container-img">
+                                                                <img src="{{ asset('/public/'.$image->path) }}" height="120" width="120" />
+                                                                <i class="fa-regular fa-circle-xmark fa-fw fa-lg icon-delete-image" title="delete this image" data-image_id="{{ $image->id }}"></i>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-3">
+                                                <input type="text" class="form-control" value="{{translate('Variant Pricing')}}" disabled>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <label class="aiz-switch aiz-switch-success mb-0">
+                                                    <input value="1" type="checkbox" name="variant-pricing-{{ $children->id }}" class="variant-pricing" @if(count($children->getPricingConfiguration()) == 0) checked @endif>
+                                                    <span></span>
+                                                </label>
+                                            </div>
+                                            <div class="bloc_pricing_configuration_variant">
+                                                @if(count($children->getPricingConfiguration()) > 0)
+                                                    <table class="table" class="bloc_pricing_configuration_variant">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>{{translate('From Quantity')}}</th>
+                                                                <th>{{translate('To Quantity')}}</th>
+                                                                <th>{{translate('Unit Price (VAT Exclusive)')}}</th>
+                                                                <th>{{translate('Discount(Start/End)')}}</th>
+                                                                <th>{{translate('Discount Type')}}</th>
+                                                                <th>{{translate('Discount Amount')}}</th>
+                                                                <th>{{translate('Discount Percentage')}}</th>
+                                                                <th>{{translate('Action')}}</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="bloc_pricing_configuration">
+                                                            @foreach ($children->getPricingConfiguration() as $pricing)
+                                                                <tr>
+                                                                    <td><input type="number" name="variant[from][{{ $children->id }}][]" class="form-control min-qty" id="" value="{{ $pricing->from }}"></td>
+                                                                    <td><input type="number" name="variant[to][{{ $children->id }}][]" class="form-control max-qty" id="" value="{{ $pricing->to }}"></td>
+                                                                    <td><input type="number" name="variant[unit_price][{{ $children->id }}][]" class="form-control unit-price-variant" id="" value="{{ $pricing->unit_price }}"></td>
+                                                                    @php
+                                                                        $date_range = '';
+                                                                        if($pricing->discount_start_datetime){
+                                                                            $start_date = new DateTime($pricing->discount_start_datetime);
+                                                                            $start_date_formatted = $start_date->format('d-m-Y H:i:s');
 
+                                                                            $end_date = new DateTime($pricing->discount_end_datetime);
+                                                                            $end_date_formatted = $end_date->format('d-m-Y H:i:s');
+
+                                                                            $date_range = $start_date_formatted.' to '.$end_date_formatted;
+                                                                        }
+                                                                    @endphp
+                                                                    <td><input type="text" class="form-control aiz-date-range discount-range" value="{{ $date_range }}" name="variant[date_range_pricing][{{ $children->id }}][]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
+                                                                    <td>
+                                                                        <select class="form-control discount_type" name="variant[discount_type][{{ $children->id }}][]">
+                                                                            <option value="" selected>{{translate('Choose type')}}</option>
+                                                                            <option value="amount" @selected($pricing->discount_type == 'amount')>{{translate('Flat')}}</option>
+                                                                            <option value="percent" @selected($pricing->discount_type == 'percent')>{{translate('Percent')}}</option>
+                                                                        </select>
+                                                                    </td>
+                                                                    <td><input type="number" class="form-control discount_amount" value="{{ $pricing->discount_amount }}" name="variant[discount_amount][{{ $children->id }}][]"></td>
+                                                                    <td><input type="number" class="form-control discount_percentage" value="{{ $pricing->discount_percentage }}" name="variant[discount_percentage][{{ $children->id }}][]"></td>
+                                                                    <td>
+                                                                        <i class="las la-plus btn-add-pricing" data-id_variant="{{ $children->id }}" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
+                                                                        <i class="las la-trash delete_pricing_canfiguration" data-pricing_id="{{ $pricing->id }}" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                                                    </td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-3">
+                                                <input type="text" class="form-control" value="{{translate('Variant Sample Pricing')}}" disabled>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <label class="aiz-switch aiz-switch-success mb-0">
+                                                    <input value="1" type="checkbox" name="variant[sample_pricing][{{ $children->id }}]" class="variant-sample-pricing" checked>
+                                                    <span></span>
+                                                </label>
+                                            </div>
+                                            <div class="bloc_sample_pricing_configuration_variant">
+                                                @if($children->sample_price != null)
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-3">
+                                                            <input type="text" class="form-control" value="{{translate('VAT')}}" disabled>
+                                                        </div>
+                                                        <div class="col-md-8">
+                                                            <label class="aiz-switch aiz-switch-success mb-0">
+                                                                <input value="1" class="vat_sample" type="checkbox" name="variant[vat_sample][{{ $children->id }}]" @if($vat_user->vat_registered == 1) checked @endif>
+                                                                <span></span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-3">
+                                                            <input type="text" class="form-control" value="{{translate('Sample description')}}" disabled>
+                                                        </div>
+                                                        <div class="col-md-8">
+                                                            <textarea class="form-control sample_description" name="variant[sample_description][{{ $children->id }}]">{{ $children->sample_description }}</textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-3">
+                                                            <input type="text" class="form-control" value="{{translate('Sample price')}}" disabled>
+                                                        </div>
+                                                        <div class="col-md-8">
+                                                            <input type="text" class="form-control sample_price" name="variant[sample_price][{{ $children->id }}]" value="{{ $children->sample_price }}">
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-3">
+                                                <input type="text" class="form-control" value="{{translate('Variant Shipping')}}" disabled>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <label class="aiz-switch aiz-switch-success mb-0">
+                                                    <input value="1" type="checkbox" class="variant-shipping" name="variant[shipping][{{ $children->id }}]" value="{{ $children->shipping }}" @if($children->shipping == 1) checked @endif>
+                                                    <span></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-3">
+                                                <input type="text" class="form-control" value="{{translate('Variant Sample Shipping')}}" disabled>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <label class="aiz-switch aiz-switch-success mb-0">
+                                                    <input value="1" type="checkbox" class="variant-sample-shipping" name="variant[sample_shipping][{{ $children->id }}]" value="{{ $children->sample_shipping }}" @if($children->sample_shipping == 1) checked @endif>
+                                                    <span></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-3">
+                                                <input type="text" class="form-control" value="{{translate('Low-Stock Warning')}}" disabled>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <input type="text" class="form-control stock-warning" id="low_stock_warning" name="variant[low_stock_quantity][{{ $children->low_stock_quantity }}]" >
+                                            </div>
+                                        </div>
+                                        <div id="bloc_attributes">
+                                            @if (count($children->getIdsAttributesVariant()) > 0)
+                                                @include('seller.product.products.variant_attributes', ['attributes' => $attributes, 'variants_attributes_ids_attributes' => $children->getIdsAttributesVariant(), 'variants_attributes' => $children->getAttributesVariant(), 'children' => $children])
+                                            @endif
+                                        </div>
+                                    </div>
+                                    @php $key-- @endphp
+                                @endforeach
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -513,9 +693,12 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div id="general_attributes"></div>
-                            <div class="row">
-                                @include('seller.product.products.general_attributes', ['attributes' => $attributes, 'general_attributes_ids_attributes' => $general_attributes_ids_attributes, 'general_attributes' => $general_attributes])
+                            <div id="general_attributes">
+                                @if (count($general_attributes_ids_attributes) > 0)
+                                    <div class="row">
+                                        @include('seller.product.products.general_attributes', ['attributes' => $attributes, 'general_attributes_ids_attributes' => $general_attributes_ids_attributes, 'general_attributes' => $general_attributes])
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -543,31 +726,58 @@
                     </div>
                     <div class="card-body" id="documents_bloc">
                         @if(count($product->getDocumentsProduct()) > 0)
-                            @foreach ($product->getDocumentsProduct() as $document)
+                            @foreach ($product->getDocumentsProduct() as $key => $document)
                                 <div class="row">
                                     <div class="col-5">
                                         <div class="form-group">
                                             <label for="exampleInputEmail1">Document name</label>
-                                            <input type="text" class="form-control" name="document_names[]" value="{{ $document->document_name }}">
+                                            <input type="text" class="form-control" name="old_document_names[{{ $document->id }}]" value="{{ $document->document_name }}">
                                         </div>
                                     </div>
                                     <div class="col-5">
                                         <div class="form-group">
-                                            <label for="exampleInputEmail1">Document</label>
-                                            <div class="input-group">
+                                            <label for="exampleInputEmail{{ $key }}">Document</label>
+                                            <div class="input-group padding-name-document">
                                                 <div class="custom-file">
-                                                <input type="file" name="documents[]" accept=".pdf,.png,.jpg,.pln,.dwg,.dxf,.gsm,.stl,.rfa,.rvt,.ifc,.3ds,.max,.obj,.fbx,.skp,.rar,.zip" class="custom-file-input file_input" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
-                                                <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+                                                <input type="file" name="old_documents[{{ $document->id }}]" accept=".pdf,.png,.jpg,.pln,.dwg,.dxf,.gsm,.stl,.rfa,.rvt,.ifc,.3ds,.max,.obj,.fbx,.skp,.rar,.zip" class="custom-file-input file_input" id="inputGroupFile{{ $key }}" aria-describedby="inputGroupFileAddon04">
+                                                <label class="custom-file-label" for="inputGroupFile{{ $key }}">Choose file</label>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-2">
-                                        <i class="las la-plus add_document" style="margin-left: 5px; margin-top: 40px;" title="Add another document"></i>
-                                        <i class="las la-trash trash_document" style="margin-left: 5px; margin-top: 40px;" title="Delete this document"></i>
+                                        <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Add another document"></i>
+                                        <i class="las la-trash trash_document font-size-icon" data-id_document="{{ $document->id }}" style="margin-left: 5px; margin-top: 34px;" title="Delete this document"></i>
+                                        <a href="{{ asset('/public/'.$document->path) }}" download title="{{ translate('Click to download') }}">
+                                            <i class="las la-download font-size-icon"></i>
+                                        </a>
                                     </div>
                                 </div>
                             @endforeach
+                        @else
+                            <div class="row">
+                                <div class="col-5">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Document name</label>
+                                        <input type="text" class="form-control" name="document_names[]">
+                                    </div>
+                                </div>
+                                <div class="col-5">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Document</label>
+                                        <div class="input-group padding-name-document">
+                                            <div class="custom-file">
+                                            <input type="file" name="documents[]" accept=".pdf,.png,.jpg,.pln,.dwg,.dxf,.gsm,.stl,.rfa,.rvt,.ifc,.3ds,.max,.obj,.fbx,.skp,.rar,.zip" class="custom-file-input file_input" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
+                                            <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Add another document"></i>
+                                    <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Delete this document"></i>
+                                </div>
+                            </div>
                         @endif
                     </div>
                 </div>
@@ -652,12 +862,28 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#variant_informations').hide();
-        $('#btn-create-variant').hide();
+        @if(count($product->getChildrenProducts()) > 0)
+            $('#variant_informations').show();
+        @else
+            $('#variant_informations').hide();
+        @endif
+
+        @if(count($product->getChildrenProducts()) > 0)
+            $('#btn-create-variant').show();
+        @else
+            $('#btn-create-variant').hide();
+        @endif
+        
         $('body #bloc_pricing_configuration_variant').hide();
         $('body #bloc_sample_pricing_configuration_variant').hide();
         $('body .btn-variant-pricing').hide();
-        var numbers_variant = 0;
+        var numbers_variant = "{{ count($product->getChildrenProducts()) }}";
+        numbers_variant = parseInt(numbers_variant);
+
+        var initial_attributes = $('#attributes').val();
+        Array.prototype.diff = function(a) {
+            return this.filter(function(i) {return a.indexOf(i) < 0;});
+        };
 
         $('body input[name="activate_attributes"]').on('change', function() {
             if (!$('body input[name="activate_attributes"]').is(':checked')) {
@@ -693,7 +919,6 @@
             }
         });
 
-
         $('#short_description').on('keyup', function(event) {
             var currentLength = $(this).val().length;
             var maxCharacters = 512;
@@ -728,6 +953,11 @@
                         $('#attributes_bloc').html(data.html);
                     }else{
                         $('#attributes_bloc').html('<select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" id="attributes" multiple disabled data-placeholder="{{ translate("No attributes found") }}"></select>');
+                        $('body input[name="activate_attributes"]').prop("checked", false);
+                        $('#variant_informations').hide();
+                        $('#variant_informations').hide();
+                        $('body .div-btn').hide();
+                        $('body #bloc_variants_created').hide();
                     }
 
                     $('#general_attributes').html(data.html_attributes_generale);
@@ -739,6 +969,18 @@
 
         $('body').on('change', '#attributes', function() {
             var ids_attributes = $(this).val();
+            
+            var clicked = ids_attributes.diff( initial_attributes );
+            if(clicked.length == 0){
+                clicked = initial_attributes.diff( ids_attributes );
+            }
+
+            if(initial_attributes.includes(clicked[0])){
+                initial_attributes.splice(initial_attributes.indexOf(clicked[0]), 1);
+            }else{
+                initial_attributes.push(clicked[0]);
+            }
+
             var allValues = $('#attributes option').map(function() {
                 return $(this).val();
             }).get();
@@ -750,17 +992,99 @@
                 type:"GET",
                 url:'{{ route('seller.products.getAttributes') }}',
                 data:{
-                    ids: ids_attributes,
+                    ids: clicked,
                     id_variant: numbers_variant,
+                    selected: ids_attributes,
                     allValues: allValues
                 },
                 success: function(data) {
-                    $('body #bloc_attributes').html(data.html);
-                    $('body #general_attributes').html(data.html_attributes_generale);
+                    var attribute_variant_exist = $('#bloc_attributes > .attribute-variant-' + clicked[0]).length
+                    var numberOfChildren = $('#general_attributes > div').length;
+                    
+                    if (numberOfChildren == 0) {
+                        $('#general_attributes').append(data.html_attributes_generale);
+                    }else{
+                        var numberOfChildrenOfChildren = $('#general_attributes > div > div').length;
+                        if(numberOfChildrenOfChildren == 0){
+                            $('#general_attributes').append(data.html_attributes_generale);
+                        }else{
+                            $('#general_attributes .attribute-variant-' + clicked[0]).remove();
+                        }  
+                    }
+
+                    if(attribute_variant_exist > 0){
+                        $('#bloc_attributes .attribute-variant-' + clicked[0]).remove();
+                        $('#general_attributes .attribute-variant-' + clicked[0]).remove();
+                        $('#general_attributes').append(data.html);
+                    }else{
+                        $('body #bloc_attributes').append(data.html);
+                    }
+
+                    AIZ.plugins.bootstrapSelect('refresh');
+                    $("#bloc_variants_created div").each(function(index, element) {
+                        if($(element).data('id') != undefined){
+                            $(element).find('.attributes').each(function(index, element) {
+                                // Change the attribute name of the current input
+                                if ($(element).attr("name") == undefined) {
+                                    var id_attribute = $(element).data('id_attributes');
+                                    var name = 'variant[attributes]['+ id_variant +']['+ id_attribute +']'
+                                    $(element).attr('name', name);
+                                }
+                                
+                            });
+
+                            $(element).find('.attributes-units').each(function(index, element) {
+                                if ($(element).attr("name") == undefined) {
+                                    console.log('done done')
+                                    var id_attribute = $(element).data('id_attributes');
+                                    var name = 'unit_variant['+ id_variant +']['+ id_attribute +']'
+                                    $(element).attr('name', name);
+                                }
+                            });
+                        } 
+                    });
+
+                    $("#general_attributes div").each(function(index, element) {
+                        if($(element).data('id') != undefined){
+                            $(element).find('.attributes').each(function(index, child_element) {
+                                // Change the attribute name of the current input
+                                if ($(child_element).attr("name") == undefined) {
+                                    var id_attribute = $(child_element).data('id_attributes');
+                                    var name = 'attribute_generale-'+ id_attribute
+                                    $(child_element).attr('name', name);
+                                }
+                                
+                            });
+
+                            $(element).find('.attributes-units').each(function(index, child_element_units) {
+                                if ($(child_element_units).attr("name") == undefined) {
+                                    var id_attribute = $(child_element_units).data('id_attributes');
+                                    var name = 'unit_attribute_generale-'+ id_attribute
+                                    $(child_element_units).attr('name', name);
+                                }
+                            });
+                        }
+                    });
+
+                    var count_boolean = 1;
+                    $("body #bloc_attributes div").each(function(index, element) {
+                        $(element).find('.attributes').each(function(index, child_element) {
+                            // Change the attribute name of the current input
+                            if ($(child_element).attr("type") == 'radio') {
+                                $(child_element).parent().parent().find(':radio').each(function(index, radio_element) {
+                                    $(radio_element).attr('name', 'boolean'+count_boolean);
+                                });
+
+                                count_boolean++;
+                            }
+                        });
+                    });
 
                     AIZ.plugins.bootstrapSelect('refresh');
                 }
             });
+            
+            
         })
 
         $('body').on('change', '.photos_variant', function() {
@@ -777,7 +1101,8 @@
             var clonedDiv = $('#variant_informations').clone();
 
             // Add some unique identifier to the cloned div (optional)
-            clonedDiv.attr('id', 'clonedDiv' + numbers_variant);
+            clonedDiv.attr('class', 'clonedDiv');
+            clonedDiv.attr('data-id', numbers_variant);
             // Disable all input elements in the cloned div
             clonedDiv.find('input').prop('readonly', true);
 
@@ -961,10 +1286,10 @@
                     })
                     $(element).removeAttr("name");
                 });
-                $(this).parent().parent().parent().find('#bloc_pricing_configuration_variant').show();
-                $(this).parent().parent().parent().find('#bloc_pricing_configuration_variant').append(clonedElement);
+                $(this).parent().parent().parent().find('.bloc_pricing_configuration_variant').show();
+                $(this).parent().parent().parent().find('.bloc_pricing_configuration_variant').append(clonedElement);
             }else{
-                $(this).parent().parent().parent().find('#bloc_pricing_configuration_variant').empty();
+                $(this).parent().parent().parent().find('.bloc_pricing_configuration_variant').empty();
             }
         })
 
@@ -1139,7 +1464,31 @@
 
         });
         $('body').on('click', '.btn-add-pricing', function() {
-            var html_to_add = `
+            var id_variant = $(this).data('id_variant');
+            if(id_variant != undefined){
+                var html_to_add = `
+                                <tr>
+                                    <td><input type="number" name="variant[from][`+ id_variant +`][]" class="form-control min-qty" id=""></td>
+                                    <td><input type="number" name="variant[to][`+ id_variant +`][]" class="form-control max-qty" id=""></td>
+                                    <td><input type="number" name="variant[unit_price][`+ id_variant +`][]" class="form-control unit-price-variant" id=""></td>
+                                    <td><input type="text" class="form-control aiz-date-range discount-range" name="variant[date_range_pricing][`+ id_variant +`][]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
+                                    <td>
+                                        <select class="form-control discount_type" name="variant[discount_type][`+ id_variant +`][]">
+                                            <option value="" selected>{{translate('Choose type')}}</option>
+                                            <option value="amount" @selected(old('discount_type') == 'amount')>{{translate('Flat')}}</option>
+                                            <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" class="form-control discount_amount" name="variant[discount_amount][`+ id_variant +`][]"></td>
+                                    <td><input type="number" class="form-control discount_percentage" name="variant[discount_percentage][`+ id_variant +`][]"></td>
+                                    <td>
+                                        <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
+                                        <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                    </td>
+                                </tr>
+                            `;
+            }else{
+                var html_to_add = `
                                 <tr>
                                     <td><input type="number" name="from[]" class="form-control min-qty" id=""></td>
                                     <td><input type="number" name="to[]" class="form-control max-qty" id=""></td>
@@ -1147,7 +1496,7 @@
                                     <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                     <td>
                                         <select class="form-control discount_type" name="discount_type[]">
-                                            <option value="" disabled selected>{{translate('Choose type')}}</option>
+                                            <option value="" selected>{{translate('Choose type')}}</option>
                                             <option value="amount" @selected(old('discount_type') == 'amount')>{{translate('Flat')}}</option>
                                             <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                         </select>
@@ -1160,11 +1509,13 @@
                                     </td>
                                 </tr>
                             `;
+            }
+
                 // add another bloc in pricing configuration
-                $('#bloc_pricing_configuration').append(html_to_add);
+                $(this).parent().parent().parent().append(html_to_add);
 
                 //Initialize last date range picker
-                $('#bloc_pricing_configuration .aiz-date-range:last').daterangepicker({
+                $(this).parent().parent().parent().find('.aiz-date-range:last').daterangepicker({
                     timePicker: true,
                     locale: {
                         format: 'DD-MM-Y HH:mm:ss',
@@ -1254,8 +1605,12 @@
 
         $('body').on('change', '#photoUpload', function() {
             let files = $(this)[0].files;
-            $('#dropifyUploadedFiles').empty();
-            if (files.length > 10) {
+            var old_files =  "{{ count($product->getImagesProduct()) }}";
+            old_files = parseInt(old_files);
+            var new_size = old_files + files.length;
+            
+            //$('#dropifyUploadedFiles').empty();
+            if (new_size > 10) {
                 swal(
                             'Cancelled',
                             'Maximum 10 photos allowed.',
@@ -1326,24 +1681,22 @@
                             dropifyInput = $('#photoUpload');
                             initializeDropify();
                         }else{
-                            let uploadedFilesHTML = '<div class="row">';
+                            let uploadedFilesHTML = '';
                             for (let i = 0; i < files.length; i++) {
                                 let file = files[i];
                                 if (file.type.startsWith('image/')) {
-                                    uploadedFilesHTML += `<div class="col-2"><img src="${URL.createObjectURL(file)}" alt="${file.name}" height="80" width="80" /></div>`; // Display image preview
+                                    uploadedFilesHTML += `<div class="col-2"><img src="${URL.createObjectURL(file)}" alt="${file.name}" height="120" width="120" /></div>`; // Display image preview
                                 } else {
                                     // Display icon for document type
                                     uploadedFilesHTML += `<li><i class="fa fa-file-text-o"></i> ${file.name}</li>`;
                                 }
                             }
-                            uploadedFilesHTML += '</div>';
-                            console.log('name :', $(this).prop('name'));
 
                             if ($('body #dropifyUploadedFiles').length === 0) {
-                                $("#bloc_photos").append('<div id="dropifyUploadedFiles"></div>');
-                                $('body #dropifyUploadedFiles').html(uploadedFilesHTML);
+                                $("#bloc_photos").append('<div class="row mt-3" id="dropifyUploadedFiles"></div>');
+                                $('body #dropifyUploadedFiles').append(uploadedFilesHTML);
                             }else{
-                                $('body #dropifyUploadedFiles').html(uploadedFilesHTML);
+                                $('body #dropifyUploadedFiles').append(uploadedFilesHTML);
                             }
                         }
                     }, 500);
@@ -1353,8 +1706,12 @@
 
         $('body').on('change', '#photoUploadThumbnail', function() {
             let files = $(this)[0].files;
-            $('#dropifyUploadedFilesThumbnail').empty();
-            if (files.length > 10) {
+            var old_files =  "{{ count($product->getThumbnailsProduct()) }}";
+            old_files = parseInt(old_files);
+            var new_size = old_files + files.length;
+
+            //$('#dropifyUploadedFilesThumbnail').empty();
+            if (new_size > 10) {
                 swal(
                             'Cancelled',
                             'Maximum 10 photos allowed.',
@@ -1426,24 +1783,23 @@
                             initializeDropifyThumbnail();
                         }else{
 
-                            let uploadedFilesHTML = '<div class="row">';
+                            let uploadedFilesHTML = '';
                             for (let i = 0; i < files.length; i++) {
                                 let file = files[i];
                                 if (file.type.startsWith('image/')) {
-                                    uploadedFilesHTML += `<div class="col-2"><img src="${URL.createObjectURL(file)}" alt="${file.name}" height="80" width="80" /></div>`; // Display image preview
+                                    uploadedFilesHTML += `<div class="col-2"><img src="${URL.createObjectURL(file)}" alt="${file.name}" height="120" width="120" /></div>`; // Display image preview
                                 } else {
                                     // Display icon for document type
                                     uploadedFilesHTML += `<li><i class="fa fa-file-text-o"></i> ${file.name}</li>`;
                                 }
                             }
-                            uploadedFilesHTML += '</div>';
 
                             if ($('body #dropifyUploadedFilesThumbnail').length == 0) {
-                                $("#bloc_thumbnails").append('<div id="dropifyUploadedFilesThumbnail"></div>');
-                                $('body #dropifyUploadedFilesThumbnail').html(uploadedFilesHTML);
+                                $("#bloc_thumbnails").append('<div class="row mt-3" id="dropifyUploadedFilesThumbnail"></div>');
+                                $('body #dropifyUploadedFilesThumbnail').append(uploadedFilesHTML);
                             }else{
                                 console.log('existe')
-                                $('body #dropifyUploadedFilesThumbnail').html(uploadedFilesHTML);
+                                $('body #dropifyUploadedFilesThumbnail').append(uploadedFilesHTML);
                             }
                         }
                     }, 500);
@@ -1519,15 +1875,15 @@
                                         <label for="exampleInputEmail${fileInputCounter}">Document</label>
                                         <div class="input-group">
                                             <div class="custom-file">
-                                            <input type="file" name="documents[]" class="custom-file-input file_input" id="exampleInputEmail${fileInputCounter}" aria-describedby="inputGroupFileAddon04">
+                                            <input type="file" name="documents[]" class="custom-file-input file_input" id="exampleInputEmail${fileInputCounter}" accept=".pdf,.png,.jpg,.pln,.dwg,.dxf,.gsm,.stl,.rfa,.rvt,.ifc,.3ds,.max,.obj,.fbx,.skp,.rar,.zip" aria-describedby="inputGroupFileAddon04">
                                             <label class="custom-file-label" for="exampleInputEmail${fileInputCounter}">Choose file</label>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-2">
-                                    <i class="las la-plus add_document" style="margin-left: 5px; margin-top: 40px;" title="Add another document"></i>
-                                    <i class="las la-trash trash_document" style="margin-left: 5px; margin-top: 40px;" title="Delete this document"></i>
+                                    <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Add another document"></i>
+                                    <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Delete this document"></i>
                                 </div>
                             </div>`;
             $('#documents_bloc').append(html_document);
@@ -1535,7 +1891,121 @@
         })
 
         $('body').on('click', '.trash_document', function(){
-            $(this).parent().parent().remove();
+            var id_document = $(this).data('id_document');
+
+            if(id_document != undefined){
+                var current = $(this);
+                swal({
+                    title: 'Are you sure you want to delete this document ?',
+                    type: "warning",
+                    confirmButtonText: 'Delete',
+                    showCancelButton: true
+                })
+                .then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            url: "{{ route('seller.products.delete_image') }}",
+                            type: "GET",
+                            data: {
+                                id: id_document
+                            },
+                            cache: false,
+                            dataType: 'JSON',
+                            success: function(dataResult) {
+                                if(dataResult.status != 'failed'){
+                                    swal(
+                                        'Deleted',
+                                        'Deleted successfully',
+                                        'success'
+                                    )
+                                    current.parent().parent().remove();
+
+                                    var numberOfChildren = $('#documents_bloc > div').length;
+
+                                    if (numberOfChildren == 0) {
+                                        var html_document = `<div class="row">
+                                                            <div class="col-5">
+                                                                <div class="form-group">
+                                                                    <label for="exampleInputEmail">Document name</label>
+                                                                    <input type="text" class="form-control" name="document_names[]">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-5">
+                                                                <div class="form-group">
+                                                                    <label for="exampleInputEmail${fileInputCounter}">Document</label>
+                                                                    <div class="input-group">
+                                                                        <div class="custom-file">
+                                                                        <input type="file" name="documents[]" class="custom-file-input file_input" id="exampleInputEmail${fileInputCounter}" accept=".jpeg, .jpg, .png" aria-describedby="inputGroupFileAddon04">
+                                                                        <label class="custom-file-label" for="exampleInputEmail${fileInputCounter}">Choose file</label>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-2">
+                                                                <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Add another document"></i>
+                                                                <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Delete this document"></i>
+                                                            </div>
+                                                        </div>`;
+                                        $('#documents_bloc').append(html_document);
+                                        fileInputCounter++;
+                                    }
+                                }
+                            }
+                        })
+                    } else if (result.dismiss === 'cancel') {
+                        swal(
+                            'Cancelled',
+                            'Deletion successfully reverted.',
+                            'warning'
+                        )
+                    }
+                })
+            }else{
+                $(this).parent().parent().remove();
+            }
+        })
+
+        $('body').on('click', '.icon-delete-image', function(){
+            var id_image = $(this).data('image_id');
+
+            if(id_image != undefined){
+                var current = $(this);
+                swal({
+                    title: 'Are you sure you want to delete this picture ?',
+                    type: "warning",
+                    confirmButtonText: 'Delete',
+                    showCancelButton: true
+                })
+                .then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            url: "{{ route('seller.products.delete_image') }}",
+                            type: "GET",
+                            data: {
+                                id: id_image
+                            },
+                            cache: false,
+                            dataType: 'JSON',
+                            success: function(dataResult) {
+                                if(dataResult.status != 'failed'){
+                                    swal(
+                                        'Deleted',
+                                        'Deleted successfully',
+                                        'success'
+                                    )
+                                    current.parent().remove();
+                                }
+                            }
+                        })
+                    } else if (result.dismiss === 'cancel') {
+                        swal(
+                            'Cancelled',
+                            'Deletion successfully reverted.',
+                            'warning'
+                        )
+                    }
+                })
+            }
         })
     });
 </script>

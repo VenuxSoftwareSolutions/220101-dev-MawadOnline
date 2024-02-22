@@ -344,7 +344,7 @@
                                 </div>
                                 <div class="col-md-8">
                                     <div class="custom-file mb-3">
-                                        <input type="file" class="custom-file-input photos_variant" id="photos_variant" multiple>
+                                        <input type="file" class="custom-file-input photos_variant" id="photos_variant" accept=".jpeg, .jpg, .png" multiple>
                                         <label class="custom-file-label" for="photos_variant">Choose files</label>
                                     </div>
                                 </div>
@@ -475,7 +475,7 @@
                 {{-- Bloc Product Documents --}}
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0 h6">{{translate('PDF Specification')}}</h5>
+                        <h5 class="mb-0 h6">{{translate('PDF Specification')}}<i class="las la-info-circle ml-2" data-toggle="tooltip" data-html="true" title="The maximum size permitted in a single document: <span style='red'>15 MB</span><br>Max size allowed for all documents: <span style='red'>25 MB</span>"></i>
                     </div>
                     <div class="card-body" id="documents_bloc">
                         <div class="row">
@@ -540,6 +540,7 @@
             </div>
             <div class="col-12">
                 <div class="mar-all text-right mb-2">
+                    <button type="submit" name="button" value="draft" class="btn btn-success">Save as draft</button>
                     <button type="submit" name="button" value="publish" class="btn btn-primary">Upload Product</button>
                 </div>
             </div>
@@ -590,6 +591,11 @@
         $('body #bloc_sample_pricing_configuration_variant').hide();
         $('body .btn-variant-pricing').hide();
         var numbers_variant = 0;
+        var initial_attributes = [];
+
+        Array.prototype.diff = function(a) {
+            return this.filter(function(i) {return a.indexOf(i) < 0;});
+        };
 
         $('body input[name="activate_attributes"]').on('change', function() {
             if (!$('body input[name="activate_attributes"]').is(':checked')) {
@@ -660,6 +666,10 @@
                         $('#attributes_bloc').html(data.html);
                     }else{
                         $('#attributes_bloc').html('<select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" id="attributes" multiple disabled data-placeholder="{{ translate("No attributes found") }}"></select>');
+                        $('body input[name="activate_attributes"]').prop("checked", false);
+                        $('#variant_informations').hide();
+                        $('body .div-btn').hide();
+                        $('body #bloc_variants_created').hide();
                     }
 
                     $('#general_attributes').html(data.html_attributes_generale);
@@ -671,6 +681,18 @@
 
         $('body').on('change', '#attributes', function() {
             var ids_attributes = $(this).val();
+            
+            var clicked = ids_attributes.diff( initial_attributes );
+            if(clicked.length == 0){
+                clicked = initial_attributes.diff( ids_attributes );
+            }
+
+            if(initial_attributes.includes(clicked[0])){
+                initial_attributes.splice(initial_attributes.indexOf(clicked[0]), 1);
+            }else{
+                initial_attributes.push(clicked[0]);
+            }
+
             var allValues = $('#attributes option').map(function() {
                 return $(this).val();
             }).get();
@@ -682,13 +704,90 @@
                 type:"GET",
                 url:'{{ route('seller.products.getAttributes') }}',
                 data:{
-                    ids: ids_attributes,
+                    ids: clicked,
                     id_variant: numbers_variant,
+                    selected: ids_attributes,
                     allValues: allValues
                 },
                 success: function(data) {
-                    $('body #bloc_attributes').html(data.html);
-                    $('body #general_attributes').html(data.html_attributes_generale);
+                    var attribute_variant_exist = $('#bloc_attributes > .attribute-variant-' + clicked[0]).length
+                    var numberOfChildren = $('#general_attributes > div').length;
+                    
+                    if (numberOfChildren == 0) {
+                        $('#general_attributes').append(data.html_attributes_generale);
+                    }else{
+                        var numberOfChildrenOfChildren = $('#general_attributes > div > div').length;
+                        if(numberOfChildrenOfChildren == 0){
+                            $('#general_attributes').append(data.html_attributes_generale);
+                        }else{
+                            $('#general_attributes .attribute-variant-' + clicked[0]).remove();
+                        }  
+                    }
+
+                    if(attribute_variant_exist > 0){
+                        $('#bloc_attributes .attribute-variant-' + clicked[0]).remove();
+                        $('#general_attributes .attribute-variant-' + clicked[0]).remove();
+                        $('#general_attributes').append(data.html);
+                    }else{
+                        $('body #bloc_attributes').append(data.html);
+                    }
+
+                    $("#bloc_variants_created div").each(function(index, element) {
+                        id_variant = $(element).data('id');
+                        $(element).find('.attributes').each(function(index, child_element) {
+                            // Change the attribute name of the current input
+                            if ($(child_element).attr("name") == undefined) {
+                                var id_attribute = $(child_element).data('id_attributes');
+                                var name = 'attributes-'+ id_attribute + '-' + id_variant 
+                                $(child_element).attr('name', name);
+                            }
+                            
+                        });
+
+                        $(element).find('.attributes-units').each(function(index, child_element_units) {
+                            if ($(child_element_units).attr("name") == undefined) {
+                                var id_attribute = $(child_element_units).data('id_attributes');
+                                var name = 'attributes_units-'+ id_attribute + '-' +id_variant
+                                $(child_element_units).attr('name', name);
+                            }
+                        });
+                        
+                    });
+
+                    $("#general_attributes div").each(function(index, element) {
+                        $(element).find('.attributes').each(function(index, child_element) {
+                            // Change the attribute name of the current input
+                            if ($(child_element).attr("name") == undefined) {
+                                var id_attribute = $(child_element).data('id_attributes');
+                                var name = 'attribute_generale-'+ id_attribute
+                                $(child_element).attr('name', name);
+                            }
+                            
+                        });
+
+                        $(element).find('.attributes-units').each(function(index, child_element_units) {
+                            if ($(child_element_units).attr("name") == undefined) {
+                                var id_attribute = $(child_element_units).data('id_attributes');
+                                var name = 'unit_attribute_generale-'+ id_attribute
+                                $(child_element_units).attr('name', name);
+                            }
+                        });
+                        
+                    });
+
+                    var count_boolean = 1;
+                    $("body #bloc_attributes div").each(function(index, element) {
+                        $(element).find('.attributes').each(function(index, child_element) {
+                            // Change the attribute name of the current input
+                            if ($(child_element).attr("type") == 'radio') {
+                                $(child_element).parent().parent().find(':radio').each(function(index, radio_element) {
+                                    $(radio_element).attr('name', 'boolean'+count_boolean);
+                                });
+
+                                count_boolean++;
+                            }
+                        });
+                    });
 
                     AIZ.plugins.bootstrapSelect('refresh');
                 }
@@ -709,7 +808,9 @@
             var clonedDiv = $('#variant_informations').clone();
 
             // Add some unique identifier to the cloned div (optional)
-            clonedDiv.attr('id', 'clonedDiv' + numbers_variant);
+            clonedDiv.attr('class', 'clonedDiv');
+            clonedDiv.removeAttr('id');
+            clonedDiv.attr('data-id', numbers_variant);
             // Disable all input elements in the cloned div
             clonedDiv.find('input').prop('readonly', true);
 
@@ -1093,10 +1194,10 @@
                                 </tr>
                             `;
                 // add another bloc in pricing configuration
-                $('#bloc_pricing_configuration').append(html_to_add);
+                $(this).parent().parent().parent().append(html_to_add);
 
                 //Initialize last date range picker
-                $('#bloc_pricing_configuration .aiz-date-range:last').daterangepicker({
+                $(this).parent().parent().parent().find('.aiz-date-range:last').daterangepicker({
                     timePicker: true,
                     locale: {
                         format: 'DD-MM-Y HH:mm:ss',
@@ -1401,6 +1502,7 @@
                 var maxAllUploadedSize = 25 * 1024 * 1024; // 25MB in bytes
                 var fileSize = file.size; // Get the file size in bytes
                 var totalSize = 0;
+                var fileSizeMb = fileSize / (1024 * 1024);
 
                 if (fileSize > maxSize) {
                     swal(
@@ -1417,8 +1519,6 @@
                         }
                     });
 
-                    console.log('totalSize: ', totalSize)
-
                     if (totalSize > maxAllUploadedSize) {
                         // If combined file size exceeds the limit, show an error message or take necessary action
                         swal(
@@ -1431,6 +1531,8 @@
                     } else {
                         let fileName = $(this).val().split('\\').pop();
                         $(this).next('.custom-file-label').addClass('selected').html(fileName);
+                        $(this).parent().parent().parent().find('.size-file-uploaded').remove();
+                        $(this).parent().parent().parent().append("<p class='size-file-uploaded'>{{ translate('the size of the downloaded document: ') }}<span style='color: red'>"+ fileSizeMb.toFixed(2) +"MB<span></p>");
                     }
                 }
             } else {

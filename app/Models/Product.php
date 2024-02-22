@@ -5,6 +5,7 @@ namespace App\Models;
 use App;
 use App\Models\UploadProducts;
 use App\Models\ProductCategory;
+use App\Models\ProductAttributeValues;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
@@ -116,6 +117,11 @@ class Product extends Model
         return $childrens;
     }
 
+    public function getChildrenProductsDesc(){
+        $childrens = Product::where('parent_id', $this->id)->orderBy('id', 'desc')->get();
+        return $childrens;
+    }
+
     public function getImagesProduct(){
         $images = UploadProducts::where('id_product', $this->id)->where('type', 'images')->get();
         return $images;
@@ -134,5 +140,42 @@ class Product extends Model
     public function getPricingConfiguration(){
         $pricing = PricingConfiguration::where('id_products', $this->id)->get();
         return $pricing;
+    }
+
+    public function getIdsAttributesVariant(){
+        $ids = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->pluck('id_attribute')->toArray();
+        return $ids;
+    }
+
+    public function getAttributesVariant(){
+        $attributes = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->get();
+        $data = [];
+        if(count($attributes) > 0){
+            foreach ($attributes as $attribute){
+                $data[$attribute->id_attribute] = $attribute;
+            }
+        }
+        return $data;
+    }
+
+    public function getIdsAttributesChildren(){
+        $children = Product::where('parent_id', $this->id)->first();
+        $ids = [];
+        if($children != null){
+            $ids = ProductAttributeValues::where('id_products', $children->id)->where('is_variant', 1)->pluck('id_attribute')->toArray();
+        }
+
+        return $ids;
+    }
+
+    public function getAttributesVariantChildren(){
+        $attributes = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->get();
+        $data = [];
+        if(count($attributes) > 0){
+            foreach ($attributes as $attribute){
+                $data[$attribute->id_attribute] = $attribute;
+            }
+        }
+        return $data;
     }
 }

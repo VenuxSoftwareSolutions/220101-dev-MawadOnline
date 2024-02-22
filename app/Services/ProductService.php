@@ -12,12 +12,14 @@ use App\Models\Attribute;
 use App\Models\ProductAttributeValues;
 use App\Models\UploadProducts;
 use App\Models\AttributeValue;
+use App\Models\BusinessInformation;
 use App\Models\Unity;
 use App\Utility\ProductUtility;
 use Combinations;
 use App\Models\PricingConfiguration;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Auth;
 
 class ProductService
 {
@@ -43,12 +45,6 @@ class ProductService
         $collection['tags'] = implode(',', $tags);
         $discount_start_date = null;
         $discount_end_date   = null;
-        // if ($collection['date_range'] != null) {
-        //     $date_var               = explode(" to ", $collection['date_range']);
-        //     $discount_start_date = strtotime($date_var[0]);
-        //     $discount_end_date   = strtotime($date_var[1]);
-        // }
-        // unset($collection['date_range']);
 
         if ($collection['meta_title'] == null) {
             $collection['meta_title'] = $collection['name'];
@@ -89,52 +85,6 @@ class ProductService
             $colors = json_encode($collection['colors']);
         }
 
-        // $options = ProductUtility::get_attribute_options($collection);
-
-        // $combinations = (new CombinationService())->generate_combination($options);
-
-        // if (count($combinations) > 0) {
-        //     foreach ($combinations as $key => $combination) {
-        //         $str = ProductUtility::get_combination_string($combination, $collection);
-
-        //         unset($collection['price_' . str_replace('.', '_', $str)]);
-        //         unset($collection['sku_' . str_replace('.', '_', $str)]);
-        //         unset($collection['qty_' . str_replace('.', '_', $str)]);
-        //         unset($collection['img_' . str_replace('.', '_', $str)]);
-        //     }
-        // }
-
-        // unset($collection['colors_active']);
-
-        // $choice_options = array();
-        // if (isset($collection['choice_no']) && $collection['choice_no']) {
-        //     $str = '';
-        //     $item = array();
-        //     foreach ($collection['choice_no'] as $key => $no) {
-        //         $str = 'choice_options_' . $no;
-        //         $item['attribute_id'] = $no;
-        //         $attribute_data = array();
-        //         // foreach (json_decode($request[$str][0]) as $key => $eachValue) {
-        //         foreach ($collection[$str] as $key => $eachValue) {
-        //             // array_push($data, $eachValue->value);
-        //             array_push($attribute_data, $eachValue);
-        //         }
-        //         unset($collection[$str]);
-
-        //         $item['values'] = $attribute_data;
-        //         array_push($choice_options, $item);
-        //     }
-        // }
-
-        // $choice_options = json_encode($choice_options, JSON_UNESCAPED_UNICODE);
-
-        // if (isset($collection['choice_no']) && $collection['choice_no']) {
-        //     $attributes = json_encode($collection['choice_no']);
-        //     unset($collection['choice_no']);
-        // } else {
-        //     $attributes = json_encode(array());
-        // }
-
         if(isset($collection['stock_visibility_state'])){
             $collection['stock_visibility_state'] ="quantity";
         }else{
@@ -142,10 +92,12 @@ class ProductService
         }
 
         $published = 1;
+        $is_draft = 0;
 
         if(isset($collection['button'])){
-            if ($collection['button'] == 'unpublish' || $collection['button'] == 'draft') {
-                $published = 0;
+            $published = 0;
+            if ($collection['button'] == 'draft') {
+              $is_draft = 1;  
             }
             unset($collection['button']);
         }
@@ -165,6 +117,7 @@ class ProductService
             }
         }
 
+        $pricing = [];
         if((isset($collection['from'])) &&(isset($collection['to'])) && (isset($collection['unit_price']))){
             $pricing = [
                 "from" => $collection['from'],
@@ -203,6 +156,7 @@ class ProductService
             'slug',
             'colors',
             'published',
+            'is_draft',
         ))->toArray();
 
         $variants_data = [];
@@ -332,49 +286,50 @@ class ProductService
                 foreach($pricing['from'] as $key => $from){
                     $current_data = [];
 
-                    if(isset($pricing['date_range_pricing'])){
-                        if($pricing['date_range_pricing'] != null){
-                            $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
-                            $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
-                            $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
-
-                            $current_data["discount_start_datetime"] = $discount_start_date;
-                            $current_data["discount_end_datetime"] = $discount_end_date;
-                            $current_data["discount_type"] = $pricing['discount_type'][$key];
+                    if($pricing['from'][$key] != null){
+                        if(isset($pricing['date_range_pricing'])){
+                            if($pricing['date_range_pricing'] != null){
+                                $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
+                                $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
+                                $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
+    
+                                $current_data["discount_start_datetime"] = $discount_start_date;
+                                $current_data["discount_end_datetime"] = $discount_end_date;
+                                $current_data["discount_type"] = $pricing['discount_type'][$key];
+                            }else{
+                                $current_data["discount_start_datetime"] = null;
+                                $current_data["discount_end_datetime"] = null;
+                                $current_data["discount_type"] = null;
+                            }
                         }else{
                             $current_data["discount_start_datetime"] = null;
                             $current_data["discount_end_datetime"] = null;
                             $current_data["discount_type"] = null;
                         }
-                    }else{
-                        $current_data["discount_start_datetime"] = null;
-                        $current_data["discount_end_datetime"] = null;
-                        $current_data["discount_type"] = null;
+    
+                        $current_data["id_products"] = $product->id;
+                        $current_data["from"] = $from;
+                        $current_data["to"] = $pricing['to'][$key];
+                        $current_data["unit_price"] = $pricing['unit_price'][$key];
+    
+                        if(isset($pricing['discount_amount'])){
+                            $current_data["discount_amount"] = $pricing['discount_amount'][$key];
+                        }else{
+                            $current_data["discount_amount"] = null;
+                        }
+                        if(isset($current_data["discount_percentage"])){
+                            $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
+                        }else{
+                            $current_data["discount_percentage"] = null;
+                        }
+    
+                        array_push($all_data_to_insert, $current_data);
                     }
-
-
-
-                    $current_data["id_products"] = $product->id;
-                    $current_data["from"] = $from;
-                    $current_data["to"] = $pricing['to'][$key];
-                    $current_data["unit_price"] = $pricing['unit_price'][$key];
-
-                    if(isset($pricing['discount_amount'])){
-                        $current_data["discount_amount"] = $pricing['discount_amount'][$key];
-                    }else{
-                        $current_data["discount_amount"] = null;
-                    }
-                    if(isset($current_data["discount_percentage"])){
-                        $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
-                    }else{
-                        $current_data["discount_percentage"] = null;
-                    }
-
-
-                    array_push($all_data_to_insert, $current_data);
+                    
                 }
-
-                PricingConfiguration::insert($all_data_to_insert);
+                if(count($all_data_to_insert) > 0){
+                    PricingConfiguration::insert($all_data_to_insert);
+                }
             }
 
             if(count($general_attributes_data) > 0){
@@ -521,6 +476,10 @@ class ProductService
                                         $current_data["discount_start_datetime"] = $discount_start_date;
                                         $current_data["discount_end_datetime"] = $discount_end_date;
                                         $current_data["discount_type"] = $variant['pricing']['discount_type'][$key];
+                                    }else{
+                                        $current_data["discount_start_datetime"] = null;
+                                        $current_data["discount_end_datetime"] = null;
+                                        $current_data["discount_type"] = null;
                                     }
                                 }else{
                                     $current_data["discount_start_datetime"] = null;
@@ -806,5 +765,836 @@ class ProductService
         $product->wishlists()->delete();
         $product->carts()->delete();
         Product::destroy($id);
+    }
+
+    public function draft(array $data, Product $product_draft){
+        $collection = collect($data);
+        $vat_user = BusinessInformation::where('user_id', Auth::user()->id)->first();
+
+        $slug = Str::slug($collection['name']);
+        $same_slug_count = Product::where('slug', 'LIKE', $slug . '%')->count();
+        $slug_suffix = $same_slug_count > 1 ? '-' . $same_slug_count + 1 : '';
+        $slug .= $slug_suffix;
+
+        $collection['slug'] = $slug;
+        if(!isset($collection['refundable'])){
+            $collection['refundable'] = 0;
+        }
+
+        $pricing = [];
+        if((isset($collection['from'])) &&(isset($collection['to'])) && (isset($collection['unit_price']))){
+            $pricing = [
+                "from" => $collection['from'],
+                "to" => $collection['to'],
+                "unit_price" => $collection['unit_price'],
+            ];
+
+            if(isset($collection['discount_type'])){
+                $pricing["discount_type"]= $collection['discount_type'];
+            }
+
+            if(isset($collection['date_range_pricing'])){
+                $pricing["date_range_pricing"]= $collection['date_range_pricing'];
+            }
+
+            if(isset($collection['discount_amount'])){
+                $pricing["discount_amount"]= $collection['discount_amount'];
+            }
+
+            if(isset($collection['discount_percentage'])){
+                $pricing["discount_percentage"]= $collection['discount_percentage'];
+            }
+
+            unset($collection['from']);
+            unset($collection['to']);
+            unset($collection['unit_price']);
+            unset($collection['discount_amount']);
+            unset($collection['discount_type']);
+            unset($collection['discount_percentage']);
+        }
+
+        $tags = array();
+        if ($collection['tags'][0] != null) {
+            foreach (json_decode($collection['tags'][0]) as $key => $tag) {
+                array_push($tags, $tag->value);
+            }
+        }
+        $collection['tags'] = implode(',', $tags);
+
+        $variants_data = [];
+        $variants_new_data = [];
+        $general_attributes_data = [];
+        $unit_general_attributes_data = [];
+        
+        //check if product has old variants 
+        if (array_key_exists('variant', $data)) {
+            foreach($collection['variant']['sku'] as $key => $sku){
+                if(!array_key_exists($key, $variants_data)){
+                    $variants_data[$key] = [];
+                }
+
+                $variants_data[$key]['sku'] = $sku;
+
+                //Check if the variant has pictures 
+                if(array_key_exists('photo', $data['variant'])){
+                    if(array_key_exists($key, $data['variant']['photo'])){
+                        $variants_data[$key]['photo'] = $data['variant']['photo'][$key];
+                    }else{
+                        $variants_data[$key]['photo'] = [];
+                    }
+                }else{
+                    $variants_data[$key]['photo'] = [];
+                }
+
+                //check if the variant has pricing configuration
+                if(array_key_exists('from', $data['variant'])){
+                    if(array_key_exists($key, $data['variant']['from'])){
+                        $pricing_variant = [];
+                        $pricing_variant['from'] = $data['variant']['from'][$key];
+                        $pricing_variant['to'] = $data['variant']['to'][$key];
+                        $pricing_variant['unit_price'] = $data['variant']['unit_price'][$key];
+                        $pricing_variant['date_range_pricing'] = $data['variant']['date_range_pricing'][$key];
+                        $pricing_variant['discount_type'] = $data['variant']['discount_type'][$key];
+                        $pricing_variant['discount_amount'] = $data['variant']['discount_amount'][$key];
+                        $pricing_variant['discount_percentage'] = $data['variant']['discount_percentage'][$key];
+                        $variants_data[$key]['pricing'] = $pricing_variant;
+                    }else{
+                        $variants_data[$key]['pricing'] = $pricing;
+                    }
+                }else{
+                    $variants_data[$key]['pricing'] = $pricing;
+                }
+
+                //check if the variant has sample pricing
+                if(array_key_exists('sample_pricing', $data['variant'])){
+                    if(array_key_exists($key, $data['variant']['sample_pricing'])){
+                        $variants_data[$key]['sample_pricing'] = 0;
+                        $variants_data[$key]['sample_description'] = $data['sample_description'];
+                        $variants_data[$key]['sample_price'] = $data['sample_price'];
+                    }else{
+                        $variants_data[$key]['sample_pricing'] = 1;
+                        $variants_data[$key]['sample_description'] = $data['variant']['sample_description'][$key];
+                        $variants_data[$key]['sample_price'] = $data['variant']['sample_price'][$key];
+                    }
+                }else{
+                    $variants_data[$key]['sample_pricing'] = 0;
+                    $variants_data[$key]['sample_description'] = $data['sample_description'];
+                    $variants_data[$key]['sample_pricing'] = $data['sample_price'];
+                }
+
+                //check if the variant activated the shipping configuration
+                if(array_key_exists('shipping', $data['variant'])){
+                    if(array_key_exists($key, $data['variant']['shipping'])){
+                        $variants_data[$key]['shipping'] = $data['variant']['shipping'][$key];
+                    }else{
+                        $variants_data[$key]['shipping'] = 0;
+                    }
+                }else{
+                    $variants_data[$key]['shipping'] = 0;
+                }
+
+                //check if the variant activated the sample shipping configuration
+                if(array_key_exists('sample_shipping', $data['variant'])){
+                    if(array_key_exists($key, $data['variant']['sample_shipping'])){
+                        $variants_data[$key]['sample_shipping'] = $data['variant']['sample_shipping'][$key];
+                    }else{
+                        $variants_data[$key]['sample_shipping'] = 0;
+                    }
+                }else{
+                    $variants_data[$key]['sample_shipping'] = 0;
+                }
+
+                //check if the variant activated vat option for sample
+                if(array_key_exists('vat_sample', $data['variant'])){
+                    if(array_key_exists($key, $data['variant']['vat_sample'])){
+                        $variants_data[$key]['vat_sample'] = $data['variant']['vat_sample'][$key];
+                    }else{
+                        $variants_data[$key]['vat_sample'] = 0;
+                    }
+                }else{
+                    $variants_data[$key]['vat_sample'] = 0;
+                }
+
+                //check if the variant has low stock quantity
+                if(array_key_exists('low_stock_quantity', $data['variant'])){
+                    if(array_key_exists($key, $data['variant']['low_stock_quantity'])){
+                        $variants_data[$key]['low_stock_quantity'] = $data['variant']['low_stock_quantity'][$key];
+                    }else{
+                        $variants_data[$key]['low_stock_quantity'] = 0;
+                    }
+                }else{
+                    $variants_data[$key]['low_stock_quantity'] = 0;
+                }
+
+                //Check if the variant has attributes. If it does, a table will be generated containing all attributes, with each attribute having its own value.
+                if(array_key_exists('attributes', $data['variant'])){
+                    if(array_key_exists($key, $data['variant']['attributes'])){
+                        foreach($data['variant']['attributes'][$key] as $id_attribute => $attribute){
+                            if(!array_key_exists('attributes', $variants_data[$key])){
+                                $variants_data[$key]['attributes'][$id_attribute]=$attribute;
+                            }else{
+                                if(!array_key_exists($id_attribute, $variants_data[$key]['attributes'])){
+                                    $variants_data[$key]['attributes'][$id_attribute]=$attribute;
+                                }
+                            }
+                        }
+                    }else{
+                        $variants_data[$key]['attributes'] = [];
+                    }
+                }else{
+                    $variants_data[$key]['attributes'] = [];
+                }
+            }
+
+            unset($collection['variant']);
+        }
+        
+        //Check if porduct has new variants
+        foreach ($data as $key => $value) {
+            if (strpos($key, 'attributes-') === 0) {
+                //Check if the new variant has attributes. If it does, a table will be generated containing all attributes, with each attribute having its own value.
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[2], $variants_new_data)){
+                    $variants_new_data[$ids[2]] = [];
+                }
+                if(!array_key_exists('attributes', $variants_new_data[$ids[2]])){
+                    $variants_new_data[$ids[2]]['attributes'][$ids[1]]=$value;
+                }else{
+                    if(!array_key_exists($ids[1], $variants_new_data[$ids[2]]['attributes'])){
+                        $variants_new_data[$ids[2]]['attributes'][$ids[1]]=$value;
+                    }
+                }
+
+                //check if the variant activated the variant pricing
+                $key_pricing = 'variant-pricing-'.$ids[2];
+                if(!isset($data[$key_pricing])){
+                    if(!array_key_exists($ids[2], $variants_new_data)){
+                        $variants_new_data[$ids[2]] = [];
+                    }
+
+                    $variants_new_data[$ids[2]]['pricing'] = $data['variant_pricing-from' . $ids[2]];
+                }
+            }
+
+            if(strpos($key, 'sku') === 0){
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[1], $variants_new_data)){
+                    $variants_new_data[$ids[1]] = [];
+                }
+
+                $variants_new_data[$ids[1]]['sku'] = $value;
+            }
+
+            if(strpos($key, 'stock-warning-') === 0){
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[2], $variants_new_data)){
+                    $variants_new_data[$ids[2]] = [];
+                }
+
+                $variants_new_data[$ids[2]]['stock'] = $value;
+            }
+
+            if(strpos($key, 'variant-shipping-') === 0){
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[2], $variants_new_data)){
+                    $variants_new_data[$ids[2]] = [];
+                }
+
+                $variants_new_data[$ids[2]]['shipping'] = 1;
+            }
+
+            if(strpos($key, 'photos_variant') === 0){
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[1], $variants_new_data)){
+                    $variants_new_data[$ids[1]] = [];
+                }
+
+                $variants_new_data[$ids[1]]['photo'] = $value;
+            }
+
+            if(strpos($key, 'attributes_units') === 0){
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[2], $variants_new_data)){
+                    $variants_new_data[$ids[2]] = [];
+                }
+
+                $variants_new_data[$ids[2]]['units'][$ids[1]] = $value;
+            }
+
+            if(strpos($key, 'attribute_generale-') === 0){
+                $ids = explode('-', $key);
+                $general_attributes_data[$ids[1]] = $value;
+            }
+
+            if(strpos($key, 'unit_attribute_generale-') === 0){
+                $ids = explode('-', $key);
+                $unit_general_attributes_data[$ids[1]] = $value;
+            }
+
+            if(strpos($key, 'vat_sample-') === 0){
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[1], $variants_new_data)){
+                    $variants_new_data[$ids[1]] = [];
+                }
+
+                $variants_new_data[$ids[1]]['vat_sample'] = $value;
+            }
+
+            if(strpos($key, 'sample_description-') === 0){
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[1], $variants_new_data)){
+                    $variants_new_data[$ids[1]] = [];
+                }
+
+                if($value != null){
+                    $variants_new_data[$ids[1]]['sample_description'] = $value;
+                }
+            }
+
+            if(strpos($key, 'sample_price-') === 0){
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[1], $variants_new_data)){
+                    $variants_new_data[$ids[1]] = [];
+                }
+                if($value != null){
+                    $variants_new_data[$ids[1]]['sample_price'] = $value;
+                }
+
+            }
+        }
+
+        $ids_attributes_color = Attribute::where('type_value', 'color')->pluck('id')->toArray();
+        $ids_attributes_list = Attribute::where('type_value', 'list')->pluck('id')->toArray();
+        $ids_attributes_numeric = Attribute::where('type_value', 'numeric')->pluck('id')->toArray();
+
+        if(!isset($data['activate_attributes'])){
+            //Create product without variants
+            $data['is_draft'] = 0;
+            $product_draft->update($data);
+            $ids_attributes_color = Attribute::where('type_value', 'color')->pluck('id')->toArray();
+
+            if(count($pricing) > 0){
+                $all_data_to_insert = [];
+
+                foreach($pricing['from'] as $key => $from){
+                    $current_data = [];
+
+                    if(isset($pricing['date_range_pricing'])){
+                        if($pricing['date_range_pricing'] != null){
+                            if($pricing['date_range_pricing'][$key] != null){
+                                $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
+                                $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
+                                $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
+    
+                                $current_data["discount_start_datetime"] = $discount_start_date;
+                                $current_data["discount_end_datetime"] = $discount_end_date;
+                                $current_data["discount_type"] = $pricing['discount_type'][$key];
+                            }else{
+                                $current_data["discount_start_datetime"] = null;
+                            $current_data["discount_end_datetime"] = null;
+                            $current_data["discount_type"] = null;
+                            }
+                            
+                        }else{
+                            $current_data["discount_start_datetime"] = null;
+                            $current_data["discount_end_datetime"] = null;
+                            $current_data["discount_type"] = null;
+                        }
+                    }else{
+                        $current_data["discount_start_datetime"] = null;
+                        $current_data["discount_end_datetime"] = null;
+                        $current_data["discount_type"] = null;
+                    }
+
+                    $current_data["id_products"] = $product_draft->id;
+                    $current_data["from"] = $from;
+                    $current_data["to"] = $pricing['to'][$key];
+                    $current_data["unit_price"] = $pricing['unit_price'][$key];
+
+                    if(isset($pricing['discount_amount'])){
+                        $current_data["discount_amount"] = $pricing['discount_amount'][$key];
+                    }else{
+                        $current_data["discount_amount"] = null;
+                    }
+                    if(isset($current_data["discount_percentage"])){
+                        $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
+                    }else{
+                        $current_data["discount_percentage"] = null;
+                    }
+
+                    array_push($all_data_to_insert, $current_data);
+                }
+
+                PricingConfiguration::where('id_products', $product_draft->id)->delete();
+                PricingConfiguration::insert($all_data_to_insert);
+            }
+
+            if(count($general_attributes_data) > 0){
+                foreach ($general_attributes_data as $attr => $value) {
+                        $attribute_product = new ProductAttributeValues();
+                        $attribute_product->id_products = $product_draft->id;
+                        $attribute_product->id_attribute = $attr;
+                        $attribute_product->is_general = 1;
+                        if(in_array($attr, $ids_attributes_list)){
+                            $value_attribute = AttributeValue::find($value);
+                            $attribute_product->id_values = $value;
+                            $attribute_product->value = $value_attribute->value;
+                        }elseif(in_array($attr, $ids_attributes_color)){
+                            $value = Color::where('code', $value)->first();
+                            $attribute_product->id_colors = $value->id;
+                            $attribute_product->value = $value;
+                        }elseif(in_array($attr, $ids_attributes_numeric)){
+                            $attribute_product->id_units = $unit_general_attributes_data[$attr];
+                            $attribute_product->value = $value;
+                        }
+                        else{
+                            $attribute_product->value = $value;
+                        }
+
+                        $attribute_product->save();
+                }
+            }
+
+            return $product_draft;
+        }else{
+            // //Create Parent Product
+            $collection['is_parent'] = 1;
+            $collection['is_draft'] = 0;
+            $collection = $collection->toArray();
+            $product_draft->update($collection);
+            unset($collection['is_parent']);
+            $collection['parent_id'] = $product_draft->id;
+            if(isset($collection['vat_sample'])){
+                $data_sample = [
+                    'vat_sample' => $collection['vat_sample'],
+                    'sample_description' => $collection['sample_description'],
+                    'sample_price' => $collection['sample_price'],
+                ];
+            }else{
+                $data_sample = [
+                    'vat_sample' => 0,
+                    'sample_description' => $collection['sample_description'],
+                    'sample_price' => $collection['sample_price'],
+                ];
+            }
+
+            unset($collection['vat_sample']);
+            unset($collection['sample_description']);
+            unset($collection['sample_price']);
+
+            if(count($variants_data) > 0){
+                foreach ($variants_data as $id => $variant){
+                    $collection['low_stock'] = $variant['low_stock_quantity'];
+                    $collection['sku'] = $variant['sku'];
+                    $collection['vat_sample'] = $variant['vat_sample'];
+                    $collection['sample_description'] = $variant['sample_description'];
+                    $collection['sample_price'] = $variant['sample_price'];
+                    $product = Product::find($id);
+                    $product->update($collection);
+                    if($product != null){
+                        $product->update($data);
+
+                        //attributes of variant
+                        foreach($variant['attributes'] as $key => $value_attribute){
+                            $attribute_product = ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->first();
+                            
+                            if($attribute_product == null){
+                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product->id_products = $product->id;
+                                $attribute_product->id_attribute = $key;
+                                $attribute_product->is_variant = 1;
+                            }
+                            
+                            if(in_array($key, $ids_attributes_list)){
+                                $value = AttributeValue::find($value_attribute);
+                                $attribute_product->id_values = $value_attribute;
+                                $attribute_product->value = $value->value;
+                            }elseif(in_array($key, $ids_attributes_color)){
+                                $value = Color::where('code', $value_attribute)->first();
+                                $attribute_product->id_colors = $value->id;
+                                $attribute_product->value = $value->code;
+                            }elseif(in_array($key, $ids_attributes_numeric)){
+                                $attribute_product->id_units = $data['unit_variant'][$id][$key];
+                                $attribute_product->value = $value_attribute;
+                            }
+                            else{
+                                $attribute_product->value = $value_attribute;
+                            }
+
+                            $attribute_product->save();
+                        }
+
+                        $new_ids_attributes = array_keys($variant['attributes']);
+                        $deleted_attributes = ProductAttributeValues::where('id_products', $id)->whereNotIn('id_attribute', $new_ids_attributes)->delete();
+
+                        //Images of variant
+                        if(count($variant['photo']) > 0){
+                            $structure = public_path('upload_products');
+                            if (!file_exists($structure)) {
+                                mkdir(public_path('upload_products', 0777));
+                            }
+
+                            if(!file_exists(public_path('/upload_products/Product-'.$product->id))){
+                                mkdir(public_path('/upload_products/Product-'.$product->id, 0777));
+                                mkdir(public_path('/upload_products/Product-'.$product->id.'/images', 0777));
+                            }else{
+                                if(!file_exists(public_path('/upload_products/Product-'.$product->id.'/images'))){
+                                    mkdir(public_path('/upload_products/Product-'.$product->id.'/images', 0777));
+                                }
+                            }
+
+                            foreach($variant['photo'] as $key => $image){
+                                $imageName = time().rand(5, 15).'.'.$image->getClientOriginalExtension();
+                                $image->move(public_path('/upload_products/Product-'.$product->id.'/images') , $imageName);
+                                $path = '/upload_products/Product-'.$product->id.'/images'.'/'.$imageName;
+
+                                $uploaded_document = new UploadProducts();
+                                $uploaded_document->id_product = $product->id;
+                                $uploaded_document->path = $path;
+                                $uploaded_document->extension = $image->getClientOriginalExtension();
+                                $uploaded_document->type = 'images';
+                                $uploaded_document->save();
+                            }
+                        }
+
+                        //Pricing configuration of variant
+                        if (array_key_exists('pricing', $variant)) {
+                            $all_data_to_insert = [];
+
+                            foreach($variant['pricing']['from'] as $key => $from){
+                                $current_data = [];
+
+                                if(isset($variant['pricing']['date_range_pricing'])){
+                                    if(($variant['pricing']['date_range_pricing'] != null)){
+                                        if(($variant['pricing']['date_range_pricing'][$key]) && ($variant['pricing']['discount_type'][$key])){
+                                            $date_var               = explode(" to ", $variant['pricing']['date_range_pricing'][$key]);
+                                            $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
+                                            $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
+
+                                            $current_data["discount_start_datetime"] = $discount_start_date;
+                                            $current_data["discount_end_datetime"] = $discount_end_date;
+                                            $current_data["discount_type"] = $variant['pricing']['discount_type'][$key];
+                                        }else{
+                                            $current_data["discount_start_datetime"] = null;
+                                            $current_data["discount_end_datetime"] = null;
+                                            $current_data["discount_type"] = null;
+                                        }
+                                    }else{
+                                        $current_data["discount_start_datetime"] = null;
+                                        $current_data["discount_end_datetime"] = null;
+                                        $current_data["discount_type"] = null;
+                                    }
+                                }else{
+                                    $current_data["discount_start_datetime"] = null;
+                                    $current_data["discount_end_datetime"] = null;
+                                    $current_data["discount_type"] = null;
+                                }
+
+
+
+                                $current_data["id_products"] = $product->id;
+                                $current_data["from"] = $from;
+                                $current_data["to"] = $variant['pricing']['to'][$key];
+                                $current_data["unit_price"] = $variant['pricing']['unit_price'][$key];
+
+                                if(isset($variant['pricing']['discount_amount'])){
+                                    $current_data["discount_amount"] = $variant['pricing']['discount_amount'][$key];
+                                }else{
+                                    $current_data["discount_amount"] = null;
+                                }
+                                if(isset($variant['pricing']['discount_percentage'])){
+                                    $current_data["discount_percentage"] = $variant['pricing']['discount_percentage'][$key];
+                                }else{
+                                    $current_data["discount_percentage"] = null;
+                                }
+
+
+                                array_push($all_data_to_insert, $current_data);
+                            }
+
+                            PricingConfiguration::where('id_products', $product->id)->delete();
+                            PricingConfiguration::insert($all_data_to_insert);
+                        }else{
+                            //get pricing by default
+                            $all_data_to_insert = [];
+
+                            foreach($pricing['from'] as $key => $from){
+                                $current_data = [];
+
+                                if(isset($pricing['date_range_pricing'])){
+                                    if(($pricing['date_range_pricing'] != null)){
+                                        if(($pricing['date_range_pricing'][$key]) && ($pricing['discount_type'][$key])){
+                                            $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
+                                            $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
+                                            $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
+
+                                            $current_data["discount_start_datetime"] = $discount_start_date;
+                                            $current_data["discount_end_datetime"] = $discount_end_date;
+                                            $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                        }
+                                    }else{
+                                        $current_data["discount_start_datetime"] = null;
+                                        $current_data["discount_end_datetime"] = null;
+                                        $current_data["discount_type"] = null;
+                                    }
+                                }else{
+                                    $current_data["discount_start_datetime"] = null;
+                                    $current_data["discount_end_datetime"] = null;
+                                    $current_data["discount_type"] = null;
+                                }
+
+
+
+                                $current_data["id_products"] = $product->id;
+                                $current_data["from"] = $from;
+                                $current_data["to"] = $pricing['to'][$key];
+                                $current_data["unit_price"] = $pricing['unit_price'][$key];
+
+                                if(isset($pricing['discount_amount'])){
+                                    $current_data["discount_amount"] = $pricing['discount_amount'][$key];
+                                }else{
+                                    $current_data["discount_amount"] = null;
+                                }
+                                if(isset($pricing['discount_percentage'])){
+                                    $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
+                                }else{
+                                    $current_data["discount_percentage"] = null;
+                                }
+
+
+                                array_push($all_data_to_insert, $current_data);
+                            }
+
+                            PricingConfiguration::insert($all_data_to_insert);
+                        }
+                    }
+                    
+                }
+            }
+
+            if(count($general_attributes_data) > 0){
+                foreach ($general_attributes_data as $attr => $value) {
+                    $attribute_product = ProductAttributeValues::where('id_products', $product_draft->id)->where('id_attribute', $attr)->first();
+                        
+                    if($attribute_product == null){
+                        $attribute_product = new ProductAttributeValues();
+                        $attribute_product->id_products = $product_draft->id;
+                        $attribute_product->id_attribute = $attr;
+                        $attribute_product->is_general = 1;
+                    }
+
+                    if(in_array($attr, $ids_attributes_list)){
+                        $value_attribute = AttributeValue::find($value);
+                        $attribute_product->id_values = $value;
+                        $attribute_product->value = $value_attribute->value;
+                    }elseif(in_array($attr, $ids_attributes_color)){
+                        $value = Color::where('code', $value)->first();
+                        $attribute_product->id_colors = $value->id;
+                        $attribute_product->value = $value->code;
+                    }elseif(in_array($attr, $ids_attributes_numeric)){
+                        $attribute_product->id_units = $unit_general_attributes_data[$attr];
+                        $attribute_product->value = $value;
+                    }
+                    else{
+                        $attribute_product->value = $value;
+                    }
+
+                    $attribute_product->save();
+                }
+            }
+
+            $new_ids_attributes_general = array_keys($general_attributes_data);
+            $deleted_attributes_general = ProductAttributeValues::where('id_products', $id)->whereNotIn('id_attribute', $new_ids_attributes_general)->delete();
+
+            if(count($variants_new_data)){
+                foreach ($variants_new_data as $id => $variant){
+                    if (!array_key_exists('shipping', $variant)) {
+                        $collection['shipping'] = 0;
+                    }else{
+                        $collection['shipping'] = $variant['shipping'];
+                    }
+                    $collection['low_stock'] = $variant['stock'];
+                    $collection['sku'] = $variant['sku'];
+                    if(!isset($variant['sample_price'])){
+                        $collection['vat_sample'] = $data_sample['vat_sample'];
+                        $collection['sample_description'] = $data_sample['sample_description'];
+                        $collection['sample_price'] = $data_sample['sample_price'];
+                    }else{
+                        $collection['vat_sample'] = 1;
+                        $collection['sample_description'] = $variant['sample_description'];
+                        $collection['sample_price'] = $variant['sample_price'];
+                    }
+                    $new_product = Product::create($collection);
+
+                    //attributes of variant
+                    foreach($variant['attributes'] as $key => $value_attribute){
+                        $attribute_product = new ProductAttributeValues();
+                        $attribute_product->id_products = $new_product->id;
+                        $attribute_product->id_attribute = $key;
+                        $attribute_product->is_variant = 1;
+                        if(in_array($key, $ids_attributes_list)){
+                            $value = AttributeValue::find($value_attribute);
+                            $attribute_product->id_values = $value_attribute;
+                            $attribute_product->value = $value->value;
+                        }elseif(in_array($key, $ids_attributes_color)){
+                            $value = Color::where('code', $value_attribute)->first();
+                            $attribute_product->id_colors = $value->id;
+                            $attribute_product->value = $value->code;
+                        }elseif(in_array($key, $ids_attributes_numeric)){
+                            $attribute_product->id_units = $variant['units'][$key];
+                            $attribute_product->value = $value_attribute;
+                        }
+                        else{
+                            $attribute_product->value = $value_attribute;
+                        }
+
+                        $attribute_product->save();
+                    }
+
+                    //Images of variant
+                    if(count($variant['photo']) > 0){
+                        $structure = public_path('upload_products');
+                        if (!file_exists($structure)) {
+                            mkdir(public_path('upload_products', 0777));
+                        }
+
+                        if(!file_exists(public_path('/upload_products/Product-'.$new_product->id))){
+                            mkdir(public_path('/upload_products/Product-'.$new_product->id, 0777));
+                            mkdir(public_path('/upload_products/Product-'.$new_product->id.'/images', 0777));
+                        }else{
+                            if(!file_exists(public_path('/upload_products/Product-'.$new_product->id.'/images'))){
+                                mkdir(public_path('/upload_products/Product-'.$new_product->id.'/images', 0777));
+                            }
+                        }
+
+                        foreach($variant['photo'] as $key => $image){
+                            $imageName = time().rand(5, 15).'.'.$image->getClientOriginalExtension();
+                            $image->move(public_path('/upload_products/Product-'.$new_product->id.'/images') , $imageName);
+                            $path = '/upload_products/Product-'.$new_product->id.'/images'.'/'.$imageName;
+
+                            $uploaded_document = new UploadProducts();
+                            $uploaded_document->id_product = $new_product->id;
+                            $uploaded_document->path = $path;
+                            $uploaded_document->extension = $image->getClientOriginalExtension();
+                            $uploaded_document->type = 'images';
+                            $uploaded_document->save();
+                        }
+                    }
+
+                    //Pricing configuration of variant
+                    if (array_key_exists('pricing', $variant)) {
+                        $all_data_to_insert = [];
+
+                        foreach($variant['pricing']['from'] as $key => $from){
+                            $current_data = [];
+
+                            if(isset($variant['pricing']['discount_range'])){
+                                if(($variant['pricing']['discount_range'] != null)){
+                                    if(($variant['pricing']['discount_range'][$key]) && ($variant['pricing']['discount_type'][$key])){
+                                        $date_var               = explode(" to ", $variant['pricing']['discount_range'][$key]);
+                                        $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
+                                        $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
+
+                                        $current_data["discount_start_datetime"] = $discount_start_date;
+                                        $current_data["discount_end_datetime"] = $discount_end_date;
+                                        $current_data["discount_type"] = $variant['pricing']['discount_type'][$key];
+                                    }else{
+                                        $current_data["discount_start_datetime"] = null;
+                                        $current_data["discount_end_datetime"] = null;
+                                        $current_data["discount_type"] = null;
+                                    }
+                                }else{
+                                    $current_data["discount_start_datetime"] = null;
+                                    $current_data["discount_end_datetime"] = null;
+                                    $current_data["discount_type"] = null;
+                                }
+                            }else{
+                                $current_data["discount_start_datetime"] = null;
+                                $current_data["discount_end_datetime"] = null;
+                                $current_data["discount_type"] = null;
+                            }
+
+
+
+                            $current_data["id_products"] = $new_product->id;
+                            $current_data["from"] = $from;
+                            $current_data["to"] = $variant['pricing']['to'][$key];
+                            $current_data["unit_price"] = $variant['pricing']['unit_price'][$key];
+
+                            if(isset($variant['pricing']['discount_amount'])){
+                                $current_data["discount_amount"] = $variant['pricing']['discount_amount'][$key];
+                            }else{
+                                $current_data["discount_amount"] = null;
+                            }
+                            if(isset($variant['pricing']['discount_percentage'])){
+                                $current_data["discount_percentage"] = $variant['pricing']['discount_percentage'][$key];
+                            }else{
+                                $current_data["discount_percentage"] = null;
+                            }
+
+
+                            array_push($all_data_to_insert, $current_data);
+                        }
+
+                        PricingConfiguration::insert($all_data_to_insert);
+                    }else{
+                        //get pricing by default
+                        $all_data_to_insert = [];
+
+                        foreach($pricing['from'] as $key => $from){
+                            $current_data = [];
+
+                            if(isset($pricing['date_range_pricing'])){
+                                if(($pricing['date_range_pricing'] != null)){
+                                    if(($pricing['date_range_pricing'][$key]) && ($pricing['discount_type'][$key])){
+                                        $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
+                                        $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
+                                        $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
+
+                                        $current_data["discount_start_datetime"] = $discount_start_date;
+                                        $current_data["discount_end_datetime"] = $discount_end_date;
+                                        $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                    }
+                                }else{
+                                    $current_data["discount_start_datetime"] = null;
+                                    $current_data["discount_end_datetime"] = null;
+                                    $current_data["discount_type"] = null;
+                                }
+                            }else{
+                                $current_data["discount_start_datetime"] = null;
+                                $current_data["discount_end_datetime"] = null;
+                                $current_data["discount_type"] = null;
+                            }
+
+
+
+                            $current_data["id_products"] = $new_product->id;
+                            $current_data["from"] = $from;
+                            $current_data["to"] = $pricing['to'][$key];
+                            $current_data["unit_price"] = $pricing['unit_price'][$key];
+
+                            if(isset($pricing['discount_amount'])){
+                                $current_data["discount_amount"] = $pricing['discount_amount'][$key];
+                            }else{
+                                $current_data["discount_amount"] = null;
+                            }
+                            if(isset($pricing['discount_percentage'])){
+                                $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
+                            }else{
+                                $current_data["discount_percentage"] = null;
+                            }
+
+
+                            array_push($all_data_to_insert, $current_data);
+                        }
+
+                        PricingConfiguration::insert($all_data_to_insert);
+                    }
+                }
+
+            }
+            return $product_draft;
+        }
+
     }
 }

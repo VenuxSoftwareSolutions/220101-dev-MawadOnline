@@ -29,22 +29,76 @@ class ProductUploadsService
         }
 
         //insert paths of documents in DB and upload documents in folder under public/upload_products/Product{id_porduct}/document
-        if(count($data['document_names']) == count($data['documents'])){
-            foreach($data['documents'] as $key => $document){
-                $documen_name = time().rand(5, 15).'.'.$document->getClientOriginalExtension();
-                $document->move(public_path('/upload_products/Product-'.$collection['product']->id.'/documents') , $documen_name);
-                $path = '/upload_products/Product-'.$collection['product']->id.'/documents'.'/'.$documen_name;
-
-                $uploaded_document = new UploadProducts();
-                $uploaded_document->id_product = $collection['product']->id;
-                $uploaded_document->path = $path;
-                $uploaded_document->extension = $document->getClientOriginalExtension();
-                $uploaded_document->document_name = $data['document_names'][$key];
-                $uploaded_document->type = 'documents';
-                $uploaded_document->save();
+        if(($data['document_names'] != null) && ($data['documents'] != null)){
+            if(count($data['document_names']) == count($data['documents'])){
+                foreach($data['documents'] as $key => $document){
+                    if($document != null){
+                        $documen_name = time().rand(5, 15).'.'.$document->getClientOriginalExtension();
+                        $document->move(public_path('/upload_products/Product-'.$collection['product']->id.'/documents') , $documen_name);
+                        $path = '/upload_products/Product-'.$collection['product']->id.'/documents'.'/'.$documen_name;
+        
+                        $uploaded_document = new UploadProducts();
+                        $uploaded_document->id_product = $collection['product']->id;
+                        $uploaded_document->path = $path;
+                        $uploaded_document->extension = $document->getClientOriginalExtension();
+                        $uploaded_document->document_name = $data['document_names'][$key];
+                        $uploaded_document->type = 'documents';
+                        $uploaded_document->save();
+                    } 
+                }
             }
         }
 
+        //Updated old document
+        if(array_key_exists('old_document_names', $data) || (array_key_exists('old_documents', $data))){
+            if(count($data['old_document_names']) > 0){
+                foreach($data['old_document_names'] as $key => $document){
+                    $uploaded_document = UploadProducts::find($key);
+                    if($uploaded_document != null){
+                        if($data['old_documents'] != null){
+                            if(array_key_exists($key, $data['old_documents'])){
+                                if(file_exists(public_path($uploaded_document->path))){
+                                    unlink(public_path($uploaded_document->path));
+                                }
+                                $new_document = $data['old_documents'][$key];
+                                $documen_name = time().rand(5, 15).'.'.$new_document->getClientOriginalExtension();
+                                $new_document->move(public_path('/upload_products/Product-'.$collection['product']->id.'/documents') , $documen_name);
+                                $path = '/upload_products/Product-'.$collection['product']->id.'/documents'.'/'.$documen_name;
+    
+                                $uploaded_document->path = $path;
+                                $uploaded_document->extension = $new_document->getClientOriginalExtension();
+                            }
+                        }
+                        
+                        $uploaded_document->document_name = $document;
+                        $uploaded_document->save();
+                    }   
+                }
+            }else{
+                foreach($data['old_documents'] as $key => $document){
+                    $uploaded_document = UploadProducts::find($key);
+                    if($uploaded_document != null){
+                        if(file_exists(public_path($uploaded_document->path))){
+                            unlink(public_path($uploaded_document->path));
+                        }
+                        $documen_name = time().rand(5, 15).'.'.$document->getClientOriginalExtension();
+                        $new_document->move(public_path('/upload_products/Product-'.$collection['product']->id.'/documents') , $documen_name);
+                        $path = '/upload_products/Product-'.$collection['product']->id.'/documents'.'/'.$documen_name;
+
+                        $uploaded_document->path = $path;
+                        $uploaded_document->extension = $document->getClientOriginalExtension();
+                            
+                        if($data['old_document_names'] != null){
+                            if(array_key_exists($key, $data['old_document_names'])){
+                                $uploaded_document->document_name = $data['old_document_names'][$key];
+                            }
+                        }
+                        $uploaded_document->save();
+                    }   
+                }
+            }
+        }
+        
         //check if images folder is existe, if not existe create it under under public/upload_products/Product{id_porduct}/images
         if(!file_exists(public_path('/upload_products/Product-'.$collection['product']->id.'/images'))){
             mkdir(public_path('/upload_products/Product-'.$collection['product']->id.'/images', 0777));
@@ -56,33 +110,36 @@ class ProductUploadsService
         }
 
         //insert paths of images in DB and upload images in folder under public/upload_products/Product{id_porduct}/images
-        if(count($data['main_photos']) > 0){
-            foreach($data['main_photos'] as $key => $image){
-                $imageName = time().rand(5, 15).'.jpg';
-                $image->move(public_path('/upload_products/Product-'.$collection['product']->id.'/images') , $imageName);
-                $path = '/upload_products/Product-'.$collection['product']->id.'/images'.'/'.$imageName;
-
-                //check if vendor not uploaded thumbnails, the system will create a thumbnail from a gallery image
-                if($data['photosThumbnail'] == null){
-                    $this->createThumbnail(public_path($path), $imageName,$collection['product']->id);
-                    $path_thumbnail = '/upload_products/Product-'.$collection['product']->id.'/thumbnails'.'/'.$imageName;
-
+        if($data['main_photos'] != null){
+            if(count($data['main_photos']) > 0){
+                foreach($data['main_photos'] as $key => $image){
+                    $imageName = time().rand(5, 15).'.jpg';
+                    $image->move(public_path('/upload_products/Product-'.$collection['product']->id.'/images') , $imageName);
+                    $path = '/upload_products/Product-'.$collection['product']->id.'/images'.'/'.$imageName;
+    
+                    //check if vendor not uploaded thumbnails, the system will create a thumbnail from a gallery image
+                    if($data['photosThumbnail'] == null){
+                        $this->createThumbnail(public_path($path), $imageName,$collection['product']->id);
+                        $path_thumbnail = '/upload_products/Product-'.$collection['product']->id.'/thumbnails'.'/'.$imageName;
+    
+                        $uploaded_document = new UploadProducts();
+                        $uploaded_document->id_product = $collection['product']->id;
+                        $uploaded_document->path = $path_thumbnail;
+                        $uploaded_document->extension = 'jpg';
+                        $uploaded_document->type = 'thumbnails';
+                        $uploaded_document->save();
+                    }
+    
                     $uploaded_document = new UploadProducts();
                     $uploaded_document->id_product = $collection['product']->id;
-                    $uploaded_document->path = $path_thumbnail;
+                    $uploaded_document->path = $path;
                     $uploaded_document->extension = 'jpg';
-                    $uploaded_document->type = 'thumbnails';
+                    $uploaded_document->type = 'images';
                     $uploaded_document->save();
                 }
-
-                $uploaded_document = new UploadProducts();
-                $uploaded_document->id_product = $collection['product']->id;
-                $uploaded_document->path = $path;
-                $uploaded_document->extension = 'jpg';
-                $uploaded_document->type = 'images';
-                $uploaded_document->save();
             }
         }
+        
 
         //insert paths of thumbnails in DB and upload thumbnails in folder under public/upload_products/Product{id_porduct}/thumbnails
         if($data['photosThumbnail'] != null){
