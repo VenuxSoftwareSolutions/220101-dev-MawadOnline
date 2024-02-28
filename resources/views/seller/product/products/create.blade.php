@@ -330,14 +330,14 @@
                         <div id="variant_informations">
                             <h3 class="mb-3">Variant informations</h3>
                             <hr>
-                            <div class="row mb-3">
+                            {{-- <div class="row mb-3">
                                 <div class="col-md-3">
                                     <input type="text" class="form-control" value="{{translate('Variant SKU')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
                                     <input type="text" class="form-control sku" id="sku">
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="row mb-3">
                                 <div class="col-md-3">
                                     <input type="text" class="form-control" value="{{translate('Variant Photos')}}" disabled>
@@ -818,13 +818,12 @@
 
             var count = numbers_variant + 1;
             //add attribute name for each input cloned
-            clonedDiv.find('h3').text('Variant informations ' + count);
-            clonedDiv.find('h3').after('<i class="fa-regular fa-pen-to-square fa-xl square-variant" title="Edit variant"></i>');
-            clonedDiv.find('.fa-pen-to-square').after('<i class="fa-regular fa-circle-check fa-xl square-variant" title="End edit"></i>');
-            clonedDiv.find('.fa-circle-xmark').hide();
+            var html_to_add = '<div style="float: right; margin-top: -35px"><i class="fa-regular fa-circle-check fa-xl square-variant" title="End edit"></i><i class="fa-regular fa-pen-to-square fa-xl square-variant" title="Edit variant"></i><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
+            clonedDiv.find('h3').after(html_to_add);
+            //clonedDiv.find('.fa-circle-xmark').hide();
             clonedDiv.find('.fa-circle-check').hide();
             clonedDiv.find('#btn-add-pricing-variant').hide();
-            clonedDiv.find('.sku').attr('name', 'sku-' + numbers_variant);
+            //clonedDiv.find('.sku').attr('name', 'sku-' + numbers_variant);
             clonedDiv.find('.vat_sample').attr('name', 'vat_sample-' + numbers_variant);
             clonedDiv.find('.sample_description').attr('name', 'sample_description-' + numbers_variant);
             clonedDiv.find('.sample_price').attr('name', 'sample_price-' + numbers_variant);
@@ -853,9 +852,10 @@
                 $(element).attr('name', 'variant_pricing-from' + numbers_variant + '[discount_range][]');
                 $(element).daterangepicker({
                     timePicker: true,
+                    autoUpdateInput: false,
                     locale: {
                         format: 'DD-MM-Y HH:mm:ss',
-                        separator : " to "
+                        separator : " to ",
                     },
                 });
             });
@@ -901,6 +901,17 @@
             });
 
             $('#bloc_variants_created').prepend(clonedDiv);
+            var divId = "#bloc_variants_created";
+
+            // Get the length of all h3 tags under the specific div
+            var h3Count = $(divId + " h3").length;
+
+
+            // Loop through each h3 tag and display its order
+            $(divId + " h3").each(function(index) {
+                var order = h3Count - index; // Number in descending order
+                $(this).text("Variant informations  " + order);
+            });
             numbers_variant++;
         });
 
@@ -963,9 +974,10 @@
                 clonedElement.find('.discount-range').each(function(index, element) {
                     $(element).daterangepicker({
                         timePicker: true,
+                        autoUpdateInput: false,
                         locale: {
                             format: 'DD-MM-Y HH:mm:ss',
-                            separator : " to "
+                            separator : " to ",
                         },
                     });
                     $(element).removeClass("discount-range").addClass("discount-range-variant");
@@ -1161,9 +1173,10 @@
                 //Initialize last date range picker
                 $('#bloc_pricing_configuration_variant .aiz-date-range-variant:last').daterangepicker({
                     timePicker: true,
+                    autoUpdateInput: false,
                     locale: {
                         format: 'DD-MM-Y HH:mm:ss',
-                        separator : " to "
+                        separator : " to ",
                     },
                 });
 
@@ -1199,9 +1212,10 @@
                 //Initialize last date range picker
                 $(this).parent().parent().parent().find('.aiz-date-range:last').daterangepicker({
                     timePicker: true,
+                    autoUpdateInput: false,
                     locale: {
                         format: 'DD-MM-Y HH:mm:ss',
-                        separator : " to "
+                        separator : " to ", 
                     },
                 });
 
@@ -1231,14 +1245,14 @@
         $('body').on('change', '.discount_type-variant', function(){
             //enablig or disabling input discount amout or discount percentage
             if($(this).val() == "amount"){
-                $(this).parent().parent().parent().find('.discount_amount-variant').prop('readonly', false);
-                $(this).parent().parent().parent().find('.discount_percentage-variant').prop('readonly', true);
-                $(this).parent().parent().parent().find('.discount_percentage-variant').val('');
+                $(this).parent().parent().find('.discount_amount-variant').prop('readonly', false);
+                $(this).parent().parent().find('.discount_percentage-variant').prop('readonly', true);
+                $(this).parent().parent().find('.discount_percentage-variant').val('');
             }
             if($(this).val() == "percent"){
-                $(this).parent().parent().parent().find('.discount_amount-variant').prop('readonly', true);
-                $(this).parent().parent().parent().find('.discount_percentage-variant').prop('readonly', false);
-                $(this).parent().parent().parent().find('.discount_amount-variant').val('');
+                $(this).parent().parent().find('.discount_amount-variant').prop('readonly', true);
+                $(this).parent().parent().find('.discount_percentage-variant').prop('readonly', false);
+                $(this).parent().parent().find('.discount_amount-variant').val('');
             }
         })
 
@@ -1571,117 +1585,22 @@
         $('body').on('click', '.trash_document', function(){
             $(this).parent().parent().remove();
         })
-    });
-</script>
 
-<script type="text/javascript">
-    $(document).ready(function() {
-        $("#treeview").hummingbird();
-    });
+        $('body').on('click', '.delete-variant', function(){
+            $(this).parent().parent().remove();
 
-    $("[name=shipping_type]").on("change", function() {
-        $(".product_wise_shipping_div").hide();
-        $(".flat_rate_shipping_div").hide();
-        if ($(this).val() == 'product_wise') {
-            $(".product_wise_shipping_div").show();
-        }
-        if ($(this).val() == 'flat_rate') {
-            $(".flat_rate_shipping_div").show();
-        }
+            var divId = "#bloc_variants_created";
 
-    });
-
-    function add_more_customer_choice_option(i, name) {
-        $.ajax({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            type: "POST",
-            url: '{{ route('seller.products.add-more-choice-option') }}',
-            data: {
-                attribute_id: i
-            },
-            success: function(data) {
-                var obj = JSON.parse(data);
-                $('#customer_choice_options').append('\
-                    <div class="form-group row">\
-                        <div class="col-md-3">\
-                            <input type="hidden" name="choice_no[]" value="' + i + '">\
-                            <input type="text" class="form-control" name="choice[]" value="' + name +
-                    '" placeholder="{{ translate('Choice Title') }}" readonly>\
-                        </div>\
-                        <div class="col-md-8">\
-                            <select class="form-control aiz-selectpicker attribute_choice" data-live-search="true" name="choice_options_' + i + '[]" multiple>\
-                                ' + obj + '\
-                            </select>\
-                        </div>\
-                    </div>');
-                AIZ.plugins.bootstrapSelect('refresh');
-            }
-        });
+            // Get the length of all h3 tags under the specific div
+            var h3Count = $(divId + " h3").length;
 
 
-    }
-
-    $('input[name="colors_active"]').on('change', function() {
-        if (!$('input[name="colors_active"]').is(':checked')) {
-            $('#colors').prop('disabled', true);
-            AIZ.plugins.bootstrapSelect('refresh');
-        } else {
-            $('#colors').prop('disabled', false);
-            AIZ.plugins.bootstrapSelect('refresh');
-        }
-        update_sku();
-    });
-
-    $(document).on("change", ".attribute_choice", function() {
-        update_sku();
-    });
-
-    $('#colors').on('change', function() {
-            update_sku();
-        });
-
-    $('input[name="unit_price"]').on('keyup', function() {
-        update_sku();
-    });
-
-    // $('input[name="name"]').on('keyup', function() {
-    //     update_sku();
-    // });
-
-    function delete_row(em) {
-        $(em).closest('.form-group row').remove();
-        update_sku();
-    }
-
-    function delete_variant(em) {
-        $(em).closest('.variant').remove();
-    }
-
-    function update_sku() {
-        $.ajax({
-            type: "POST",
-            url: '{{ route('seller.products.sku_combination') }}',
-            data: $('#choice_form').serialize(),
-            success: function(data) {
-                $('#sku_combination').html(data);
-                AIZ.plugins.fooTable();
-                if (data.trim().length > 1) {
-                    $('#show-hide-div').hide();
-                } else {
-                    $('#show-hide-div').show();
-                }
-            }
-        });
-    }
-
-    $('#choice_attributes').on('change', function() {
-        $('#customer_choice_options').html(null);
-        $.each($("#choice_attributes option:selected"), function() {
-            add_more_customer_choice_option($(this).val(), $(this).text());
-        });
-        update_sku();
+            // Loop through each h3 tag and display its order
+            $(divId + " h3").each(function(index) {
+                var order = h3Count - index; // Number in descending order
+                $(this).text("Variant informations  " + order);
+            });
+        })
     });
 </script>
 @endsection

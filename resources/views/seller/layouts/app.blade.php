@@ -154,8 +154,7 @@
         }
 
         .square-variant{
-            float: right;
-            margin-top: -29px;
+            margin-right: 10px;
             color: black;
         }
 
@@ -181,6 +180,10 @@
 
         .inner_ul {
             padding: 0px 0px 0px 35px;
+        }
+
+        .width-badge{
+            width: 100%;
         }
 
     </style>

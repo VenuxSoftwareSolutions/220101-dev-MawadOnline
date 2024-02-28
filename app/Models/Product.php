@@ -6,11 +6,14 @@ use App;
 use App\Models\UploadProducts;
 use App\Models\ProductCategory;
 use App\Models\ProductAttributeValues;
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Model;
+use \Venturecraft\Revisionable\RevisionableTrait;
 
 class Product extends Model
 {
 
+    use RevisionableTrait;
     protected $guarded = ['choice_attributes'];
 
     protected $with = ['product_translations', 'taxes', 'thumbnail'];
@@ -177,5 +180,34 @@ class Product extends Model
             }
         }
         return $data;
+    }
+
+    public function pathCategory(){
+        $product_category = ProductCategory::where('product_id', $this->id)->first();
+        $path = '';
+        if($product_category != null){
+            $current_category = Category::find($product_category->category_id);
+            if($current_category != null){
+                while($current_category->parent_id != 0){
+                    if($path == ''){
+                        $path = $current_category->name;
+                    }else{
+                        $path = $current_category->name . ' > '  . $path;
+                    }
+                    $current_category = Category::find($current_category->parent_id);
+                }
+                if($current_category->parent_id == 0){
+                    if($path == ''){
+                        $path = $current_category->name;
+                    }else{
+                        $path = $current_category->name . ' > '  . $path;
+                    }
+                }
+            }
+
+            
+        }
+
+        return $path;
     }
 }

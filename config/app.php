@@ -189,6 +189,7 @@ return [
 
         Spatie\Permission\PermissionServiceProvider::class,
         Laravel\Sanctum\SanctumServiceProvider::class,
+        Venturecraft\Revisionable\RevisionableServiceProvider::class,
 
     ],
 

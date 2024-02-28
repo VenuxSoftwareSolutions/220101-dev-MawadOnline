@@ -23,6 +23,11 @@
     <form class="" action="{{route('seller.products.update', $product->id)}}" method="POST" enctype="multipart/form-data" id="choice_form">
         <div class="row gutters-5">
             <div class="col-lg-12">
+                @if($product->rejection_reason != null)
+                    <div class="alert alert-danger" role="alert">
+                        {{$product->rejection_reason}}
+                    </div>
+                @endif
                 @csrf
                 <input type="hidden" name="product_id" value="{{ $product->id }}">
                 {{-- Bloc Product Information --}}
@@ -508,6 +513,7 @@
                                 @foreach ($product->getChildrenProductsDesc() as $children)
                                     <div data-id="{{ $children->id }}">
                                         <h3 class="mb-3">Variant informations {{ $key }}</h3>
+                                        <i class="fa-regular fa-circle-xmark fa-lx delete-variant" data-id={{ $children->id }} style="font-size: 16px; float: right; margin-top: -35px;" title="delete this variant"></i>
                                         <hr>
                                         <div class="row mb-3">
                                             <div class="col-md-3">
@@ -818,7 +824,7 @@
             </div>
             <div class="col-12">
                 <div class="mar-all text-right mb-2">
-                    <button type="submit" name="button" value="publish" class="btn btn-primary">Upload Product</button>
+                    <button type="submit" class="btn btn-primary">Edit Product</button>
                 </div>
             </div>
         </div>
@@ -885,6 +891,7 @@
             return this.filter(function(i) {return a.indexOf(i) < 0;});
         };
 
+        //activate variant option
         $('body input[name="activate_attributes"]').on('change', function() {
             if (!$('body input[name="activate_attributes"]').is(':checked')) {
                 $('body #attributes').val('');
@@ -919,6 +926,7 @@
             }
         });
 
+        //Check length short description 
         $('#short_description').on('keyup', function(event) {
             var currentLength = $(this).val().length;
             var maxCharacters = 512;
@@ -936,6 +944,7 @@
             }
         });
 
+        //Get attribute of category checked
         $("body").on("click", '.radio-category', function() {
             var categorie_id = $(this).val();
 
@@ -967,6 +976,7 @@
             });
         });
 
+        //Get value of attribute checked
         $('body').on('change', '#attributes', function() {
             var ids_attributes = $(this).val();
             
@@ -1021,9 +1031,28 @@
                     }
 
                     AIZ.plugins.bootstrapSelect('refresh');
+
+                    var count_boolean = 1;
+                    $("#variant_informations > #bloc_attributes:first > div").each(function(index, element) {
+                        $(element).find('.attributes').each(function(index, child_element) {
+                            // Change the attribute name of the current input
+                            if ($(child_element).attr("type") == 'radio') {
+                                $(child_element).parent().parent().find(':radio').each(function(index, radio_element) {
+                                    $(radio_element).attr('name', 'boolean'+count_boolean);
+                                });
+
+                                count_boolean++;
+                            }
+                        });
+                    });
+                    
                     $("#bloc_variants_created div").each(function(index, element) {
+                        console.log('not done yet')
                         if($(element).data('id') != undefined){
+                            console.log('not done')
+                            id_variant = $(element).data('id');
                             $(element).find('.attributes').each(function(index, element) {
+                                console.log('done')
                                 // Change the attribute name of the current input
                                 if ($(element).attr("name") == undefined) {
                                     var id_attribute = $(element).data('id_attributes');
@@ -1066,20 +1095,6 @@
                         }
                     });
 
-                    var count_boolean = 1;
-                    $("body #bloc_attributes div").each(function(index, element) {
-                        $(element).find('.attributes').each(function(index, child_element) {
-                            // Change the attribute name of the current input
-                            if ($(child_element).attr("type") == 'radio') {
-                                $(child_element).parent().parent().find(':radio').each(function(index, radio_element) {
-                                    $(radio_element).attr('name', 'boolean'+count_boolean);
-                                });
-
-                                count_boolean++;
-                            }
-                        });
-                    });
-
                     AIZ.plugins.bootstrapSelect('refresh');
                 }
             });
@@ -1087,6 +1102,7 @@
             
         })
 
+        //Change label of input value by name of file selected
         $('body').on('change', '.photos_variant', function() {
             // Get the number of selected files
             var numFiles = $(this)[0].files.length;
@@ -1096,6 +1112,7 @@
             $(this).next('.custom-file-label').html(labelText);
         });
 
+        //Create variant when click on button create variant
         $('#btn-create-variant').on('click', function() {
             // Clone the original div
             var clonedDiv = $('#variant_informations').clone();
@@ -1107,13 +1124,11 @@
             clonedDiv.find('input').prop('readonly', true);
 
             // Append the cloned div to the container
-
             var count = numbers_variant + 1;
             //add attribute name for each input cloned
-            clonedDiv.find('h3').text('Variant informations ' + count);
-            clonedDiv.find('h3').after('<i class="fa-regular fa-pen-to-square fa-xl square-variant" title="Edit variant"></i>');
-            clonedDiv.find('.fa-pen-to-square').after('<i class="fa-regular fa-circle-check fa-xl square-variant" title="End edit"></i>');
-            clonedDiv.find('.fa-circle-xmark').hide();
+            var html_to_add = '<div style="float: right; margin-top: -35px"><i class="fa-regular fa-circle-check fa-xl square-variant" title="End edit"></i><i class="fa-regular fa-pen-to-square fa-xl square-variant" title="Edit variant"></i><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
+            clonedDiv.find('h3').after(html_to_add);
+            //clonedDiv.find('.fa-circle-xmark').hide();
             clonedDiv.find('.fa-circle-check').hide();
             clonedDiv.find('#btn-add-pricing-variant').hide();
             clonedDiv.find('.sku').attr('name', 'sku-' + numbers_variant);
@@ -1145,9 +1160,10 @@
                 $(element).attr('name', 'variant_pricing-from' + numbers_variant + '[discount_range][]');
                 $(element).daterangepicker({
                     timePicker: true,
+                    autoUpdateInput: false,
                     locale: {
                         format: 'DD-MM-Y HH:mm:ss',
-                        separator : " to "
+                        separator : " to ",
                     },
                 });
             });
@@ -1193,9 +1209,20 @@
             });
 
             $('#bloc_variants_created').prepend(clonedDiv);
+            var divId = "#bloc_variants_created";
+
+            // Get the length of all h3 tags under the specific div
+            var h3Count = $(divId + " h3").length;
+
+            // Loop through each h3 tag and display its order
+            $(divId + " h3").each(function(index) {
+                var order = h3Count - index; // Number in descending order
+                $(this).text("Variant informations  " + order);
+            });
             numbers_variant++;
         });
 
+        //enabled all input under specific variant to edit
         $('body').on('click', '.fa-pen-to-square', function(){
             $(this).parent().find('input').prop('readonly', false);
             $(this).parent().find('.fa-circle-xmark').show();
@@ -1204,6 +1231,7 @@
             $(this).parent().find('.fa-circle-check').show();
         })
 
+        //disabled all input under specific variant to edit
         $('body').on('click', '.fa-circle-check', function(){
             $(this).parent().find('input').prop('readonly', true);
             $(this).parent().find('.fa-circle-xmark').hide();
@@ -1212,6 +1240,7 @@
             $(this).parent().find('.fa-circle-check').hide();
         })
 
+        //show or hide bloc sample variant under specific variant
         $('body').on('change', '.variant-sample-pricing', function(){
             if ($(this).is(':not(:checked)')) {
                 $(this).parent().parent().parent().find('.bloc_sample_pricing_configuration_variant').show();
@@ -1255,9 +1284,10 @@
                 clonedElement.find('.discount-range').each(function(index, element) {
                     $(element).daterangepicker({
                         timePicker: true,
+                        autoUpdateInput: false,
                         locale: {
                             format: 'DD-MM-Y HH:mm:ss',
-                            separator : " to "
+                            separator : " to ",
                         },
                     });
                     $(element).removeClass("discount-range").addClass("discount-range-variant");
@@ -1328,17 +1358,22 @@
 
             var valuesMinQtyArray = [];
             var valuesMaxQtyArray = [];
-            $('body .min-qty').each(function() {
+            var parent_selector = $(this).parent().parent().parent();
+
+            $(parent_selector).find('.min-qty').each(function() {
                 // Get the value of each input field and push it to the array
                 valuesMinQtyArray.push($(this).val());
                 $(this).css('border-color', '#e2e5ec');
             });
 
-            $('body .max-qty').each(function() {
+            $(parent_selector).find('.max-qty').each(function() {
                 // Get the value of each input field and push it to the array
                 valuesMaxQtyArray.push($(this).val());
                 $(this).css('border-color', '#e2e5ec');
             });
+
+            console.log('valuesMinQtyArray: ', valuesMinQtyArray)
+            console.log('valuesMaxQtyArray: ', valuesMaxQtyArray)
 
             //check if there is any overlaps
             for (let i = 0; i < valuesMinQtyArray.length; i++) {
@@ -1453,9 +1488,10 @@
                 //Initialize last date range picker
                 $('#bloc_pricing_configuration_variant .aiz-date-range-variant:last').daterangepicker({
                     timePicker: true,
+                    autoUpdateInput: false,
                     locale: {
                         format: 'DD-MM-Y HH:mm:ss',
-                        separator : " to "
+                        separator : " to ",
                     },
                 });
 
@@ -1517,6 +1553,7 @@
                 //Initialize last date range picker
                 $(this).parent().parent().parent().find('.aiz-date-range:last').daterangepicker({
                     timePicker: true,
+                    autoUpdateInput: false,
                     locale: {
                         format: 'DD-MM-Y HH:mm:ss',
                         separator : " to "
@@ -1549,14 +1586,14 @@
         $('body').on('change', '.discount_type-variant', function(){
             //enablig or disabling input discount amout or discount percentage
             if($(this).val() == "amount"){
-                $(this).parent().parent().parent().find('.discount_amount-variant').prop('readonly', false);
-                $(this).parent().parent().parent().find('.discount_percentage-variant').prop('readonly', true);
-                $(this).parent().parent().parent().find('.discount_percentage-variant').val('');
+                $(this).parent().parent().find('.discount_amount-variant').prop('readonly', false);
+                $(this).parent().parent().find('.discount_percentage-variant').prop('readonly', true);
+                $(this).parent().parent().find('.discount_percentage-variant').val('');
             }
             if($(this).val() == "percent"){
-                $(this).parent().parent().parent().find('.discount_amount-variant').prop('readonly', true);
-                $(this).parent().parent().parent().find('.discount_percentage-variant').prop('readonly', false);
-                $(this).parent().parent().parent().find('.discount_amount-variant').val('');
+                $(this).parent().parent().find('.discount_amount-variant').prop('readonly', true);
+                $(this).parent().parent().find('.discount_percentage-variant').prop('readonly', false);
+                $(this).parent().parent().find('.discount_amount-variant').val('');
             }
         })
 
@@ -2006,6 +2043,55 @@
                     }
                 })
             }
+        })
+
+        $('body').on('click', '.delete-variant', function(){
+            if($(this).data('id')){
+                var id_variant = $(this).data('id');
+                var current = $(this);
+                swal({
+                    title: 'Are you sure you want to delete this variant ?',
+                    type: "warning",
+                    confirmButtonText: 'Delete',
+                    showCancelButton: true
+                })
+                .then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            url: "{{ route('seller.products.delete_variant') }}",
+                            type: "GET",
+                            data: {
+                                id_variant: id_variant
+                            },
+                            cache: false,
+                            dataType: 'JSON',
+                            success: function(dataResult) {
+                               
+                            }
+                        })
+                    } else if (result.dismiss === 'cancel') {
+                        swal(
+                            'Cancelled',
+                            'Deletion successfully reverted.',
+                            'warning'
+                        )
+                    }
+                })
+            }
+
+            // $(this).parent().parent().remove();
+
+            // var divId = "#bloc_variants_created";
+
+            // // Get the length of all h3 tags under the specific div
+            // var h3Count = $(divId + " h3").length;
+
+
+            // // Loop through each h3 tag and display its order
+            // $(divId + " h3").each(function(index) {
+            //     var order = h3Count - index; // Number in descending order
+            //     $(this).text("Variant informations  " + order);
+            // });
         })
     });
 </script>

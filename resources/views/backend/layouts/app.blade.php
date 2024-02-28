@@ -52,7 +52,19 @@
         .dropify-wrapper .dropify-message p {
             font-size: 13px !important; /* Adjust the font size as needed */
         }
-   
+        .font-size-icon{
+            font-size: 21px;
+            margin-top: 29px;
+            color: black;
+            border: solid 1px;
+            border-radius: 50%;
+            padding: 5px;
+        }
+
+        .style-img{
+            border-radius: 5%;
+            box-shadow: 5px 5px 5px gainsboro;
+        }
 
         .country-select {
             width: 100%;
@@ -73,6 +85,44 @@
         }
         .fa-regular{
             color:red
+        }
+
+        .div-btn{
+            display: flex;
+            width: 100%;
+            justify-content: center;
+        }
+
+        #bloc_pricing_configuration_variant{
+            width: 94%;
+            margin-left: 19px;
+            margin-top: 21px;
+        }
+
+        .bloc_pricing_configuration_variant{
+            width: 94%;
+            margin-left: 19px;
+            margin-top: 21px;
+        }
+
+        #bloc_sample_pricing_configuration_variant{
+            width: 94%;
+            margin-left: 19px;
+            margin-top: 21px;
+        }
+
+        .bloc_sample_pricing_configuration_variant{
+            width: 94%;
+            margin-left: 19px;
+            margin-top: 21px;
+        }
+
+        #general_attributes{
+            width: 100%;
+        }
+
+        .width-badge{
+            width: 100%;
         }
 
     </style>

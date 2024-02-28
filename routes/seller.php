@@ -23,6 +23,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
     Route::controller(ProductController::class)->group(function () {
         Route::get('/products', 'index')->name('products');
         Route::get('/product/create', 'create')->name('products.create');
+        Route::get('/product/delete_variant', 'delete_variant')->name('products.delete_variant');
         Route::post('/products/store/', 'store')->name('products.store');
         Route::post('/products/store_draft', 'store_draft')->name('products.store_draft');
         Route::get('/product/{id}/edit', 'edit')->name('products.edit');

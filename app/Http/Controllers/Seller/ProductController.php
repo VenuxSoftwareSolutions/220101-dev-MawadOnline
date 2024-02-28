@@ -10,6 +10,7 @@ use App\Models\Cart;
 use App\Models\Color;
 use App\Models\Category;
 use App\Models\ProductCategory;
+use App\Models\PricingConfiguration;
 use App\Models\Product;
 use App\Models\Unity;
 use App\Models\ProductTax;
@@ -27,6 +28,7 @@ use Combinations;
 use Artisan;
 use Auth;
 use Str;
+use Illuminate\Support\Facades\File;
 
 use App\Services\ProductService;
 use App\Services\ProductTaxService;
@@ -472,18 +474,20 @@ class ProductController extends Controller
         $variants_attributes_ids_attributes = [];
         $general_attributes_ids_attributes = [];
         if($product != null){
-            if($product->is_parent = 1){
+            if($product->is_parent == 1){
                 $childrens = Product::where('parent_id', $id)->get();
                 $childrens_ids = Product::where('parent_id', $id)->pluck('id')->toArray();
                 $variants_attributes = ProductAttributeValues::whereIn('id_products', $childrens_ids)->where('is_variant', 1)->get();
-                $general_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->get();
+                
                 $variants_attributes_ids_attributes = ProductAttributeValues::whereIn('id_products', $childrens_ids)->where('is_variant', 1)->pluck('id_attribute')->toArray();
-                $general_attributes_ids_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->pluck('id_attribute')->toArray();
-                $data_general_attributes = [];
-                if(count($general_attributes) > 0){
-                    foreach ($general_attributes as $general_attribute){
-                        $data_general_attributes[$general_attribute->id_attribute] = $general_attribute;
-                    }
+                
+            }
+            $general_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->get();
+            $general_attributes_ids_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->pluck('id_attribute')->toArray();
+            $data_general_attributes = [];
+            if(count($general_attributes) > 0){
+                foreach ($general_attributes as $general_attribute){
+                    $data_general_attributes[$general_attribute->id_attribute] = $general_attribute;
                 }
             }
             if($product_category != null){
@@ -547,50 +551,51 @@ class ProductController extends Controller
         return view('seller.product.products.edit', compact('product', 'categories', 'tags', 'lang'));
     }
 
-    public function update(ProductRequest $request, Product $product)
+    public function update(Request $request)
     {
-        //Product
-        $product = $this->productService->update($request->except([
-            '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
-        ]), $product);
+        //dd($request->all());
+        $parent = Product::find($request->product_id);
+        if($parent != null){
+            $product = $this->productService->update($request->except([
+                'category_ids', 'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
+            ]), $parent);
 
-        $request->merge(['product_id' => $product->id]);
+            //Product categories
+            if($product->is_parent == 1){
+                $products = Product::where('parent_id', $product->id)->get();
+                if(count($products) > 0){
+                    foreach($products as $child){
+                        $child->categories()->attach($request->category_ids);
+                    }
+                }
+            }
+            $product->categories()->sync($request->category_ids);
 
-        //Product categories
-        $product->categories()->sync($request->category_ids);
+            //Upload documents, images and thumbnails
+            $data['document_names'] = $request->document_names;
+            $data['documents'] = $request->documents;
+            $data['product'] = $product;
+            $data['main_photos'] = $request->main_photos;
+            $data['photosThumbnail'] = $request->photosThumbnail;
+            $data['old_documents'] = $request->old_documents;
+            $data['old_document_names'] = $request->old_document_names;
+            $this->productUploadsService->store_uploads($data);
+            
 
-        //Product Stock
-        $product->stocks()->delete();
-        $this->productStockService->store($request->only([
-            'colors_active', 'colors', 'choice_no', 'unit_price', 'sku', 'current_stock', 'product_id'
-        ]), $product);
+            flash(translate('Product has been updated successfully'))->success();
 
-        //VAT & Tax
-        if ($request->tax_id) {
-            $product->taxes()->delete();
-            $request->merge(['product_id' => $product->id]);
-            $this->productTaxService->store($request->only([
-                'tax_id', 'tax', 'tax_type', 'product_id'
-            ]));
+            Artisan::call('view:clear');
+            Artisan::call('cache:clear');
+
+            return redirect()->route('seller.products');
+
+        }else{
+            return redirect()->back();
         }
 
-        // Product Translations
-        ProductTranslation::updateOrCreate(
-            $request->only([
-                'lang', 'product_id'
-            ]),
-            $request->only([
-                'name', 'unit', 'description'
-            ])
-        );
 
+        //flash(translate('Product has been updated successfully'))->success();
 
-        flash(translate('Product has been updated successfully'))->success();
-
-        Artisan::call('view:clear');
-        Artisan::call('cache:clear');
-
-        return back();
     }
 
     public function sku_combination(Request $request)
@@ -620,6 +625,33 @@ class ProductController extends Controller
         $combinations = (new CombinationService())->generate_combination($options);
         return view('backend.product.products.sku_combinations', compact('combinations', 'unit_price', 'colors_active', 'product_name'));
     }
+
+    public function delete_variant(Request $request){
+        $product = Product::find($request->id_variant);
+        if($product != null){
+            $uploads = UploadProducts::where('id_product', $request->id_variant)->get();
+            if(count($uploads) > 0){
+                if(file_exists(public_path('/upload_products/Product-'.$request->id_variant))){
+                    File::deleteDirectory(public_path('/upload_products/Product-'.$request->id_variant));
+                }
+
+                UploadProducts::where('id_product', $request->id_variant)->delete();
+            }
+
+            $pricing = PricingConfiguration::where('id_products', $request->id_variant)->delete();
+            $attributes = ProductAttributeValues::where('id_products', $request->id_variant)->delete();
+            $product_to_delete = Product::where('id', $request->id_variant)->delete();
+
+            return response()->json([
+                'status' => 'done'
+            ]);
+        }else{
+            return response()->json([
+                'status' => 'failed'
+            ]);
+        }
+    }
+    
 
     public function sku_combination_edit(Request $request)
     {

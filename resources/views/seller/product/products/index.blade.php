@@ -96,10 +96,7 @@
                             {{-- <th data-breakpoints="md">{{ translate('Category')}}</th> --}}
                             <th data-breakpoints="md">{{ translate('Current Qty')}}</th>
                             <th>{{ translate('Base Price')}}</th>
-                            @if(get_setting('product_approve_by_admin') == 1)
-                                <th data-breakpoints="md">{{ translate('Approval')}}</th>
-                            @endif
-                            <th data-breakpoints="md">{{ translate('Published')}}</th>
+                            <th data-breakpoints="md">{{ translate('Status')}}</th>
                             <th data-breakpoints="md">{{ translate('Draft')}}</th>
                             <th data-breakpoints="md">{{ translate('Featured')}}</th>
                             <th data-breakpoints="md" class="text-right">{{ translate('Options')}}</th>
@@ -119,7 +116,7 @@
                                 </td>
                                 <td>
                                     <a href="{{ route('product', $product->slug) }}" target="_blank" class="text-reset">
-                                        {{ $product->getTranslation('name') }}
+                                        {{ $product->sku }}
                                     </a>
                                 </td>
                                 {{-- <td>
@@ -137,20 +134,27 @@
                                     @endphp
                                 </td>
                                 <td>{{ $product->unit_price }}</td>
-                                @if(get_setting('product_approve_by_admin') == 1)
-                                    <td>
-                                        @if ($product->approved == 1)
-                                            <span class="badge badge-inline badge-success">{{ translate('Approved')}}</span>
-                                        @else
-                                            <span class="badge badge-inline badge-info">{{ translate('Pending')}}</span>
-                                        @endif
-                                    </td>
-                                @endif
                                 <td>
-                                    <label class="aiz-switch aiz-switch-success mb-0">
-                                        <input onchange="update_published(this)" value="{{ $product->id }}" type="checkbox" <?php if($product->published == 1) echo "checked";?> >
-                                        <span class="slider round"></span>
-                                    </label>
+                                    @if($product->is_parent == 0)
+                                        @switch($product->approved)
+                                            @case(0)
+                                                <span class="badge badge-primary width-badge width-badge">{{ translate('Pending')}}</span>
+                                            @break
+                                        
+                                            @case(1)
+                                            <span class="badge badge-success width-badge width-badge">{{ translate('Approved')}}</span>
+                                                @break
+                                            @case(4)
+                                                <span class="badge badge-info width-badge width-badge">{{ translate('Under Review')}}</span>
+                                                @break
+                                            @case(2)
+                                            <span class="badge badge-warning width-badge width-badge">{{ translate('Revision Required')}}</span>
+                                                @break
+                                            @case(3)
+                                                <span class="badge badge-danger width-badge width-badge">{{ translate('Rejected')}}</span>
+                                                    @break
+                                        @endswitch
+                                    @endif
                                 </td>
                                 <td>
                                     @if ($product->is_draft == 1)
@@ -190,7 +194,7 @@
                                         </td>
                                         <td >
                                             <a href="{{ route('product', $children->slug) }}" style="margin-left: 34px !important" target="_blank" class="text-reset">
-                                                {{ $children->getTranslation('name') }}
+                                                {{ $children->sku }}
                                             </a>
                                         </td>
                                         <td>
@@ -203,23 +207,32 @@
                                             @endphp
                                         </td>
                                         <td>{{ $children->unit_price }}</td>
-                                        @if(get_setting('product_approve_by_admin') == 1)
-                                            <td>
-                                                @if ($children->approved == 1)
-                                                    <span class="badge badge-inline badge-success">{{ translate('Approved')}}</span>
-                                                @else
-                                                    <span class="badge badge-inline badge-info">{{ translate('Pending')}}</span>
-                                                @endif
-                                            </td>
-                                        @endif
                                         <td>
-                                            <label class="aiz-switch aiz-switch-success mb-0">
-                                                <input onchange="update_published(this)" value="{{ $children->id }}" type="checkbox" <?php if($children->published == 1) echo "checked";?> >
-                                                <span class="slider round"></span>
-                                            </label>
+                                            @switch($children->approved)
+                                                @case(0)
+                                                    <span class="badge badge-primary width-badge">{{ translate('Pending')}}</span>
+                                                @break
+                                            
+                                                @case(1)
+                                                <span class="badge badge-success width-badge">{{ translate('Approved')}}</span>
+                                                    @break
+                                                @case(4)
+                                                    <span class="badge badge-info width-badge">{{ translate('Under Review')}}</span>
+                                                    @break
+                                                @case(2)
+                                                <span class="badge badge-warning width-badge">{{ translate('Revision Required')}}</span>
+                                                    @break
+                                                @case(3)
+                                                    <span class="badge badge-danger width-badge">{{ translate('Rejected')}}</span>
+                                                        @break
+                                            @endswitch
                                         </td>
                                         <td>
-                                            <span class="badge badge-inline badge-success">{{ translate('No')}}</span>
+                                            @if ($product->is_draft == 1)
+                                                <span class="badge badge-inline badge-info">{{ translate('Yes')}}</span>
+                                            @else
+                                                <span class="badge badge-inline badge-success">{{ translate('No')}}</span>
+                                            @endif
                                         </td>
                                         <td>
                                             <label class="aiz-switch aiz-switch-success mb-0">

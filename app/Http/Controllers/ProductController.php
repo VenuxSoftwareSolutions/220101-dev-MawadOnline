@@ -10,8 +10,17 @@ use App\Models\ProductTranslation;
 use App\Models\Category;
 use App\Models\ProductTax;
 use App\Models\AttributeValue;
+use App\Models\ProductCategory;
+use App\Models\PricingConfiguration;
+use App\Models\BusinessInformation;
+use App\Models\ProductAttributeValues;
+use App\Models\UploadProducts;
+use Auth;
+use Illuminate\Support\Facades\DB;
+use App\Models\Attribute;
 use App\Models\Cart;
 use App\Models\Wishlist;
+use App\Models\Color;
 use App\Models\User;
 use App\Notifications\ShopProductNotification;
 use Carbon\Carbon;
@@ -72,32 +81,51 @@ class ProductController extends Controller
     {
         CoreComponentRepository::instantiateShopRepository();
 
-        $type = 'In House';
-        $col_name = null;
-        $query = null;
-        $sort_search = null;
+        // $type = 'In House';
+        // $col_name = null;
+        // $query = null;
+        // $sort_search = null;
 
-        $products = Product::where('added_by', 'admin')->where('auction_product', 0)->where('wholesale_product', 0);
+        // $products = Product::where('added_by', 'admin')->where('auction_product', 0)->where('wholesale_product', 0);
 
-        if ($request->type != null) {
-            $var = explode(",", $request->type);
-            $col_name = $var[0];
-            $query = $var[1];
-            $products = $products->orderBy($col_name, $query);
-            $sort_type = $request->type;
+        // if ($request->type != null) {
+        //     $var = explode(",", $request->type);
+        //     $col_name = $var[0];
+        //     $query = $var[1];
+        //     $products = $products->orderBy($col_name, $query);
+        //     $sort_type = $request->type;
+        // }
+        // if ($request->search != null) {
+        //     $sort_search = $request->search;
+        //     $products = $products
+        //         ->where('name', 'like', '%' . $sort_search . '%')
+        //         ->orWhereHas('stocks', function ($q) use ($sort_search) {
+        //             $q->where('sku', 'like', '%' . $sort_search . '%');
+        //         });
+        // }
+
+        // $products = $products->where('digital', 0)->orderBy('created_at', 'desc')->paginate(15);
+
+        $search = null;
+        dd('ok');
+        $products = Product::where(function ($query) {
+            $query->where('is_draft',0)
+                ->where('parent_id', 0)
+                ->where('is_parent', 0);
+        })->orWhere(function ($query) {
+            $query->where('is_draft',0)
+                ->where('is_parent', 1);
+        })->orderBy('id','desc');
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $products = $products->where('name', 'like', '%' . $search . '%');
         }
-        if ($request->search != null) {
-            $sort_search = $request->search;
-            $products = $products
-                ->where('name', 'like', '%' . $sort_search . '%')
-                ->orWhereHas('stocks', function ($q) use ($sort_search) {
-                    $q->where('sku', 'like', '%' . $sort_search . '%');
-                });
-        }
+        dd($product->get());
+        $products = $products->paginate(10);
 
-        $products = $products->where('digital', 0)->orderBy('created_at', 'desc')->paginate(15);
-
-        return view('backend.product.products.index', compact('products', 'type', 'col_name', 'query', 'sort_search'));
+        return view('backend.product.products.index', compact('products', 'search'));
+        //return view('backend.product.products.index', compact('products', 'type', 'col_name', 'query', 'sort_search'));
     }
 
     /**
@@ -140,38 +168,56 @@ class ProductController extends Controller
 
     public function all_products(Request $request)
     {
-        $col_name = null;
-        $query = null;
-        $seller_id = null;
-        $sort_search = null;
-        $products = Product::where('auction_product', 0)->where('wholesale_product', 0);
-        if (get_setting('vendor_system_activation') != 1) {
-            $products = $products->where('added_by', 'admin');
-        }
-        if ($request->has('user_id') && $request->user_id != null) {
-            $products = $products->where('user_id', $request->user_id);
-            $seller_id = $request->user_id;
-        }
-        if ($request->search != null) {
-            $sort_search = $request->search;
-            $products = $products
-                ->where('name', 'like', '%' . $sort_search . '%')
-                ->orWhereHas('stocks', function ($q) use ($sort_search) {
-                    $q->where('sku', 'like', '%' . $sort_search . '%');
-                });
-        }
-        if ($request->type != null) {
-            $var = explode(",", $request->type);
-            $col_name = $var[0];
-            $query = $var[1];
-            $products = $products->orderBy($col_name, $query);
-            $sort_type = $request->type;
-        }
+        // $col_name = null;
+        // $query = null;
+        // $seller_id = null;
+        // $sort_search = null;
+        // $products = Product::where('auction_product', 0)->where('wholesale_product', 0);
+        // if (get_setting('vendor_system_activation') != 1) {
+        //     $products = $products->where('added_by', 'admin');
+        // }
+        // if ($request->has('user_id') && $request->user_id != null) {
+        //     $products = $products->where('user_id', $request->user_id);
+        //     $seller_id = $request->user_id;
+        // }
+        // if ($request->search != null) {
+        //     $sort_search = $request->search;
+        //     $products = $products
+        //         ->where('name', 'like', '%' . $sort_search . '%')
+        //         ->orWhereHas('stocks', function ($q) use ($sort_search) {
+        //             $q->where('sku', 'like', '%' . $sort_search . '%');
+        //         });
+        // }
+        // if ($request->type != null) {
+        //     $var = explode(",", $request->type);
+        //     $col_name = $var[0];
+        //     $query = $var[1];
+        //     $products = $products->orderBy($col_name, $query);
+        //     $sort_type = $request->type;
+        // }
 
-        $products = $products->orderBy('created_at', 'desc')->paginate(15);
-        $type = 'All';
+        // $products = $products->orderBy('created_at', 'desc')->paginate(15);
+        // $type = 'All';
 
-        return view('backend.product.products.index', compact('products', 'type', 'col_name', 'query', 'seller_id', 'sort_search'));
+        $search = null;
+        $products = Product::where(function ($query) {
+            $query->where('is_draft',0)
+                ->where('parent_id', 0)
+                ->where('is_parent', 0);
+        })->orWhere(function ($query) {
+            $query->where('is_draft',0)
+                ->where('is_parent', 1);
+        })->orderBy('id','desc');
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $products = $products->where('name', 'like', '%' . $search . '%');
+        }
+        $products = $products->paginate(10);
+
+        return view('backend.product.products.index', compact('products', 'search'));
+
+        //return view('backend.product.products.index', compact('products', 'type', 'col_name', 'query', 'seller_id', 'sort_search'));
     }
 
 
@@ -604,5 +650,116 @@ class ProductController extends Controller
 
         $combinations = (new CombinationService())->generate_combination($options);
         return view('backend.product.products.sku_combinations_edit', compact('combinations', 'unit_price', 'colors_active', 'product_name', 'product'));
+    }
+
+    public function approve($id){
+        $product = Product::findOrFail($id);
+
+        // if (Auth::user()->id != $product->user_id) {
+        //     flash(translate('This product is not yours.'))->warning();
+        //     return back();
+        // }
+
+        // $lang = $request->lang;
+        // $tags = json_decode($product->tags);
+        // $categories = Category::where('parent_id', 0)
+        //     ->where('digital', 0)
+        //     ->with('childrenCategories')
+        //     ->get();
+        $product = Product::find($id);
+        $colors = Color::orderBy('name', 'asc')->get();
+        $product_category = ProductCategory::where('product_id', $id)->first();
+        $vat_user = BusinessInformation::where('user_id', $product->user_id)->first();
+        $categories = Category::where('level', 1)
+            ->with('childrenCategories')
+            ->get();
+        $attributes = [];
+        $childrens = [];
+        $childrens_ids = [];
+        $variants_attributes = [];
+        $general_attributes = [];
+        $variants_attributes_ids_attributes = [];
+        $general_attributes_ids_attributes = [];
+        if($product != null){
+            if($product->is_parent == 1){
+                $childrens = Product::where('parent_id', $id)->get();
+                $childrens_ids = Product::where('parent_id', $id)->pluck('id')->toArray();
+                $variants_attributes = ProductAttributeValues::whereIn('id_products', $childrens_ids)->where('is_variant', 1)->get();
+                
+                $variants_attributes_ids_attributes = ProductAttributeValues::whereIn('id_products', $childrens_ids)->where('is_variant', 1)->pluck('id_attribute')->toArray();
+                
+            }
+            $general_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->get();
+            $general_attributes_ids_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->pluck('id_attribute')->toArray();
+            $data_general_attributes = [];
+            if(count($general_attributes) > 0){
+                foreach ($general_attributes as $general_attribute){
+                    $data_general_attributes[$general_attribute->id_attribute] = $general_attribute;
+                }
+            }
+            if($product_category != null){
+                $categorie = Category::find($product_category->category_id);
+                $current_categorie = $categorie;
+    
+                $parents = [];
+                if($current_categorie->parent_id == 0){
+                    array_push($parents, $current_categorie->id);
+                }else{
+                    array_push($parents, $current_categorie->id);
+                    while($current_categorie->parent_id != 0) {
+                        $parent = Category::where('id',$current_categorie->parent_id)->first();
+                        array_push($parents, $parent->id);
+                        $current_categorie = $parent;
+                    }
+                }
+    
+                if(count($parents) > 0){
+                    $attributes_ids = DB::table('categories_has_attributes')->whereIn('category_id', $parents)->pluck('attribute_id')->toArray();
+                    if(count($attributes_ids) > 0){
+                        $attributes = Attribute::whereIn('id',$attributes_ids)->get();
+                    }
+                }
+            }
+
+            return view('backend.product.products.approve', [
+                'product' => $product,
+                'vat_user' => $vat_user,
+                'categories' => $categories,
+                'product_category' => $product_category,
+                'attributes' => $attributes,
+                'childrens' => $childrens,
+                'childrens_ids' => $childrens_ids,
+                'variants_attributes' => $variants_attributes,
+                'variants_attributes_ids_attributes' => $variants_attributes_ids_attributes,
+                'general_attributes_ids_attributes' => $general_attributes_ids_attributes,
+                'general_attributes' => $data_general_attributes,
+                'colors' => $colors
+            ]);                
+        }else{
+            abort(404);
+        }
+
+    }
+
+    public function approve_action(Request $request){
+        $product = Product::find($request->id_variant);
+        if($product != null){
+            $product->approved = $request->status;
+            //check if status is Revision Required or Rejected to set the rejection reason
+            if(($request->status == 2) || ($request->status == 3)){
+                $product->rejection_reason = $request->reason;
+            }else{
+                $product->rejection_reason = null;
+            }
+            $product->save();
+
+            return response()->json([
+                'status' => 'success'
+            ]);
+        }else{
+            return response()->json([
+                'status' => 'failed'
+            ]);
+        }
     }
 }
