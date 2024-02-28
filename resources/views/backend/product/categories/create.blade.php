@@ -6,6 +6,7 @@
 CoreComponentRepository::instantiateShopRepository();
 CoreComponentRepository::initializeCache();
 @endphp
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 <div class="row">
     <div class="col-lg-8 mx-auto">
@@ -13,13 +14,12 @@ CoreComponentRepository::initializeCache();
             <ul class="nav nav-tabs nav-fill border-light">
                 @foreach (get_all_active_language() as $key => $language)
                 <li class="nav-item fa fa-hand-pointer-o language-switcher" id="my-active-lang-{{$language->code}}" data-lang-switcher="{{$language->code}}" style="
-                    @if($errors->has($language->code=='en' ? 'name'. '':'name'.'_'.$language->code) ||
-                    $errors->has($language->code=='en' ? 'description'. '':'description'.'_'.$language->code)
-                    )
+                    @if(count($errors)>0) 
+                    
                     border:1px solid red
                     @endif
                     ">
-                    <div class="nav-link text-reset @if ($language->code == $lang) active @else @if($language->code !=env('DEFAULT_LANGUAGE'))bg-soft-dark @endif border-light border-left-0 @endif py-3" href="">
+                    <div class="nav-link text-reset @if ($language->code == $lang) active @else @if($language->code != env('DEFAULT_LANGUAGE'))bg-soft-dark @endif border-light border-left-0 @endif py-3" href="">
                         <img src="{{ static_asset('assets/img/flags/'.$language->code.'.png') }}" height="11" class="mr-1">
                         <span>{{$language->name}}</span>
                     </div>
@@ -78,11 +78,11 @@ CoreComponentRepository::initializeCache();
                             <div class="form-group row">
                                 <label class="col-md-3 col-form-label">{{translate('Name')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
                                 <div class="col-md-9">
-                                    <input type="text" placeholder="{{translate('name_'.$language->code)}}" id="name{{$language->code=='en'?'':'_'.$language->code}}" name="name{{$language->code=='en'?'':'_'.$language->code}}" class="form-control" value="{{old('name'. ($language->code=='en'?'':'_'.$language->code))}}">
+                                    <input type="text" placeholder="{{translate('name_'.$language->code)}}" id="name{{$language->code=='en'?'':'_'.$language->code}}" name="name_{{$language->code}}" class="form-control" value="{{old('name'.'_'.$language->code)}}">
                                     <div class="mt-3">
-                                        @if($errors->has($language->code=='en' ? 'name'. '':'name'.'_'.$language->code))
+                                        @if($errors->has('name'.'_'.$language->code))
                                         <span class="text-danger" role="alert">
-                                            {{ translate($errors->get($language->code=='en' ? 'name'. '':'name'.'_'.$language->code)[0]) }}
+                                            {{ translate($errors->get('name'.'_'.$language->code)[0]) }}
                                         </span>
                                         @endif
                                     </div>
@@ -96,12 +96,12 @@ CoreComponentRepository::initializeCache();
                             <div class="form-group row">
                                 <label class="col-md-3 col-form-label">{{translate('Description')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
                                 <div class="col-md-9">
-                                    <textarea rows="10" cols="30" type="text" placeholder="{{translate('Description '. ($language->code=='en'?'':$language->code))}}" id="description{{$language->code=='en'?'':'_'.$language->code}}" name="description{{$language->code=='en'?'':'_'.$language->code}}" class="form-control">{{old('description'. ($language->code=='en'?'':'_'.$language->code))}}</textarea>
+                                    <textarea rows="10" cols="30" type="text" placeholder="{{translate('Description '. $language->code)}}" id="description{{'_'.$language->code}}" name="description{{'_'.$language->code}}" class="form-control">{{old('description'. ('_'.$language->code))}}</textarea>
 
                                     <div class="mt-3">
-                                        @if($errors->has($language->code=='en' ? 'description'. '':'description'.'_'.$language->code))
+                                        @if($errors->has('description'.'_'.$language->code))
                                         <span class="text-danger" role="alert">
-                                            {{ translate($errors->get($language->code=='en' ? 'description'. '':'description'.'_'.$language->code)[0]) }}
+                                            {{ translate($errors->get('description'.'_'.$language->code)[0]) }}
                                         </span>
 
                                         @endif
@@ -113,20 +113,8 @@ CoreComponentRepository::initializeCache();
                     @endforeach
 
 
-                    <div class="form-group row not-translatable">
-                        <label class="col-md-3 col-form-label">{{translate('Type')}}</label>
-                        <div class="col-md-9">
-                            <select name="digital" onchange="categoriesByType(this.value)" required class="form-control aiz-selectpicker mb-2 mb-md-0">
-                                <option value="0">{{translate('Physical')}}</option>
-                                <!--<option value="1">{{translate('Digital')}}</option>-->
-                            </select>
-                        </div>
-                    </div>
-
-
-
                     <div class="form-group row  not-translatable">
-                        <label class="col-md-3 col-form-label">{{translate('Parent Category')}}</label>
+                        <label class="col-md-3 col-form-label">{{translate('Parent Category')}} <span class="text-danger">*</span></label>
                         <div class="col-md-9">
                             <input type="text" id="search_input" class="form-control" placeholder="Search">
                             <div class="h-300px overflow-auto c-scrollbar-light">
@@ -138,7 +126,17 @@ CoreComponentRepository::initializeCache();
                     <input type="hidden" id="selected_parent_id" name="parent_id" value="">
 
 
-                    <div class="form-group row  not-translatable">
+                    
+                    <div class="form-group row not-translatable">
+                        <label class="col-md-3 col-form-label">{{translate('Type')}} <span class="text-danger">*</span></label>
+                        <div class="col-md-9">
+                            <select name="digital" onchange="categoriesByType(this.value)" required class="form-control aiz-selectpicker mb-2 mb-md-0">
+                                <option value="0">{{translate('Physical')}}</option>
+                                <!--<option value="1">{{translate('Digital')}}</option>-->
+                            </select>
+                        </div>
+                    </div>
+                    <!-- <div class="form-group row  not-translatable">
                         <label class="col-md-3 col-form-label">
                             {{translate('Ordering Number')}}
                         </label>
@@ -146,53 +144,41 @@ CoreComponentRepository::initializeCache();
                             <input type="number" name="order_level" class="form-control" id="order_level" value="{{old('order_level')}}" placeholder="{{translate('Order Level')}}">
                             <small>{{translate('Higher number has high priority')}}</small>
                         </div>
-                    </div>
-                    <!--<div class="form-group row  not-translatable">
-                        <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Banner')}} <small>({{ translate('200x200') }})</small></label>
-                        <div class="col-md-9">
-                            <div class="input-group" data-toggle="aizuploader" data-type="image">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text bg-soft-secondary font-weight-medium">{{ translate('Browse')}}</div>
-                                </div>
-                                <div class="form-control file-amount">{{ translate('Choose File') }}</div>
-                                <input type="hidden" name="banner" class="selected-files">
-                            </div>
-                            <div class="file-preview box sm">
-                            </div>
-                        </div>
-                    </div>
+                    </div> -->
+          
+
                     <div class="form-group row  not-translatable">
-                        <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Icon')}} <small>({{ translate('32x32') }})</small></label>
+                    <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <span class="text-danger">*</span></label>
+
                         <div class="col-md-9">
-                            <div class="input-group" data-toggle="aizuploader" data-type="image">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text bg-soft-secondary font-weight-medium">{{ translate('Browse')}}</div>
-                                </div>
-                                <div class="form-control file-amount">{{ translate('Choose File') }}</div>
-                                <input type="hidden" name="icon" class="selected-files">
-                            </div>
-                            <div class="file-preview box sm">
-                            </div>
-                        </div>
-                    </div>-->
-                    <div class="form-group row  not-translatable">
-                        <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Cover Image')}} <small>({{ translate('360x360') }})</small></label>
-                        <div class="col-md-9">
-                            <div class="input-group" data-toggle="aizuploader" data-type="image">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text bg-soft-secondary font-weight-medium">{{ translate('Browse')}}</div>
-                                </div>
-                                <div class="form-control file-amount">{{ translate('Choose File') }}</div>
-                                <input type="hidden" name="cover_image" class="selected-files">
-                            </div>
-                            <br>
+                            <input class="form-control" type="file" name="thumbnail_image" id="formFile" accept="image/jpeg, image/png, image/gif">
                             <div>
-                                @if($errors->has('cover_image'))
-                                <span class="text-danger" role="alert">{{ translate('Cover Image is required')}}</span>
+                                @if($errors->has('thumbnail_image'))
+                                <span class="text-danger" role="alert">{{ translate('Thumbnail Image is required')}}</span>
                                 @endif
                             </div>
+                        </div>
+                    </div>
+                   
+                    <div class="form-group row  not-translatable">
+                        <label class="col-md-3 col-form-label">{{translate('featured')}}</label>
+                        <div class="col-md-3">
+                            <input type="checkbox" class="form-control"  name="featured" style="width: 20px; height:20px">
+                        </div>
+                    </div>
+                    
 
-                            <div class="file-preview box sm">
+
+
+                    <div class="form-group row  not-translatable">
+                    <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Category Image')}} </label>
+
+                        <div class="col-md-9">
+                            <input class="form-control" type="file" name="cover_image" id="formFile" accept="image/jpeg, image/png, image/gif">
+                            <div>
+                                @if($errors->has('cover_image'))
+                                <span class="text-danger" role="alert">{{ translate('Category Image is required')}}</span>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -216,7 +202,7 @@ CoreComponentRepository::initializeCache();
                             <div class="row">
                                 <label class="col-md-3 col-form-label">{{translate('Meta Description')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
                                 <div class="col-md-9">
-                                    <textarea name="meta_description{{$language->code=='en'?'':'_'.$language->code}}" rows="5" placeholder="{{translate('Meta Description '. ($language->code=='en'?'':$language->code))}}" class="form-control"> {{old('meta_description'. ($language->code=='en'?'':'_'.$language->code))}}</textarea>
+                                    <textarea name="meta_description{{$language->code=='en'?'':'_'.$language->code}}" rows="5" placeholder="{{translate('Meta Description '. ($language->code))}}" class="form-control"> {{old('meta_description'. ($language->code=='en'?'':'_'.$language->code))}}</textarea>
                                 </div>
                             </div>
                         </div>
@@ -232,6 +218,7 @@ CoreComponentRepository::initializeCache();
                             <div class="input-group-append">
                                 <span class="input-group-text">%</span>
                             </div>
+    
                         </div>
                     </div>
                     @endif
@@ -255,15 +242,11 @@ CoreComponentRepository::initializeCache();
                         </div>
                     </div>
 
-                    <div class="form-group row  not-translatable">
-                        <label class="col-md-3 col-form-label">{{translate('featured')}}</label>
-                        <div class="col-md-3">
-                            <input type="checkbox" class="form-control" checked name="featured" style="width: 20px; height:20px">
-                        </div>
-                    </div>
+
                     <div class="form-group mb-0 text-right">
                         <button type="submit" class="btn btn-primary">{{translate('Save')}}</button>
                     </div>
+                   
                 </form>
             </div>
         </div>

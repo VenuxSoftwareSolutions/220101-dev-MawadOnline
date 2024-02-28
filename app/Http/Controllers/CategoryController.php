@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Attribute;
 use Illuminate\Http\Request;
 use App\Models\Category;
@@ -33,11 +34,9 @@ class CategoryController extends Controller
         $searchTerm = $request->input('searchTerm');
         $formattedCategories = Cache::get('categories_tree');
 
-        if(isset($formattedCategories))
-        {
+        if (isset($formattedCategories)) {
             $data = $this->searchAndHighlightCategoryJstree($formattedCategories, $searchTerm);
-
-        }else{
+        } else {
             $categories = Category::where('parent_id', 0)->get();
 
             $data = $this->jsTreeFormat($categories);
@@ -62,7 +61,7 @@ class CategoryController extends Controller
             $formattedCategory = [
                 'id' => (string)$category->id,
                 'text' => $category->name,
-                'level'=> $level,
+                'level' => $level,
                 'children' => [] // Add a 'children' key for nesting
             ];
 
@@ -235,6 +234,7 @@ class CategoryController extends Controller
                 'parent' => (string)$parentId,
                 'order_level' => $category->order_level,
                 'cover_image' => $category->cover_image,
+                'thumbnail_image' => $category->thumbnail_image,
                 'commision_rate' => $category->commision_rate,
                 'cat_level' => $category->level,
                 'featured' => $category->featured,
@@ -285,7 +285,7 @@ class CategoryController extends Controller
      */
     public function create(Request $request,)
     {
-        $lang = $request->lang;
+        $lang = app()->getLocale();
 
         return view('backend.product.categories.create', compact('lang'));
     }
@@ -294,13 +294,8 @@ class CategoryController extends Controller
     {
         $parent = Category::find($request->category_id);
         $expected_ids = [];
-        if ($parent?->parent_id != "0") {
-            $expected_ids = $this->getexpected_ids($parent);
-        }
-        /* if($parent){
-            $parent->categories_attributes
-        }
-        $category_attributes =Attribute::where(function())*/
+        $expected_ids = $this->getexpected_ids($parent);
+        
         return Attribute::whereNotIn('id', $expected_ids)->get();
     }
 
@@ -308,9 +303,9 @@ class CategoryController extends Controller
     {
         $parent = Category::find($request->category_id);
         $expected_ids = [];
-        if ($parent?->parent_id != "0") {
-            $expected_ids = $this->getexpected_ids($parent);
-        }
+        
+        $expected_ids = $this->getexpected_ids($parent);
+        
         return Attribute::whereIn('id', $expected_ids)->get();
     }
 
@@ -334,26 +329,29 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
+        $lang = app()->getLocale();
         try {
             $category = new Category;
-            $category->name = $request->name;
+            $category->name = $request['name_' . $lang];
             $category->order_level = $request->order_level ?? 0;
             $category->digital = $request->digital;
-            $category->banner = $request->cover_image;
-            $category->icon = $request->cover_image;
-            $category->cover_image = $request->cover_image;
-            $category->meta_title = $request->meta_title;
-            $category->meta_description = $request->meta_description;
 
-            if ($request->parent_id != "0" && $request->parent_id != null) {
-                $category->parent_id = $request->parent_id;
-                $parent = Category::find($request->parent_id);
-                $category->level = $parent->level + 1;
-            } else {
-                $category->level = 0;
+            if ($request->hasFile('thumbnail_image')) {
+                $path = $request->file('thumbnail_image')->store('categories');
+                $category->thumbnail_image = $path;
             }
 
-            $category->slug = $request->slug ? strtolower(preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->slug))) : strtolower(preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->name)));
+            if ($request->hasFile('cover_image')) {
+                $path_cover = $request->file('cover_image')->store('categories');
+                $category->cover_image = $path_cover;
+            }
+
+            $category->meta_title = $request->meta_title;
+            $category->meta_description = $request->meta_description;
+            $category->parent_id = $request->parent_id;
+            $category->featured = $request->featured == "on" ? 1 : 0;
+
+            $category->slug = strtolower(preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request['name_' . $lang])));
 
             $category->commision_rate = $request->commision_rate ?? 0;
 
@@ -363,7 +361,7 @@ class CategoryController extends Controller
             $category->categories_attributes()->sync($request->category_attributes);
 
             foreach (get_all_active_language() as $key => $language) {
-                $langPrefix = $language->code == env('DEFAULT_LANGUAGE') ? '' : '_' . $language->code;
+                $langPrefix = '_' . $language->code;
                 $categoryTranslation = CategoryTranslation::firstOrNew(['lang' => $language->code, 'category_id' => $category->id]);
                 $categoryTranslation->name = $request['name' . $langPrefix];
                 $categoryTranslation->description = $request['description' . $langPrefix];
@@ -409,16 +407,10 @@ class CategoryController extends Controller
     {
         $lang = $request->lang;
         $category = Category::findOrFail($id);
-        $categories = Category::where('parent_id', 0)
-            ->where('digital', $category->digital)
-            ->with('childrenCategories')
-            ->whereNotIn('id', CategoryUtility::children_ids($category->id, true))->where('id', '!=', $category->id)
-            ->orderBy('name', 'asc')
-            ->get();
 
         $category_attributes = $category->categories_attributes()->pluck('attribute_id');
         $category_filtring_attributes = $category->attributes()->pluck('attribute_id');
-        return view('backend.product.categories.edit', compact('category', 'categories', 'lang', 'category_attributes', 'category_filtring_attributes'));
+        return view('backend.product.categories.edit', compact('category', 'lang', 'category_attributes', 'category_filtring_attributes'));
     }
 
     /**
@@ -428,69 +420,85 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateCategoryRequest $request, $id)
     {
-        $category = Category::findOrFail($id);
-        if ($request->lang == env("DEFAULT_LANGUAGE")) {
-            $category->name = $request->name;
+        $lang = $request->lang;
+
+        try {
+            // Fetch the existing category using the provided ID
+            $category = Category::findOrFail($id);
+
+            if($lang == env("DEFAULT_LANGUAGE")){
+                $category->name = $request->name;
+                // Update slug for the category
+                $category->slug = strtolower(preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->name)));
+            }
+            $category->order_level = $request->order_level ?? $category->order_level;
+            $category->digital = $request->digital;
+
+            // Update thumbnail_image if a new file is provided
+            if ($request->hasFile('thumbnail_image')) {
+                $path = $request->file('thumbnail_image')->store('categories');
+                $category->thumbnail_image = $path;
+            }
+
+            // Update cover_image if a new file is provided
+            if ($request->hasFile('cover_image')) {
+                $path_cover = $request->file('cover_image')->store('categories');
+                $category->cover_image = $path_cover;
+            }
+
+            $category->meta_title = $request->meta_title;
+            $category->meta_description = $request->meta_description;
+
+            if($category->id != 1){
+                $category->parent_id = $request->parent_id;
+            }
+            $category->featured = $request->featured == "on" ? 1 : 0;
+
+        
+
+            $category->commision_rate = $request->commision_rate ?? $category->commision_rate;
+
+            // Save the updated category
+            $category->save();
+
+            // Sync attributes if provided
+            if ($request->has('filtering_attributes')) {
+                $category->attributes()->sync($request->filtering_attributes);
+            }
+
+            if ($request->has('category_attributes')) {
+                $category->categories_attributes()->sync($request->category_attributes);
+            }
+
+            // Update translations for all active languages
+            $category_translation = CategoryTranslation::firstOrNew(['lang' => $request->lang, 'category_id' => $category->id]);
+            $category_translation->name = $request->name;
+            $category_translation->description = $request->description;
+            $category_translation->meta_title = $request->meta_title;
+            $category_translation->meta_description = $request->meta_description;
+            $category_translation->save();
+
+            // Clear relevant caches
+            Cache::forget('categories_children');
+            Cache::forget('categories_tree');
+            Cache::forget('featured_categories');
+
+            // Flash success message
+            flash(translate('Category has been updated successfully'))->success();
+            return redirect()->route('categories.index');
+        } catch (QueryException $e) {
+            // Handle database related errors
+            Log::error($e->getMessage());
+            return back()->withErrors('There was a problem updating the category. Please try again.')->withInput();
+        } catch (Exception $e) {
+            // Handle general errors
+            Log::error($e->getMessage());
+            return back()->withErrors('An unexpected error occurred. Please try again.')->withInput();
         }
-        if ($request->order_level != null) {
-            $category->order_level = $request->order_level;
-        }
-        $category->digital = $request->digital;
-        $category->banner = $request->banner;
-        $category->icon = $request->icon;
-        $category->cover_image = $request->cover_image;
-        $category->meta_title = $request->meta_title;
-        $category->meta_description = $request->meta_description;
-
-        $previous_level = $category->level;
-
-        if ($request->parent_id != "0" && $request->parent_id != null) {
-            $category->parent_id = $request->parent_id;
-
-            $parent = Category::find($request->parent_id);
-            $category->level = $parent->level + 1;
-        } else {
-            $category->parent_id = 0;
-            $category->level = 0;
-        }
-
-        if ($category->level > $previous_level) {
-            CategoryUtility::move_level_down($category->id);
-        } elseif ($category->level < $previous_level) {
-            CategoryUtility::move_level_up($category->id);
-        }
-
-        if ($request->slug != null) {
-            $category->slug = strtolower($request->slug);
-        } else {
-            $category->slug = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->name)) . '-' . Str::random(5);
-        }
-
-
-        if ($request->commision_rate != null) {
-            $category->commision_rate = $request->commision_rate;
-        }
-
-        $category->save();
-
-        $category->attributes()->sync($request->filtering_attributes);
-        $category->categories_attributes()->sync($request->category_attributes);
-
-        $category_translation = CategoryTranslation::firstOrNew(['lang' => $request->lang, 'category_id' => $category->id]);
-        $category_translation->name = $request->name;
-        $category_translation->description = $request->description;
-        $category_translation->meta_title = $request->meta_title;
-        $category_translation->meta_description = $request->meta_description;
-        $category_translation->save();
-
-        Cache::forget('featured_categories');
-        Cache::forget('categories_tree');
-
-        flash(translate('Category has been updated successfully'))->success();
-        return back();
     }
+
 
     /**
      * Remove the specified resource from storage.

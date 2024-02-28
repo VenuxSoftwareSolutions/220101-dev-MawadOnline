@@ -13,39 +13,70 @@ class StoreCategoryRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        $processedNames = [];
+        foreach ($this->get_all_active_languages() as $language) {
+            $langCode = '_' . $language->code;
+            $fieldName = 'name' . $langCode;
+
+            if ($this->has($fieldName)) {
+                // Trim the string and replace consecutive whitespaces with a single space
+                $processedName = preg_replace('/\s+/', ' ', trim($this->$fieldName));
+                $processedNames[$fieldName] = $processedName;
+            }
+        }
+        // Merge processed names back into the request data
+        $this->merge($processedNames);
+    }
+
     public function rules()
     {
         $rules = [
-            // Add your static rules here
+            // Static rules
             'digital' => 'required|boolean',
             'parent_id' => 'required|exists:categories,id',
-            'order_level' => 'required|numeric',
-            'cover_image' => 'required|string',
-            'commision_rate' => 'required|numeric',
-            'category_attributes' => 'required|array',
-            'category_attributes.*' => 'exists:attributes,id',
-            'filtering_attributes' => 'required|array',
-            'filtering_attributes.*' => 'exists:attributes,id',
+            'thumbnail_image' => 'required|image',
+            'cover_image' => 'required_if:featured,on|image',
+            'category_attributes' => 'nullable|array',
+            'category_attributes.*' => 'nullable|exists:attributes,id',
+            'filtering_attributes' => 'nullable|array',
+            'filtering_attributes.*' => 'nullable|exists:attributes,id',
             'featured' => 'sometimes|in:on',
-            // Initialize other static rules here
+            // Other static rules...
         ];
 
         // Dynamically add language-specific rules
         foreach ($this->get_all_active_languages() as $key => $language) {
-            $langCode = $language->code == 'en' ? '' : '_' . $language->code;
+            $langCode = $language->code;
             $maxLength = $language->code == 'en' ? 60 : 110;
+            $descMaxLength = $language->code == 'en' ? 128 : 240;
 
             $rules = array_merge($rules, [
-                'name' . $langCode => ['required', Rule::unique('category_translations', 'name')->where(function ($query) use ($langCode) {
-                    return $query->where('lang', $langCode);
-                }), 'max:' . $maxLength],
-                'description' . $langCode => 'required|string',
-                'meta_title' . $langCode => 'nullable|string|max:' . $maxLength,
-                'meta_description' . $langCode => 'nullable|string|max:' . ($maxLength + 140), // Assuming you want a bit longer descriptions
+                'name_' . $langCode => [
+                    'required',
+                    'max:' . $maxLength,
+                    function ($attribute, $value, $fail) use ($langCode) {
+                        // Check for case-insensitive uniqueness
+                        $exists = \DB::table('category_translations')
+                            ->whereRaw('LOWER(name) = LOWER(?)', [$value])
+                            ->where('lang', $langCode)
+                            ->exists();
+
+                        if ($exists) {
+                            $fail('The ' . $attribute . ' has already been taken.');
+                        }
+                    },
+                ],
+                'description_' . $langCode => 'required|string|max:' . $descMaxLength,
+                'meta_title_' . $langCode => 'nullable|string|max:' . $maxLength,
+                'meta_description_' . $langCode => 'nullable|string|max:' . ($maxLength + 140),
+                // Additional language-specific rules...
             ]);
         }
 
         return $rules;
+
     }
 
     protected function get_all_active_languages()

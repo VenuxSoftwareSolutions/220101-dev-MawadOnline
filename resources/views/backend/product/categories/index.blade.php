@@ -63,7 +63,7 @@ CoreComponentRepository::initializeCache();
                     <th data-breakpoints="lg">{{ translate('Level') }}</th>
                     <!--<th data-breakpoints="lg">{{translate('Banner')}}</th>
                     <th data-breakpoints="lg">{{translate('Icon')}}</th>-->
-                    <th data-breakpoints="lg">{{translate('Cover Image')}}</th>
+                    <th data-breakpoints="lg">{{translate('Thumbnail')}}</th>
                     <th data-breakpoints="lg">{{translate('Featured')}}</th>
                     <th data-breakpoints="lg">{{translate('Commission')}}</th>
                     <th width="10%" class="text-right">{{translate('Options')}}</th>
@@ -86,6 +86,8 @@ CoreComponentRepository::initializeCache();
 @section('script')
 <script src="{{asset('/public/js/tree.js') }}"></script>
 <script>
+    var baseUrl = "{{ asset('/public') }}";
+
     var columns = [{
             title: '',
             target: 0,
@@ -126,12 +128,12 @@ CoreComponentRepository::initializeCache();
             }
         },
         {
-            title: '{{translate('Cover Image')}}',
+            title: '{{translate('Thumbnail')}}',
             target: 5,
             data: function(item) {
-                if (item.cover_image) {
+                if (item.thumbnail_image) {
                     // Return an image tag with the cover image URL
-                    return `<img src="${item.cover_image}" alt="Cover Image" class="h-50px">`;
+                    return `<img src="${baseUrl + '/'+ item.thumbnail_image}" alt="Cover Image" class="h-50px">`;
                 } else {
                     // Fallback text if no cover image is available
                     return '—';

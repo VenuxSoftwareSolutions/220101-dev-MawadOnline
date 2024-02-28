@@ -3,9 +3,10 @@
 @section('content')
 
 @php
-    CoreComponentRepository::instantiateShopRepository();
-    CoreComponentRepository::initializeCache();
+CoreComponentRepository::instantiateShopRepository();
+CoreComponentRepository::initializeCache();
 @endphp
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 
 <div class="aiz-titlebar text-left mt-2 mb-3">
     <h5 class="mb-0 h6">{{translate('Category Information')}}</h5>
@@ -27,95 +28,92 @@
                 </ul>
                 <form class="p-4" action="{{ route('categories.update', $category->id) }}" method="POST" enctype="multipart/form-data">
                     <input name="_method" type="hidden" value="PATCH">
-    	            <input type="hidden" name="lang" value="{{ $lang }}">
-                	@csrf
+                    <input type="hidden" name="lang" value="{{ $lang }}">
+                    @csrf
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label">{{translate('Name')}} <i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
                         <div class="col-md-9">
                             <input type="text" name="name" value="{{ $category->getTranslation('name', $lang) }}" class="form-control" id="name" placeholder="{{translate('Name')}}" required>
+                            @if($errors->has('name'))
+                            <span class="text-danger" role="alert">
+                                {{ $errors->first('name') }}
+                            </span>
+                        @endif
                         </div>
+                        
                     </div>
+
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label">{{translate('description')}} <i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
                         <div class="col-md-9">
                             <input type="text" name="description" value="{{ $category->getTranslation('description', $lang) }}" class="form-control" id="name" placeholder="{{translate('description')}}" required>
+                            @if($errors->has('description'))
+                            <span class="text-danger" role="alert">
+                                {{ $errors->first('description') }}
+                            </span>
+                        @endif
                         </div>
                     </div>
+
+                    <div class="form-group row  not-translatable">
+                        <label class="col-md-3 col-form-label">{{translate('Parent Category')}} <span class="text-danger">*</span></label>
+                        <div class="col-md-9">
+                            <input type="text" id="search_input" class="form-control" placeholder="Search">
+                            <div class="h-300px overflow-auto c-scrollbar-light">
+
+                                <div id="jstree"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="selected_parent_id" name="parent_id" value="{{$category->parent_id}}">
+
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label">{{translate('Type')}}</label>
                         <div class="col-md-9">
                             <select name="digital" onchange="categoriesByType(this.value)" required class="form-control aiz-selectpicker mb-2 mb-md-0">
                                 <option value="0" @if ($category->digital == '0') selected @endif>{{translate('Physical')}}</option>
-                                <option value="1" @if ($category->digital == '1') selected @endif>{{translate('Digital')}}</option>
                             </select>
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <label class="col-md-3 col-form-label">{{translate('Parent Category')}}</label>
+
+
+
+                    <div class="form-group row  not-translatable">
+                        <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <span class="text-danger">*</span></label>
+
                         <div class="col-md-9">
-                            <select class="select2 form-control aiz-selectpicker" id="selected_parent_id" name="parent_id" data-toggle="select2" data-placeholder="Choose ..."data-live-search="true" data-selected="{{ $category->parent_id }}"
-                                onchange="load_categories_attributes()">
-                                @include('backend.product.categories.categories_option', ['categories' => $categories]){{-- <option value="0">{{ translate('No Parent') }}</option>
-                                @foreach ($categories as $acategory)
-                                    <option value="{{ $acategory->id }}">{{ $acategory->getTranslation('name') }}</option>
-                                    @foreach ($acategory->childrenCategories as $childCategory)
-                                        @include('categories.child_category', ['child_category' => $childCategory])
-                                    @endforeach
-                                @endforeach --}}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-md-3 col-form-label">
-                            {{translate('Ordering Number')}}
-                        </label>
-                        <div class="col-md-9">
-                            <input type="number" name="order_level" value="{{ $category->order_level }}" class="form-control" id="order_level" placeholder="{{translate('Order Level')}}">
-                            <small>{{translate('Higher number has high priority')}}</small>
-                        </div>
-                    </div>
-    	            <div class="form-group row">
-                        <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Banner')}} <small>({{ translate('200x200') }})</small></label>
-                        <div class="col-md-9">
-                            <div class="input-group" data-toggle="aizuploader" data-type="image">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text bg-soft-secondary font-weight-medium">{{ translate('Browse')}}</div>
-                                </div>
-                                <div class="form-control file-amount">{{ translate('Choose File') }}</div>
-                                <input type="hidden" name="banner" class="selected-files" value="{{ $category->banner }}">
-                            </div>
-                            <div class="file-preview box sm">
+                            <input class="form-control" type="file" name="thumbnail_image" id="formFile" accept="image/jpeg, image/png, image/gif">
+                            <div>
+                                @if($errors->has('thumbnail_image'))
+                                <span class="text-danger" role="alert">{{ translate('Thumbnail Image is required')}}</span>
+                                @endif
                             </div>
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Icon')}} <small>({{ translate('32x32') }})</small></label>
+
+                    <div class="form-group row  not-translatable">
+                        <label class="col-md-3 col-form-label">{{translate('featured')}}</label>
+                        <div class="col-md-3">
+                            <input type="checkbox" class="form-control" @if($category->featured) checked @endif name="featured" style="width: 20px; height:20px">
+                        </div>
+                    </div>
+
+
+
+
+                    <div class="form-group row  not-translatable">
+                        <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Category Image')}} </label>
+
                         <div class="col-md-9">
-                            <div class="input-group" data-toggle="aizuploader" data-type="image">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text bg-soft-secondary font-weight-medium">{{ translate('Browse')}}</div>
-                                </div>
-                                <div class="form-control file-amount">{{ translate('Choose File') }}</div>
-                                <input type="hidden" name="icon" class="selected-files" value="{{ $category->icon }}">
-                            </div>
-                            <div class="file-preview box sm">
+                            <input class="form-control" type="file" name="cover_image" id="formFile" accept="image/jpeg, image/png, image/gif">
+                            <div>
+                                @if($errors->has('cover_image'))
+                                <span class="text-danger" role="alert">{{ translate('Category Image is required')}}</span>
+                                @endif
                             </div>
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Cover Image')}} <small>({{ translate('360x360') }})</small></label>
-                        <div class="col-md-9">
-                            <div class="input-group" data-toggle="aizuploader" data-type="image">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text bg-soft-secondary font-weight-medium">{{ translate('Browse')}}</div>
-                                </div>
-                                <div class="form-control file-amount">{{ translate('Choose File') }}</div>
-                                <input type="hidden" name="cover_image" class="selected-files" value="{{ $category->cover_image }}">
-                            </div>
-                            <div class="file-preview box sm">
-                            </div>
-                        </div>
-                    </div>
+
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label">{{translate('Meta Title')}}</label>
                         <div class="col-md-9">
@@ -131,25 +129,25 @@
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label">{{translate('Slug')}}</label>
                         <div class="col-md-9">
-                            <input type="text" placeholder="{{translate('Slug')}}" id="slug" name="slug" value="{{ $category->slug }}" class="form-control">
+                            <input type="text" disabled placeholder="{{translate('Slug')}}" id="slug" name="slug" value="{{ $category->slug }}" class="form-control">
                         </div>
                     </div>
                     @if (get_setting('category_wise_commission') == 1)
-                        <div class="form-group row">
-                            <label class="col-md-3 col-form-label">{{translate('Commission Rate')}}</label>
-                            <div class="col-md-9 input-group">
-                                <input type="number" lang="en" min="0" step="0.01" id="commision_rate" name="commision_rate" value="{{ $category->commision_rate }}" class="form-control">
-                                <div class="input-group-append">
-                                    <span class="input-group-text">%</span>
-                                </div>
+                    <div class="form-group row">
+                        <label class="col-md-3 col-form-label">{{translate('Commission Rate')}}</label>
+                        <div class="col-md-9 input-group">
+                            <input type="number" lang="en" min="0" step="0.01" id="commision_rate" name="commision_rate" value="{{ $category->commision_rate }}" class="form-control">
+                            <div class="input-group-append">
+                                <span class="input-group-text">%</span>
                             </div>
                         </div>
+                    </div>
                     @endif
 
                     <div class="form-group row  not-translatable">
                         <label class="col-md-3 col-form-label">{{translate('Category Attributes')}}</label>
                         <div class="col-md-9">
-                            <select class="select2 form-control aiz-selectpicker" onchange="load_filtring_attributes()"  id="category_attributes" name="category_attributes[]" data-toggle="select2" data-placeholder="Choose ..."data-live-search="true"  multiple>
+                            <select class="select2 form-control aiz-selectpicker" onchange="load_filtring_attributes()" id="category_attributes" name="category_attributes[]" data-toggle="select2" data-placeholder="Choose ..." data-live-search="true" multiple>
 
                             </select>
                             <input type="hidden" value="{{ implode(',',$category_attributes->toArray())}}" id="category_has_attributes">
@@ -159,9 +157,9 @@
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label">{{translate('Filtering Attributes')}}</label>
                         <div class="col-md-9">
-                            <select class="select2 form-control aiz-selectpicker"  id="filtering_attributes"  name="filtering_attributes[]" data-toggle="select2" data-placeholder="Choose ..."data-live-search="true" data-selected="{{ $category->attributes->pluck('id') }}" multiple>
+                            <select class="select2 form-control aiz-selectpicker" id="filtering_attributes" name="filtering_attributes[]" data-toggle="select2" data-placeholder="Choose ..." data-live-search="true" data-selected="{{ $category->attributes->pluck('id') }}" multiple>
                                 @foreach (\App\Models\Attribute::all() as $attribute)
-                                    <option value="{{ $attribute->id }}">{{ $attribute->getTranslation('name') }}</option>
+                                <option value="{{ $attribute->id }}">{{ $attribute->getTranslation('name') }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -178,19 +176,20 @@
 @endsection
 
 @section('script')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 
 <script type="text/javascript">
-    function categoriesByType(val){
+    function categoriesByType(val) {
         $('select[name="parent_id"]').html('');
         AIZ.plugins.bootstrapSelect('refresh');
         $.ajax({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            type:"POST",
-            url:'{{ route('categories.categories-by-type') }}',
-            data:{
-               digital: val
+            type: "POST",
+            url: '{{ route('categories.categories-by-type') }}',
+            data: {
+                digital: val
             },
             success: function(data) {
                 $('select[name="parent_id"]').html(data);
@@ -199,64 +198,64 @@
         });
     }
     document.addEventListener("DOMContentLoaded", function() {
-            // Your JavaScript code here
-            load_categories_attributes();
-            load_filtring_attributes();
-        });
-    function load_filtring_attributes(){
+        // Your JavaScript code here
+        load_categories_attributes();
+        load_filtring_attributes();
+    });
+
+    function load_filtring_attributes() {
         let parent_category = document.getElementById('selected_parent_id');
-        if(parent_category){
+        if (parent_category) {
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                type:"POST",
-                url:'{{ route('categories.parent-attributes') }}',
+                type: "POST",
+                url: '{{ route('categories.parent-attributes') }}',
 
-                data:{
+                data: {
                     category_id: parent_category.value
                 },
                 success: function(data) {
-                    let innerhtmlselect ='';
-                    let myattributes =  document.querySelector('#category_filtring_attributes').value;
+                    let innerhtmlselect = '';
+                    let myattributes = document.querySelector('#category_filtring_attributes').value;
                     let myattributesarray = myattributes.split(',');
                     let founded = false;
-                        data.forEach(element=>{
-                            myattributesarray.forEach(el=>{
-                            if(el==element.id){
-                                founded=true;
+                    data.forEach(element => {
+                        myattributesarray.forEach(el => {
+                            if (el == element.id) {
+                                founded = true;
                             }
                         })
-                        if(founded==true){
+                        if (founded == true) {
 
-                            innerhtmlselect += '<option selected value="'+element.id+'">'+element.name+'</option>';
-                            founded=false
-                        }else{
-                            innerhtmlselect += '<option  value="'+element.id+'">'+element.name+'</option>';
+                            innerhtmlselect += '<option selected value="' + element.id + '">' + element.name + '</option>';
+                            founded = false
+                        } else {
+                            innerhtmlselect += '<option  value="' + element.id + '">' + element.name + '</option>';
 
                         }
                     });
                     /////////////////////////////////////////
                     var selectElement = document.getElementById('category_attributes');
                     var selectedOptionIds = [];
-                    let myfiltringattributes =  document.querySelector('#category_filtring_attributes').value;
+                    let myfiltringattributes = document.querySelector('#category_filtring_attributes').value;
                     let myfiltringattributesarray = myfiltringattributes.split(',');
                     for (var i = 0; i < selectElement.options.length; i++) {
                         if (selectElement.options[i].selected) {
 
-                            myfiltringattributesarray.forEach(el=>{
-                            if(el==selectElement.options[i].value)
-                            {
-                                founded=true;
-                            }
-                        })
-                        if(founded==true){
-                            innerhtmlselect += '<option selected value="'+selectElement.options[i].value+'">'+selectElement.options[i].text+'</option>';
-                            founded=false;
-                        }else{
-                            innerhtmlselect += '<option value="'+selectElement.options[i].value+'">'+selectElement.options[i].text+'</option>';
+                            myfiltringattributesarray.forEach(el => {
+                                if (el == selectElement.options[i].value) {
+                                    founded = true;
+                                }
+                            })
+                            if (founded == true) {
+                                innerhtmlselect += '<option selected value="' + selectElement.options[i].value + '">' + selectElement.options[i].text + '</option>';
+                                founded = false;
+                            } else {
+                                innerhtmlselect += '<option value="' + selectElement.options[i].value + '">' + selectElement.options[i].text + '</option>';
 
-                        }
+                            }
                         }
                     }
                     /////////////////////////////////////////
@@ -268,107 +267,190 @@
 
 
     }
-    function load_categories_attributes(){
+
+    function load_categories_attributes() {
         let parent_category = document.getElementById('selected_parent_id');
-        if(parent_category){
+        if (parent_category) {
 
             $.ajax({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            type:"POST",
-            url:'{{ route('categories.categories-attributes') }}',
-
-
-            data:{
-                category_id: parent_category.value
-            },
-            success: function(data) {
-                let innerhtmlselect ='';
-                let myattributes =  document.querySelector('#category_has_attributes').value;
-                let myattributesarray = myattributes.split(',');
-                let founded = false;
-                data.forEach(element=>{
-                    myattributesarray.forEach(el=>{
-                        if(el==element.id){
-                            founded=true;
-                        }
-                    })
-                    if(founded==true){
-
-                        innerhtmlselect += '<option selected value="'+element.id+'">'+element.name+'</option>';
-                        founded = false;
-                    }else{
-                        innerhtmlselect += '<option value="'+element.id+'">'+element.name+'</option>';
-                    }
-                })
-
-                $('select[id="category_attributes"]').html(innerhtmlselect);
-                AIZ.plugins.bootstrapSelect('refresh');
-            }
-        });
-        $.ajax({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            type:"POST",
-            url:'{{ route('categories.parent-attributes') }}',
-
-            data:{
-                category_id: parent_category.value
-            },
-            success: function(data) {
-                let innerhtmlselect ='';
-                let myattributes =  document.querySelector('#category_filtring_attributes').value;
-                let myattributesarray = myattributes.split(',');
-                let founded = false;
-                data.forEach(element=>{
-                    myattributesarray.forEach(el=>{
-                        if(el==element.id){
-                            founded=true;
-                        }
-                    })
-                    if(founded==true){
-                        innerhtmlselect += '<option selected value="'+element.id+'">'+element.name+'</option>';
-                        founded=false
-                    }else{
-                        innerhtmlselect += '<option  value="'+element.id+'">'+element.name+'</option>';
-
-                    }
-
-                });
-
-                console.log(innerhtmlselect)
-                /////////////////////////////////////////
-                var selectElement = document.getElementById('category_attributes');
-                var selectedOptionIds = [];
-                let myfiltringattributes =  document.querySelector('#category_filtring_attributes').value;
-                let myfiltringattributesarray = myfiltringattributes.split(',');
-
-                for (var i = 0; i < selectElement.options.length; i++) {
-                    if (selectElement.options[i].selected) {
-
-                        myfiltringattributesarray.forEach(el=>{
-                            if(el==selectElement.options[i].value)
-                            {
-                                founded=true;
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                type: "POST",
+                url: '{{ route('categories.categories-attributes') }}',
+                data: {
+                    category_id: parent_category.value
+                },
+                success: function(data) {
+                    let innerhtmlselect = '';
+                    let myattributes = document.querySelector('#category_has_attributes').value;
+                    let myattributesarray = myattributes.split(',');
+                    let founded = false;
+                    data.forEach(element => {
+                        myattributesarray.forEach(el => {
+                            if (el == element.id) {
+                                founded = true;
                             }
                         })
-                        if(founded==true){
-                            innerhtmlselect += '<option selected value="'+selectElement.options[i].value+'">'+selectElement.options[i].text+'</option>';
-                            founded=false;
-                        }else{
-                            innerhtmlselect += '<option  value="'+selectElement.options[i].value+'">'+selectElement.options[i].text+'</option>';
+                        if (founded == true) {
+
+                            innerhtmlselect += '<option selected value="' + element.id + '">' + element.name + '</option>';
+                            founded = false;
+                        } else {
+                            innerhtmlselect += '<option value="' + element.id + '">' + element.name + '</option>';
                         }
-                        }
+                    })
+
+                    $('select[id="category_attributes"]').html(innerhtmlselect);
+                    AIZ.plugins.bootstrapSelect('refresh');
                 }
-                /////////////////////////////////////////
-                $('select[id="filtering_attributes"]').html(innerhtmlselect);
-                AIZ.plugins.bootstrapSelect('refresh');
-            }
-        });
+            });
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                type: "POST",
+                url: '{{ route('categories.parent-attributes') }}',
+
+                data: {
+                    category_id: parent_category.value
+                },
+                success: function(data) {
+                    let innerhtmlselect = '';
+                    let myattributes = document.querySelector('#category_filtring_attributes').value;
+                    let myattributesarray = myattributes.split(',');
+                    let founded = false;
+                    data.forEach(element => {
+                        myattributesarray.forEach(el => {
+                            if (el == element.id) {
+                                founded = true;
+                            }
+                        })
+                        if (founded == true) {
+                            innerhtmlselect += '<option selected value="' + element.id + '">' + element.name + '</option>';
+                            founded = false
+                        } else {
+                            innerhtmlselect += '<option  value="' + element.id + '">' + element.name + '</option>';
+
+                        }
+
+                    });
+
+                    console.log(innerhtmlselect)
+                    /////////////////////////////////////////
+                    var selectElement = document.getElementById('category_attributes');
+                    var selectedOptionIds = [];
+                    let myfiltringattributes = document.querySelector('#category_filtring_attributes').value;
+                    let myfiltringattributesarray = myfiltringattributes.split(',');
+
+                    for (var i = 0; i < selectElement.options.length; i++) {
+                        if (selectElement.options[i].selected) {
+
+                            myfiltringattributesarray.forEach(el => {
+                                if (el == selectElement.options[i].value) {
+                                    founded = true;
+                                }
+                            })
+                            if (founded == true) {
+                                innerhtmlselect += '<option selected value="' + selectElement.options[i].value + '">' + selectElement.options[i].text + '</option>';
+                                founded = false;
+                            } else {
+                                innerhtmlselect += '<option  value="' + selectElement.options[i].value + '">' + selectElement.options[i].text + '</option>';
+                            }
+                        }
+                    }
+                    /////////////////////////////////////////
+                    $('select[id="filtering_attributes"]').html(innerhtmlselect);
+                    AIZ.plugins.bootstrapSelect('refresh');
+                }
+            });
         }
     }
 </script>
+<script>
+$(document).ready(function() {
+        var parentCategoryId = "{{ $category->parent_id != 0 ? $category->parent_id : 1 }}"; 
+        alert(parentCategoryId);
+        console.log(parentCategoryId);
+        $('#jstree').jstree({
+            'core': {
+                'data': {
+                    "url": "{{ route('categories.jstree') }}",
+                    "data": function(node) {
+                        return {
+                            "id": node.id
+                        };
+                    },
+                    "dataType": "json"
+                },
+                'check_callback': true,
+                'themes': {
+                    'responsive': false
+                }
+            },
+            "plugins": ["wholerow", "state", "search"] // Include the search plugin here
+        }).on("changed.jstree", function(e, data) {
+            if (data && data.selected && data.selected.length) {
+                var selectedId = data.selected[0]; // Get the ID of the first selected node
+                $('#selected_parent_id').val(selectedId); // Update hidden input with selected ID
 
+                // Call your functions to load attributes
+                load_categories_attributes();
+                load_filtring_attributes();
+            }
+        }).on("ready.jstree", function(e, data) {
+        // Pre-select the node once the tree is fully loaded
+        $('#jstree').jstree("select_node", parentCategoryId);
+    });
+
+
+
+    });
+
+
+    // Search configuration
+    var to = false;
+    $('#search_input').keyup(function() {
+        if (to) {
+            clearTimeout(to);
+        }
+        to = setTimeout(function() {
+            var v = $('#search_input').val();
+            if (v === "") {
+                lastSearchTerm = null;
+                // Explicitly reset the URL for the initial data load
+                $('#jstree').jstree(true).settings.core.data.url = "{{ route('categories.jstree') }}";
+
+                $('#jstree').jstree(true).settings.core.data.data = function(node) {
+                        return {
+                            "id": node.id
+                        };
+                    },
+                    $('#jstree').jstree(false, true).refresh(); // Refresh the tree to load initial data
+            } else {
+                lastSearchTerm = v;
+                $.ajax({
+                    url: "{{ route('categories.jstreeSearch') }}", // Your actual API endpoint
+                    type: 'GET', // Or 'POST', depending on your API
+                    dataType: 'json', // Expected data format from API
+                    data: {
+                        searchTerm: v // Send the search term to your API
+                    },
+                    success: function(response) {
+                        console.log(response);
+                        // Assuming 'response' contains the data to update the jstree
+                        // You will need to process 'response' to fit your jstree's data format
+
+                        // Example: clear the existing jstree and populate with new data
+                        $('#jstree').jstree(true).settings.core.data = response;
+                        $('#jstree').jstree(true).refresh();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error during search API call:", status, error);
+                    }
+                });
+            }
+        }, 250);
+    });
+</script>
 @endsection
