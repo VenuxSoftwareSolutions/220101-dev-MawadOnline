@@ -370,8 +370,7 @@ CoreComponentRepository::initializeCache();
 <script>
 $(document).ready(function() {
         var parentCategoryId = "{{ $category->parent_id != 0 ? $category->parent_id : 1 }}"; 
-        alert(parentCategoryId);
-        console.log(parentCategoryId);
+       
         $('#jstree').jstree({
             'core': {
                 'data': {
