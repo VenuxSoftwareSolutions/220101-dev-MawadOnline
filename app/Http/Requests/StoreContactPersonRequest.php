@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Auth;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreContactPersonRequest extends FormRequest
 {
@@ -36,10 +37,18 @@ class StoreContactPersonRequest extends FormRequest
      */
     public function rules()
     {
+        $user_id = Auth::id(); // Retrieve the authenticated user's ID
+
         return [
             'first_name' => 'nullable|string|max:64|regex:/\D/',
             'last_name' => 'nullable|string|max:64|regex:/\D/',
-            'email' => 'nullable|email',
+            'email' => [
+                'nullable',
+                'email',
+                Rule::unique('contact_people')->where(function ($query) use ($user_id) {
+                    return $query->where('user_id', '<>', $user_id);
+                }),
+            ],
             'mobile_phone' => $this->input('mobile_phone') != '+971' ? ['nullable', 'string', 'max:16', new \App\Rules\UaeMobilePhone] :'',
             'additional_mobile_phone' => $this->input('additional_mobile_phone') != '+971' ? ['nullable', 'string', 'max:16', new \App\Rules\UaeMobilePhone]:'',
             'nationality' => 'nullable|string|max:255',

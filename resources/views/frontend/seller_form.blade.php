@@ -655,7 +655,7 @@ use Carbon\Carbon;
                                                                     class="text-primary">*</span></label>
                                                             <br>
                                                             <select  title="{{ translate('Select Nationality') }}"
-                                                                name="nationality" class="selectpicker countrypicker"
+                                                                name="nationality" class="form-control selectpicker countrypicker"
                                                                 @if (isset($user->contact_people) && !empty($user->contact_people->nationality)) data-default="{{ $user->contact_people->nationality }}" @else data-default="" @endif
                                                                 data-flag="true"></select>
 
@@ -2254,6 +2254,7 @@ use Carbon\Carbon;
                 changeYear: true,      // Enable year dropdown
                  yearRange: "-100:+10"  // Optional: specify the range of years available
             });
+
         });
     </script>
 

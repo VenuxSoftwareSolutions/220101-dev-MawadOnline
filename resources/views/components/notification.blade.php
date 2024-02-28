@@ -27,15 +27,15 @@
                         @if ($is_linkable)
                             </a>
                         @endif
-                        
+
                         {{ translate(' has been ' . ucfirst(str_replace('_', ' ', $notification->data['status']))) }}
-                        
+
                     @elseif ($notification->type == 'App\Notifications\ShopVerificationNotification')
                         @if ($user_type == 'admin')
                             @if ($is_linkable)
                                 <a href="{{ route('sellers.show_verification_request', $notification->data['id']) }}">
                             @endif
-                            {{ $notification->data['name'] }}: 
+                            {{ $notification->data['name'] }}:
                             @if ($is_linkable)
                                 </a>
                             @endif
@@ -44,7 +44,7 @@
                         @endif
                         {{ translate('verification request has been '.$notification->data['status']) }}
                     @elseif ($notification->type == 'App\Notifications\ShopProductNotification')
-                        @php 
+                        @php
                             $product_id     = $notification->data['id'];
                             $product_type   = $notification->data['type'];
                             $product_name   = $notification->data['name'];
@@ -55,7 +55,7 @@
                                         ? route('products.seller.edit', ['id'=>$product_id, 'lang'=>$lang])
                                         : route('digitalproducts.edit', ['id'=>$product_id, 'lang'=>$lang] ))
                                     : ( $product_type == 'physical'
-                                        ? route('seller.products.edit', ['id'=>$product_id, 'lang'=>$lang]) 
+                                        ? route('seller.products.edit', ['id'=>$product_id, 'lang'=>$lang])
                                         : route('seller.digitalproducts.edit',  ['id'=>$product_id, 'lang'=>$lang] ));
                         @endphp
 
@@ -65,14 +65,14 @@
                         @else
                             {{ $product_name }}
                         @endif
-                        
+
                         {{ translate(' is').' '.$notification->data['status'] }}
                     @elseif ($notification->type == 'App\Notifications\PayoutNotification')
-                        @php 
+                        @php
                             $route = $user_type == 'admin'
                                     ? ( $notification->data['status'] == 'pending' ? route('withdraw_requests_all') : route('sellers.payment_histories'))
                                     : ( $notification->data['status'] == 'pending' ? route('seller.money_withdraw_requests.index') : route('seller.payments.index'));
-                            
+
                         @endphp
 
                          {{ $user_type == 'admin' ? $notification->data['name'].': ' : translate('Your') }}
@@ -82,6 +82,24 @@
                              {{ translate('payment') }}
                          @endif
                          {{ single_price($notification->data['payment_amount']).' '.translate('is').' '.translate($notification->data['status']) }}
+
+                    @elseif ($notification->type == 'App\Notifications\CustomStatusNotification' && isset($notification->data['message']))
+                    <!-- Access notification data -->
+                            @if ($notification->data['newStatus'] == 'Suspended')
+                            {{ __('messages.suspended_notification', ['reason' =>$notification->data['suspendedTitle'] ?? ""]) }}
+                            @elseif ($notification->data['newStatus'] == 'Pending Approval')
+                            {{ __('messages.registration_completed') }}
+                            @elseif ($notification->data['newStatus'] == 'Closed')
+                            {{ __('messages.vendor_closed') }}
+                            @elseif ($notification->data['newStatus'] == 'Pending Closure')
+                            {{ __('messages.pending_closure') }}
+                            @elseif ($notification->data['newStatus'] == 'Enabled')
+                            {{ __('messages.approved') }}
+                            @elseif ($notification->data['newStatus'] == 'Rejected')
+                            {{ __('messages.registration_rejected') }}
+                        @endif
+                    @else
+                        <!-- Handle other notification types -->
                     @endif
                 </p>
                 <small class="text-muted">
