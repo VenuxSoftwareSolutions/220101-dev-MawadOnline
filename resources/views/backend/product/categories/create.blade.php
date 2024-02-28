@@ -202,7 +202,7 @@ CoreComponentRepository::initializeCache();
                             <div class="row">
                                 <label class="col-md-3 col-form-label">{{translate('Meta Description')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
                                 <div class="col-md-9">
-                                    <textarea name="meta_description{{$language->code=='en'?'':'_'.$language->code}}" rows="5" placeholder="{{translate('Meta Description '. ($language->code))}}" class="form-control"> {{old('meta_description'. ($language->code=='en'?'':'_'.$language->code))}}</textarea>
+                                    <textarea name="meta_description{{$language->code=='en'?'':'_'.$language->code}}" rows="5" class="form-control">{{old('meta_description'. ($language->code=='en'?'':'_'.$language->code))}}</textarea>
                                 </div>
                             </div>
                         </div>
