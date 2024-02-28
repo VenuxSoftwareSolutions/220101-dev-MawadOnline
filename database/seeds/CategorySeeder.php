@@ -197,7 +197,7 @@ class CategorySeeder extends Seeder
                     'name' => $childCategoryName,
                     'slug' => $childCategorySlug,
                     'parent_id' => $lastSubCategoryId ? $lastSubCategoryId : $lastMainCategoryId,
-                    'level' => 2,
+                    'level' => 3,
                 ]);
 
                 $childCategory_translation = CategoryTranslation::firstOrCreate([

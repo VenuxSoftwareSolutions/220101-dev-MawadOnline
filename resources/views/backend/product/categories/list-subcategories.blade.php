@@ -20,7 +20,7 @@
                     @endif
                 </div>
                 <div class="flex-item"  style="color:white">--</div>
-                <div class="flex-item">{{ $category->getTranslation('name') }}</div>
+                <div class="flex-item">{!! $category->getTranslation('name') !!}</div>
             <!-- Add more divs as needed -->
           </div>
 
