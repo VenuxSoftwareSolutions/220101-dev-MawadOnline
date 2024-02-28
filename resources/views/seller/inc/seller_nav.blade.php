@@ -59,7 +59,10 @@
                                     <a class="nav-link" data-toggle="tab" data-type="seller"
                                         href="#payouts-notifications" role="tab" id="sellers-tab">{{ translate('Payouts') }}</a>
                                 </li>
-                                
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" data-type="status" href="#status-notifications" role="tab" id="status-tab">{{ translate('Status') }}</a>
+                                </li>
+
                             </ul>
                             <div class="tab-content">
                                 <div class="tab-pane active" id="orders-notifications" role="tabpanel">
@@ -70,6 +73,9 @@
                                 </div>
                                 <div class="tab-pane" id="payouts-notifications" role="tabpanel">
                                     <x-notification :notifications="auth()->user()->unreadNotifications()->where('type', 'App\Notifications\PayoutNotification')->take(20)->get()" />
+                                </div>
+                                <div class="tab-pane" id="status-notifications" role="tabpanel">
+                                    <x-notification :notifications="auth()->user()->unreadNotifications()->where('type', 'App\Notifications\CustomStatusNotification')->take(20)->get()" />
                                 </div>
                             </div>
                         </div>

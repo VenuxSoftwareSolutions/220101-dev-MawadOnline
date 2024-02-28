@@ -53,6 +53,17 @@ class ShopController extends Controller
         return view('seller.shop', compact('shop'));
     }
 
+    public function showStatus($status) {
+
+        if (Auth::check()) {
+            // User is authenticated
+            return view('frontend.seller-status');
+        } else {
+            // User is not authenticated, redirect to login page or handle accordingly
+            return redirect()->back();
+        }
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -68,18 +79,41 @@ class ShopController extends Controller
                 flash(translate('Admin or Customer cannot be a seller'))->error();
                 return back();
             }
-            if (Auth::user()->user_type == 'seller' && Auth::user()->steps) {
+            if (Auth::user()->user_type == 'seller' && Auth::user()->steps && Auth::user()->status == "Enabled") {
                 // flash(translate('This user already a seller'))->error();
                 // return back();
                 return redirect()->route('dashboard');
             }
 
-            if (Auth::user()->user_type == 'seller' && Auth::user()->steps == 0) {
+            if (Auth::user()->user_type == 'seller'  && (Auth::user()->status == "Draft" || Auth::user()->status == "Rejected") /* && Auth::user()->steps == 0 */) {
                 $user = Auth::user();
-                $step_number = Auth::user()->step_number;
+                if(Auth::user()->status == "Draft") {
+                    $step_number = Auth::user()->step_number;
 
-                flash(translate('You need to complete all steps to create a vendor account.'))->error();
+                    flash(translate('You need to complete all steps to create a vendor account.'))->error();
+                } else {
+                    $step_number = 2;
+                    flash(__('messages.registration_rejected'))->error();
+
+                }
+
                 return view('frontend.seller_form', compact('step_number', "user","emirates"));
+            }
+            if (Auth::user()->user_type == 'seller' && Auth::user()->steps && Auth::user()->status == "Pending Approval") {
+                $status =strtolower(str_replace(' ','-',Auth::user()->status)) ;
+                return redirect()->route('seller.status',$status);
+            }
+            if (Auth::user()->user_type == 'seller' && Auth::user()->steps && Auth::user()->status == "Pending Closure") {
+                $status =strtolower(str_replace(' ','-',Auth::user()->status)) ;
+                return redirect()->route('seller.status',$status);
+            }
+            if (Auth::user()->user_type == 'seller' && Auth::user()->steps && Auth::user()->status == "Suspended") {
+                $status =strtolower(str_replace(' ','-',Auth::user()->status)) ;
+                return redirect()->route('seller.status',$status);
+            }
+            if (Auth::user()->user_type == 'seller' && Auth::user()->steps && Auth::user()->status == "Closed") {
+                $status =strtolower(str_replace(' ','-',Auth::user()->status)) ;
+                return redirect()->route('seller.status',$status);
             }
         } else {
             return view('frontend.seller_form',compact('emirates'));
@@ -722,6 +756,7 @@ class ShopController extends Controller
         );
         $user = Auth::user();
         $user->steps = 1;
+        $user->status = 'Pending Approval';
         $user->save();
         return response()->json(['finish' => true, 'success' => true, 'message' => 'Shop stored successfully']);
 
