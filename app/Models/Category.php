@@ -15,6 +15,20 @@ class Category extends Model
         return $this->belongsTo(Category::class, 'parent_id');
     }
 
+    // Recursive parents
+    public function parents()
+    {
+        $parents = collect([]);
+
+        $parent = $this->parent;
+
+        while (!is_null($parent)) {
+            $parents->prepend($parent);
+            $parent = $parent->parent;
+        }
+
+        return $parents;
+    }
 
     public function getTranslation($field = '', $lang = false)
     {

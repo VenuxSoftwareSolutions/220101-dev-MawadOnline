@@ -145,10 +145,10 @@ class CategoryController extends Controller
         $formattedCategories = Cache::get('categories_children');
         if ($request->has("search") && !empty($request->search['value'])) {
             $searchResults = $this->searchAndHighlightCategory($formattedCategories, $request->search['value']);
-            return response()->json(['data' => $searchResults]);
+            return response()->json(['data' => $searchResults,'recordsTotal' => Category::all()->count()]);
         }
         if (isset($formattedCategories)) {
-            return response()->json(['data' => $formattedCategories]);
+            return response()->json(['data' => $formattedCategories,'recordsTotal' => Category::all()->count()]);
         } else {
             $parentId = $request->input('parent_id', 0); // Default to fetching top-level categories
 
@@ -156,7 +156,7 @@ class CategoryController extends Controller
 
             $formattedCategories = $this->formatCategories($categories);
 
-            return response()->json(['data' => $formattedCategories]);
+            return response()->json(['data' => $formattedCategories,'recordsTotal' => $categories->all()->count()]);
         }
     }
 
@@ -408,9 +408,13 @@ class CategoryController extends Controller
         $lang = $request->lang;
         $category = Category::findOrFail($id);
 
+        // Get all parents
+        $breadcrumbs = $category->parents();
+        // Add current category to the end
+        $breadcrumbs->push($category);
         $category_attributes = $category->categories_attributes()->pluck('attribute_id');
         $category_filtring_attributes = $category->attributes()->pluck('attribute_id');
-        return view('backend.product.categories.edit', compact('category', 'lang', 'category_attributes', 'category_filtring_attributes'));
+        return view('backend.product.categories.edit', compact('category', 'lang', 'category_attributes', 'category_filtring_attributes','breadcrumbs'));
     }
 
     /**
