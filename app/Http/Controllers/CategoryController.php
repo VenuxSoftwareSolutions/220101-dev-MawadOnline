@@ -145,10 +145,10 @@ class CategoryController extends Controller
         $formattedCategories = Cache::get('categories_children');
         if ($request->has("search") && !empty($request->search['value'])) {
             $searchResults = $this->searchAndHighlightCategory($formattedCategories, $request->search['value']);
-            return response()->json(['data' => $searchResults]);
+            return response()->json(['data' => $searchResults,'recordsTotal' => Category::all()->count()]);
         }
         if (isset($formattedCategories)) {
-            return response()->json(['data' => $formattedCategories]);
+            return response()->json(['data' => $formattedCategories,'recordsTotal' => Category::all()->count()]);
         } else {
             $parentId = $request->input('parent_id', 0); // Default to fetching top-level categories
 
@@ -156,7 +156,7 @@ class CategoryController extends Controller
 
             $formattedCategories = $this->formatCategories($categories);
 
-            return response()->json(['data' => $formattedCategories]);
+            return response()->json(['data' => $formattedCategories,'recordsTotal' => $categories->all()->count()]);
         }
     }
 
