@@ -69,14 +69,16 @@ class ProductController extends Controller
         $search = null;
         $products = Product::where('user_id', Auth::user()->id)->where(function ($query) {
             $query->where('is_draft', '=', 1)
-            ->where('parent_id', 0);
-        })->orWhere(function ($query) {
-            $query->where('is_draft',0)
-                ->where('parent_id', 0)
-                ->where('is_parent', 0);
-        })->orWhere(function ($query) {
-            $query->where('is_draft',0)
-                ->where('is_parent', 1);
+            ->where('parent_id', 0)
+            ->orWhere(function ($query) {
+                $query->where('is_draft',0)
+                    ->where('parent_id', 0)
+                    ->where('is_parent', 0);
+            })
+            ->orWhere(function ($query) {
+                $query->where('is_draft',0)
+                    ->where('is_parent', 1);
+            });
         })->orderBy('id','desc');
 
         if ($request->has('search')) {
@@ -84,12 +86,7 @@ class ProductController extends Controller
             $products = $products->where('name', 'like', '%' . $search . '%');
         }
         $products = $products->paginate(10);
-
         return view('seller.product.products.index', compact('products', 'search'));
-    }
-
-    public function draft($id){
-        
     }
 
     public function delete_image(Request $request){
@@ -133,7 +130,7 @@ class ProductController extends Controller
     {
         //dd($request->all());
         $product = $this->productService->store($request->except([
-            'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
+            'parent_id', 'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
         ]));
 
         $request->merge(['product_id' => $product->id]);
@@ -143,11 +140,11 @@ class ProductController extends Controller
             $products = Product::where('parent_id', $product->id)->get();
             if(count($products) > 0){
                 foreach($products as $child){
-                    $child->categories()->attach($request->category_ids);
+                    $child->categories()->attach($request->parent_id);
                 }
             }
         }
-        $product->categories()->attach($request->category_ids);
+        $product->categories()->attach($request->parent_id);
 
         //Upload documents, images and thumbnails
         if($request->document_names){
@@ -172,7 +169,7 @@ class ProductController extends Controller
         $parent = Product::find($request->product_id);
         if($parent != null){
             $product = $this->productService->draft($request->except([
-                'category_ids', 'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
+                'parent_id', 'category_ids', 'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
             ]), $parent);
 
             //Product categories
@@ -180,11 +177,11 @@ class ProductController extends Controller
                 $products = Product::where('parent_id', $product->id)->get();
                 if(count($products) > 0){
                     foreach($products as $child){
-                        $child->categories()->attach($request->category_ids);
+                        $child->categories()->attach($request->parent_id);
                     }
                 }
             }
-            $product->categories()->attach($request->category_ids);
+            $product->categories()->attach($request->parent_id);
 
             //Upload documents, images and thumbnails
             $data['document_names'] = $request->document_names;
@@ -448,24 +445,16 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        // if (Auth::user()->id != $product->user_id) {
-        //     flash(translate('This product is not yours.'))->warning();
-        //     return back();
-        // }
-
-        // $lang = $request->lang;
-        // $tags = json_decode($product->tags);
-        // $categories = Category::where('parent_id', 0)
-        //     ->where('digital', 0)
-        //     ->with('childrenCategories')
-        //     ->get();
         $product = Product::find($id);
         $colors = Color::orderBy('name', 'asc')->get();
         $product_category = ProductCategory::where('product_id', $id)->first();
         $vat_user = BusinessInformation::where('user_id', Auth::user()->id)->first();
-        $categories = Category::where('level', 1)
-            ->with('childrenCategories')
-            ->get();
+        if($product_category != null){
+            $categorie =  Category::find($product_category->category_id);
+        }else{
+            $categorie=null;
+        }
+        
         $attributes = [];
         $childrens = [];
         $childrens_ids = [];
@@ -510,6 +499,15 @@ class ProductController extends Controller
                     $attributes_ids = DB::table('categories_has_attributes')->whereIn('category_id', $parents)->pluck('attribute_id')->toArray();
                     if(count($attributes_ids) > 0){
                         $attributes = Attribute::whereIn('id',$attributes_ids)->get();
+                        $all_general_attributes = Attribute::whereIn('id',$attributes_ids)->whereNotIn('id', $variants_attributes_ids_attributes)->whereNotIn('id', $general_attributes_ids_attributes)->get();
+                        if(count($all_general_attributes) > 0){
+                            foreach($all_general_attributes as $attribute){
+                                $data_general_attributes[$attribute->id] = $attribute;
+                                if (!in_array($attribute->id, $general_attributes_ids_attributes)) {
+                                    array_push($general_attributes_ids_attributes, $attribute->id);
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -518,7 +516,7 @@ class ProductController extends Controller
                 return view('seller.product.products.draft', [
                     'product' => $product,
                     'vat_user' => $vat_user,
-                    'categories' => $categories,
+                    'categorie' => $categorie,
                     'product_category' => $product_category,
                     'attributes' => $attributes,
                     'childrens' => $childrens,
@@ -533,7 +531,7 @@ class ProductController extends Controller
                 return view('seller.product.products.edit', [
                     'product' => $product,
                     'vat_user' => $vat_user,
-                    'categories' => $categories,
+                    'categorie' => $categorie,
                     'product_category' => $product_category,
                     'attributes' => $attributes,
                     'childrens' => $childrens,
@@ -557,7 +555,7 @@ class ProductController extends Controller
         $parent = Product::find($request->product_id);
         if($parent != null){
             $product = $this->productService->update($request->except([
-                'category_ids', 'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
+                'parent_id', 'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
             ]), $parent);
 
             //Product categories
@@ -565,11 +563,11 @@ class ProductController extends Controller
                 $products = Product::where('parent_id', $product->id)->get();
                 if(count($products) > 0){
                     foreach($products as $child){
-                        $child->categories()->attach($request->category_ids);
+                        $child->categories()->attach($request->parent_id);
                     }
                 }
             }
-            $product->categories()->sync($request->category_ids);
+            $product->categories()->sync($request->parent_id);
 
             //Upload documents, images and thumbnails
             $data['document_names'] = $request->document_names;

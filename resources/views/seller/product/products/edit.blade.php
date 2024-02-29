@@ -1,4 +1,5 @@
 @extends('seller.layouts.app')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 
 @section('panel_content')
     <div class="aiz-titlebar mt-2 mb-4">
@@ -39,13 +40,13 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Product Name')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" name="name" value="{{ $product->name }}" placeholder="{{ translate('Product Name') }}" >
+                                <input type="text" required class="form-control" name="name" value="{{ $product->name }}" placeholder="{{ translate('Product Name') }}" >
                             </div>
                         </div>
                         <div class="form-group row" id="brand">
                             <label class="col-md-3 col-from-label">{{translate('Brand')}}</label>
                             <div class="col-md-8">
-                                <select class="form-control aiz-selectpicker" name="brand_id" id="brand_id" data-live-search="true">
+                                <select class="form-control aiz-selectpicker" name="brand_id" id="brand_id" required data-live-search="true">
                                     <option value="">{{ translate('Select Brand') }}</option>
                                     @foreach (\App\Models\Brand::all() as $brand)
                                     <option value="{{ $brand->id }}" @selected($product->brand_id == $brand->id)>{{ $brand->getTranslation('name') }}</option>
@@ -56,7 +57,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Unit of Sale')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" name="unit" value="{{ $product->unit }}" placeholder="{{ translate('Unit (e.g. KG, Pc etc)') }}" >
+                                <input type="text" required class="form-control" name="unit" value="{{ $product->unit }}" placeholder="{{ translate('Unit (e.g. KG, Pc etc)') }}" >
                             </div>
                         </div>
                         <div class="form-group row">
@@ -75,13 +76,13 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Manufacturer')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" name="manufacturer" value="{{ $product->manufacturer }}" placeholder="Manufacturer" >
+                                <input type="text"  class="form-control" name="manufacturer" value="{{ $product->manufacturer }}" placeholder="Manufacturer" >
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Tags')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control aiz-tag-input" value="{{ $product->tags }}" name="tags[]" placeholder="{{ translate('Type and hit enter to add a tag') }}">
+                                <input type="text" required class="form-control aiz-tag-input" value="{{ $product->tags }}" name="tags[]" placeholder="{{ translate('Type and hit enter to add a tag') }}">
                                 <small class="text-muted">{{translate('This is used for search. Input those words by which cutomer can find this product.')}}</small>
                             </div>
                         </div>
@@ -322,43 +323,27 @@
                     <div class="card-header">
                         <h5 class="mb-0 h6">{{ translate('Product Category') }}</h5>
                         <h6 class="float-right fs-13 mb-0">
+                            <span id="message-category"><span>
                             {{ translate('Select Main') }}
                             <span class="position-relative main-category-info-icon">
                                 <i class="las la-question-circle fs-18 text-info"></i>
                                 <span class="main-category-info bg-soft-info p-2 position-absolute d-none border">{{ translate('This will be used for commission based calculations and homepage category wise product Show.') }}</span>
                             </span>
+                            
                         </h6>
                     </div>
+                    <input type="hidden" id="selected_parent_id" name="parent_id" value="">
+
                     <div class="card-body">
+                        
                         <div class="tree_main">
-                            <ul id="bs_main" class="main_ul">
-                                @foreach ($categories as $key => $category)
-                                    <li id="bs_{{ $category->id }}">
-                                        <span class="plus">&nbsp;</span>
-                                        <span>{{ $category->getTranslation('name') }} </span>
-                                        <ul id="bs_l_1" class="sub_ul" style="display: none">
-                                            @foreach ($category->childrenCategories as $childCategory)
-                                                @if (count($childCategory->childrenCategories) > 0)
-                                                    <li id="bf_1">
-                                                        <span class="plus">&nbsp;</span>
-                                                        <span>{{ $childCategory->getTranslation('name') }} </span>
-                                                        <ul id="bf_l_1" style="display: none" class="inner_ul">
-                                                            @foreach ($childCategory->childrenCategories as $childrenCategorie)
-                                                                <li id="io_1"><input type="radio" name="category_ids" id="c_io_1" class="radio-category" @if($product_category != null) @if($product_category->category_id == $childrenCategorie->id) checked @endif @endif value="{{ $childrenCategorie->id }}" /><span>{{ $childrenCategorie->getTranslation('name') }}</span></li>
-                                                            @endforeach
-                                                        </ul>
-                                                    </li>
-                                                @else
-                                                    <li id="bf_1">
-                                                        <input type="radio" name="category_ids" class="radio-category" @if($product_category != null) @if($product_category->category_id == $childrenCategorie->id) checked @endif @endif value="{{ $childCategory->id }}" id="c_bf_1" />
-                                                        <span>{{ $childCategory->getTranslation('name') }} </span>
-                                                    </li>
-                                                @endif
-                                            @endforeach
-                                        </ul>
-                                    </li>
-                                @endforeach
-                            </ul>
+                            
+                            <input type="text" value="{{ $categorie->name }}" id="search_input" class="form-control" placeholder="Search">
+                            <small style="color: red">To select a different category, please clear the search field, However, you must choose other attributes to modify your variants</small>
+                            <div class="h-300px overflow-auto c-scrollbar-light">
+
+                                <div id="jstree"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -832,39 +817,11 @@
 @endsection
 
 @section('script')
-<!-- Treeview js -->
-<script src="{{ static_asset('assets/js/hummingbird-treeview.js') }}"></script>
 <script src="{{ static_asset('assets/js/countrySelect.min.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js" integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
-<script>
-    $(document).ready(function () {
-        $(".plus").click(function () {
-            $(this).toggleClass("minus").siblings("ul").toggle();
-        })
-    })
-
-    function check_fst_lvl(dd) {
-        //var ss = $('#' + dd).parents("ul[id^=bs_l]").attr("id");
-        var ss = $('#' + dd).parent().closest("ul").attr("id");
-        if ($('#' + ss + ' > li input[type=checkbox]:checked').length == $('#' + ss + ' > li input[type=checkbox]').length) {
-            //$('#' + ss).siblings("input[id^=c_bs]").prop('checked', true);
-            $('#' + ss).siblings("input[type=checkbox]").prop('checked', true);
-        }
-        else {
-            //$('#' + ss).siblings("input[id^=c_bs]").prop('checked', false);
-            $('#' + ss).siblings("input[type=checkbox]").prop('checked', false);
-        }
-
-    }
-
-    function pageLoad() {
-        $(".plus").click(function () {
-            $(this).toggleClass("minus").siblings("ul").toggle();
-        })
-    }
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 
 <script type="text/javascript">
     $(document).ready(function() {
@@ -891,6 +848,51 @@
             return this.filter(function(i) {return a.indexOf(i) < 0;});
         };
 
+        function getCategorySelected(){
+            if (to) {
+                clearTimeout(to);
+            }
+            to = setTimeout(function() {
+                var v = "{{ $categorie->name }}";
+                if (v === "") {
+                    lastSearchTerm = null;
+                        // Explicitly reset the URL for the initial data load
+                    $('#jstree').jstree(true).settings.core.data.url = "{{ route('seller.categories.jstree') }}";
+
+                    $('#jstree').jstree(true).settings.core.data.data = function(node) {
+                        return {
+                            "id": node.id
+                        };
+                    },
+                    $('#jstree').jstree(false, true).refresh(); // Refresh the tree to load initial data
+                } else {
+                    lastSearchTerm = v;
+                    $.ajax({
+                        url: "{{ route('seller.categories.jstreeSearch') }}", // Your actual API endpoint
+                        type: 'GET', // Or 'POST', depending on your API
+                        dataType: 'json', // Expected data format from API
+                        data: {
+                            searchTerm: v // Send the search term to your API
+                        },
+                        success: function(response) {
+                            console.log(response);
+                            // Assuming 'response' contains the data to update the jstree
+                            // You will need to process 'response' to fit your jstree's data format
+
+                            // Example: clear the existing jstree and populate with new data
+                            $('#jstree').jstree(true).settings.core.data = response;
+                            $('#jstree').jstree(true).refresh();
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error during search API call:", status, error);
+                        }
+                    });
+                }
+            }, 250);
+        }
+
+        getCategorySelected();
+
         //activate variant option
         $('body input[name="activate_attributes"]').on('change', function() {
             if (!$('body input[name="activate_attributes"]').is(':checked')) {
@@ -900,11 +902,13 @@
                 $('#btn-create-variant').hide();
                 AIZ.plugins.bootstrapSelect('refresh');
             } else {
-                if ($('.radio-category:checked').length > 0) {
+                var category_choosen = $("#selected_parent_id").val();
+                if (category_choosen != "1") {
                     if ($('#attributes option').length > 0) {
                         $('body #attributes').prop('disabled', false);
                         $('#variant_informations').show();
                         $('#btn-create-variant').show();
+                        $('.div-btn').show();
                         AIZ.plugins.bootstrapSelect('refresh');
                     } else {
                         $('body input[name="activate_attributes"]').prop('checked', false);
@@ -922,7 +926,6 @@
                             'error'
                         )
                 }
-
             }
         });
 
@@ -2096,114 +2099,140 @@
     });
 </script>
 
-<script type="text/javascript">
-    $(document).ready(function() {
-        $("#treeview").hummingbird();
+<script>
+    $(function() {
+        $('#jstree').jstree({
+            'core': {
+                'data': {
+                    "url": "{{ route('seller.categories.jstree') }}",
+                    "data": function(node) {
+                        return {
+                            "id": node.id
+                        };
+                    },
+                    "dataType": "json"
+                },
+                'check_callback': true,
+                'themes': {
+                    'responsive': false
+                }
+            },
+            "plugins": ["wholerow", "search"] // Include the search plugin here
+        }).on("changed.jstree", function(e, data) {
+            if (data && data.selected && data.selected.length) {
+                    var selectedId = data.selected[0]; // Get the ID of the first selected node
+                    
+                    // Check if the selected node has children
+                    var node = $('#jstree').jstree(true).get_node(selectedId);
+                    
+                    if ((!node.children || node.children.length === 0) && node.state.loaded ==  true) {
+                        $('#message-category').text("Correct choice.");
+                        $('#message-category').css({'color': 'green', 'margin-right': '7px'});
+                        // The node does not have children, proceed with your logic
+                        $('#selected_parent_id').val(selectedId); // Update hidden input with selected ID
+                        $('body .div-btn').hide();
+                        $('#general_attributes').empty();
+                        AIZ.plugins.bootstrapSelect('refresh');
+                        // Call your functions to load attributes
+                        load_attributes(selectedId);
+                    } else {
+                        // The node has children, maybe clear selection or handle differently
+                        $('#message-category').text("Please select a category without subcategories.");
+                        $('#message-category').css({'color': 'red', 'margin-right': '7px'});
+                        // $('#attributes_bloc').html('<select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" id="attributes" multiple disabled data-placeholder="{{ translate("No attributes found") }}"></select>');
+                        // $('body input[name="activate_attributes"]').prop("checked", false);
+                        // $('#variant_informations').hide();
+                        // $('body .div-btn').hide();
+                        // $('body #bloc_variants_created').hide();
+                        // $('#general_attributes').empty();
+                        // AIZ.plugins.bootstrapSelect('refresh');
+                        // Optionally, clear selection here if needed
+                        // $('#jstree').jstree(true).deselect_node(selectedId);
+                    }
+                }
+        });
     });
 
-    $("[name=shipping_type]").on("change", function() {
-        $(".product_wise_shipping_div").hide();
-        $(".flat_rate_shipping_div").hide();
-        if ($(this).val() == 'product_wise') {
-            $(".product_wise_shipping_div").show();
+    // Search configuration
+    var to = false;
+    $('#search_input').keyup(function() {
+        if (to) {
+            clearTimeout(to);
         }
-        if ($(this).val() == 'flat_rate') {
-            $(".flat_rate_shipping_div").show();
-        }
+        to = setTimeout(function() {
+            var v = $('#search_input').val();
+            if (v === "") {
+                lastSearchTerm = null;
+                    // Explicitly reset the URL for the initial data load
+                $('#jstree').jstree(true).settings.core.data.url = "{{ route('seller.categories.jstree') }}";
 
+                $('#jstree').jstree(true).settings.core.data.data = function(node) {
+                    return {
+                        "id": node.id
+                    };
+                },
+                $('#jstree').jstree(false, true).refresh(); // Refresh the tree to load initial data
+            } else {
+                lastSearchTerm = v;
+                $.ajax({
+                    url: "{{ route('seller.categories.jstreeSearch') }}", // Your actual API endpoint
+                    type: 'GET', // Or 'POST', depending on your API
+                    dataType: 'json', // Expected data format from API
+                    data: {
+                        searchTerm: v // Send the search term to your API
+                    },
+                    success: function(response) {
+                        console.log(response);
+                        // Assuming 'response' contains the data to update the jstree
+                        // You will need to process 'response' to fit your jstree's data format
+
+                        // Example: clear the existing jstree and populate with new data
+                        $('#jstree').jstree(true).settings.core.data = response;
+                        $('#jstree').jstree(true).refresh();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error during search API call:", status, error);
+                    }
+                });
+            }
+        }, 250);
     });
 
-    function add_more_customer_choice_option(i, name) {
+    function load_attributes(categorie_id) {
         $.ajax({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            type: "POST",
-            url: '{{ route('seller.products.add-more-choice-option') }}',
-            data: {
-                attribute_id: i
+            type:"GET",
+            url:'{{ route('seller.products.getAttributeCategorie') }}',
+            data:{
+                id: categorie_id
             },
             success: function(data) {
-                var obj = JSON.parse(data);
-                $('#customer_choice_options').append('\
-                    <div class="form-group row">\
-                        <div class="col-md-3">\
-                            <input type="hidden" name="choice_no[]" value="' + i + '">\
-                            <input type="text" class="form-control" name="choice[]" value="' + name +
-                    '" placeholder="{{ translate('Choice Title') }}" readonly>\
-                        </div>\
-                        <div class="col-md-8">\
-                            <select class="form-control aiz-selectpicker attribute_choice" data-live-search="true" name="choice_options_' + i + '[]" multiple>\
-                                ' + obj + '\
-                            </select>\
-                        </div>\
-                    </div>');
+                if(data.html != ""){
+                    $('#attributes_bloc').html(data.html);
+                }else{
+                    $('#attributes_bloc').html('<select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" id="attributes" multiple disabled data-placeholder="{{ translate("No attributes found") }}"></select>');
+                    $('body input[name="activate_attributes"]').prop("checked", false);
+                    $('#variant_informations').hide();
+                    $('body .div-btn').hide();
+                    $('body #bloc_variants_created').hide();
+                }
+
+                $('#general_attributes').html(data.html_attributes_generale);
+                if($('body #bloc_variants_created').is(':empty')){
+                    $('body input[name="activate_attributes"]').prop("checked", false);
+                }else{
+                    $('body input[name="activate_attributes"]').prop("checked", true);
+                    $('body input[name="activate_attributes"]').prop("disabled", false);
+                    $('body #attributes').prop("disabled", false);
+                    $('body #bloc_attributes').empty();
+                }
+                
+
                 AIZ.plugins.bootstrapSelect('refresh');
             }
         });
-
-
-    }
-
-    $('input[name="colors_active"]').on('change', function() {
-        if (!$('input[name="colors_active"]').is(':checked')) {
-            $('#colors').prop('disabled', true);
-            AIZ.plugins.bootstrapSelect('refresh');
-        } else {
-            $('#colors').prop('disabled', false);
-            AIZ.plugins.bootstrapSelect('refresh');
-        }
-        update_sku();
-    });
-
-    $(document).on("change", ".attribute_choice", function() {
-        update_sku();
-    });
-
-    $('#colors').on('change', function() {
-            update_sku();
-        });
-
-    $('input[name="unit_price"]').on('keyup', function() {
-        update_sku();
-    });
-
-    // $('input[name="name"]').on('keyup', function() {
-    //     update_sku();
-    // });
-
-    function delete_row(em) {
-        $(em).closest('.form-group row').remove();
-        update_sku();
-    }
-
-    function delete_variant(em) {
-        $(em).closest('.variant').remove();
-    }
-
-    function update_sku() {
-        $.ajax({
-            type: "POST",
-            url: '{{ route('seller.products.sku_combination') }}',
-            data: $('#choice_form').serialize(),
-            success: function(data) {
-                $('#sku_combination').html(data);
-                AIZ.plugins.fooTable();
-                if (data.trim().length > 1) {
-                    $('#show-hide-div').hide();
-                } else {
-                    $('#show-hide-div').show();
-                }
-            }
-        });
-    }
-
-    $('#choice_attributes').on('change', function() {
-        $('#customer_choice_options').html(null);
-        $.each($("#choice_attributes option:selected"), function() {
-            add_more_customer_choice_option($(this).val(), $(this).text());
-        });
-        update_sku();
-    });
+    };
 </script>
 @endsection
