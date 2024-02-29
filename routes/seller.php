@@ -23,8 +23,12 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
     Route::controller(ProductController::class)->group(function () {
         Route::get('/products', 'index')->name('products');
         Route::get('/product/create', 'create')->name('products.create');
+        Route::get('/product/delete_variant', 'delete_variant')->name('products.delete_variant');
         Route::post('/products/store/', 'store')->name('products.store');
+        Route::post('/products/store_draft', 'store_draft')->name('products.store_draft');
         Route::get('/product/{id}/edit', 'edit')->name('products.edit');
+        Route::get('/getAttributeCategorie', 'getAttributeCategorie')->name('products.getAttributeCategorie');
+        Route::get('/getAttributes', 'getAttributes')->name('products.getAttributes');
         Route::post('/products/update/{product}', 'update')->name('products.update');
         Route::get('/products/duplicate/{id}', 'duplicate')->name('products.duplicate');
         Route::post('/products/sku_combination', 'sku_combination')->name('products.sku_combination');
@@ -33,6 +37,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
         Route::post('/products/seller/featured', 'updateFeatured')->name('products.featured');
         Route::post('/products/published', 'updatePublished')->name('products.published');
         Route::get('/products/destroy/{id}', 'destroy')->name('products.destroy');
+        Route::get('/products/draft/{id}', 'draft')->name('products.draft');
+        Route::get('/products/delete_image', 'delete_image')->name('products.delete_image');
         Route::post('/products/bulk-delete', 'bulk_product_delete')->name('products.bulk-delete');
     });
 

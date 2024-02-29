@@ -12,13 +12,6 @@
         <div class="col-auto">
             <h1 class="h3">{{translate('All products')}}</h1>
         </div>
-        @if($type != 'Seller' && auth()->user()->can('add_new_product'))
-            <div class="col text-right">
-                <a href="{{ route('products.create') }}" class="btn btn-circle btn-info">
-                    <span>{{translate('Add New Product')}}</span>
-                </a>
-            </div>
-        @endif
     </div>
 </div>
 <br>
@@ -41,7 +34,7 @@
                 </div>
             @endcan
             
-            @if($type == 'Seller')
+            {{-- @if($type == 'Seller')
             <div class="col-md-2 ml-auto">
                 <select class="form-control form-control-sm aiz-selectpicker mb-2 mb-md-0" id="user_id" name="user_id" onchange="sort_products()">
                     <option value="">{{ translate('All Sellers') }}</option>
@@ -62,7 +55,7 @@
                         @endforeach
                 </select>
             </div>
-            @endif
+            @endif --}}
             <div class="col-md-2 ml-auto">
                 <select class="form-control form-control-sm aiz-selectpicker mb-2 mb-md-0" name="type" id="type" onchange="sort_products()">
                     <option value="">{{ translate('Sort By') }}</option>
@@ -85,39 +78,30 @@
             <table class="table aiz-table mb-0">
                 <thead>
                     <tr>
-                        @if(auth()->user()->can('product_delete'))
-                            <th>
-                                <div class="form-group">
-                                    <div class="aiz-checkbox-inline">
-                                        <label class="aiz-checkbox">
-                                            <input type="checkbox" class="check-all">
-                                            <span class="aiz-square-check"></span>
-                                        </label>
-                                    </div>
+                        <th>
+                            <div class="form-group">
+                                <div class="aiz-checkbox-inline">
+                                    <label class="aiz-checkbox">
+                                        <input type="checkbox" class="check-all">
+                                        <span class="aiz-square-check"></span>
+                                    </label>
                                 </div>
-                            </th>
-                        @else
-                            <th data-breakpoints="lg">#</th>
-                        @endif
-                        <th>{{translate('Name')}}</th>
-                        @if($type == 'Seller' || $type == 'All')
-                            <th data-breakpoints="lg">{{translate('Added By')}}</th>
-                        @endif
-                        <th data-breakpoints="sm">{{translate('Info')}}</th>
-                        <th data-breakpoints="md">{{translate('Total Stock')}}</th>
-                        <th data-breakpoints="lg">{{translate('Todays Deal')}}</th>
-                        <th data-breakpoints="lg">{{translate('Published')}}</th>
-                        @if(get_setting('product_approve_by_admin') == 1 && $type == 'Seller')
-                            <th data-breakpoints="lg">{{translate('Approved')}}</th>
-                        @endif
-                        <th data-breakpoints="lg">{{translate('Featured')}}</th>
-                        <th data-breakpoints="sm" class="text-right">{{translate('Options')}}</th>
+                            </div>
+                        </th>
+                        <th width="30%">{{ translate('Name')}}</th>
+                        {{-- <th data-breakpoints="md">{{ translate('Category')}}</th> --}}
+                        <th data-breakpoints="md">{{ translate('Current Qty')}}</th>
+                        <th>{{ translate('Base Price')}}</th>
+                        <th data-breakpoints="md">{{ translate('Status')}}</th>
+                        <th data-breakpoints="md">{{ translate('Draft')}}</th>
+                        <th data-breakpoints="md">{{ translate('Featured')}}</th>
+                        <th data-breakpoints="md" class="text-right">{{ translate('Options')}}</th>
                     </tr>
                 </thead>
+
                 <tbody>
-                    @foreach($products as $key => $product)
-                    <tr>
-                        @if(auth()->user()->can('product_delete'))
+                    @foreach ($products as $key => $product)
+                        <tr>
                             <td>
                                 <div class="form-group d-inline-block">
                                     <label class="aiz-checkbox">
@@ -126,104 +110,143 @@
                                     </label>
                                 </div>
                             </td>
-                        @else
-                            <td>{{ ($key+1) + ($products->currentPage() - 1)*$products->perPage() }}</td>
-                        @endif
-                        <td>
-                            <div class="row gutters-5 w-200px w-md-300px mw-100">
-                                <div class="col-auto">
-                                    <img src="{{ uploaded_asset($product->thumbnail_img)}}" alt="Image" class="size-50px img-fit">
-                                </div>
-                                <div class="col">
-                                    <span class="text-muted text-truncate-2">{{ $product->getTranslation('name') }}</span>
-                                </div>
-                            </div>
-                        </td>
-                        @if($type == 'Seller' || $type == 'All')
-                            <td>{{ optional($product->user)->name }}</td>
-                        @endif
-                        <td>
-                            <strong>{{translate('Num of Sale')}}:</strong> {{ $product->num_of_sale }} {{translate('times')}} </br>
-                            <strong>{{translate('Base Price')}}:</strong> {{ single_price($product->unit_price) }} </br>
-                            <strong>{{translate('Rating')}}:</strong> {{ $product->rating }} </br>
-                        </td>
-                        <td>
-                            @if($product->digital == 1)
-                            <span class="badge badge-inline badge-info">{{ translate('Digital Product') }}</span>
-                            @else
+                            <td>
+                                <a href="{{ route('product', $product->slug) }}" target="_blank" class="text-reset">
+                                    {{ $product->sku }}
+                                </a>
+                            </td>
+                            {{-- <td>
+                                @if ($product->main_category != null)
+                                    {{ $product->main_category->getTranslation('name') }}
+                                @endif
+                            </td> --}}
+                            <td>
                                 @php
                                     $qty = 0;
-                                    if($product->variant_product) {
-                                        foreach ($product->stocks as $key => $stock) {
-                                            $qty += $stock->qty;
-                                            echo $stock->variant.' - '.$stock->qty.'<br>';
-                                        }
+                                    foreach ($product->stocks as $key => $stock) {
+                                        $qty += $stock->qty;
                                     }
-                                    else {
-                                        //$qty = $product->current_stock;
-                                        $qty = optional($product->stocks->first())->qty;
-                                        echo $qty;
-                                    }
+                                    echo $qty;
                                 @endphp
-                                @if($qty <= $product->low_stock_quantity)
-                                    <span class="badge badge-inline badge-danger">{{ translate('Low') }}</span>
+                            </td>
+                            <td>{{ $product->unit_price }}</td>
+                            <td>
+                                @if($product->is_parent == 0)
+                                        @switch($product->approved)
+                                            @case(0)
+                                                <span class="badge badge-primary width-badge" style="background-color: #2E294E;">{{ translate('Pending')}}</span>
+                                            @break
+                                        
+                                            @case(1)
+                                            <span class="badge badge-success width-badge">{{ translate('Approved')}}</span>
+                                                @break
+                                            @case(4)
+                                                <span class="badge badge-info width-badge">{{ translate('Under Review')}}</span>
+                                                @break
+                                            @case(2)
+                                            <span class="badge badge-warning width-badge">{{ translate('Revision Required')}}</span>
+                                                @break
+                                            @case(3)
+                                                <span class="badge badge-danger width-badge">{{ translate('Rejected')}}</span>
+                                                    @break
+                                        @endswitch
+                                    @endif
+                            </td>
+                            <td>
+                                @if ($product->is_draft == 1)
+                                    <span class="badge badge-inline badge-info">{{ translate('Yes')}}</span>
+                                @else
+                                    <span class="badge badge-inline badge-success">{{ translate('No')}}</span>
                                 @endif
-                            @endif
-                            
-                        </td>
-                        <td>
-                            <label class="aiz-switch aiz-switch-success mb-0">
-                                <input onchange="update_todays_deal(this)" value="{{ $product->id }}" type="checkbox" <?php if ($product->todays_deal == 1) echo "checked"; ?> >
-                                <span class="slider round"></span>
-                            </label>
-                        </td>
-                        <td>
-                            <label class="aiz-switch aiz-switch-success mb-0">
-                                <input onchange="update_published(this)" value="{{ $product->id }}" type="checkbox" <?php if ($product->published == 1) echo "checked"; ?> >
-                                <span class="slider round"></span>
-                            </label>
-                        </td>
-                        @if(get_setting('product_approve_by_admin') == 1 && $type == 'Seller')
+                            </td>
                             <td>
                                 <label class="aiz-switch aiz-switch-success mb-0">
-                                    <input onchange="update_approved(this)" value="{{ $product->id }}" type="checkbox" <?php if ($product->approved == 1) echo "checked"; ?> >
+                                    <input onchange="update_featured(this)" value="{{ $product->id }}" type="checkbox" <?php if($product->seller_featured == 1) echo "checked";?> >
                                     <span class="slider round"></span>
                                 </label>
                             </td>
-                        @endif
-                        <td>
-                            <label class="aiz-switch aiz-switch-success mb-0">
-                                <input onchange="update_featured(this)" value="{{ $product->id }}" type="checkbox" <?php if ($product->featured == 1) echo "checked"; ?> >
-                                <span class="slider round"></span>
-                            </label>
-                        </td>
-                        <td class="text-right">
-                            <a class="btn btn-soft-success btn-icon btn-circle btn-sm"  href="{{ route('product', $product->slug) }}" target="_blank" title="{{ translate('View') }}">
-                                <i class="las la-eye"></i>
-                            </a>
-                            @can('product_edit')
-                                @if ($type == 'Seller')
-                                    <a class="btn btn-soft-primary btn-icon btn-circle btn-sm" href="{{route('products.seller.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')] )}}" title="{{ translate('Edit') }}">
-                                        <i class="las la-edit"></i>
-                                    </a>
-                                @else
-                                    <a class="btn btn-soft-primary btn-icon btn-circle btn-sm" href="{{route('products.admin.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')] )}}" title="{{ translate('Edit') }}">
-                                        <i class="las la-edit"></i>
-                                    </a>
-                                @endif
-                            @endcan
-                            @can('product_duplicate')
-                                <a class="btn btn-soft-warning btn-icon btn-circle btn-sm" href="{{route('products.duplicate', ['id'=>$product->id, 'type'=>$type]  )}}" title="{{ translate('Duplicate') }}">
+                            <td class="text-right">
+                                <a class="btn btn-soft-info btn-icon btn-circle btn-sm" href="{{route('products.approve', $product->id)}}" title="{{ translate('Approve product') }}">
+                                    <i class="las la-eye"></i>
+                                </a> 
+                                {{-- <a href="{{route('seller.products.duplicate', $product->id)}}" class="btn btn-soft-success btn-icon btn-circle btn-sm"  title="{{ translate('Duplicate') }}">
                                     <i class="las la-copy"></i>
-                                </a>
-                            @endcan
-                            @can('product_delete')
-                                <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('products.destroy', $product->id)}}" title="{{ translate('Delete') }}">
-                                    <i class="las la-trash"></i>
-                                </a>
-                            @endcan
-                        </td>
-                    </tr>
+                                </a> --}}
+                            </td>
+                        </tr>
+                        @if((count($product->getChildrenProducts()) > 0) && ($product->is_draft == 0))
+                            @foreach ($product->getChildrenProducts() as $children)
+                                <tr>
+                                    <td>
+                                        <div class="form-group d-inline-block">
+                                            <label class="aiz-checkbox">
+                                                <input type="checkbox" class="check-one" name="id[]" value="{{$children->id}}">
+                                                <span class="aiz-square-check"></span>
+                                            </label>
+                                        </div>
+                                    </td>
+                                    <td >
+                                        <a href="{{ route('product', $children->slug) }}" style="margin-left: 34px !important" target="_blank" class="text-reset">
+                                            {{ $children->sku }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        @php
+                                            $qty = 0;
+                                            foreach ($children->stocks as $key => $stock) {
+                                                $qty += $stock->qty;
+                                            }
+                                            echo $qty;
+                                        @endphp
+                                    </td>
+                                    <td>{{ $children->unit_price }}</td>
+                                    <td>
+                                        @switch($children->approved)
+                                            @case(0)
+                                                <span class="badge badge-primary width-badge" style="background-color: #2E294E;">{{ translate('Pending')}}</span>
+                                            @break
+                                        
+                                            @case(1)
+                                            <span class="badge badge-success width-badge">{{ translate('Approved')}}</span>
+                                                @break
+                                            @case(4)
+                                                <span class="badge badge-info width-badge">{{ translate('Under Review')}}</span>
+                                                @break
+                                            @case(2)
+                                            <span class="badge badge-warning width-badge">{{ translate('Revision Required')}}</span>
+                                                @break
+                                            @case(3)
+                                                <span class="badge badge-danger width-badge">{{ translate('Rejected')}}</span>
+                                                    @break
+                                        @endswitch
+                                    </td>
+                                    <td>
+                                        @if ($product->is_draft == 1)
+                                            <span class="badge badge-inline badge-info">{{ translate('Yes')}}</span>
+                                        @else
+                                            <span class="badge badge-inline badge-success">{{ translate('No')}}</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <label class="aiz-switch aiz-switch-success mb-0">
+                                            <input onchange="update_featured(this)" value="{{ $children->id }}" type="checkbox" <?php if($children->seller_featured == 1) echo "checked";?> >
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </td>
+                                    <td class="text-right">
+                                        {{-- <a class="btn btn-soft-info btn-icon btn-circle btn-sm" href="{{route('seller.products.edit', ['id'=>$children->id, 'lang'=>env('DEFAULT_LANGUAGE')])}}" title="{{ translate('Edit') }}">
+                                            <i class="las la-edit"></i>
+                                        </a>
+                                        <a href="{{route('seller.products.duplicate', $children->id)}}" class="btn btn-soft-success btn-icon btn-circle btn-sm"  title="{{ translate('Duplicate') }}">
+                                            <i class="las la-copy"></i>
+                                        </a> --}}
+                                        {{-- <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('seller.products.destroy', $children->id)}}" title="{{ translate('Delete') }}">
+                                            <i class="las la-trash"></i>
+                                        </a> --}}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @endif
                     @endforeach
                 </tbody>
             </table>
