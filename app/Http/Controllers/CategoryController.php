@@ -408,9 +408,13 @@ class CategoryController extends Controller
         $lang = $request->lang;
         $category = Category::findOrFail($id);
 
+        // Get all parents
+        $breadcrumbs = $category->parents();
+        // Add current category to the end
+        $breadcrumbs->push($category);
         $category_attributes = $category->categories_attributes()->pluck('attribute_id');
         $category_filtring_attributes = $category->attributes()->pluck('attribute_id');
-        return view('backend.product.categories.edit', compact('category', 'lang', 'category_attributes', 'category_filtring_attributes'));
+        return view('backend.product.categories.edit', compact('category', 'lang', 'category_attributes', 'category_filtring_attributes','breadcrumbs'));
     }
 
     /**
