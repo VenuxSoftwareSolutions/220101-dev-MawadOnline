@@ -102,7 +102,7 @@ CoreComponentRepository::initializeCache();
                             <input class="form-control" type="file" name="thumbnail_image" id="formFile" accept="image/jpeg, image/png, image/gif" onchange="previewImage(event)">
                             <div style="margin-top: 15px;">
                                 <!-- Existing Image or Placeholder for New Selection -->
-                                <img id="thumbnailPreview" src="{{ isset($category->thumbnail_image) ? asset('public/'.$category->thumbnail_image) : 'path/to/default-placeholder.png' }}" alt="Thumbnail Image" style="width: 100px; height: auto;">
+                                <img id="thumbnailPreview" src="{{ isset($category->thumbnail_image) ? asset('public/'.$category->thumbnail_image) : 'public/landscape-placeholder.svg' }}" alt="Thumbnail Image" style="width: 100px; height: auto;">
                             </div>
                             @if($errors->has('thumbnail_image'))
                                 <span class="text-danger" role="alert">{{ translate('Thumbnail Image is required') }}</span>
@@ -128,7 +128,7 @@ CoreComponentRepository::initializeCache();
                             <input class="form-control" type="file" name="cover_image" id="categoryImageInput" accept="image/jpeg, image/png, image/gif" onchange="previewCategoryImage(event)">
                             <div style="margin-top: 15px;">
                                 <!-- Placeholder for New Selection or Existing Image -->
-                                <img id="categoryImagePreview" src="{{ isset($category->cover_image) ? asset('public/'.$category->cover_image) : 'path/to/default-placeholder.png' }}" alt="Category Image" style="width: 100px; height: auto;">
+                                <img id="categoryImagePreview" src="{{ isset($category->cover_image) ? asset('public/'.$category->cover_image) : 'public/landscape-placeholder.svg' }}" alt="Category Image" style="width: 100px; height: auto;">
                             </div>
                             @if($errors->has('cover_image'))
                                 <span class="text-danger" role="alert">{{ translate('Category Image is required') }}</span>
