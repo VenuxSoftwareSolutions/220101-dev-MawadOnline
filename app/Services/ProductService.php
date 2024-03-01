@@ -278,6 +278,7 @@ class ProductService
         $ids_attributes_list = Attribute::where('type_value', 'list')->pluck('id')->toArray();
         $ids_attributes_numeric = Attribute::where('type_value', 'numeric')->pluck('id')->toArray();
         $data['sku'] = $data['name'];
+
         if(!isset($data['activate_attributes'])){
             $product = Product::create($data);
             $ids_attributes_color = Attribute::where('type_value', 'color')->pluck('id')->toArray();
@@ -288,8 +289,7 @@ class ProductService
                     $current_data = [];
 
                     if($pricing['from'][$key] != null){
-                        if(isset($pricing['date_range_pricing'])){
-                            if($pricing['date_range_pricing'] != null){
+                            if($pricing['date_range_pricing'][$key] != null){
                                 if(($pricing['date_range_pricing'][$key]) && ($pricing['discount_type'][$key])){
                                     $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
                                     $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
@@ -297,7 +297,7 @@ class ProductService
 
                                     $current_data["discount_start_datetime"] = $discount_start_date;
                                     $current_data["discount_end_datetime"] = $discount_end_date;
-                                    $current_data["discount_type"] = $variant['pricing']['discount_type'][$key];
+                                    $current_data["discount_type"] = $pricing['discount_type'][$key];
                                 }else{
                                     $current_data["discount_start_datetime"] = null;
                                     $current_data["discount_end_datetime"] = null;
@@ -308,11 +308,6 @@ class ProductService
                                 $current_data["discount_end_datetime"] = null;
                                 $current_data["discount_type"] = null;
                             }
-                        }else{
-                            $current_data["discount_start_datetime"] = null;
-                            $current_data["discount_end_datetime"] = null;
-                            $current_data["discount_type"] = null;
-                        }
     
                         $current_data["id_products"] = $product->id;
                         $current_data["from"] = $from;
@@ -341,6 +336,7 @@ class ProductService
 
             if(count($general_attributes_data) > 0){
                 foreach ($general_attributes_data as $attr => $value) {
+                    if($value != null){
                         $attribute_product = new ProductAttributeValues();
                         $attribute_product->id_products = $product->id;
                         $attribute_product->id_attribute = $attr;
@@ -362,6 +358,7 @@ class ProductService
                         }
 
                         $attribute_product->save();
+                    }    
                 }
             }
 
@@ -370,7 +367,57 @@ class ProductService
             // //Create Parent Product
             $data['is_parent'] = 1;
             $data['sku'] = $data['name'];
+           
             $product_parent = Product::create($data);
+            $all_data_to_insert_parent = [];
+            
+            foreach($pricing['from'] as $key => $from){
+                $current_data = [];
+
+                if($pricing['from'][$key] != null){
+                        if($pricing['date_range_pricing'][$key] != null){
+                            if(($pricing['date_range_pricing'][$key]) && ($pricing['discount_type'][$key])){
+                                $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
+                                $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
+                                $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
+
+                                $current_data["discount_start_datetime"] = $discount_start_date;
+                                $current_data["discount_end_datetime"] = $discount_end_date;
+                                $current_data["discount_type"] = $pricing['discount_type'][$key];
+                            }else{
+                                $current_data["discount_start_datetime"] = null;
+                                $current_data["discount_end_datetime"] = null;
+                                $current_data["discount_type"] = null;
+                            }
+                        }else{
+                            $current_data["discount_start_datetime"] = null;
+                            $current_data["discount_end_datetime"] = null;
+                            $current_data["discount_type"] = null;
+                        }
+
+                    $current_data["id_products"] = $product_parent->id;
+                    $current_data["from"] = $from;
+                    $current_data["to"] = $pricing['to'][$key];
+                    $current_data["unit_price"] = $pricing['unit_price'][$key];
+
+                    if(isset($pricing['discount_amount'])){
+                        $current_data["discount_amount"] = $pricing['discount_amount'][$key];
+                    }else{
+                        $current_data["discount_amount"] = null;
+                    }
+                    if(isset($current_data["discount_percentage"])){
+                        $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
+                    }else{
+                        $current_data["discount_percentage"] = null;
+                    }
+
+                    array_push($all_data_to_insert_parent, $current_data);
+                }
+                
+            }
+            if(count($all_data_to_insert_parent) > 0){
+                PricingConfiguration::insert($all_data_to_insert_parent);
+            }
             unset($data['is_parent']);
             $data['parent_id'] = $product_parent->id;
             if(isset($data['vat_sample'])){
@@ -414,29 +461,31 @@ class ProductService
                     //attributes of variant
                     $sku = "";
                     foreach($variant['attributes'] as $key => $value_attribute){
-                        $attribute_name = Attribute::find($key)->name;
-                        $sku .= "_".$attribute_name;
-                        $attribute_product = new ProductAttributeValues();
-                        $attribute_product->id_products = $product->id;
-                        $attribute_product->id_attribute = $key;
-                        $attribute_product->is_variant = 1;
-                        if(in_array($key, $ids_attributes_list)){
-                            $value = AttributeValue::find($value_attribute);
-                            $attribute_product->id_values = $value_attribute;
-                            $attribute_product->value = $value->value;
-                        }elseif(in_array($key, $ids_attributes_color)){
-                            $value = Color::where('code', $value_attribute)->first();
-                            $attribute_product->id_colors = $value->id;
-                            $attribute_product->value = $value->code;
-                        }elseif(in_array($key, $ids_attributes_numeric)){
-                            $attribute_product->id_units = $variant['units'][$key];
-                            $attribute_product->value = $value_attribute;
-                        }
-                        else{
-                            $attribute_product->value = $value_attribute;
-                        }
+                        if($value_attribute != null){
+                            $attribute_name = Attribute::find($key)->name;
+                            $sku .= "_".$attribute_name;
+                            $attribute_product = new ProductAttributeValues();
+                            $attribute_product->id_products = $product->id;
+                            $attribute_product->id_attribute = $key;
+                            $attribute_product->is_variant = 1;
+                            if(in_array($key, $ids_attributes_list)){
+                                $value = AttributeValue::find($value_attribute);
+                                $attribute_product->id_values = $value_attribute;
+                                $attribute_product->value = $value->value;
+                            }elseif(in_array($key, $ids_attributes_color)){
+                                $value = Color::where('code', $value_attribute)->first();
+                                $attribute_product->id_colors = $value->id;
+                                $attribute_product->value = $value->code;
+                            }elseif(in_array($key, $ids_attributes_numeric)){
+                                $attribute_product->id_units = $variant['units'][$key];
+                                $attribute_product->value = $value_attribute;
+                            }
+                            else{
+                                $attribute_product->value = $value_attribute;
+                            }
 
-                        $attribute_product->save();
+                            $attribute_product->save();
+                        }
                     }
 
                     $product->sku = $product_parent->name . $sku;
@@ -988,6 +1037,7 @@ class ProductService
 
             if(count($general_attributes_data) > 0){
                 foreach ($general_attributes_data as $attr => $value) {
+                    if($value != null){
                         $attribute_product = new ProductAttributeValues();
                         $attribute_product->id_products = $product_update->id;
                         $attribute_product->id_attribute = $attr;
@@ -1009,6 +1059,7 @@ class ProductService
                         }
 
                         $attribute_product->save();
+                    }
                 }
             }
 
@@ -1055,33 +1106,35 @@ class ProductService
                         //attributes of variant
                         $sku = "";
                         foreach($variant['attributes'] as $key => $value_attribute){
-                            $attribute_name = Attribute::find($key)->name;
-                            $sku .= "_".$attribute_name;
-                            $attribute_product = ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->first();
-                            
-                            if($attribute_product == null){
-                                $attribute_product = new ProductAttributeValues();
-                                $attribute_product->id_products = $product->id;
-                                $attribute_product->id_attribute = $key;
-                                $attribute_product->is_variant = 1;
-                            }
-                            if(in_array($key, $ids_attributes_list)){
-                                $value = AttributeValue::find($value_attribute);
-                                $attribute_product->id_values = $value_attribute;
-                                $attribute_product->value = $value->value;
-                            }elseif(in_array($key, $ids_attributes_color)){
-                                $value = Color::where('code', $value_attribute)->first();
-                                $attribute_product->id_colors = $value->id;
-                                $attribute_product->value = $value->code;
-                            }elseif(in_array($key, $ids_attributes_numeric)){
-                                $attribute_product->id_units = $data['unit_variant'][$id][$key];
-                                $attribute_product->value = $value_attribute;
-                            }
-                            else{
-                                $attribute_product->value = $value_attribute;
-                            }
+                            if($value_attribute != null){
+                                $attribute_name = Attribute::find($key)->name;
+                                $sku .= "_".$attribute_name;
+                                $attribute_product = ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->first();
+                                
+                                if($attribute_product == null){
+                                    $attribute_product = new ProductAttributeValues();
+                                    $attribute_product->id_products = $product->id;
+                                    $attribute_product->id_attribute = $key;
+                                    $attribute_product->is_variant = 1;
+                                }
+                                if(in_array($key, $ids_attributes_list)){
+                                    $value = AttributeValue::find($value_attribute);
+                                    $attribute_product->id_values = $value_attribute;
+                                    $attribute_product->value = $value->value;
+                                }elseif(in_array($key, $ids_attributes_color)){
+                                    $value = Color::where('code', $value_attribute)->first();
+                                    $attribute_product->id_colors = $value->id;
+                                    $attribute_product->value = $value->code;
+                                }elseif(in_array($key, $ids_attributes_numeric)){
+                                    $attribute_product->id_units = $data['unit_variant'][$id][$key];
+                                    $attribute_product->value = $value_attribute;
+                                }
+                                else{
+                                    $attribute_product->value = $value_attribute;
+                                }
 
-                            $attribute_product->save();
+                                $attribute_product->save();
+                            }
                         }
 
                         $product->sku = $product_update->name . $sku;
@@ -1237,32 +1290,34 @@ class ProductService
 
             if(count($general_attributes_data) > 0){
                 foreach ($general_attributes_data as $attr => $value) {
-                    $attribute_product = ProductAttributeValues::where('id_products', $product_update->id)->where('id_attribute', $attr)->first();
-                        
-                    if($attribute_product == null){
-                        $attribute_product = new ProductAttributeValues();
-                        $attribute_product->id_products = $product_update->id;
-                        $attribute_product->id_attribute = $attr;
-                        $attribute_product->is_general = 1;
-                    }
+                    if($value != null){
+                        $attribute_product = ProductAttributeValues::where('id_products', $product_update->id)->where('id_attribute', $attr)->first();
+                            
+                        if($attribute_product == null){
+                            $attribute_product = new ProductAttributeValues();
+                            $attribute_product->id_products = $product_update->id;
+                            $attribute_product->id_attribute = $attr;
+                            $attribute_product->is_general = 1;
+                        }
 
-                    if(in_array($attr, $ids_attributes_list)){
-                        $value_attribute = AttributeValue::find($value);
-                        $attribute_product->id_values = $value;
-                        $attribute_product->value = $value_attribute->value;
-                    }elseif(in_array($attr, $ids_attributes_color)){
-                        $value = Color::where('code', $value)->first();
-                        $attribute_product->id_colors = $value->id;
-                        $attribute_product->value = $value->code;
-                    }elseif(in_array($attr, $ids_attributes_numeric)){
-                        $attribute_product->id_units = $unit_general_attributes_data[$attr];
-                        $attribute_product->value = $value;
-                    }
-                    else{
-                        $attribute_product->value = $value;
-                    }
+                        if(in_array($attr, $ids_attributes_list)){
+                            $value_attribute = AttributeValue::find($value);
+                            $attribute_product->id_values = $value;
+                            $attribute_product->value = $value_attribute->value;
+                        }elseif(in_array($attr, $ids_attributes_color)){
+                            $value = Color::where('code', $value)->first();
+                            $attribute_product->id_colors = $value->id;
+                            $attribute_product->value = $value->code;
+                        }elseif(in_array($attr, $ids_attributes_numeric)){
+                            $attribute_product->id_units = $unit_general_attributes_data[$attr];
+                            $attribute_product->value = $value;
+                        }
+                        else{
+                            $attribute_product->value = $value;
+                        }
 
-                    $attribute_product->save();
+                        $attribute_product->save();
+                    }
                 }
             }
 
@@ -1291,27 +1346,29 @@ class ProductService
 
                     //attributes of variant
                     foreach($variant['attributes'] as $key => $value_attribute){
-                        $attribute_product = new ProductAttributeValues();
-                        $attribute_product->id_products = $new_product->id;
-                        $attribute_product->id_attribute = $key;
-                        $attribute_product->is_variant = 1;
-                        if(in_array($key, $ids_attributes_list)){
-                            $value = AttributeValue::find($value_attribute);
-                            $attribute_product->id_values = $value_attribute;
-                            $attribute_product->value = $value->value;
-                        }elseif(in_array($key, $ids_attributes_color)){
-                            $value = Color::where('code', $value_attribute)->first();
-                            $attribute_product->id_colors = $value->id;
-                            $attribute_product->value = $value->code;
-                        }elseif(in_array($key, $ids_attributes_numeric)){
-                            $attribute_product->id_units = $variant['units'][$key];
-                            $attribute_product->value = $value_attribute;
-                        }
-                        else{
-                            $attribute_product->value = $value_attribute;
-                        }
+                        if($value_attribute != null){
+                            $attribute_product = new ProductAttributeValues();
+                            $attribute_product->id_products = $new_product->id;
+                            $attribute_product->id_attribute = $key;
+                            $attribute_product->is_variant = 1;
+                            if(in_array($key, $ids_attributes_list)){
+                                $value = AttributeValue::find($value_attribute);
+                                $attribute_product->id_values = $value_attribute;
+                                $attribute_product->value = $value->value;
+                            }elseif(in_array($key, $ids_attributes_color)){
+                                $value = Color::where('code', $value_attribute)->first();
+                                $attribute_product->id_colors = $value->id;
+                                $attribute_product->value = $value->code;
+                            }elseif(in_array($key, $ids_attributes_numeric)){
+                                $attribute_product->id_units = $variant['units'][$key];
+                                $attribute_product->value = $value_attribute;
+                            }
+                            else{
+                                $attribute_product->value = $value_attribute;
+                            }
 
-                        $attribute_product->save();
+                            $attribute_product->save();
+                        }
                     }
 
                     //Images of variant
@@ -1810,52 +1867,55 @@ class ProductService
                 $all_data_to_insert = [];
 
                 foreach($pricing['from'] as $key => $from){
-                    $current_data = [];
+                    if($from != null){
+                        $current_data = [];
 
-                    if(isset($pricing['date_range_pricing'])){
-                        if($pricing['date_range_pricing'] != null){
-                            if($pricing['date_range_pricing'][$key] != null){
-                                $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
-                                $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
-                                $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
-    
-                                $current_data["discount_start_datetime"] = $discount_start_date;
-                                $current_data["discount_end_datetime"] = $discount_end_date;
-                                $current_data["discount_type"] = $pricing['discount_type'][$key];
+                        if(isset($pricing['date_range_pricing'])){
+                            if($pricing['date_range_pricing'] != null){
+                                if($pricing['date_range_pricing'][$key] != null){
+                                    $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
+                                    $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
+                                    $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
+        
+                                    $current_data["discount_start_datetime"] = $discount_start_date;
+                                    $current_data["discount_end_datetime"] = $discount_end_date;
+                                    $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                }else{
+                                    $current_data["discount_start_datetime"] = null;
+                                $current_data["discount_end_datetime"] = null;
+                                $current_data["discount_type"] = null;
+                                }
+                                
                             }else{
                                 $current_data["discount_start_datetime"] = null;
-                            $current_data["discount_end_datetime"] = null;
-                            $current_data["discount_type"] = null;
+                                $current_data["discount_end_datetime"] = null;
+                                $current_data["discount_type"] = null;
                             }
-                            
                         }else{
                             $current_data["discount_start_datetime"] = null;
                             $current_data["discount_end_datetime"] = null;
                             $current_data["discount_type"] = null;
                         }
-                    }else{
-                        $current_data["discount_start_datetime"] = null;
-                        $current_data["discount_end_datetime"] = null;
-                        $current_data["discount_type"] = null;
+    
+                        $current_data["id_products"] = $product_draft->id;
+                        $current_data["from"] = $from;
+                        $current_data["to"] = $pricing['to'][$key];
+                        $current_data["unit_price"] = $pricing['unit_price'][$key];
+    
+                        if(isset($pricing['discount_amount'])){
+                            $current_data["discount_amount"] = $pricing['discount_amount'][$key];
+                        }else{
+                            $current_data["discount_amount"] = null;
+                        }
+                        if(isset($current_data["discount_percentage"])){
+                            $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
+                        }else{
+                            $current_data["discount_percentage"] = null;
+                        }
+    
+                        array_push($all_data_to_insert, $current_data);
                     }
-
-                    $current_data["id_products"] = $product_draft->id;
-                    $current_data["from"] = $from;
-                    $current_data["to"] = $pricing['to'][$key];
-                    $current_data["unit_price"] = $pricing['unit_price'][$key];
-
-                    if(isset($pricing['discount_amount'])){
-                        $current_data["discount_amount"] = $pricing['discount_amount'][$key];
-                    }else{
-                        $current_data["discount_amount"] = null;
-                    }
-                    if(isset($current_data["discount_percentage"])){
-                        $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
-                    }else{
-                        $current_data["discount_percentage"] = null;
-                    }
-
-                    array_push($all_data_to_insert, $current_data);
+                    
                 }
 
                 PricingConfiguration::where('id_products', $product_draft->id)->delete();
@@ -1864,6 +1924,7 @@ class ProductService
 
             if(count($general_attributes_data) > 0){
                 foreach ($general_attributes_data as $attr => $value) {
+                    if($value != null){
                         $attribute_product = new ProductAttributeValues();
                         $attribute_product->id_products = $product_draft->id;
                         $attribute_product->id_attribute = $attr;
@@ -1885,6 +1946,7 @@ class ProductService
                         }
 
                         $attribute_product->save();
+                    }
                 }
             }
 
@@ -1894,6 +1956,65 @@ class ProductService
             $collection['is_parent'] = 1;
             $collection = $collection->toArray();
             $product_draft->update($collection);
+            if(count($pricing) > 0){
+                $all_data_to_insert = [];
+                $all_data_to_insert_product_draft = [];
+
+                foreach($pricing['from'] as $key => $from){
+                    if($from != null){
+                        $current_data = [];
+
+                        if(isset($pricing['date_range_pricing'])){
+                            if($pricing['date_range_pricing'] != null){
+                                if($pricing['date_range_pricing'][$key] != null){
+                                    $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
+                                    $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
+                                    $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
+        
+                                    $current_data["discount_start_datetime"] = $discount_start_date;
+                                    $current_data["discount_end_datetime"] = $discount_end_date;
+                                    $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                }else{
+                                    $current_data["discount_start_datetime"] = null;
+                                $current_data["discount_end_datetime"] = null;
+                                $current_data["discount_type"] = null;
+                                }
+                                
+                            }else{
+                                $current_data["discount_start_datetime"] = null;
+                                $current_data["discount_end_datetime"] = null;
+                                $current_data["discount_type"] = null;
+                            }
+                        }else{
+                            $current_data["discount_start_datetime"] = null;
+                            $current_data["discount_end_datetime"] = null;
+                            $current_data["discount_type"] = null;
+                        }
+    
+                        $current_data["id_products"] = $product_draft->id;
+                        $current_data["from"] = $from;
+                        $current_data["to"] = $pricing['to'][$key];
+                        $current_data["unit_price"] = $pricing['unit_price'][$key];
+    
+                        if(isset($pricing['discount_amount'])){
+                            $current_data["discount_amount"] = $pricing['discount_amount'][$key];
+                        }else{
+                            $current_data["discount_amount"] = null;
+                        }
+                        if(isset($current_data["discount_percentage"])){
+                            $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
+                        }else{
+                            $current_data["discount_percentage"] = null;
+                        }
+    
+                        array_push($all_data_to_insert_product_draft, $current_data);
+                    }
+                    
+                }
+
+                PricingConfiguration::where('id_products', $product_draft->id)->delete();
+                PricingConfiguration::insert($all_data_to_insert_product_draft);
+            }
             unset($collection['is_parent']);
             $collection['parent_id'] = $product_draft->id;
             if(isset($collection['vat_sample'])){
@@ -1933,34 +2054,36 @@ class ProductService
                         //attributes of variant
                         $sku = "";
                         foreach($variant['attributes'] as $key => $value_attribute){
-                            $attribute_name = Attribute::find($key)->name;
-                            $sku .= "_".$attribute_name;
-                            $attribute_product = ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->first();
-                            
-                            if($attribute_product == null){
-                                $attribute_product = new ProductAttributeValues();
-                                $attribute_product->id_products = $product->id;
-                                $attribute_product->id_attribute = $key;
-                                $attribute_product->is_variant = 1;
-                            }
-                            
-                            if(in_array($key, $ids_attributes_list)){
-                                $value = AttributeValue::find($value_attribute);
-                                $attribute_product->id_values = $value_attribute;
-                                $attribute_product->value = $value->value;
-                            }elseif(in_array($key, $ids_attributes_color)){
-                                $value = Color::where('code', $value_attribute)->first();
-                                $attribute_product->id_colors = $value->id;
-                                $attribute_product->value = $value->code;
-                            }elseif(in_array($key, $ids_attributes_numeric)){
-                                $attribute_product->id_units = $data['unit_variant'][$id][$key];
-                                $attribute_product->value = $value_attribute;
-                            }
-                            else{
-                                $attribute_product->value = $value_attribute;
-                            }
+                            if($value_attribute != null){
+                                $attribute_name = Attribute::find($key)->name;
+                                $sku .= "_".$attribute_name;
+                                $attribute_product = ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->first();
+                                
+                                if($attribute_product == null){
+                                    $attribute_product = new ProductAttributeValues();
+                                    $attribute_product->id_products = $product->id;
+                                    $attribute_product->id_attribute = $key;
+                                    $attribute_product->is_variant = 1;
+                                }
+                                
+                                if(in_array($key, $ids_attributes_list)){
+                                    $value = AttributeValue::find($value_attribute);
+                                    $attribute_product->id_values = $value_attribute;
+                                    $attribute_product->value = $value->value;
+                                }elseif(in_array($key, $ids_attributes_color)){
+                                    $value = Color::where('code', $value_attribute)->first();
+                                    $attribute_product->id_colors = $value->id;
+                                    $attribute_product->value = $value->code;
+                                }elseif(in_array($key, $ids_attributes_numeric)){
+                                    $attribute_product->id_units = $data['unit_variant'][$id][$key];
+                                    $attribute_product->value = $value_attribute;
+                                }
+                                else{
+                                    $attribute_product->value = $value_attribute;
+                                }
 
-                            $attribute_product->save();
+                                $attribute_product->save();
+                            }
                         }
                         $product->sku = $product_parent->name . $sku;
                         $product->save();
@@ -2115,37 +2238,39 @@ class ProductService
 
             if(count($general_attributes_data) > 0){
                 foreach ($general_attributes_data as $attr => $value) {
-                    $attribute_product = ProductAttributeValues::where('id_products', $product_draft->id)->where('id_attribute', $attr)->first();
-                        
-                    if($attribute_product == null){
-                        $attribute_product = new ProductAttributeValues();
-                        $attribute_product->id_products = $product_draft->id;
-                        $attribute_product->id_attribute = $attr;
-                        $attribute_product->is_general = 1;
-                    }
+                    if($value != null){
+                        $attribute_product = ProductAttributeValues::where('id_products', $product_draft->id)->where('id_attribute', $attr)->first();
+                            
+                        if($attribute_product == null){
+                            $attribute_product = new ProductAttributeValues();
+                            $attribute_product->id_products = $product_draft->id;
+                            $attribute_product->id_attribute = $attr;
+                            $attribute_product->is_general = 1;
+                        }
 
-                    if(in_array($attr, $ids_attributes_list)){
-                        $value_attribute = AttributeValue::find($value);
-                        $attribute_product->id_values = $value;
-                        $attribute_product->value = $value_attribute->value;
-                    }elseif(in_array($attr, $ids_attributes_color)){
-                        $value = Color::where('code', $value)->first();
-                        $attribute_product->id_colors = $value->id;
-                        $attribute_product->value = $value->code;
-                    }elseif(in_array($attr, $ids_attributes_numeric)){
-                        $attribute_product->id_units = $unit_general_attributes_data[$attr];
-                        $attribute_product->value = $value;
-                    }
-                    else{
-                        $attribute_product->value = $value;
-                    }
+                        if(in_array($attr, $ids_attributes_list)){
+                            $value_attribute = AttributeValue::find($value);
+                            $attribute_product->id_values = $value;
+                            $attribute_product->value = $value_attribute->value;
+                        }elseif(in_array($attr, $ids_attributes_color)){
+                            $value = Color::where('code', $value)->first();
+                            $attribute_product->id_colors = $value->id;
+                            $attribute_product->value = $value->code;
+                        }elseif(in_array($attr, $ids_attributes_numeric)){
+                            $attribute_product->id_units = $unit_general_attributes_data[$attr];
+                            $attribute_product->value = $value;
+                        }
+                        else{
+                            $attribute_product->value = $value;
+                        }
 
-                    $attribute_product->save();
+                        $attribute_product->save();
+                    }
                 }
             }
 
             $new_ids_attributes_general = array_keys($general_attributes_data);
-            $deleted_attributes_general = ProductAttributeValues::where('id_products', $id)->whereNotIn('id_attribute', $new_ids_attributes_general)->delete();
+            $deleted_attributes_general = ProductAttributeValues::where('id_products', $product_draft->id)->whereNotIn('id_attribute', $new_ids_attributes_general)->delete();
 
             if(count($variants_new_data)){
                 foreach ($variants_new_data as $id => $variant){
@@ -2169,56 +2294,60 @@ class ProductService
 
                     //attributes of variant
                     foreach($variant['attributes'] as $key => $value_attribute){
-                        $attribute_product = new ProductAttributeValues();
-                        $attribute_product->id_products = $new_product->id;
-                        $attribute_product->id_attribute = $key;
-                        $attribute_product->is_variant = 1;
-                        if(in_array($key, $ids_attributes_list)){
-                            $value = AttributeValue::find($value_attribute);
-                            $attribute_product->id_values = $value_attribute;
-                            $attribute_product->value = $value->value;
-                        }elseif(in_array($key, $ids_attributes_color)){
-                            $value = Color::where('code', $value_attribute)->first();
-                            $attribute_product->id_colors = $value->id;
-                            $attribute_product->value = $value->code;
-                        }elseif(in_array($key, $ids_attributes_numeric)){
-                            $attribute_product->id_units = $variant['units'][$key];
-                            $attribute_product->value = $value_attribute;
-                        }
-                        else{
-                            $attribute_product->value = $value_attribute;
-                        }
+                        if($value_attribute != null){
+                            $attribute_product = new ProductAttributeValues();
+                            $attribute_product->id_products = $new_product->id;
+                            $attribute_product->id_attribute = $key;
+                            $attribute_product->is_variant = 1;
+                            if(in_array($key, $ids_attributes_list)){
+                                $value = AttributeValue::find($value_attribute);
+                                $attribute_product->id_values = $value_attribute;
+                                $attribute_product->value = $value->value;
+                            }elseif(in_array($key, $ids_attributes_color)){
+                                $value = Color::where('code', $value_attribute)->first();
+                                $attribute_product->id_colors = $value->id;
+                                $attribute_product->value = $value->code;
+                            }elseif(in_array($key, $ids_attributes_numeric)){
+                                $attribute_product->id_units = $variant['units'][$key];
+                                $attribute_product->value = $value_attribute;
+                            }
+                            else{
+                                $attribute_product->value = $value_attribute;
+                            }
 
-                        $attribute_product->save();
+                            $attribute_product->save();
+                        }
                     }
 
                     //Images of variant
-                    if(count($variant['photo']) > 0){
-                        $structure = public_path('upload_products');
-                        if (!file_exists($structure)) {
-                            mkdir(public_path('upload_products', 0777));
-                        }
-
-                        if(!file_exists(public_path('/upload_products/Product-'.$new_product->id))){
-                            mkdir(public_path('/upload_products/Product-'.$new_product->id, 0777));
-                            mkdir(public_path('/upload_products/Product-'.$new_product->id.'/images', 0777));
-                        }else{
-                            if(!file_exists(public_path('/upload_products/Product-'.$new_product->id.'/images'))){
-                                mkdir(public_path('/upload_products/Product-'.$new_product->id.'/images', 0777));
+                    if (array_key_exists('photo', $variant)) {
+                        if(count($variant['photo']) > 0){
+                            $structure = public_path('upload_products');
+                            if (!file_exists($structure)) {
+                                mkdir(public_path('upload_products', 0777));
                             }
-                        }
 
-                        foreach($variant['photo'] as $key => $image){
-                            $imageName = time().rand(5, 15).'.'.$image->getClientOriginalExtension();
-                            $image->move(public_path('/upload_products/Product-'.$new_product->id.'/images') , $imageName);
-                            $path = '/upload_products/Product-'.$new_product->id.'/images'.'/'.$imageName;
+                            if(!file_exists(public_path('/upload_products/Product-'.$new_product->id))){
+                                mkdir(public_path('/upload_products/Product-'.$new_product->id, 0777));
+                                mkdir(public_path('/upload_products/Product-'.$new_product->id.'/images', 0777));
+                            }else{
+                                if(!file_exists(public_path('/upload_products/Product-'.$new_product->id.'/images'))){
+                                    mkdir(public_path('/upload_products/Product-'.$new_product->id.'/images', 0777));
+                                }
+                            }
 
-                            $uploaded_document = new UploadProducts();
-                            $uploaded_document->id_product = $new_product->id;
-                            $uploaded_document->path = $path;
-                            $uploaded_document->extension = $image->getClientOriginalExtension();
-                            $uploaded_document->type = 'images';
-                            $uploaded_document->save();
+                            foreach($variant['photo'] as $key => $image){
+                                $imageName = time().rand(5, 15).'.'.$image->getClientOriginalExtension();
+                                $image->move(public_path('/upload_products/Product-'.$new_product->id.'/images') , $imageName);
+                                $path = '/upload_products/Product-'.$new_product->id.'/images'.'/'.$imageName;
+
+                                $uploaded_document = new UploadProducts();
+                                $uploaded_document->id_product = $new_product->id;
+                                $uploaded_document->path = $path;
+                                $uploaded_document->extension = $image->getClientOriginalExtension();
+                                $uploaded_document->type = 'images';
+                                $uploaded_document->save();
+                            }
                         }
                     }
 

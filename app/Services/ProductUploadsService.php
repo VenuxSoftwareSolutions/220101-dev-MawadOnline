@@ -51,7 +51,7 @@ class ProductUploadsService
 
         //Updated old document
         if(array_key_exists('old_document_names', $data) || (array_key_exists('old_documents', $data))){
-            if(count($data['old_document_names']) > 0){
+            if($data['old_document_names'] != null){
                 foreach($data['old_document_names'] as $key => $document){
                     $uploaded_document = UploadProducts::find($key);
                     if($uploaded_document != null){
@@ -75,26 +75,28 @@ class ProductUploadsService
                     }   
                 }
             }else{
-                foreach($data['old_documents'] as $key => $document){
-                    $uploaded_document = UploadProducts::find($key);
-                    if($uploaded_document != null){
-                        if(file_exists(public_path($uploaded_document->path))){
-                            unlink(public_path($uploaded_document->path));
-                        }
-                        $documen_name = time().rand(5, 15).'.'.$document->getClientOriginalExtension();
-                        $new_document->move(public_path('/upload_products/Product-'.$collection['product']->id.'/documents') , $documen_name);
-                        $path = '/upload_products/Product-'.$collection['product']->id.'/documents'.'/'.$documen_name;
-
-                        $uploaded_document->path = $path;
-                        $uploaded_document->extension = $document->getClientOriginalExtension();
-                            
-                        if($data['old_document_names'] != null){
-                            if(array_key_exists($key, $data['old_document_names'])){
-                                $uploaded_document->document_name = $data['old_document_names'][$key];
+                if($data['old_documents'] != null){
+                    foreach($data['old_documents'] as $key => $document){
+                        $uploaded_document = UploadProducts::find($key);
+                        if($uploaded_document != null){
+                            if(file_exists(public_path($uploaded_document->path))){
+                                unlink(public_path($uploaded_document->path));
                             }
-                        }
-                        $uploaded_document->save();
-                    }   
+                            $documen_name = time().rand(5, 15).'.'.$document->getClientOriginalExtension();
+                            $new_document->move(public_path('/upload_products/Product-'.$collection['product']->id.'/documents') , $documen_name);
+                            $path = '/upload_products/Product-'.$collection['product']->id.'/documents'.'/'.$documen_name;
+
+                            $uploaded_document->path = $path;
+                            $uploaded_document->extension = $document->getClientOriginalExtension();
+                                
+                            if($data['old_document_names'] != null){
+                                if(array_key_exists($key, $data['old_document_names'])){
+                                    $uploaded_document->document_name = $data['old_document_names'][$key];
+                                }
+                            }
+                            $uploaded_document->save();
+                        }   
+                    }
                 }
             }
         }

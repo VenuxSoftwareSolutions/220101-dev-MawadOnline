@@ -2,9 +2,15 @@
 
 use App\Http\Controllers\AizUploadController;
 use App\Http\Controllers\Seller\StockController;
+use App\Http\Controllers\CategoryController;
 
 //Upload
 Route::group(['prefix' => 'seller', 'middleware' => ['seller', 'verified', 'user', 'prevent-back-history'], 'as' => 'seller.'], function () {
+    Route::controller(CategoryController::class)->group(function () {
+        Route::get('/jstree', 'jstree')->name('categories.jstree');
+        Route::get('/jstreeSearch', 'jstreeSearch')->name('categories.jstreeSearch');
+    });
+   
     Route::controller(AizUploadController::class)->group(function () {
         Route::any('/uploads', 'index')->name('uploaded-files.index');
         Route::any('/uploads/create', 'create')->name('uploads.create');
@@ -41,6 +47,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
         Route::get('/products/delete_image', 'delete_image')->name('products.delete_image');
         Route::post('/products/bulk-delete', 'bulk_product_delete')->name('products.bulk-delete');
     });
+         // categories
+
+       
 
          // Stocks
       Route::controller(StockController::class)->group(function () {

@@ -1,4 +1,5 @@
 @extends('seller.layouts.app')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 
 @section('panel_content')
     <div class="aiz-titlebar mt-2 mb-4">
@@ -33,13 +34,13 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Product Name')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" name="name" value="{{ old('name') }}" placeholder="{{ translate('Product Name') }}" onchange="update_sku()" >
+                                <input type="text" class="form-control" name="name" value="{{ old('name') }}" placeholder="{{ translate('Product Name') }}" required >
                             </div>
                         </div>
                         <div class="form-group row" id="brand">
                             <label class="col-md-3 col-from-label">{{translate('Brand')}}</label>
                             <div class="col-md-8">
-                                <select class="form-control aiz-selectpicker" name="brand_id" id="brand_id" data-live-search="true">
+                                <select class="form-control aiz-selectpicker" name="brand_id" id="brand_id" data-live-search="true" required>
                                     <option value="">{{ translate('Select Brand') }}</option>
                                     @foreach (\App\Models\Brand::all() as $brand)
                                     <option value="{{ $brand->id }}" @selected(old('brand_id') == $brand->id)>{{ $brand->getTranslation('name') }}</option>
@@ -50,7 +51,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Unit of Sale')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" name="unit" value="{{ old('unit') }}" placeholder="{{ translate('Unit (e.g. KG, Pc etc)') }}" >
+                                <input type="text" class="form-control" name="unit" value="{{ old('unit') }}" placeholder="{{ translate('Unit (e.g. KG, Pc etc)') }}" required>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -75,7 +76,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Tags')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control aiz-tag-input" name="tags[]" placeholder="{{ translate('Type and hit enter to add a tag') }}">
+                                <input type="text" required class="form-control aiz-tag-input" name="tags[]" placeholder="{{ translate('Type and hit enter to add a tag') }}">
                                 <small class="text-muted">{{translate('This is used for search. Input those words by which cutomer can find this product.')}}</small>
                             </div>
                         </div>
@@ -261,43 +262,26 @@
                     <div class="card-header">
                         <h5 class="mb-0 h6">{{ translate('Product Category') }}</h5>
                         <h6 class="float-right fs-13 mb-0">
+                            <span id="message-category"><span>
                             {{ translate('Select Main') }}
                             <span class="position-relative main-category-info-icon">
                                 <i class="las la-question-circle fs-18 text-info"></i>
                                 <span class="main-category-info bg-soft-info p-2 position-absolute d-none border">{{ translate('This will be used for commission based calculations and homepage category wise product Show.') }}</span>
                             </span>
+                            
                         </h6>
                     </div>
+                    <input type="hidden" id="selected_parent_id" name="parent_id" value="">
+
                     <div class="card-body">
+                        
                         <div class="tree_main">
-                            <ul id="bs_main" class="main_ul">
-                                @foreach ($categories as $key => $category)
-                                    <li id="bs_{{ $category->id }}">
-                                        <span class="plus">&nbsp;</span>
-                                        <span>{{ $category->getTranslation('name') }} </span>
-                                        <ul id="bs_l_1" class="sub_ul" style="display: none">
-                                            @foreach ($category->childrenCategories as $childCategory)
-                                                @if (count($childCategory->childrenCategories) > 0)
-                                                    <li id="bf_1">
-                                                        <span class="plus">&nbsp;</span>
-                                                        <span>{{ $childCategory->getTranslation('name') }} </span>
-                                                        <ul id="bf_l_1" style="display: none" class="inner_ul">
-                                                            @foreach ($childCategory->childrenCategories as $childrenCategorie)
-                                                                <li id="io_1"><input type="radio" name="category_ids" id="c_io_1" class="radio-category" value="{{ $childrenCategorie->id }}" /><span>{{ $childrenCategorie->getTranslation('name') }}</span></li>
-                                                            @endforeach
-                                                        </ul>
-                                                    </li>
-                                                @else
-                                                    <li id="bf_1">
-                                                        <input type="radio" name="category_ids" class="radio-category" value="{{ $childCategory->id }}" id="c_bf_1" />
-                                                        <span>{{ $childCategory->getTranslation('name') }} </span>
-                                                    </li>
-                                                @endif
-                                            @endforeach
-                                        </ul>
-                                    </li>
-                                @endforeach
-                            </ul>
+                            
+                            <input type="text" id="search_input" class="form-control" placeholder="Search">
+                            <div class="h-300px overflow-auto c-scrollbar-light">
+
+                                <div id="jstree"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -550,39 +534,13 @@
 
 @section('script')
 <!-- Treeview js -->
-<script src="{{ static_asset('assets/js/hummingbird-treeview.js') }}"></script>
 <script src="{{ static_asset('assets/js/countrySelect.min.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js" integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
-<script>
-    $(document).ready(function () {
-        $(".plus").click(function () {
-            $(this).toggleClass("minus").siblings("ul").toggle();
-        })
-    })
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 
-    function check_fst_lvl(dd) {
-        //var ss = $('#' + dd).parents("ul[id^=bs_l]").attr("id");
-        var ss = $('#' + dd).parent().closest("ul").attr("id");
-        if ($('#' + ss + ' > li input[type=checkbox]:checked').length == $('#' + ss + ' > li input[type=checkbox]').length) {
-            //$('#' + ss).siblings("input[id^=c_bs]").prop('checked', true);
-            $('#' + ss).siblings("input[type=checkbox]").prop('checked', true);
-        }
-        else {
-            //$('#' + ss).siblings("input[id^=c_bs]").prop('checked', false);
-            $('#' + ss).siblings("input[type=checkbox]").prop('checked', false);
-        }
-
-    }
-
-    function pageLoad() {
-        $(".plus").click(function () {
-            $(this).toggleClass("minus").siblings("ul").toggle();
-        })
-    }
-</script>
-
+//<!--- category parent tree -->
 <script type="text/javascript">
     $(document).ready(function() {
         $('#variant_informations').hide();
@@ -605,11 +563,13 @@
                 $('#btn-create-variant').hide();
                 AIZ.plugins.bootstrapSelect('refresh');
             } else {
-                if ($('.radio-category:checked').length > 0) {
+                var category_choosen = $("#selected_parent_id").val();
+                if (category_choosen != "1") {
                     if ($('#attributes option').length > 0) {
                         $('body #attributes').prop('disabled', false);
                         $('#variant_informations').show();
                         $('#btn-create-variant').show();
+                        $('.div-btn').show();
                         AIZ.plugins.bootstrapSelect('refresh');
                     } else {
                         $('body input[name="activate_attributes"]').prop('checked', false);
@@ -627,7 +587,6 @@
                             'error'
                         )
                 }
-
             }
         });
 
@@ -647,37 +606,7 @@
                 var message = "<p>Remaining characters: <span style='color: red'>" + charactersLeft + "</span></p>"
                 $('#charCountShortDescription').html(message);
             }
-        });
-
-        $("body").on("click", '.radio-category', function() {
-            var categorie_id = $(this).val();
-
-            $.ajax({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                type:"GET",
-                url:'{{ route('seller.products.getAttributeCategorie') }}',
-                data:{
-                    id: categorie_id
-                },
-                success: function(data) {
-                    if(data.html != ""){
-                        $('#attributes_bloc').html(data.html);
-                    }else{
-                        $('#attributes_bloc').html('<select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" id="attributes" multiple disabled data-placeholder="{{ translate("No attributes found") }}"></select>');
-                        $('body input[name="activate_attributes"]').prop("checked", false);
-                        $('#variant_informations').hide();
-                        $('body .div-btn').hide();
-                        $('body #bloc_variants_created').hide();
-                    }
-
-                    $('#general_attributes').html(data.html_attributes_generale);
-
-                    AIZ.plugins.bootstrapSelect('refresh');
-                }
-            });
-        });
+        });        
 
         $('body').on('change', '#attributes', function() {
             var ids_attributes = $(this).val();
@@ -803,9 +732,9 @@
             $(this).next('.custom-file-label').html(labelText);
         });
 
-        $('#btn-create-variant').on('click', function() {
+        $('body').on('click', '#btn-create-variant', function() {
             // Clone the original div
-            var clonedDiv = $('#variant_informations').clone();
+            var clonedDiv = $('body #variant_informations').clone();
 
             // Add some unique identifier to the cloned div (optional)
             clonedDiv.attr('class', 'clonedDiv');
@@ -900,6 +829,7 @@
                 })
             });
 
+            $('#bloc_variants_created').show();
             $('#bloc_variants_created').prepend(clonedDiv);
             var divId = "#bloc_variants_created";
 
@@ -1602,5 +1532,136 @@
             });
         })
     });
+</script>
+<script>
+    $(function() {
+        $('#jstree').jstree({
+            'core': {
+                'data': {
+                    "url": "{{ route('seller.categories.jstree') }}",
+                    "data": function(node) {
+                        return {
+                            "id": node.id
+                        };
+                    },
+                    "dataType": "json"
+                },
+                'check_callback': true,
+                'themes': {
+                    'responsive': false
+                }
+            },
+            "plugins": ["wholerow", "search"] // Include the search plugin here
+        }).on("changed.jstree", function(e, data) {
+            if (data && data.selected && data.selected.length) {
+                    var selectedId = data.selected[0]; // Get the ID of the first selected node
+                    
+                    // Check if the selected node has children
+                    var node = $('#jstree').jstree(true).get_node(selectedId);
+                    
+                    if ((!node.children || node.children.length === 0) && node.state.loaded ==  true) {
+                        $('#message-category').text("Correct choice.");
+                        $('#message-category').css({'color': 'green', 'margin-right': '7px'});
+                        // The node does not have children, proceed with your logic
+                        $('#selected_parent_id').val(selectedId); // Update hidden input with selected ID
+                        $('#attributes_bloc').html('<select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" id="attributes" multiple disabled data-placeholder="{{ translate("No attributes found") }}"></select>');
+                        $('body input[name="activate_attributes"]').prop("checked", false);
+                        $('#variant_informations').hide();
+                        $('body .div-btn').hide();
+                        $('body #bloc_variants_created').hide();
+                        $('#general_attributes').empty();
+                        AIZ.plugins.bootstrapSelect('refresh');
+                        // Call your functions to load attributes
+                        load_attributes(selectedId);
+                    } else {
+                        // The node has children, maybe clear selection or handle differently
+                        $('#message-category').text("Please select a category without subcategories.");
+                        $('#message-category').css({'color': 'red', 'margin-right': '7px'});
+                        $('#attributes_bloc').html('<select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" id="attributes" multiple disabled data-placeholder="{{ translate("No attributes found") }}"></select>');
+                        $('body input[name="activate_attributes"]').prop("checked", false);
+                        $('#variant_informations').hide();
+                        $('body .div-btn').hide();
+                        $('body #bloc_variants_created').hide();
+                        $('#general_attributes').empty();
+                        AIZ.plugins.bootstrapSelect('refresh');
+                        // Optionally, clear selection here if needed
+                        // $('#jstree').jstree(true).deselect_node(selectedId);
+                    }
+                }
+        });
+    });
+
+    // Search configuration
+    var to = false;
+    $('#search_input').keyup(function() {
+        if (to) {
+            clearTimeout(to);
+        }
+        to = setTimeout(function() {
+            var v = $('#search_input').val();
+            if (v === "") {
+                lastSearchTerm = null;
+                    // Explicitly reset the URL for the initial data load
+                $('#jstree').jstree(true).settings.core.data.url = "{{ route('seller.categories.jstree') }}";
+
+                $('#jstree').jstree(true).settings.core.data.data = function(node) {
+                    return {
+                        "id": node.id
+                    };
+                },
+                $('#jstree').jstree(false, true).refresh(); // Refresh the tree to load initial data
+            } else {
+                lastSearchTerm = v;
+                $.ajax({
+                    url: "{{ route('seller.categories.jstreeSearch') }}", // Your actual API endpoint
+                    type: 'GET', // Or 'POST', depending on your API
+                    dataType: 'json', // Expected data format from API
+                    data: {
+                        searchTerm: v // Send the search term to your API
+                    },
+                    success: function(response) {
+                        console.log(response);
+                        // Assuming 'response' contains the data to update the jstree
+                        // You will need to process 'response' to fit your jstree's data format
+
+                        // Example: clear the existing jstree and populate with new data
+                        $('#jstree').jstree(true).settings.core.data = response;
+                        $('#jstree').jstree(true).refresh();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error during search API call:", status, error);
+                    }
+                });
+            }
+        }, 250);
+    });
+
+    function load_attributes(categorie_id) {
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            type:"GET",
+            url:'{{ route('seller.products.getAttributeCategorie') }}',
+            data:{
+                id: categorie_id
+            },
+            success: function(data) {
+                if(data.html != ""){
+                    $('#attributes_bloc').html(data.html);
+                }else{
+                    $('#attributes_bloc').html('<select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" id="attributes" multiple disabled data-placeholder="{{ translate("No attributes found") }}"></select>');
+                    $('body input[name="activate_attributes"]').prop("checked", false);
+                    $('#variant_informations').hide();
+                    $('body .div-btn').hide();
+                    $('body #bloc_variants_created').hide();
+                }
+
+                $('#general_attributes').html(data.html_attributes_generale);
+
+                AIZ.plugins.bootstrapSelect('refresh');
+            }
+        });
+    };
 </script>
 @endsection

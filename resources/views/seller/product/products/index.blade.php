@@ -135,25 +135,27 @@
                                 </td>
                                 <td>{{ $product->unit_price }}</td>
                                 <td>
-                                    @if($product->is_parent == 0)
-                                        @switch($product->approved)
-                                            @case(0)
-                                                <span class="badge badge-primary width-badge width-badge">{{ translate('Pending')}}</span>
-                                            @break
-                                        
-                                            @case(1)
-                                            <span class="badge badge-success width-badge width-badge">{{ translate('Approved')}}</span>
+                                    @if ($product->is_draft == 0)
+                                        @if($product->is_parent == 0)
+                                            @switch($product->approved)
+                                                @case(0)
+                                                    <span class="badge badge-primary width-badge width-badge">{{ translate('Pending')}}</span>
                                                 @break
-                                            @case(4)
-                                                <span class="badge badge-info width-badge width-badge">{{ translate('Under Review')}}</span>
-                                                @break
-                                            @case(2)
-                                            <span class="badge badge-warning width-badge width-badge">{{ translate('Revision Required')}}</span>
-                                                @break
-                                            @case(3)
-                                                <span class="badge badge-danger width-badge width-badge">{{ translate('Rejected')}}</span>
+                                            
+                                                @case(1)
+                                                <span class="badge badge-success width-badge width-badge">{{ translate('Approved')}}</span>
                                                     @break
-                                        @endswitch
+                                                @case(4)
+                                                    <span class="badge badge-info width-badge width-badge">{{ translate('Under Review')}}</span>
+                                                    @break
+                                                @case(2)
+                                                <span class="badge badge-warning width-badge width-badge">{{ translate('Revision Required')}}</span>
+                                                    @break
+                                                @case(3)
+                                                    <span class="badge badge-danger width-badge width-badge">{{ translate('Rejected')}}</span>
+                                                        @break
+                                            @endswitch
+                                        @endif
                                     @endif
                                 </td>
                                 <td>
@@ -208,27 +210,29 @@
                                         </td>
                                         <td>{{ $children->unit_price }}</td>
                                         <td>
-                                            @switch($children->approved)
-                                                @case(0)
-                                                    <span class="badge badge-primary width-badge">{{ translate('Pending')}}</span>
-                                                @break
-                                            
-                                                @case(1)
-                                                <span class="badge badge-success width-badge">{{ translate('Approved')}}</span>
+                                            @if ($children->is_draft == 0)
+                                                @switch($children->approved)
+                                                    @case(0)
+                                                        <span class="badge badge-primary width-badge">{{ translate('Pending')}}</span>
                                                     @break
-                                                @case(4)
-                                                    <span class="badge badge-info width-badge">{{ translate('Under Review')}}</span>
-                                                    @break
-                                                @case(2)
-                                                <span class="badge badge-warning width-badge">{{ translate('Revision Required')}}</span>
-                                                    @break
-                                                @case(3)
-                                                    <span class="badge badge-danger width-badge">{{ translate('Rejected')}}</span>
+                                                
+                                                    @case(1)
+                                                    <span class="badge badge-success width-badge">{{ translate('Approved')}}</span>
                                                         @break
-                                            @endswitch
+                                                    @case(4)
+                                                        <span class="badge badge-info width-badge">{{ translate('Under Review')}}</span>
+                                                        @break
+                                                    @case(2)
+                                                    <span class="badge badge-warning width-badge">{{ translate('Revision Required')}}</span>
+                                                        @break
+                                                    @case(3)
+                                                        <span class="badge badge-danger width-badge">{{ translate('Rejected')}}</span>
+                                                            @break
+                                                @endswitch
+                                            @endif
                                         </td>
                                         <td>
-                                            @if ($product->is_draft == 1)
+                                            @if ($children->is_draft == 1)
                                                 <span class="badge badge-inline badge-info">{{ translate('Yes')}}</span>
                                             @else
                                                 <span class="badge badge-inline badge-success">{{ translate('No')}}</span>
