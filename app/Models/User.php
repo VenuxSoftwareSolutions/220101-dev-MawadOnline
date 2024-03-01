@@ -191,4 +191,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     }
 
+    public function getStaff() {
+        return $this->hasMany(User::class, 'owner_id', 'id');
+    }
+
 }

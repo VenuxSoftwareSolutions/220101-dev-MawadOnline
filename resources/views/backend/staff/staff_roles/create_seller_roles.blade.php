@@ -20,7 +20,7 @@
                 <div class="form-group row">
                     <label class="col-md-3 col-from-label" for="description">{{translate('Description')}}</label>
                     <div class="col-md-9">
-                        <textarea placeholder="{{translate('Description')}}" id="description" name="description" class="form-control" required></textarea>
+                        <textarea placeholder="{{translate('Description')}}" id="description" name="description" class="form-control" ></textarea>
                     </div>
                 </div>
                 <div class="card-header">

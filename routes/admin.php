@@ -174,6 +174,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::post('vendors/{id}/pending-closure', 'pendingClosure')->name('vendors.pending-closure');
         Route::post('/vendors/{id}/close', 'close')->name('vendors.close');
         Route::get('/vendors/{vendorId}/status-history', 'getStatusHistory')->name('vendors.status-history');
+        Route::get('/sellers/{seller}/staff', 'showStaff')->name('sellers.staff');
 
 
     });

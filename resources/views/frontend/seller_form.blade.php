@@ -1500,14 +1500,12 @@ use Carbon\Carbon;
                                 location.reload();
 
                             }
-                            if (response.hasOwnProperty('verif_staff_login') && response.verif_login ===
+                            if (response.hasOwnProperty('verif_staff_login') && response.verif_staff_login ===
                                 true && response.staff === true) {
-
-                                    window.location.href = "{{ url('/220101-dev-MawadOnline/seller/dashboard') }}";
+                                    window.location.href = "{{ url('/seller/dashboard') }}";
                             }
                             if (response.hasOwnProperty('verif_login') && response.verif_login ===
                                 true) {
-
                                 $('#personal-info-tab, #code-verification-tab').addClass(
                                     'disabled');
                                 $('#personal-info, #code-verification').addClass('disabled');

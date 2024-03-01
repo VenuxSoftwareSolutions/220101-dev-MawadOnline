@@ -239,6 +239,9 @@
                                         <button type="button" class="dropdown-item btn btn-info view-status-history-btn" data-vendor-id="{{ $seller->id }}">
                                             View Status History
                                         </button>
+                                        <a href="{{route('sellers.staff',$seller->id)}}" class="dropdown-item" >
+                                            View Staff
+                                        </a>
                                     </div>
                                 </div>
 

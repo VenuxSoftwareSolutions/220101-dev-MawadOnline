@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Auth;
 // use App\Models\Role;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use App\Models\RoleTranslation;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
-use App\Models\User;
-use Auth;
 
 class RoleController extends Controller
 {
@@ -30,7 +31,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles = Role::where('id', '!=', 1)->where('seller_id',0)->paginate(10);
+        $roles = Role::where('id', '!=', 1)->where('role_type',0)->paginate(10);
         return view('backend.staff.staff_roles.index', compact('roles'));
 
         // $roles = Role::paginate(10);
@@ -39,7 +40,7 @@ class RoleController extends Controller
 
     public function indexSellerRoles()
     {
-        $roles = Role::where('id', '!=', 1)->where('seller_id',1)->paginate(10);
+        $roles = Role::where('id', '!=', 1)->where('role_type',1)->paginate(10);
         return view('backend.staff.staff_roles.seller_roles', compact('roles'));
 
     }
@@ -72,6 +73,7 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
+        abort_if(!auth('web')->user()->can('add_staff_role'), Response::HTTP_FORBIDDEN, 'ACCESS FORBIDDEN');
         // dd($request->permissions);
         if($request->seller){
             $seller_id = $request->seller;
@@ -81,7 +83,8 @@ class RoleController extends Controller
         }
         $role = Role::create([
             'name' => $request->name,
-            'seller_id' => $seller_id,
+            'role_type' => $seller_id,
+            'created_by' => Auth::user()->id,
             'description' => $request->description
         ]);
         $role->givePermissionTo($request->permissions);
@@ -127,6 +130,7 @@ class RoleController extends Controller
      */
     public function update(Request $request, $id)
     {
+        abort_if(!auth('web')->user()->can('edit_staff_role'), Response::HTTP_FORBIDDEN, 'ACCESS FORBIDDEN');
         $role = Role::findOrFail($id);
         if ($request->lang == env("DEFAULT_LANGUAGE")) {
             $role->name = $request->name;
@@ -159,13 +163,13 @@ class RoleController extends Controller
         return redirect()->route('roles.index');
     }
 
-    public function add_permission(Request $request)
-    {
-        $permission = Permission::create(['name' => $request->name, 'section' => $request->parent]);
-        return redirect()->route('roles.index');
-    }
+    // public function add_permission(Request $request)
+    // {
+    //     $permission = Permission::create(['name' => $request->name, 'section' => $request->parent]);
+    //     return redirect()->route('roles.index');
+    // }
 
-    public function create_admin_permissions()
-    {
-    }
+    // public function create_admin_permissions()
+    // {
+    // }
 }

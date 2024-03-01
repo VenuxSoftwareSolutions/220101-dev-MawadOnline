@@ -4,6 +4,7 @@ use App\Http\Controllers\AizUploadController;
 use App\Http\Controllers\Seller\SellerRoleController;
 use App\Http\Controllers\Seller\SellerStaffController;
 use App\Http\Controllers\Seller\StockController;
+use App\Http\Controllers\SellerController;
 
 //Upload
 Route::group(['prefix' => 'seller', 'middleware' => ['seller', 'verified', 'user', 'prevent-back-history'], 'as' => 'seller.'], function () {
@@ -169,6 +170,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
         Route::resource('staffs', SellerStaffController::class);
         Route::get('/staffs/destroy/{id}', [SellerStaffController::class, 'destroy'])->name('staffs.destroy');
     });
+    Route::post('vendors/{id}/approve', [SellerController::class,'approve'])->name('staff.approve');
+
 
 
     Route::controller(SellerRoleController::class)->group(function () {

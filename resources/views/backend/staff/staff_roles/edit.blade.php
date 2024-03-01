@@ -30,12 +30,23 @@
                         <input type="text" placeholder="{{translate('Name')}}" id="name" name="name" class="form-control" value="{{ $roleForTranslation->getTranslation('name', $lang) }}" required>
                     </div>
                 </div>
+                <div class="form-group row">
+                    <label class="col-md-3 col-from-label" for="description">{{translate('Description')}}</label>
+                    <div class="col-md-9">
+                        <textarea placeholder="{{translate('Description')}}" id="description" name="description" class="form-control" required>{{$role->description}}</textarea>
+                    </div>
+                </div>
                 <div class="card-header">
                     <h5 class="mb-0 h6">{{ translate('Permissions') }}</h5>
                 </div>
                 <br>
                 @php
-                    $permission_groups =  \App\Models\Permission::all()->groupBy('section');
+                    if ( $role->seller_id == 1) {
+                        $permission_groups =  \App\Models\Permission::where('section', 'like', 'seller_%')->get()->groupBy('section');
+                    }else{
+                        $permission_groups =  \App\Models\Permission::where('section', 'not like', 'seller_%')->get()->groupBy('section');
+                    }
+
                     $addons = array("offline_payment", "club_point", "pos_system", "paytm", "seller_subscription", "otp_system", "refund_request", "affiliate_system", "african_pg", "delivery_boy", "auction", "wholesale");
                 @endphp
                 @foreach ($permission_groups as $key => $permission_group)

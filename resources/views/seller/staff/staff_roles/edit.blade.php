@@ -29,7 +29,7 @@
                         @php $roleForTranslation = \App\Models\Role::where('id',$role->id)->first(); @endphp
                         <input type="text" placeholder="{{translate('Name')}}" id="name" name="name" class="form-control"
                         value="{{ $roleForTranslation->getTranslation('name', $lang) }}" required
-                        @if ($role->seller_id == 1)
+                        @if ($role->created_by == 1)
                             disabled
                         @endif >
                     </div>
@@ -38,7 +38,7 @@
                     <label class="col-md-3 col-from-label" for="name">{{translate('Description')}}</label>
                     <div class="col-md-9">
                         <textarea placeholder="{{translate('Description')}}" id="description" name="description" class="form-control"
-                        @if ($role->seller_id == 1)
+                        @if ($role->created_by == 1)
                             disabled
                         @endif  >{{$role->description}}</textarea>
                     </div>
@@ -71,7 +71,10 @@
 
                                 <!-- Add checkbox for selecting/deselecting all permissions in this group -->
                                 <label class="aiz-switch aiz-switch-success">
-                                    <input type="checkbox" class="form-control demo-sw select-all-permissions" data-group="{{ $permission_group[0]['section'] }}">
+                                    <input type="checkbox" class="form-control demo-sw select-all-permissions" data-group="{{ $permission_group[0]['section'] }}"
+                                    @if ($role->created_by == 1)
+                                                            disabled
+                                                        @endif>
                                     <span class="slider round"></span>
                                 </label>
                             </li>
@@ -86,7 +89,7 @@
                                                         @if ($role->hasPermissionTo($permission->name))
                                                             checked
                                                         @endif
-                                                        @if ($role->seller_id == 1)
+                                                        @if ($role->created_by == 1)
                                                             disabled
                                                         @endif >
                                                     <span class="slider round"></span>

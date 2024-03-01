@@ -65,10 +65,14 @@
                         <td class="text-right">
 
                                 <a class="btn btn-soft-primary btn-icon btn-circle btn-sm" href="{{route('seller.roles.edit', ['id'=>$role->id, 'lang'=>env('DEFAULT_LANGUAGE')] )}}" title="{{ translate('Edit') }}">
+                                    @if($role->id != 1 && $role->created_by != 1 )
                                     <i class="las la-edit"></i>
+                                    @else
+                                    <i class="la la-list-alt"></i>
+                                    @endif
                                 </a>
 
-                            @if($role->id != 1 && $role->seller_id != 1 )
+                            @if($role->id != 1 && $role->created_by != 1 )
                                 <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('seller.roles.destroy', $role->id)}}" title="{{ translate('Delete') }}">
                                     <i class="las la-trash"></i>
                                 </a>

@@ -30,6 +30,7 @@
                     <th data-breakpoints="lg">{{translate('Email')}}</th>
                     <th data-breakpoints="lg">{{translate('Phone')}}</th>
                     <th data-breakpoints="lg">{{translate('Role')}}</th>
+                    <th data-breakpoints="lg">{{__('Approval')}}</th>
                     <th width="10%" class="text-right">{{translate('Options')}}</th>
                 </tr>
             </thead>
@@ -46,6 +47,13 @@
 									{{ $staff->role->getTranslation('name') }}
 								@endif
 							</td>
+                            <td>
+                                <!-- Approval status column with toggle switch -->
+                                <label class="aiz-switch aiz-switch-success mb-0">
+                                    <input id="vendor-checkbox-{{ $staff->user->id }}" type="checkbox" class="approval-checkbox" data-vendor-id="{{ $staff->user->id }}" <?php if($staff->user->status == 'Enabled') echo "checked";?> onchange="updateSettings(this, 'vendor_approval', {{ $staff->user->id }})">
+                                    <span class="slider round"></span>
+                                </label>
+                            </td>
                             <td class="text-right">
 
                                     <a class="btn btn-soft-primary btn-icon btn-circle btn-sm" href="{{route('seller.staffs.edit', encrypt($staff->id))}}" title="{{ translate('Edit') }}">
@@ -73,3 +81,29 @@
 @section('modal')
     @include('modals.delete_modal')
 @endsection
+
+@section('script')
+ <script>
+
+        // Handle click event for select all checkboxes
+            function updateSettings(el, type, vendorId) {
+            // Determine the value based on whether the checkbox is checked or not
+            var value = $(el).is(':checked') ? 'Enabled' : 'Disabled';
+
+            // Send a POST request to update the vendor's approval status
+
+            $.post("{{ route('seller.staff.approve', ':id') }}".replace(':id', vendorId), {_token:'{{ csrf_token() }}', type:type, value:value}, function(data){
+                // Handle the response from the server
+                if(data.success){
+                    AIZ.plugins.notify('success', '{{ translate('Vendor approval status updated successfully') }}');
+                    $('#status-' + vendorId).text(data.status); // Update the status cell with the new status
+
+                }
+                else{
+                    AIZ.plugins.notify('danger', 'Something went wrong');
+                }
+            });
+        }
+
+</script>
+ @endsection

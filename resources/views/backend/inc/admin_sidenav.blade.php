@@ -1497,7 +1497,7 @@
                             @can('view_all_staffs')
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('staffs.index') }}" class="aiz-side-nav-link {{ areActiveRoutes(['staffs.index', 'staffs.create', 'staffs.edit'])}}">
-                                        <span class="aiz-side-nav-text">{{translate('All staffs')}}</span>
+                                        <span class="aiz-side-nav-text">{{translate('All admin staffs')}}</span>
                                     </a>
                                 </li>
                             @endcan
@@ -1511,7 +1511,7 @@
                             @can('view_seller_staff_roles')
                                 <li class="aiz-side-nav-item">
                                     <a href="{{route('roles.seller.index')}}" class="aiz-side-nav-link {{ areActiveRoutes(['roles.seller.index', 'roles.seller.create', 'roles.edit'])}}">
-                                        <span class="aiz-side-nav-text">{{translate('Seller staff permissions')}}</span>
+                                        <span class="aiz-side-nav-text">{{translate('Vendor staff permissions')}}</span>
                                     </a>
                                 </li>
                             @endcan

@@ -7,6 +7,7 @@ use Auth;
 use App\Models\User;
 use App\Models\Staff;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use App\Models\RoleTranslation;
 use App\Models\RoleHasPermissions;
 use Spatie\Permission\Models\Role;
@@ -31,7 +32,8 @@ class SellerRoleController extends Controller
     public function index()
     {
         //$roles=Auth::user()->roles();
-        $roles = Role::whereIn('seller_id',[1,Auth::user()->id])->paginate(10);
+        //$roles = Role::where('id', '!=', 1)->where('role_type',1)->paginate(10);
+        $roles = Role::where('role_type',1)->whereIn('created_by',[1,Auth::user()->id])->paginate(10);
         return view('seller.staff.staff_roles.index', compact('roles'));
 
         // $roles = Role::paginate(10);
@@ -62,10 +64,12 @@ class SellerRoleController extends Controller
      */
     public function store(Request $request)
     {
+        abort_if(!auth('web')->user()->can('seller_add_staff_role'), Response::HTTP_FORBIDDEN, 'ACCESS FORBIDDEN');
         // dd($request->permissions);
         $role = Role::create(['name' => $request->name]);
         $role->givePermissionTo($request->permissions);
-        $role->seller_id=Auth::user()->id;
+        $role->created_by=Auth::user()->id;
+        $role->role_type=1;
         $role->save();
 
         $role_translation = RoleTranslation::firstOrNew(['lang' => env('DEFAULT_LANGUAGE'), 'role_id' => $role->id]);
@@ -109,8 +113,10 @@ class SellerRoleController extends Controller
      */
     public function update(Request $request, $id)
     {
+        abort_if(!auth('web')->user()->can('seller_edit_staff_role'), Response::HTTP_FORBIDDEN, 'ACCESS FORBIDDEN');
+
         $role = Role::findOrFail($id);
-        if($role->seller_id == 1 || $role->seller_id == 0){
+        if($role->created_by != Auth::user()->id || $role->role_type == 0){
             return back();
         }
         if ($request->lang == env("DEFAULT_LANGUAGE")) {
@@ -144,10 +150,10 @@ class SellerRoleController extends Controller
         return redirect()->route('seller.roles.index');
     }
 
-    public function add_permission(Request $request)
-    {
-        $permission = Permission::create(['name' => $request->name, 'section' => $request->parent]);
-        return redirect()->route('seller.roles.index');
-    }
+    // public function add_permission(Request $request)
+    // {
+    //     $permission = Permission::create(['name' => $request->name, 'section' => $request->parent]);
+    //     return redirect()->route('seller.roles.index');
+    // }
 
 }

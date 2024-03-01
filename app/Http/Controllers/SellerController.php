@@ -61,7 +61,7 @@ class SellerController extends Controller
         // }
         // $shops = $shops->paginate(15);
         // return view('backend.sellers.index', compact('shops', 'sort_search', 'approved'));
-        $sellers = User::where('user_type', 'seller')->get() ;
+        $sellers = User::where('user_type', 'seller')->whereColumn('id','owner_id')->get() ;
         return view('backend.sellers.index', compact('sellers'));
     }
 
@@ -73,6 +73,11 @@ class SellerController extends Controller
     public function create()
     {
         return view('backend.sellers.create');
+    }
+
+    public function showStaff(User $seller) {
+        $staff = $seller->getStaff;
+        return view('backend.sellers.staff', compact('seller', 'staff'));
     }
 
     /**
