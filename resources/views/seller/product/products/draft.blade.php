@@ -332,7 +332,7 @@
                             
                         </h6>
                     </div>
-                    <input type="hidden" id="selected_parent_id" name="parent_id" value="">
+                    <input type="hidden" id="selected_parent_id" name="parent_id" value="{{ $categorie->id }}">
 
                     <div class="card-body">
                         
@@ -810,7 +810,7 @@
             <div class="col-12">
                 <div class="mar-all text-right mb-2">
                     <button type="submit" name="button" value="draft" class="btn btn-success">Save as draft</button>
-                    <button type="submit" name="button" value="edit" class="btn btn-primary">Edit Product</button>
+                    <button type="submit" name="button" value="edit" class="btn btn-primary">Create Product</button>
                 </div>
             </div>
         </div>

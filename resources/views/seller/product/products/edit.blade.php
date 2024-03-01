@@ -332,7 +332,7 @@
                             
                         </h6>
                     </div>
-                    <input type="hidden" id="selected_parent_id" name="parent_id" value="">
+                    <input type="hidden" id="selected_parent_id" name="parent_id" value="{{ $categorie->id }}">
 
                     <div class="card-body">
                         

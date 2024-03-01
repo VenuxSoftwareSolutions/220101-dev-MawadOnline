@@ -9,11 +9,18 @@ use App\Models\ProductAttributeValues;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Model;
 use \Venturecraft\Revisionable\RevisionableTrait;
-
+use App\Traits\EnhancedRevisionableTrait;
 class Product extends Model
 {
 
-    use RevisionableTrait;
+    use EnhancedRevisionableTrait;
+
+    protected function getLastActionNumber()
+    {
+        $lastRevision = $this->revisionHistory()->latest('id')->first();
+        return $lastRevision ? $lastRevision->action_number + 1 : 0;
+    }
+    
     protected $guarded = ['choice_attributes'];
 
     protected $with = ['product_translations', 'taxes', 'thumbnail'];
