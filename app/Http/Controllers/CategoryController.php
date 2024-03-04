@@ -156,7 +156,7 @@ class CategoryController extends Controller
 
             $formattedCategories = $this->formatCategories($categories);
 
-            return response()->json(['data' => $formattedCategories,'recordsTotal' => $categories::all()->count()]);
+            return response()->json(['data' => $formattedCategories,'recordsTotal' => Category::all()->count()]);
         }
     }
 
