@@ -26,6 +26,91 @@
     <link rel="stylesheet" href="{{ static_asset('assets/css/bootstrap-rtl.min.css') }}">
     @endif
 	<link rel="stylesheet" href="{{ static_asset('assets/css/aiz-seller.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.css" integrity="sha512-In/+MILhf6UMDJU4ZhDL0R0fEpsp4D3Le23m6+ujDWXwl3whwpucJG1PEmI3B07nyJx+875ccs+yX2CqQJUxUw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" href="{{ static_asset('assets/css/countrySelect.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* Override Dropify's default message font size */
+        .dropify-wrapper .dropify-message p {
+            font-size: 13px !important; /* Adjust the font size as needed */
+        }
+
+        .country-select {
+            width: 100%;
+        }
+
+        .country-select.inside input, .country-select.inside input[type=text] {
+            width: 100%;
+            height: calc(1.3125rem + 1.2rem + 2px);
+            border: 1px solid #e4e5eb;
+            color: #898b92;
+
+        }
+
+        .icon-delete-pricing{
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 14px;
+        }
+        /* .fa-regular{
+            color:red
+        } */
+
+        .div-btn{
+            display: flex;
+            width: 100%;
+            justify-content: center;
+        }
+
+        #bloc_pricing_configuration_variant{
+            width: 94%;
+            margin-left: 19px;
+            margin-top: 21px;
+        }
+
+        .bloc_pricing_configuration_variant{
+            width: 94%;
+            margin-left: 19px;
+            margin-top: 21px;
+        }
+
+        #bloc_sample_pricing_configuration_variant{
+            width: 94%;
+            margin-left: 19px;
+            margin-top: 21px;
+        }
+
+        .bloc_sample_pricing_configuration_variant{
+            width: 94%;
+            margin-left: 19px;
+            margin-top: 21px;
+        }
+
+        #general_attributes{
+            width: 100%;
+        }
+
+        .font-size-icon{
+            font-size: 23px;
+        }
+
+        .container-img{
+            position: relative;
+        }
+
+        .icon-delete-image{
+            position: absolute;
+            color: red;
+            top: 0;
+            right: -11px;
+        }
+
+        .icon-delete-image:hover{
+            cursor: pointer;
+        }
+    </style>
+
     <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- DataTables CSS -->
@@ -50,6 +135,55 @@
         }
         .pac-container{
             z-index: 100000;
+        }
+
+        .plus, .minus {
+            display: inline-block;
+            background-repeat: no-repeat;
+            background-size: 16px 16px !important;
+            width: 16px;
+            height: 16px;
+        }
+
+        .plus {
+            background-image: url(https://img.icons8.com/android/24/plus.png);
+        }
+
+        .minus {
+            background-image: url(https://img.icons8.com/material-rounded/24/minus.png);
+        }
+
+        .square-variant{
+            margin-right: 10px;
+            color: black;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0px 0px 0px 20px;
+        }
+
+        ul.inner_ul li:before {
+            content: "├";
+            font-size: 18px;
+            margin-left: -11px;
+            margin-top: -5px;
+            vertical-align: middle;
+            float: left;
+            width: 8px;
+            color: #41424e;
+        }
+
+        ul.inner_ul li:last-child:before {
+            content: "└";
+        }
+
+        .inner_ul {
+            padding: 0px 0px 0px 35px;
+        }
+
+        .width-badge{
+            width: 100%;
         }
 
     </style>
@@ -78,7 +212,7 @@
             files: '{{ translate('Files') }}',
         }
 	</script>
-
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
 </head>
 <body class="">
 
@@ -162,6 +296,7 @@
 			}
         }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.all.min.js"></script>
 
 </body>
 </html>

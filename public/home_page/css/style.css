@@ -132,6 +132,9 @@ ul.navbar-nav {
     gap: 2px;
     display: flex;
 } */
+.logo-image {
+    width: 100px;
+}
 /* slider */
 section.slider {
     position: relative;
@@ -649,14 +652,14 @@ section.Join-The-Waitlist:before {
     font-weight: 500;
     word-wrap: break-word;
 }
-.champ1 input, .champ2 input, .champ3 input {
+.champ1 input, .champ2 input, .champ2 textarea, .champ3 input {
     width: 100%;
     border: 1px #FEBC98 solid;
     border-radius: 5px;
     background: white;
     padding: 14px 0 14px 24px;
 }
-.champ1 input::placeholder, .champ2 input::placeholder, .champ3 input::placeholder {
+.champ1 input::placeholder, .champ2 input::placeholder,.champ2 textarea::placeholder, .champ3 input::placeholder {
     opacity: 0.3;
 }
 .champ1, .champ2, .champ3 {
@@ -755,6 +758,7 @@ input[type='checkbox']:checked {
 
 .nav-menu.nav-mobile {
     text-align: right;
+    margin-top: 4px;
 }
 span.required {
     color: #ff0000;
@@ -1054,7 +1058,7 @@ span.required {
         position: absolute;
         content: "";
         background: url(../images/Ellipse-4-mob.png);
-        width: 430px;
+        width: 390px;
         height: 897px;
         right: 0;
         top: 0;
@@ -1064,7 +1068,7 @@ span.required {
     }
     section.why-MawadOnline:after {
         background: url(../images/Ellipse-3-mob.png);
-        width: 430px;
+        width: 390px;
         height: 643px;
     }
     .content-slider p {

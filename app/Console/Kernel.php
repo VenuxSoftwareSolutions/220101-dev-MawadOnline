@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Models\User;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -26,6 +27,12 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+        $schedule->call(function () {
+            // Logic to delete rejected vendors older than 30 days
+            User::where('status', 'Rejected')->where('user_type','seller')
+                ->where('updated_at', '<=', now()->subDays(30))
+                ->delete();
+        })->daily();
     }
 
     /**

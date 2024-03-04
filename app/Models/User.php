@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Cart;
 use App\Notifications\EmailVerificationNotification;
+use Auth;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -106,6 +107,20 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsTo(CustomerPackage::class);
     }
 
+    public function vendor_status_history() {
+
+        return $this->hasMany(VendorStatusHistory::class,'vendor_id');
+    }
+    public function getSuspendedStatusHistory()
+    {
+        // Retrieve the latest vendor status history where the status is "Suspended"
+        $latestSuspendedHistory = Auth::user()->vendor_status_history()
+            ->where('status', 'Suspended')
+            ->latest()
+            ->first();
+
+        return $latestSuspendedHistory;
+    }
     public function customer_package_payments()
     {
         return $this->hasMany(CustomerPackagePayment::class);

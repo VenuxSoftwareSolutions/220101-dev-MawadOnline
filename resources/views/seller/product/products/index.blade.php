@@ -18,7 +18,7 @@
                       <i class="las la-upload la-2x text-white"></i>
                   </span>
                   <div class="px-3 pt-3 pb-3">
-                      <div class="h4 fw-700 text-center">{{ max(0, auth()->user()->shop->product_upload_limit - auth()->user()->products()->count()) }}</div>
+                      {{-- <div class="h4 fw-700 text-center">{{ max(0, auth()->user()->shop->product_upload_limit - auth()->user()->products()->count()) }}</div> --}}
                       <div class="opacity-50 text-center">{{  translate('Remaining Uploads') }}</div>
                   </div>
                 </div>
@@ -38,7 +38,8 @@
 
         @if (addon_is_activated('seller_subscription'))
         @php
-            $seller_package = \App\Models\SellerPackage::find(Auth::user()->shop->seller_package_id);
+            // $seller_package = \App\Models\SellerPackage::find(Auth::user()->shop->seller_package_id);
+            $seller_package = null;
         @endphp
         <div class="col-md-4">
             <a href="{{ route('seller.seller_packages_list') }}" class="text-center bg-white shadow-sm hov-shadow-lg text-center d-block p-3 rounded">
@@ -95,10 +96,8 @@
                             {{-- <th data-breakpoints="md">{{ translate('Category')}}</th> --}}
                             <th data-breakpoints="md">{{ translate('Current Qty')}}</th>
                             <th>{{ translate('Base Price')}}</th>
-                            @if(get_setting('product_approve_by_admin') == 1)
-                                <th data-breakpoints="md">{{ translate('Approval')}}</th>
-                            @endif
-                            <th data-breakpoints="md">{{ translate('Published')}}</th>
+                            <th data-breakpoints="md">{{ translate('Status')}}</th>
+                            <th data-breakpoints="md">{{ translate('Draft')}}</th>
                             <th data-breakpoints="md">{{ translate('Featured')}}</th>
                             <th data-breakpoints="md" class="text-right">{{ translate('Options')}}</th>
                         </tr>
@@ -117,7 +116,7 @@
                                 </td>
                                 <td>
                                     <a href="{{ route('product', $product->slug) }}" target="_blank" class="text-reset">
-                                        {{ $product->getTranslation('name') }}
+                                        {{ $product->sku }}
                                     </a>
                                 </td>
                                 {{-- <td>
@@ -135,20 +134,36 @@
                                     @endphp
                                 </td>
                                 <td>{{ $product->unit_price }}</td>
-                                @if(get_setting('product_approve_by_admin') == 1)
-                                    <td>
-                                        @if ($product->approved == 1)
-                                            <span class="badge badge-inline badge-success">{{ translate('Approved')}}</span>
-                                        @else
-                                            <span class="badge badge-inline badge-info">{{ translate('Pending')}}</span>
-                                        @endif
-                                    </td>
-                                @endif
                                 <td>
-                                    <label class="aiz-switch aiz-switch-success mb-0">
-                                        <input onchange="update_published(this)" value="{{ $product->id }}" type="checkbox" <?php if($product->published == 1) echo "checked";?> >
-                                        <span class="slider round"></span>
-                                    </label>
+                                    @if ($product->is_draft == 0)
+                                        @if($product->is_parent == 0)
+                                            @switch($product->approved)
+                                                @case(0)
+                                                    <span class="badge badge-primary width-badge width-badge">{{ translate('Pending')}}</span>
+                                                @break
+                                            
+                                                @case(1)
+                                                <span class="badge badge-success width-badge width-badge">{{ translate('Approved')}}</span>
+                                                    @break
+                                                @case(4)
+                                                    <span class="badge badge-info width-badge width-badge">{{ translate('Under Review')}}</span>
+                                                    @break
+                                                @case(2)
+                                                <span class="badge badge-warning width-badge width-badge">{{ translate('Revision Required')}}</span>
+                                                    @break
+                                                @case(3)
+                                                    <span class="badge badge-danger width-badge width-badge">{{ translate('Rejected')}}</span>
+                                                        @break
+                                            @endswitch
+                                        @endif
+                                    @endif
+                                </td>
+                                <td>
+                                    @if ($product->is_draft == 1)
+                                        <span class="badge badge-inline badge-info">{{ translate('Yes')}}</span>
+                                    @else
+                                        <span class="badge badge-inline badge-success">{{ translate('No')}}</span>
+                                    @endif
                                 </td>
                                 <td>
                                     <label class="aiz-switch aiz-switch-success mb-0">
@@ -157,17 +172,92 @@
                                     </label>
                                 </td>
                                 <td class="text-right">
-                                <a class="btn btn-soft-info btn-icon btn-circle btn-sm" href="{{route('seller.products.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')])}}" title="{{ translate('Edit') }}">
-                                    <i class="las la-edit"></i>
-                                </a>
-                                <a href="{{route('seller.products.duplicate', $product->id)}}" class="btn btn-soft-success btn-icon btn-circle btn-sm"  title="{{ translate('Duplicate') }}">
-                                    <i class="las la-copy"></i>
-                                </a>
-                                <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('seller.products.destroy', $product->id)}}" title="{{ translate('Delete') }}">
-                                    <i class="las la-trash"></i>
-                                </a>
-                            </td>
+                                    <a class="btn btn-soft-info btn-icon btn-circle btn-sm" href="{{route('seller.products.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')])}}" title="{{ translate('Edit') }}">
+                                        <i class="las la-edit"></i>
+                                    </a>
+                                    {{-- <a href="{{route('seller.products.duplicate', $product->id)}}" class="btn btn-soft-success btn-icon btn-circle btn-sm"  title="{{ translate('Duplicate') }}">
+                                        <i class="las la-copy"></i>
+                                    </a> --}}
+                                    <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('seller.products.destroy', $product->id)}}" title="{{ translate('Delete') }}">
+                                        <i class="las la-trash"></i>
+                                    </a>
+                                </td>
                             </tr>
+                            @if((count($product->getChildrenProducts()) > 0) && ($product->is_draft == 0))
+                                @foreach ($product->getChildrenProducts() as $children)
+                                    <tr>
+                                        <td>
+                                            <div class="form-group d-inline-block">
+                                                <label class="aiz-checkbox">
+                                                    <input type="checkbox" class="check-one" name="id[]" value="{{$children->id}}">
+                                                    <span class="aiz-square-check"></span>
+                                                </label>
+                                            </div>
+                                        </td>
+                                        <td >
+                                            <a href="{{ route('product', $children->slug) }}" style="margin-left: 34px !important" target="_blank" class="text-reset">
+                                                {{ $children->sku }}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            @php
+                                                $qty = 0;
+                                                foreach ($children->stocks as $key => $stock) {
+                                                    $qty += $stock->qty;
+                                                }
+                                                echo $qty;
+                                            @endphp
+                                        </td>
+                                        <td>{{ $children->unit_price }}</td>
+                                        <td>
+                                            @if ($children->is_draft == 0)
+                                                @switch($children->approved)
+                                                    @case(0)
+                                                        <span class="badge badge-primary width-badge">{{ translate('Pending')}}</span>
+                                                    @break
+                                                
+                                                    @case(1)
+                                                    <span class="badge badge-success width-badge">{{ translate('Approved')}}</span>
+                                                        @break
+                                                    @case(4)
+                                                        <span class="badge badge-info width-badge">{{ translate('Under Review')}}</span>
+                                                        @break
+                                                    @case(2)
+                                                    <span class="badge badge-warning width-badge">{{ translate('Revision Required')}}</span>
+                                                        @break
+                                                    @case(3)
+                                                        <span class="badge badge-danger width-badge">{{ translate('Rejected')}}</span>
+                                                            @break
+                                                @endswitch
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($children->is_draft == 1)
+                                                <span class="badge badge-inline badge-info">{{ translate('Yes')}}</span>
+                                            @else
+                                                <span class="badge badge-inline badge-success">{{ translate('No')}}</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <label class="aiz-switch aiz-switch-success mb-0">
+                                                <input onchange="update_featured(this)" value="{{ $children->id }}" type="checkbox" <?php if($children->seller_featured == 1) echo "checked";?> >
+                                                <span class="slider round"></span>
+                                            </label>
+                                        </td>
+                                        <td class="text-right">
+                                            {{-- <a class="btn btn-soft-info btn-icon btn-circle btn-sm" href="{{route('seller.products.edit', ['id'=>$children->id, 'lang'=>env('DEFAULT_LANGUAGE')])}}" title="{{ translate('Edit') }}">
+                                                <i class="las la-edit"></i>
+                                            </a>
+                                            <a href="{{route('seller.products.duplicate', $children->id)}}" class="btn btn-soft-success btn-icon btn-circle btn-sm"  title="{{ translate('Duplicate') }}">
+                                                <i class="las la-copy"></i>
+                                            </a> --}}
+                                            <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('seller.products.destroy', $children->id)}}" title="{{ translate('Delete') }}">
+                                                <i class="las la-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endif
                         @endforeach
                     </tbody>
                 </table>
@@ -194,14 +284,14 @@
             if(this.checked) {
                 // Iterate each checkbox
                 $('.check-one:checkbox').each(function() {
-                    this.checked = true;                        
+                    this.checked = true;
                 });
             } else {
                 $('.check-one:checkbox').each(function() {
-                    this.checked = false;                       
+                    this.checked = false;
                 });
             }
-          
+
         });
 
         function update_featured(el){

@@ -13,7 +13,7 @@
                 <img src="{{ $topbar_banner_asset }}" class="d-none d-xl-block img-fit h-100" alt="{{ translate('topbar_banner') }}">
                 <!-- For Medium device -->
                 <img src="{{ $topbar_banner_medium != null ? uploaded_asset($topbar_banner_medium) : $topbar_banner_asset }}"
-                    class="d-none d-md-block d-xl-none img-fit h-100" alt="{{ translate('topbar_banner') }}"> 
+                    class="d-none d-md-block d-xl-none img-fit h-100" alt="{{ translate('topbar_banner') }}">
                 <!-- For Small device -->
                 <img src="{{ $topbar_banner_small != null ? uploaded_asset($topbar_banner_small) : $topbar_banner_asset }}"
                     class="d-md-none img-fit h-100" alt="{{ translate('topbar_banner') }}">
@@ -34,7 +34,7 @@
                         <!-- Language switcher -->
                         @if (get_setting('show_language_switcher') == 'on')
                             <li class="list-inline-item dropdown mr-4" id="lang-change">
-                                
+
                                 <a href="javascript:void(0)" class="dropdown-toggle text-secondary fs-12 py-2"
                                     data-toggle="dropdown" data-display="static">
                                     <span class="">{{ $system_language->name }}</span>
@@ -85,6 +85,8 @@
                 <div class="col-6 text-right d-none d-lg-block">
                     <ul class="list-inline mb-0 h-100 d-flex justify-content-end align-items-center">
                         @if (get_setting('vendor_system_activation') == 1)
+                        @unless(Auth::check() && Auth::user()->user_type == 'seller')
+
                             <!-- Become a Seller -->
                             <li class="list-inline-item mr-0 pl-0 py-2">
                                 <a href="{{ route('shops.create') }}"
@@ -95,6 +97,8 @@
                                 <a href="{{ route('seller.login') }}"
                                     class="text-secondary fs-12 pl-3 d-inline-block">{{ translate('Login to Seller') }}</a>
                             </li>
+                            @endunless
+
                         @endif
                         @if (get_setting('helpline_number'))
                             <!-- Helpline -->
@@ -273,6 +277,22 @@
                                                                     </span>
                                                                 </a>
                                                             @endif
+                                                        @elseif ($notification->type == 'App\Notifications\CustomStatusNotification')
+                                                        <span class="ml-2">
+                                                            @if ($notification->data['newStatus'] == 'Suspended')
+                                                                {{ __('messages.suspended_notification', ['reason' =>$notification->data['suspendedTitle'] ?? "" ]) }}
+                                                                @elseif ($notification->data['newStatus'] == 'Pending Approval')
+                                                                {{ __('messages.registration_completed') }}
+                                                                @elseif ($notification->data['newStatus'] == 'Closed')
+                                                                {{ __('messages.vendor_closed') }}
+                                                                @elseif ($notification->data['newStatus'] == 'Pending Closure')
+                                                                {{ __('messages.pending_closure') }}
+                                                                @elseif ($notification->data['newStatus'] == 'Enabled')
+                                                                {{ __('messages.approved') }}
+                                                                @elseif ($notification->data['newStatus'] == 'Rejected')
+                                                                {{ __('messages.registration_rejected') }}
+                                                            @endif
+                                                        </span>
                                                         @endif
                                                     </li>
                                                 @empty

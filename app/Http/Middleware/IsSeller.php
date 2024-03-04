@@ -16,10 +16,10 @@ class IsSeller
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::check() && Auth::user()->user_type == 'seller'  && !Auth::user()->banned) {
+        if (Auth::check() && Auth::user()->user_type == 'seller'  && !Auth::user()->banned  ) {
             $user = Auth::user();
 
-            if (!$user->steps) {
+            if (Auth::user()->status != "Enabled") {
                 // Redirect to shops.create with the step number
                 return redirect()->route('shops.create', ['step' => $user->step_number]);
             }

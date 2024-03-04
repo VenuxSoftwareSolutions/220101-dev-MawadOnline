@@ -69,15 +69,8 @@ class AttributeService
                             if(($values_english != null) && ($data_values_arabic[$key] != null)){
                                 $attribute_value_english = new AttributeValue();
                                 $attribute_value_english->attribute_id = $attribute->id;
-                                $attribute_value_english->value = $values_english;
-                                $attribute_value_english->lang = 'en';
+                                $attribute_value_english->value = ['en' => $values_english, 'ar' => $data_values_arabic[$key]];
                                 $attribute_value_english->save();
-
-                                $attribute_value_arabic = new AttributeValue();
-                                $attribute_value_arabic->attribute_id = $attribute->id;
-                                $attribute_value_arabic->value = $data_values_arabic[$key];
-                                $attribute_value_arabic->lang = 'ar';
-                                $attribute_value_arabic->save();
                             }
 
                         }
@@ -207,12 +200,8 @@ class AttributeService
                     $new_key_english_value = 'value_english-'.$ids_values_english[$key];
 
                     $old_value_arabic_value = AttributeValue::find($id);
-                    $old_value_arabic_value->value = $data[$new_key_arabic_value];
+                    $old_value_arabic_value->value = ['en' => $data[$new_key_english_value], 'ar' => $data[$new_key_arabic_value]];
                     $old_value_arabic_value->save();
-
-                    $old_value_english_value = AttributeValue::find($ids_values_english[$key]);
-                    $old_value_english_value->value = $data[$new_key_english_value];
-                    $old_value_english_value->save();
                 }
 
                 if(array_key_exists('values_arabic', $data)){
@@ -223,15 +212,8 @@ class AttributeService
                             if(($values_english != null) && ($data_values_arabic[$key] != null)){
                                 $attribute_value_english = new AttributeValue();
                                 $attribute_value_english->attribute_id = $attribute->id;
-                                $attribute_value_english->value = $values_english;
-                                $attribute_value_english->lang = 'en';
+                                $attribute_value_english->value = ['en' => $values_english, 'ar' => $data_values_arabic[$key]];
                                 $attribute_value_english->save();
-
-                                $attribute_value_arabic = new AttributeValue();
-                                $attribute_value_arabic->attribute_id = $attribute->id;
-                                $attribute_value_arabic->value = $data_values_arabic[$key];
-                                $attribute_value_arabic->lang = 'ar';
-                                $attribute_value_arabic->save();
                             }
 
                         }

@@ -30,19 +30,102 @@
     <link rel="stylesheet" href="{{ static_asset('assets/css/vendors.css') }}">
     <link rel="stylesheet" href="{{ static_asset('assets/css/tagify.css') }}">
 
+
     @if (\App\Models\Language::where('code', Session::get('locale', Config::get('app.locale')))->first()->rtl == 1)
         <link rel="stylesheet" href="{{ static_asset('assets/css/bootstrap-rtl.min.css') }}">
     @endif
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.css" integrity="sha512-In/+MILhf6UMDJU4ZhDL0R0fEpsp4D3Le23m6+ujDWXwl3whwpucJG1PEmI3B07nyJx+875ccs+yX2CqQJUxUw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{{ static_asset('assets/css/aiz-core.css?v=') }}{{ rand(1000,9999) }}">
-    <!-- Font Awesome CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
-    <!-- DataTables Buttons CSS -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
-     <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ static_asset('assets/css/countrySelect.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+     <!-- Font Awesome CSS -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+     <!-- DataTables CSS -->
+     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+     <!-- DataTables Buttons CSS -->
+     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+      <!-- Select2 CSS -->
+     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        /* Override Dropify's default message font size */
+        .dropify-wrapper .dropify-message p {
+            font-size: 13px !important; /* Adjust the font size as needed */
+        }
+        .font-size-icon{
+            font-size: 21px;
+            margin-top: 29px;
+            color: black;
+            border: solid 1px;
+            border-radius: 50%;
+            padding: 5px;
+        }
 
+        .style-img{
+            border-radius: 5%;
+            box-shadow: 5px 5px 5px gainsboro;
+        }
+
+        .country-select {
+            width: 100%;
+        }
+
+        .country-select.inside input, .country-select.inside input[type=text] {
+            width: 100%;
+            height: calc(1.3125rem + 1.2rem + 2px);
+            border: 1px solid #e4e5eb;
+            color: #898b92;
+
+        }
+
+        .icon-delete-pricing{
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 14px;
+        }
+        .fa-regular{
+            color:red
+        }
+
+        .div-btn{
+            display: flex;
+            width: 100%;
+            justify-content: center;
+        }
+
+        #bloc_pricing_configuration_variant{
+            width: 94%;
+            margin-left: 19px;
+            margin-top: 21px;
+        }
+
+        .bloc_pricing_configuration_variant{
+            width: 94%;
+            margin-left: 19px;
+            margin-top: 21px;
+        }
+
+        #bloc_sample_pricing_configuration_variant{
+            width: 94%;
+            margin-left: 19px;
+            margin-top: 21px;
+        }
+
+        .bloc_sample_pricing_configuration_variant{
+            width: 94%;
+            margin-left: 19px;
+            margin-top: 21px;
+        }
+
+        #general_attributes{
+            width: 100%;
+        }
+
+        .width-badge{
+            width: 100%;
+        }
+
+    </style>
     <style>
         :root {
             --blue: #3390f3;

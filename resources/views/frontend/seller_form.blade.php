@@ -298,7 +298,7 @@ use Carbon\Carbon;
                                                                     class="text-primary">*</span>
                                                             </label>
 
-                                                            <input required type="{{-- date --}}text" class="datepicker form-control rounded-0"
+                                                            <input dir="auto" required type="{{-- date --}}text" class="datepicker form-control rounded-0"
                                                                 placeholder="{{ translate('License Issue Date') }}"
                                                                 id="license_issue_date"
                                                                 value="{{ isset($user->business_information->license_issue_date) ? Carbon::createFromFormat('Y-m-d', $user->business_information->license_issue_date)->format('d M Y') : '' }}"
@@ -310,7 +310,7 @@ use Carbon\Carbon;
                                                             <label>{{ translate('License Expiry Date') }} <span
                                                                     class="text-primary">*</span></label>
 
-                                                            <input required type="text" class="datepicker form-control rounded-0"
+                                                            <input dir="auto" required type="text" class="datepicker form-control rounded-0"
                                                                 {{-- value="{{ $user->business_information->license_expiry_date ?? '' }}" --}}
                                                                 value="{{ isset($user->business_information->license_expiry_date) ? Carbon::createFromFormat('Y-m-d', $user->business_information->license_expiry_date)->format('d M Y') : '' }}"
                                                                 placeholder="{{ translate('License Expiry Date') }}"
@@ -655,7 +655,7 @@ use Carbon\Carbon;
                                                                     class="text-primary">*</span></label>
                                                             <br>
                                                             <select  title="{{ translate('Select Nationality') }}"
-                                                                name="nationality" class="selectpicker countrypicker"
+                                                                name="nationality" class="form-control selectpicker countrypicker"
                                                                 @if (isset($user->contact_people) && !empty($user->contact_people->nationality)) data-default="{{ $user->contact_people->nationality }}" @else data-default="" @endif
                                                                 data-flag="true"></select>
 
@@ -665,7 +665,7 @@ use Carbon\Carbon;
                                                         <div class="form-group">
                                                             <label>{{ translate('Date Of Birth') }} <span
                                                                     class="text-primary">*</span></label>
-                                                            <input type="text" class="datepicker form-control rounded-0"
+                                                            <input  dir="auto" type="text" class="datepicker form-control rounded-0"
                                                                 placeholder="{{ translate('Date Of Birth') }}"
                                                                 {{-- value="{{ $user->contact_people->date_of_birth ?? '' }}" --}}
                                                                 value="{{ isset($user->contact_people->date_of_birth) ? Carbon::createFromFormat('Y-m-d', $user->contact_people->date_of_birth)->format('d M Y') : '' }}"
@@ -691,7 +691,7 @@ use Carbon\Carbon;
                                                         <div class="form-group">
                                                             <label>{{ translate('Emirates ID - Expiry Date') }} <span
                                                                     class="text-primary">*</span></label>
-                                                            <input type="text" class="datepicker form-control rounded-0"
+                                                            <input dir="auto" type="text" class="datepicker form-control rounded-0"
                                                                 placeholder="{{ translate('Emirates ID - Expiry Date') }}"
                                                                 {{-- value="{{ $user->contact_people->emirates_id_expiry_date ?? '' }}" --}}
                                                                 value="{{ isset($user->contact_people->emirates_id_expiry_date) ? Carbon::createFromFormat('Y-m-d', $user->contact_people->emirates_id_expiry_date)->format('d M Y') : '' }}"
@@ -2254,6 +2254,7 @@ use Carbon\Carbon;
                 changeYear: true,      // Enable year dropdown
                  yearRange: "-100:+10"  // Optional: specify the range of years available
             });
+
         });
     </script>
 

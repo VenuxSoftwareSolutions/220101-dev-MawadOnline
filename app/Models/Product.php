@@ -3,11 +3,17 @@
 namespace App\Models;
 
 use App;
+use App\Models\UploadProducts;
+use App\Models\ProductCategory;
+use App\Models\ProductAttributeValues;
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Model;
+use \Venturecraft\Revisionable\RevisionableTrait;
 
 class Product extends Model
 {
 
+    use RevisionableTrait;
     protected $guarded = ['choice_attributes'];
 
     protected $with = ['product_translations', 'taxes', 'thumbnail'];
@@ -28,7 +34,7 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class, 'category_id');
     }
-    
+
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'product_categories');
@@ -103,9 +109,105 @@ class Product extends Model
     {
         return $this->hasMany(Cart::class);
     }
-    
+
     public function scopeIsApprovedPublished($query)
     {
         return $query->where('approved', '1')->where('published', 1);
+    }
+
+    public function getChildrenProducts(){
+        $childrens = Product::where('parent_id', $this->id)->get();
+        return $childrens;
+    }
+
+    public function getChildrenProductsDesc(){
+        $childrens = Product::where('parent_id', $this->id)->orderBy('id', 'desc')->get();
+        return $childrens;
+    }
+
+    public function getImagesProduct(){
+        $images = UploadProducts::where('id_product', $this->id)->where('type', 'images')->get();
+        return $images;
+    }
+
+    public function getThumbnailsProduct(){
+        $thumbnails = UploadProducts::where('id_product', $this->id)->where('type', 'thumbnails')->get();
+        return $thumbnails;
+    }
+
+    public function getDocumentsProduct(){
+        $documents = UploadProducts::where('id_product', $this->id)->where('type', 'documents')->get();
+        return $documents;
+    }
+
+    public function getPricingConfiguration(){
+        $pricing = PricingConfiguration::where('id_products', $this->id)->get();
+        return $pricing;
+    }
+
+    public function getIdsAttributesVariant(){
+        $ids = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->pluck('id_attribute')->toArray();
+        return $ids;
+    }
+
+    public function getAttributesVariant(){
+        $attributes = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->get();
+        $data = [];
+        if(count($attributes) > 0){
+            foreach ($attributes as $attribute){
+                $data[$attribute->id_attribute] = $attribute;
+            }
+        }
+        return $data;
+    }
+
+    public function getIdsAttributesChildren(){
+        $children = Product::where('parent_id', $this->id)->first();
+        $ids = [];
+        if($children != null){
+            $ids = ProductAttributeValues::where('id_products', $children->id)->where('is_variant', 1)->pluck('id_attribute')->toArray();
+        }
+
+        return $ids;
+    }
+
+    public function getAttributesVariantChildren(){
+        $attributes = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->get();
+        $data = [];
+        if(count($attributes) > 0){
+            foreach ($attributes as $attribute){
+                $data[$attribute->id_attribute] = $attribute;
+            }
+        }
+        return $data;
+    }
+
+    public function pathCategory(){
+        $product_category = ProductCategory::where('product_id', $this->id)->first();
+        $path = '';
+        if($product_category != null){
+            $current_category = Category::find($product_category->category_id);
+            if($current_category != null){
+                while($current_category->parent_id != 0){
+                    if($path == ''){
+                        $path = $current_category->name;
+                    }else{
+                        $path = $current_category->name . ' > '  . $path;
+                    }
+                    $current_category = Category::find($current_category->parent_id);
+                }
+                if($current_category->parent_id == 0){
+                    if($path == ''){
+                        $path = $current_category->name;
+                    }else{
+                        $path = $current_category->name . ' > '  . $path;
+                    }
+                }
+            }
+
+            
+        }
+
+        return $path;
     }
 }

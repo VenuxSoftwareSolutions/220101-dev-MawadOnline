@@ -251,6 +251,9 @@ return [
         'iban' => 'الآيبان',
         'swift_code' => 'رمز سويفت',
         'iban_certificate' => 'شهادة الآيبان',
+        'product_variant' => 'متغير المنتج',
+        'warehouse' => 'المستودع',
+        'quantity' => 'الكمية'
     ],
 
 ];
