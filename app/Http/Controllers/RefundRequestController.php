@@ -21,6 +21,12 @@ class RefundRequestController extends Controller
         $this->middleware(['permission:view_approved_refund_requests'])->only('paid_index');
         $this->middleware(['permission:view_rejected_refund_requests'])->only('rejected_index');
         $this->middleware(['permission:refund_request_configuration'])->only('refund_config');
+
+        $this->middleware(['permission:seller_view_all_refund_request'])->only('vendor_index');
+        $this->middleware(['permission:seller_refund_request_approval'])->only('request_approval_vendor');
+        $this->middleware(['permission:seller_reject_refund_request'])->only('reject_refund_request');
+        $this->middleware(['permission:seller_view_refund_request_reason'])->only('reason_view');
+
     }
 
     /**
@@ -62,9 +68,9 @@ class RefundRequestController extends Controller
     public function vendor_index()
     {
         $refunds = RefundRequest::where('seller_id', Auth::user()->id)->latest()->paginate(10);
-        
+
         return view('refund_request.frontend.recieved_refund_request.index', compact('refunds'));
-        
+
     }
 
     /**
@@ -208,9 +214,9 @@ class RefundRequestController extends Controller
             $club_point = ClubPoint::where('order_id', $refund->order_id)->first();
             if($club_point != null){
                 $club_point_details = $club_point->club_point_details->where('product_id',$refund->orderDetail->product->id)->first();
-                
+
                 if($club_point->convert_status == 1 ){
-                    $refund_amount -= $club_point_details->converted_amount;  
+                    $refund_amount -= $club_point_details->converted_amount;
                 }
                 else{
                     $club_point_details->refunded = 1;
@@ -253,7 +259,7 @@ class RefundRequestController extends Controller
           $refund->seller_approval = 2;
           $refund->reject_reason  = $request->reject_reason;
       }
-      
+
       if ($refund->save()) {
           flash(translate('Refund request rejected successfully.'))->success();
           return back();

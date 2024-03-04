@@ -26,17 +26,19 @@
         @endif
 
         <div class="col-md-4 mx-auto mb-3" >
+            @can('seller_create_product')
             <a href="{{ route('seller.products.create')}}">
-              <div class="p-3 rounded mb-3 c-pointer text-center bg-white shadow-sm hov-shadow-lg has-transition">
-                  <span class="size-60px rounded-circle mx-auto bg-secondary d-flex align-items-center justify-content-center mb-3">
-                      <i class="las la-plus la-3x text-white"></i>
-                  </span>
-                  <div class="fs-18 text-primary">{{ translate('Add New Product') }}</div>
-              </div>
-            </a>
+                <div class="p-3 rounded mb-3 c-pointer text-center bg-white shadow-sm hov-shadow-lg has-transition">
+                    <span class="size-60px rounded-circle mx-auto bg-secondary d-flex align-items-center justify-content-center mb-3">
+                        <i class="las la-plus la-3x text-white"></i>
+                    </span>
+                    <div class="fs-18 text-primary">{{ translate('Add New Product') }}</div>
+                </div>
+              </a>
+            @endcan
         </div>
 
-        @if (addon_is_activated('seller_subscription'))
+        {{-- @if (addon_is_activated('seller_subscription'))
         @php
             // $seller_package = \App\Models\SellerPackage::find(Auth::user()->shop->seller_package_id);
             $seller_package = null;
@@ -53,7 +55,7 @@
                 <div class="btn btn-outline-primary py-1">{{ translate('Upgrade Package')}}</div>
             </a>
         </div>
-        @endif
+        @endif --}}
 
     </div>
 

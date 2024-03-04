@@ -21,6 +21,16 @@ use Illuminate\Support\Facades\Notification;
 
 class DigitalProductController  extends Controller
 {
+    public function __construct()
+    {
+        // Staff Permission Check
+        $this->middleware(['permission:seller_show_digital_products'])->only('index');
+        $this->middleware(['permission:seller_add_digital_product'])->only('create');
+        $this->middleware(['permission:seller_edit_digital_product'])->only('edit');
+        $this->middleware(['permission:seller_delete_digital_product'])->only('destroy');
+        $this->middleware(['permission:seller_download_digital_product'])->only('download');
+    }
+
     /**
      * Display a listing of the resource.
      *

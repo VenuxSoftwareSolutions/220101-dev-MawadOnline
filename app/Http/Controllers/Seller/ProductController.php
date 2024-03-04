@@ -62,6 +62,11 @@ class ProductController extends Controller
         $this->productStockService = $productStockService;
         $this->productUploadsService = $productUploadsService;
         $this->productPricingService = $productPricingService;
+
+        $this->middleware(['permission:seller_show_product'])->only('index');
+        $this->middleware(['permission:seller_create_product'])->only('create');
+        $this->middleware(['permission:seller_edit_product'])->only('edit');
+        $this->middleware(['permission:seller_destroy_product'])->only('destroy');
     }
 
     public function index(Request $request)

@@ -247,11 +247,11 @@
                                         <button type="button" class="dropdown-item {{-- btn btn-danger --}} close-vendor-btn" data-vendor-id="{{ $seller->id }}">{{ __('messages.close_vendor') }}</button>
 
                                         {{-- View Status History --}}
-                                        {{-- <button type="button" class="dropdown-item btn btn-info view-status-history-btn" data-vendor-id="{{ $seller->id }}">
-                                            {{ __('messages.view_status_history') }}
-                                        </button> --}}
-                                        <a href="{{route('vendors.status-history',$seller->id)}}" class="dropdown-item" >
-                                            {{ __('messages.view_status_history') }}
+                                        <button type="button" class="dropdown-item btn btn-info view-status-history-btn" data-vendor-id="{{ $seller->id }}">
+                                            View Status History
+                                        </button>
+                                        <a href="{{route('sellers.staff',$seller->id)}}" class="dropdown-item" >
+                                            View Staff
                                         </a>
                                     </div>
                                 </div>

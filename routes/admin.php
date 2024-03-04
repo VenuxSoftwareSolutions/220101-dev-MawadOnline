@@ -182,6 +182,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::post('vendors/{id}/pending-closure', 'pendingClosure')->name('vendors.pending-closure');
         Route::post('/vendors/{id}/close', 'close')->name('vendors.close');
         Route::get('/vendors/{vendorId}/status-history', 'getStatusHistory')->name('vendors.status-history');
+        Route::get('/sellers/{seller}/staff', 'showStaff')->name('sellers.staff');
 
 
     });
@@ -319,7 +320,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
     // Staff Roles
     Route::resource('roles', RoleController::class);
     Route::controller(RoleController::class)->group(function () {
+        Route::get('/seller/roles', 'indexSellerRoles')->name('roles.seller.index');
         Route::get('/roles/edit/{id}', 'edit')->name('roles.edit');
+        Route::get('/roles/create/seller', 'createSellerRole')->name('roles.seller.create');
         Route::get('/roles/destroy/{id}', 'destroy')->name('roles.destroy');
 
         // Add Permissiom
