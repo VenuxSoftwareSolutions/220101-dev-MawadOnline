@@ -29,6 +29,20 @@ class CategoryController extends Controller
         $this->middleware(['permission:delete_product_category'])->only('destroy');
     }
 
+
+    public function breadcrumbs($id)
+    {
+        $category = Category::findOrFail($id);
+        $breadcrumbs = collect([]);
+
+        while ($category) {
+            $breadcrumbs->prepend(['id' => $category->id, 'name' => $category->name]);
+            $category = $category->parent; // Assuming you have a 'parent' relationship defined
+        }
+
+        return response()->json($breadcrumbs);
+    }
+
     public function jstreeSearch(Request $request)
     {
         $searchTerm = $request->input('searchTerm');
@@ -145,10 +159,10 @@ class CategoryController extends Controller
         $formattedCategories = Cache::get('categories_children');
         if ($request->has("search") && !empty($request->search['value'])) {
             $searchResults = $this->searchAndHighlightCategory($formattedCategories, $request->search['value']);
-            return response()->json(['data' => $searchResults,'recordsTotal' => Category::all()->count()]);
+            return response()->json(['data' => $searchResults, 'recordsTotal' => Category::all()->count()]);
         }
         if (isset($formattedCategories)) {
-            return response()->json(['data' => $formattedCategories,'recordsTotal' => Category::all()->count()]);
+            return response()->json(['data' => $formattedCategories, 'recordsTotal' => Category::all()->count()]);
         } else {
             $parentId = $request->input('parent_id', 0); // Default to fetching top-level categories
 
@@ -156,7 +170,7 @@ class CategoryController extends Controller
 
             $formattedCategories = $this->formatCategories($categories);
 
-            return response()->json(['data' => $formattedCategories,'recordsTotal' => Category::all()->count()]);
+            return response()->json(['data' => $formattedCategories, 'recordsTotal' => Category::all()->count()]);
         }
     }
 
@@ -295,7 +309,7 @@ class CategoryController extends Controller
         $parent = Category::find($request->category_id);
         $expected_ids = [];
         $expected_ids = $this->getexpected_ids($parent);
-        
+
         return Attribute::whereNotIn('id', $expected_ids)->get();
     }
 
@@ -303,9 +317,9 @@ class CategoryController extends Controller
     {
         $parent = Category::find($request->category_id);
         $expected_ids = [];
-        
+
         $expected_ids = $this->getexpected_ids($parent);
-        
+
         return Attribute::whereIn('id', $expected_ids)->get();
     }
 
@@ -414,7 +428,7 @@ class CategoryController extends Controller
         $breadcrumbs->push($category);
         $category_attributes = $category->categories_attributes()->pluck('attribute_id');
         $category_filtring_attributes = $category->attributes()->pluck('attribute_id');
-        return view('backend.product.categories.edit', compact('category', 'lang', 'category_attributes', 'category_filtring_attributes','breadcrumbs'));
+        return view('backend.product.categories.edit', compact('category', 'lang', 'category_attributes', 'category_filtring_attributes', 'breadcrumbs'));
     }
 
     /**
@@ -432,7 +446,7 @@ class CategoryController extends Controller
             // Fetch the existing category using the provided ID
             $category = Category::findOrFail($id);
 
-            if($lang == env("DEFAULT_LANGUAGE")){
+            if ($lang == env("DEFAULT_LANGUAGE")) {
                 $category->name = $request->name;
                 // Update slug for the category
                 $category->slug = strtolower(preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->name)));
@@ -455,12 +469,12 @@ class CategoryController extends Controller
             $category->meta_title = $request->meta_title;
             $category->meta_description = $request->meta_description;
 
-            if($category->id != 1){
+            if ($category->id != 1) {
                 $category->parent_id = $request->parent_id;
             }
             $category->featured = $request->featured == "on" ? 1 : 0;
 
-        
+
 
             $category->commision_rate = $request->commision_rate ?? $category->commision_rate;
 

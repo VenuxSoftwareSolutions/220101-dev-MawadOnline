@@ -87,6 +87,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::get('/fetchAll', 'fetchCategories')->name('categories.fetchCategories');
         Route::get('/jstree', 'jstree')->name('categories.jstree');
         Route::get('/jstreeSearch', 'jstreeSearch')->name('categories.jstreeSearch');
+        Route::get('/categories/breadcrumbs/{id}', 'breadcrumbs')->name('categories.breadcrumbs');
 
     });
 

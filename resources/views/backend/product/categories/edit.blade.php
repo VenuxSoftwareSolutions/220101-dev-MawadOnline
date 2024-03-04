@@ -64,7 +64,7 @@ CoreComponentRepository::initializeCache();
                                     @if ($loop->last)
                                         <strong>{{ $breadcrumb->name }}</strong> {{-- Active item --}}
                                     @else
-                                        <a href="{{ route('categories.show', $breadcrumb->id) }}">{{ $breadcrumb->name }}</a>
+                                        <a href="#">{{ $breadcrumb->name }}</a>
                                     @endif
                                 </li>
                             @endforeach
@@ -410,12 +410,36 @@ $(document).ready(function() {
                     'responsive': false
                 }
             },
-            "plugins": ["wholerow", "state", "search"] // Include the search plugin here
+            "plugins": ["wholerow","search"] // Include the search plugin here
         }).on("changed.jstree", function(e, data) {
             if (data && data.selected && data.selected.length) {
                 var selectedId = data.selected[0]; // Get the ID of the first selected node
                 $('#selected_parent_id').val(selectedId); // Update hidden input with selected ID
+                var categoryBreadcrumbsUrl = "{{ route('categories.breadcrumbs', ['id' => ':id']) }}";
+                    categoryBreadcrumbsUrl = categoryBreadcrumbsUrl.replace(':id', selectedId); // Replace 'selectedId' with the actual ID using JavaScript
 
+                 // Fetch the new breadcrumb path
+                $.ajax({
+                    url: categoryBreadcrumbsUrl,
+                    type: 'GET',
+                    success: function(response) {
+                        var breadcrumbHtml = '';
+                        response.forEach(function(breadcrumb) {
+                            if (response.indexOf(breadcrumb) === response.length - 1) {
+                                // Last item - active
+                                breadcrumbHtml += '<li class="breadcrumb-item"><strong>' + breadcrumb.name + '</strong></li>';
+                            } else {
+                                // Other items - links
+                                breadcrumbHtml += '<li class="breadcrumb-item"><a href="#">' + breadcrumb.name + '</a></li>';
+                            }
+                        });
+                        // Add the edit icon at the end
+                        breadcrumbHtml += '<li class="breadcrumb-item"><a href="#" onclick="showCategoryParentTree()" title="Edit"><i class="fas fa-edit"></i></a></li>';
+
+                        // Update the breadcrumb container
+                        $('.breadcrumb').html(breadcrumbHtml);
+                    }
+                });
                 // Call your functions to load attributes
                 load_categories_attributes();
                 load_filtring_attributes();
