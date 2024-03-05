@@ -251,7 +251,7 @@ class ProductController extends Controller
                                 break;
                             case "list":
                                 $values = $attribute->attribute_values_list(app()->getLocale());
-                                $options = '<div class="col-md-8"><select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" name="attribute_generale-'.$attribute_generale->id.'">';
+                                $options = '<div class="col-md-8"><select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" name="attribute_generale-'.$attribute->id.'">';
                                 foreach ($values as $key=>$value){
                                     $options .= "<option  value='".$value->id."'>". $value->value ."</option>";
                                 }
