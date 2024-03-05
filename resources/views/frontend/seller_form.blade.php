@@ -188,14 +188,15 @@ use Carbon\Carbon;
                                                     class="btn btn-info fw-600 rounded-0 prv-tab">
                                                     {{ translate('previous') }}
                                                 </button>
-                                                @if (Auth::user()->owner_id == null)
-                                                    <button id="verifyCodeBtn" type="button"
-                                                    class="btn btn-primary fw-600 rounded-0"
-                                                    {{-- onclick="switchTab('business-info')" --}}>{{ translate('Next') }}</button>
-                                                @else
-                                                    <button  type="submit"
+                                                @if (Auth::user() && Auth::user()->owner_id != Auth::user()->id)
+                                                <button  type="submit"
                                                     class="btn btn-primary fw-600 rounded-0"
                                                     {{-- onclick="switchTab('business-info')" --}}>{{ translate('Finish') }}</button>
+
+                                                @else
+                                                <button id="verifyCodeBtn" type="button"
+                                                class="btn btn-primary fw-600 rounded-0"
+                                                {{-- onclick="switchTab('business-info')" --}}>{{ translate('Next') }}</button>
                                                 @endif
 
                                                 <button id="resendCodeBtn" type="button"
