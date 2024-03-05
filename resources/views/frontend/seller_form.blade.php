@@ -46,7 +46,7 @@ use Carbon\Carbon;
             <div class="row">
                 <div class="mx-auto">
                     <h1 class="fw-700 fs-20 fs-md-24 text-dark text-center mb-3">
-                        @if (Auth::user()->owner_id == null)
+                        @if (Auth::user() && Auth::user()->owner_id == null)
                             {{ translate('Register Your Shop') }}
 
                         @else
@@ -68,7 +68,7 @@ use Carbon\Carbon;
                                             href="#code-verification">{{ translate('Code Verification Email') }}</a>
                                     </li>
                                 @endif
-                                @if (Auth::user()->owner_id == null)
+                                @if (Auth::user() &&Auth::user()->owner_id == null)
                                     <li class="nav-item">
                                         <a class="nav-link" id="business-info-tab" data-toggle="tab"
                                             href="#business-info">{{ translate('Business Information') }}</a>
@@ -130,7 +130,7 @@ use Carbon\Carbon;
 
                                                     </div>
                                                     <div class="form-group">
-                                                        <label>{{ Auth::user()->owner_id == null ? translate('Your Password')  : translate('Your New Password') }} <span
+                                                        <label>{{Auth::user() && Auth::user()->owner_id == null ? translate('Your Password')  : translate('Your New Password') }} <span
                                                                 class="text-primary">*</span></label>
                                                         <input id="password" type="password" class="form-control rounded-0"
                                                             value="{{ old('password') }}"
