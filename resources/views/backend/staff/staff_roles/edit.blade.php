@@ -41,7 +41,7 @@
                 </div>
                 <br>
                 @php
-                    if ( $role->seller_id == 1) {
+                    if ( $role->role_type == 1) {
                         $permission_groups =  \App\Models\Permission::where('section', 'like', 'seller_%')->get()->groupBy('section');
                     }else{
                         $permission_groups =  \App\Models\Permission::where('section', 'not like', 'seller_%')->get()->groupBy('section');
