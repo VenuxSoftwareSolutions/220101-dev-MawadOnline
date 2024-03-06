@@ -3,39 +3,40 @@
 namespace App\Http\Controllers;
 
 use App;
-use App\Http\Requests\SellerRegistrationRequest;
-use App\Http\Requests\SellerRegistrationShopRequest;
-use App\Http\Requests\StoreBusinessInfoRequest;
-use App\Http\Requests\StoreContactPersonRequest;
-use App\Http\Requests\StorePayoutInfoRequest;
-use App\Http\Requests\StoreWarehouseRequest;
-use App\Mail\VerificationCodeEmail;
-use App\Models\Area;
-use App\Models\BusinessInformation;
-use Illuminate\Http\Request;
-use App\Models\Shop;
-use App\Models\User;
-use App\Models\BusinessSetting;
-use App\Models\ContactPerson;
-use App\Models\Emirate;
-use App\Models\PayoutInformation;
-use App\Models\Role;
-use App\Models\VerificationCode;
-use App\Models\Warehouse;
 use Auth;
 use Hash;
-use App\Notifications\EmailVerificationNotification;
-use App\Notifications\NewRegistrationNotification;
-use App\Notifications\NewVendorRegistration;
-use App\Rules\CustomPasswordRule;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Notification;
 use Mail;
 use Session;
 use Storage;
 use Validator;
+use Carbon\Carbon;
+use App\Models\Area;
+use App\Models\Role;
+use App\Models\Shop;
+use App\Models\User;
+use App\Models\Staff;
+use App\Models\Emirate;
+use App\Models\Warehouse;
+use Illuminate\Http\Request;
+use App\Models\ContactPerson;
+use App\Models\BusinessSetting;
 use Illuminate\Validation\Rule;
+use App\Models\VerificationCode;
+use App\Models\PayoutInformation;
+use App\Rules\CustomPasswordRule;
+use App\Mail\VerificationCodeEmail;
+use App\Models\BusinessInformation;
 use Illuminate\Support\Facades\File;
+use App\Http\Requests\StoreWarehouseRequest;
+use App\Notifications\NewVendorRegistration;
+use Illuminate\Support\Facades\Notification;
+use App\Http\Requests\StorePayoutInfoRequest;
+use App\Http\Requests\StoreBusinessInfoRequest;
+use App\Http\Requests\SellerRegistrationRequest;
+use App\Http\Requests\StoreContactPersonRequest;
+use App\Notifications\NewRegistrationNotification;
+use App\Http\Requests\SellerRegistrationShopRequest;
+use App\Notifications\EmailVerificationNotification;
 
 class ShopController extends Controller
 {
@@ -158,7 +159,8 @@ class ShopController extends Controller
         // $user->user_type = "seller";
         // $user->password = Hash::make($request->password);
         // $user->save();
-        if($user= User::where('email',$request->email)->first()){
+        $user = User::where('email',$request->email )->first();
+        if($user && $user->id != $user->owner_id && $user->owner_id != null){
 
             if(Hash::check($request->password, $user->password)==true){
                 return response()->json(['message' => 'You can\'t use the same password'], 403);
@@ -473,7 +475,6 @@ class ShopController extends Controller
             return response()->json(['staff'=>true,'verif_staff_login' => true, 'success' => true, 'message' => translate('Verification successful')]);
         }
         elseif ($user) {
-            dd('vendor');
             $user->email_verified_at = now(); // Assuming you want to set the current timestamp
             $user->save();
             Auth::login($user);
@@ -783,6 +784,10 @@ class ShopController extends Controller
 
         $role = Role::where('name','seller')->first();
         $user->assignRole($role) ;
+        $staff = new Staff;
+        $staff->user_id = $user->id;
+        $staff->role_id = $role->id;
+        $staff->save();
         // Trigger the notification
         $admin = User::where('user_type','admin')->first(); // Fetch the first admin
         $admin->notify(new NewVendorRegistration($user));
