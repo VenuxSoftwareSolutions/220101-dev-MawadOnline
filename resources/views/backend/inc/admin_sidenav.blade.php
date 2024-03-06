@@ -1501,16 +1501,25 @@
                                     </a>
                                 </li>
                             @endcan
+                            @php
+                            if (isset($role) && $role->role_type == 0){
+                                $admin_role= 'roles.edit';
+                                $seller_role='';
+                            }else{
+                                $admin_role= '';
+                                $seller_role='roles.edit';
+                            }
+                            @endphp
                             @can('view_staff_roles')
                                 <li class="aiz-side-nav-item">
-                                    <a href="{{route('roles.index')}}" class="aiz-side-nav-link {{ areActiveRoutes(['roles.index', 'roles.create', 'roles.edit'])}}">
+                                    <a href="{{route('roles.index')}}" class="aiz-side-nav-link {{ areActiveRoutes(['roles.index', 'roles.create', $admin_role])}}">
                                         <span class="aiz-side-nav-text">{{translate('Admin staff permissions')}}</span>
                                     </a>
                                 </li>
                             @endcan
                             @can('view_seller_staff_roles')
                                 <li class="aiz-side-nav-item">
-                                    <a href="{{route('roles.seller.index')}}" class="aiz-side-nav-link {{ areActiveRoutes(['roles.seller.index', 'roles.seller.create', 'roles.edit'])}}">
+                                    <a href="{{route('roles.seller.index')}}" class="aiz-side-nav-link {{ areActiveRoutes(['roles.seller.index', 'roles.seller.create', $seller_role])}}">
                                         <span class="aiz-side-nav-text">{{translate('Vendor staff permissions')}}</span>
                                     </a>
                                 </li>
