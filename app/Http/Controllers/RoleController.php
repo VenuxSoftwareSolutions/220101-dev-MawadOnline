@@ -94,7 +94,11 @@ class RoleController extends Controller
         $role_translation->save();
 
         flash(translate('New Role has been added successfully'))->success();
-        return redirect()->route('roles.index');
+        if($seller_id==0){
+            return redirect()->route('roles.index');
+        }else{
+            return redirect()->route('roles.seller.index');
+        }
     }
 
     /**
