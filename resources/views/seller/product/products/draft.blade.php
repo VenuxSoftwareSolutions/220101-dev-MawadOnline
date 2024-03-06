@@ -2222,7 +2222,6 @@
 
                 $('#general_attributes').html(data.html_attributes_generale);
                 if($('body #bloc_variants_created div').length == 0){
-                    alert();
                     $('body input[name="activate_attributes"]').prop("checked", false);
                 }else{
                     alert('tnekna')
