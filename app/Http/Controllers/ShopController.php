@@ -19,6 +19,7 @@ use App\Models\BusinessSetting;
 use App\Models\ContactPerson;
 use App\Models\Emirate;
 use App\Models\PayoutInformation;
+use App\Models\Role;
 use App\Models\VerificationCode;
 use App\Models\Warehouse;
 use Auth;
@@ -777,7 +778,11 @@ class ShopController extends Controller
         $user = Auth::user();
         $user->steps = 1;
         $user->status = 'Pending Approval';
+        $user->owner_id = $user->id ;
         $user->save();
+
+        $role = Role::where('name','seller')->first();
+        $user->assignRole($role) ;
         // Trigger the notification
         $admin = User::where('user_type','admin')->first(); // Fetch the first admin
         $admin->notify(new NewVendorRegistration($user));

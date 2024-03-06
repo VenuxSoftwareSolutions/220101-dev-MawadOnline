@@ -5,7 +5,7 @@
 <div class="aiz-titlebar text-left mt-2 mb-3">
     <div class="row align-items-center">
         <div class="col-md-6">
-            <h1 class="h3">{{translate('All Sellers')}}</h1>
+            <h1 class="h3">{{translate('All Vendors')}}</h1>
         </div>
     </div>
 </div>
@@ -14,7 +14,7 @@
     {{-- <form class="" id="sort_sellers" action="" method="GET"> --}}
         <div class="card-header row gutters-5">
             <div class="col">
-                <h5 class="mb-md-0 h6">{{ translate('Sellers') }}</h5>
+                <h5 class="mb-md-0 h6">{{ translate('Vendors') }}</h5>
             </div>
 
             {{-- @can('delete_seller')
@@ -193,7 +193,8 @@
                 <thead>
                     <tr>
                         <th>{{__('messages.email_address')}}</th>
-                        <th>{{__('messages.approval')}}</th>
+                        {{-- <th>{{__('messages.approval')}}</th> --}}
+                        <th>Business name</th>
                         <th>{{ __('messages.status') }}</th>
                         <th width="10%">{{__('messages.options')}}</th>
                     </tr>
@@ -202,8 +203,9 @@
                         @foreach ( $sellers as $seller )
                         <tr>
                             <td>{{ $seller->email }}</td>
+                            <td>{{ $seller->business_information ?  $seller->business_information->trade_name :"" }}</td>
 
-                            <td>
+                            {{-- <td>
                                 @if ($seller->status != "Draft")
                                 <!-- Approval status column with toggle switch -->
                                 <label class="aiz-switch aiz-switch-success mb-0">
@@ -211,7 +213,7 @@
                                     <span class="slider round"></span>
                                 </label>
                                 @endif
-                            </td>
+                            </td> --}}
 
 
 
