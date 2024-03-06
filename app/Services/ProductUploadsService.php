@@ -6,6 +6,7 @@ use App\Models\UploadProducts;
 use Illuminate\Support\Facades\DB;
 use Intervention\Image\Facades\Image;
 
+
 class ProductUploadsService
 {
     public function store_uploads(array $data)
@@ -116,13 +117,17 @@ class ProductUploadsService
             if(count($data['main_photos']) > 0){
                 foreach($data['main_photos'] as $key => $image){
                     $imageName = time().rand(5, 15).'.jpg';
-                    $image->move(public_path('/upload_products/Product-'.$collection['product']->id.'/images') , $imageName);
+                    
                     $path = '/upload_products/Product-'.$collection['product']->id.'/images'.'/'.$imageName;
     
                     //check if vendor not uploaded thumbnails, the system will create a thumbnail from a gallery image
                     if($data['photosThumbnail'] == null){
-                        $this->createThumbnail(public_path($path), $imageName,$collection['product']->id);
+                        //$this->createThumbnail(public_path($path), $imageName,$collection['product']->id);
+                        $img3 = Image::make($image);
+                        $img3->resize(300, 300);
                         $path_thumbnail = '/upload_products/Product-'.$collection['product']->id.'/thumbnails'.'/'.$imageName;
+                        $path_to_save = public_path('/upload_products/Product-'.$collection['product']->id.'/thumbnails'.'/'.$imageName);
+                        $img3->save($path_to_save);
     
                         $uploaded_document = new UploadProducts();
                         $uploaded_document->id_product = $collection['product']->id;
@@ -131,6 +136,8 @@ class ProductUploadsService
                         $uploaded_document->type = 'thumbnails';
                         $uploaded_document->save();
                     }
+
+                    $image->move(public_path('/upload_products/Product-'.$collection['product']->id.'/images') , $imageName);
     
                     $uploaded_document = new UploadProducts();
                     $uploaded_document->id_product = $collection['product']->id;
@@ -146,9 +153,14 @@ class ProductUploadsService
         //insert paths of thumbnails in DB and upload thumbnails in folder under public/upload_products/Product{id_porduct}/thumbnails
         if($data['photosThumbnail'] != null){
             foreach($data['photosThumbnail'] as $key => $image){
-                $imageName = time().rand(5, 15).'.jpg';
-                $image->move(public_path('/upload_products/Product-'.$collection['product']->id.'/thumbnails') , $imageName);
-                $path = '/upload_products/Product-'.$collection['product']->id.'/thumbnails'.'/'.$imageName;
+                // $imageName = time().rand(5, 15).'.jpg';
+                // $image->move(public_path('/upload_products/Product-'.$collection['product']->id.'/thumbnails') , $imageName);
+                // $path = '/upload_products/Product-'.$collection['product']->id.'/thumbnails'.'/'.$imageName;
+                $img3 = Image::make($image);
+                $img3->resize(300, 300);
+                $path_thumbnail = '/upload_products/Product-'.$collection['product']->id.'/thumbnails'.'/'.$imageName;
+                $path_to_save = public_path('/upload_products/Product-'.$collection['product']->id.'/thumbnails'.'/'.$imageName);
+                $img3->save($path_to_save);
 
                 $uploaded_document = new UploadProducts();
                 $uploaded_document->id_product = $collection['product']->id;
@@ -162,16 +174,16 @@ class ProductUploadsService
 
     private function createThumbnail($path, $imageName,$product_id, $thumbWidth = 300, $thumbHeight = 300 )
     {
-        $imgPath = $path;
-        list($width, $height) = getimagesize($imgPath);
-        $thumb = imagecreatetruecolor($thumbWidth, $thumbHeight);
-        $source = imagecreatefromjpeg($imgPath);
-        imagecopyresized($thumb, $source, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $width, $height);
+        // $imgPath = $path;
+        // list($width, $height) = getimagesize($imgPath);
+        // $thumb = imagecreatetruecolor($thumbWidth, $thumbHeight);
+        // $source = imagecreatefromjpeg($imgPath);
+        // imagecopyresized($thumb, $source, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $width, $height);
 
-        $thumbPath = public_path('/upload_products/Product-'. $product_id) . '/thumbnails/' . $imageName;
-        imagejpeg($thumb, $thumbPath, 100); // 100 is the quality
-        imagedestroy($thumb);
+        // $thumbPath = public_path('/upload_products/Product-'. $product_id) . '/thumbnails/' . $imageName;
+        // imagejpeg($thumb, $thumbPath, 100); // 100 is the quality
+        // imagedestroy($thumb);
 
-        return $thumbPath;
+        //return $thumbPath;
     }
 }

@@ -846,19 +846,19 @@
         });
 
         $('body').on('click', '.fa-pen-to-square', function(){
-            $(this).parent().find('input').prop('readonly', false);
-            $(this).parent().find('.fa-circle-xmark').show();
-            $(this).parent().find('#btn-add-pricing-variant').show();
-            $(this).parent().find('.fa-pen-to-square').hide();
-            $(this).parent().find('.fa-circle-check').show();
+            $(this).parent().parent().find('input').prop('readonly', false);
+            $(this).parent().parent().find('.fa-circle-xmark').show();
+            $(this).parent().parent().find('#btn-add-pricing-variant').show();
+            $(this).parent().parent().find('.fa-pen-to-square').hide();
+            $(this).parent().parent().find('.fa-circle-check').show();
         })
 
         $('body').on('click', '.fa-circle-check', function(){
-            $(this).parent().find('input').prop('readonly', true);
-            $(this).parent().find('.fa-circle-xmark').hide();
-            $(this).parent().find('#btn-add-pricing-variant').hide();
-            $(this).parent().find('.fa-pen-to-square').show();
-            $(this).parent().find('.fa-circle-check').hide();
+            $(this).parent().parent().find('input').prop('readonly', true);
+            $(this).parent().parent().find('.fa-circle-xmark').hide();
+            $(this).parent().parent().find('#btn-add-pricing-variant').hide();
+            $(this).parent().parent().find('.fa-pen-to-square').show();
+            $(this).parent().parent().find('.fa-circle-check').hide();
         })
 
         $('body').on('change', '.variant-sample-pricing', function(){

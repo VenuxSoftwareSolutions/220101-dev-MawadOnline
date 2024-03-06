@@ -288,7 +288,7 @@ class ProductService
                 foreach($pricing['from'] as $key => $from){
                     $current_data = [];
 
-                    if($pricing['from'][$key] != null){
+                    if($pricing['from'][$key] != null && $pricing['unit_price'][$key] != null){
                             if($pricing['date_range_pricing'][$key] != null){
                                 if(($pricing['date_range_pricing'][$key]) && ($pricing['discount_type'][$key])){
                                     $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
@@ -374,7 +374,7 @@ class ProductService
             foreach($pricing['from'] as $key => $from){
                 $current_data = [];
 
-                if($pricing['from'][$key] != null){
+                if($pricing['from'][$key] != null && $pricing['unit_price'][$key] != null){
                         if($pricing['date_range_pricing'][$key] != null){
                             if(($pricing['date_range_pricing'][$key]) && ($pricing['discount_type'][$key])){
                                 $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
