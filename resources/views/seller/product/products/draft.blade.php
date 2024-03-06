@@ -854,7 +854,7 @@
                 clearTimeout(to);
             }
             to = setTimeout(function() {
-                var v = "{{ $categorie->name }}";
+                var v = $('#search_input').val();
                 if (v === "") {
                     lastSearchTerm = null;
                         // Explicitly reset the URL for the initial data load
