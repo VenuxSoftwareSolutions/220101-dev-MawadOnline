@@ -174,6 +174,9 @@ CoreComponentRepository::initializeCache();
     ];
     $(document).ready(function() {
         var table = $('#example').DataTable({
+            "columnDefs": [
+                { "orderable": false, "targets": '_all' } // Disables sorting on all columns
+            ],
             paging: false,
             processing: true, // Enable processing indicator
             serverSide: true, // Enable server-side processing

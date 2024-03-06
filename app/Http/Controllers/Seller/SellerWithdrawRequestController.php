@@ -11,6 +11,12 @@ use Auth;
 
 class SellerWithdrawRequestController extends Controller
 {
+    public function __construct()
+    {
+        // Staff Permission Check
+        $this->middleware(['permission:seller_view_withdraw_requests'])->only('index');
+        $this->middleware(['permission:seller_money_withdraw_request'])->only('store');
+    }
     /**
      * Display a listing of the resource.
      *

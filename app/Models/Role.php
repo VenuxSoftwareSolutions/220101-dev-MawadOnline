@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Spatie\Permission\Models\Role as SpatieRole;
+//use Illuminate\Database\Eloquent\Model;
 use App;
 
-class Role extends Model
+class Role extends SpatieRole
 {
     protected $with = ['role_translations'];
 

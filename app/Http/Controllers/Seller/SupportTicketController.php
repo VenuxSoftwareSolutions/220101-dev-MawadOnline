@@ -9,9 +9,19 @@ use App\Models\TicketReply;
 use App\Models\User;
 use Auth;
 use Mail;
+use Spatie\Permission\Models\Role;
 
 class SupportTicketController extends Controller
 {
+    public function __construct()
+    {
+        // Staff Permission Check
+        $this->middleware(['permission:seller_view_support_tickets'])->only('index');
+        $this->middleware(['permission:seller_add_support_tickets'])->only('store');
+        $this->middleware(['permission:seller_show_support_tickets'])->only('show');
+        $this->middleware(['permission:seller_reply_support_tickets'])->only('ticket_reply_store');
+    }
+
     /**
      * Display a listing of the resource.
      *

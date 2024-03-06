@@ -9,6 +9,11 @@ use Illuminate\Http\Request;
 
 class ProductQueryController extends Controller
 {
+    public function __construct() {
+        // Staff Permission Check
+        $this->middleware(['permission:seller_view_product_query'])->only('index');
+    }
+
     /**
      * Retrieve queries that belongs to current seller
      */

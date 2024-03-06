@@ -54,6 +54,7 @@ use App\Http\Controllers\CommissionController;
 use AizPackages\ColorCodeConverter\Services\ColorCodeConverter;
 use App\Models\FlashDealProduct;
 use App\Models\UserCoupon;
+use Intervention\Image\Facades\Image;
 
 //sensSMS function for OTP
 if (!function_exists('sendSMS')) {
@@ -70,6 +71,23 @@ if (!function_exists('areActiveRoutes')) {
         foreach ($routes as $route) {
             if (Route::currentRouteName() == $route && (url()->current() != url('/admin/website/custom-pages/edit/home'))) return $output;
         }
+    }
+}
+
+
+
+if (!function_exists('createThumbnail')) {
+
+    function createThumbnail($path, $width = 150, $height = 150)
+    {
+        $img = Image::make($path);
+        $img->resize($width, $height, function ($constraint) {
+            $constraint->aspectRatio();
+            $constraint->upsize();
+        });
+
+        $thumbnailPath = 'path/to/thumbnails/';
+        $img->save($thumbnailPath . basename($path));
     }
 }
 
@@ -231,7 +249,7 @@ if (!function_exists('format_price')) {
         }
 
 
-        // Minimize the price 
+        // Minimize the price
         if ($isMinimize) {
             $temp = number_format($price / 1000000000, get_setting('no_of_decimals'), ".", "");
 
@@ -320,7 +338,7 @@ if (!function_exists('cart_product_price')) {
             $price = $product->bids->max('amount');
         }
 
-        //calculation of taxes 
+        //calculation of taxes
         if ($tax) {
             $taxAmount = 0;
             foreach ($product->taxes as $product_tax) {
@@ -371,7 +389,7 @@ if (!function_exists('cart_product_tax')) {
             }
         }
 
-        //calculation of taxes 
+        //calculation of taxes
         $tax = 0;
         foreach ($product->taxes as $product_tax) {
             if ($product_tax->tax_type == 'percent') {
@@ -1186,7 +1204,7 @@ if (!function_exists('my_asset')) {
         if (config('filesystems.default') != 'local') {
             return Storage::disk(config('filesystems.default'))->url($path);
         }
-        
+
         return app('url')->asset('public/' . $path, $secure);
     }
 }
@@ -1501,14 +1519,14 @@ if (!function_exists('seller_package_validity_check')) {
     {
         $user = $user_id == null ? \App\Models\User::find(Auth::user()->id) : \App\Models\User::find($user_id);
         $shop = $user->shop;
-        $package_validation = false;
-        if (
-            $shop->product_upload_limit > $shop->user->products()->count()
-            && $shop->package_invalid_at != null
-            && Carbon::now()->diffInDays(Carbon::parse($shop->package_invalid_at), false) >= 0
-        ) {
-            $package_validation = true;
-        }
+        $package_validation = true;
+        // if (
+        //     $shop->product_upload_limit > $shop->user->products()->count()
+        //     && $shop->package_invalid_at != null
+        //     && Carbon::now()->diffInDays(Carbon::parse($shop->package_invalid_at), false) >= 0
+        // ) {
+        //     $package_validation = true;
+        // }
 
         return $package_validation;
         // Ture = Seller package is valid and seller has the product upload limit
@@ -1554,7 +1572,7 @@ if (!function_exists('get_featured_flash_deal')) {
             ->where('start_date', '<=', strtotime(date('Y-m-d H:i:s')))
             ->where('end_date', '>=', strtotime(date('Y-m-d H:i:s')))
             ->first();
-            
+
         return $featured_flash_deal;
     }
 }
@@ -1565,7 +1583,7 @@ if (!function_exists('get_flash_deal_products')) {
         $flash_deal_product_query = FlashDealProduct::query();
         $flash_deal_product_query->where('flash_deal_id', $flash_deal_id);
         $flash_deal_products = $flash_deal_product_query->with('product')->limit(10)->get();
-        
+
         return $flash_deal_products;
     }
 }
@@ -1599,9 +1617,9 @@ if (!function_exists('get_system_language')) {
         if(Session::has('locale')){
             $locale = Session::get('locale', Config::get('app.locale'));
         }
-        
+
         $language_query->where('code',  $locale);
-        
+
         return $language_query->first();
     }
 }
@@ -1635,7 +1653,7 @@ if (!function_exists('get_system_currency')) {
         else{
             $currency_query = $currency_query->where('id', get_setting('system_default_currency'));
         }
-        
+
         return $currency_query->first();
     }
 }
@@ -1861,9 +1879,9 @@ if (!function_exists('get_category')) {
     {
         $category_query = Category::query();
         $category_query->with('coverImage');
-        
+
         $category_query->whereIn('id', $category_ids);
-        
+
         $categories = $category_query->get();
         return $categories;
     }
@@ -1893,7 +1911,7 @@ if (!function_exists('get_categories_by_products')) {
     {
         $product_query = Product::query();
         $category_ids = $product_query->where('user_id', $user_id)->isApprovedPublished()->pluck('category_id')->toArray();
-        
+
         $category_query = Category::query();
         return $category_query->whereIn('id', $category_ids)->get();
     }
@@ -2224,9 +2242,9 @@ if (!function_exists('offerUserWelcomeCoupon')) {
     {
         $coupon = Coupon::where('type','welcome_base')->where('status',1)->first();
         if($coupon){
-            
+
             $couponDetails = json_decode($coupon->details);
-            
+
             $user_coupon                = new UserCoupon();
             $user_coupon->user_id       = auth()->user()->id;
             $user_coupon->coupon_id     = $coupon->id;
@@ -2256,7 +2274,7 @@ if (!function_exists('ifUserHasWelcomeCouponAndNotUsed')) {
                 }
             }
         }
-        
+
         return false;
     }
 }
@@ -2287,7 +2305,7 @@ if (!function_exists('get_image')) {
 
 // Get POS user cart
 if (!function_exists('get_pos_user_cart')) {
-    function get_pos_user_cart($sessionUserID = null , $sessionTemUserId = null) 
+    function get_pos_user_cart($sessionUserID = null , $sessionTemUserId = null)
     {
         $cart               = [];
         $authUser           = auth()->user();
@@ -2299,7 +2317,7 @@ if (!function_exists('get_pos_user_cart')) {
         if($sessionTemUserId == null) {
             $sessionTemUserId = Session::has('pos.temp_user_id') ? Session::get('pos.temp_user_id') : null;
         }
-        
+
         $cart = Cart::where('owner_id', $owner_id)->where('user_id', $sessionUserID)->where('temp_user_id', $sessionTemUserId)->get();
         return $cart;
 

@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Laravel\Sanctum\HasApiTokens;
 use App\Models\Cart;
+use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\EmailVerificationNotification;
 use Auth;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Models\Permission;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -75,7 +76,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function staff()
     {
-        return $this->hasOne(Staff::class);
+        return $this->hasMany(Staff::class);
     }
 
     public function orders()
@@ -188,6 +189,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function warehouses() {
         return $this->hasMany(Warehouse::class);
 
+    }
+
+    public function getStaff() {
+        return $this->hasMany(User::class, 'owner_id', 'id');
     }
 
 }

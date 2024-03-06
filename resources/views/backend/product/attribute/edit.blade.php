@@ -77,14 +77,14 @@
                                             @endphp
                                             @if($attribute->type_value == "list")
                                                 @php
-                                                    $values = $attribute->attribute_values_list($language->app_lang_code);
+                                                    $values = $attribute->attribute_values_list();
                                                     $id_bloc_with_name = "id_bloc_".$name."_";
                                                 @endphp
                                                 @foreach ($values as $key => $value)
                                                     <div class="row" style="width: 100%;margin-left: 1px;" id="{{'id_bloc_'.$value->id}}">
                                                         <div class="form-group mb-3 col-10">
                                                             <label for="name" class="tagify-label">{{ translate($titre) }}</label>
-                                                            <input name='value_{{ $name }}-{{ $value->id }}' data-id={{ $value->id }} class="form-control values_attribute_list" value="{{ $value->value }}" autofocus>
+                                                            <input name='value_{{ $name }}-{{ $value->id }}' data-id={{ $value->id }} class="form-control values_attribute_list" value="{{ $value->getTranslation('value', $language->app_lang_code,false) }}" autofocus>
                                                         </div>
                                                         <div class="col-1">
                                                             <i class="las la-plus add_values" style="margin-left: 5px; margin-top: 40px;" title="Add another values"></i>

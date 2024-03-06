@@ -20,6 +20,8 @@ class SellerPackageController extends Controller
         $this->middleware(['permission:add_seller_package'])->only('create');
         $this->middleware(['permission:edit_seller_package'])->only('edit');
         $this->middleware(['permission:delete_seller_package'])->only('destroy');
+        $this->middleware(['permission:seller_view_package_list'])->only('seller_packages_list');
+        $this->middleware(['permission:seller_view_all_packages'])->only('packages_payment_list');
     }
 
     /**

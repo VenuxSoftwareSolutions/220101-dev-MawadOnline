@@ -8,7 +8,12 @@ class Staff extends Model
 {
     public function user()
     {
-    return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function seller()
+    {
+        return $this->belongsTo(User::class, 'seller_id');
     }
 
     public function role()

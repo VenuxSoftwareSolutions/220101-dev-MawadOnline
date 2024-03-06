@@ -1,10 +1,19 @@
 <?php
 
 use App\Http\Controllers\AizUploadController;
+use App\Http\Controllers\Seller\SellerRoleController;
+use App\Http\Controllers\Seller\SellerStaffController;
 use App\Http\Controllers\Seller\StockController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\SellerController;
 
 //Upload
 Route::group(['prefix' => 'seller', 'middleware' => ['seller', 'verified', 'user', 'prevent-back-history'], 'as' => 'seller.'], function () {
+    Route::controller(CategoryController::class)->group(function () {
+        Route::get('/jstree', 'jstree')->name('categories.jstree');
+        Route::get('/jstreeSearch', 'jstreeSearch')->name('categories.jstreeSearch');
+    });
+   
     Route::controller(AizUploadController::class)->group(function () {
         Route::any('/uploads', 'index')->name('uploaded-files.index');
         Route::any('/uploads/create', 'create')->name('uploads.create');
@@ -17,14 +26,20 @@ Route::group(['prefix' => 'seller', 'middleware' => ['seller', 'verified', 'user
 Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller', 'middleware' => ['seller', 'verified', 'user', 'prevent-back-history'], 'as' => 'seller.'], function () {
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'index')->name('dashboard');
+
     });
 
     // Product
+
     Route::controller(ProductController::class)->group(function () {
         Route::get('/products', 'index')->name('products');
         Route::get('/product/create', 'create')->name('products.create');
+        Route::get('/product/delete_variant', 'delete_variant')->name('products.delete_variant');
         Route::post('/products/store/', 'store')->name('products.store');
+        Route::post('/products/store_draft', 'store_draft')->name('products.store_draft');
         Route::get('/product/{id}/edit', 'edit')->name('products.edit');
+        Route::get('/getAttributeCategorie', 'getAttributeCategorie')->name('products.getAttributeCategorie');
+        Route::get('/getAttributes', 'getAttributes')->name('products.getAttributes');
         Route::post('/products/update/{product}', 'update')->name('products.update');
         Route::get('/products/duplicate/{id}', 'duplicate')->name('products.duplicate');
         Route::post('/products/sku_combination', 'sku_combination')->name('products.sku_combination');
@@ -33,8 +48,13 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
         Route::post('/products/seller/featured', 'updateFeatured')->name('products.featured');
         Route::post('/products/published', 'updatePublished')->name('products.published');
         Route::get('/products/destroy/{id}', 'destroy')->name('products.destroy');
+        Route::get('/products/draft/{id}', 'draft')->name('products.draft');
+        Route::get('/products/delete_image', 'delete_image')->name('products.delete_image');
         Route::post('/products/bulk-delete', 'bulk_product_delete')->name('products.bulk-delete');
     });
+         // categories
+
+       
 
          // Stocks
       Route::controller(StockController::class)->group(function () {
@@ -161,5 +181,21 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
         Route::get('/all-notification', 'index')->name('all-notification');
     });
 
+        Route::controller(SellerStaffController::class)->group(function () {
+        Route::resource('staffs', SellerStaffController::class);
+        Route::get('/staffs/destroy/{id}', [SellerStaffController::class, 'destroy'])->name('staffs.destroy');
+    });
+    Route::post('vendors/{id}/approve', [SellerController::class,'approve'])->name('staff.approve');
+
+
+
+    Route::controller(SellerRoleController::class)->group(function () {
+        Route::resource('roles', SellerRoleController::class);
+        Route::get('/roles/edit/{id}', 'edit')->name('roles.edit');
+        Route::get('/roles/destroy/{id}', 'destroy')->name('roles.destroy');
+
+        // Add Permissiom
+        Route::post('/roles/add_permission', 'add_permission')->name('roles.permission');
+    });
 });
 

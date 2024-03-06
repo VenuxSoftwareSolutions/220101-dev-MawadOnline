@@ -55,13 +55,31 @@ CoreComponentRepository::initializeCache();
                         </div>
                     </div>
 
-                    <div class="form-group row  not-translatable">
+                    <div class="form-group row  not-translatable" >
                         <label class="col-md-3 col-form-label">{{translate('Parent Category')}} <span class="text-danger">*</span></label>
                         <div class="col-md-9">
-                            <input type="text" id="search_input" class="form-control" placeholder="Search">
-                            <div class="h-300px overflow-auto c-scrollbar-light">
+                        <ol class="breadcrumb">
+                            @foreach ($breadcrumbs as $breadcrumb)
+                                <li class="breadcrumb-item">
+                                    @if ($loop->last)
+                                        <strong>{{ $breadcrumb->name }}</strong> {{-- Active item --}}
+                                    @else
+                                        <a href="#">{{ $breadcrumb->name }}</a>
+                                    @endif
+                                </li>
+                            @endforeach
+                            <li class="breadcrumb-item">
+                                <a href="#" onclick="showCategoryParentTree()" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </li>
+                        </ol>
+                            <div id="category_parent_tree" style="display: none;">
+                                <input type="text" id="search_input" class="form-control" placeholder="Search">
+                                <div class="h-300px overflow-auto c-scrollbar-light">
 
-                                <div id="jstree"></div>
+                                    <div id="jstree"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -78,18 +96,21 @@ CoreComponentRepository::initializeCache();
 
 
 
-                    <div class="form-group row  not-translatable">
-                        <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <span class="text-danger">*</span></label>
-
+                    <div class="form-group row not-translatable">
+                        <label class="col-md-3 col-form-label" for="formFile">{{ translate('Thumbnail Image') }} <span class="text-danger">*</span></label>
                         <div class="col-md-9">
-                            <input class="form-control" type="file" name="thumbnail_image" id="formFile" accept="image/jpeg, image/png, image/gif">
-                            <div>
-                                @if($errors->has('thumbnail_image'))
-                                <span class="text-danger" role="alert">{{ translate('Thumbnail Image is required')}}</span>
-                                @endif
+                            <input class="form-control" type="file" name="thumbnail_image" id="formFile" accept="image/jpeg, image/png, image/gif" onchange="previewImage(event)">
+                            <div style="margin-top: 15px;">
+                                <!-- Existing Image or Placeholder for New Selection -->
+                                <img id="thumbnailPreview" src="{{ isset($category->thumbnail_image) ? asset('public/'.$category->thumbnail_image) : asset('public/landscape-placeholder.svg') }}" alt="Thumbnail Image" style="width: 100px; height: auto;">
                             </div>
+                            @if($errors->has('thumbnail_image'))
+                                <span class="text-danger" role="alert">{{ translate('Thumbnail Image is required') }}</span>
+                            @endif
                         </div>
                     </div>
+
+
 
                     <div class="form-group row  not-translatable">
                         <label class="col-md-3 col-form-label">{{translate('featured')}}</label>
@@ -101,18 +122,20 @@ CoreComponentRepository::initializeCache();
 
 
 
-                    <div class="form-group row  not-translatable">
-                        <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Category Image')}} </label>
-
+                    <div class="form-group row not-translatable">
+                        <label class="col-md-3 col-form-label" for="categoryImageInput">{{ translate('Category Image') }}</label>
                         <div class="col-md-9">
-                            <input class="form-control" type="file" name="cover_image" id="formFile" accept="image/jpeg, image/png, image/gif">
-                            <div>
-                                @if($errors->has('cover_image'))
-                                <span class="text-danger" role="alert">{{ translate('Category Image is required')}}</span>
-                                @endif
+                            <input class="form-control" type="file" name="cover_image" id="categoryImageInput" accept="image/jpeg, image/png, image/gif" onchange="previewCategoryImage(event)">
+                            <div style="margin-top: 15px;">
+                                <!-- Placeholder for New Selection or Existing Image -->
+                                <img id="categoryImagePreview" src="{{ isset($category->cover_image) ? asset('public/'.$category->cover_image) : asset('public/landscape-placeholder.svg') }}" alt="Category Image" style="width: 100px; height: auto;">
                             </div>
+                            @if($errors->has('cover_image'))
+                                <span class="text-danger" role="alert">{{ translate('Category Image is required') }}</span>
+                            @endif
                         </div>
                     </div>
+
 
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label">{{translate('Meta Title')}}</label>
@@ -387,12 +410,36 @@ $(document).ready(function() {
                     'responsive': false
                 }
             },
-            "plugins": ["wholerow", "state", "search"] // Include the search plugin here
+            "plugins": ["wholerow","search"] // Include the search plugin here
         }).on("changed.jstree", function(e, data) {
             if (data && data.selected && data.selected.length) {
                 var selectedId = data.selected[0]; // Get the ID of the first selected node
                 $('#selected_parent_id').val(selectedId); // Update hidden input with selected ID
+                var categoryBreadcrumbsUrl = "{{ route('categories.breadcrumbs', ['id' => ':id']) }}";
+                    categoryBreadcrumbsUrl = categoryBreadcrumbsUrl.replace(':id', selectedId); // Replace 'selectedId' with the actual ID using JavaScript
 
+                 // Fetch the new breadcrumb path
+                $.ajax({
+                    url: categoryBreadcrumbsUrl,
+                    type: 'GET',
+                    success: function(response) {
+                        var breadcrumbHtml = '';
+                        response.forEach(function(breadcrumb) {
+                            if (response.indexOf(breadcrumb) === response.length - 1) {
+                                // Last item - active
+                                breadcrumbHtml += '<li class="breadcrumb-item"><strong>' + breadcrumb.name + '</strong></li>';
+                            } else {
+                                // Other items - links
+                                breadcrumbHtml += '<li class="breadcrumb-item"><a href="#">' + breadcrumb.name + '</a></li>';
+                            }
+                        });
+                        // Add the edit icon at the end
+                        breadcrumbHtml += '<li class="breadcrumb-item"><a href="#" onclick="showCategoryParentTree()" title="Edit"><i class="fas fa-edit"></i></a></li>';
+
+                        // Update the breadcrumb container
+                        $('.breadcrumb').html(breadcrumbHtml);
+                    }
+                });
                 // Call your functions to load attributes
                 load_categories_attributes();
                 load_filtring_attributes();
@@ -452,4 +499,34 @@ $(document).ready(function() {
         }, 250);
     });
 </script>
+
+
+<script>
+    function showCategoryParentTree() {
+        $('#category_parent_tree').show();
+    }
+</script>
+
+<script>
+function previewImage(event) {
+    var reader = new FileReader();
+    reader.onload = function() {
+        var output = document.getElementById('thumbnailPreview');
+        output.src = reader.result;
+    }
+    reader.readAsDataURL(event.target.files[0]);
+}
+</script>
+
+<script>
+function previewCategoryImage(event) {
+    var reader = new FileReader();
+    reader.onload = function() {
+        var output = document.getElementById('categoryImagePreview');
+        output.src = reader.result;
+    }
+    reader.readAsDataURL(event.target.files[0]);
+}
+</script>
+
 @endsection

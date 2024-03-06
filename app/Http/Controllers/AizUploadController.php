@@ -12,6 +12,15 @@ use enshrined\svgSanitize\Sanitizer;
 
 class AizUploadController extends Controller
 {
+    // public function __construct()
+    // {
+    //     // Staff Permission Check
+    //     $this->middleware(['permission:seller_uploaded_files'])->only('index');
+    //     $this->middleware(['permission:seller_add_file'])->only('create');
+    //     $this->middleware(['permission:seller_edit_file'])->only('edit');
+    //     $this->middleware(['permission:seller_destroy_file'])->only('destroy');
+    // }
+
     public function index(Request $request)
     {
 
