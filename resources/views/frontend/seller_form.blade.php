@@ -46,7 +46,7 @@ use Carbon\Carbon;
             <div class="row">
                 <div class="mx-auto">
                     <h1 class="fw-700 fs-20 fs-md-24 text-dark text-center mb-3">
-                        @if (Auth::user() && Auth::user()->owner_id == null)
+                        @if (!Auth::user() || (Auth::user() && Auth::user()->owner_id == null))
                             {{ translate('Register Your Shop') }}
 
                         @else
@@ -68,7 +68,7 @@ use Carbon\Carbon;
                                             href="#code-verification">{{ translate('Code Verification Email') }}</a>
                                     </li>
                                 @endif
-                                @if (Auth::user() &&Auth::user()->owner_id == null)
+                                @if (!Auth::user() || (Auth::user() && (Auth::user()->owner_id == null || Auth::user()->owner_id == Auth::user()->id)) )
                                     <li class="nav-item">
                                         <a class="nav-link" id="business-info-tab" data-toggle="tab"
                                             href="#business-info">{{ translate('Business Information') }}</a>
@@ -130,7 +130,7 @@ use Carbon\Carbon;
 
                                                     </div>
                                                     <div class="form-group">
-                                                        <label>{{Auth::user() && Auth::user()->owner_id == null ? translate('Your Password')  : translate('Your New Password') }} <span
+                                                        <label>{{!Auth::user() || (Auth::user() && (Auth::user()->owner_id == null || Auth::user()->owner_id == Auth::user()->id)) ? translate('Your Password')  : translate('Your New Password') }} <span
                                                                 class="text-primary">*</span></label>
                                                         <input id="password" type="password" class="form-control rounded-0"
                                                             value="{{ old('password') }}"
@@ -188,15 +188,14 @@ use Carbon\Carbon;
                                                     class="btn btn-info fw-600 rounded-0 prv-tab">
                                                     {{ translate('previous') }}
                                                 </button>
-                                                @if (Auth::user() && Auth::user()->owner_id != Auth::user()->id)
-                                                <button  type="submit"
-                                                    class="btn btn-primary fw-600 rounded-0"
-                                                    {{-- onclick="switchTab('business-info')" --}}>{{ translate('Finish') }}</button>
-
-                                                @else
+                                                @if (!Auth::user() || (Auth::user()->owner_id == null || Auth::user()->owner_id == Auth::user()->id))
                                                 <button id="verifyCodeBtn" type="button"
                                                 class="btn btn-primary fw-600 rounded-0"
                                                 {{-- onclick="switchTab('business-info')" --}}>{{ translate('Next') }}</button>
+                                                @else
+                                                <button  type="submit"
+                                                    class="btn btn-primary fw-600 rounded-0"
+                                                    {{-- onclick="switchTab('business-info')" --}}>{{ translate('Finish') }}</button>
                                                 @endif
 
                                                 <button id="resendCodeBtn" type="button"

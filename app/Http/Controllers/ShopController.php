@@ -155,7 +155,8 @@ class ShopController extends Controller
         // $user->user_type = "seller";
         // $user->password = Hash::make($request->password);
         // $user->save();
-        if($user= User::where('email',$request->email)->first()){
+        $user = User::where('email',$request->email )->first();
+        if($user && $user->id != $user->owner_id && $user->owner_id != null){
 
             if(Hash::check($request->password, $user->password)==true){
                 return response()->json(['message' => 'You can\'t use the same password'], 403);
@@ -470,7 +471,6 @@ class ShopController extends Controller
             return response()->json(['staff'=>true,'verif_staff_login' => true, 'success' => true, 'message' => translate('Verification successful')]);
         }
         elseif ($user) {
-            dd('vendor');
             $user->email_verified_at = now(); // Assuming you want to set the current timestamp
             $user->save();
             Auth::login($user);
