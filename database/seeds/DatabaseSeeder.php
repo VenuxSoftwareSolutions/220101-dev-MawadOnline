@@ -6,7 +6,7 @@ use Database\seeds\CategorySeeder;
 use Database\Seeders\EmirateSeeder;
 use Database\seeds\MigrationSeeder;
 use Database\Seeders\AreasTableSeeder;
-use Database\Seeders\PermissionSeeder;
+use Database\seeds\PermissionSeeder;
 use Database\Seeders\TranslationsTableSeeder;
 use Database\Seeders\TranslationsRegisterVendorPart2;
 use Database\seeds\AddPermessionEnablingAttributeSeeder;

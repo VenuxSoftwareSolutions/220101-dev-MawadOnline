@@ -83,6 +83,12 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::post('/categories/categoriesByType', 'categoriesByType')->name('categories.categories-by-type');
         Route::post('/categories/categories-attributes', 'fetch_category_attribute')->name('categories.categories-attributes');
         Route::post('/categories/parent-attributes', 'fetch_parent_attribute')->name('categories.parent-attributes');
+        Route::get('/categories-tree', 'getCategoriesTree')->name('categories-tree');
+        Route::get('/fetchAll', 'fetchCategories')->name('categories.fetchCategories');
+        Route::get('/jstree', 'jstree')->name('categories.jstree');
+        Route::get('/jstreeSearch', 'jstreeSearch')->name('categories.jstreeSearch');
+        Route::get('/categories/breadcrumbs/{id}', 'breadcrumbs')->name('categories.breadcrumbs');
+
     });
 
     // Brand
@@ -109,6 +115,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::post('/products/get_products_by_subcategory', 'get_products_by_subcategory')->name('products.get_products_by_subcategory');
         Route::get('/products/duplicate/{id}', 'duplicate')->name('products.duplicate');
         Route::get('/products/destroy/{id}', 'destroy')->name('products.destroy');
+        Route::get('/products/approve/{id}', 'approve')->name('products.approve');
+        Route::get('/products/approve_action', 'approve_action')->name('products.approve_action');
         Route::post('/bulk-product-delete', 'bulk_product_delete')->name('bulk-product-delete');
 
         Route::post('/products/sku_combination', 'sku_combination')->name('products.sku_combination');

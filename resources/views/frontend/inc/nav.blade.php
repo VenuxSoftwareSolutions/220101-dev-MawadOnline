@@ -279,7 +279,19 @@
                                                             @endif
                                                         @elseif ($notification->type == 'App\Notifications\CustomStatusNotification')
                                                         <span class="ml-2">
-                                                            {{ $notification->data['message'] }}
+                                                            @if ($notification->data['newStatus'] == 'Suspended')
+                                                                {{ __('messages.suspended_notification', ['reason' =>$notification->data['suspendedTitle'] ?? "" ]) }}
+                                                                @elseif ($notification->data['newStatus'] == 'Pending Approval')
+                                                                {{ __('messages.registration_completed') }}
+                                                                @elseif ($notification->data['newStatus'] == 'Closed')
+                                                                {{ __('messages.vendor_closed') }}
+                                                                @elseif ($notification->data['newStatus'] == 'Pending Closure')
+                                                                {{ __('messages.pending_closure') }}
+                                                                @elseif ($notification->data['newStatus'] == 'Enabled')
+                                                                {{ __('messages.approved') }}
+                                                                @elseif ($notification->data['newStatus'] == 'Rejected')
+                                                                {{ __('messages.registration_rejected') }}
+                                                            @endif
                                                         </span>
                                                         @endif
                                                     </li>

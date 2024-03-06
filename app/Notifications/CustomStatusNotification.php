@@ -7,20 +7,23 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class CustomStatusNotification extends Notification implements ShouldQueue
+class CustomStatusNotification extends Notification
 {
     use Queueable;
     protected $oldStatus;
     protected $newStatus;
+    protected $suspendedTitle ;
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($oldStatus, $newStatus)
+    public function __construct($oldStatus, $newStatus,$suspendedTitle=null)
     {
         $this->oldStatus = $oldStatus;
         $this->newStatus = $newStatus;
+        $this->suspendedTitle = $suspendedTitle;
+
     }
 
     /**
@@ -82,7 +85,7 @@ class CustomStatusNotification extends Notification implements ShouldQueue
     {
         $oldStatus = $this->oldStatus;
         $newStatus = $this->newStatus;
-
+        $suspendedTitle = $this->suspendedTitle;
         switch ($newStatus) {
             case 'Suspended':
                 $message = __('messages.suspended');
@@ -109,6 +112,8 @@ class CustomStatusNotification extends Notification implements ShouldQueue
 
         return [
             'message' => $message,
+            'newStatus' =>$newStatus,
+            'suspendedTitle' =>$suspendedTitle
         ];
     }
 }
