@@ -9,11 +9,20 @@ use App\Models\ProductAttributeValues;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Model;
 use \Venturecraft\Revisionable\RevisionableTrait;
+use App\Traits\EnhancedRevisionableTrait;
+use Illuminate\Support\Facades\DB;
 
 class Product extends Model
 {
 
-    use RevisionableTrait;
+    use EnhancedRevisionableTrait;
+
+    protected function getLastActionNumber()
+    {
+        $lastRevision = $this->revisionHistory()->latest('id')->first();
+        return $lastRevision ? $lastRevision->action_number + 1 : 0;
+    }
+    
     protected $guarded = ['choice_attributes'];
 
     protected $with = ['product_translations', 'taxes', 'thumbnail'];
@@ -152,6 +161,17 @@ class Product extends Model
 
     public function getAttributesVariant(){
         $attributes = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->get();
+        $variants_id = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->pluck('id')->toArray();
+        $historique_children = DB::table('revisions')->whereIn('revisionable_id', $variants_id)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
+        if(count($historique_children) > 0){
+            foreach($historique_children as $historique_child){
+                foreach($attributes as $variant){
+                    if($variant->id == $historique_child->revisionable_id){
+                        $variant->old_value = $historique_child->old_value;
+                    }
+                }
+            }
+        }
         $data = [];
         if(count($attributes) > 0){
             foreach ($attributes as $attribute){
@@ -173,6 +193,7 @@ class Product extends Model
 
     public function getAttributesVariantChildren(){
         $attributes = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->get();
+        
         $data = [];
         if(count($attributes) > 0){
             foreach ($attributes as $attribute){

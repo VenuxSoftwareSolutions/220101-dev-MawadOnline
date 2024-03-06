@@ -168,37 +168,6 @@ class ProductController extends Controller
 
     public function all_products(Request $request)
     {
-        // $col_name = null;
-        // $query = null;
-        // $seller_id = null;
-        // $sort_search = null;
-        // $products = Product::where('auction_product', 0)->where('wholesale_product', 0);
-        // if (get_setting('vendor_system_activation') != 1) {
-        //     $products = $products->where('added_by', 'admin');
-        // }
-        // if ($request->has('user_id') && $request->user_id != null) {
-        //     $products = $products->where('user_id', $request->user_id);
-        //     $seller_id = $request->user_id;
-        // }
-        // if ($request->search != null) {
-        //     $sort_search = $request->search;
-        //     $products = $products
-        //         ->where('name', 'like', '%' . $sort_search . '%')
-        //         ->orWhereHas('stocks', function ($q) use ($sort_search) {
-        //             $q->where('sku', 'like', '%' . $sort_search . '%');
-        //         });
-        // }
-        // if ($request->type != null) {
-        //     $var = explode(",", $request->type);
-        //     $col_name = $var[0];
-        //     $query = $var[1];
-        //     $products = $products->orderBy($col_name, $query);
-        //     $sort_type = $request->type;
-        // }
-
-        // $products = $products->orderBy('created_at', 'desc')->paginate(15);
-        // $type = 'All';
-
         $search = null;
         $products = Product::where(function ($query) {
             $query->where('is_draft',0)
@@ -216,8 +185,6 @@ class ProductController extends Controller
         $products = $products->paginate(10);
 
         return view('backend.product.products.index', compact('products', 'search'));
-
-        //return view('backend.product.products.index', compact('products', 'type', 'col_name', 'query', 'seller_id', 'sort_search'));
     }
 
 
@@ -654,18 +621,7 @@ class ProductController extends Controller
 
     public function approve($id){
         $product = Product::findOrFail($id);
-
-        // if (Auth::user()->id != $product->user_id) {
-        //     flash(translate('This product is not yours.'))->warning();
-        //     return back();
-        // }
-
-        // $lang = $request->lang;
-        // $tags = json_decode($product->tags);
-        // $categories = Category::where('parent_id', 0)
-        //     ->where('digital', 0)
-        //     ->with('childrenCategories')
-        //     ->get();
+        
         $product = Product::find($id);
         $colors = Color::orderBy('name', 'asc')->get();
         $product_category = ProductCategory::where('product_id', $id)->first();
@@ -680,15 +636,27 @@ class ProductController extends Controller
         $general_attributes = [];
         $variants_attributes_ids_attributes = [];
         $general_attributes_ids_attributes = [];
+        $history = [];
         if($product != null){
             if($product->is_parent == 1){
                 $childrens = Product::where('parent_id', $id)->get();
                 $childrens_ids = Product::where('parent_id', $id)->pluck('id')->toArray();
                 $variants_attributes = ProductAttributeValues::whereIn('id_products', $childrens_ids)->where('is_variant', 1)->get();
-                
+
                 $variants_attributes_ids_attributes = ProductAttributeValues::whereIn('id_products', $childrens_ids)->where('is_variant', 1)->pluck('id_attribute')->toArray();
-                
+                $variants_ids = ProductAttributeValues::whereIn('id_products', $childrens_ids)->where('is_variant', 1)->pluck('id')->toArray();
+                $historique_children = DB::table('revisions')->whereIn('revisionable_id', $variants_ids)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
+                if(count($historique_children) > 0){
+                    foreach($historique_children as $historique_child){
+                        foreach($variants_attributes as $variant){
+                            if($variant->id == $historique_child->revisionable_id){
+                                $variant->old_value = $historique_child->old_value;
+                            }
+                        }
+                    }
+                }
             }
+
             $general_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->get();
             $general_attributes_ids_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->pluck('id_attribute')->toArray();
             $data_general_attributes = [];
@@ -720,6 +688,8 @@ class ProductController extends Controller
                     }
                 }
             }
+
+            $history[$product->id] = $product->revisionHistory;
 
             return view('backend.product.products.approve', [
                 'product' => $product,

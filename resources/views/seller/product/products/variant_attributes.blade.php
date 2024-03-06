@@ -1,4 +1,5 @@
 @foreach ($attributes as $attribute)
+
     @if (in_array($attribute->id, $variants_attributes_ids_attributes))
     <div class="row attribute-variant-{{ $attribute->id }}">
         <div class="col-md-3 mb-3">
@@ -55,10 +56,10 @@
             @case ('boolean')
                 <div class="col-md-8 mb-3" style="padding-top: 10px">
                     <label style="margin-right: 15px">
-                        <input type="radio" class="attributes" data-id_attributes="{{ $attribute->id }}" name="variant[attributes][{{ $children->id }}][{{ $attribute->id }}]" @if($variants_attributes[$attribute->id]->value == "yes") checked @endif name="boolean" value="yes">Yes
+                        <input type="radio" data-id_attributes="{{ $attribute->id }}" name="variant[attributes][{{ $children->id }}][{{ $attribute->id }}]" @if($variants_attributes[$attribute->id]->value == "yes") checked @endif @if(isset($variants_attributes[$attribute->id]->old_value)) class="attributes border-color" data-toggle="tooltip" data-html="true" title="Old value: {{ $variants_attributes[$attribute->id]->old_value }}" style=" accent-color:red !important;" @endif name="boolean" value="yes">Yes
                     </label>
                     <label>
-                        <input type="radio" class="attributes" data-id_attributes="{{ $attribute->id }}" name="variant[attributes][{{ $children->id }}][{{ $attribute->id }}]" name="boolean" @if($variants_attributes[$attribute->id]->value == "no") checked @endif value="no"> No
+                        <input type="radio"  data-id_attributes="{{ $attribute->id }}" name="variant[attributes][{{ $children->id }}][{{ $attribute->id }}]" name="boolean" @if($variants_attributes[$attribute->id]->value == "no") checked @endif @if(isset($variants_attributes[$attribute->id]->old_value))  data-toggle="tooltip" data-html="true" title="Old value: {{ $variants_attributes[$attribute->id]->old_value }}" @endif value="no"> No
                     </label>
                 </div>
                 @break;
