@@ -19,11 +19,14 @@ use App\Models\BusinessSetting;
 use App\Models\ContactPerson;
 use App\Models\Emirate;
 use App\Models\PayoutInformation;
+use App\Models\Role;
 use App\Models\VerificationCode;
 use App\Models\Warehouse;
 use Auth;
 use Hash;
 use App\Notifications\EmailVerificationNotification;
+use App\Notifications\NewRegistrationNotification;
+use App\Notifications\NewVendorRegistration;
 use App\Rules\CustomPasswordRule;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Notification;
@@ -775,7 +778,15 @@ class ShopController extends Controller
         $user = Auth::user();
         $user->steps = 1;
         $user->status = 'Pending Approval';
+        $user->owner_id = $user->id ;
         $user->save();
+
+        $role = Role::where('name','seller')->first();
+        $user->assignRole($role) ;
+        // Trigger the notification
+        $admin = User::where('user_type','admin')->first(); // Fetch the first admin
+        $admin->notify(new NewVendorRegistration($user));
+        Notification::send($admin, new NewRegistrationNotification($user));
         return response()->json(['finish' => true, 'success' => true, 'message' => 'Shop stored successfully']);
 
 

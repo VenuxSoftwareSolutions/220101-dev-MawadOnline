@@ -98,6 +98,16 @@
                             @elseif ($notification->data['newStatus'] == 'Rejected')
                             {{ __('messages.registration_rejected') }}
                         @endif
+                        @elseif ($notification->type == 'App\Notifications\NewRegistrationNotification')
+                        <!-- Access notification data -->
+                        @if ($notification->data)
+                        <p>{{ $notification->data['admin_message'] }}</p>
+                        <p>User Name: {{ $notification->data['user_name'] }}</p>
+                        <p>User Email: {{ $notification->data['user_email'] }}</p>
+
+                        @endif
+
+
                     @else
                         <!-- Handle other notification types -->
                     @endif

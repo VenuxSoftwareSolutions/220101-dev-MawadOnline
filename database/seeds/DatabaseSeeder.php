@@ -30,6 +30,6 @@ class DatabaseSeeder extends Seeder
       //  $this->call(TranslationsRegisterVendorPart2::class);
         //$this->call(CategorySeeder::class);
         $this->call(PermissionSeeder::class);
-        //$this->call(RoleSeeder::class);
+        $this->call(RoleSeeder::class);
     }
 }
