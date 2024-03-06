@@ -16,8 +16,8 @@
         "genealabs/laravel-socialiter": "*",
         "guzzlehttp/guzzle": "^7.5",
         "instamojo/instamojo-php": "^0.4.0",
+        "intervention/image": "^2",
         "iyzico/iyzipay-php": "^2.0",
-        "venturecraft/revisionable": "1.*",
         "kingflamez/laravelrave": "dev-master",
         "laracasts/flash": "^3.2",
         "laravel/framework": "^9.2",
@@ -48,7 +48,8 @@
         "spatie/laravel-translatable": "^6.5",
         "stripe/stripe-php": "^10.5",
         "twilio/sdk": "^6.44",
-        "unicodeveloper/laravel-paystack": "^1.0"
+        "unicodeveloper/laravel-paystack": "^1.0",
+        "venturecraft/revisionable": "1.*"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.8",
