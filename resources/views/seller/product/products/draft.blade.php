@@ -2224,7 +2224,6 @@
                 if($('body #bloc_variants_created div').length == 0){
                     $('body input[name="activate_attributes"]').prop("checked", false);
                 }else{
-                    alert('tnekna')
                     $('body input[name="activate_attributes"]').prop("checked", true);
                     $('body input[name="activate_attributes"]').prop("disabled", false);
                     $('body #attributes').prop("disabled", false);
