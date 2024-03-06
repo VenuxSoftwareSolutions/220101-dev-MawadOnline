@@ -10,6 +10,15 @@ use Auth;
 
 class CouponController extends Controller
 {
+    public function __construct() {
+        // Staff Permission Check
+        $this->middleware(['permission:seller_view_all_coupons'])->only('index');
+        $this->middleware(['permission:seller_add_coupon'])->only('create');
+        $this->middleware(['permission:seller_edit_coupon'])->only('edit');
+        $this->middleware(['permission:seller_edit_coupon'])->only('destroy');
+    }
+
+
     /**
      * Display a listing of the resource.
      *
@@ -29,8 +38,8 @@ class CouponController extends Controller
     public function create()
     {
         return view('seller.coupons.create');
-    } 
-    
+    }
+
 
     /**
      * Store a newly created resource in storage.
@@ -82,7 +91,7 @@ class CouponController extends Controller
     public function update(CouponRequest $request, Coupon $coupon)
     {
         $coupon->update($request->validated());
-        
+
         flash(translate('Coupon has been updated successfully'))->success();
         return redirect()->route('seller.coupon.index');
     }

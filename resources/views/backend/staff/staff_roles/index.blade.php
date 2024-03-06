@@ -51,7 +51,8 @@
             <thead>
                 <tr>
                     <th width="10%">#</th>
-                    <th>{{translate('Name')}}</th>
+                    <th width="25%">{{translate('Name')}}</th>
+                    <th>{{translate('Description')}}</th>
                     <th class="text-right" width="10%">{{translate('Options')}}</th>
                 </tr>
             </thead>
@@ -60,6 +61,7 @@
                     <tr>
                         <td>{{ ($key+1) + ($roles->currentPage() - 1)*$roles->perPage() }}</td>
                         <td>{{ $role->name}}</td>
+                        <td>{{ $role->description}}</td>
                         <td class="text-right">
                             @can('edit_staff_role')
                                 <a class="btn btn-soft-primary btn-icon btn-circle btn-sm" href="{{route('roles.edit', ['id'=>$role->id, 'lang'=>env('DEFAULT_LANGUAGE')] )}}" title="{{ translate('Edit') }}">

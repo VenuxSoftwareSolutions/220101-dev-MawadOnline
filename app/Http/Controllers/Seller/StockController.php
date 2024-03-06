@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Seller;
 use App\Exports\StockSummaryExport;
 use App\Http\Requests\SaveRecordRequest;
 use App\Http\Requests\SearchStockRequest;
+use App\Models\Product;
 use App\Models\StockDetails;
 use App\Models\StockSummary;
 use App\Models\Warehouse;
@@ -15,6 +16,14 @@ use Illuminate\Http\Request;
 
 class StockController extends Controller
 {
+    public function __construct()
+    {
+        // Staff Permission Check
+        $this->middleware(['permission:seller_add_inventory'])->only('index');
+        $this->middleware(['permission:seller_edit_or_remove_inventory'])->only('storeAddRemoveStock');
+        $this->middleware(['permission:seller_inventory_history'])->only('stockOperationReport');
+    }
+
     // public function index(Request $request)
     // {
 
@@ -72,8 +81,14 @@ class StockController extends Controller
             $inventoryData =  StockSummary::where('seller_id', $seller->id)->get();
         }
         $warehouses = Warehouse::where('user_id', $seller->id)->get();
+        $products = Product::where('is_parent', 0)   // Filter products where 'is_parent' column is 0
+        ->where('is_draft', 0)                   // Filter products where 'is_draft' column is 0
+        ->where('approved', 1)                   // Filter products where 'approved' column is 1
+        ->where('user_id', $seller->id)          // Filter products where 'user_id' column matches the seller's id
+        ->get();
 
-        return view('seller.stock.index', compact('inventoryData', 'warehouses'));
+
+        return view('seller.stock.index', compact('inventoryData', 'warehouses','products'));
     }
 
     /**

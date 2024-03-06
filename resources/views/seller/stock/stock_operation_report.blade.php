@@ -67,12 +67,17 @@
                         <label for="product_variants">{{ __('stock.Product Variants') }}</label>
                         <select id="product_variants" name="product_variants[]" class="form-control myMultiselect" multiple="multiple">
 
-                            <option @if (is_array(request('product_variants')) && (in_array(2,request('product_variants')))|| !(request('product_variants')))
+                            {{-- <option @if (is_array(request('product_variants')) && (in_array(2,request('product_variants')))|| !(request('product_variants')))
                                 selected
                             @endif value="2">Zephania Mann</option>
                             <option @if (is_array(request('product_variants')) && (in_array(1,request('product_variants')))|| !(request('product_variants')))
                             selected
-                        @endif value="1">Lucian Burke</option>
+                        @endif value="1">Lucian Burke</option> --}}
+                        @foreach ($productVariants as $productVariant)
+                            <option @if (is_array(request('product_variants')) && (in_array($productVariant->id,request('product_variants')))|| !(request('product_variants')))
+                                selected
+                            @endif value="{{$productVariant->id}}">{{$productVariant->name}}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
@@ -124,12 +129,12 @@
 
 
         <div class="card-body">
-            <table class="table aiz-table mb-0">
+            <table class="table {{-- aiz-table --}} mb-0">
                 <thead>
                     <tr>
                         <th>{{__('stock.Date/Time')}}</th>
                         <th>{{__('stock.Type of Operation')}}</th>
-                        <th>{{__('stock.SKU + Product Name + Variant')}}</th>
+                        <th>{{__('stock.Product/Variant + SKU')}}</th>
                         <th>{{__('stock.Warehouse Name')}}</th>
                         <th>{{__('stock.Quantity Before Operation')}}</th>
                         <th>{{__('stock.Operation Quantity')}}</th>
@@ -144,7 +149,7 @@
                         <tr>
                             <td>{{ $record->created_at }}</td>
                             <td>{{ $record->operation_type }}</td>
-                            <td>{{ $record->productVariant->name }}</td>
+                            <td>{{ $record->productVariant->name.' '.$record->productVariant->sku }}</td>
                             <td>{{ $record->warehouse->warehouse_name }}</td>
                             <td>{{ $record->before_quantity }}</td>
                             <td>{{ $record->transaction_quantity	 }}</td>
@@ -183,7 +188,7 @@
 
 <script>
     $(document).ready( function () {
-        $('.aiz-table').DataTable({
+        $('.table').DataTable({
             "order": [[0, "desc"]], // Sort by first column in descending order
             "dom": 'Bfrtip', // Add buttons to the layout
 

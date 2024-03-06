@@ -38,8 +38,10 @@
                 {{-- <p>{{ __('messages.reason') }}: {{ $suspendedStatusHistory->reason }}</p>
                 <p>{{ __('messages.details') }}: {{ $suspendedStatusHistory->details }}</p>
                 <h1 class="fw-600 h4">{{ __('messages.suspended') }}</h1> --}}
-                <span class="suspension-reason">{{$suspendedDetail}}</span>
-                <p class="suspension-message">{{ __('messages.due_to_reason_above') }} {{ __('messages.suspended') }}</p>
+                @if (!empty($reason))
+                    <span class="suspension-reason">{!! $reason !!}</span>
+                @endif
+                <p class="suspension-message">{{ __('messages.due_to_reason_above') }} {{ __('messages.suspended_email') }}</p>
 
             </div>
         @elseif ($newStatus == 'Pending Approval')
@@ -68,8 +70,14 @@
         @elseif ($newStatus == 'Rejected')
             <!-- Display message for rejected status -->
             <p>{{ __('messages.registration_rejected') }}</p>
+             <!-- Display suspension details if available -->
+            @if (!empty($reason))
+            <!-- Display the reason -->
+            <p>Reason for rejection: {!! $reason !!}</p>
+           @endif
             <!-- Add Font Awesome icon for rejected status -->
             <i class="fas fa-times-circle fa-3x text-danger"></i>
+            Vendor Email: {{ $vendorEmail }}
         @endif
         {{-- <p>Your vendor status has been changed from {{ $oldStatus }} to {{ $newStatus }}.</p> --}}
         <p>{{ __('messages.thank_you') }}</p>

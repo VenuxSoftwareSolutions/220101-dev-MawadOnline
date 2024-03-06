@@ -1,13 +1,15 @@
 <?php
 
-use Database\Seeders\AreasTableSeeder;
-use Database\Seeders\EmirateSeeder;
-use Database\Seeders\TranslationsRegisterVendorPart2;
-use Database\Seeders\TranslationsTableSeeder;
-use Database\seeds\AddPermessionEnablingAttributeSeeder;
-use Database\seeds\CategorySeeder;
 use Illuminate\Database\Seeder;
+use Database\Seeders\RoleSeeder;
+use Database\seeds\CategorySeeder;
+use Database\Seeders\EmirateSeeder;
 use Database\seeds\MigrationSeeder;
+use Database\Seeders\AreasTableSeeder;
+use Database\seeds\PermissionSeeder;
+use Database\Seeders\TranslationsTableSeeder;
+use Database\Seeders\TranslationsRegisterVendorPart2;
+use Database\seeds\AddPermessionEnablingAttributeSeeder;
 
 
 class DatabaseSeeder extends Seeder
@@ -26,6 +28,8 @@ class DatabaseSeeder extends Seeder
      //  $this->call(TranslationsTableSeeder::class);
         // $this->call(TranslationsTableSeeder::class);
       //  $this->call(TranslationsRegisterVendorPart2::class);
-        $this->call(CategorySeeder::class);
+        //$this->call(CategorySeeder::class);
+        $this->call(PermissionSeeder::class);
+        $this->call(RoleSeeder::class);
     }
 }

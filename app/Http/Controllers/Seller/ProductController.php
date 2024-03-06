@@ -62,6 +62,11 @@ class ProductController extends Controller
         $this->productStockService = $productStockService;
         $this->productUploadsService = $productUploadsService;
         $this->productPricingService = $productPricingService;
+
+        $this->middleware(['permission:seller_show_product'])->only('index');
+        $this->middleware(['permission:seller_create_product'])->only('create');
+        $this->middleware(['permission:seller_edit_product'])->only('edit');
+        $this->middleware(['permission:seller_destroy_product'])->only('destroy');
     }
 
     public function index(Request $request)
@@ -246,7 +251,7 @@ class ProductController extends Controller
                                 break;
                             case "list":
                                 $values = $attribute->attribute_values_list(app()->getLocale());
-                                $options = '<div class="col-md-8"><select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" name="attribute_generale-'.$attribute_generale->id.'">';
+                                $options = '<div class="col-md-8"><select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" name="attribute_generale-'.$attribute->id.'">';
                                 foreach ($values as $key=>$value){
                                     $options .= "<option  value='".$value->id."'>". $value->value ."</option>";
                                 }

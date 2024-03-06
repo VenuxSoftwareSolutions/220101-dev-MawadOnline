@@ -45,7 +45,15 @@ use Carbon\Carbon;
         <div class="container">
             <div class="row">
                 <div class="mx-auto">
-                    <h1 class="fw-700 fs-20 fs-md-24 text-dark text-center mb-3">{{ translate('Register Your Shop') }}</h1>
+                    <h1 class="fw-700 fs-20 fs-md-24 text-dark text-center mb-3">
+                        @if (Auth::user() && Auth::user()->owner_id == null)
+                            {{ translate('Register Your Shop') }}
+
+                        @else
+                            {{ translate('Account verification') }}
+
+                        @endif
+                        </h1>
 
                     <div class="row">
                         <div class="col-12">
@@ -60,22 +68,24 @@ use Carbon\Carbon;
                                             href="#code-verification">{{ translate('Code Verification Email') }}</a>
                                     </li>
                                 @endif
-                                <li class="nav-item">
-                                    <a class="nav-link" id="business-info-tab" data-toggle="tab"
-                                        href="#business-info">{{ translate('Business Information') }}</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="contact-person-tab" data-toggle="tab"
-                                        href="#contact-person">{{ translate('Contact Person') }}</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="warehouses-tab" data-toggle="tab"
-                                        href="#warehouses">{{ translate('Warehouses') }}</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="payout-info-tab" data-toggle="tab"
-                                        href="#payout-info">{{ translate('Payout Information') }}</a>
-                                </li>
+                                @if (Auth::user() &&Auth::user()->owner_id == null)
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="business-info-tab" data-toggle="tab"
+                                            href="#business-info">{{ translate('Business Information') }}</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="contact-person-tab" data-toggle="tab"
+                                            href="#contact-person">{{ translate('Contact Person') }}</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="warehouses-tab" data-toggle="tab"
+                                            href="#warehouses">{{ translate('Warehouses') }}</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="payout-info-tab" data-toggle="tab"
+                                            href="#payout-info">{{ translate('Payout Information') }}</a>
+                                    </li>
+                                @endif
                             </ul>
                             <div class="tab-content" id="registerTabsContent">
                                 @if (!Auth::check() || (Auth::check() && !Auth::user()->email_verified_at))
@@ -97,7 +107,7 @@ use Carbon\Carbon;
                                                         <label>{{ translate('First Name') }} <span
                                                                 class="text-primary">*</span></label>
                                                         <input type="text" class="form-control rounded-0"
-                                                            value="{{ old('name') }}" id="first_name"
+                                                            value="{{ auth()->check() ? auth()->user()->first_name : old('first_name') }}" id="first_name"
                                                             placeholder="{{ translate('First Name') }}" name="first_name"
                                                             required>
 
@@ -106,6 +116,7 @@ use Carbon\Carbon;
                                                         <label>{{ translate('Last name') }} <span
                                                                 class="text-primary">*</span></label>
                                                         <input type="text" class="form-control rounded-0" id="last_name"
+                                                            value="{{ auth()->check() ? auth()->user()->last_name : old('last_name') }}"
                                                             placeholder="{{ translate('Last name') }}" name="last_name"
                                                             required>
 
@@ -114,12 +125,12 @@ use Carbon\Carbon;
                                                         <label>{{ translate('Your Email') }} <span
                                                                 class="text-primary">*</span></label>
                                                         <input id="email" type="email" class="form-control rounded-0"
-                                                            value="{{ $user->email ?? '' }}"
+                                                            value="{{ auth()->check() ? auth()->user()->email : '' }}"
                                                             placeholder="{{ translate('Email') }}" name="email" required>
 
                                                     </div>
                                                     <div class="form-group">
-                                                        <label>{{ translate('Your Password') }} <span
+                                                        <label>{{Auth::user() && Auth::user()->owner_id == null ? translate('Your Password')  : translate('Your New Password') }} <span
                                                                 class="text-primary">*</span></label>
                                                         <input id="password" type="password" class="form-control rounded-0"
                                                             value="{{ old('password') }}"
@@ -177,10 +188,17 @@ use Carbon\Carbon;
                                                     class="btn btn-info fw-600 rounded-0 prv-tab">
                                                     {{ translate('previous') }}
                                                 </button>
-
-                                                <button id="verifyCodeBtn" type="button"
+                                                @if (Auth::user() && Auth::user()->owner_id != Auth::user()->id)
+                                                <button  type="submit"
                                                     class="btn btn-primary fw-600 rounded-0"
-                                                    {{-- onclick="switchTab('business-info')" --}}>{{ translate('Next') }}</button>
+                                                    {{-- onclick="switchTab('business-info')" --}}>{{ translate('Finish') }}</button>
+
+                                                @else
+                                                <button id="verifyCodeBtn" type="button"
+                                                class="btn btn-primary fw-600 rounded-0"
+                                                {{-- onclick="switchTab('business-info')" --}}>{{ translate('Next') }}</button>
+                                                @endif
+
                                                 <button id="resendCodeBtn" type="button"
                                                     class="btn btn-secondary fw-600 rounded-0">{{ translate('Resend Code') }}</button>
 
@@ -1483,9 +1501,12 @@ use Carbon\Carbon;
                                 location.reload();
 
                             }
+                            if (response.hasOwnProperty('verif_staff_login') && response.verif_staff_login ===
+                                true && response.staff === true) {
+                                    window.location.href = "{{ url('/seller/dashboard') }}";
+                            }
                             if (response.hasOwnProperty('verif_login') && response.verif_login ===
                                 true) {
-
                                 $('#personal-info-tab, #code-verification-tab').addClass(
                                     'disabled');
                                 $('#personal-info, #code-verification').addClass('disabled');

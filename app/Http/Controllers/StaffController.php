@@ -2,11 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Staff;
+use Hash;
 use App\Models\Role;
 use App\Models\User;
-use Hash;
+use App\Models\Staff;
+use Illuminate\Http\Request;
+use App\Mail\SellerStaffMail;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Http\Requests\StoreStaffRequest;
+use Illuminate\Support\Facades\Validator;
 
 class StaffController extends Controller
 {
@@ -25,7 +31,8 @@ class StaffController extends Controller
      */
     public function index()
     {
-        $staffs = Staff::paginate(10);
+        $seller= Role::where('name','seller')->first();
+        $staffs = Staff::where('created_by',null)->where('role_id','!=',$seller->id)->orderBy('id','desc')->paginate(10);
         return view('backend.staff.staffs.index', compact('staffs'));
     }
 
@@ -36,7 +43,7 @@ class StaffController extends Controller
      */
     public function create()
     {
-        $roles = Role::where('id','!=',1)->orderBy('id', 'desc')->get();
+        $roles = Role::where('id','!=',1)->where('role_type',0)->where('guard_name','web')->orderBy('id', 'desc')->get();
         return view('backend.staff.staffs.create', compact('roles'));
     }
 
@@ -46,21 +53,32 @@ class StaffController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreStaffRequest $request)
     {
+        abort_if(!auth('web')->user()->can('add_staff'), Response::HTTP_FORBIDDEN, 'ACCESS FORBIDDEN');
+
+        $url = url('/admin');
+        $admin=Auth::user();
         if(User::where('email', $request->email)->first() == null){
             $user = new User;
-            $user->name = $request->name;
+            $user->name = $request->first_name.' '.$request->last_name;
+            $user->first_name = $request->first_name;
+            $user->last_name = $request->last_name;
             $user->email = $request->email;
             $user->phone = $request->mobile;
             $user->user_type = "staff";
-            $user->password = Hash::make($request->password);
+            $user->status = "Enabled";
+            $password=$this->generatePassword(12);
+            $user->password = Hash::make($password);
             if($user->save()){
                 $staff = new Staff;
                 $staff->user_id = $user->id;
+                $staff->created_by = $admin->id;
                 $staff->role_id = $request->role_id;
-                $user->assignRole(Role::findOrFail($request->role_id)->name);
+                $role=Role::findOrFail($request->role_id);
+                $user->assignRole($role->name);
                 if($staff->save()){
+                    Mail::to($user->email)->send(new SellerStaffMail($user, $role, $password, $admin , $url));
                     flash(translate('Staff has been inserted successfully'))->success();
                     return redirect()->route('staffs.index');
                 }
@@ -70,6 +88,34 @@ class StaffController extends Controller
         flash(translate('Email already used'))->error();
         return back();
     }
+
+    public function generatePassword($length = 12) {
+        $uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $lowercase = 'abcdefghijklmnopqrstuvwxyz';
+        $numbers = '0123456789';
+        $specialChars = '!@#$%^&*()-_+=\/{}[]|';
+
+        $password = '';
+
+        // Choose at least one character from each character set
+        $password .= $uppercase[rand(0, strlen($uppercase) - 1)];
+        $password .= $lowercase[rand(0, strlen($lowercase) - 1)];
+        $password .= $numbers[rand(0, strlen($numbers) - 1)];
+        $password .= $specialChars[rand(0, strlen($specialChars) - 1)];
+
+        // Fill the rest of the password with random characters
+        $remainingLength = $length - 4; // Subtracting 4 as we already added one from each character set
+        $allChars = $uppercase . $lowercase . $numbers . $specialChars;
+        for ($i = 0; $i < $remainingLength; $i++) {
+            $password .= $allChars[rand(0, strlen($allChars) - 1)];
+        }
+
+        // Shuffle the password to randomize the positions of the characters
+        $password = str_shuffle($password);
+
+        return $password;
+    }
+
 
     /**
      * Display the specified resource.
@@ -102,16 +148,18 @@ class StaffController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StoreStaffRequest $request, $id)
     {
+        abort_if(!auth('web')->user()->can('edit_staff'), Response::HTTP_FORBIDDEN, 'ACCESS FORBIDDEN');
+
         $staff = Staff::findOrFail($id);
         $user = $staff->user;
         $user->name = $request->name;
-        $user->email = $request->email;
+        //$user->email = $request->email;
         $user->phone = $request->mobile;
-        if(strlen($request->password) > 0){
-            $user->password = Hash::make($request->password);
-        }
+        // if(strlen($request->password) > 0){
+        //     $user->password = Hash::make($request->password);
+        // }
         if($user->save()){
             $staff->role_id = $request->role_id;
             if($staff->save()){

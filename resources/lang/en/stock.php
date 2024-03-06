@@ -54,5 +54,7 @@ return [
     'inventory_record_saved' => 'Inventory record saved successfully!',
     'Select All'=>'Select All',
     'Deselect All'=>'Deselect All',
+    'Product/Variant + SKU'=>'المنتج/المتغير + SKU',
+
 
 ];

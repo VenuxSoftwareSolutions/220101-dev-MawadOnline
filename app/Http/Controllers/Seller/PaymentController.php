@@ -7,6 +7,11 @@ use Auth;
 
 class PaymentController extends Controller
 {
+    public function __construct() {
+        // Staff Permission Check
+        $this->middleware(['permission:seller_shop_payment_history'])->only('index');
+    }
+
     /**
      * Display a listing of the resource.
      *

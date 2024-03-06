@@ -14,6 +14,16 @@ use DB;
 
 class OrderController extends Controller
 {
+    public function __construct()
+    {
+        // Staff Permission Check
+        $this->middleware(['permission:seller_view_all_orders'])->only('index');
+        $this->middleware(['permission:seller_view_order_details'])->only('show');
+        $this->middleware(['permission:seller_update_delivery_status'])->only('update_delivery_status');
+        $this->middleware(['permission:seller_update_payment_status'])->only('update_payment_status');
+    }
+
+
     /**
      * Display a listing of the resource to seller.
      *
@@ -81,7 +91,7 @@ class OrderController extends Controller
             $user->save();
         }
 
-        
+
         foreach ($order->orderDetails->where('seller_id', Auth::user()->id) as $key => $orderDetail) {
             $orderDetail->delivery_status = $request->status;
             $orderDetail->save();
@@ -148,7 +158,7 @@ class OrderController extends Controller
             $orderDetail->payment_status = $request->status;
             $orderDetail->save();
         }
-        
+
         $status = 'paid';
         foreach ($order->orderDetails as $key => $orderDetail) {
             if ($orderDetail->payment_status != 'paid') {

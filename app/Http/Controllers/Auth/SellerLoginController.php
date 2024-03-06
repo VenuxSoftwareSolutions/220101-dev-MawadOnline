@@ -22,16 +22,16 @@ class SellerLoginController extends Controller
                     'user_id' => auth()->user()->id,
                     'temp_user_id' => null
                 ]);
-    
+
             Session::forget('temp_user_id');
         }
-        
+
         // Attempt to log the user in
         if ($this->attemptLogin($request, 'seller')) {
             // Redirect to admin dashboard
             return redirect()->route('seller.dashboard');
         }
-    
+
         // If login attempt was unsuccessful
         return $this->sendFailedLoginResponse($request);
     }

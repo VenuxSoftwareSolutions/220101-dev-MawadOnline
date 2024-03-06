@@ -6,17 +6,31 @@
         .text-primary {
             color: #007bff !important;
         }
-        .suspension-reason {
-        margin-bottom: 15px;
-        padding: 10px;
-        border-radius: 5px;
-        background-color: #f8d7da; /* Light red background */
-        border: 1px solid #f5c6cb; /* Border color */
-    }
+        .suspension-card {
+    border: 1px solid #ddd; /* Border color */
+    border-radius: 5px; /* Rounded corners */
+    padding: 20px; /* Padding inside the card */
+    background-color: #f9f9f9; /* Background color */
+    margin-bottom: 20px; /* Spacing at the bottom */
+}
 
-    .suspension-reason i {
-        margin-right: 10px; /* Spacing between icon and text */
-    }
+.suspension-card .card-title {
+    font-weight: bold; /* Make the title bold */
+    margin-bottom: 10px; /* Spacing below the title */
+}
+
+.suspension-card .card-text {
+    color: #555; /* Text color */
+    font-size: 16px; /* Text size */
+}
+.suspended-heading {
+    color: #ff0000; /* Red color */
+}
+
+img {
+    max-width: 100% !important;
+}
+
     </style>
 @endsection
 
@@ -38,16 +52,21 @@
                         <!-- Add Font Awesome icon for closed status -->
                         <i class="fas fa-lock fa-3x text-danger"></i>
                     @elseif (Auth::user()->status == "Suspended")
-                    <h1 class="fw-600 h4">{{ __('messages.suspended') }}</h1>
+                    <h1 class="fw-600 h4 suspended-heading">{{ __('messages.suspended') }}</h1>
                     @php
                         $suspendedStatusHistory = Auth::user()->getSuspendedStatusHistory();
                     @endphp
-                        @if ($suspendedStatusHistory)
+                    @if ($suspendedStatusHistory)
                         <!-- Display suspension reason and details -->
-                        <div class="suspension-reason">
-                            <p>{{ __('messages.reason') . $suspendedStatusHistory->suspension_reason }}</p>
-                            <p>{{ __('messages.details') . $suspendedStatusHistory->details }}</p>
+                        <div class="card suspension-card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ __('messages.reason') }}</h5>
+                                <p class="card-text">{{ $suspendedStatusHistory->suspension_reason }}</p>
+                                <h5 class="card-title">{{ __('messages.details') }} </h5>
+                                <p class="card-text">{!! $suspendedStatusHistory->details !!}</p>
+                            </div>
                         </div>
+
                         {{-- <!-- Map suspension reasons to icons -->
                         @php
                             $reasonsIcons = [

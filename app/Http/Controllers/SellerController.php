@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Emirate;
 use Illuminate\Http\Request;
 use App\Models\Seller;
 use App\Models\User;
@@ -16,6 +17,7 @@ use App\Notifications\EmailVerificationNotification;
 use App\Notifications\ShopVerificationNotification;
 use App\Notifications\VendorStatusChangedNotification;
 use Cache;
+use File;
 use Illuminate\Support\Facades\Notification;
 
 class SellerController extends Controller
@@ -61,7 +63,7 @@ class SellerController extends Controller
         // }
         // $shops = $shops->paginate(15);
         // return view('backend.sellers.index', compact('shops', 'sort_search', 'approved'));
-        $sellers = User::where('user_type', 'seller')->get() ;
+        $sellers = User::where('user_type', 'seller')->whereColumn('id','owner_id')->get() ;
         return view('backend.sellers.index', compact('sellers'));
     }
 
@@ -73,6 +75,11 @@ class SellerController extends Controller
     public function create()
     {
         return view('backend.sellers.create');
+    }
+
+    public function showStaff(User $seller) {
+        $staff = $seller->getStaff;
+        return view('backend.sellers.staff', compact('seller', 'staff'));
     }
 
     /**
@@ -317,7 +324,7 @@ class SellerController extends Controller
     $seller->notify(new VendorStatusChangedNotification($oldStatus, $seller->status));
     Notification::send($seller, new CustomStatusNotification($oldStatus, $seller->status));
 
-
+        // Check if it's an AJAX request
         return response()->json([
             'success' => true,
             'message' => __('messages.vendor_approved_successfully'),
@@ -326,8 +333,94 @@ class SellerController extends Controller
 
     }
 
-    public function resubmitRegistration($id)
+    public function enable($id) {
+        $seller = User::findOrFail($id);
+        $oldStatus = $seller->status;
+        $seller->status = 'Enabled';
+
+
+        $seller->save();
+
+
+        $this->logStatusChange($seller, 'Enabled');
+
+
+    // Send an email notification to the seller with old and new status
+    $seller->notify(new VendorStatusChangedNotification($oldStatus, $seller->status));
+    Notification::send($seller, new CustomStatusNotification($oldStatus, $seller->status));
+
+    return redirect()->route('sellers.index')->with('success', 'Vendor approved successfully');
+
+    }
+
+    public function upload(Request $request)
     {
+        // Validate the uploaded file
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Adjust as per your requirements
+        ]);
+        // Retrieve the total size of all uploaded images from the session
+        $totalSize = $request->session()->get('totalSize', 0);
+
+        // Validate and process the uploaded file
+        $image = $request->file('image');
+        $imageSize = $image->getSize(); // Get the size of the image in bytes
+
+        // Check if adding the size of this image would exceed the limit
+        if ($totalSize + $imageSize > 5 * 1024 * 1024) {
+
+            // Store the updated total size in the session as flash data
+            $request->session()->flash('totalSize', $totalSize);
+            // Return an error response if the total size exceeds the limit
+            return response()->json(['errors' => [
+                'message' => 'Total image size exceeds the maximum limit of 5 MB. Please reduce the size of the images.'],'totalSize'=>$totalSize], 400);
+        }
+        // Store the image in the storage directory
+        $imageName = time().'.'.$request->image->extension();
+        $request->image->move(public_path('reject_reason'), $imageName);
+
+        // Return the URL of the uploaded image
+        $imageUrl = static_asset('reject_reason/'.$imageName);
+        // Increment the total size with the size of the uploaded image
+        $totalSize += $imageSize;
+
+        // Store the updated total size in the session as flash data
+        $request->session()->flash('totalSize', $totalSize);
+        return response()->json(['imageUrl' => $imageUrl,'totalSize'=>$totalSize]);
+    }
+    public function delete(Request $request)
+    {
+        $imageSrc = $request->input('src');
+
+        // Get the filename from the image URL
+        $filename = basename($imageSrc);
+
+        // Delete the image from storage
+        $filePath = public_path('reject_reason/' . $filename);
+        if (File::exists($filePath)) {
+            // Get the size of the image
+            $imageSize = filesize($filePath);
+
+            // Get the total size from the session
+            $totalSize = $request->session()->get('totalSize', 0);
+
+            // Subtract the image size from the total size
+            $totalSize -= $imageSize;
+
+            // Update the total size in the the session as flash data
+            $request->session()->flash('totalSize', $totalSize);
+
+            // Delete the image from storage
+            File::delete($filePath);
+            return response()->json(['message' => 'Image deleted successfully','totalSize'=>$totalSize], 200);
+        }
+
+        return response()->json(['message' => 'Image not found'], 404);
+    }
+
+    public function resubmitRegistration($id,Request $request)
+    {
+
         $seller = User::findOrFail($id);
         $oldStatus = $seller->status;
 
@@ -337,12 +430,18 @@ class SellerController extends Controller
 
         // Optionally, you can also log this status change in the status history table
         $this->logStatusChange($seller, 'Rejected');
+        // Get the reject reason and image URL from the request
+        $rejectReason = $request->input('reject_reason');
+
         // Send an email notification to the seller with old and new status
-        $seller->notify(new VendorStatusChangedNotification($oldStatus, $seller->status));
+        $seller->notify(new VendorStatusChangedNotification($oldStatus, $seller->status,$rejectReason,$seller->email));
         Notification::send($seller, new CustomStatusNotification($oldStatus, $seller->status));
 
-        // Redirect the user back or to any other page
-        return response()->json(['success' => true]);
+        // // Redirect the user back or to any other page
+        // return response()->json(['success' => true]);
+        // Redirect the user back to sellers.index with a success message
+        return redirect()->route('sellers.index')->with('success', 'Vendor has been rejected successfully.');
+
     }
 
        // Helper method to log status change
@@ -356,6 +455,7 @@ class SellerController extends Controller
 
        public function suspend($id, Request $request)
         {
+
             $vendor = User::findOrFail($id);
             $oldStatus = $vendor->status;
             // Update vendor's status to "Suspended"
@@ -371,11 +471,11 @@ class SellerController extends Controller
             $suspension->status = "Suspended";
             $suspension->save();
             // Send an email notification to the seller with old and new status
-            $vendor->notify(new VendorStatusChangedNotification($oldStatus, $vendor->status,$request->input('reason_details')));
+            $vendor->notify(new VendorStatusChangedNotification($oldStatus, $vendor->status,$request->input('reason_details'),null,$request->input('reason_title')));
             Notification::send($vendor, new CustomStatusNotification($oldStatus, $vendor->status,$suspension->suspension_reason));
 
-            // Return JSON response indicating success
-            return response()->json(['success' => true]);
+            return redirect()->route('sellers.index')->with('success', 'Vendor has been suspended successfully.');
+
         }
 
         public function pendingClosure($id)
@@ -424,6 +524,24 @@ class SellerController extends Controller
             return view('backend.sellers.status_history',compact('history','vendor_email'));
 
         }
+
+        public function view($id)
+    {
+        $user = User::findOrFail($id);
+        $emirates=Emirate::all() ;
+        return view('backend.sellers.view', compact('user','emirates'));
+    }
+
+    public function reject($id) {
+        $user = User::find($id) ;
+        return view('backend.sellers.reject_seller_registration',compact('user'));
+    }
+
+    public function suspendView($id) {
+        $user = User::find($id) ;
+        return view('backend.sellers.suspend_seller',compact('user'));
+    }
+
 
 
 

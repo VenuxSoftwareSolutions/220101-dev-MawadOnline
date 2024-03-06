@@ -5,7 +5,7 @@
 <div class="aiz-titlebar text-left mt-2 mb-3">
     <div class="row align-items-center">
         <div class="col-md-6">
-            <h1 class="h3">{{translate('All Sellers')}}</h1>
+            <h1 class="h3">{{translate('All Vendors')}}</h1>
         </div>
     </div>
 </div>
@@ -14,7 +14,7 @@
     {{-- <form class="" id="sort_sellers" action="" method="GET"> --}}
         <div class="card-header row gutters-5">
             <div class="col">
-                <h5 class="mb-md-0 h6">{{ translate('Sellers') }}</h5>
+                <h5 class="mb-md-0 h6">{{ translate('Vendors') }}</h5>
             </div>
 
             {{-- @can('delete_seller')
@@ -43,6 +43,11 @@
         </div>
 
         <div class="card-body">
+            @if (session('success'))
+                <div class="alert alert-success">
+                    {{ session('success')}}
+                </div>
+            @endif
             {{-- <table class="table aiz-table mb-0">
                 <thead>
                 <tr>
@@ -188,7 +193,8 @@
                 <thead>
                     <tr>
                         <th>{{__('messages.email_address')}}</th>
-                        <th>{{__('messages.approval')}}</th>
+                        {{-- <th>{{__('messages.approval')}}</th> --}}
+                        <th>Business name</th>
                         <th>{{ __('messages.status') }}</th>
                         <th width="10%">{{__('messages.options')}}</th>
                     </tr>
@@ -197,8 +203,9 @@
                         @foreach ( $sellers as $seller )
                         <tr>
                             <td>{{ $seller->email }}</td>
+                            <td>{{ $seller->business_information ?  $seller->business_information->trade_name :"" }}</td>
 
-                            <td>
+                            {{-- <td>
                                 @if ($seller->status != "Draft")
                                 <!-- Approval status column with toggle switch -->
                                 <label class="aiz-switch aiz-switch-success mb-0">
@@ -206,7 +213,7 @@
                                     <span class="slider round"></span>
                                 </label>
                                 @endif
-                            </td>
+                            </td> --}}
 
 
 
@@ -220,7 +227,7 @@
                                 @endif --}}
                             </td>
                             <td>
-                                @if ($seller->status != "Draft")
+
                                 <!-- Options column -->
                                 <div class="dropdown">
                                     {{-- <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -231,15 +238,20 @@
                                     </button>
                                     {{-- <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton"> --}}
                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-xs">
-
+                                        <a href="{{route('vendor.registration.view',$seller->id)}}" class="dropdown-item" >
+                                            {{ __('messages.View') }}
+                                        </a>
+                                        @if ($seller->status != "Draft")
                                         {{-- Resubmit Registration --}}
-                                        <button type="button" class="dropdown-item {{-- btn btn-primary --}} resubmit-registration" data-vendor-id="{{ $seller->id }}">
+                                        {{-- <button type="button" class="dropdown-item resubmit-registration" data-vendor-id="{{ $seller->id }}">
                                             {{ __('messages.resubmit_registration') }}
-                                        </button>
+                                        </button> --}}
 
                                         {{-- Suspend Vendor --}}
-                                        <button type="button" class="dropdown-item {{-- btn btn-danger --}} suspend-vendor-btn" data-vendor-id="{{ $seller->id }}">   {{ __('messages.suspend_vendor') }}</button>
-
+                                        {{-- <button type="button" class="dropdown-item suspend-vendor-btn" data-vendor-id="{{ $seller->id }}">   {{ __('messages.suspend_vendor') }}</button> --}}
+                                        <a href="{{route('vendors.suspend.view',$seller->id)}}" class="dropdown-item" >
+                                            {{ __('messages.suspend_vendor') }}
+                                        </a>
                                         {{-- Pending Closure --}}
                                         <button type="button" class="dropdown-item {{-- btn btn-warning --}} pending-closure-btn" data-vendor-id="{{ $seller->id }}">{{ __('messages.pending_closure_op') }}</button>
 
@@ -247,15 +259,16 @@
                                         <button type="button" class="dropdown-item {{-- btn btn-danger --}} close-vendor-btn" data-vendor-id="{{ $seller->id }}">{{ __('messages.close_vendor') }}</button>
 
                                         {{-- View Status History --}}
-                                        {{-- <button type="button" class="dropdown-item btn btn-info view-status-history-btn" data-vendor-id="{{ $seller->id }}">
-                                            {{ __('messages.view_status_history') }}
-                                        </button> --}}
-                                        <a href="{{route('vendors.status-history',$seller->id)}}" class="dropdown-item" >
-                                            {{ __('messages.view_status_history') }}
+                                        <button type="button" class="dropdown-item btn btn-info view-status-history-btn" data-vendor-id="{{ $seller->id }}">
+                                            View Status History
+                                        </button>
+                                        <a href="{{route('sellers.staff',$seller->id)}}" class="dropdown-item" >
+                                            View Staff
                                         </a>
+                                        @endif
                                     </div>
                                 </div>
-                                @endif
+
 
                             </td>
                         </tr>

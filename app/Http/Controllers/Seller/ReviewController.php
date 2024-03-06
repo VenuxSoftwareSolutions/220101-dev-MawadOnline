@@ -8,6 +8,13 @@ use DB;
 
 class ReviewController extends Controller
 {
+    public function __construct()
+    {
+        // Staff Permission Check
+        $this->middleware(['permission:seller_view_product_reviews'])->only('index');
+
+    }
+
     public function index(Request $request)
     {
         $reviews = DB::table('reviews')

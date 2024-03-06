@@ -87,6 +87,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::get('/fetchAll', 'fetchCategories')->name('categories.fetchCategories');
         Route::get('/jstree', 'jstree')->name('categories.jstree');
         Route::get('/jstreeSearch', 'jstreeSearch')->name('categories.jstreeSearch');
+        Route::get('/categories/breadcrumbs/{id}', 'breadcrumbs')->name('categories.breadcrumbs');
 
     });
 
@@ -176,12 +177,22 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         // Route for resubmitting vendor registration
         Route::post('/seller/{id}/resubmit-registration', [SellerController::class, 'resubmitRegistration'])
         ->name('resubmit.registration');
+        Route::get('/vendor-registration/view/{id}', 'view')->name('vendor.registration.view');
+        Route::post('/upload-image', 'upload')->name('upload.image');
+        Route::delete('/delete-image', 'delete')->name('delete.image');
+        Route::get('/reject-seller-registration/{id}', 'reject')->name('reject.seller.registration');
+
+
         Route::post('vendors/{id}/approve', 'approve')->name('vendors.approve');
+        Route::get('vendors/{id}/approve', 'enable')->name('vendors.approve.registration');
+
         Route::post('vendors/{id}/suspend', 'suspend')->name('vendors.suspend');
+        Route::get('vendors/{id}/suspend', 'suspendView')->name('vendors.suspend.view');
+
         Route::post('vendors/{id}/pending-closure', 'pendingClosure')->name('vendors.pending-closure');
         Route::post('/vendors/{id}/close', 'close')->name('vendors.close');
         Route::get('/vendors/{vendorId}/status-history', 'getStatusHistory')->name('vendors.status-history');
-
+        Route::get('/sellers/{seller}/staff', 'showStaff')->name('sellers.staff');
 
     });
 
@@ -318,7 +329,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
     // Staff Roles
     Route::resource('roles', RoleController::class);
     Route::controller(RoleController::class)->group(function () {
+        Route::get('/seller/roles', 'indexSellerRoles')->name('roles.seller.index');
         Route::get('/roles/edit/{id}', 'edit')->name('roles.edit');
+        Route::get('/roles/create/seller', 'createSellerRole')->name('roles.seller.create');
         Route::get('/roles/destroy/{id}', 'destroy')->name('roles.destroy');
 
         // Add Permissiom

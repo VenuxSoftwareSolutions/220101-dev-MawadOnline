@@ -1474,7 +1474,7 @@
                 @endcanany
 
                 <!-- Staffs -->
-                @canany(['view_all_staffs','view_staff_roles'])
+                @canany(['view_all_staffs','view_staff_roles','view_seller_staff_roles'])
                     <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link">
                             <div class="aiz-side-nav-icon">
@@ -1497,14 +1497,30 @@
                             @can('view_all_staffs')
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('staffs.index') }}" class="aiz-side-nav-link {{ areActiveRoutes(['staffs.index', 'staffs.create', 'staffs.edit'])}}">
-                                        <span class="aiz-side-nav-text">{{translate('All staffs')}}</span>
+                                        <span class="aiz-side-nav-text">{{translate('All admin staffs')}}</span>
                                     </a>
                                 </li>
                             @endcan
+                            @php
+                            if (isset($role) && $role->role_type == 0){
+                                $admin_role= 'roles.edit';
+                                $seller_role='';
+                            }else{
+                                $admin_role= '';
+                                $seller_role='roles.edit';
+                            }
+                            @endphp
                             @can('view_staff_roles')
                                 <li class="aiz-side-nav-item">
-                                    <a href="{{route('roles.index')}}" class="aiz-side-nav-link {{ areActiveRoutes(['roles.index', 'roles.create', 'roles.edit'])}}">
-                                        <span class="aiz-side-nav-text">{{translate('Staff permissions')}}</span>
+                                    <a href="{{route('roles.index')}}" class="aiz-side-nav-link {{ areActiveRoutes(['roles.index', 'roles.create', $admin_role])}}">
+                                        <span class="aiz-side-nav-text">{{translate('Admin staff permissions')}}</span>
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('view_seller_staff_roles')
+                                <li class="aiz-side-nav-item">
+                                    <a href="{{route('roles.seller.index')}}" class="aiz-side-nav-link {{ areActiveRoutes(['roles.seller.index', 'roles.seller.create', $seller_role])}}">
+                                        <span class="aiz-side-nav-text">{{translate('Vendor staff permissions')}}</span>
                                     </a>
                                 </li>
                             @endcan
