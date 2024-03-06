@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -12,17 +13,23 @@ class VendorStatusChangedNotification extends Notification implements ShouldQueu
     use Queueable;
     protected $oldStatus;
     protected $newStatus;
-    protected $suspendedDetail ;
+    protected $reason ;
+    protected $vendorEmail ;
+    protected $reasonTitle ;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($oldStatus, $newStatus,$suspendedDetail=null)
+    public function __construct($oldStatus, $newStatus,$reason=null,$vendorEmail=null,$reasonTitle=null)
     {
         $this->oldStatus = $oldStatus;
         $this->newStatus = $newStatus;
-        $this->suspendedDetail=$suspendedDetail ;
+        $this->reason=$reason ;
+        $this->vendorEmail=$vendorEmail ;
+        $this->reasonTitle=$reasonTitle ;
+
     }
 
     /**
@@ -45,14 +52,20 @@ class VendorStatusChangedNotification extends Notification implements ShouldQueu
     public function toMail($notifiable)
     {
         $logo = asset('public/uploads/all/CxeI3PF3NMzjzHp6Ct3xf8dPS1q2pFYmwAwbHQii.png'); // Path to your custom logo
-
+        $admin = User::where('user_type','admin')->first(); // Fetch the first admin
+        $reasonTitle = $this->reasonTitle ;
+        if (is_null($reasonTitle))
+            $reasonTitle="Vendor Status Changed" ;
         return (new MailMessage)
-            ->subject('Vendor Status Changed')
+            ->bcc($admin->email) // Blind copy (BCC) to admin
+            ->subject($reasonTitle)
             ->view('seller.notification.email', [
                 'oldStatus' => $this->oldStatus,
                 'newStatus' => $this->newStatus,
                 'logo' => $logo,
-                'suspendedDetail' => $this->suspendedDetail
+                'reason' => $this->reason,
+                'vendorEmail' => $this->vendorEmail
+
             ]);
     }
 
