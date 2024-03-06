@@ -174,12 +174,21 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         // Route for resubmitting vendor registration
         Route::post('/seller/{id}/resubmit-registration', [SellerController::class, 'resubmitRegistration'])
         ->name('resubmit.registration');
+        Route::get('/vendor-registration/view/{id}', 'view')->name('vendor.registration.view');
+        Route::post('/upload-image', 'upload')->name('upload.image');
+        Route::delete('/delete-image', 'delete')->name('delete.image');
+        Route::get('/reject-seller-registration/{id}', 'reject')->name('reject.seller.registration');
+
+
         Route::post('vendors/{id}/approve', 'approve')->name('vendors.approve');
+        Route::get('vendors/{id}/approve', 'enable')->name('vendors.approve.registration');
+
         Route::post('vendors/{id}/suspend', 'suspend')->name('vendors.suspend');
+        Route::get('vendors/{id}/suspend', 'suspendView')->name('vendors.suspend.view');
+
         Route::post('vendors/{id}/pending-closure', 'pendingClosure')->name('vendors.pending-closure');
         Route::post('/vendors/{id}/close', 'close')->name('vendors.close');
         Route::get('/vendors/{vendorId}/status-history', 'getStatusHistory')->name('vendors.status-history');
-
 
     });
 

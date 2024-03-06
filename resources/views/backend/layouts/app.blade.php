@@ -152,7 +152,7 @@
     </script>
 
     <link rel="stylesheet" href="{{ static_asset('assets/css/filter_multi_select.css') }}">
-
+    @yield('css')
 </head>
 
 <body class="">

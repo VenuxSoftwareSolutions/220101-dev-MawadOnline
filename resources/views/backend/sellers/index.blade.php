@@ -43,6 +43,11 @@
         </div>
 
         <div class="card-body">
+            @if (session('success'))
+                <div class="alert alert-success">
+                    {{ session('success')}}
+                </div>
+            @endif
             {{-- <table class="table aiz-table mb-0">
                 <thead>
                 <tr>
@@ -220,7 +225,7 @@
                                 @endif --}}
                             </td>
                             <td>
-                                @if ($seller->status != "Draft")
+
                                 <!-- Options column -->
                                 <div class="dropdown">
                                     {{-- <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -231,15 +236,20 @@
                                     </button>
                                     {{-- <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton"> --}}
                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-xs">
-
+                                        <a href="{{route('vendor.registration.view',$seller->id)}}" class="dropdown-item" >
+                                            {{ __('messages.View') }}
+                                        </a>
+                                        @if ($seller->status != "Draft")
                                         {{-- Resubmit Registration --}}
-                                        <button type="button" class="dropdown-item {{-- btn btn-primary --}} resubmit-registration" data-vendor-id="{{ $seller->id }}">
+                                        {{-- <button type="button" class="dropdown-item resubmit-registration" data-vendor-id="{{ $seller->id }}">
                                             {{ __('messages.resubmit_registration') }}
-                                        </button>
+                                        </button> --}}
 
                                         {{-- Suspend Vendor --}}
-                                        <button type="button" class="dropdown-item {{-- btn btn-danger --}} suspend-vendor-btn" data-vendor-id="{{ $seller->id }}">   {{ __('messages.suspend_vendor') }}</button>
-
+                                        {{-- <button type="button" class="dropdown-item suspend-vendor-btn" data-vendor-id="{{ $seller->id }}">   {{ __('messages.suspend_vendor') }}</button> --}}
+                                        <a href="{{route('vendors.suspend.view',$seller->id)}}" class="dropdown-item" >
+                                            {{ __('messages.suspend_vendor') }}
+                                        </a>
                                         {{-- Pending Closure --}}
                                         <button type="button" class="dropdown-item {{-- btn btn-warning --}} pending-closure-btn" data-vendor-id="{{ $seller->id }}">{{ __('messages.pending_closure_op') }}</button>
 
@@ -253,9 +263,10 @@
                                         <a href="{{route('vendors.status-history',$seller->id)}}" class="dropdown-item" >
                                             {{ __('messages.view_status_history') }}
                                         </a>
+                                        @endif
                                     </div>
                                 </div>
-                                @endif
+
 
                             </td>
                         </tr>

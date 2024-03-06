@@ -24,6 +24,8 @@ use App\Models\Warehouse;
 use Auth;
 use Hash;
 use App\Notifications\EmailVerificationNotification;
+use App\Notifications\NewRegistrationNotification;
+use App\Notifications\NewVendorRegistration;
 use App\Rules\CustomPasswordRule;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Notification;
@@ -758,6 +760,10 @@ class ShopController extends Controller
         $user->steps = 1;
         $user->status = 'Pending Approval';
         $user->save();
+        // Trigger the notification
+        $admin = User::where('user_type','admin')->first(); // Fetch the first admin
+        $admin->notify(new NewVendorRegistration($user));
+        Notification::send($admin, new NewRegistrationNotification($user));
         return response()->json(['finish' => true, 'success' => true, 'message' => 'Shop stored successfully']);
 
 
