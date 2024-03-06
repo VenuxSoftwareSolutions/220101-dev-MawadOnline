@@ -24,6 +24,8 @@ class AizUploadController extends Controller
     public function index(Request $request)
     {
 
+        $user=Auth::user();
+        dd( $roles = $user->roles()->get());
         $all_uploads = (auth()->user()->user_type == 'seller') ? Upload::where('user_id', auth()->user()->id) : Upload::query();
         $search = null;
         $sort_by = null;

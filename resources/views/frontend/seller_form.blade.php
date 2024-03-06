@@ -58,7 +58,7 @@ use Carbon\Carbon;
                     <div class="row">
                         <div class="col-12">
                             <ul class="nav nav-tabs" id="registerTabs">
-                                @if (!Auth::check() || (Auth::check() && !Auth::user()->email_verified_at))
+                                @if (Auth::check() && !Auth::user()->email_verified_at)
                                     <li class="nav-item">
                                         <a class="nav-link active" id="personal-info-tab" data-toggle="tab"
                                             href="#personal-info">{{ translate('Personal Info') }}</a>
@@ -1503,6 +1503,7 @@ use Carbon\Carbon;
                             if (response.hasOwnProperty('verif_staff_login') && response.verif_staff_login ===
                                 true && response.staff === true) {
                                     window.location.href = "{{ url('/seller/dashboard') }}";
+                                    return ;
                             }
                             if (response.hasOwnProperty('verif_login') && response.verif_login ===
                                 true) {

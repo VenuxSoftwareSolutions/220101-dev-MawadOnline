@@ -69,7 +69,7 @@ class SellerStaffController extends Controller
                 $user->phone = $request->mobile;
                 $user->user_type = "seller";
                 $user->step_number = 0;
-                $user->status ="Enabled";
+                $user->status ="Draft";
                 $user->owner_id = $vendor->id;
                 $password = $this->generatePassword(12);
                 $user->password = Hash::make($password);
