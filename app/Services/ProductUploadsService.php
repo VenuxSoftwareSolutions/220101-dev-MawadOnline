@@ -15,16 +15,16 @@ class ProductUploadsService
         //check if upload_products folder is existe, if not existe create it
         $structure = public_path('upload_products');
         if (!file_exists($structure)) {
-            mkdir(public_path('upload_products', 0777));
+            mkdir(public_path('upload_products', 0755));
         }
 
         //check if product folder with id of product is existe, if not existe create it with documents folder
         if(!file_exists(public_path('/upload_products/Product-'.$collection['product']->id))){
-            mkdir(public_path('/upload_products/Product-'.$collection['product']->id, 0777));
-            mkdir(public_path('/upload_products/Product-'.$collection['product']->id.'/documents', 0777));
+            mkdir(public_path('/upload_products/Product-'.$collection['product']->id, 0755));
+            mkdir(public_path('/upload_products/Product-'.$collection['product']->id.'/documents', 0755));
         }else{
             if(!file_exists(public_path('/upload_products/Product-'.$collection['product']->id.'/documents'))){
-                mkdir(public_path('/upload_products/Product-'.$collection['product']->id.'/documents', 0777));
+                mkdir(public_path('/upload_products/Product-'.$collection['product']->id.'/documents', 0755));
             }
         }
 
@@ -103,12 +103,12 @@ class ProductUploadsService
         
         //check if images folder is existe, if not existe create it under under public/upload_products/Product{id_porduct}/images
         if(!file_exists(public_path('/upload_products/Product-'.$collection['product']->id.'/images'))){
-            mkdir(public_path('/upload_products/Product-'.$collection['product']->id.'/images', 0777));
+            mkdir(public_path('/upload_products/Product-'.$collection['product']->id.'/images', 0755));
         }
 
         //check if thumbnails folder is existe, if not existe create it under under public/upload_products/Product{id_porduct}/thumbnails
         if(!file_exists(public_path('/upload_products/Product-'.$collection['product']->id.'/thumbnails'))){
-            mkdir(public_path('/upload_products/Product-'.$collection['product']->id.'/thumbnails', 0777));
+            mkdir(public_path('/upload_products/Product-'.$collection['product']->id.'/thumbnails', 0755));
         }
 
         //insert paths of images in DB and upload images in folder under public/upload_products/Product{id_porduct}/images
