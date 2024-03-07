@@ -29,7 +29,9 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $fillable = [
         'name', 'email','user_type','first_name','last_name' ,'password', 'address', 'city', 'postal_code', 'phone', 'country', 'provider_id', 'email_verified_at', 'verification_code'
     ];
-
+    protected $dates = [
+        'approved_at',
+    ];
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -192,7 +194,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     public function getStaff() {
-        return $this->hasMany(User::class, 'owner_id', 'id');
+        return $this->hasMany(User::class, 'owner_id', 'id')->where('id','!=',$this->id);
     }
 
 }

@@ -38,9 +38,10 @@
                             <option value="">{{__('stock.Please Choose !!')}}</option>
                             <!-- Populate options dynamically based on your data -->
                             @foreach ($products as $product  )
+
                             <option @if (request('productVariant') == $product->id )
                                 selected
-                            @endif value="{{$product->id}}">{{$product->name}}</option>
+                            @endif value="{{$product->id}}">{{$product->name.' '.$product->sku .$product->productVariantDetails()}}</option>
                              @endforeach
 
                         </select>

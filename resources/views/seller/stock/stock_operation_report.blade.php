@@ -76,9 +76,11 @@
                         @foreach ($productVariants as $productVariant)
                             <option @if (is_array(request('product_variants')) && (in_array($productVariant->id,request('product_variants')))|| !(request('product_variants')))
                                 selected
-                            @endif value="{{$productVariant->id}}">{{$productVariant->name}}</option>
+                            @endif value="{{$productVariant->id}}">{{$productVariant->name.' '.$productVariant->sku .$productVariant->productVariantDetails()}}</option>
                             @endforeach
                         </select>
+                        <small class="form-text text-muted">{{ trans('stock.products_on_selected_date') }}</small>
+
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -104,6 +106,8 @@
                                 @endif value="{{$warehouse->id}}">{{$warehouse->warehouse_name}}</option>
                             @endforeach
                         </select>
+                        <small class="form-text text-muted">{{ trans('stock.warehouses_on_selected_date') }}</small>
+
                     </div>
                 </div>
                 @endif

@@ -205,9 +205,45 @@ class Product extends Model
                 }
             }
 
-            
+
         }
 
         return $path;
     }
+
+    public function productAttributeValues() {
+        return $this->hasMany(ProductAttributeValues::class,'id_products') ;
+    }
+
+    public function productVariantDetails() {
+         $productVariantName = "" ;
+        foreach ($this->productAttributeValues as $productAttributeValue  ) {
+            if($productAttributeValue->attribute->type_value == "numeric")
+            {
+                $productVariantName.= $this->productAttributeValue->value." ".$this->productAttributeValue->unity->name ;
+            }
+            elseif($productAttributeValue->attribute->type_value ="list") {
+                foreach($productAttributeValue->attribute->attribute_values as $attributeValue)
+                    $productVariantName.= $attributeValue->value ;
+
+            }
+            elseif($productAttributeValue->attribute->type_value ="color") {
+                $productVariantName.= $productAttributeValue->color->name ;
+
+            }
+            elseif($productAttributeValue->attribute->type_value ="boolean") {
+                $productVariantName.= $productAttributeValue->value ;
+
+            }
+            elseif($productAttributeValue->attribute->type_value ="text") {
+                $productVariantName.= $productAttributeValue->value ;
+
+            }
+
+        }
+
+        return $productVariantName ;
+
+    }
+
 }

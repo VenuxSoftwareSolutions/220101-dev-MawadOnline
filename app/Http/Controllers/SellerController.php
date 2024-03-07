@@ -17,6 +17,7 @@ use App\Notifications\EmailVerificationNotification;
 use App\Notifications\ShopVerificationNotification;
 use App\Notifications\VendorStatusChangedNotification;
 use Cache;
+use Carbon\Carbon;
 use File;
 use Illuminate\Support\Facades\Notification;
 
@@ -63,7 +64,8 @@ class SellerController extends Controller
         // }
         // $shops = $shops->paginate(15);
         // return view('backend.sellers.index', compact('shops', 'sort_search', 'approved'));
-        $sellers = User::where('user_type', 'seller')->whereColumn('id','owner_id')->get() ;
+        $sellers = User::where('user_type', 'seller')->whereColumn('id','owner_id')
+        ->orWhere('owner_id',null)->get() ;
         return view('backend.sellers.index', compact('sellers'));
     }
 
@@ -337,6 +339,7 @@ class SellerController extends Controller
         $seller = User::findOrFail($id);
         $oldStatus = $seller->status;
         $seller->status = 'Enabled';
+        $seller->approved_at = Carbon::now(); // Set the approved_at timestamp to the current time
 
 
         $seller->save();
@@ -489,7 +492,7 @@ class SellerController extends Controller
             // Optionally, you can also log this status change in the status history table
             $this->logStatusChange($vendor, 'Pending Closure');
             // Send an email notification to the seller with old and new status
-            $vendor->notify(new VendorStatusChangedNotification($oldStatus, $vendor->status));
+            $vendor->notify(new VendorStatusChangedNotification($oldStatus, $vendor->status,null,null,'Your Account is Pending-Closure'));
             Notification::send($vendor, new CustomStatusNotification($oldStatus, $vendor->status));
 
             // Return success response
@@ -540,6 +543,16 @@ class SellerController extends Controller
     public function suspendView($id) {
         $user = User::find($id) ;
         return view('backend.sellers.suspend_seller',compact('user'));
+    }
+
+    public function VendorsStatusHistory() {
+        $vendorsStatusHistory = VendorStatusHistory::orderBy('created_at', 'desc')
+        ->get();
+        $vendors = User::where('user_type', 'seller')->whereColumn('id','owner_id')
+        ->orWhere('owner_id',null)->get() ;
+        return view('backend.sellers.vendors_status_history', ['vendorsStatusHistory' => $vendorsStatusHistory,'vendors'=>$vendors]);
+
+
     }
 
 

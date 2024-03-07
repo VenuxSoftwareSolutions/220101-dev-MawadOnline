@@ -58,7 +58,7 @@
             <i class="fas fa-lock fa-3x text-danger"></i>
         @elseif ($newStatus == 'Pending Closure')
             <!-- Display message for pending closure status -->
-            <p>{{ __('messages.pending_closure') }}</p>
+            <p>Your account is pending closure. Please contact the MawadOnline support team for further details.</p>
             <!-- Add Font Awesome icon for pending closure -->
             <i class="fas fa-exclamation-triangle fa-3x text-warning"></i>
         @elseif ($newStatus == 'Enabled')
