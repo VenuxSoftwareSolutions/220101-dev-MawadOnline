@@ -66,15 +66,26 @@ class SellerRoleController extends Controller
     {
         abort_if(!auth('web')->user()->can('seller_add_staff_role'), Response::HTTP_FORBIDDEN, 'ACCESS FORBIDDEN');
         // dd($request->permissions);
-        $role = Role::create(['name' => $request->name]);
+        $role = Role::create([
+            'name' => $request->name,
+            'role_type' => 1,
+            'created_by' => Auth::user()->id,
+            'description' => $request->description
+        ]);
         $role->givePermissionTo($request->permissions);
-        $role->created_by=Auth::user()->id;
-        $role->role_type=1;
-        $role->save();
 
-        $role_translation = RoleTranslation::firstOrNew(['lang' => env('DEFAULT_LANGUAGE'), 'role_id' => $role->id]);
-        $role_translation->name = $request->name;
-        $role_translation->save();
+        // $role = Role::create([
+        //     'name' => $request->name,
+        //     'description' => $request->description
+        // ]);
+        // $role->givePermissionTo($request->permissions);
+        // $role->created_by=Auth::user()->id;
+        // $role->role_type=1;
+        // $role->save();
+
+        // $role_translation = RoleTranslation::firstOrNew(['lang' => env('DEFAULT_LANGUAGE'), 'role_id' => $role->id]);
+        // $role_translation->name = $request->name;
+        // $role_translation->save();
 
         flash(translate('New Role has been added successfully'))->success();
         return redirect()->route('seller.roles.index');
@@ -127,9 +138,9 @@ class SellerRoleController extends Controller
         $role->save();
 
         // Role Translation
-        $role_translation = RoleTranslation::firstOrNew(['lang' => $request->lang, 'role_id' => $role->id]);
-        $role_translation->name = $request->name;
-        $role_translation->save();
+        // $role_translation = RoleTranslation::firstOrNew(['lang' => $request->lang, 'role_id' => $role->id]);
+        // $role_translation->name = $request->name;
+        // $role_translation->save();
 
         flash(translate('Role has been updated successfully'))->success();
         return back();

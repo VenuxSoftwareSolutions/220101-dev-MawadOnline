@@ -13,7 +13,7 @@ Route::group(['prefix' => 'seller', 'middleware' => ['seller', 'verified', 'user
         Route::get('/jstree', 'jstree')->name('categories.jstree');
         Route::get('/jstreeSearch', 'jstreeSearch')->name('categories.jstreeSearch');
     });
-   
+
     Route::controller(AizUploadController::class)->group(function () {
         Route::any('/uploads', 'index')->name('uploaded-files.index');
         Route::any('/uploads/create', 'create')->name('uploads.create');
@@ -54,7 +54,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
     });
          // categories
 
-       
+
 
          // Stocks
       Route::controller(StockController::class)->group(function () {

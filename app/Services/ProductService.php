@@ -288,7 +288,7 @@ class ProductService
                 foreach($pricing['from'] as $key => $from){
                     $current_data = [];
 
-                    if($pricing['from'][$key] != null){
+                    if($pricing['from'][$key] != null && $pricing['unit_price'][$key] != null){
                             if($pricing['date_range_pricing'][$key] != null){
                                 if(($pricing['date_range_pricing'][$key]) && ($pricing['discount_type'][$key])){
                                     $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
@@ -374,7 +374,7 @@ class ProductService
             foreach($pricing['from'] as $key => $from){
                 $current_data = [];
 
-                if($pricing['from'][$key] != null){
+                if($pricing['from'][$key] != null && $pricing['unit_price'][$key] != null){
                         if($pricing['date_range_pricing'][$key] != null){
                             if(($pricing['date_range_pricing'][$key]) && ($pricing['discount_type'][$key])){
                                 $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
@@ -1038,10 +1038,15 @@ class ProductService
             if(count($general_attributes_data) > 0){
                 foreach ($general_attributes_data as $attr => $value) {
                     if($value != null){
-                        $attribute_product = new ProductAttributeValues();
-                        $attribute_product->id_products = $product_update->id;
-                        $attribute_product->id_attribute = $attr;
-                        $attribute_product->is_general = 1;
+                        $attribute_product = ProductAttributeValues::where('id_products', $product_update->id)->where('id_attribute', $attr)->first();
+                                
+                        if($attribute_product == null){
+                            $attribute_product = new ProductAttributeValues();
+                            $attribute_product->id_products = $product_update->id;
+                            $attribute_product->id_attribute = $attr;
+                            $attribute_product->is_general = 1;
+                        }
+
                         if(in_array($attr, $ids_attributes_list)){
                             $value_attribute = AttributeValue::find($value);
                             $attribute_product->id_values = $value;
@@ -1925,10 +1930,15 @@ class ProductService
             if(count($general_attributes_data) > 0){
                 foreach ($general_attributes_data as $attr => $value) {
                     if($value != null){
-                        $attribute_product = new ProductAttributeValues();
-                        $attribute_product->id_products = $product_draft->id;
-                        $attribute_product->id_attribute = $attr;
-                        $attribute_product->is_general = 1;
+                        $attribute_product = ProductAttributeValues::where('id_products', $product_draft->id)->where('id_attribute', $attr)->first();
+                                
+                        if($attribute_product == null){
+                            $attribute_product = new ProductAttributeValues();
+                            $attribute_product->id_products = $product_draft->id;
+                            $attribute_product->id_attribute = $attr;
+                            $attribute_product->is_general = 1;
+                        }
+
                         if(in_array($attr, $ids_attributes_list)){
                             $value_attribute = AttributeValue::find($value);
                             $attribute_product->id_values = $value;

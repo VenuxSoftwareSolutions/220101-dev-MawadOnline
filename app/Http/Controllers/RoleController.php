@@ -40,7 +40,7 @@ class RoleController extends Controller
 
     public function indexSellerRoles()
     {
-        $roles = Role::where('id', '!=', 1)->where('role_type',1)->paginate(10);
+        $roles = Role::where('id', '!=', 1)->where('role_type',1)->where('created_by',1)->paginate(10);
         return view('backend.staff.staff_roles.seller_roles', compact('roles'));
 
     }
@@ -84,7 +84,7 @@ class RoleController extends Controller
         $role = Role::create([
             'name' => $request->name,
             'role_type' => $seller_id,
-            'created_by' => Auth::user()->id,
+            'created_by' => 1,
             'description' => $request->description
         ]);
         $role->givePermissionTo($request->permissions);
@@ -94,7 +94,11 @@ class RoleController extends Controller
         $role_translation->save();
 
         flash(translate('New Role has been added successfully'))->success();
-        return redirect()->route('roles.index');
+        if($seller_id==0){
+            return redirect()->route('roles.index');
+        }else{
+            return redirect()->route('roles.seller.index');
+        }
     }
 
     /**
@@ -157,10 +161,19 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-        RoleTranslation::where('role_id', $id)->delete();
-        Role::destroy($id);
-        flash(translate('Role has been deleted successfully'))->success();
-        return redirect()->route('roles.index');
+        $role=Role::find($id);
+        if($role->role_type==0){
+            RoleTranslation::where('role_id', $id)->delete();
+            Role::destroy($id);
+            flash(translate('Role has been deleted successfully'))->success();
+            return redirect()->route('roles.index');
+        }else{
+            RoleTranslation::where('role_id', $id)->delete();
+            Role::destroy($id);
+            flash(translate('Role has been deleted successfully'))->success();
+            return redirect()->route('roles.seller.index');
+        }
+
     }
 
     // public function add_permission(Request $request)

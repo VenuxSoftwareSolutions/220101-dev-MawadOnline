@@ -332,13 +332,13 @@
                             
                         </h6>
                     </div>
-                    <input type="hidden" id="selected_parent_id" name="parent_id" value="">
+                    <input type="hidden" id="selected_parent_id" name="parent_id" @if($categorie != null) value="{{ $categorie->id }}" @else value="" @endif>
 
                     <div class="card-body">
                         
                         <div class="tree_main">
                             
-                            <input type="text" value="{{ $categorie->name }}" id="search_input" class="form-control" placeholder="Search">
+                            <input type="text" @if($categorie != null) value="{{ $categorie->name }}" @else value="" @endif id="search_input" class="form-control" placeholder="Search">
                             <small style="color: red">To select a different category, please clear the search field, However, you must choose other attributes to modify your variants</small>
                             <div class="h-300px overflow-auto c-scrollbar-light">
 
@@ -810,7 +810,7 @@
             <div class="col-12">
                 <div class="mar-all text-right mb-2">
                     <button type="submit" name="button" value="draft" class="btn btn-success">Save as draft</button>
-                    <button type="submit" name="button" value="edit" class="btn btn-primary">Edit Product</button>
+                    <button type="submit" name="button" value="edit" class="btn btn-primary">Create Product</button>
                 </div>
             </div>
         </div>
@@ -854,7 +854,7 @@
                 clearTimeout(to);
             }
             to = setTimeout(function() {
-                var v = "{{ $categorie->name }}";
+                var v = $('#search_input').val();
                 if (v === "") {
                     lastSearchTerm = null;
                         // Explicitly reset the URL for the initial data load
@@ -2222,10 +2222,8 @@
 
                 $('#general_attributes').html(data.html_attributes_generale);
                 if($('body #bloc_variants_created div').length == 0){
-                    alert();
                     $('body input[name="activate_attributes"]').prop("checked", false);
                 }else{
-                    alert('tnekna')
                     $('body input[name="activate_attributes"]').prop("checked", true);
                     $('body input[name="activate_attributes"]').prop("disabled", false);
                     $('body #attributes').prop("disabled", false);

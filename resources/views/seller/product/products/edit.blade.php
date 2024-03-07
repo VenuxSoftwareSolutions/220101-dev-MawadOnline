@@ -332,13 +332,13 @@
                             
                         </h6>
                     </div>
-                    <input type="hidden" id="selected_parent_id" name="parent_id" value="">
+                    <input type="hidden" id="selected_parent_id" name="parent_id" @if($categorie != null) value="{{ $categorie->id }}" @else value="" @endif>
 
                     <div class="card-body">
                         
                         <div class="tree_main">
                             
-                            <input type="text" value="{{ $categorie->name }}" id="search_input" class="form-control" placeholder="Search">
+                            <input type="text" @if($categorie != null) value="{{ $categorie->name }}" @else value="" @endif id="search_input" class="form-control" placeholder="Search">
                             <small style="color: red">To select a different category, please clear the search field, However, you must choose other attributes to modify your variants</small>
                             <div class="h-300px overflow-auto c-scrollbar-light">
 
