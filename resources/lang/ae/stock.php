@@ -54,5 +54,7 @@ return [
     'inventory_record_saved' => 'تم حفظ سجل المخزون بنجاح!',
     'Select All'=>'اختر الكل',
     'Deselect All'=>'الغاء تحديد الكل',
-
+    'Product/Variant + SKU'=>'المنتج/المتغير + SKU',
+    'products_on_selected_date' => 'المنتجات الموجودة في التاريخ المحدد',
+    'warehouses_on_selected_date' => 'المستودعات الموجودة في التاريخ المحدد',
 ];

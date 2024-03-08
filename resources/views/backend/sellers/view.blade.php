@@ -980,7 +980,7 @@ use Carbon\Carbon;
                             class="btn btn-info fw-600 rounded-0 prv-tab">
                             {{ translate('Previous') }}
                         </button>
-                        @if ($user->status != "Draft" && $user->status != "Enabled" )
+                        @if ($user->status == "Pending Approval" || $user->status == "Suspended" || $user->status =="Pending Closure")
                         <!-- Approve Button -->
                         <a href="{{route('vendors.approve.registration', $user->id)}}" name="action" value="approve" class="btn btn-success fw-600 rounded-0">
                             {{ translate('Approve') }}
@@ -990,7 +990,7 @@ use Carbon\Carbon;
                         {{-- <button id="rejectButton" type="button" name="action" value="reject" class="btn btn-danger fw-600 rounded-0">
                             {{ translate('Reject') }}
                         </button> --}}
-                        @if ($user->status != "Draft" && $user->status != "Rejected" )
+                        @if ($user->status == "Pending Approval" )
                         <a href="{{ route('reject.seller.registration', $user->id) }}" class="btn btn-danger fw-600 rounded-0">
                             {{ translate('Reject') }}
                         </a>

@@ -193,6 +193,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::post('/vendors/{id}/close', 'close')->name('vendors.close');
         Route::get('/vendors/{vendorId}/status-history', 'getStatusHistory')->name('vendors.status-history');
         Route::get('/sellers/{seller}/staff', 'showStaff')->name('sellers.staff');
+        Route::get('/vendors-status-history-report', 'VendorsStatusHistory')->name('vendors.status-history-report');
+
 
     });
 

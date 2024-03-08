@@ -195,7 +195,10 @@
                         <th>{{__('messages.email_address')}}</th>
                         {{-- <th>{{__('messages.approval')}}</th> --}}
                         <th>Business name</th>
+                        <th>Vendor name</th>
                         <th>{{ __('messages.status') }}</th>
+                        <th>Joining Date/Time</th>
+                        <th>Last Status Update</th>
                         <th width="10%">{{__('messages.options')}}</th>
                     </tr>
                     </thead>
@@ -203,7 +206,9 @@
                         @foreach ( $sellers as $seller )
                         <tr>
                             <td>{{ $seller->email }}</td>
+                            <td>{{ $seller->name }}</td>
                             <td>{{ $seller->business_information ?  $seller->business_information->trade_name :"" }}</td>
+
 
                             {{-- <td>
                                 @if ($seller->status != "Draft")
@@ -226,6 +231,12 @@
                                     <span class="badge bg-warning">{{ __('Pending Approval') }}</span>
                                 @endif --}}
                             </td>
+                            <td>{{ $seller->approved_at ? $seller->approved_at->format('jS F Y, H:i') : '' }}</td>
+                            <td>
+                                @if($seller->vendor_status_history->isNotEmpty())
+                                    {{ $seller->vendor_status_history->sortByDesc('created_at')->first()->created_at->format('jS F Y, H:i') }}
+                                @endif
+                            </td>
                             <td>
 
                                 <!-- Options column -->
@@ -241,7 +252,7 @@
                                         <a href="{{route('vendor.registration.view',$seller->id)}}" class="dropdown-item" >
                                             {{ __('messages.View') }}
                                         </a>
-                                        @if ($seller->status != "Draft")
+                                        @if ($seller->status != "Draft" && $seller->status !="Closed" && $seller->status !="Pending Approval" && $seller->status !="Rejected" )
                                         {{-- Resubmit Registration --}}
                                         {{-- <button type="button" class="dropdown-item resubmit-registration" data-vendor-id="{{ $seller->id }}">
                                             {{ __('messages.resubmit_registration') }}
@@ -249,19 +260,28 @@
 
                                         {{-- Suspend Vendor --}}
                                         {{-- <button type="button" class="dropdown-item suspend-vendor-btn" data-vendor-id="{{ $seller->id }}">   {{ __('messages.suspend_vendor') }}</button> --}}
+                                        @if ( $seller->status =="Enabled"  )
                                         <a href="{{route('vendors.suspend.view',$seller->id)}}" class="dropdown-item" >
                                             {{ __('messages.suspend_vendor') }}
                                         </a>
+                                        @endif
                                         {{-- Pending Closure --}}
-                                        <button type="button" class="dropdown-item {{-- btn btn-warning --}} pending-closure-btn" data-vendor-id="{{ $seller->id }}">{{ __('messages.pending_closure_op') }}</button>
-
-                                        {{-- Close Vendor --}}
-                                        <button type="button" class="dropdown-item {{-- btn btn-danger --}} close-vendor-btn" data-vendor-id="{{ $seller->id }}">{{ __('messages.close_vendor') }}</button>
-
+                                        @if ($seller->status !="Pending Closure" )
+                                           <button type="button" class="dropdown-item {{-- btn btn-warning --}} pending-closure-btn" data-vendor-id="{{ $seller->id }}">{{ __('messages.pending_closure_op') }}</button>
+                                        @endif
+                                        @if ($seller->status != "Enabled" && $seller->status !="Suspended"  )
+                                            {{-- Close Vendor --}}
+                                            <button type="button" class="dropdown-item {{-- btn btn-danger --}} close-vendor-btn" data-vendor-id="{{ $seller->id }}">{{ __('messages.close_vendor') }}</button>
+                                        @endif
                                         {{-- View Status History --}}
-                                        <button type="button" class="dropdown-item btn btn-info view-status-history-btn" data-vendor-id="{{ $seller->id }}">
+                                        {{-- <button type="button" class="dropdown-item btn btn-info view-status-history-btn" data-vendor-id="{{ $seller->id }}">
                                             View Status History
-                                        </button>
+                                        </button> --}}
+                                        @endif
+                                        @if ($seller->status != "Draft")
+                                        <a href="{{route('vendors.status-history',$seller->id)}}" class="dropdown-item" >
+                                            View Status History
+                                        </a>
                                         <a href="{{route('sellers.staff',$seller->id)}}" class="dropdown-item" >
                                             View Staff
                                         </a>

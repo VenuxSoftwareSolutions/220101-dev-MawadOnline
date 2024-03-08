@@ -50,11 +50,12 @@ return [
     'User' => 'User',
     'User Comments' => 'User Comments',
     'Sales Order' => 'Sales Order',
-    'info_message_from_date' => 'Please note: The note: The selected date cannot be more than 3 months in the past.',
+    'info_message_from_date' => 'Please note: The selected date cannot be more than 3 months in the past.',
     'inventory_record_saved' => 'Inventory record saved successfully!',
     'Select All'=>'Select All',
     'Deselect All'=>'Deselect All',
-    'Product/Variant + SKU'=>'المنتج/المتغير + SKU',
-
+    'Product/Variant + SKU'=>'Product/Variant + SKU',
+    'products_on_selected_date' => 'Products existing on the selected date',
+    'warehouses_on_selected_date' => 'Warehouses existing on the selected date',
 
 ];
