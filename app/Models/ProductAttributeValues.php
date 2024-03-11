@@ -24,6 +24,10 @@ class ProductAttributeValues extends Model
     }
 
     public function color() {
-        return $this->belongsTo(Color::class,'id_units') ;
+        return $this->belongsTo(Color::class,'id_colors') ;
     }
+    public function attributeValues() {
+        return $this->belongsTo(AttributeValue::class,'id_values') ;
+    }
+
 }

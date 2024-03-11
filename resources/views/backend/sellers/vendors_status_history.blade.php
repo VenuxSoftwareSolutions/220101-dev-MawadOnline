@@ -22,7 +22,7 @@
                 <label for="vendorSelect">Vendor:</label>
                 <select id="vendorSelect" class="form-control myMultiselect" multiple>
                     @foreach ($vendors as $vendor)
-                        <option value="{{ $vendor->id }}">{{ $vendor->id }} - {{ $vendor->business_information ? $vendor->business_information->trade_name : '' }} - {{ $vendor->name }}</option>
+                        <option value="{{ $vendor->name }}">{{ $vendor->id }} - {{ $vendor->business_information ? $vendor->business_information->trade_name : '' }} - {{ $vendor->name }}</option>
                     @endforeach
                 </select>
 
@@ -37,7 +37,7 @@
                     <th>Date</th>
                     <th>Suspension Reason</th>
                     <th>Suspension Reason Title</th>
-                    <th>Suspension Reason Details</th>
+                    <th>Suspension/Rejected Reason Details</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -56,12 +56,12 @@
                         @endif
 
 
-                        <td> @if ($vendorStatusHistory->details)
-                            <button type="button" class="btn btn-info" data-toggle="modal" >
-                                View Description
-                            </button>
+                        <td>
+                            @if ($vendorStatusHistory->details)
+                                <a href="{{route('vendor.suspension_reason',$vendorStatusHistory->id)}}" class="btn btn-info">View Details</a>
+                            @endif
+                        </td>
 
-                        @endif</td>
                     </tr>
                     @endforeach
 
@@ -82,10 +82,12 @@
   <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
     <!-- Include MultiSelect JS -->
     <script src="https://cdn.rawgit.com/nobleclem/jQuery-MultiSelect/master/jquery.multiselect.js"></script>
+
+
   <script>
     $(document).ready(function() {
-        $('#myTable').DataTable({
-            "order": [[4, "desc"]], // Sort by first column in descending order
+        var table = $('#myTable').DataTable({
+            "order": false, // Sort by first column in descending order
             "dom": 'Bfrtip', // Add buttons to the layout
             "buttons":   [{
                 extend: 'excelHtml5',
