@@ -103,6 +103,16 @@
                             </div>
                         </div>
 
+                        <div class="form-group row">
+                            <label class="col-md-3 col-from-label">{{translate('Published')}}</label>
+                            <div class="col-md-8">
+                                <label class="aiz-switch aiz-switch-success mb-0">
+                                    <input type="checkbox" name="published" value="1" @if( $product->published == 1) checked="checked" @endif>
+                                    <span></span>
+                                </label>
+                            </div>
+                        </div>
+
                         @if (addon_is_activated('pos_system'))
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Barcode')}}</label>
@@ -168,7 +178,7 @@
                 {{-- Bloc Pricing configuration --}}
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0 h6">{{translate('Pricing Configuration')}}</h5>
+                        <h5 class="mb-0 h6">{{translate('Default Pricing Configuration')}}</h5>
                     </div>
                     <div class="card-body">
                         <div class="row mb-3">
@@ -262,7 +272,7 @@
                 {{-- Bloc Sample pricing configuration --}}
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0 h6">{{translate('Sample Pricing Configuration')}}</h5>
+                        <h5 class="mb-0 h6">{{translate('Default Sample Pricing Configuration')}}</h5>
                     </div>
                     <div class="card-body">
                         <div class="row mb-3">
@@ -354,7 +364,19 @@
                     </div>
                     <div class="card-body">
                         <div class="form-group row gutters-5">
-                            <div class="col-md-3">
+                            <div class="col-md-4">
+                                <input type="text" class="form-control mb-2" value="{{translate('Activate variant option')}}" disabled>
+                                <small style="color: red">Activate this option to select attribute</small>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="aiz-switch aiz-switch-success mb-0">
+                                    <input value="1" type="checkbox" name="activate_attributes" @if((count($product->getChildrenProducts()) > 0) && (count($attributes) > 0)) checked @endif>
+                                    <span></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group row gutters-5">
+                            <div class="col-md-4">
                                 <input type="text" class="form-control" value="{{translate('Attributes')}}" disabled>
                             </div>
                             <div class="col-md-8" id="attributes_bloc">
@@ -366,12 +388,6 @@
                                     @endif
                                 </select>
                             </div>
-                            <div class="col-md-1">
-                                <label class="aiz-switch aiz-switch-success mb-0">
-                                    <input value="1" type="checkbox" name="activate_attributes" @if((count($product->getChildrenProducts()) > 0) && (count($attributes) > 0)) checked @endif>
-                                    <span></span>
-                                </label>
-                            </div>
                         </div>
                         <div>
                             <p>{{ translate('Choose the attributes of this product and then input values of each attribute') }}</p>
@@ -381,7 +397,7 @@
                             <h3 class="mb-3">Variant informations</h3>
                             <hr>
                             <div class="row mb-3">
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Variant SKU')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
@@ -389,7 +405,7 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Variant Photos')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
@@ -400,8 +416,8 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control" value="{{translate('Variant Pricing')}}" disabled>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" value="{{translate('Use default pricing configuration')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
                                     <label class="aiz-switch aiz-switch-success mb-0">
@@ -414,8 +430,8 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control" value="{{translate('Variant Sample Pricing')}}" disabled>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" value="{{translate('Use default sample pricing configuration')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
                                     <label class="aiz-switch aiz-switch-success mb-0">
@@ -454,8 +470,8 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control" value="{{translate('Variant Shipping')}}" disabled>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" value="{{translate('Use default shipping')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
                                     <label class="aiz-switch aiz-switch-success mb-0">
@@ -465,8 +481,8 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control" value="{{translate('VariantSample Shipping')}}" disabled>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" value="{{translate('Use default sample shipping')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
                                     <label class="aiz-switch aiz-switch-success mb-0">
@@ -476,7 +492,18 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-md-3">
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" value="{{translate('Published')}}" disabled>
+                                </div>
+                                <div class="col-md-8">
+                                    <label class="aiz-switch aiz-switch-success mb-0">
+                                        <input value="1" type="checkbox" class="variant-sample-published" >
+                                        <span></span>
+                                    </label>
+                                </div>
+                            </div>                            
+                            <div class="row mb-3">
+                                <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Low-Stock Warning')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
@@ -494,14 +521,13 @@
                         </div>
                         <div id="bloc_variants_created">
                             @if(count($product->getChildrenProductsDesc()) > 0)
-                                @php $key = count($product->getChildrenProductsDesc()) @endphp
-                                @foreach ($product->getChildrenProductsDesc() as $children)
+                                @foreach ($product->getChildrenProductsDesc() as $key => $children)
                                     <div data-id="{{ $children->id }}">
-                                        <h3 class="mb-3">Variant informations {{ $key }}</h3>
+                                        <h3 class="mb-3">Variant informations {{ $key + 1}}</h3>
                                         <i class="fa-regular fa-circle-xmark fa-lx delete-variant" data-id={{ $children->id }} style="font-size: 16px; float: right; margin-top: -35px;" title="delete this variant"></i>
                                         <hr>
                                         <div class="row mb-3">
-                                            <div class="col-md-3">
+                                            <div class="col-md-4">
                                                 <input type="text" class="form-control" value="{{translate('Variant SKU')}}" disabled>
                                             </div>
                                             <div class="col-md-8">
@@ -509,7 +535,7 @@
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-md-3">
+                                            <div class="col-md-4">
                                                 <input type="text" class="form-control" value="{{translate('Variant Photos')}}" disabled>
                                             </div>
                                             <div class="col-md-8">
@@ -530,7 +556,7 @@
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-md-3">
+                                            <div class="col-md-4">
                                                 <input type="text" class="form-control" value="{{translate('Variant Pricing')}}" disabled>
                                             </div>
                                             <div class="col-md-8">
@@ -594,8 +620,8 @@
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-md-3">
-                                                <input type="text" class="form-control" value="{{translate('Variant Sample Pricing')}}" disabled>
+                                            <div class="col-md-4">
+                                                <input type="text" class="form-control" value="{{translate('Use default sample pricing')}}" disabled>
                                             </div>
                                             <div class="col-md-8">
                                                 <label class="aiz-switch aiz-switch-success mb-0">
@@ -636,8 +662,8 @@
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-md-3">
-                                                <input type="text" class="form-control" value="{{translate('Variant Shipping')}}" disabled>
+                                            <div class="col-md-4">
+                                                <input type="text" class="form-control" value="{{translate('Use default shipping')}}" disabled>
                                             </div>
                                             <div class="col-md-8">
                                                 <label class="aiz-switch aiz-switch-success mb-0">
@@ -647,8 +673,8 @@
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-md-3">
-                                                <input type="text" class="form-control" value="{{translate('Variant Sample Shipping')}}" disabled>
+                                            <div class="col-md-4">
+                                                <input type="text" class="form-control" value="{{translate('Use default sample Shipping')}}" disabled>
                                             </div>
                                             <div class="col-md-8">
                                                 <label class="aiz-switch aiz-switch-success mb-0">
@@ -658,11 +684,22 @@
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-md-3">
+                                            <div class="col-md-4">
+                                                <input type="text" class="form-control" value="{{translate('Published')}}" disabled>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <label class="aiz-switch aiz-switch-success mb-0">
+                                                    <input value="1" type="checkbox" class="variant-published" name="variant[published][{{ $children->id }}]" value="{{ $children->published }}" @if($children->published == 1) checked @endif>
+                                                    <span></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-4">
                                                 <input type="text" class="form-control" value="{{translate('Low-Stock Warning')}}" disabled>
                                             </div>
                                             <div class="col-md-8">
-                                                <input type="text" class="form-control stock-warning" id="low_stock_warning" name="variant[low_stock_quantity][{{ $children->low_stock_quantity }}]" >
+                                                <input type="number" class="form-control stock-warning" id="low_stock_warning" name="variant[low_stock_quantity][{{ $children->id }}]" value="{{ $children->low_stock_quantity }}">
                                             </div>
                                         </div>
                                         <div id="bloc_attributes">
@@ -671,7 +708,6 @@
                                             @endif
                                         </div>
                                     </div>
-                                    @php $key-- @endphp
                                 @endforeach
                             @endif
                         </div>
@@ -1148,6 +1184,7 @@
             clonedDiv.find('.min-qty-variant').each(function(index, element) {
                 $(element).attr('name', 'variant_pricing-from' + numbers_variant + '[from][]');
             });
+            clonedDiv.find('.variant-published').attr('name', 'variant-published-' + numbers_variant);
             clonedDiv.find('.max-qty-variant').each(function(index, element) {
                 $(element).attr('name', 'variant_pricing-from' + numbers_variant + '[to][]');
             });
@@ -1570,7 +1607,85 @@
 
         $('body').on('click', '.delete_pricing_canfiguration', function(){
             //remove bloc pricing configuration
-            $(this).parent().parent().remove();
+            var current = $(this);
+            var parent = $(this).parent().parent().parent();
+            
+            var id_pricing = $(this).data('pricing_id')
+
+            var html_added = `<tr>
+                                    <td><input type="number" name="from[]" class="form-control min-qty" id=""></td>
+                                    <td><input type="number" name="to[]" class="form-control max-qty" id=""></td>
+                                    <td><input type="number" name="unit_price[]" class="form-control unit-price-variant" id=""></td>
+                                    <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
+                                    <td>
+                                        <select class="form-control discount_type" name="discount_type[]">
+                                            <option value="" selected>{{translate('Choose type')}}</option>
+                                            <option value="amount" @selected(old('discount_type') == 'amount')>{{translate('Flat')}}</option>
+                                            <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" class="form-control discount_amount" name="discount_amount[]"></td>
+                                    <td><input type="number" class="form-control discount_percentage" name="discount_percentage[]"></td>
+                                    <td>
+                                        <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
+                                        <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                    </td>
+                                </tr>`
+            if(id_pricing == undefined){
+                $(this).parent().parent().remove();
+                if(parent.find('tr').length == 0){
+                    parent.append(html_added);
+                }
+            }else{
+                swal({
+                    title: 'Are you sure you want to delete this pricing ?',
+                    type: "warning",
+                    confirmButtonText: 'Delete',
+                    showCancelButton: true
+                })
+                .then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            url: "{{ route('seller.products.delete_pricing') }}",
+                            type: "GET",
+                            data: {
+                                id: id_pricing
+                            },
+                            cache: false,
+                            dataType: 'JSON',
+                            success: function(dataResult) {
+                                if(dataResult.status != 'failed'){
+                                    swal(
+                                        'Deleted',
+                                        'Deleted successfully',
+                                        'success'
+                                    )
+
+                                    current.parent().parent().remove();
+                                    if(parent.find('tr').length == 0){
+                                        parent.append(html_added);
+                                    }
+                                    
+                                }else{
+                                    swal(
+                                        'Cancelled',
+                                        'Something went wrong.',
+                                        'warning'
+                                    )
+                                }
+                            }
+                        })
+                    } else if (result.dismiss === 'cancel') {
+                        swal(
+                            'Cancelled',
+                            'Deletion successfully reverted.',
+                            'warning'
+                        )
+                    }
+                })
+            }
+                                
+            
         })
 
         $('body').on('change', '.discount_type', function(){
@@ -2230,7 +2345,6 @@
                     $('body #bloc_attributes').empty();
                 }
                 
-
                 AIZ.plugins.bootstrapSelect('refresh');
             }
         });

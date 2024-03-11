@@ -2,7 +2,7 @@
 
     @if (in_array($attribute->id, $variants_attributes_ids_attributes))
     <div class="row attribute-variant-{{ $attribute->id }}">
-        <div class="col-md-3 mb-3">
+        <div class="col-md-4 mb-3">
             <input type="text" class="form-control" value="{{ translate($attribute->getTranslation('name')) }}" disabled>
         </div>
         @switch ($attribute->type_value)
@@ -41,7 +41,7 @@
                 <div class="col-md-8 mb-3">
                     <div class="row">
                         <div class="col-6">
-                            <input type="number" class="form-control attributes" data-id_attributes="{{ $attribute->id }}" name="variant[attributes][{{ $children->id }}][{{ $attribute->id }}]" value="{{ $variants_attributes[$attribute->id]->value }}">
+                            <input type="number" step="0.1" class="form-control attributes" data-id_attributes="{{ $attribute->id }}" name="variant[attributes][{{ $children->id }}][{{ $attribute->id }}]" value="{{ $variants_attributes[$attribute->id]->value }}">
                         </div>
                         <div class="col-6">
                             <select class="form-control attributes-units aiz-selectpicker" data-id_attributes="{{ $attribute->id }}" name="unit_variant[{{ $children->id }}][{{ $attribute->id }}]" data-live-search="true" data-selected-text-format="count">

@@ -48,6 +48,18 @@ class ProductService
         
         $collection['approved'] = 0;
 
+        if(isset($collection['refundable'])){
+            $collection['refundable'] = 1;
+        }else{
+            $collection['refundable'] = 0;
+        } 
+
+        if(isset($collection['published'])){
+            $collection['published'] = 1;
+        }else{
+            $collection['published'] = 0;
+        } 
+
         if ($collection['meta_title'] == null) {
             $collection['meta_title'] = $collection['name'];
         }
@@ -203,6 +215,15 @@ class ProductService
                 }
 
                 $variants_data[$ids[2]]['stock'] = $value;
+            }
+
+            if(strpos($key, 'variant-published-') === 0){
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[2], $variants_data)){
+                    $variants_data[$ids[2]] = [];
+                }
+
+                $variants_data[$ids[2]]['published'] = $value;
             }
 
             if(strpos($key, 'variant-shipping-') === 0){
@@ -439,6 +460,8 @@ class ProductService
             unset($data['sample_description']);
             unset($data['sample_price']);
 
+            $variants_data = array_reverse($variants_data);
+            dd($variants_data);
             if(count($variants_data) > 0){
                 foreach ($variants_data as $id => $variant){
                     if (!array_key_exists('shipping', $variant)) {
@@ -446,7 +469,7 @@ class ProductService
                     }else{
                         $data['shipping'] = $variant['shipping'];
                     }
-                    $data['low_stock'] = $variant['stock'];
+                    $data['low_stock_quantity'] = $variant['stock'];
                     if(!isset($variant['sample_price'])){
                         $data['vat_sample'] = $data_sample['vat_sample'];
                         $data['sample_description'] = $data_sample['sample_description'];
@@ -680,9 +703,17 @@ class ProductService
         
 
         $collection['slug'] = $slug;
-        if(!isset($collection['refundable'])){
+        if(isset($collection['refundable'])){
+            $collection['refundable'] = 1;
+        }else{
             $collection['refundable'] = 0;
-        }        
+        }
+        
+        if(isset($collection['published'])){
+            $collection['published'] = 1;
+        }else{
+            $collection['published'] = 0;
+        } 
 
         $pricing = [];
         if((isset($collection['from'])) &&(isset($collection['to'])) && (isset($collection['unit_price']))){
@@ -723,6 +754,12 @@ class ProductService
             }
         }
         $collection['tags'] = implode(',', $tags);
+
+        if(isset($collection['stock_visibility_state'])){
+            $collection['stock_visibility_state'] ="quantity";
+        }else{
+            $collection['stock_visibility_state'] ="hide";
+        }
 
 
         $variants_data = [];
@@ -768,6 +805,7 @@ class ProductService
                 }else{
                     $variants_data[$key]['pricing'] = $pricing;
                 }
+                
 
                 //check if the variant has sample pricing
                 if(array_key_exists('sample_pricing', $data['variant'])){
@@ -795,6 +833,17 @@ class ProductService
                     }
                 }else{
                     $variants_data[$key]['shipping'] = 0;
+                }
+
+                //check if the variant is published
+                if(array_key_exists('published', $data['variant'])){
+                    if(array_key_exists($key, $data['variant']['published'])){
+                        $variants_data[$key]['published'] = $data['variant']['published'][$key];
+                    }else{
+                        $variants_data[$key]['published'] = 0;
+                    }
+                }else{
+                    $variants_data[$key]['published'] = 0;
                 }
 
                 //check if the variant activated the sample shipping configuration
@@ -878,6 +927,15 @@ class ProductService
 
                     $variants_new_data[$ids[2]]['pricing'] = $data['variant_pricing-from' . $ids[2]];
                 }
+            }
+
+            if(strpos($key, 'variant-published-') === 0){
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[2], $variants_data)){
+                    $variants_data[$ids[2]] = [];
+                }
+
+                $variants_data[$ids[2]]['published'] = $value;
             }
 
             if(strpos($key, 'sku') === 0){
@@ -1099,11 +1157,12 @@ class ProductService
                 
                 foreach ($variants_data as $id => $variant){
                     
-                    $collection['low_stock'] = $variant['low_stock_quantity'];
+                    $collection['low_stock_quantity'] = $variant['low_stock_quantity'];
                     $collection['sku'] = $variant['sku'];
                     $collection['vat_sample'] = $variant['vat_sample'];
                     $collection['sample_description'] = $variant['sample_description'];
                     $collection['sample_price'] = $variant['sample_price'];
+                    $collection['published'] = $variant['published'];
                     $product = Product::find($id);
                     if($product != null){
                         $product->update($collection);
@@ -1558,10 +1617,11 @@ class ProductService
         
 
         $collection['slug'] = $slug;
-        if(!isset($collection['refundable'])){
+        if(isset($collection['refundable'])){
+            $collection['refundable'] = 1;
+        }else{
             $collection['refundable'] = 0;
-        }
-
+        } 
         $pricing = [];
         if((isset($collection['from'])) &&(isset($collection['to'])) && (isset($collection['unit_price']))){
             $pricing = [
@@ -1594,6 +1654,12 @@ class ProductService
             unset($collection['discount_percentage']);
         }
 
+        if(isset($collection['published'])){
+            $collection['published'] = 1;
+        }else{
+            $collection['published'] = 0;
+        } 
+        
         $tags = array();
         if ($collection['tags'][0] != null) {
             foreach (json_decode($collection['tags'][0]) as $key => $tag) {
@@ -1607,6 +1673,12 @@ class ProductService
         $variants_new_data = [];
         $general_attributes_data = [];
         $unit_general_attributes_data = [];
+
+        if(isset($collection['stock_visibility_state'])){
+            $collection['stock_visibility_state'] ="quantity";
+        }else{
+            $collection['stock_visibility_state'] ="hide";
+        }
         
         //check if product has old variants 
         if (array_key_exists('variant', $data)) {
@@ -1684,6 +1756,17 @@ class ProductService
                     }
                 }else{
                     $variants_data[$key]['sample_shipping'] = 0;
+                }
+
+                //check if the variant is published
+                if(array_key_exists('published', $data['variant'])){
+                    if(array_key_exists($key, $data['variant']['published'])){
+                        $variants_data[$key]['published'] = $data['variant']['published'][$key];
+                    }else{
+                        $variants_data[$key]['published'] = 0;
+                    }
+                }else{
+                    $variants_data[$key]['published'] = 0;
                 }
 
                 //check if the variant activated vat option for sample
@@ -1774,6 +1857,15 @@ class ProductService
                 }
 
                 $variants_new_data[$ids[2]]['stock'] = $value;
+            }
+
+            if(strpos($key, 'variant-published-') === 0){
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[2], $variants_data)){
+                    $variants_data[$ids[2]] = [];
+                }
+
+                $variants_data[$ids[2]]['published'] = $value;
             }
 
             if(strpos($key, 'variant-shipping-') === 0){
@@ -2047,7 +2139,7 @@ class ProductService
 
             if(count($variants_data) > 0){
                 foreach ($variants_data as $id => $variant){
-                    $collection['low_stock'] = $variant['low_stock_quantity'];
+                    $collection['low_stock_quantity'] = $variant['low_stock_quantity'];
                     $collection['sku'] = $variant['sku'];
                     $collection['vat_sample'] = $variant['vat_sample'];
                     $collection['sample_description'] = $variant['sample_description'];

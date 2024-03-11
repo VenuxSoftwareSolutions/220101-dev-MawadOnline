@@ -1,6 +1,6 @@
 @foreach ($attributes as $attribute)
     @if (in_array($attribute->id, $general_attributes_ids_attributes))
-        <div class="col-md-3 mb-3 attribute-variant-{{ $attribute->id }}">
+        <div class="col-md-4 mb-3 attribute-variant-{{ $attribute->id }}">
             <input type="text" class="form-control" value="{{ translate($attribute->getTranslation('name')) }}" disabled>
         </div>
         @switch ($attribute->type_value)
@@ -39,7 +39,7 @@
                 <div class="col-md-8 mb-3 attribute-variant-{{ $attribute->id }}">
                     <div class="row">
                         <div class="col-6">
-                            <input type="number" class="form-control attributes" name="attribute_generale-{{ $attribute->id }}" value="{{ $general_attributes[$attribute->id]->value }}">
+                            <input type="number" step="0.1" class="form-control attributes" name="attribute_generale-{{ $attribute->id }}" value="{{ $general_attributes[$attribute->id]->value }}">
                         </div>
                         <div class="col-6">
                             <select class="form-control attributes-units aiz-selectpicker" name="unit_attribute_generale-{{ $attribute->id }}" data-live-search="true" data-selected-text-format="count">

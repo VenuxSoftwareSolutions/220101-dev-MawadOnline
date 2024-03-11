@@ -114,6 +114,21 @@ class ProductController extends Controller
 
     }
 
+    public function delete_pricing(Request $request){
+        $pricing = PricingConfiguration::find($request->id);
+        if($pricing != null){
+            $pricing->delete();
+
+            return response()->json([
+                'status' => 'success'
+            ]);
+        }else{
+            return response()->json([
+                'status' => 'failed'
+            ]);
+        }
+    }
+
     public function create(Request $request)
     {
         if (addon_is_activated('seller_subscription')) {
@@ -276,7 +291,7 @@ class ProductController extends Controller
                                 }
                                 $options .= "</select>";
                                 $html_attributes_generale .= '<div class="col-md-8"><div class="row"><div class="col-6">
-                                            <input type="number" class="form-control attributes" name="attribute_generale-'.$attribute->id.'"></div><div class="col-6">'.$options.'
+                                            <input type="number" step="0.1" class="form-control attributes" name="attribute_generale-'.$attribute->id.'"></div><div class="col-6">'.$options.'
                                         </div></div></div>';
                                 break;
                             case "boolean":
@@ -325,7 +340,7 @@ class ProductController extends Controller
         if(count($attributes) > 0){
             foreach($attributes as $attribute){
                 $html .= '<div class="row mb-3 attribute-variant-'. $attribute->id .'">
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <input type="text" class="form-control" value="'.translate($attribute->getTranslation('name')).'" disabled>
                         </div>';
 
@@ -362,7 +377,7 @@ class ProductController extends Controller
                         }
                         $options .= "</select>";
                         $html .= '<div class="col-md-8"><div class="row"><div class="col-6">
-                                    <input type="number" class="form-control attributes" data-id_attributes="'.$attribute->id.'"></div><div class="col-6">'.$options.'
+                                    <input type="number" step="0.1" class="form-control attributes" data-id_attributes="'.$attribute->id.'"></div><div class="col-6">'.$options.'
                                 </div></div>';
                         break;
                     case "boolean":
@@ -384,7 +399,7 @@ class ProductController extends Controller
         if(count($attributes_generale) > 0){
             foreach($attributes_generale as $attribute_generale){
                 $html_attributes_generale .= '<div class="row mb-3">
-                        <div class="col-md-3 attribute-variant-'. $attribute_generale->id .'">
+                        <div class="col-md-4 attribute-variant-'. $attribute_generale->id .'">
                             <input type="text" class="form-control" value="'.translate($attribute_generale->getTranslation('name')).'" disabled>
                         </div>';
 
@@ -421,7 +436,7 @@ class ProductController extends Controller
                         }
                         $options .= "</select>";
                         $html_attributes_generale .= '<div class="col-md-8 attribute-variant-'. $attribute_generale->id .'"><div class="row"><div class="col-6">
-                                    <input type="number" class="form-control attributes" name="attribute_generale-'.$attribute_generale->id.'"></div><div class="col-6">'.$options.'
+                                    <input type="number" step="0.1" class="form-control attributes" name="attribute_generale-'.$attribute_generale->id.'"></div><div class="col-6">'.$options.'
                                 </div></div>';
                         break;
                     case "boolean":

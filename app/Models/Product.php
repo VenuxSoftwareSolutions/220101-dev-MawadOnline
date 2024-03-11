@@ -130,7 +130,7 @@ class Product extends Model
     }
 
     public function getChildrenProductsDesc(){
-        $childrens = Product::where('parent_id', $this->id)->orderBy('id', 'desc')->get();
+        $childrens = Product::where('parent_id', $this->id)->orderBy('id', 'asc')->get();
         return $childrens;
     }
 

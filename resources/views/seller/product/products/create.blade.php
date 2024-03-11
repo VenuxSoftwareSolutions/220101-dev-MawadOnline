@@ -97,6 +97,16 @@
                             </div>
                         </div>
 
+                        <div class="form-group row">
+                            <label class="col-md-3 col-from-label">{{translate('Published')}}</label>
+                            <div class="col-md-8">
+                                <label class="aiz-switch aiz-switch-success mb-0">
+                                    <input type="checkbox" name="published" checked value="1">
+                                    <span></span>
+                                </label>
+                            </div>
+                        </div>
+
                         @if (addon_is_activated('pos_system'))
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Barcode')}}</label>
@@ -144,7 +154,7 @@
                 {{-- Bloc Pricing configuration --}}
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0 h6">{{translate('Pricing Configuration')}}</h5>
+                        <h5 class="mb-0 h6">{{translate('Default Pricing Configuration')}}</h5>
                     </div>
                     <div class="card-body">
                         <div class="row mb-3">
@@ -201,7 +211,7 @@
                 {{-- Bloc Sample pricing configuration --}}
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0 h6">{{translate('Sample Pricing Configuration')}}</h5>
+                        <h5 class="mb-0 h6">{{translate('Default Sample Pricing Configuration')}}</h5>
                     </div>
                     <div class="card-body">
                         <div class="row mb-3">
@@ -292,19 +302,25 @@
                     </div>
                     <div class="card-body">
                         <div class="form-group row gutters-5">
-                            <div class="col-md-3">
+                            <div class="col-md-4">
+                                <input type="text" class="form-control mb-2" value="{{translate('Activate variant option')}}" disabled>
+                                <small style="color: red">Activate this option to select attribute</small>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="aiz-switch aiz-switch-success mb-0">
+                                    <input value="1" type="checkbox" name="activate_attributes">
+                                    <span></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group row gutters-5">
+                            <div class="col-md-4">
                                 <input type="text" class="form-control" value="{{translate('Attributes')}}" disabled>
                             </div>
                             <div class="col-md-8" id="attributes_bloc">
                                 <select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" id="attributes" multiple disabled data-placeholder="{{ translate('Choose Attributes') }}">
 
                                 </select>
-                            </div>
-                            <div class="col-md-1">
-                                <label class="aiz-switch aiz-switch-success mb-0">
-                                    <input value="1" type="checkbox" name="activate_attributes">
-                                    <span></span>
-                                </label>
                             </div>
                         </div>
                         <div>
@@ -323,7 +339,7 @@
                                 </div>
                             </div> --}}
                             <div class="row mb-3">
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Variant Photos')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
@@ -334,8 +350,8 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control" value="{{translate('Variant Pricing')}}" disabled>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" value="{{translate('Use default pricing configuration')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
                                     <label class="aiz-switch aiz-switch-success mb-0">
@@ -348,8 +364,8 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control" value="{{translate('Variant Sample Pricing')}}" disabled>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" value="{{translate('Use default sample pricing configuration')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
                                     <label class="aiz-switch aiz-switch-success mb-0">
@@ -388,8 +404,8 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control" value="{{translate('Variant Shipping')}}" disabled>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" value="{{translate('Use default Shipping')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
                                     <label class="aiz-switch aiz-switch-success mb-0">
@@ -399,8 +415,8 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control" value="{{translate('VariantSample Shipping')}}" disabled>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" value="{{translate('Use default sample Shipping')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
                                     <label class="aiz-switch aiz-switch-success mb-0">
@@ -410,7 +426,7 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Low-Stock Warning')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
