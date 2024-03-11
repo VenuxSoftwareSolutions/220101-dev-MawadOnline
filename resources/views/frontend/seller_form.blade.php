@@ -58,7 +58,7 @@ use Carbon\Carbon;
                     <div class="row">
                         <div class="col-12">
                             <ul class="nav nav-tabs" id="registerTabs">
-                                @if (Auth::check() && !Auth::user()->email_verified_at)
+                                @if (!Auth::user() || (Auth::check() && !Auth::user()->email_verified_at))
                                     <li class="nav-item">
                                         <a class="nav-link active" id="personal-info-tab" data-toggle="tab"
                                             href="#personal-info">{{ translate('Personal Info') }}</a>

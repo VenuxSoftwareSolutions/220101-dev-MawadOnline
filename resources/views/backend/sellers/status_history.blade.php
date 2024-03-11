@@ -29,7 +29,7 @@
                         <td>{{ $item['status'] }}</td>
                         <td>{{ $item['reason'] ?? '' }}</td>
                         <td>{{ $item['suspension_reason'] ?? '' }}</td>
-                        <td>{{ $item['details'] ?? '' }}</td>
+                        <td>{!! $item['details'] ?? '' !!}</td>
                         <td>{{ \Carbon\Carbon::parse($item['created_at'])->toDateTimeString() }}</td>
                     </tr>
                     @endforeach

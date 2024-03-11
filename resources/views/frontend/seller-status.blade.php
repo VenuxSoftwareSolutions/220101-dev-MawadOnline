@@ -44,9 +44,18 @@ img {
                         <!-- Display a nice icon here -->
                         <i class="fas fa-hourglass fa-3x text-primary"></i>
                     @elseif (Auth::user()->status == "Pending Closure")
-                        <h1 class="fw-600 h4">{{ __('messages.pending_closure') }}</h1>
+                        {{-- <h1 class="fw-600 h4">{{ __('messages.pending_closure') }}</h1>
                         <!-- Add Font Awesome icon for pending closure -->
-                        <i class="fas fa-exclamation-triangle fa-3x text-warning"></i>
+                        <i class="fas fa-exclamation-triangle fa-3x text-warning"></i> --}}
+                              <!-- Display suspension reason and details -->
+                              <div class="card suspension-card">
+                                <div class="card-body">
+                                    <h5 class="suspended-heading card-title">{{ __('messages.account_status'). ': '. __('messages.pending_closure_title') }}</h5>
+                                    <p class="card-text">{{ __('messages.contact_support') }}</p>
+                                    <i class="fas fa-exclamation-triangle fa-3x text-warning"></i>
+                                </div>
+                            </div>
+
                     @elseif (Auth::user()->status == "Closed")
                         <h1 class="fw-600 h4">{{ __('messages.vendor_closed') }}</h1>
                         <!-- Add Font Awesome icon for closed status -->

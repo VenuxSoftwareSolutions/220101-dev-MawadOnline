@@ -4,7 +4,8 @@ return [
     'registration_resubmitted_successfully' => 'Registration resubmitted successfully.',
     'registration_completed' => 'Thank you for completing the registration process! Your account is now pending approval. We will review your information shortly and send you an email with further instructions. Please remember to check your email, including your spam folder, for updates.',
     'registration_rejected' => 'Your vendor registration has been rejected. You can update your registration form and resubmit it for review. Upon resubmission, your status will change to "Pending Approval". Please ensure to resubmit your registration within 30 days, otherwise, your account will be automatically deleted.',
-    'pending_closure' => 'Your account is currently under pending closure status. This means your account is suspended with the intention of being closed. Please contact MawadOnline management for further assistance.',
+    // 'pending_closure' => 'Your account is currently under pending closure status. This means your account is suspended with the intention of being closed. Please contact MawadOnline management for further assistance.',
+    'pending_closure' => 'Dear Vendor, Your MawadOnline account has been set to PendingClosure.',
     'vendor_closed' => 'Your vendor account has been closed. If you have any questions or concerns, please contact MawadOnline support.',
     'suspended' => 'Account Suspended',
     'suspended_email' => 'your seller account has been suspended by the administrator. If you have any inquiries, please contact MawadOnline support.',
@@ -31,5 +32,8 @@ return [
     'Date' => 'Date',
     'Vendor Status History' => 'Vendor Status History',
     'View' => 'View',
+    'account_status' => 'Account status',
+    'pending_closure_title' => 'Pending-Closure',
+    'contact_support' => 'Please contact MawadOnline support team for further details.',
 
 ];
