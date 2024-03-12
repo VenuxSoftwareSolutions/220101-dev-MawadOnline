@@ -20,6 +20,7 @@
             </ul>
         </div>
     @endif
+    <button type="button" onclick="submitForm()">Preview Product</button>
 
     <form class="" action="{{route('seller.products.store')}}" method="POST" enctype="multipart/form-data" id="choice_form">
         <div class="row gutters-5">
@@ -201,6 +202,74 @@
                                         <td>
                                             <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                             <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                              </table>
+                        </div>
+                    </div>
+                </div>
+                {{-- Bloc Default shipping configuration --}}
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0 h6">{{translate('Default Shipping Configuration')}}</h5>
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <table class="table" id="table_pricing_configuration" class="bloc_pricing_configuration_variant">
+                                <thead>
+                                    <tr>
+                                        <th>{{translate('From Quantity')}}</th>
+                                        <th>{{translate('To Quantity')}}</th>
+                                        <th>{{translate('Shipper')}}</th>
+                                        <th>{{translate('Estimated Order Preparation Days')}}</th>
+                                        <th>{{translate('Estimated Shipping Days')}}</th>
+                                        <th>{{translate('Paid by')}}</th>
+                                        <th>{{translate('VAT')}}</th>
+                                        <th>{{translate('Shipping Charge')}}</th>
+                                        <th>{{translate('Flat-rate Amount')}}</th>
+                                        <th>{{translate('Charge per Unit of Sale')}}</th>
+                                        <th>{{translate('Action')}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bloc_shipping_configuration">
+                                    <tr>
+                                        <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id=""></td>
+                                        <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id=""></td>
+                                        <td>
+                                            <select class="form-control shipper" name="shipper[]">
+                                                <option value="" disabled selected>{{translate('Choose shipper')}}</option>
+                                                <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                                <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
+                                            </select>
+                                        </td>
+                                        <td><input type="number" class="form-control estimated_order" name="estimated_order[]"></td>
+                                        <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]"></td>
+                                        <td>
+                                            <select class="form-control paid" name="paid[]">
+                                                <option value="" disabled selected>{{translate('Choose shipper')}}</option>
+                                                <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                                <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <label class="aiz-switch aiz-switch-success mb-0">
+                                                <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping" @if($vat_user->vat_registered == 1) checked @endif>
+                                                <span></span>
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <select class="form-control shipping_charge" name="shipping_charge[]">
+                                                <option value="" disabled selected>{{translate('Choose shipping charge')}}</option>
+                                                <option value="flat" @selected(old('shipping_charge') == 'flat')>{{translate('Flat-rate regardless of quantity')}}</option>
+                                                <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
+                                            </select>
+                                        </td>
+                                        <td><input type="number" class="form-control flat_rate_shipping" name="flat_rate_shipping[]"></td>
+                                        <td><input type="number" class="form-control charge_per_unit_shipping" name="charge_per_unit_shipping[]"></td>
+                                        <td>
+                                            <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
+                                            <i class="las la-trash delete_shipping_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -555,9 +624,35 @@
 
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
-
+<script>
+    var previewUrlBase  = "{{ route('seller.product.preview', ['slug' => 'PLACEHOLDER']) }}";
+    </script>
+    
 //<!--- category parent tree -->
 <script type="text/javascript">
+    function submitForm() {
+        const formData = new FormData(document.getElementById('choice_form'));
+
+        fetch('{{route("seller.product.tempStore")}}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Replace 'PLACEHOLDER' with the actual slug from the response
+                var previewUrl = previewUrlBase.replace('PLACEHOLDER', data.data.slug);
+
+                // Open the URL in a new tab
+                window.open(previewUrl, '_blank');
+            }
+        });
+    }
+
+
     $(document).ready(function() {
         $('#variant_informations').hide();
         $('#btn-create-variant').hide();

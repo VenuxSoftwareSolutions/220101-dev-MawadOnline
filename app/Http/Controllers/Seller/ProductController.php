@@ -13,6 +13,7 @@ use App\Models\ProductCategory;
 use App\Models\PricingConfiguration;
 use App\Models\Product;
 use App\Models\Unity;
+use App\Models\Brand;
 use App\Models\ProductTax;
 use App\Models\BusinessInformation;
 use App\Models\ProductTranslation;
@@ -810,4 +811,58 @@ class ProductController extends Controller
 
         return 1;
     }
+
+    public function tempStore(Request $request)
+    {
+           // Assuming you have a method to prepare or simulate data needed for the preview
+        $detailedProduct = $this->prepareDetailedProductData($request->all());
+
+        $product_queries = []; // Simulate or prepare this data
+        $total_query = 0; // Calculate or simulate this
+        $reviews = []; // Simulate or prepare this data
+        $review_status = false; // Determine this based on your logic
+
+        // Store all necessary data in the session for preview
+        $request->session()->put('productPreviewData', compact('detailedProduct', 'product_queries', 'total_query', 'reviews', 'review_status'));
+
+            
+        $slug = $request->name;
+        return response()->json(['data'=>['slug'=>$slug],'success' => true]);
+    }
+
+    function prepareDetailedProductData($data){
+        // dd($data['name']) ;
+        $brand= Brand::find($data['brand_id']) ;
+        dd($brand) ;
+        $detailedProduct = [
+            'name'=>$data['name'],
+            'brand'=> $brand,
+            'unit'=>$data['unit'],
+            'description'=>$data['description']
+        ];
+        dd($detailedProduct) ;
+        // to save images 
+        // create tmp folder for uploaded images
+
+        // product->image = path
+
+
+    }
+
+
+    public function preview(Request $request)
+    {
+        $previewData = $request->session()->get('productPreviewData', null);
+
+        // dd($previewData);
+        if (!$previewData) {
+            return redirect()->back()->withErrors('No preview data found.');
+        }
+
+        // Extract all variables required for the view
+        extract($previewData);
+        $detailedProduct = $this->prepareDetailedProductData($previewData);
+        return view('frontend.product_details.preview', compact('previewData'));
+    }
+
 }

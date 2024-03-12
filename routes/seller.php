@@ -32,6 +32,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
     // Product
 
     Route::controller(ProductController::class)->group(function () {
+        Route::post('/product/temp-store', 'tempStore')->name('product.tempStore');
+        Route::get('/product/preview/{slug}', 'preview')->name('product.preview');
+
         Route::get('/products', 'index')->name('products');
         Route::get('/product/create', 'create')->name('products.create');
         Route::get('/product/delete_variant', 'delete_variant')->name('products.delete_variant');
