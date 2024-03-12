@@ -232,10 +232,10 @@
                                 @endif --}}
                             </td>
                             <td>{{ $seller->approved_at ? $seller->approved_at->format('jS F Y, H:i') : '' }}</td>
-                            <td>
-                                @if($seller->vendor_status_history->isNotEmpty())
+                            <td id="last-status-update-{{ $seller->id}}"> {{$seller->last_status_update ? $seller->last_status_update->format('jS F Y, H:i') : ''}}
+                                {{-- @if($seller->vendor_status_history->isNotEmpty())
                                     {{ $seller->vendor_status_history->sortByDesc('created_at')->first()->created_at->format('jS F Y, H:i') }}
-                                @endif
+                                @endif --}}
                             </td>
                             <td>
 
@@ -248,7 +248,7 @@
                                         <i class="las la-ellipsis-v"></i>
                                     </button>
                                     {{-- <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton"> --}}
-                                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-xs">
+                                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-xs vendor-action">
                                         <a href="{{route('vendor.registration.view',$seller->id)}}" class="dropdown-item" >
                                             {{ __('messages.View') }}
                                         </a>
@@ -278,12 +278,12 @@
                                             View Status History
                                         </button> --}}
                                         @endif
-                                        @if ($seller->status != "Draft")
+                                        @if ($seller->status != "Draft" && $seller->status !='Pending Approval')
                                         <a href="{{route('vendors.status-history',$seller->id)}}" class="dropdown-item" >
-                                            View Status History
+                                            {{ __('messages.View Status History') }}
                                         </a>
                                         <a href="{{route('sellers.staff',$seller->id)}}" class="dropdown-item" >
-                                            View Staff
+                                            {{ __('messages.View Staff') }}
                                         </a>
                                         @endif
                                     </div>
@@ -461,6 +461,27 @@
                 }
             });
         }
+        function updateDropDownMenu(vendorId) {
+        // Make AJAX call to update the seller's status and refresh the dropdown menu
+        $.ajax({
+            url: '{{route("update.seller.dropdown")}}', // Replace with your URL
+            type: 'POST',
+            data: {
+                vendor_id: vendorId,
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                // Assuming response contains the updated HTML for the dropdown menu
+                var updatedHtml = response.html;
+
+                // Update the dropdown menu content with the updated HTML
+                $('.dropdown-menu.vendor-action ').html(updatedHtml);
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+            }
+        });
+    }
 
     </script>
 
@@ -575,8 +596,9 @@
                         // Show success message
                         Swal.fire('Vendor Suspended with Pending Closure', 'The vendor has been successfully suspended with pending closure.', 'success');
                         $('#status-' + vendorId).text('Pending Closure');
+                        $('#last-status-update-' + vendorId).text(data.last_status_update);
                         uncheckCheckboxByVendorId(vendorId);
-
+                        updateDropDownMenu(vendorId) ;
 
                     },
                     error: function(xhr, status, error) {
@@ -614,8 +636,9 @@
                         // Show success message
                         Swal.fire('Vendor Closed', 'The vendor\'s e-shop has been closed successfully', 'success');
                         $('#status-' + vendorId).text('Closed');
+                        $('#last-status-update-' + vendorId).text(data.last_status_update);
                         uncheckCheckboxByVendorId(vendorId);
-
+                        updateDropDownMenu(vendorId) ;
                     },
                     error: function(xhr, status, error) {
                         // Show error message
@@ -712,9 +735,10 @@
             });
         });
         $('#myTable').DataTable({
-            "order": [[0, "asc"]], // Sort by first column in descending order
-
+                "order": false
         });
+
+
 
     });
 </script>

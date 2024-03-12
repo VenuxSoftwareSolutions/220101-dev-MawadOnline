@@ -61,13 +61,14 @@ img {
                         <!-- Add Font Awesome icon for closed status -->
                         <i class="fas fa-lock fa-3x text-danger"></i>
                     @elseif (Auth::user()->status == "Suspended")
-                    <h1 class="fw-600 h4 suspended-heading">{{ __('messages.suspended') }}</h1>
+                    {{-- <h1 class="fw-600 h4 suspended-heading">{{ __('messages.suspended') }}</h1> --}}
                     @php
                         $suspendedStatusHistory = Auth::user()->getSuspendedStatusHistory();
                     @endphp
                     @if ($suspendedStatusHistory)
                         <!-- Display suspension reason and details -->
                         <div class="card suspension-card">
+                            <h5 class="card-title suspended-heading">{{ __('messages.suspended') }}</h5> <!-- Add the card title here -->
                             <div class="card-body">
                                 <h5 class="card-title">{{ __('messages.reason') }}</h5>
                                 <p class="card-text">{{ $suspendedStatusHistory->suspension_reason }}</p>
