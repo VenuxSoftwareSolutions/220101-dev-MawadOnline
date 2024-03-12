@@ -17,6 +17,7 @@ use App\Notifications\EmailVerificationNotification;
 use App\Notifications\ShopVerificationNotification;
 use App\Notifications\VendorStatusChangedNotification;
 use Cache;
+use Carbon\Carbon;
 use File;
 use Illuminate\Support\Facades\Notification;
 
@@ -63,7 +64,14 @@ class SellerController extends Controller
         // }
         // $shops = $shops->paginate(15);
         // return view('backend.sellers.index', compact('shops', 'sort_search', 'approved'));
-        $sellers = User::where('user_type', 'seller')->whereColumn('id','owner_id')->get() ;
+        $sellers = User::where('user_type', 'seller')
+        ->where(function($query) {
+            $query->whereColumn('id', 'owner_id')
+                  ->orWhereNull('owner_id');
+        })
+        ->orderBy('created_at', 'desc')
+        ->get();
+
         return view('backend.sellers.index', compact('sellers'));
     }
 
@@ -337,6 +345,7 @@ class SellerController extends Controller
         $seller = User::findOrFail($id);
         $oldStatus = $seller->status;
         $seller->status = 'Enabled';
+        $seller->approved_at = Carbon::now(); // Set the approved_at timestamp to the current time
 
 
         $seller->save();
@@ -428,13 +437,19 @@ class SellerController extends Controller
         $seller->status = 'Rejected'; // Change status to "Pending Approval"
         $seller->save();
 
-        // Optionally, you can also log this status change in the status history table
-        $this->logStatusChange($seller, 'Rejected');
+
+        // $this->logStatusChange($seller, 'Rejected');
+        // Store suspension details in the database
+        $suspension = new VendorStatusHistory();
+        $suspension->vendor_id = $seller->id;
+        $suspension->details = $request->input('reject_reason');
+        $suspension->status = "Rejected";
+        $suspension->save();
         // Get the reject reason and image URL from the request
         $rejectReason = $request->input('reject_reason');
 
         // Send an email notification to the seller with old and new status
-        $seller->notify(new VendorStatusChangedNotification($oldStatus, $seller->status,$rejectReason,$seller->email));
+        $seller->notify(new VendorStatusChangedNotification($oldStatus, $seller->status,$rejectReason,$seller->email,'Your account is rejected'));
         Notification::send($seller, new CustomStatusNotification($oldStatus, $seller->status));
 
         // // Redirect the user back or to any other page
@@ -489,11 +504,11 @@ class SellerController extends Controller
             // Optionally, you can also log this status change in the status history table
             $this->logStatusChange($vendor, 'Pending Closure');
             // Send an email notification to the seller with old and new status
-            $vendor->notify(new VendorStatusChangedNotification($oldStatus, $vendor->status));
+            $vendor->notify(new VendorStatusChangedNotification($oldStatus, $vendor->status,null,null,'Your account is pending-closure'));
             Notification::send($vendor, new CustomStatusNotification($oldStatus, $vendor->status));
 
             // Return success response
-            return response()->json(['success' => true]);
+            return response()->json(['success' => true,'last_status_update' => $vendor->last_status_update->format('jS F Y, H:i')]);
         }
         public function close($id)
         {
@@ -505,11 +520,11 @@ class SellerController extends Controller
             $vendor->save();
             $this->logStatusChange($vendor, 'Closed');
             // Send an email notification to the seller with old and new status
-            $vendor->notify(new VendorStatusChangedNotification($oldStatus, $vendor->status));
+            $vendor->notify(new VendorStatusChangedNotification($oldStatus, $vendor->status,null,null,'Your account is closed'));
             Notification::send($vendor, new CustomStatusNotification($oldStatus, $vendor->status));
 
             // Return success response
-            return response()->json(['success' => true]);
+            return response()->json(['success' => true,'last_status_update' => $vendor->last_status_update->format('jS F Y, H:i')]);
         }
 
         public function getStatusHistory(Request $request, $vendorId)
@@ -542,6 +557,44 @@ class SellerController extends Controller
         return view('backend.sellers.suspend_seller',compact('user'));
     }
 
+    public function VendorsStatusHistory() {
+        $vendorsStatusHistory = VendorStatusHistory::orderBy('created_at', 'desc')
+        ->get();
+        $vendors = User::where('user_type', 'seller')->whereColumn('id','owner_id')
+        ->orWhere('owner_id',null)->get() ;
+        return view('backend.sellers.vendors_status_history', ['vendorsStatusHistory' => $vendorsStatusHistory,'vendors'=>$vendors]);
+
+
+    }
+
+    public function suspensionReasonDetail($id) {
+
+        $suspensionReasonDetail=VendorStatusHistory::find($id) ;
+        return view('backend.sellers.suspension_reason_detail', ['suspensionReasonDetail' => $suspensionReasonDetail]);
+
+    }
+
+    public function updateSellerDropDown(Request $request) {
+         // Find the seller and update the status
+         $seller = User::find($request->vendor_id);
+
+        // Initialize dropdown items HTML
+        $dropdownHtml = '<a href="'.route('vendor.registration.view', $seller->id).'" class="dropdown-item">'.__('messages.View').'</a>';
+
+        // Check seller's status and generate HTML accordingly
+        if ($seller->status == 'Pending Closure') {
+            // Generate HTML for Pending Closure status
+            $dropdownHtml .= '<button type="button" class="dropdown-item close-vendor-btn" data-vendor-id="'.$seller->id.'">'.__('messages.close_vendor').'</button>';
+        }
+
+
+        // Append common dropdown items
+        $dropdownHtml .= '<a href="'.route('vendors.status-history', $seller->id).'" class="dropdown-item">'.__('messages.View Status History').'</a>';
+        $dropdownHtml .= '<a href="'.route('sellers.staff', $seller->id).'" class="dropdown-item">'.__('messages.View Staff').'</a>';
+
+        // Return the HTML as JSON
+        return response()->json(['html' => $dropdownHtml]);
+    }
 
 
 

@@ -29,7 +29,12 @@
                         <td>{{ $item['status'] }}</td>
                         <td>{{ $item['reason'] ?? '' }}</td>
                         <td>{{ $item['suspension_reason'] ?? '' }}</td>
-                        <td>{{ $item['details'] ?? '' }}</td>
+                        <td>
+                            {{-- {!! $item['details'] ?? '' !!} --}}
+                            @if ($item->details)
+                            <a href="{{route('vendor.suspension_reason',$item->id)}}" class="btn btn-info">View Details</a>
+                            @endif
+                        </td>
                         <td>{{ \Carbon\Carbon::parse($item['created_at'])->toDateTimeString() }}</td>
                     </tr>
                     @endforeach

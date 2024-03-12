@@ -15,4 +15,19 @@ class ProductAttributeValues extends Model
         $lastRevision = $this->revisionHistory()->latest('id')->first();
         return $lastRevision ? $lastRevision->action_number + 1 : 0;
     }
+    public function attribute() {
+        return $this->belongsTo(Attribute::class,'id_attribute') ;
+    }
+
+    public function unity() {
+        return $this->belongsTo(Unity::class,'id_units') ;
+    }
+
+    public function color() {
+        return $this->belongsTo(Color::class,'id_colors') ;
+    }
+    public function attributeValues() {
+        return $this->belongsTo(AttributeValue::class,'id_values') ;
+    }
+
 }

@@ -603,6 +603,11 @@
                                         </a>
                                     </li>
                                 @endcan
+                                <li class="aiz-side-nav-item">
+                                    <a href="{{ route('vendors.status-history-report') }}" class="aiz-side-nav-link">
+                                        <span class="aiz-side-nav-text">Vendors Status History Report</span>
+                                    </a>
+                                </li>
                                 @can('seller_payment_history')
                                     <li class="aiz-side-nav-item">
                                         <a href="{{ route('sellers.payment_histories') }}" class="aiz-side-nav-link">

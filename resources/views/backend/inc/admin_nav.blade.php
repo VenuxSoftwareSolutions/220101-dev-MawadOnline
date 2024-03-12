@@ -133,7 +133,7 @@
                                         data-target="#orders-notifications" role="tab" id="orders-tab">{{ translate('Orders') }}</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" data-toggle="tab" data-type="seller" href="javascript:void();"
+                                    <a class="nav-link text-dark " data-toggle="tab" data-type="seller" href="javascript:void();"
                                         data-target="#sellers-notifications" role="tab" id="sellers-tab">{{ translate('Sellers') }}</a>
                                 </li>
                                 <li class="nav-item">

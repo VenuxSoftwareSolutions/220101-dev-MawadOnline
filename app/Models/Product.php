@@ -22,7 +22,7 @@ class Product extends Model
         $lastRevision = $this->revisionHistory()->latest('id')->first();
         return $lastRevision ? $lastRevision->action_number + 1 : 0;
     }
-    
+
     protected $guarded = ['choice_attributes'];
 
     protected $with = ['product_translations', 'taxes', 'thumbnail'];
@@ -193,7 +193,7 @@ class Product extends Model
 
     public function getAttributesVariantChildren(){
         $attributes = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->get();
-        
+
         $data = [];
         if(count($attributes) > 0){
             foreach ($attributes as $attribute){
@@ -226,9 +226,42 @@ class Product extends Model
                 }
             }
 
-            
+
         }
 
         return $path;
     }
+
+    public function productAttributeValues() {
+        return $this->hasMany(ProductAttributeValues::class,'id_products') ;
+    }
+
+    public function productVariantDetails() {
+         $productVariantName = "" ;
+        foreach ($this->productAttributeValues as $productAttributeValue  ) {
+            if($productAttributeValue->attribute->type_value == "numeric")
+            {
+                $productVariantName.= $productAttributeValue->attribute->name.' '.$productAttributeValue->value." ".$productAttributeValue->unity->name." " ;
+            }
+            elseif($productAttributeValue->attribute->type_value ="list") {
+                $productVariantName.=$productAttributeValue->attribute->name.' '.$productAttributeValue->attributeValues->value." " ;
+
+
+            }
+            elseif($productAttributeValue->attribute->type_value ="color") {
+                $productVariantName.= $productAttributeValue->attribute->name.' '.$productAttributeValue->color->name." "  ;
+
+            }
+            else{
+                $productVariantName.= $productAttributeValue->attribute->name.' '.$productAttributeValue->value." "  ;
+
+            }
+
+
+        }
+
+        return $productVariantName ;
+
+    }
+
 }

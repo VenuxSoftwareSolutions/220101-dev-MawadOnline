@@ -121,7 +121,18 @@ use Carbon\Carbon;
 <script>
     document.getElementById('submitRejection').addEventListener('click', function(event) {
         event.preventDefault(); // Prevent the default form submission
-
+        // Check if the textarea is not empty
+        var rejectReason = document.getElementById('editor').value.trim();
+                if (rejectReason === '') {
+                    // If the textarea is empty, show an error message
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please provide a rejection reason.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    return; // Exit the function without submitting the form
+                }
         // Use SweetAlert for confirmation
         Swal.fire({
             title: 'Are you sure?',
