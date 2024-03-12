@@ -64,7 +64,7 @@ class PaymentController extends Controller
     public function show($id)
     {
         $user = User::find(decrypt($id));
-        $payments = Payment::where('seller_id', $user->id)->orderBy('created_at', 'desc')->get();
+        $payments = Payment::where('seller_id', $user->owner_id)->orderBy('created_at', 'desc')->get();
         if($payments->count() > 0){
             return view('backend.sellers.payment', compact('payments', 'user'));
         }

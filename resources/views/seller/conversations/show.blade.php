@@ -4,7 +4,7 @@
     <div class="aiz-titlebar mt-2 mb-4">
         <div class="h6">
             <span>{{ translate('Conversations With ')}}</span>
-            @if ($conversation->sender_id == Auth::user()->id && $conversation->receiver->shop != null)
+            @if ($conversation->sender_id == Auth::user()->owner_id && $conversation->receiver->shop != null)
                 <a href="{{ route('shop.visit', $conversation->receiver->shop->slug) }}" class="">{{ $conversation->receiver->shop->name }}</a>
             @endif
         </div>
@@ -14,7 +14,7 @@
             <h5 class="card-title fs-16 fw-600 mb-0">#{{ $conversation->title }}
             (
                 {{ translate('Between you and') }}
-                @if ($conversation->sender_id == Auth::user()->id)
+                @if ($conversation->sender_id == Auth::user()->owner_id)
                     {{ $conversation->receiver->name }}
                 @else
                     {{ $conversation->sender->name }}

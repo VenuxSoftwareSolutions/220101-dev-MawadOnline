@@ -2,15 +2,18 @@
     <div class="aiz-sidebar left c-scrollbar">
         <div class="aiz-side-nav-logo-wrap">
             <div class="d-block text-center my-3">
-                @if (optional(Auth::user()->shop)->logo != null)
-                    <img class="mw-100 mb-3" src="{{ uploaded_asset(optional(Auth::user()->shop)->logo) }}"
+                @php
+                    $vendor = User::find(Auth::user()->owner_id);
+                @endphp
+                @if (optional($vendor->shop)->logo != null)
+                    <img class="mw-100 mb-3" src="{{ uploaded_asset(optional($vendor->shop)->logo) }}"
                         class="brand-icon" alt="{{ get_setting('site_name') }}">
                 @else
                     <img class="mw-100 mb-3" src="{{ uploaded_asset(get_setting('header_logo')) }}" class="brand-icon"
                         alt="{{ get_setting('site_name') }}">
                 @endif
-                <h3 class="fs-16  m-0 text-primary">{{ optional(Auth::user()->shop)->name }}</h3>
-                <p class="text-primary">{{ Auth::user()->email }}</p>
+                <h3 class="fs-16  m-0 text-primary">{{ optional($vendor->shop)->name }}</h3>
+                <p class="text-primary">{{ $vendor->email }}</p>
             </div>
         </div>
         <div class="aiz-side-nav-wrap">
@@ -266,7 +269,7 @@
 
                 @if (get_setting('conversation_system') == 1)
                     @php
-                        $conversation = \App\Models\Conversation::where('sender_id', Auth::user()->id)
+                        $conversation = \App\Models\Conversation::where('sender_id', Auth::user()->owner_id)
                             ->where('sender_viewed', 0)
                             ->get();
                     @endphp
@@ -300,7 +303,7 @@
                 @php
                     $support_ticket = DB::table('tickets')
                         ->where('client_viewed', 0)
-                        ->where('user_id', Auth::user()->id)
+                        ->where('user_id', Auth::user()->owner_id)
                         ->count();
                 @endphp
                 @can('seller_view_support_tickets')

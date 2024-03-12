@@ -37,7 +37,10 @@
                         <span class="btn btn-icon p-0 d-flex justify-content-center align-items-center">
                             <span class="d-flex align-items-center position-relative">
                                 <i class="las la-bell fs-24"></i>
-                                @if(Auth::user()->unreadNotifications->count() > 0)
+                                @php
+                                    $vendor = User::find(Auth::user()->owner_id);
+                                @endphp
+                                @if($vendor->unreadNotifications->count() > 0)
                                     <span class="badge badge-sm badge-dot badge-circle badge-primary position-absolute absolute-top-right"></span>
                                 @endif
                             </span>
@@ -66,16 +69,16 @@
                             </ul>
                             <div class="tab-content">
                                 <div class="tab-pane active" id="orders-notifications" role="tabpanel">
-                                    <x-notification :notifications="auth()->user()->unreadNotifications()->where('type', 'App\Notifications\OrderNotification')->take(20)->get()" />
+                                    <x-notification :notifications="$vendor->unreadNotifications()->where('type', 'App\Notifications\OrderNotification')->take(20)->get()" />
                                 </div>
                                 <div class="tab-pane" id="sellers-notifications" role="tabpanel">
-                                    <x-notification :notifications="auth()->user()->unreadNotifications()->where('type', 'like', '%shop%')->take(20)->get()" />
+                                    <x-notification :notifications="$vendor->unreadNotifications()->where('type', 'like', '%shop%')->take(20)->get()" />
                                 </div>
                                 <div class="tab-pane" id="payouts-notifications" role="tabpanel">
-                                    <x-notification :notifications="auth()->user()->unreadNotifications()->where('type', 'App\Notifications\PayoutNotification')->take(20)->get()" />
+                                    <x-notification :notifications="$vendor->unreadNotifications()->where('type', 'App\Notifications\PayoutNotification')->take(20)->get()" />
                                 </div>
                                 <div class="tab-pane" id="status-notifications" role="tabpanel">
-                                    <x-notification :notifications="auth()->user()->unreadNotifications()->where('type', 'App\Notifications\CustomStatusNotification')->take(20)->get()" />
+                                    <x-notification :notifications="$vendor->unreadNotifications()->where('type', 'App\Notifications\CustomStatusNotification')->take(20)->get()" />
                                 </div>
                             </div>
                         </div>

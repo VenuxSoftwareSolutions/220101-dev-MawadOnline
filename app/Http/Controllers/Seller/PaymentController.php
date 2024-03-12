@@ -19,7 +19,7 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        $payments = Payment::where('seller_id', Auth::user()->id)->paginate(9);
+        $payments = Payment::where('seller_id', Auth::user()->owner_id)->paginate(9);
         return view('seller.payment_history', compact('payments'));
     }
 }

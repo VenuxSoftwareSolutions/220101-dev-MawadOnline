@@ -52,7 +52,7 @@ class ShopController extends Controller
 
     public function update(Request $request)
     {
-        $shop = Shop::where('user_id', auth()->user()->id)->first();
+        $shop = Shop::where('user_id', auth()->user()->owner_id)->first();
         $successMessage = 'Shop info updated successfully';
         $failedMessage = 'Shop info updated failed';
 
@@ -117,7 +117,7 @@ class ShopController extends Controller
     public function sales_stat()
     {
         $data = Order::where('created_at', '>=', Carbon::now()->subDays(7))
-            ->where('seller_id', '=', auth()->user()->id)
+            ->where('seller_id', '=', auth()->user()->owner_id)
             ->where('delivery_status', '=', 'delivered')
             ->select(DB::raw("sum(grand_total) as total, DATE_FORMAT(created_at, '%b-%d') as date"))
             ->groupBy(DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d')"))
@@ -148,10 +148,10 @@ class ShopController extends Controller
         $category_wise_product = [];
         $new_array = [];
         foreach (Category::all() as $key => $category) {
-            if (count($category->products->where('user_id', auth()->user()->id)) > 0) {
+            if (count($category->products->where('user_id', auth()->user()->owner_id)) > 0) {
                 $category_wise_product['name'] = $category->getTranslation('name');
                 $category_wise_product['banner'] = uploaded_asset($category->banner);
-                $category_wise_product['cnt_product'] = count($category->products->where('user_id', auth()->user()->id));
+                $category_wise_product['cnt_product'] = count($category->products->where('user_id', auth()->user()->owner_id));
 
                 $new_array[] = $category_wise_product;
             }
@@ -162,7 +162,7 @@ class ShopController extends Controller
 
     public function top_12_products()
     {
-        $products = filter_products(Product::where('user_id',  auth()->user()->id)
+        $products = filter_products(Product::where('user_id',  auth()->user()->owner_id)
             ->orderBy('num_of_sale', 'desc'))
             ->limit(12)
             ->get();
@@ -173,12 +173,14 @@ class ShopController extends Controller
     public function info()
     {
         // dd(auth()->user()->shop);
-        return new ShopDetailsCollection(auth()->user()->shop);
+        $vendor = User::find(auth()->user()->owner_id);
+        return new ShopDetailsCollection($vendor->shop);
     }
 
     public function pacakge()
     {
-        $shop = auth()->user()->shop;
+        $vendor = User::find(auth()->user()->owner_id);
+        $shop = $vendor->shop;
 
         return response()->json([
             'result' => true,
@@ -209,13 +211,13 @@ class ShopController extends Controller
 
     public function payment_histories()
     {
-        $payments = Payment::where('seller_id', auth()->user()->id)->paginate(10);
+        $payments = Payment::where('seller_id', auth()->user()->owner_id)->paginate(10);
         return SellerPaymentResource::collection($payments);
     }
 
     public function collection_histories()
     {
-        $commission_history = CommissionHistory::where('seller_id', auth()->user()->id)->orderBy('created_at', 'desc')->paginate(10);
+        $commission_history = CommissionHistory::where('seller_id', auth()->user()->owner_id)->orderBy('created_at', 'desc')->paginate(10);
         return CommissionHistoryResource::collection($commission_history);
     }
 
@@ -286,8 +288,8 @@ class ShopController extends Controller
             array_push($data, $item);
             $i++;
         }
-
-        $shop = auth()->user()->shop;
+        $vendor = User::find(auth()->user()->owner_id);
+        $shop = $vendor->shop;
         $shop->verification_info = json_encode($data);
         if ($shop->save()) {
             return $this->success(translate('Your shop verification request has been submitted successfully!'));

@@ -63,7 +63,8 @@ class StockController extends Controller
         // Filter by product variant and warehouse if provided
         $productVariant = $request->input('productVariant');
         $warehouse = $request->input('warehouse');
-        $seller = Auth::user();
+        $seller = User::find(Auth::user()->owner_id);
+        //$seller = Auth::user();
 
         // Check if productVariant and warehouse are provided and exist
         // if ($productVariant && !ProductVariant::where('id', $productVariant)->exists()) {
@@ -117,7 +118,7 @@ class StockController extends Controller
     public function saveRecord(SaveRecordRequest $request)
     {
 
-        $seller_id = Auth::user()->id;
+        $seller_id = Auth::user()->owner_id;
 
         // Extract and rename specific data from the request
         $stockSummaryData = $request->only(['product_variant', 'warehouse', 'quantity']);
@@ -175,7 +176,7 @@ class StockController extends Controller
         $warehouse = $request->input('warehouse');
         $quantity = $request->input('quantity');
         $comment = $request->input('comment');
-        $seller_id = Auth::user()->id;
+        $seller_id = Auth::user()->owner_id;
 
         // Determine operation type and perform stock addition or removal
         if ($request->addRemove == "add") {
@@ -253,7 +254,7 @@ class StockController extends Controller
         $productVariant = $request->input('product_variant');
         $warehouse = $request->input('warehouse');
 
-        $seller_id = Auth::user()->id;
+        $seller_id = Auth::user()->owner_id;
         // Check if the inventory entry exists for the given product variant, warehouse, and seller
         $exists = StockSummary::where('variant_id', $productVariant)
             ->where('warehouse_id', $warehouse)->where('seller_id', $seller_id)
@@ -285,7 +286,8 @@ class StockController extends Controller
     {
 
         // Retrieve the authenticated user (seller).
-        $seller = Auth::user();
+        $seller = User::find(Auth::user()->owner_id);
+        //$seller = Auth::user();
         // Fetch all warehouses associated with the seller.
         $warehouses = Warehouse::where("user_id", $seller->id)->get();
         // Return the view for the stock operation report with the warehouses data.
@@ -305,7 +307,8 @@ class StockController extends Controller
     {
 
         // Get the authenticated user (seller).
-        $seller = Auth::user();
+        $seller = User::find(Auth::user()->owner_id);
+        //$seller = Auth::user();
 
         // Retrieve stock details within the specified date range for this seller.
         $stockDetails = StockDetails::with('productVariant', 'warehouse')->where('seller_id', $seller->id)

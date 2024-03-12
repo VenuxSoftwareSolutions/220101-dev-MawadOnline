@@ -20,7 +20,7 @@
                                 <span class="fs-14 text-light">{{ translate('Products') }}</span>
                             </p>
                             <h3 class="mb-0 text-white fs-30">
-                                {{ \App\Models\Product::where('user_id', Auth::user()->id)->count() }}
+                                {{ \App\Models\Product::where('user_id', Auth::user()->owner_id)->count() }}
                             </h3>
 
                         </div>
@@ -70,7 +70,7 @@
                                 <span class="fs-14 text-light">{{ translate('Total Order') }}</span>
                             </p>
                             <h3 class="mb-0 text-white fs-30">
-                                {{ \App\Models\Order::where('seller_id', Auth::user()->id)->where('delivery_status', 'delivered')->count() }}
+                                {{ \App\Models\Order::where('seller_id', Auth::user()->owner_id)->where('delivery_status', 'delivered')->count() }}
                             </h3>
                         </div>
                         <div class="col-auto text-right">
@@ -127,7 +127,7 @@
                             </p>
                             <h3 class="mb-0 text-white fs-30">
                                 @php
-                                    $orderDetails = \App\Models\OrderDetail::where('seller_id', Auth::user()->id)->get();
+                                    $orderDetails = \App\Models\OrderDetail::where('seller_id', Auth::user()->owner_id)->get();
                                     $total = 0;
                                     foreach ($orderDetails as $key => $orderDetail) {
                                         if ($orderDetail->order != null && $orderDetail->order->payment_status == 'paid') {
@@ -180,7 +180,7 @@
                     $days_ago_30 = date('Y-m-d', strtotime('-30 days', strtotime($date)));
                     $days_ago_60 = date('Y-m-d', strtotime('-60 days', strtotime($date)));
 
-                    $orderTotal = \App\Models\Order::where('seller_id', Auth::user()->id)
+                    $orderTotal = \App\Models\Order::where('seller_id', Auth::user()->owner_id)
                         ->where('payment_status', 'paid')
                         ->where('created_at', '>=', $days_ago_30)
                         ->sum('grand_total');
@@ -196,7 +196,7 @@
                     </h3>
                     <p class="mt-4">
                         @php
-                            $orderTotal = \App\Models\Order::where('seller_id', Auth::user()->id)
+                            $orderTotal = \App\Models\Order::where('seller_id', Auth::user()->owner_id)
                                 ->where('payment_status', 'paid')
                                 ->where('created_at', '>=', $days_ago_60)
                                 ->where('created_at', '<=', $days_ago_30)
@@ -216,11 +216,11 @@
                     <hr>
                     <ul class="list-group">
                         @foreach (\App\Models\Category::all() as $key => $category)
-                            @if (count($category->products->where('user_id', Auth::user()->id)) > 0)
+                            @if (count($category->products->where('user_id', Auth::user()->owner_id)) > 0)
                                 <li class="d-flex justify-content-between align-items-center my-2 text-primary fs-13">
                                     {{ $category->getTranslation('name') }}
                                     <span class="">
-                                        {{ count($category->products->where('user_id', Auth::user()->id)) }}
+                                        {{ count($category->products->where('user_id', Auth::user()->owner_id)) }}
                                     </span>
                                 </li>
                             @endif
@@ -261,7 +261,7 @@
                                 <span class="fs-13 text-primary fw-600">{{ translate('New Order') }}</span>
                             </p>
                             <h3 class="mb-0" style="color: #A9A3CC">
-                                {{ \App\Models\OrderDetail::where('seller_id', Auth::user()->id)->where('delivery_status', 'pending')->count() }}
+                                {{ \App\Models\OrderDetail::where('seller_id', Auth::user()->owner_id)->where('delivery_status', 'pending')->count() }}
                             </h3>
                         </div>
                     </div>
@@ -300,7 +300,7 @@
                                 <span class="fs-13 text-primary fw-600">{{ translate('Cancelled') }}</span>
                             </p>
                             <h3 class="mb-0" style="color: #A9A3CC">
-                                {{ \App\Models\OrderDetail::where('seller_id', Auth::user()->id)->where('delivery_status', 'cancelled')->count() }}
+                                {{ \App\Models\OrderDetail::where('seller_id', Auth::user()->owner_id)->where('delivery_status', 'cancelled')->count() }}
                             </h3>
                         </div>
                     </div>
@@ -342,7 +342,7 @@
                                 <span class="fs-13 text-primary fw-600">{{ translate('On Delivery') }}</span>
                             </p>
                             <h3 class="mb-0" style="color: #A9A3CC">
-                                {{ \App\Models\OrderDetail::where('seller_id', Auth::user()->id)->where('delivery_status', 'on_the_way')->count() }}
+                                {{ \App\Models\OrderDetail::where('seller_id', Auth::user()->owner_id)->where('delivery_status', 'on_the_way')->count() }}
                             </h3>
                         </div>
                     </div>
@@ -372,7 +372,7 @@
                                 <span class="fs-13 text-primary fw-600">{{ translate('Delivered') }}</span>
                             </p>
                             <h3 class="mb-0" style="color: #A9A3CC">
-                                {{ \App\Models\OrderDetail::where('seller_id', Auth::user()->id)->where('delivery_status', 'delivered')->count() }}
+                                {{ \App\Models\OrderDetail::where('seller_id', Auth::user()->owner_id)->where('delivery_status', 'delivered')->count() }}
                             </h3>
                         </div>
                     </div>
@@ -387,22 +387,25 @@
                         <div class="card-title">
                             <h6 class="mb-0">{{ translate('Purchased Package') }}</h6>
                         </div>
-                        @if (isset(Auth::user()->shop->seller_package))
+                        @php
+                            $vendor = User::find(Auth::user()->owner_id);
+                        @endphp
+                        @if (isset($vendor->shop->seller_package))
                             <div class="d-flex">
                                 <div class="col-3">
-                                    <img src="{{ uploaded_asset(Auth::user()->shop->seller_package->logo) }}"
+                                    <img src="{{ uploaded_asset($vendor->shop->seller_package->logo) }}"
                                         class="img-fluid mb-4 w-64px">
                                 </div>
                                 <div class="col-9">
                                     <a class="fw-600 mb-3 text-primary">{{ translate('Current Package') }}:</a>
                                     <h6 class="text-primary">
-                                        {{ Auth::user()->shop->seller_package->name }}
+                                        {{ $vendor->shop->seller_package->name }}
                                         </h3>
                                         <p class="mb-1 text-muted">{{ translate('Product Upload Limit') }}:
-                                            {{ Auth::user()->shop->product_upload_limit }} {{ translate('Times') }}
+                                            {{ $vendor->shop->product_upload_limit }} {{ translate('Times') }}
                                         </p>
                                         <p class="text-muted mb-4">{{ translate('Package Expires at') }}:
-                                            {{ Auth::user()->shop->package_invalid_at }}
+                                            {{ $vendor->shop->package_invalid_at }}
                                         </p>
                                         <div class="">
                                             <a href="{{ route('seller.seller_packages_list') }}"
@@ -412,7 +415,7 @@
                             </div>
                         @else
                             <h6 class="fw-600 mb-3 text-primary">{{ translate('Package Not Found') }}</h6>
-                        @endif 
+                        @endif
 
                     </div>
                 </div>
