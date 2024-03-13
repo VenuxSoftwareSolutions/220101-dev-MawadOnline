@@ -213,7 +213,7 @@ class ProductController extends Controller
             $data['old_documents'] = $request->old_documents;
             $data['old_document_names'] = $request->old_document_names;
             $this->productUploadsService->store_uploads($data);
-            
+
 
             flash(translate('Product has been inserted successfully'))->success();
 
@@ -225,7 +225,7 @@ class ProductController extends Controller
         }else{
             return redirect()->back();
         }
-        
+
     }
 
     public function getAttributeCategorie(Request $request){
@@ -332,7 +332,7 @@ class ProductController extends Controller
             $attributes_not_selected = array_diff($request->allValues, $request->selected);
         }else{
             $attributes_not_selected = array_diff($request->allValues, []);
-        }        
+        }
 
         $attributes_generale = Attribute::whereIn('id', $attributes_not_selected)->get();
 
@@ -475,7 +475,7 @@ class ProductController extends Controller
         }else{
             $categorie=null;
         }
-        
+
         $attributes = [];
         $childrens = [];
         $childrens_ids = [];
@@ -488,9 +488,9 @@ class ProductController extends Controller
                 $childrens = Product::where('parent_id', $id)->get();
                 $childrens_ids = Product::where('parent_id', $id)->pluck('id')->toArray();
                 $variants_attributes = ProductAttributeValues::whereIn('id_products', $childrens_ids)->where('is_variant', 1)->get();
-                
+
                 $variants_attributes_ids_attributes = ProductAttributeValues::whereIn('id_products', $childrens_ids)->where('is_variant', 1)->pluck('id_attribute')->toArray();
-                
+
             }
             $general_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->get();
             $general_attributes_ids_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->pluck('id_attribute')->toArray();
@@ -503,7 +503,7 @@ class ProductController extends Controller
             if($product_category != null){
                 $categorie = Category::find($product_category->category_id);
                 $current_categorie = $categorie;
-    
+
                 $parents = [];
                 if($current_categorie->parent_id == 0){
                     array_push($parents, $current_categorie->id);
@@ -515,7 +515,7 @@ class ProductController extends Controller
                         $current_categorie = $parent;
                     }
                 }
-    
+
                 if(count($parents) > 0){
                     $attributes_ids = DB::table('categories_has_attributes')->whereIn('category_id', $parents)->pluck('attribute_id')->toArray();
                     if(count($attributes_ids) > 0){
@@ -563,7 +563,7 @@ class ProductController extends Controller
                     'general_attributes' => $data_general_attributes,
                     'colors' => $colors
                 ]);
-            }                
+            }
         }else{
             abort(404);
         }
@@ -599,7 +599,7 @@ class ProductController extends Controller
             $data['old_documents'] = $request->old_documents;
             $data['old_document_names'] = $request->old_document_names;
             $this->productUploadsService->store_uploads($data);
-            
+
 
             flash(translate('Product has been updated successfully'))->success();
 
@@ -670,7 +670,7 @@ class ProductController extends Controller
             ]);
         }
     }
-    
+
 
     public function sku_combination_edit(Request $request)
     {
@@ -814,6 +814,7 @@ class ProductController extends Controller
 
     public function tempStore(Request $request)
     {
+
            // Assuming you have a method to prepare or simulate data needed for the preview
         $detailedProduct = $this->prepareDetailedProductData($request->all());
 
@@ -825,28 +826,241 @@ class ProductController extends Controller
         // Store all necessary data in the session for preview
         $request->session()->put('productPreviewData', compact('detailedProduct', 'product_queries', 'total_query', 'reviews', 'review_status'));
 
-            
+
         $slug = $request->name;
         return response()->json(['data'=>['slug'=>$slug],'success' => true]);
     }
 
-    function prepareDetailedProductData($data){
-        // dd($data['name']) ;
-        $brand= Brand::find($data['brand_id']) ;
-        dd($brand) ;
+    public function prepareDetailedProductData($data){
+        // dd($data) ;
+        // Check if main_photos has files
+        if (isset($data['main_photos']) && is_array($data['main_photos'])) {
+            // Process and save main photos
+            $storedFilePaths = $this->saveMainPhotos($data['main_photos']);
+        } else {
+            // If no main photos are provided, set an empty array
+            $storedFilePaths = [];
+        }
+
+        // Retrieve the brand information
+        $brand = Brand::find($data['brand_id']);
+
+        $total = isset($data['from'][0]) && isset($data['unit_price'][0]) ? $data['from'][0] * $data['unit_price'][0] : "";
+        $numeric_keys = [];
+
+        foreach ($data as $key => $value) {
+            // Extract numeric part from the key
+            $numeric_part = substr($key, strrpos($key, '-') + 1);
+            // Check if the extracted part is numeric and not already added
+            if (is_numeric($numeric_part) && !in_array($numeric_part, $numeric_keys)) {
+                // Add to the array of numeric keys
+                $numeric_keys[] = $numeric_part;
+            }
+        }
+
+       // Now $numeric_keys array contains the unique numeric parts
+       $attributesArray = [];
+        foreach ($numeric_keys as $numeric_key) {
+            // Access corresponding values
+            if (isset($data["attribute_generale-$numeric_key"])) {
+                // Value is set, you can do something with it here
+                $attribute = Attribute::find($numeric_key) ;
+
+                $value = $data["attribute_generale-$numeric_key"];
+            // Add attribute name and value to the array
+            if ($attribute) {
+                $attributesArray[$attribute->getTranslation('name')] = $value;
+            }
+         }
+        }
+        $variants = [];
+
+        foreach ($data as $key => $value) {
+            // Split the key to extract variant ID and attribute ID
+            $parts = explode('-', $key);
+
+            // Ensure the key format is valid
+            if (count($parts) === 3 && $parts[0] === 'attributes') {
+                $variantId = $parts[1];
+                $attributeId = $parts[2];
+
+                // Initialize variant if not exists
+                if (!isset($variants[$variantId])) {
+                    $variants[$variantId] = [];
+                }
+
+                // Add attribute value to the variant
+                $variants[$variantId][$attributeId] = $value;
+            }
+        }
+        // dd($variants) ;
+        // Now $variants contains all values for each variant
+
+        // Prepare detailed product data
         $detailedProduct = [
-            'name'=>$data['name'],
-            'brand'=> $brand,
-            'unit'=>$data['unit'],
-            'description'=>$data['description']
+            'name' => $data['name'],
+            'brand' => $brand ? $brand->name : "",
+            'unit' => $data['unit'],
+            'description' => $data['description'],
+            'main_photos' => $storedFilePaths, // Add stored file paths to the detailed product data
+            'quantity' => isset($data['from'][0]) ? $data['from'][0] : "" ,
+            'price' => isset($data['unit_price'][0]) ? $data['unit_price'][0] : "",
+            'total' => $total,
+            'general_attributes' =>$attributesArray
+
         ];
-        dd($detailedProduct) ;
-        // to save images 
-        // create tmp folder for uploaded images
-
-        // product->image = path
 
 
+
+        $variants_data = [];
+        $general_attributes_data = [];
+        $unit_general_attributes_data = [];
+        foreach ($data as $key => $value) {
+            if (strpos($key, 'attributes-') === 0) {
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[2], $variants_data)){
+                    $variants_data[$ids[2]] = [];
+                }
+                if(!array_key_exists('attributes', $variants_data[$ids[2]])){
+                    $variants_data[$ids[2]]['attributes'][$ids[1]]=$value;
+                }else{
+                    if(!array_key_exists($ids[1], $variants_data[$ids[2]]['attributes'])){
+                        $variants_data[$ids[2]]['attributes'][$ids[1]]=$value;
+                    }
+                }
+
+                $key_pricing = 'variant-pricing-'.$ids[2];
+                if(!isset($data[$key_pricing])){
+                    if(!array_key_exists($ids[2], $variants_data)){
+                        $variants_data[$ids[2]] = [];
+                    }
+
+                    $variants_data[$ids[2]]['pricing'] = $data['variant_pricing-from' . $ids[2]];
+                }
+            }
+
+            if(strpos($key, 'sku') === 0){
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[1], $variants_data)){
+                    $variants_data[$ids[1]] = [];
+                }
+
+                $variants_data[$ids[1]]['sku'] = $value;
+            }
+
+            if(strpos($key, 'stock-warning-') === 0){
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[2], $variants_data)){
+                    $variants_data[$ids[2]] = [];
+                }
+
+                $variants_data[$ids[2]]['stock'] = $value;
+            }
+
+            if(strpos($key, 'variant-published-') === 0){
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[2], $variants_data)){
+                    $variants_data[$ids[2]] = [];
+                }
+
+                $variants_data[$ids[2]]['published'] = $value;
+            }
+
+            if(strpos($key, 'variant-shipping-') === 0){
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[2], $variants_data)){
+                    $variants_data[$ids[2]] = [];
+                }
+
+                $variants_data[$ids[2]]['shipping'] = 1;
+            }
+
+            if(strpos($key, 'photos_variant') === 0){
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[1], $variants_data)){
+                    $variants_data[$ids[1]] = [];
+                }
+
+                $variants_data[$ids[1]]['photo'] = $value;
+            }
+
+            if(strpos($key, 'attributes_units') === 0){
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[2], $variants_data)){
+                    $variants_data[$ids[2]] = [];
+                }
+
+                $variants_data[$ids[2]]['units'][$ids[1]] = $value;
+            }
+
+            if(strpos($key, 'attribute_generale-') === 0){
+                $ids = explode('-', $key);
+                $general_attributes_data[$ids[1]] = $value;
+            }
+
+            if(strpos($key, 'unit_attribute_generale-') === 0){
+                $ids = explode('-', $key);
+                $unit_general_attributes_data[$ids[1]] = $value;
+            }
+
+            if(strpos($key, 'vat_sample-') === 0){
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[1], $variants_data)){
+                    $variants_data[$ids[1]] = [];
+                }
+
+                $variants_data[$ids[1]]['vat_sample'] = $value;
+            }
+
+            if(strpos($key, 'sample_description-') === 0){
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[1], $variants_data)){
+                    $variants_data[$ids[1]] = [];
+                }
+
+                if($value != null){
+                    $variants_data[$ids[1]]['sample_description'] = $value;
+                }
+            }
+
+            if(strpos($key, 'sample_price-') === 0){
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[1], $variants_data)){
+                    $variants_data[$ids[1]] = [];
+                }
+                if($value != null){
+                    $variants_data[$ids[1]]['sample_price'] = $value;
+                }
+
+            }
+        }
+
+        if(!isset($data['activate_attributes'])){
+            $price = $data['unit_price'][0] ;
+            $from = $data['from'][0] ;
+
+
+         }
+
+        return $detailedProduct;
+    }
+
+    private function saveMainPhotos($photos){
+
+        $storedFilePaths = [];
+
+        foreach ($photos as $photo) {
+            // Generate a unique filename
+            $filename = uniqid('main_photo_') . '.' . $photo->getClientOriginalExtension();
+
+            // Store the file to the desired location (e.g., public storage)
+            $storedPath = $photo->storeAs('main_photos', $filename);
+
+            // Add the stored file path to the array
+            $storedFilePaths[] = $storedPath;
+        }
+
+        return $storedFilePaths;
     }
 
 
@@ -861,7 +1075,7 @@ class ProductController extends Controller
 
         // Extract all variables required for the view
         extract($previewData);
-        $detailedProduct = $this->prepareDetailedProductData($previewData);
+
         return view('frontend.product_details.preview', compact('previewData'));
     }
 

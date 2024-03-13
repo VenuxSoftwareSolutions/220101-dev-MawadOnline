@@ -621,7 +621,7 @@ class ProductController extends Controller
 
     public function approve($id){
         $product = Product::findOrFail($id);
-        
+
         $product = Product::find($id);
         $colors = Color::orderBy('name', 'asc')->get();
         $product_category = ProductCategory::where('product_id', $id)->first();
@@ -668,7 +668,7 @@ class ProductController extends Controller
             if($product_category != null){
                 $categorie = Category::find($product_category->category_id);
                 $current_categorie = $categorie;
-    
+
                 $parents = [];
                 if($current_categorie->parent_id == 0){
                     array_push($parents, $current_categorie->id);
@@ -680,7 +680,7 @@ class ProductController extends Controller
                         $current_categorie = $parent;
                     }
                 }
-    
+
                 if(count($parents) > 0){
                     $attributes_ids = DB::table('categories_has_attributes')->whereIn('category_id', $parents)->pluck('attribute_id')->toArray();
                     if(count($attributes_ids) > 0){
@@ -704,7 +704,7 @@ class ProductController extends Controller
                 'general_attributes_ids_attributes' => $general_attributes_ids_attributes,
                 'general_attributes' => $data_general_attributes,
                 'colors' => $colors
-            ]);                
+            ]);
         }else{
             abort(404);
         }
