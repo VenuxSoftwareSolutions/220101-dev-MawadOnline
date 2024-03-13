@@ -8,6 +8,7 @@ use App\Http\Requests\SearchStockRequest;
 use App\Models\Product;
 use App\Models\StockDetails;
 use App\Models\StockSummary;
+use App\Models\User;
 use App\Models\Warehouse;
 use Auth;
 use Carbon\Carbon;

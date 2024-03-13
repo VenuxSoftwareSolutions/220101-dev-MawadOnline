@@ -3,7 +3,7 @@
         <div class="aiz-side-nav-logo-wrap">
             <div class="d-block text-center my-3">
                 @php
-                    $vendor = User::find(Auth::user()->owner_id);
+                    $vendor = \App\Models\User::find(Auth::user()->owner_id);
                 @endphp
                 @if (optional($vendor->shop)->logo != null)
                     <img class="mw-100 mb-3" src="{{ uploaded_asset(optional($vendor->shop)->logo) }}"
