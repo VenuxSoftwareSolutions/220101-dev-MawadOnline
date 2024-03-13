@@ -383,7 +383,7 @@ CoreComponentRepository::initializeCache();
                     'responsive': false
                 }
             },
-            "plugins": ["wholerow", "state", "search"] // Include the search plugin here
+            "plugins": ["wholerow","search"] // Include the search plugin here
         }).on("changed.jstree", function(e, data) {
             if (data && data.selected && data.selected.length) {
                 var selectedId = data.selected[0]; // Get the ID of the first selected node

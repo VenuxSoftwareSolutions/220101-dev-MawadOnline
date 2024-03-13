@@ -10,7 +10,7 @@
       </div>
     </div>
     @php
-        $vendor = User::find(Auth::user()->owner_id);
+        $vendor = \App\Models\User::find(Auth::user()->owner_id);
     @endphp
     <div class="row gutters-10">
         <div class="col-md-4 mb-3 ml-auto" >
@@ -19,7 +19,7 @@
                   <i class="las la-dollar-sign la-2x text-white"></i>
               </span>
               <div class="px-3 pt-3 pb-3">
-                  <div class="h4 fw-700 text-center">{{ single_price($vendor->shop->admin_to_pay) }}</div>
+                  <div class="h4 fw-700 text-center">{{ @single_price($vendor->shop->admin_to_pay) }}</div>
                   <div class="opacity-50 text-center">{{ translate('Pending Balance') }}</div>
               </div>
             </div>
@@ -84,7 +84,7 @@
                     <h5 class="modal-title" id="exampleModalLabel">{{ translate('Send A Withdraw Request') }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
                 </div>
-                @if ($vendor->shop->admin_to_pay > 5)
+                @if (@$vendor->shop->admin_to_pay > 5)
                     <form class="" action="{{ route('seller.money_withdraw_request.store') }}" method="post">
                         @csrf
                         <div class="modal-body gry-bg px-3 pt-3">

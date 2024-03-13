@@ -38,7 +38,7 @@
                             <span class="d-flex align-items-center position-relative">
                                 <i class="las la-bell fs-24"></i>
                                 @php
-                                    $vendor = User::find(Auth::user()->owner_id);
+                                    $vendor = \App\Models\User::find(Auth::user()->owner_id);
                                 @endphp
                                 @if($vendor->unreadNotifications->count() > 0)
                                     <span class="badge badge-sm badge-dot badge-circle badge-primary position-absolute absolute-top-right"></span>

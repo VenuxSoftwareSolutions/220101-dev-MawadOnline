@@ -388,7 +388,7 @@
                             <h6 class="mb-0">{{ translate('Purchased Package') }}</h6>
                         </div>
                         @php
-                            $vendor = User::find(Auth::user()->owner_id);
+                            $vendor = \App\Models\User::find(Auth::user()->owner_id);
                         @endphp
                         @if (isset($vendor->shop->seller_package))
                             <div class="d-flex">
