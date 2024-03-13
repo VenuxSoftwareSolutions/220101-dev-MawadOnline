@@ -16,8 +16,8 @@ class ProfileController extends Controller
      */
     public function index()
     {
-        $user = Auth::user();
-        $addresses = $user->addresses; 
+        $user = User::find(Auth::user()->owner_id) ;
+        $addresses = $user->addresses;
         return view('seller.profile.index', compact('user','addresses'));
     }
 
@@ -34,15 +34,15 @@ class ProfileController extends Controller
             flash(translate('Sorry! the action is not permitted in demo '))->error();
             return back();
         }
-
-        $user = User::findOrFail($id);
+        $staff = User::findOrFail($id);
+        $user = User::findOrFail($staff->owner_id);
         $user->name = $request->name;
         $user->phone = $request->phone;
 
         if($request->new_password != null && ($request->new_password == $request->confirm_password)){
             $user->password = Hash::make($request->new_password);
         }
-        
+
         $user->avatar_original = $request->photo;
 
         $shop = $user->shop;

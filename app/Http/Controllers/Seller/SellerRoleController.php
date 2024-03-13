@@ -33,7 +33,7 @@ class SellerRoleController extends Controller
     {
         //$roles=Auth::user()->roles();
         //$roles = Role::where('id', '!=', 1)->where('role_type',1)->paginate(10);
-        $roles = Role::where('role_type',1)->whereIn('created_by',[1,Auth::user()->id])->paginate(10);
+        $roles = Role::where('role_type',1)->whereIn('created_by',[1,Auth::user()->owner_id])->paginate(10);
         return view('seller.staff.staff_roles.index', compact('roles'));
 
         // $roles = Role::paginate(10);
@@ -69,7 +69,7 @@ class SellerRoleController extends Controller
         $role = Role::create([
             'name' => $request->name,
             'role_type' => 1,
-            'created_by' => Auth::user()->id,
+            'created_by' => Auth::user()->owner_id,
             'description' => $request->description
         ]);
         $role->givePermissionTo($request->permissions);
@@ -127,7 +127,7 @@ class SellerRoleController extends Controller
         abort_if(!auth('web')->user()->can('seller_edit_staff_role'), Response::HTTP_FORBIDDEN, 'ACCESS FORBIDDEN');
 
         $role = Role::findOrFail($id);
-        if($role->created_by != Auth::user()->id || $role->role_type == 0){
+        if($role->created_by != Auth::user()->owner_id || $role->role_type == 0){
             return back();
         }
         if ($request->lang == env("DEFAULT_LANGUAGE")) {

@@ -5,9 +5,10 @@ use Database\Seeders\RoleSeeder;
 use Database\seeds\CategorySeeder;
 use Database\Seeders\EmirateSeeder;
 use Database\seeds\MigrationSeeder;
-use Database\Seeders\AreasTableSeeder;
 use Database\seeds\PermissionSeeder;
+use Database\Seeders\AreasTableSeeder;
 use Database\Seeders\TranslationsTableSeeder;
+use Database\Seeders\AddSellerRoleToUserSeeder;
 use Database\Seeders\TranslationsRegisterVendorPart2;
 use Database\seeds\AddPermessionEnablingAttributeSeeder;
 
@@ -31,5 +32,6 @@ class DatabaseSeeder extends Seeder
         //$this->call(CategorySeeder::class);
         $this->call(PermissionSeeder::class);
         $this->call(RoleSeeder::class);
+        $this->call(AddSellerRoleToUserSeeder::class);
     }
 }

@@ -26,7 +26,7 @@ class CouponController extends Controller
      */
     public function index()
     {
-        $coupons = Coupon::where('user_id', Auth::user()->id)->orderBy('id','desc')->get();
+        $coupons = Coupon::where('user_id', Auth::user()->owner_id)->orderBy('id','desc')->get();
         return view('seller.coupons.index', compact('coupons'));
     }
 
@@ -49,7 +49,7 @@ class CouponController extends Controller
      */
     public function store(CouponRequest $request)
     {
-        $user_id = Auth::user()->id;
+        $user_id = Auth::user()->owner_id;
         Coupon::create($request->validated() + [
             'user_id' => $user_id,
         ]);
@@ -112,7 +112,7 @@ class CouponController extends Controller
     public function get_coupon_form(Request $request)
     {
         if($request->coupon_type == "product_base") {
-            $products = filter_products(\App\Models\Product::where('user_id', Auth::user()->id))->get();
+            $products = filter_products(\App\Models\Product::where('user_id', Auth::user()->owner_id))->get();
             return view('partials.coupons.product_base_coupon', compact('products'));
         }
         elseif($request->coupon_type == "cart_base"){
@@ -124,7 +124,7 @@ class CouponController extends Controller
     {
         if($request->coupon_type == "product_base") {
             $coupon = Coupon::findOrFail($request->id);
-            $products = filter_products(\App\Models\Product::where('user_id', Auth::user()->id))->get();
+            $products = filter_products(\App\Models\Product::where('user_id', Auth::user()->owner_id))->get();
             return view('partials.coupons.product_base_coupon_edit',compact('coupon', 'products'));
         }
         elseif($request->coupon_type == "cart_base"){

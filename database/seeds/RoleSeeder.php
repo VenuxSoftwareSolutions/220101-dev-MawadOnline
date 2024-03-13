@@ -16,10 +16,11 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        $seller=Role::where([
-            'name' => 'seller',
-            'guard_name' => 'web',
-            'role_type' => '1'
+        $seller=Role::updateOrCreate(
+            ['name' => 'seller'],
+            ['guard_name' => 'web',
+            'role_type' => '1',
+            'created_by' => '1',
         ]);
         $seller->givePermissionTo('seller_show_product');
         $seller->givePermissionTo('seller_create_product');
@@ -72,5 +73,9 @@ class RoleSeeder extends Seeder
         $seller->givePermissionTo('seller_edit_wholesale_product');
         $seller->givePermissionTo('seller_delete_wholesale_product');
         $seller->givePermissionTo('seller_view_product_query');
+
+        $admin=Role::where('name','Super Admin')->first();
+        $admin->givePermissionTo('view_seller_staff_roles');
+        $admin->givePermissionTo('add_seller_staff_role');
     }
 }

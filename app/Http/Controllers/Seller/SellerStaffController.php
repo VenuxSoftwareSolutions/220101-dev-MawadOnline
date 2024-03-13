@@ -32,7 +32,7 @@ class SellerStaffController extends Controller
      */
     public function index()
     {
-        $staffs = Staff::where('created_by',Auth::user()->id)->orderBy('id','desc')->paginate(10);
+        $staffs = Staff::where('created_by',Auth::user()->owner_id)->orderBy('id','desc')->paginate(10);
         return view('seller.staff.staffs.index', compact('staffs'));
     }
 
@@ -43,7 +43,7 @@ class SellerStaffController extends Controller
      */
     public function create()
     {
-        $roles = Role::where('role_type',1)->whereIn('created_by',[1,Auth::user()->id])->orderBy('id', 'desc')->get();
+        $roles = Role::where('role_type',1)->whereIn('created_by',[1,Auth::user()->owner_id])->orderBy('id', 'desc')->get();
         return view('seller.staff.staffs.create', compact('roles'));
     }
 
@@ -58,7 +58,7 @@ class SellerStaffController extends Controller
         abort_if(!auth('web')->user()->can('seller_add_staff'), Response::HTTP_FORBIDDEN, 'ACCESS FORBIDDEN');
 
         $url = url('/seller/login');
-        $vendor=Auth::user();
+        $vendor=User::find(Auth::user()->owner_id);
         if(User::where('email', $request->email)->first() == null){
             try {
                 $user = new User;
@@ -77,7 +77,7 @@ class SellerStaffController extends Controller
                 if ($user->save()) {
                     $staff = new Staff;
                     $staff->user_id = $user->id;
-                    $staff->created_by = $vendor->id;
+                    $staff->created_by = $vendor->owner_id;
                     $staff->role_id = $request->role_id;
                     $role = Role::findOrFail($request->role_id);
                     $user->assignRole($role->name);

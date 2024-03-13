@@ -84,7 +84,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        {{ count($order->orderDetails->where('seller_id', Auth::user()->id)) }}
+                                        {{ count($order->orderDetails->where('seller_id', Auth::user()->owner_id)) }}
                                     </td>
                                     <td>
                                         @if ($order->user_id != null)

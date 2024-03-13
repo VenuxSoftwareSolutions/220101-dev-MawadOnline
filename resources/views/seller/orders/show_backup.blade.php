@@ -7,7 +7,7 @@
 
 @php
 $status = $order->delivery_status;
-$payment_status = $order->orderDetails->where('seller_id', Auth::user()->id)->first()->payment_status;
+$payment_status = $order->orderDetails->where('seller_id', Auth::user()->owner_id)->first()->payment_status;
 @endphp
 
 <div class="modal-body gry-bg px-3 pt-0">
@@ -142,7 +142,7 @@ $payment_status = $order->orderDetails->where('seller_id', Auth::user()->id)->fi
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($order->orderDetails->where('seller_id', Auth::user()->id) as $key => $orderDetail)
+                            @foreach ($order->orderDetails->where('seller_id', Auth::user()->owner_id) as $key => $orderDetail)
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
                                     <td>
@@ -204,21 +204,21 @@ $payment_status = $order->orderDetails->where('seller_id', Auth::user()->id)->fi
                                 <td class="w-50 fw-600">{{ translate('Subtotal') }}</th>
                                 <td class="text-right">
                                     <span
-                                        class="strong-600">{{ single_price($order->orderDetails->where('seller_id', Auth::user()->id)->sum('price')) }}</span>
+                                        class="strong-600">{{ single_price($order->orderDetails->where('seller_id', Auth::user()->owner_id)->sum('price')) }}</span>
                                 </td>
                             </tr>
                             <tr>
                                 <td class="w-50 fw-600">{{ translate('Shipping') }}</th>
                                 <td class="text-right">
                                     <span
-                                        class="text-italic">{{ single_price($order->orderDetails->where('seller_id', Auth::user()->id)->sum('shipping_cost')) }}</span>
+                                        class="text-italic">{{ single_price($order->orderDetails->where('seller_id', Auth::user()->owner_id)->sum('shipping_cost')) }}</span>
                                 </td>
                             </tr>
                             <tr>
                                 <td class="w-50 fw-600">{{ translate('Tax') }}</th>
                                 <td class="text-right">
                                     <span
-                                        class="text-italic">{{ single_price($order->orderDetails->where('seller_id', Auth::user()->id)->sum('tax')) }}</span>
+                                        class="text-italic">{{ single_price($order->orderDetails->where('seller_id', Auth::user()->owner_id)->sum('tax')) }}</span>
                                 </td>
                             </tr>
                             <tr>
