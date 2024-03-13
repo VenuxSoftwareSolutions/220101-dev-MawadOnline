@@ -20,7 +20,8 @@ class ShopController extends Controller
 
     public function index()
     {
-        $shop = Auth::user()->shop;
+        $vendor = User::find(Auth::user()->owner_id);
+        $shop = $vendor->shop;
         return view('seller.shop', compact('shop'));
     }
 
@@ -83,8 +84,9 @@ class ShopController extends Controller
 
     public function verify_form()
     {
-        if (Auth::user()->shop->verification_info == null) {
-            $shop = Auth::user()->shop;
+        $vendor = User::find(Auth::user()->owner_id);
+        if ($vendor->shop->verification_info == null) {
+            $shop = $vendor->shop;
             return view('seller.verify_form', compact('shop'));
         } else {
             flash(translate('Sorry! You have sent verification request already.'))->error();
@@ -118,10 +120,11 @@ class ShopController extends Controller
             array_push($data, $item);
             $i++;
         }
-        $shop = Auth::user()->shop;
+        $vendor = User::find(Auth::user()->owner_id);
+        $shop = $vendor->shop;
         $shop->verification_info = json_encode($data);
         if ($shop->save()) {
-            $users = User::findMany([auth()->user()->id, User::where('user_type', 'admin')->first()->id]);
+            $users = User::findMany([auth()->user()->owner_id, User::where('user_type', 'admin')->first()->id]);
             Notification::send($users, new ShopVerificationNotification($shop));
 
             flash(translate('Your shop verification request has been submitted successfully!'))->success();

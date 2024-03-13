@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Seller;
 
-use Illuminate\Http\Request;
-use App\Models\Category;
-use App\Models\Brand;
-use Auth;
-use App\Models\ProductsImport;
 use PDF;
+use Auth;
 use Excel;
+use App\Models\User;
+use App\Models\Brand;
+use App\Models\Category;
+use Illuminate\Http\Request;
+use App\Models\ProductsImport;
 
 class ProductBulkUploadController extends Controller
 {
@@ -20,7 +21,8 @@ class ProductBulkUploadController extends Controller
 
     public function index()
     {
-        if(Auth::user()->shop->verification_status){
+        $owner = User::find(Auth::user()->owner_id);
+        if($owner->shop->verification_status){
             return view('seller.product.product_bulk_upload.index');
         }
         else{

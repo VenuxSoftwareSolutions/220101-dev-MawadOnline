@@ -86,10 +86,11 @@ class ReportController extends Controller
         $date_range = null;
 
         if (Auth::user()->user_type == 'seller') {
-            $seller_id = Auth::user()->id;
+            $seller_id = Auth::user()->owner_id;
         }
         if ($request->seller_id) {
-            $seller_id = $request->seller_id;
+            $vendor = User::find($request->seller_id);
+            $seller_id = $vendor->id;
         }
 
         $commission_history = CommissionHistory::orderBy('created_at', 'desc');

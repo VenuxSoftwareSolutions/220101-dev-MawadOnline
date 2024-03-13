@@ -18,7 +18,7 @@ class CommissionHistoryController extends Controller
         $seller_id = null;
         $date_range = null;
 
-        $commission_history = CommissionHistory::where('seller_id', Auth::user()->id)->orderBy('created_at', 'desc');
+        $commission_history = CommissionHistory::where('seller_id', Auth::user()->owner_id)->orderBy('created_at', 'desc');
 
         if ($request->date_range) {
             $date_range = $request->date_range;

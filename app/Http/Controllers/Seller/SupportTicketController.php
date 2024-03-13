@@ -29,7 +29,7 @@ class SupportTicketController extends Controller
      */
     public function index()
     {
-        $tickets = Ticket::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->paginate(9);
+        $tickets = Ticket::where('user_id', Auth::user()->owner_id)->orderBy('created_at', 'desc')->paginate(9);
         return view('seller.support_ticket.index', compact('tickets'));
     }
 
@@ -43,7 +43,7 @@ class SupportTicketController extends Controller
     {
         $ticket = new Ticket;
         $ticket->code = max(100000, (Ticket::latest()->first() != null ? Ticket::latest()->first()->code + 1 : 0)).date('s');
-        $ticket->user_id = Auth::user()->id;
+        $ticket->user_id = Auth::user()->owner_id;
         $ticket->subject = $request->subject;
         $ticket->details = $request->details;
         $ticket->files = $request->attachments;
