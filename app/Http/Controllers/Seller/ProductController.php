@@ -19,6 +19,9 @@ use App\Models\BusinessInformation;
 use App\Models\ProductTranslation;
 use App\Models\ProductAttributeValues;
 use App\Models\Wishlist;
+use App\Models\Shipper;
+use App\Models\ShippersArea;
+use App\Models\Warehouse;
 use App\Models\UploadProducts;
 use App\Models\User;
 use App\Models\Attribute;
@@ -132,19 +135,40 @@ class ProductController extends Controller
 
     public function create(Request $request)
     {
-        if (addon_is_activated('seller_subscription')) {
-            if (!seller_package_validity_check()) {
-                flash(translate('Please upgrade your package.'))->warning();
-                return back();
-            }
-        }
+        // if (addon_is_activated('seller_subscription')) {
+        //     if (!seller_package_validity_check()) {
+        //         flash(translate('Please upgrade your package.'))->warning();
+        //         return back();
+        //     }
+        // }
 
         $vat_user = BusinessInformation::where('user_id', Auth::user()->id)->first();
         $categories = Category::where('level', 1)
             ->with('childrenCategories')
             ->get();
             //dd($categories);
-        return view('seller.product.products.create', compact('categories', 'vat_user'));
+        
+        $shippers = Shipper::all();
+        $supported_shippers = [];
+        if(count($shippers) > 0){
+            foreach($shippers as $shipper){
+                $shipper_areas = ShippersArea::where('shipper_id', $shipper->id)->get();
+
+                if(count($shipper_areas) > 0){
+                    foreach($shipper_areas as $area){
+                        $warhouses = Warehouse::where('user_id', Auth::user()->id)->where('emirate_id', $area->emirate_id)->where('area_id', $area->area_id)->get();
+                        if(count($warhouses) > 0){
+                            if(!array_key_exists($shipper->id, $supported_shippers)){
+                                $supported_shippers[$shipper->id] = $shipper;
+                            }
+                        }
+                    }
+                }
+                
+            }
+        }
+        
+        return view('seller.product.products.create', compact('categories', 'vat_user', 'supported_shippers'));
     }
 
     public function store(Request $request)
