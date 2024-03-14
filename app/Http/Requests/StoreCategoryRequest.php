@@ -70,11 +70,10 @@ class StoreCategoryRequest extends FormRequest
                 ],
                 'description_' . $langCode => 'required|string|max:' . $descMaxLength,
                 'meta_title_' . $langCode => 'nullable|string|max:' . $maxLength,
-                'meta_description_' . $langCode => 'nullable|string|max:' . ($maxLength + 140),
+                'meta_description_' . $langCode => 'nullable|string|max:' . $descMaxLength,
                 // Additional language-specific rules...
             ]);
         }
-
         return $rules;
 
     }
