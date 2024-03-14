@@ -16,7 +16,7 @@ class PermissionSeeder extends Seeder
     public function run()
     {
 
-        ission::updateOrCreate(
+        Permission::updateOrCreate(
             ['name' => 'seller_show_product'],
             ['section' => 'seller_product_attribute',
             'guard_name' => 'web']
