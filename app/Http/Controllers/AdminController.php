@@ -18,7 +18,7 @@ class AdminController extends Controller
      */
     public function admin_dashboard(Request $request)
     {
-        CoreComponentRepository::initializeCache();
+       // CoreComponentRepository::initializeCache();
         $root_categories = Category::where('level', 0)->get();
 
         $cached_graph_data = Cache::remember('cached_graph_data', 86400, function () use ($root_categories) {
