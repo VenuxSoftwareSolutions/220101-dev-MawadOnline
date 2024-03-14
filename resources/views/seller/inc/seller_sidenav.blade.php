@@ -2,7 +2,7 @@
     <div class="aiz-sidebar left c-scrollbar">
         <div class="aiz-side-nav-logo-wrap">
             <div class="d-block text-center my-3">
-                @php
+                {{-- @php
                     $vendor = \App\Models\User::find(Auth::user()->owner_id);
                 @endphp
                 @if (optional($vendor->shop)->logo != null)
@@ -13,7 +13,7 @@
                         alt="{{ get_setting('site_name') }}">
                 @endif
                 <h3 class="fs-16  m-0 text-primary">{{ optional($vendor->shop)->name }}</h3>
-                <p class="text-primary">{{ $vendor->email }}</p>
+                <p class="text-primary">{{ $vendor->email }}</p> --}}
             </div>
         </div>
         <div class="aiz-side-nav-wrap">

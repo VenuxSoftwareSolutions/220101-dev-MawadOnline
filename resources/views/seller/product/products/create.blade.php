@@ -40,13 +40,13 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Product Name')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" name="name" value="{{ old('name') }}" placeholder="{{ translate('Product Name') }}" required >
+                                <input type="text" class="form-control" name="name" value="{{ old('name') }}" placeholder="{{ translate('Product Name') }}" >
                             </div>
                         </div>
                         <div class="form-group row" id="brand">
                             <label class="col-md-3 col-from-label">{{translate('Brand')}}</label>
                             <div class="col-md-8">
-                                <select class="form-control aiz-selectpicker" name="brand_id" id="brand_id" data-live-search="true" required>
+                                <select class="form-control aiz-selectpicker" name="brand_id" id="brand_id" data-live-search="true">
                                     <option value="">{{ translate('Select Brand') }}</option>
                                     @foreach (\App\Models\Brand::all() as $brand)
                                     <option value="{{ $brand->id }}" @selected(old('brand_id') == $brand->id)>{{ $brand->getTranslation('name') }}</option>
@@ -57,7 +57,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Unit of Sale')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" name="unit" value="{{ old('unit') }}" placeholder="{{ translate('Unit (e.g. KG, Pc etc)') }}" required>
+                                <input type="text" class="form-control" name="unit" value="{{ old('unit') }}" placeholder="{{ translate('Unit (e.g. KG, Pc etc)') }}">
                             </div>
                         </div>
                         <div class="form-group row">
@@ -82,7 +82,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Tags')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" required class="form-control aiz-tag-input" name="tags[]" placeholder="{{ translate('Type and hit enter to add a tag') }}">
+                                <input type="text" class="form-control aiz-tag-input" name="tags[]" placeholder="{{ translate('Type and hit enter to add a tag') }}">
                                 <small class="text-muted">{{translate('This is used for search. Input those words by which cutomer can find this product.')}}</small>
                             </div>
                         </div>
@@ -248,25 +248,25 @@
                                 </thead>
                                 <tbody id="bloc_third_party">
                                     <tr>
-                                        <td><input type="number" class="form-control" id="length" step="0.1" readonly></td>
-                                        <td><input type="number" class="form-control" id="width" step="0.1" readonly></td>
-                                        <td><input type="number" class="form-control" id="height" step="0.1" readonly></td>
-                                        <td><input type="number" class="form-control" id="weight" step="0.1" readonly></td>
+                                        <td><input type="number" name="length" class="form-control" id="length" step="0.1" readonly></td>
+                                        <td><input type="number" name="width" class="form-control" id="width" step="0.1" readonly></td>
+                                        <td><input type="number" name="height" class="form-control" id="height" step="0.1" readonly></td>
+                                        <td><input type="number" name="weight" class="form-control" id="weight" step="0.1" readonly></td>
                                         <td>
-                                            <select class="form-control" id="breakable" disabled>
+                                            <select class="form-control" id="breakable" name="breakable" disabled>
                                                 <option value="yes">{{translate('Yes')}}</option>
                                                 <option value="no">{{translate('No')}}</option>
                                             </select>
                                         </td>
                                         <td>
-                                            <select class="form-control" id="unit_third_party" disabled>
+                                            <select class="form-control" id="unit_third_party" name="unit_third_party" disabled>
                                                 <option value="celsius">{{translate('Celsius')}}</option>
                                                 <option value="kelvin">{{translate('Kelvin')}}</option>
                                                 <option value="fahrenheit">{{translate('Fahrenheit')}}</option>
                                             </select>
                                         </td>
-                                        <td><input type="number" class="form-control" id="min_third_party" step="0.1" readonly></td>
-                                        <td><input type="number" class="form-control" id="max_third_party" step="0.1" readonly></td>
+                                        <td><input type="number" class="form-control" name="min_third_party" id="min_third_party" step="0.1" readonly></td>
+                                        <td><input type="number" class="form-control" name="max_third_party" id="max_third_party" step="0.1" readonly></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -317,12 +317,12 @@
                                         </td>
                                         <td>
                                             <label class="aiz-switch aiz-switch-success mb-0">
-                                                <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping" @if($vat_user->vat_registered == 1) checked @endif>
+                                                <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping[]" @if($vat_user->vat_registered == 1) checked @endif>
                                                 <span></span>
                                             </label>
                                         </td>
                                         <td>
-                                            <select class="form-control shipping_charge" name="shipping_charge[]" disabled>
+                                            <select class="form-control shipping_charge" name="shipping_charge[]">
                                                 <option value="" selected>{{translate('Choose shipping charge')}}</option>
                                                 <option value="flat" @selected(old('shipping_charge') == 'flat')>{{translate('Flat-rate regardless of quantity')}}</option>
                                                 <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
@@ -386,17 +386,17 @@
                             <tbody id="bloc_sample_configuration">
                                 <tr>
                                     <td>
-                                        <select class="form-control shipper_sample" name="shipper_sample[]">
-                                            <option value="" disabled selected>{{translate('Choose shipper')}}</option>
+                                        <select class="form-control shipper_sample" name="shipper_sample">
+                                            <option value="" selected>{{translate('Choose shipper')}}</option>
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control estimated_sample" name="estimated_sample[]"></td>
-                                    <td><input type="number" class="form-control estimated_shipping_sample" name="estimated_shipping_sample[]"></td>
+                                    <td><input type="number" class="form-control estimated_sample" name="estimated_sample"></td>
+                                    <td><input type="number" class="form-control estimated_shipping_sample" name="estimated_shipping_sample"></td>
                                     <td>
-                                        <select class="form-control paid_sample" name="paid_sample[]">
-                                            <option value="" disabled selected>{{translate('Choose paid by')}}</option>
+                                        <select class="form-control paid_sample" name="paid_sample">
+                                            <option value="" selected>{{translate('Choose paid by')}}</option>
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
                                         </select>
@@ -407,7 +407,7 @@
                                             <span></span>
                                         </label>
                                     </td>
-                                    <td><input type="number" class="form-control shipping_amount" name="shipping_amount[]" readonly></td>
+                                    <td><input type="number" class="form-control shipping_amount" name="shipping_amount" readonly></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -771,7 +771,6 @@
         });
     }
 
-
     $(document).ready(function() {
         $('#variant_informations').hide();
         $('#btn-create-variant').hide();
@@ -962,7 +961,7 @@
             $(this).next('.custom-file-label').html(labelText);
         });
 
-        $('body').on('click', '#btn-create-variant', function() {
+        $('body').on('click', '#btn-create-variant', function() { name=""
             // Clone the original div
             var clonedDiv = $('body #variant_informations').clone();
 
@@ -1119,8 +1118,8 @@
             });
 
             clonedDiv.find('.shipper_sample').each(function(index, element) {
-                $(element).attr('name', 'shipper_sample-' + numbers_variant);
-                $('#variant_informations #table_shipping_configuration').find('.shipper_sample').each(function(key, element_original) {
+                $(element).attr('name', 'variant_shipper_sample-' + numbers_variant);
+                $('#variant_informations #table_sample_configuration').find('.shipper_sample').each(function(key, element_original) {
                     if(index == key){
                         $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
                     }
@@ -1129,7 +1128,7 @@
 
             clonedDiv.find('.paid_sample').each(function(index, element) {
                 $(element).attr('name', 'paid_sample-' + numbers_variant);
-                $('#variant_informations #table_shipping_configuration').find('.paid_sample').each(function(key, element_original) {
+                $('#variant_informations #table_sample_configuration').find('.paid_sample').each(function(key, element_original) {
                     if(index == key){
                         $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
                     }
@@ -1927,7 +1926,7 @@
                                     <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id=""></td>
                                     <td>
                                         <select class="form-control shipper" name="shipper[]">
-                                            <option value="" disabled selected>{{translate('Choose shipper')}}</option>
+                                            <option value="" selected>{{translate('Choose shipper')}}</option>
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                         </select>
@@ -1936,7 +1935,7 @@
                                     <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]"></td>
                                     <td>
                                         <select class="form-control paid" name="paid[]">
-                                            <option value="" disabled selected>{{translate('Choose shipper')}}</option>
+                                            <option value="" selected>{{translate('Choose shipper')}}</option>
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
                                         </select>
@@ -1949,13 +1948,13 @@
                                     </td>
                                     <td>
                                         <select class="form-control shipping_charge" name="shipping_charge[]">
-                                            <option value="" disabled selected>{{translate('Choose shipping charge')}}</option>
+                                            <option value="" selected>{{translate('Choose shipping charge')}}</option>
                                             <option value="flat" @selected(old('shipping_charge') == 'flat')>{{translate('Flat-rate regardless of quantity')}}</option>
                                             <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control flat_rate_shipping" name="flat_rate_shipping[]"></td>
-                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="charge_per_unit_shipping[]"></td>
+                                    <td><input type="number" class="form-control flat_rate_shipping" name="flat_rate_shipping[]" readonly></td>
+                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="charge_per_unit_shipping[]" readonly></td>
                                     <td>
                                         <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                         <i class="las la-trash delete_shipping_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
@@ -2030,10 +2029,7 @@
         })
 
         $('body').on('change', '.paid', function(){
-            if($(this).val() == "buyer"){
-                $(this).parent().parent().find('.shipping_charge').prop('disabled', false);
-            }else{
-                $(this).parent().parent().find('.shipping_charge').prop('disabled', true);
+            if($(this).val() != "buyer"){
                 $(this).parent().parent().find('.shipping_charge').find("option:first").prop("selected", true);
                 $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly', true);
                 $(this).parent().parent().find('.charge_per_unit_shipping').val(null);
@@ -2084,7 +2080,7 @@
 
                 $(this).parent().parent().parent().find('#bloc_default_shipping').append(clonedDiv);
             }else{
-
+                $(this).parent().parent().parent().find('#bloc_default_shipping').empty();
             }
         })
 

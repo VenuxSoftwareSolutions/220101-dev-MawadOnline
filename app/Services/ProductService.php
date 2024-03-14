@@ -14,6 +14,7 @@ use App\Models\UploadProducts;
 use App\Models\AttributeValue;
 use App\Models\BusinessInformation;
 use App\Models\Unity;
+use App\Models\Shipping;
 use App\Utility\ProductUtility;
 use Combinations;
 use App\Models\PricingConfiguration;
@@ -26,7 +27,9 @@ class ProductService
     public function store(array $data)
     {
         $collection = collect($data);
-
+        //dd($collection);
+        $vat_user = BusinessInformation::where('user_id', Auth::user()->id)->first();
+        
         $approved = 1;
         if (auth()->user()->user_type == 'seller') {
             $user_id = auth()->user()->id;
@@ -59,6 +62,10 @@ class ProductService
         }else{
             $collection['published'] = 0;
         } 
+
+        if(isset($collection['activate_third_party'])){
+            $collection['activate_third_party'] = 1;
+        }
 
         if ($collection['meta_title'] == null) {
             $collection['meta_title'] = $collection['name'];
@@ -162,6 +169,40 @@ class ProductService
             unset($collection['discount_type']);
             unset($collection['discount_percentage']);
         }
+        //dd($collection['to_shipping'][0]);
+        $shipping = [];
+        foreach($collection['from_shipping'] as $key => $from_shipping){
+            if(($from_shipping != null) && ($collection['to_shipping'][$key]!= null)&& ($collection['shipper'][$key]!= null)&& ($collection['estimated_order'][$key]!= null)&& ($collection['estimated_shipping'][$key]!= null)&& ($collection['paid'][$key]!= null)){
+                $current_data = [];
+                $current_data['from_shipping'] = $from_shipping;
+                $current_data['to_shipping'] = $collection['to_shipping'][$key];
+                $current_data['shipper'] = $collection['shipper'][$key];
+                $current_data['estimated_order'] = $collection['estimated_order'][$key];
+                $current_data['paid'] = $collection['estimated_shipping'][$key];
+                $current_data['paid'] = $collection['paid'][$key];
+                $current_data['shipping_charge'] = $collection['shipping_charge'][$key];
+                $current_data['flat_rate_shipping'] = $collection['flat_rate_shipping'][$key];
+                $current_data['vat_shipping'] = $vat_user->vat_registered;
+                $current_data['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'][$key];
+
+                array_push($shipping, $current_data);
+            }            
+        }
+
+        unset($collection['from_shipping']);
+        unset($collection['to_shipping']);
+        unset($collection['shipper']);
+        unset($collection['estimated_order']);
+        unset($collection['estimated_shipping']);
+        unset($collection['paid']);
+        unset($collection['shipping_charge']);
+        unset($collection['flat_rate_shipping']);
+        unset($collection['vat_shipping']);
+        unset($collection['charge_per_unit_shipping']);
+        unset($collection['date_range_pricing']);
+
+        
+
 
         $data = $collection->merge(compact(
             'user_id',
@@ -197,6 +238,30 @@ class ProductService
 
                     $variants_data[$ids[2]]['pricing'] = $data['variant_pricing-from' . $ids[2]];
                 }
+
+                $key_shipping = 'variant_shipping-'.$ids[2];
+                if(isset($data[$key_shipping])){
+                    if(!array_key_exists($ids[2], $variants_data)){
+                        $variants_data[$ids[2]] = [];
+                    }
+
+                    $variants_data[$ids[2]]['shipping_details'] = $data['variant_shipping-' . $ids[2]];
+                }
+
+                $key_sample_available = 'variant-sample-available'.$ids[2];
+                if(isset($data[$key_sample_available])){
+                    if(!array_key_exists($ids[2], $variants_data)){
+                        $variants_data[$ids[2]] = [];
+                    }
+
+                    $variants_data[$ids[2]]['sample_available'] = 1;
+                }else{
+                    if(!array_key_exists($ids[2], $variants_data)){
+                        $variants_data[$ids[2]] = [];
+                    }
+
+                    $variants_data[$ids[2]]['sample_available'] = 0;
+                }
             }
 
             if(strpos($key, 'sku') === 0){
@@ -207,6 +272,7 @@ class ProductService
 
                 $variants_data[$ids[1]]['sku'] = $value;
             }
+            
 
             if(strpos($key, 'stock-warning-') === 0){
                 $ids = explode('-', $key);
@@ -293,15 +359,72 @@ class ProductService
                 }
 
             }
+
+            if(strpos($key, 'estimated_sample-') === 0){
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[1], $variants_data)){
+                    $variants_data[$ids[1]] = [];
+                }
+
+                $variants_data[$ids[1]]['estimated_sample'] = $value;
+            }
+
+            if(strpos($key, 'estimated_shipping_sample-') === 0){
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[1], $variants_data)){
+                    $variants_data[$ids[1]] = [];
+                }
+
+                $variants_data[$ids[1]]['estimated_shipping_sample'] = $value;
+            }
+
+            if(strpos($key, 'shipping_amount-') === 0){
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[1], $variants_data)){
+                    $variants_data[$ids[1]] = [];
+                }
+
+                $variants_data[$ids[1]]['shipping_amount'] = $value;
+            }
+
+            if(strpos($key, 'variant_shipper_sample-') === 0){
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[1], $variants_data)){
+                    $variants_data[$ids[1]] = [];
+                }
+
+                $variants_data[$ids[1]]['variant_shipper_sample'] = $value;
+            }
+
+            if(strpos($key, 'paid_sample-') === 0){
+                $ids = explode('-', $key);
+                if(!array_key_exists($ids[1], $variants_data)){
+                    $variants_data[$ids[1]] = [];
+                }
+
+                $variants_data[$ids[1]]['paid_sample'] = $value;
+            }
         }
 
-        dd($variants_data);
+        //dd($variants_data);
 
         $ids_attributes_color = Attribute::where('type_value', 'color')->pluck('id')->toArray();
         $ids_attributes_list = Attribute::where('type_value', 'list')->pluck('id')->toArray();
         $ids_attributes_numeric = Attribute::where('type_value', 'numeric')->pluck('id')->toArray();
         $data['sku'] = $data['name'];
+        $prefixToRemove = 'attribute_generale';
+        $prefixToRemoveUnit = 'unit_attribute_generale';
 
+        foreach ($data as $key => $value) {
+            if(strpos($key, $prefixToRemove) === 0){
+              unset($data[$key]);
+            }
+            if(strpos($key, $prefixToRemoveUnit) === 0){
+              unset($data[$key]);
+            }
+        }
+
+        //dd($data);
         if(!isset($data['activate_attributes'])){
             $product = Product::create($data);
             $ids_attributes_color = Attribute::where('type_value', 'color')->pluck('id')->toArray();
@@ -385,6 +508,16 @@ class ProductService
                 }
             }
 
+            if(count($shipping) > 0){
+                $id = $product->id;
+                $keyToPush = 'product_id';
+                $shipping = array_map(function($arr) use ($id, $keyToPush) {
+                    $arr[$keyToPush] = $id;
+                    return $arr;
+                }, $shipping);
+                Shipping::insert($shipping);
+            }
+
             return $product;
         }else{
             // //Create Parent Product
@@ -438,9 +571,21 @@ class ProductService
                 }
                 
             }
+
             if(count($all_data_to_insert_parent) > 0){
                 PricingConfiguration::insert($all_data_to_insert_parent);
             }
+
+            if(count($shipping) > 0){
+                $id = $product_parent->id;
+                $keyToPush = 'product_id';
+                $shipping = array_map(function($arr) use ($id, $keyToPush) {
+                    $arr[$keyToPush] = $id;
+                    return $arr;
+                }, $shipping);
+                Shipping::insert($shipping);
+            }
+
             unset($data['is_parent']);
             $data['parent_id'] = $product_parent->id;
             if(isset($data['vat_sample'])){
@@ -456,7 +601,6 @@ class ProductService
                     'sample_price' => $data['sample_price'],
                 ];
             }
-
 
             unset($data['vat_sample']);
             unset($data['sample_description']);
@@ -481,6 +625,31 @@ class ProductService
                         $data['sample_description'] = $variant['sample_description'];
                         $data['sample_price'] = $variant['sample_price'];
                     }
+
+                    if(isset($variant['variant_shipper_sample'])){
+                        $data['shipper_sample'] = $variant['variant_shipper_sample'];
+                    }
+
+                    if(isset($variant['estimated_sample'])){
+                        $data['estimated_sample'] = $variant['estimated_sample'];
+                    }
+
+                    if(isset($variant['estimated_shipping_sample'])){
+                        $data['estimated_shipping_sample'] = $variant['estimated_shipping_sample'];
+                    }
+
+                    if(isset($variant['paid_sample'])){
+                        $data['paid_sample'] = $variant['paid_sample'];
+                    }
+
+                    if(isset($variant['shipping_amount'])){
+                        $data['shipping_amount'] = $variant['shipping_amount'];
+                    }
+
+                    if(isset($variant['sample_available'])){
+                        $data['sample_available'] = $variant['sample_available'];
+                    }
+
                     $product = Product::create($data);
 
                     //attributes of variant
@@ -656,6 +825,53 @@ class ProductService
                         }
 
                         PricingConfiguration::insert($all_data_to_insert);
+                    }
+
+                    //Shipping of variant
+                    $shipping_details = [];
+                    if(array_key_exists('shipping_details', $variant)){
+                        foreach($variant['shipping_details']['from'] as $key => $from){
+                            if(($from != null) && ($variant['shipping_details']['to'][$key]!= null)&& ($variant['shipping_details']['shipper'][$key]!= null)&& ($variant['shipping_details']['estimated_order'][$key]!= null)&& ($variant['shipping_details']['estimated_shipping'][$key]!= null)&& ($variant['shipping_details']['paid'][$key]!= null)){
+                                $current_shipping = [];
+                                $current_shipping['from_shipping'] = $from;
+                                $current_shipping['to_shipping'] = $variant['shipping_details']['to'][$key];
+                                $current_shipping['shipper'] = $variant['shipping_details']['shipper'][$key];
+                                $current_shipping['estimated_order'] = $variant['shipping_details']['estimated_order'][$key];
+                                $current_shipping['paid'] = $variant['shipping_details']['estimated_shipping'][$key];
+                                $current_shipping['paid'] = $variant['shipping_details']['paid'][$key];
+                                $current_shipping['shipping_charge'] = $variant['shipping_details']['shipping_charge'][$key];
+                                $current_shipping['flat_rate_shipping'] = $variant['shipping_details']['flat_rate_shipping'][$key];
+                                $current_shipping['vat_shipping'] = $vat_user->vat_registered;
+                                $current_shipping['product_id'] = $product->id;
+                                $current_shipping['charge_per_unit_shipping'] = $variant['shipping_details']['charge_per_unit_shipping'][$key];
+
+                                array_push($shipping_details, $current_shipping);
+                            }
+                        }
+
+                        if(count($shipping_details) > 0){
+                            Shipping::insert($shipping_details);
+                        }
+                    }else{
+                        if(count($shipping) > 0){
+                            $keyToRemove = 'product_id'; // For example, let's say you want to remove the element at index 1
+
+                            // Using array_map() and array_filter()
+                            $shipping = array_map(function($arr) use ($keyToRemove) {
+                                return array_filter($arr, function($k) use ($keyToRemove) {
+                                    return $k !== $keyToRemove;
+                                }, ARRAY_FILTER_USE_KEY);
+                            }, $shipping);
+
+                            $id = $product->id;
+                            $keyToPush = 'product_id';
+                            $shipping = array_map(function($arr) use ($id, $keyToPush) {
+                                $arr[$keyToPush] = $id;
+                                return $arr;
+                            }, $shipping);
+
+                            Shipping::insert($shipping);
+                        }
                     }
                 }
 
