@@ -52,6 +52,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
         Route::post('/products/published', 'updatePublished')->name('products.published');
         Route::get('/products/destroy/{id}', 'destroy')->name('products.destroy');
         Route::get('/products/draft/{id}', 'draft')->name('products.draft');
+        Route::get('/products/delete_shipping', 'delete_shipping')->name('products.delete_shipping');
         Route::get('/products/delete_image', 'delete_image')->name('products.delete_image');
         Route::get('/products/delete_pricing', 'delete_pricing')->name('products.delete_pricing');
         Route::post('/products/bulk-delete', 'bulk_product_delete')->name('products.bulk-delete');

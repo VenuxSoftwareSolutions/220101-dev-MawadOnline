@@ -7,6 +7,7 @@ use App\Models\UploadProducts;
 use App\Models\ProductCategory;
 use App\Models\ProductAttributeValues;
 use App\Models\Category;
+use App\Models\Shipping;
 use Illuminate\Database\Eloquent\Model;
 use \Venturecraft\Revisionable\RevisionableTrait;
 use App\Traits\EnhancedRevisionableTrait;
@@ -262,6 +263,11 @@ class Product extends Model
 
         return $productVariantName ;
 
+    }
+
+    public function getShipping(){
+        $shipping = Shipping::where('product_id', $this->id)->get();
+        return $shipping;
     }
 
 }

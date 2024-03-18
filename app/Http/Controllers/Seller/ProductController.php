@@ -20,6 +20,7 @@ use App\Models\ProductTranslation;
 use App\Models\ProductAttributeValues;
 use App\Models\Wishlist;
 use App\Models\Shipper;
+use App\Models\Shipping;
 use App\Models\ShippersArea;
 use App\Models\Warehouse;
 use App\Models\UploadProducts;
@@ -507,7 +508,41 @@ class ProductController extends Controller
         $general_attributes = [];
         $variants_attributes_ids_attributes = [];
         $general_attributes_ids_attributes = [];
+        $chargeable_weight = 0;
+
+        $shippers = Shipper::all();
+        $supported_shippers = [];
+        if(count($shippers) > 0){
+            foreach($shippers as $shipper){
+                $shipper_areas = ShippersArea::where('shipper_id', $shipper->id)->get();
+
+                if(count($shipper_areas) > 0){
+                    foreach($shipper_areas as $area){
+                        $warhouses = Warehouse::where('user_id', Auth::user()->id)->where('emirate_id', $area->emirate_id)->where('area_id', $area->area_id)->get();
+                        if(count($warhouses) > 0){
+                            if(!array_key_exists($shipper->id, $supported_shippers)){
+                                $supported_shippers[$shipper->id] = $shipper;
+                            }
+                        }
+                    }
+                }
+                
+            }
+        }
+
         if($product != null){
+            if($product->activate_third_party == 1){
+                $volumetric_weight = ($product->length * $product->height * $product->width) / 5000;
+                if($volumetric_weight > $product->weight){
+                    $chargeable_weight = $volumetric_weight;
+                }else{
+                    $chargeable_weight = $product->weight;
+                }
+
+                if($product->unit_weight == "pounds"){
+                    $chargeable_weight *= 2.2;
+                }
+            }
             if($product->is_parent == 1){
                 $childrens = Product::where('parent_id', $id)->get();
                 $childrens_ids = Product::where('parent_id', $id)->pluck('id')->toArray();
@@ -570,7 +605,9 @@ class ProductController extends Controller
                     'variants_attributes_ids_attributes' => $variants_attributes_ids_attributes,
                     'general_attributes_ids_attributes' => $general_attributes_ids_attributes,
                     'general_attributes' => $data_general_attributes,
-                    'colors' => $colors
+                    'colors' => $colors,
+                    'supported_shippers' => $supported_shippers,
+                    'chargeable_weight' => $chargeable_weight
                 ]);
             }else{
                 return view('seller.product.products.edit', [
@@ -585,13 +622,30 @@ class ProductController extends Controller
                     'variants_attributes_ids_attributes' => $variants_attributes_ids_attributes,
                     'general_attributes_ids_attributes' => $general_attributes_ids_attributes,
                     'general_attributes' => $data_general_attributes,
-                    'colors' => $colors
+                    'colors' => $colors,
+                    'supported_shippers' => $supported_shippers,
+                    'chargeable_weight' => $chargeable_weight
                 ]);
             }                
         }else{
             abort(404);
         }
         return view('seller.product.products.edit', compact('product', 'categories', 'tags', 'lang'));
+    }
+
+    public function delete_shipping(Request $request){
+        $shipping = Shipping::find($request->id);
+        if($shipping != null){
+            $shipping->delete();
+
+            return response()->json([
+                'status' => 'success'
+            ]);
+        }else{
+            return response()->json([
+                'status' => 'failed'
+            ]);
+        }
     }
 
     public function update(Request $request)
