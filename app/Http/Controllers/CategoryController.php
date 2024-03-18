@@ -159,18 +159,19 @@ class CategoryController extends Controller
         $formattedCategories = Cache::get('categories_children');
         if ($request->has("search") && !empty($request->search['value'])) {
             $searchResults = $this->searchAndHighlightCategory($formattedCategories, $request->search['value']);
-            return response()->json(['data' => $searchResults, 'recordsTotal' => Category::all()->count()]);
+            return response()->json(['data' => $searchResults, 'recordsTotal' => Category::count()]);
         }
         if (isset($formattedCategories)) {
-            return response()->json(['data' => $formattedCategories, 'recordsTotal' => Category::all()->count()]);
+            return response()->json(['data' => $formattedCategories, 'recordsTotal' => Category::count()]);
         } else {
+
             $parentId = $request->input('parent_id', 0); // Default to fetching top-level categories
 
             $categories = Category::where('parent_id', $parentId)->get();
 
             $formattedCategories = $this->formatCategories($categories);
 
-            return response()->json(['data' => $formattedCategories, 'recordsTotal' => Category::all()->count()]);
+            return response()->json(['data' => $formattedCategories, 'recordsTotal' => Category::count()]);
         }
     }
 
@@ -360,8 +361,8 @@ class CategoryController extends Controller
                 $category->cover_image = $path_cover;
             }
 
-            $category->meta_title = $request->meta_title;
-            $category->meta_description = $request->meta_description;
+            $category->meta_title = $request->meta_title_en;
+            $category->meta_description = $request->meta_description_en;
             $category->parent_id = $request->parent_id;
             $category->featured = $request->featured == "on" ? 1 : 0;
 

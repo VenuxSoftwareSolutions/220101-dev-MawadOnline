@@ -2,10 +2,7 @@
 
 @section('content')
 
-@php
-CoreComponentRepository::instantiateShopRepository();
-CoreComponentRepository::initializeCache();
-@endphp
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 
 <div class="aiz-titlebar text-left mt-2 mb-3">
@@ -141,12 +138,22 @@ CoreComponentRepository::initializeCache();
                         <label class="col-md-3 col-form-label">{{translate('Meta Title')}}</label>
                         <div class="col-md-9">
                             <input type="text" class="form-control" name="meta_title" value="{{ $category->getTranslation('meta_title', $lang) }}" placeholder="{{translate('Meta Title')}}">
+                            @if($errors->has('meta_title'))
+                            <span class="text-danger" role="alert">
+                                {{ $errors->first('meta_title') }}
+                            </span>
+                            @endif
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label">{{translate('Meta Description')}}</label>
                         <div class="col-md-9">
                             <textarea name="meta_description" rows="5" class="form-control">{{ $category->getTranslation('meta_description', $lang) }}</textarea>
+                            @if($errors->has('meta_description'))
+                            <span class="text-danger" role="alert">
+                                {{ $errors->first('meta_description') }}
+                            </span>
+                            @endif
                         </div>
                     </div>
                     <div class="form-group row">
