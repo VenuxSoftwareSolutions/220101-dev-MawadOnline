@@ -15,6 +15,7 @@ use App\Models\PricingConfiguration;
 use App\Models\BusinessInformation;
 use App\Models\ProductAttributeValues;
 use App\Models\UploadProducts;
+use App\Models\Brand;
 use Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Attribute;
@@ -636,7 +637,7 @@ class ProductController extends Controller
         $general_attributes = [];
         $variants_attributes_ids_attributes = [];
         $general_attributes_ids_attributes = [];
-        $history = [];
+        
         if($product != null){
             if($product->is_parent == 1){
                 $childrens = Product::where('parent_id', $id)->get();
@@ -659,12 +660,22 @@ class ProductController extends Controller
 
             $general_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->get();
             $general_attributes_ids_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->pluck('id_attribute')->toArray();
+            $historique_parent = DB::table('revisions')->whereIn('revisionable_id', $variants_ids)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
+
             $data_general_attributes = [];
             if(count($general_attributes) > 0){
                 foreach ($general_attributes as $general_attribute){
                     $data_general_attributes[$general_attribute->id_attribute] = $general_attribute;
+                    if(count($historique_parent) > 0){
+                        foreach($historique_parent as $historique){
+                            if($general_attribute->id == $historique->revisionable_id){
+                                $general_attribute->old_value = $historique->old_value;
+                            }
+                        }
+                    }
                 }
             }
+
             if($product_category != null){
                 $categorie = Category::find($product_category->category_id);
                 $current_categorie = $categorie;
@@ -689,7 +700,50 @@ class ProductController extends Controller
                 }
             }
 
-            $history[$product->id] = $product->revisionHistory;
+            $general_informations = [];
+            $general_informations_data = DB::table('revisions')->where('revisionable_id', $id)->where('revisionable_type', 'App\Models\Product')->get();
+
+            if(count($general_informations_data) > 0){
+                foreach($general_informations_data as $general_information){
+                    switch ($general_information->key) {
+                        case 'brand_id':
+                            $brand = Brand::find($general_information->old_value);
+                            if($brand != null){
+                                $general_informations[$general_information->key] = $brand->name;
+                            }else{
+                                $general_informations[$general_information->key] = '';
+                            }
+                            break;
+                        case 'category_id':
+                            $path = '';
+                            $current_category = Category::find($general_information->old_value);
+                            if($current_category != null){
+                                while($current_category->parent_id != 0){
+                                    if($path == ''){
+                                        $path = $current_category->name;
+                                    }else{
+                                        $path = $current_category->name . ' > '  . $path;
+                                    }
+                                    $current_category = Category::find($current_category->parent_id);
+                                }
+                                if($current_category->parent_id == 0){
+                                    if($path == ''){
+                                        $path = $current_category->name;
+                                    }else{
+                                        $path = $current_category->name . ' > '  . $path;
+                                    }
+                                }
+                            }
+                            
+                            $general_informations[$general_information->key] = $path;
+                            break;
+                        
+                        default:
+                            $general_informations[$general_information->key] = $general_information->old_value;
+                            break;
+                    }
+                }
+            }
 
             return view('backend.product.products.approve', [
                 'product' => $product,
@@ -703,7 +757,8 @@ class ProductController extends Controller
                 'variants_attributes_ids_attributes' => $variants_attributes_ids_attributes,
                 'general_attributes_ids_attributes' => $general_attributes_ids_attributes,
                 'general_attributes' => $data_general_attributes,
-                'colors' => $colors
+                'colors' => $colors,
+                'general_informations' => $general_informations
             ]);                
         }else{
             abort(404);

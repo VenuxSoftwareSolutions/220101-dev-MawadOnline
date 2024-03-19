@@ -18,6 +18,7 @@ class Product extends Model
 
     use EnhancedRevisionableTrait;
 
+
     protected function getLastActionNumber()
     {
         $lastRevision = $this->revisionHistory()->latest('id')->first();
@@ -226,8 +227,6 @@ class Product extends Model
                     }
                 }
             }
-
-
         }
 
         return $path;

@@ -57,6 +57,12 @@ class ProductService
             $collection['refundable'] = 0;
         } 
 
+        if($collection['parent_id'] != null){
+            $collection['category_id'] = $collection['parent_id'];
+        }
+
+        unset($collection['parent_id']);
+
         if(isset($collection['published'])){
             $collection['published'] = 1;
         }else{
@@ -4407,6 +4413,12 @@ class ProductService
             $collection['activate_third_party'] = 1;
         }
 
+        if($collection['parent_id'] != null){
+            $collection['category_id'] = $collection['parent_id'];
+        }
+
+        unset($collection['parent_id']);
+        
         $is_draft = 0;
 
         if(isset($collection['button'])){

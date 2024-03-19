@@ -176,7 +176,7 @@ class ProductController extends Controller
     {
         //dd($request->all());
         $product = $this->productService->store($request->except([
-            'parent_id', 'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
+            'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
         ]));
 
         $request->merge(['product_id' => $product->id]);
@@ -215,7 +215,7 @@ class ProductController extends Controller
         $parent = Product::find($request->product_id);
         if($parent != null){
             $product = $this->productService->draft($request->except([
-                'parent_id', 'category_ids', 'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
+                'category_ids', 'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
             ]), $parent);
 
             //Product categories
@@ -654,7 +654,7 @@ class ProductController extends Controller
         $parent = Product::find($request->product_id);
         if($parent != null){
             $product = $this->productService->update($request->except([
-                'parent_id', 'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
+                'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
             ]), $parent);
 
             //Product categories

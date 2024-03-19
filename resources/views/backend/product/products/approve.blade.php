@@ -4,6 +4,10 @@
         display: flex;
         justify-content: center;
     }
+
+    .border{
+        border-color: red !important;
+    }
 </style>
 
 @section('content')
@@ -59,13 +63,13 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Product Name')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" name="name" value="{{ $product->name }}" placeholder="{{ translate('Product Name') }}" >
+                                <input type="text" class="form-control" name="name" value="{{ $product->name }}" @if(array_key_exists('name', $general_informations)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old value is: {{ $general_informations['name'] }}" @endif placeholder="{{ translate('Product Name') }}" >
                             </div>
                         </div>
                         <div class="form-group row" id="brand">
                             <label class="col-md-3 col-from-label">{{translate('Brand')}}</label>
                             <div class="col-md-8">
-                                <select class="form-control aiz-selectpicker" name="brand_id" id="brand_id" data-live-search="true">
+                                <select class="form-control" name="brand_id" id="brand_id" @if(array_key_exists('name', $general_informations)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old value is: {{ $general_informations['brand_id'] }}" @endif data-live-search="true">
                                     <option value="">{{ translate('Select Brand') }}</option>
                                     @foreach (\App\Models\Brand::all() as $brand)
                                     <option value="{{ $brand->id }}" @selected($product->brand_id == $brand->id)>{{ $brand->getTranslation('name') }}</option>
@@ -76,18 +80,18 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Unit of Sale')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" name="unit" value="{{ $product->unit }}" placeholder="{{ translate('Unit (e.g. KG, Pc etc)') }}" >
+                                <input type="text" class="form-control" name="unit" value="{{ $product->unit }}" @if(array_key_exists('unit', $general_informations)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old value is: {{ $general_informations['unit'] }}" @endif placeholder="{{ translate('Unit (e.g. KG, Pc etc)') }}" >
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Country of origin')}}</label>
                             <div class="col-md-8">
                                 <div class="form-item">
-                                    <input id="country_selector" type="text">
+                                    <input id="country_selector" type="text" @if(array_key_exists('country_code', $general_informations)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old value is: {{ $general_informations['country_code'] }}" @endif>
                                     <label for="country_selector" style="display:none;">Select a country here...</label>
                                 </div>
                                 <div class="form-item" style="display:none;">
-                                    <input type="text" id="country_selector_code" name="country_code" data-countrycodeinput="1" readonly="readonly" placeholder="Selected country code will appear here" />
+                                    <input type="text" @if(array_key_exists('country_code', $general_informations)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old value is: {{ $general_informations['country_code'] }}" @endif id="country_selector_code" name="country_code" data-countrycodeinput="1" readonly="readonly" placeholder="Selected country code will appear here" />
                                     <label for="country_selector_code">...and the selected country code will be updated here</label>
                                 </div>
                             </div>
@@ -95,7 +99,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Manufacturer')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" name="manufacturer" value="{{ $product->manufacturer }}" placeholder="Manufacturer" >
+                                <input type="text" class="form-control" name="manufacturer" @if(array_key_exists('manufacturer', $general_informations)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old value is: {{ $general_informations['manufacturer'] }}" @endif value="{{ $product->manufacturer }}" placeholder="Manufacturer" >
                             </div>
                         </div>
                         <div class="form-group row">
@@ -108,15 +112,25 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Short description')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <textarea class="form-control" name="short_description" id="short_description">{{ $product->short_description }}</textarea>
+                                <textarea class="form-control" name="short_description" id="short_description" @if(array_key_exists('short_description', $general_informations)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old value is: {{ $general_informations['short_description'] }}" @endif>{{ $product->short_description }}</textarea>
                                 <div id="charCountShortDescription">Remaining characters: 512</div>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Show Stock Quantity')}}</label>
                             <div class="col-md-8">
-                                <label class="aiz-switch aiz-switch-success mb-0">
-                                    <input type="checkbox" name="stock_visibility_state" value="1" @if( $product->stock_visibility_state == 1) checked="checked" @endif>
+                                <label class="aiz-switch aiz-switch-success mb-0" @if(array_key_exists('stock_visibility_state', $general_informations)) style="border: 1px solid red !important; border-radius: 12px;" data-toggle="tooltip" data-html="true" title="Modified and old value is: @if($general_informations['stock_visibility_state'] == 1) Enabled @else Disabled @endif" @endif>
+                                    <input type="checkbox" name="stock_visibility_state" value="1"  @if( $product->stock_visibility_state == 1) checked="checked" @endif>
+                                    <span></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-3 col-from-label">{{translate('Published')}}</label>
+                            <div class="col-md-8">
+                                <label class="aiz-switch aiz-switch-success mb-0" @if(array_key_exists('published', $general_informations)) style="border: 1px solid red !important; border-radius: 12px;" data-toggle="tooltip" data-html="true" title="Modified and old value is: @if($general_informations['published'] == 1) Enabled @else Disabled @endif" @endif>
+                                    <input type="checkbox" name="published" value="1" @if( $product->published == 1) checked="checked" @endif>
                                     <span></span>
                                 </label>
                             </div>
@@ -135,7 +149,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Refundable')}}</label>
                             <div class="col-md-8">
-                                <label class="aiz-switch aiz-switch-success mb-0">
+                                <label class="aiz-switch aiz-switch-success mb-0" @if(array_key_exists('refundable', $general_informations)) style="border: 1px solid red !important; border-radius: 12px;" data-toggle="tooltip" data-html="true" title="Modified and old value is: @if($general_informations['refundable'] == 1) Enabled @else Disabled @endif" @endif>
                                     <input type="checkbox" name="refundable" @if($product->refundable == 1) checked @endif>
                                     <span></span>
                                 </label>
@@ -313,7 +327,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Video Provider')}}</label>
                             <div class="col-md-8">
-                                <select class="form-control aiz-selectpicker" name="video_provider" id="video_provider">
+                                <select class="form-control" @if(array_key_exists('video_provider', $general_informations)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old video provider is: {{ $general_informations['video_provider'] }}" @endif name="video_provider" id="video_provider">
                                     <option value="youtube" @selected($product->video_provider == 'youtube')>{{translate('Youtube')}}</option>
                                     <option value="vimeo" @selected($product->video_provider == 'vimeo')>{{translate('Vimeo')}}</option>
                                 </select>
@@ -322,7 +336,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Video Link')}}</label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" name="video_link" value="{{ $product->video_link }}" placeholder="{{ translate('Video Link') }}">
+                                <input type="text" class="form-control" @if(array_key_exists('video_link', $general_informations)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old link is: {{ $general_informations['video_link'] }}" @endif name="video_link" value="{{ $product->video_link }}" placeholder="{{ translate('Video Link') }}">
                                 <small class="text-muted">{{translate("Use proper link without extra parameter. Don't use short share link/embeded iframe code.")}}</small>
                             </div>
                         </div>
@@ -344,7 +358,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Category Path')}} :</label>
                             <div class="col-md-8">
-                                <b>{{ $product->pathCategory() }}</b>
+                                <b @if(array_key_exists('category_id', $general_informations)) style="color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old path is: {{ $general_informations['category_id'] }}" @endif >{{ $product->pathCategory() }}</b>
                             </div>
                         </div>
                         
@@ -772,6 +786,18 @@
         @else
             $('#btn-create-variant').hide();
         @endif
+
+        @if(array_key_exists('tags', $general_informations)) 
+            var tags = "{{ $general_informations['tags'] }}";
+            var tagsWithSpace = tags.replace(/,/g, ', ');
+
+            $('.aiz-tag-input').attr('style', 'border: 1px solid red !important');
+            $('.aiz-tag-input').attr('data-toggle', 'tooltip');
+            $('.aiz-tag-input').attr('data-html', 'true');
+            $('.aiz-tag-input').attr('title', tagsWithSpace);
+        @endif
+
+
         
         $('body #bloc_pricing_configuration_variant').hide();
         $('body #bloc_sample_pricing_configuration_variant').hide();
