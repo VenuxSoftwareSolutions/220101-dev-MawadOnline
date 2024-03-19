@@ -89,7 +89,7 @@
 
                             <!-- Become a Seller -->
                             <li class="list-inline-item mr-0 pl-0 py-2">
-                                <a href="{{ route('shops.create') }}"
+                                <a href="{{ route('shops.packages') }}"
                                     class="text-secondary fs-12 pr-3 d-inline-block border-width-2 border-right">{{ translate('Become a Seller !') }}</a>
                             </li>
                             <!-- Seller Login -->
