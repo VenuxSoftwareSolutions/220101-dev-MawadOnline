@@ -666,7 +666,6 @@
                             <label class="col-md-3 col-from-label">{{translate('Description')}}</label>
                             <div class="col-md-8">
                                 <textarea class="aiz-text-editor" name="description"></textarea>
-                                <div id="charCount">Remaining characters: 512</div>
                                 <input type="hidden" id="hidden_value" value="">
                             </div>
                         </div>

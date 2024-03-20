@@ -199,7 +199,8 @@ class ProductController extends Controller
             $data['product'] = $product;
             $data['main_photos'] = $request->main_photos;
             $data['photosThumbnail'] = $request->photosThumbnail;
-            $this->productUploadsService->store_uploads($data);
+            $update = false;
+            $this->productUploadsService->store_uploads($data, $update);
         }
 
         flash(translate('Product has been inserted successfully'))->success();
@@ -237,6 +238,7 @@ class ProductController extends Controller
             $data['photosThumbnail'] = $request->photosThumbnail;
             $data['old_documents'] = $request->old_documents;
             $data['old_document_names'] = $request->old_document_names;
+            $update = false;
             $this->productUploadsService->store_uploads($data);
             
 
@@ -676,7 +678,8 @@ class ProductController extends Controller
             $data['photosThumbnail'] = $request->photosThumbnail;
             $data['old_documents'] = $request->old_documents;
             $data['old_document_names'] = $request->old_document_names;
-            $this->productUploadsService->store_uploads($data);
+            $update = true;
+            $this->productUploadsService->store_uploads($data, $update);
             
 
             flash(translate('Product has been updated successfully'))->success();

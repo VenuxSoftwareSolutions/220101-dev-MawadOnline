@@ -16,6 +16,7 @@ use App\Models\BusinessInformation;
 use App\Models\ProductAttributeValues;
 use App\Models\UploadProducts;
 use App\Models\Brand;
+use App\Models\Unity;
 use Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Attribute;
@@ -635,33 +636,52 @@ class ProductController extends Controller
         $childrens_ids = [];
         $variants_attributes = [];
         $general_attributes = [];
-        $variants_attributes_ids_attributes = [];
         $general_attributes_ids_attributes = [];
+        $variants_attributes_ids_attributes = [];
+        $historique_images = [];
         
         if($product != null){
             if($product->is_parent == 1){
                 $childrens = Product::where('parent_id', $id)->get();
                 $childrens_ids = Product::where('parent_id', $id)->pluck('id')->toArray();
                 $variants_attributes = ProductAttributeValues::whereIn('id_products', $childrens_ids)->where('is_variant', 1)->get();
-
                 $variants_attributes_ids_attributes = ProductAttributeValues::whereIn('id_products', $childrens_ids)->where('is_variant', 1)->pluck('id_attribute')->toArray();
+
+                //Histroique images of variants
+                $images_ids = UploadProducts::where('id_product', $childrens_ids)->where('type', 'images')->orWhere('type', 'thumbnails')->pluck('id')->toArray();
+                $historique_images_revisions = DB::table('revisions')->whereIn('revisionable_id', $images_ids)->where('revisionable_type', 'App\Models\UploadProducts')->pluck('revisionable_id')->toArray();
+                $historique_images = array_merge($historique_images, $historique_images_revisions);
+
+                //Historique attributes of variants
                 $variants_ids = ProductAttributeValues::whereIn('id_products', $childrens_ids)->where('is_variant', 1)->pluck('id')->toArray();
                 $historique_children = DB::table('revisions')->whereIn('revisionable_id', $variants_ids)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
                 if(count($historique_children) > 0){
                     foreach($historique_children as $historique_child){
                         foreach($variants_attributes as $variant){
                             if($variant->id == $historique_child->revisionable_id){
-                                $variant->old_value = $historique_child->old_value;
+                                $variant->key = $historique_child->key;
+                                if($historique_child->key == 'id_units'){
+                                    $unit = Unity::find($historique_child->old_value);
+                                    if($unit != null){
+                                        $variant->old_value = $unit->name;
+                                    }else{
+                                        $variant->old_value = '';
+                                    }
+                                }else{
+                                    $variant->old_value = $historique_child->old_value;
+                                }
                             }
                         }
                     }
                 }
             }
 
+            //Histroique General attributes
             $general_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->get();
             $general_attributes_ids_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->pluck('id_attribute')->toArray();
-            $historique_parent = DB::table('revisions')->whereIn('revisionable_id', $variants_ids)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
-
+            $general_attributes_ids_values = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->pluck('id')->toArray();
+            
+            $historique_parent = DB::table('revisions')->whereIn('revisionable_id', $general_attributes_ids_values)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
             $data_general_attributes = [];
             if(count($general_attributes) > 0){
                 foreach ($general_attributes as $general_attribute){
@@ -669,13 +689,24 @@ class ProductController extends Controller
                     if(count($historique_parent) > 0){
                         foreach($historique_parent as $historique){
                             if($general_attribute->id == $historique->revisionable_id){
-                                $general_attribute->old_value = $historique->old_value;
+                                $general_attribute->key = $historique->key;
+                                if($historique->key == 'id_units'){
+                                    $unit = Unity::find($historique->old_value);
+                                    if($unit != null){
+                                        $general_attribute->old_value = $unit->name;
+                                    }else{
+                                        $general_attribute->old_value = '';
+                                    }
+                                }else{
+                                    $general_attribute->old_value = $historique->old_value;
+                                }
                             }
                         }
                     }
                 }
             }
 
+            //Get attribute of category selected and her path
             if($product_category != null){
                 $categorie = Category::find($product_category->category_id);
                 $current_categorie = $categorie;
@@ -700,6 +731,7 @@ class ProductController extends Controller
                 }
             }
 
+            //Historique Product informations 
             $general_informations = [];
             $general_informations_data = DB::table('revisions')->where('revisionable_id', $id)->where('revisionable_type', 'App\Models\Product')->get();
 
@@ -745,6 +777,40 @@ class ProductController extends Controller
                 }
             }
 
+            //Historique Documents
+            $documents_ids = UploadProducts::where('id_product', $id)->where('type', 'documents')->pluck('id')->toArray();
+            $historique_documents = DB::table('revisions')->whereIn('revisionable_id', $documents_ids)->where('revisionable_type', 'App\Models\UploadProducts')->get();
+            $data_historique_documents = [];
+            if(count($historique_documents) > 0){
+                foreach($historique_documents as $historique_document){
+                    $current_status = [];
+                    if($historique_document->key == "add_document"){
+                        $current_status['border_color'] = 'green';
+                        $current_status['action'] = 'add';
+                    }else{
+                        $current_status['border_color'] = 'red';
+                        $current_status['action'] = 'update';
+                        $new_value = $array = json_decode($historique_document->new_value, true);
+                        $old_value = $array = json_decode($historique_document->old_value, true);
+                        if(array_key_exists('new_document_name', $new_value)){
+                            $current_status['document_name'] = $old_value['old_document_name'];
+                        }
+
+                        if(array_key_exists('new_path', $new_value)){
+                            $current_status['path'] = $old_value['old_path'];
+                        }
+                    }
+
+                    
+                    $data_historique_documents[$historique_document->revisionable_id] = $current_status;
+                }
+            }
+
+            //Historique Image 
+            $images_ids = UploadProducts::where('id_product', $id)->where('type', 'images')->orWhere('type', 'thumbnails')->pluck('id')->toArray();
+            $historique_images_revisions = DB::table('revisions')->whereIn('revisionable_id', $images_ids)->where('revisionable_type', 'App\Models\UploadProducts')->pluck('revisionable_id')->toArray();
+            $historique_images = array_merge($historique_images, $historique_images_revisions);
+
             return view('backend.product.products.approve', [
                 'product' => $product,
                 'vat_user' => $vat_user,
@@ -758,7 +824,9 @@ class ProductController extends Controller
                 'general_attributes_ids_attributes' => $general_attributes_ids_attributes,
                 'general_attributes' => $data_general_attributes,
                 'colors' => $colors,
-                'general_informations' => $general_informations
+                'general_informations' => $general_informations,
+                'data_historique_documents' => $data_historique_documents, 
+                'historique_images' => $historique_images
             ]);                
         }else{
             abort(404);
