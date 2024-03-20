@@ -21,6 +21,7 @@ class RoleSeeder extends Seeder
             ['guard_name' => 'web',
             'role_type' => '1',
             'created_by' => '1',
+            'package_id' => '0',
         ]);
         $seller->givePermissionTo('seller_show_product');
         $seller->givePermissionTo('seller_create_product');
