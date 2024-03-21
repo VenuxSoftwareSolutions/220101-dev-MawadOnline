@@ -23,6 +23,8 @@ class AppServiceProvider extends ServiceProvider
           return $request->user()
               && in_array($request->user()->email, [
                   'private@sabersinan.com',
+                  'badis@sabersinan.com',
+
               ]);
       });
   }
