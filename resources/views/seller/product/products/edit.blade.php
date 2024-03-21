@@ -3094,9 +3094,9 @@
                 var clonedDiv = $('#table_shipping_configuration').clone();
 
                 clonedDiv.find('.shipper').each(function(index, element) {
-                    if(id_variant != null){
+                    if(id_variant != undefined){
                         $(element).attr('name', `variant[shipper][` + id_variant + `][]`)
-                    }else if(id != null){
+                    }else if(id != undefined){
                         
                         $(element).attr('name', `variant_shipping-` + id + `[shipper][]`)
                     }else{
@@ -3111,9 +3111,9 @@
                 });
 
                 clonedDiv.find('.paid').each(function(index, element) {
-                    if(id_variant != null){
+                    if(id_variant != undefined){
                         $(element).attr('name', `variant[paid][` + id_variant + `][]`)
-                    }else if(id != null){
+                    }else if(id != undefined){
                         
                         $(element).attr('name', `variant_shipping-` + id + `[paid][]`)
                     }else{
@@ -3128,9 +3128,9 @@
                 });
 
                 clonedDiv.find('.shipping_charge').each(function(index, element) {
-                    if(id_variant != null){
+                    if(id_variant != undefined){
                         $(element).attr('name', `variant[shipping_charge][` + id_variant + `][]`)
-                    }else if(id != null){
+                    }else if(id != undefined){
                         
                         $(element).attr('name', `variant_shipping-` + id + `[shipping_charge][]`)
                     }else{
@@ -3144,63 +3144,63 @@
                     })
                 });
 
-                if(id_variant != null){
+                if(id_variant != undefined){
                     clonedDiv.find('.min-qty-shipping').attr('name', `variant[from_shipping][` + id_variant + `][]`)
-                }else if(id != null){
+                }else if(id != undefined){
                     
                     clonedDiv.find('.min-qty-shipping').attr('name', `variant_shipping-` + id + `[from][]`)
                 }else{
                     clonedDiv.find('.min-qty-shipping').removeAttr('name');
                 }
 
-                if(id_variant != null){
+                if(id_variant != undefined){
                     clonedDiv.find('.max-qty-shipping').attr('name', `variant[to_shipping][` + id_variant + `][]`)
-                }else if(id != null){
+                }else if(id != undefined){
                     
                     clonedDiv.find('.max-qty-shipping').attr('name', `variant_shipping-` + id + `[to][]`)
                 }else{
                     clonedDiv.find('.max-qty-shipping').removeAttr('name');
                 }
 
-                if(id_variant != null){
+                if(id_variant != undefined){
                     clonedDiv.find('.estimated_order').attr('name', `variant[estimated_order][` + id_variant + `][]`)
-                }else if(id != null){
+                }else if(id != undefined){
                     
                     clonedDiv.find('.estimated_order').attr('name', `variant_shipping-` + id + `[estimated_order][]`)
                 }else{
                     clonedDiv.find('.estimated_order').removeAttr('name');
                 }
 
-                if(id_variant != null){
+                if(id_variant != undefined){
                     clonedDiv.find('.estimated_shipping').attr('name', `variant[estimated_shipping][` + id_variant + `][]`)
-                }else if(id != null){
+                }else if(id != undefined){
                     
                     clonedDiv.find('.estimated_shipping').attr('name', `variant_shipping-` + id + `[estimated_shipping][]`)
                 }else{
                     clonedDiv.find('.estimated_shipping').removeAttr('name');
                 }
 
-                if(id_variant != null){
+                if(id_variant != undefined){
                     clonedDiv.find('.shipping_charge').attr('name', `variant[shipping_charge][` + id_variant + `][]`)
-                }else if(id != null){
+                }else if(id != undefined){
                     
                     clonedDiv.find('.shipping_charge').attr('name', `variant_shipping-` + id + `[shipping_charge][]`)
                 }else{
                     clonedDiv.find('.shipping_charge').removeAttr('name');
                 }
 
-                if(id_variant != null){
+                if(id_variant != undefined){
                     clonedDiv.find('.flat_rate_shipping').attr('name', `variant[flat_rate_shipping][` + id_variant + `][]`)
-                }else if(id != null){
+                }else if(id != undefined){
                     
                     clonedDiv.find('.flat_rate_shipping').attr('name', `variant_shipping-` + id + `[flat_rate_shipping][]`)
                 }else{
                     clonedDiv.find('.flat_rate_shipping').removeAttr('name');
                 }
 
-                if(id_variant != null){
+                if(id_variant != undefined){
                     clonedDiv.find('.charge_per_unit_shipping').attr('name', `variant[charge_per_unit_shipping][` + id_variant + `][]`)
-                }else if(id != null){
+                }else if(id != undefined){
                     
                     clonedDiv.find('.charge_per_unit_shipping').attr('name', `variant_shipping-` + id + `[charge_per_unit_shipping][]`)
                 }else{

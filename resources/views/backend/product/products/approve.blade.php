@@ -32,6 +32,7 @@
             </ul>
         </div>
     @endif
+
     <form>
         <div class="row gutters-5">
             <div class="col-lg-12">
@@ -43,7 +44,6 @@
                         <div class="col-3">
                             <h5 class="mb-0 h6">{{translate('Product Information')}}</h5>
                         </div>
-                        @if($product->is_parent == 0)
                             <div class="col-7">
                                 <span style="float: right;"><b>{{translate('Product status')}}: 
                                     <span class="position-relative main-category-info-icon">
@@ -54,14 +54,13 @@
                             </div>
                             <div class="col-2">
                                 <select class="form-control status" data-id="{{ $product->id }}">
-                                    <option value="0" @if($product->approved == 0) selected @endif>Pending</option>
+                                    <option value="0" @if($product->approved == 0) selected @endif disabled>Pending</option>
                                     <option value="4" @if($product->approved == 4) selected @endif>Under Review</option>
                                     <option value="2" @if($product->approved == 2) selected @endif>Revision Required</option>
                                     <option value="3" @if($product->approved == 3) selected @endif>Rejected</option>
                                     <option value="1" @if($product->approved == 1) selected @endif>Approved</option>
                                 </select>
                             </div>
-                        @endif
                     </div>
                     <div class="card-body">
                         <div class="form-group row">
@@ -73,7 +72,7 @@
                         <div class="form-group row" id="brand">
                             <label class="col-md-3 col-from-label">{{translate('Brand')}}</label>
                             <div class="col-md-8">
-                                <select class="form-control" name="brand_id" id="brand_id" @if(array_key_exists('name', $general_informations)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old value is: {{ $general_informations['brand_id'] }}" @endif data-live-search="true">
+                                <select class="form-control" name="brand_id" id="brand_id" @if(array_key_exists('brand_id', $general_informations)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old value is: {{ $general_informations['brand_id'] }}" @endif data-live-search="true">
                                     <option value="">{{ translate('Select Brand') }}</option>
                                     @foreach (\App\Models\Brand::all() as $brand)
                                     <option value="{{ $brand->id }}" @selected($product->brand_id == $brand->id)>{{ $brand->getTranslation('name') }}</option>
@@ -123,8 +122,8 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Show Stock Quantity')}}</label>
                             <div class="col-md-8">
-                                <label class="aiz-switch aiz-switch-success mb-0" @if(array_key_exists('stock_visibility_state', $general_informations)) style="border: 1px solid red !important; border-radius: 12px;" data-toggle="tooltip" data-html="true" title="Modified and old value is: @if($general_informations['stock_visibility_state'] == 1) Enabled @else Disabled @endif" @endif>
-                                    <input type="checkbox" name="stock_visibility_state" value="1"  @if( $product->stock_visibility_state == 1) checked="checked" @endif>
+                                <label class="aiz-switch aiz-switch-success mb-0">
+                                    <input type="checkbox" name="stock_visibility_state" value="1" @if( $product->stock_visibility_state == "quantity") checked="checked" @endif>
                                     <span></span>
                                 </label>
                             </div>
@@ -627,12 +626,11 @@
                         </div>
                         <div id="bloc_variants_created" style="margin-top: 42px;">
                             @if(count($product->getChildrenProductsDesc()) > 0)
-                                @php $key = count($product->getChildrenProductsDesc()) @endphp
-                                @foreach ($product->getChildrenProductsDesc() as $children)
+                                @foreach ($product->getChildrenProductsDesc() as $key => $children)
                                     <div data-id="{{ $children->id }}">
                                         <div class="row">
                                             <div class="col-3">
-                                                <h3 class="mb-3">Variant informations {{ $key }}</h3>
+                                                <h3 class="mb-3">Variant informations {{ $key + 1 }}</h3>
                                             </div>
                                             <div class="col-7">
                                                 <span style="float: right; margin-top: 11px;"><b>{{translate('Variant status')}}: <span class="position-relative main-category-info-icon">
@@ -674,8 +672,8 @@
                                                     <div class="row mt-3">
                                                         @foreach ($children->getImagesProduct() as $image)
                                                             <div class="col-2 container-img">
-                                                                <img src="{{ asset('/public/'.$image->path) }}" height="120" width="120" />
-                                                                <i class="fa-regular fa-circle-xmark fa-fw fa-lg icon-delete-image" title="delete this image" data-image_id="{{ $image->id }}"></i>
+                                                                <img src="{{ asset('/public/'.$image->path) }}" height="120" width="120" @if(in_array($image->id, $historique_images)) data-toggle="tooltip" data-html="true" title="Image added" style="border: 4px solid green" @endif/>
+                                                                <i class="fa-regular fa-circle-xmark fa-fw fa-lg icon-delete-image" title="delete this image" data-image_id="{{ $image->id }}" ></i>
                                                             </div>
                                                         @endforeach
                                                     </div>
@@ -956,7 +954,6 @@
                                             @endif
                                         </div>
                                     </div>
-                                    @php $key-- @endphp
                                 @endforeach
                             @endif
                         </div>
@@ -1006,12 +1003,32 @@
                                     <div class="col-5">
                                         <div class="form-group">
                                             <label for="exampleInputEmail1">Document name</label>
-                                            <input type="text" class="form-control" @if(array_key_exists($document->id, $data_historique_documents)) @if(array_key_exists('document_name', $data_historique_documents[$document->id])) data-toggle="tooltip" data-html="true" title="Modified and old document name is: {{ $data_historique_documents[$document->id]['document_name'] }}" @endif style="border-color: {{ $data_historique_documents[$document->id]['border_color'] }} !important;" @endif name="old_document_names[{{ $document->id }}]" value="{{ $document->document_name }}">
+                                            <input type="text" class="form-control" @if(array_key_exists($document->id, $data_historique_documents)) 
+                                                                                        @if($data_historique_documents[$document->id]['action'] == "update") 
+                                                                                            @if(array_key_exists('document_name', $data_historique_documents[$document->id])) 
+                                                                                                data-toggle="tooltip" data-html="true" title="Modified and old document name is: {{ $data_historique_documents[$document->id]['document_name'] }}" 
+                                                                                            @endif 
+                                                                                        @else 
+                                                                                            title="New document" 
+                                                                                        @endif 
+                                                                                        style="border-color: {{ $data_historique_documents[$document->id]['border_color'] }} !important;"
+                                                                                    @endif 
+                                                                                     name="old_document_names[{{ $document->id }}]" value="{{ $document->document_name }}">
                                         </div>
                                     </div>
                                     <div class="col-2">
                                         <a href="{{ asset('/public/'.$document->path) }}" download >
-                                            <i class="las la-download font-size-icon" @if(array_key_exists($document->id, $data_historique_documents)) @if(array_key_exists('path', $data_historique_documents[$document->id])) data-toggle="tooltip" data-html="true" title="The document is modified" @endif style="border-color: {{ $data_historique_documents[$document->id]['border_color'] }} !important;" @endif></i>
+                                            <i class="las la-download font-size-icon"   @if(array_key_exists($document->id, $data_historique_documents)) 
+                                                                                            @if($data_historique_documents[$document->id]['action'] == "update") 
+                                                                                                @if(array_key_exists('path', $data_historique_documents[$document->id])) 
+                                                                                                    data-toggle="tooltip" data-html="true" title="The document is modified" 
+                                                                                                @endif 
+                                                                                            @else 
+                                                                                                title="New document" 
+                                                                                            @endif 
+                                                                                            style="border-color: {{ $data_historique_documents[$document->id]['border_color'] }} !important;"
+                                                                                        @endif 
+                                                                                        ></i>
                                         </a>
                                     </div>
                                 </div>
@@ -1119,6 +1136,7 @@
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 <script>
     $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
         $(".plus").click(function () {
             $(this).toggleClass("minus").siblings("ul").toggle();
         })
@@ -1182,11 +1200,12 @@
         })
 
         $('body .aiz-text-editor').each(function(){
-            if ($(this).attr('style') !== undefined) {
+            if ($(this).data('value') !== undefined) {
                 $(this).parent().find('.note-editor.note-frame.card').attr('style', 'border: 1px solid #FF3C50 !important');
                 var value = $(this).attr('data-value');
                 $(this).parent().find('.note-editor.note-frame.card').attr('data-tooltip-toggle', 'tooltip');
-                $(this).parent().find('.note-editor.note-frame.card').tooltip();
+                $(this).parent().find('.note-editor.note-frame.card').tooltip({ html: true });
+                $(this).parent().find('.note-editor.note-frame.card').attr('data-html', 'true');
                 $(this).parent().find('.note-editor.note-frame.card').attr('data-original-title', 'Modified and old value is: ' + value);
             }
         })
@@ -1237,7 +1256,7 @@
                     if(dataResult.status == 'success'){
                         AIZ.plugins.notify('success', '{{ translate("Status updated") }}');
                     }else{
-                        AIZ.plugins.notify('danger', '{{ translate('Something went wrong') }}');
+                        AIZ.plugins.notify('danger', '{{ translate("Something went wrong") }}');
                     }
 
                     $('#reject').modal('hide');
@@ -1265,7 +1284,7 @@
                     if(dataResult.status == 'success'){
                         AIZ.plugins.notify('success', '{{ translate("Status updated") }}');
                     }else{
-                        AIZ.plugins.notify('danger', '{{ translate('Something went wrong') }}');
+                        AIZ.plugins.notify('danger', '{{ translate("Something went wrong") }}');
                     }
 
                     $('#reject').modal('hide');

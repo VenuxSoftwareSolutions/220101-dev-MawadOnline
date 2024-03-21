@@ -1,5 +1,4 @@
 @foreach ($attributes as $attribute)
-
     @if (in_array($attribute->id, $variants_attributes_ids_attributes))
     <div class="row attribute-variant-{{ $attribute->id }}">
         <div class="col-md-4 mb-3">
@@ -8,7 +7,7 @@
         @switch ($attribute->type_value)
             @case('text')
                 <div class="col-md-8 mb-3">
-                    <input type="text" class="form-control attributes" @if(isset($general_attributes[$attribute->id]->old_value)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old video provider is: {{ isset($general_attributes[$attribute->id]->old_value) }}" @endif data-id_attributes="{{ $attribute->id }}" name="variant[attributes][{{ $children->id }}][{{ $attribute->id }}]" value="{{ $variants_attributes[$attribute->id]->value }}">
+                    <input type="text" class="form-control attributes" @if(isset($variants_attributes[$attribute->id]->old_value)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old video provider is: {{ isset($variants_attributes[$attribute->id]->old_value) }}" @endif data-id_attributes="{{ $attribute->id }}" name="variant[attributes][{{ $children->id }}][{{ $attribute->id }}]" value="{{ $variants_attributes[$attribute->id]->value }}">
                 </div>
                 @break;
             @case ('list')
@@ -16,7 +15,7 @@
                     $values = $attribute->attribute_values_list(app()->getLocale());
                 @endphp
                 <div class="col-md-8 mb-3">
-                    <select class="form-control" @if(isset($general_attributes[$attribute->id]->old_value)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old video provider is: {{ isset($general_attributes[$attribute->id]->old_value) }}" @endif data-id_attributes="{{ $attribute->id }}" data-live-search="true" data-selected-text-format="count" name="variant[attributes][{{ $children->id }}][{{ $attribute->id }}]">
+                    <select class="form-control" @if(isset($variants_attributes[$attribute->id]->old_value)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old video provider is: {{ isset($variants_attributes[$attribute->id]->old_value) }}" @endif data-id_attributes="{{ $attribute->id }}" data-live-search="true" data-selected-text-format="count" name="variant[attributes][{{ $children->id }}][{{ $attribute->id }}]">
                         @foreach ($values as $key => $value)
                             <option  value='{{ $value->id }}' @if($variants_attributes[$attribute->id]->id_values == $value->id) selected @endif>{{ $value->value }}</option>
                         @endforeach
@@ -25,7 +24,7 @@
                 @break;
             @case ('color')
                 <div class="col-md-8 mb-3">
-                    <select class="form-control attributes aiz-selectpicker" @if(isset($general_attributes[$attribute->id]->old_value)) data-value="{{ $general_attributes[$attribute->id]->old_value }}" style="border-color: #FF3C50 !important;" @endif data-id_attributes="{{ $attribute->id }}" name="variant[attributes][{{ $children->id }}][{{ $attribute->id }}]" data-type="color" data-live-search="true" data-selected-text-format="count">
+                    <select class="form-control attributes aiz-selectpicker" @if(isset($variants_attributes[$attribute->id]->old_value)) data-value="{{ $variants_attributes[$attribute->id]->old_value }}" style="border-color: #FF3C50 !important;" @endif data-id_attributes="{{ $attribute->id }}" name="variant[attributes][{{ $children->id }}][{{ $attribute->id }}]" data-type="color" data-live-search="true" data-selected-text-format="count">
                         @foreach ($colors as $key => $color)
                             <option value="{{ $color->code }}" @if($variants_attributes[$attribute->id]->id_colors == $color->id) selected @endif data-content="<span><span class='size-15px d-inline-block mr-2 rounded border' style='background:{{ $color->code }}'></span><span>{{ $color->name }}</span></span>"></option>'
                         @endforeach
@@ -41,10 +40,10 @@
                 <div class="col-md-8 mb-3">
                     <div class="row">
                         <div class="col-6">
-                            <input type="number" step="0.1" class="form-control attributes" @if(isset($general_attributes[$attribute->id]->old_value) && ($general_attributes[$attribute->id]->key == "value"))  data-toggle="tooltip" data-html="true" title="Modified and old value is: {{ $general_attributes[$attribute->id]->old_value }}" style="border-color: #FF3C50 !important;" @endif data-id_attributes="{{ $attribute->id }}"  name="variant[attributes][{{ $children->id }}][{{ $attribute->id }}]" value="{{ $variants_attributes[$attribute->id]->value }}">
+                            <input type="number" step="0.1" class="form-control attributes" @if(isset($variants_attributes[$attribute->id]->old_value) && ($variants_attributes[$attribute->id]->key == "value"))  data-toggle="tooltip" data-html="true" title="Modified and old value is: {{ $variants_attributes[$attribute->id]->old_value }}" style="border-color: #FF3C50 !important;" @endif data-id_attributes="{{ $attribute->id }}"  name="variant[attributes][{{ $children->id }}][{{ $attribute->id }}]" value="{{ $variants_attributes[$attribute->id]->value }}">
                         </div>
                         <div class="col-6">
-                            <select class="form-control attributes-units" @if(isset($general_attributes[$attribute->id]->old_value) && ($general_attributes[$attribute->id]->key == "id_units"))  data-toggle="tooltip" data-html="true" title="Modified and old unit is: {{ $general_attributes[$attribute->id]->old_value }}" style="border-color: #FF3C50 !important;" @endif data-id_attributes="{{ $attribute->id }}" name="unit_variant[{{ $children->id }}][{{ $attribute->id }}]" data-live-search="true" data-selected-text-format="count">
+                            <select class="form-control attributes-units" @if(isset($variants_attributes[$attribute->id]->old_value) && ($variants_attributes[$attribute->id]->key == "id_units"))  data-toggle="tooltip" data-html="true" title="Modified and old unit is: {{ $variants_attributes[$attribute->id]->old_value }}" style="border-color: #FF3C50 !important;" @endif data-id_attributes="{{ $attribute->id }}" name="unit_variant[{{ $children->id }}][{{ $attribute->id }}]" data-live-search="true" data-selected-text-format="count">
                                 @foreach ($units as $key=>$unit)
                                     <option  value='{{ $unit->id }}' @if($variants_attributes[$attribute->id]->id_units == $unit->id) selected @endif >{{ $unit->name }}</option>
                                 @endforeach

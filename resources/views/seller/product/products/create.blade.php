@@ -551,7 +551,7 @@
                                 </div>
                                 <div class="col-md-8">
                                     <label class="aiz-switch aiz-switch-success mb-0">
-                                        <input value="1" type="checkbox" class="variant-shipping" checked>
+                                        <input value="1" type="checkbox" class="variant-shipping" data-type="variant-information" checked>
                                         <span></span>
                                     </label>
                                 </div>
@@ -2147,6 +2147,7 @@
         $('body').on('change', '.variant-shipping', function(){
             if ($(this).is(':not(:checked)')){
                 var clonedDiv = $('#table_shipping_configuration').clone();
+                var type_switch = $(this).data('type');
 
                 clonedDiv.find('.shipper').each(function(index, element) {
                     $('#shipping_configuration_box #table_shipping_configuration').find('.shipper').each(function(key, element_original) {
@@ -2174,6 +2175,34 @@
                         }
                     })
                 });
+
+                if(type_switch != undefined){
+                    clonedDiv.find('.min-qty-shipping').removeAttr('name');
+                }
+
+                if(type_switch != undefined){
+                    clonedDiv.find('.max-qty-shipping').removeAttr('name');
+                }
+
+                if(type_switch != undefined){
+                    clonedDiv.find('.estimated_order').removeAttr('name');
+                }
+
+                if(type_switch != undefined){
+                    clonedDiv.find('.estimated_shipping').removeAttr('name');
+                }
+
+                if(type_switch != undefined){
+                    clonedDiv.find('.shipping_charge').removeAttr('name');
+                }
+
+                if(type_switch != undefined){
+                    clonedDiv.find('.flat_rate_shipping').removeAttr('name');
+                }
+
+                if(type_switch != undefined){
+                    clonedDiv.find('.charge_per_unit_shipping').removeAttr('name');
+                }
 
                 $(this).parent().parent().parent().find('#bloc_default_shipping').append(clonedDiv);
             }else{

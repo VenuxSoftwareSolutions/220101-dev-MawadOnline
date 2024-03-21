@@ -75,9 +75,9 @@ class ProductUploadsService
                     if($uploaded_document != null){
                         if($data['old_documents'] != null){
                             if(array_key_exists($key, $data['old_documents'])){
-                                if(file_exists(public_path($uploaded_document->path))){
-                                    unlink(public_path($uploaded_document->path));
-                                }
+                                // if(file_exists(public_path($uploaded_document->path))){
+                                //     unlink(public_path($uploaded_document->path));
+                                // }
                                 $new_document = $data['old_documents'][$key];
                                 $documen_name = time().rand(5, 15).'.'.$new_document->getClientOriginalExtension();
                                 $new_document->move(public_path('/upload_products/Product-'.$collection['product']->id.'/documents') , $documen_name);
@@ -122,9 +122,9 @@ class ProductUploadsService
                                 "old" => ['old_path' => $uploaded_document->path, 'old_document_name' => $uploaded_document->name],
                                 "new" => []
                             ];
-                            if(file_exists(public_path($uploaded_document->path))){
-                                unlink(public_path($uploaded_document->path));
-                            }
+                            // if(file_exists(public_path($uploaded_document->path))){
+                            //     unlink(public_path($uploaded_document->path));
+                            // }
                             $documen_name = time().rand(5, 15).'.'.$document->getClientOriginalExtension();
                             $new_document->move(public_path('/upload_products/Product-'.$collection['product']->id.'/documents') , $documen_name);
                             $path = '/upload_products/Product-'.$collection['product']->id.'/documents'.'/'.$documen_name;
@@ -265,20 +265,5 @@ class ProductUploadsService
                 }
             }
         }
-    }
-
-    private function createThumbnail($path, $imageName,$product_id, $thumbWidth = 300, $thumbHeight = 300 )
-    {
-        // $imgPath = $path;
-        // list($width, $height) = getimagesize($imgPath);
-        // $thumb = imagecreatetruecolor($thumbWidth, $thumbHeight);
-        // $source = imagecreatefromjpeg($imgPath);
-        // imagecopyresized($thumb, $source, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $width, $height);
-
-        // $thumbPath = public_path('/upload_products/Product-'. $product_id) . '/thumbnails/' . $imageName;
-        // imagejpeg($thumb, $thumbPath, 100); // 100 is the quality
-        // imagedestroy($thumb);
-
-        //return $thumbPath;
     }
 }

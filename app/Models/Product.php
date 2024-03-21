@@ -12,12 +12,43 @@ use Illuminate\Database\Eloquent\Model;
 use \Venturecraft\Revisionable\RevisionableTrait;
 use App\Traits\EnhancedRevisionableTrait;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
 
     use EnhancedRevisionableTrait;
+    
 
+    protected $dontKeepRevisionOf = [
+                                    'is_draft', 
+                                    'approved', 
+                                    'sku', 
+                                    'rejection_reason', 
+                                    'slug', 
+                                    'low_stock_quantity', 
+                                    'published', 
+                                    'shipping', 
+                                    'vat_sample', 
+                                    'sample_description', 
+                                    'vat', 
+                                    'sample_price', 
+                                    'activate_third_party',
+                                    'length',
+                                    'width',
+                                    'height',
+                                    'min_third_party',
+                                    'max_third_party',
+                                    'breakable',
+                                    'unit_third_party',
+                                    'shipper_sample',
+                                    'estimated_sample',
+                                    'estimated_shipping_sample',
+                                    'paid_sample',
+                                    'shipping_amount',
+                                    'sample_available',
+                                    'unit_weight'
+                                ];
 
     protected function getLastActionNumber()
     {
@@ -164,7 +195,7 @@ class Product extends Model
     public function getAttributesVariant(){
         $attributes = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->get();
         $variants_id = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->pluck('id')->toArray();
-        $historique_children = DB::table('revisions')->whereIn('revisionable_id', $variants_id)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
+        $historique_children = DB::table('revisions')->whereNull('deleted_at')->whereIn('revisionable_id', $variants_id)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
         if(count($historique_children) > 0){
             foreach($historique_children as $historique_child){
                 foreach($attributes as $variant){
@@ -195,7 +226,6 @@ class Product extends Model
 
     public function getAttributesVariantChildren(){
         $attributes = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->get();
-
         $data = [];
         if(count($attributes) > 0){
             foreach ($attributes as $attribute){
@@ -267,6 +297,10 @@ class Product extends Model
     public function getShipping(){
         $shipping = Shipping::where('product_id', $this->id)->get();
         return $shipping;
+    }
+
+    public function getIdsChildrens(){
+        return Product::where('parent_id', $this->id)->pluck('id')->toArray();
     }
 
 }

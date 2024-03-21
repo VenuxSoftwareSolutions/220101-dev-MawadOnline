@@ -13,6 +13,7 @@ use App\Models\ProductAttributeValues;
 use App\Models\UploadProducts;
 use App\Models\AttributeValue;
 use App\Models\BusinessInformation;
+use Illuminate\Support\Facades\DB;
 use App\Models\Unity;
 use App\Models\Shipping;
 use App\Utility\ProductUtility;
@@ -175,7 +176,7 @@ class ProductService
             unset($collection['discount_type']);
             unset($collection['discount_percentage']);
         }
-        //dd($collection['to_shipping'][0]);
+        //dd($collection);
         $shipping = [];
         
         foreach($collection['from_shipping'] as $key => $from_shipping){
@@ -1043,7 +1044,7 @@ class ProductService
         $variants_new_data = [];
         $general_attributes_data = [];
         $unit_general_attributes_data = [];
-        
+        //dd($data);
         //check if product has old variants 
         if (array_key_exists('variant', $data)) {
             foreach($collection['variant']['sku'] as $key => $sku){
@@ -1117,10 +1118,10 @@ class ProductService
                     if(array_key_exists($key, $data['variant']['shipper_sample'])){
                         $variants_data[$key]['shipper_sample'] = $data['variant']['shipper_sample'][$key];
                     }else{
-                        $variants_data[$key]['shipper_sample'] = $data['variant']['shipper_sample'][$key];
+                        $variants_data[$key]['shipper_sample'] = $data['shipper_sample'];
                     }
                 }else{
-                    $variants_data[$key]['shipper_sample'] = $data['variant']['shipper_sample'][$key];
+                    $variants_data[$key]['shipper_sample'] = $data['shipper_sample'];
                 }
 
                 //////////////////////////////////////////////////////////////////////////
@@ -1129,20 +1130,20 @@ class ProductService
                     if(array_key_exists($key, $data['variant']['estimated_sample'])){
                         $variants_data[$key]['estimated_sample'] = $data['variant']['estimated_sample'][$key];
                     }else{
-                        $variants_data[$key]['estimated_sample'] = $data['variant']['estimated_sample'][$key];
+                        $variants_data[$key]['estimated_sample'] = $data['estimated_sample'];
                     }
                 }else{
-                    $variants_data[$key]['estimated_sample'] = $data['variant']['estimated_sample'][$key];
+                    $variants_data[$key]['estimated_sample'] = $data['estimated_sample'];
                 }
 
                 if(array_key_exists('estimated_shipping_sample', $data['variant'])){
                     if(array_key_exists($key, $data['variant']['estimated_shipping_sample'])){
                         $variants_data[$key]['estimated_shipping_sample'] = $data['variant']['estimated_shipping_sample'][$key];
                     }else{
-                        $variants_data[$key]['estimated_shipping_sample'] = $data['variant']['estimated_shipping_sample'][$key];
+                        $variants_data[$key]['estimated_shipping_sample'] = $data['estimated_shipping_sample'];
                     }
                 }else{
-                    $variants_data[$key]['estimated_shipping_sample'] = $data['variant']['estimated_shipping_sample'][$key];
+                    $variants_data[$key]['estimated_shipping_sample'] = $data['estimated_shipping_sample'];
                 }
 
                 if(array_key_exists('paid_sample', $data['variant'])){
@@ -1159,10 +1160,10 @@ class ProductService
                     if(array_key_exists($key, $data['variant']['shipping_amount'])){
                         $variants_data[$key]['shipping_amount'] = $data['variant']['shipping_amount'][$key];
                     }else{
-                        $variants_data[$key]['shipping_amount'] = $data['variant']['shipping_amount'][$key];
+                        $variants_data[$key]['shipping_amount'] = $data['shipping_amount'];
                     }
                 }else{
-                    $variants_data[$key]['shipping_amount'] = $data['variant']['shipping_amount'][$key];
+                    $variants_data[$key]['shipping_amount'] = $data['shipping_amount'];
                 }
                 
 
@@ -1760,6 +1761,17 @@ class ProductService
                                 $uploaded_document->extension = $image->getClientOriginalExtension();
                                 $uploaded_document->type = 'images';
                                 $uploaded_document->save();
+                                
+                                DB::table('revisions')->insert([
+                                    "revisionable_type" => "App\Models\UploadProducts",
+                                    "revisionable_id" => $uploaded_document->id,
+                                    "user_id" => Auth::user()->id,
+                                    "key" => 'add_image',
+                                    "old_value" => NULL,
+                                    "new_value" => $uploaded_document->id,
+                                    'created_at'            => new \DateTime(),
+                                    'updated_at'            => new \DateTime(),
+                                ]);
                             }
                         }
 
