@@ -72,7 +72,7 @@ class UpdateCategoryRequest extends FormRequest
             ],
             'description'=> 'sometimes|string|max:' . $descMaxLength,
             'meta_title' => 'nullable|string|max:' . $maxLength,
-            'meta_description'=> 'nullable|string|max:' . ($maxLength + 140),
+            'meta_description'=> 'nullable|string|max:' . $descMaxLength,
             // Additional language-specific rules...
         ]);
 

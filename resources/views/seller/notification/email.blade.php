@@ -69,7 +69,7 @@
 
         @elseif ($newStatus == 'Rejected')
             <!-- Display message for rejected status -->
-            <p>{{ __('messages.registration_rejected') }}</p>
+            <p>Your vendor registration has been rejected. You can update your registration form and resubmit it for review. Upon resubmission, your status will change to "Pending Approval". Please ensure to resubmit your registration within 30 days, otherwise, your account will be automatically deleted.</p>
              <!-- Display suspension details if available -->
             @if (!empty($reason))
             <!-- Display the reason -->

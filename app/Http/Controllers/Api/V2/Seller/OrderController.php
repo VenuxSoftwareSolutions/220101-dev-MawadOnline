@@ -30,7 +30,7 @@ class OrderController extends Controller
             });
         }
 
-        $orders = $order_query->where('seller_id', auth()->user()->id)->latest()->paginate(10);
+        $orders = $order_query->where('seller_id', auth()->user()->owner_id)->latest()->paginate(10);
 
         return new OrderCollection($orders);
     }
@@ -38,13 +38,13 @@ class OrderController extends Controller
 
     public function getOrderDetails($id)
     {
-        $order_detail = Order::where('id', $id)->where('seller_id', auth()->user()->id)->get();
+        $order_detail = Order::where('id', $id)->where('seller_id', auth()->user()->owner_id)->get();
         return  OrderDetailResource::collection($order_detail);
     }
 
     public function getOrderItems($id)
     {
-        $order_id = Order::select('id')->where('id', $id)->where('seller_id', auth()->user()->id)->first();
+        $order_id = Order::select('id')->where('id', $id)->where('seller_id', auth()->user()->owner_id)->first();
         $order_query = OrderDetail::where('order_id', $order_id->id);
 
         return  OrderItemResource::collection($order_query->get());

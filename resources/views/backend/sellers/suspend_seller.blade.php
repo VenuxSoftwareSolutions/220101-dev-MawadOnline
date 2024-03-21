@@ -137,6 +137,43 @@ use Carbon\Carbon;
 <script>
     document.getElementById('submitRejection').addEventListener('click', function(event) {
         event.preventDefault(); // Prevent the default form submission
+ // Check if the Suspension Reason and Reason Title fields are not empty
+ var suspensionReason = document.getElementById('reason').value.trim();
+        var reasonTitle = document.getElementById('reason-title').value.trim();
+        var reasonDetails = document.getElementById('editor').value.trim();
+
+        if (!suspensionReason) {
+            // If Suspension Reason is empty, show an error message
+            Swal.fire({
+                title: 'Error!',
+                text: 'Please select a Suspension Reason.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            return; // Exit the function without submitting the form
+        }
+
+        if (!reasonTitle) {
+            // If Reason Title is empty, show an error message
+            Swal.fire({
+                title: 'Error!',
+                text: 'Please enter a Reason Title.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            return; // Exit the function without submitting the form
+        }
+
+        if (!reasonDetails) {
+            // If Reason Details is empty, show an error message
+            Swal.fire({
+                title: 'Error!',
+                text: 'Please provide Reason Details.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            return; // Exit the function without submitting the form
+        }
 
         // Use SweetAlert for confirmation
         Swal.fire({

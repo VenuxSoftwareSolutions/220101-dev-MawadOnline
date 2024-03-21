@@ -19,7 +19,7 @@
                           <div class="col-auto">
                               <div class="media">
                                   <span class="avatar avatar-sm flex-shrink-0">
-                                    @if (Auth::user()->id == $conversation->sender_id)
+                                    @if (Auth::user()->owner_id == $conversation->sender_id)
                                         <img @if ($conversation->receiver->avatar_original == null) src="{{ static_asset('assets/img/avatar-place.png') }}" @else src="{{ uploaded_asset($conversation->receiver->avatar_original) }}" @endif onerror="this.onerror=null;this.src='{{ static_asset('assets/img/avatar-place.png') }}';">
                                     @else
                                         <img @if ($conversation->sender->avatar_original == null) src="{{ static_asset('assets/img/avatar-place.png') }}" @else src="{{ uploaded_asset($conversation->sender->avatar_original) }}" @endif class="rounded-circle" onerror="this.onerror=null;this.src='{{ static_asset('assets/img/avatar-place.png') }}';">
@@ -29,7 +29,7 @@
                           </div>
                           <div class="col-auto col-lg-3">
                               <p>
-                                  @if (Auth::user()->id == $conversation->sender_id)
+                                  @if (Auth::user()->owner_id == $conversation->sender_id)
                                       <span class="fw-600">{{ $conversation->receiver->name }}</span>
                                   @else
                                       <span class="fw-600">{{ $conversation->sender->name }}</span>
@@ -49,7 +49,7 @@
                                                   <a href="{{ route('seller.conversations.show', encrypt($conversation->id)) }}" class="text-dark fw-600">
                                                       {{ $conversation->title }}
                                                   </a>
-                                                  @if ((Auth::user()->id == $conversation->sender_id && $conversation->sender_viewed == 0) || (Auth::user()->id == $conversation->receiver_id && $conversation->receiver_viewed == 0))
+                                                  @if ((Auth::user()->owner_id == $conversation->sender_id && $conversation->sender_viewed == 0) || (Auth::user()->owner_id == $conversation->receiver_id && $conversation->receiver_viewed == 0))
                                                       <span class="badge badge-inline badge-danger">{{ translate('New') }}</span>
                                                   @endif
                                               </h6>

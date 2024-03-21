@@ -67,7 +67,7 @@ class RefundRequestController extends Controller
      */
     public function vendor_index()
     {
-        $refunds = RefundRequest::where('seller_id', Auth::user()->id)->latest()->paginate(10);
+        $refunds = RefundRequest::where('seller_id', Auth::user()->owner_id)->latest()->paginate(10);
 
         return view('refund_request.frontend.recieved_refund_request.index', compact('refunds'));
 

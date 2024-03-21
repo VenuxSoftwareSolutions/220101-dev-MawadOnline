@@ -13,13 +13,13 @@ class RefundController extends Controller
     //
 
     public function index(){
-        $sellerId = auth()->user()->id;
+        $sellerId = auth()->user()->owner_id;
 
         $refunds = RefundRequest::where('seller_id',$sellerId)->latest()->paginate(10);
         return new RefundRequestCollection($refunds);
     }
-    
-    
+
+
         public function request_approval_vendor(Request $request)
     {
         $refund = RefundRequest::findOrFail($request->refund_id);
@@ -28,11 +28,11 @@ class RefundController extends Controller
             $refund->seller_approval = 1;
             $refund->admin_approval = 1;
         }
-        elseif (auth()->user()->user_type == 'seller' && $refund->seller_id==auth()->user()->id){
+        elseif (auth()->user()->user_type == 'seller' && $refund->seller_id==auth()->user()->owner_id){
             $refund->seller_approval = 1;
         }
 
-        if ($refund->save()) 
+        if ($refund->save())
         {
            return $this->success(translate('Refund Status has been change successfully'))  ;
         }
@@ -48,11 +48,11 @@ class RefundController extends Controller
           $refund->admin_approval = 2;
           $refund->refund_status  = 2;
       }
-      elseif (auth()->user()->user_type == 'seller' && $refund->seller_id==auth()->user()->id){
+      elseif (auth()->user()->user_type == 'seller' && $refund->seller_id==auth()->user()->owner_id){
           $refund->seller_approval = 2;
       }
-      
-      if ($refund->save()) 
+
+      if ($refund->save())
         {
            return $this->success(translate('Refund Status has been change successfully'))  ;
         }

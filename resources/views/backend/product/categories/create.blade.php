@@ -2,11 +2,6 @@
 
 @section('content')
 
-@php
-CoreComponentRepository::instantiateShopRepository();
-CoreComponentRepository::initializeCache();
-@endphp
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 <div class="row">
     <div class="col-lg-8 mx-auto">
@@ -189,8 +184,17 @@ CoreComponentRepository::initializeCache();
                             <div class="row">
                                 <label class="col-md-3 col-form-label">{{translate('Meta Title')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
                                 <div class="col-md-9">
-                                    <input type="text" class="form-control" name="meta_title{{$language->code=='en'?'':'_'.$language->code}}" placeholder="{{translate('Meta Title '. ($language->code=='en'?'':$language->code))}}" value="{{old('meta_title'. ($language->code=='en'?'':'_'.$language->code))}}">
+                                    <input type="text" class="form-control" name="meta_title_{{$language->code}}" placeholder="{{translate('Meta Title '. ($language->code=='en'?'':$language->code))}}" value="{{old('meta_title_'.$language->code)}}">
+                                    <div class="mt-3">
+                                        @if($errors->has('meta_title'.'_'.$language->code))
+                                        <span class="text-danger" role="alert">
+                                            {{ translate($errors->get('meta_title'.'_'.$language->code)[0]) }}
+                                        </span>
+
+                                        @endif
+                                    </div>
                                 </div>
+                              
                             </div>
                         </div>
 
@@ -202,8 +206,17 @@ CoreComponentRepository::initializeCache();
                             <div class="row">
                                 <label class="col-md-3 col-form-label">{{translate('Meta Description')}}<i class="las la-language text-danger" title="{{translate('Translatable')}}"></i></label>
                                 <div class="col-md-9">
-                                    <textarea name="meta_description{{$language->code=='en'?'':'_'.$language->code}}" rows="5" class="form-control">{{old('meta_description'. ($language->code=='en'?'':'_'.$language->code))}}</textarea>
+                                    <textarea name="meta_description_{{$language->code}}" rows="5" class="form-control">{{old('meta_description_'.$language->code)}}</textarea>
+                                    <div class="mt-3">
+                                        @if($errors->has('meta_description'.'_'.$language->code))
+                                        <span class="text-danger" role="alert">
+                                            {{ translate($errors->get('meta_description'.'_'.$language->code)[0]) }}
+                                        </span>
+
+                                        @endif
+                                    </div>
                                 </div>
+                                
                             </div>
                         </div>
 
@@ -383,7 +396,7 @@ CoreComponentRepository::initializeCache();
                     'responsive': false
                 }
             },
-            "plugins": ["wholerow", "state", "search"] // Include the search plugin here
+            "plugins": ["wholerow","search"] // Include the search plugin here
         }).on("changed.jstree", function(e, data) {
             if (data && data.selected && data.selected.length) {
                 var selectedId = data.selected[0]; // Get the ID of the first selected node

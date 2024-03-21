@@ -294,7 +294,7 @@ class LoginController extends Controller
     
         // Redirecting Admins and Staff
         if (auth()->user()->user_type == 'admin' || auth()->user()->user_type == 'staff') {
-            CoreComponentRepository::instantiateShopRepository();
+            //CoreComponentRepository::instantiateShopRepository();
             return redirect()->route('admin.dashboard');
         }
     

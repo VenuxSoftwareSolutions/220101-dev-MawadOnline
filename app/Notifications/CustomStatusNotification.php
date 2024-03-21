@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class CustomStatusNotification extends Notification
+class CustomStatusNotification extends Notification implements ShouldQueue
 {
     use Queueable;
     protected $oldStatus;

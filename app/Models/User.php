@@ -27,10 +27,10 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $fillable = [
-        'name', 'email','user_type','first_name','last_name' ,'password', 'address', 'city', 'postal_code', 'phone', 'country', 'provider_id', 'email_verified_at', 'verification_code'
+        'name', 'email','user_type','first_name','last_name' ,'password', 'address', 'city', 'postal_code', 'phone', 'country', 'provider_id', 'email_verified_at', 'verification_code',
     ];
     protected $dates = [
-        'approved_at',
+        'approved_at','last_status_update'
     ];
     /**
      * The attributes that should be hidden for arrays.
@@ -196,5 +196,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getStaff() {
         return $this->hasMany(User::class, 'owner_id', 'id')->where('id','!=',$this->id);
     }
+    protected static function boot()
+    {
+        parent::boot();
 
+        static::updating(function ($user) {
+            // Check if the status attribute is being updated
+            if ($user->isDirty('status')) {
+                // Update the last_status_update attribute with the current timestamp
+                $user->last_status_update = now();
+            }
+        });
+    }
 }

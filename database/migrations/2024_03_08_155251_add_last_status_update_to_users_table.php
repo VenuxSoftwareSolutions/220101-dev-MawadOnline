@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('staff', function (Blueprint $table) {
-            $table->unsignedBigInteger('seller_id')->nullable()->after('role_id');
+        Schema::table('users', function (Blueprint $table) {
+            $table->timestamp('last_status_update')->nullable()->after('status');
         });
     }
 
@@ -25,8 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('staff', function (Blueprint $table) {
-            $table->dropColumn('seller_id');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('last_status_update');
         });
     }
 };
