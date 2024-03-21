@@ -358,13 +358,25 @@
                         <div class="nav aiz-nav-tabs">
                             <a href="#tab_default_1" data-toggle="tab"
                                 class="mr-5 pb-2 fs-16 fw-700 text-reset active show">Description</a>
+                            <a href="#tab_default_2" data-toggle="tab" class="mr-5 pb-2 fs-16 fw-700 text-reset">Video</a>
                         </div>
 
                         <!-- Description -->
                         <div class="tab-content pt-0">
                             <!-- Description -->
                             <div class="tab-pane fade active show" id="tab_default_1">
+
                                 <div class="py-5">
+                                    @if(!empty($previewData['detailedProduct']['description']))
+                                    <div class="mw-100 overflow-hidden text-left aiz-editor-data">
+                                        {!! $previewData['detailedProduct']['description'] !!}
+                                    </div>
+                                    @else
+                                        <div class="mw-100 overflow-hidden text-left aiz-editor-data">
+                                            No description available.
+                                        </div>
+                                    @endif
+
                                     <div class="mw-100 overflow-hidden text-left aiz-editor-data">
                                         <p></p>
                                         <div id="andonCord_feature_div" class="celwidget" data-feature-name="andonCord"
@@ -441,6 +453,10 @@
                             <div class="tab-pane fade" id="tab_default_2">
                                 <div class="py-5">
                                     <div class="embed-responsive embed-responsive-16by9">
+                                        {{-- <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/{{ $youtubeVideoId }}" allowfullscreen></iframe> --}}
+                                        {{-- @if ($videoData['video_provider'] === 'youtube') --}}
+                                        {{-- <iframe class="embed-responsive-item" src="https://www.youtube.com/watch?v=nk1n4wYSGAs&t=2245s" allowfullscreen></iframe> --}}
+                                        {{-- @endif --}}
                                     </div>
                                 </div>
                             </div>
@@ -498,7 +514,7 @@
                             </div>
 
                             <!-- Product queries -->
-                            <div class="produc-queries mb-4">
+                            {{-- <div class="produc-queries mb-4">
                                 <div class="query d-flex  my-2">
                                     <span class="mt-1">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="36"
@@ -707,7 +723,7 @@
                                     </ul>
                                 </nav>
 
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
 
@@ -1246,5 +1262,133 @@
                 }
             });
         }
+    </script>
+    <script>
+        $(document).ready(function() {
+              // Set the CSRF token for all AJAX requests
+               $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+            $('.quantity-control').click(function() {
+
+                var action = $(this).data('type');
+                var quantityInput = $('#quantity');
+                var currentQuantity = parseInt(quantityInput.val());
+
+                // if (action === 'plus') {
+                //     // Increment quantity
+                //     quantityInput.val(currentQuantity + 1);
+                // } else if (action === 'minus' && currentQuantity > 1) {
+                //     // Decrement quantity, ensuring it doesn't go below 1
+                //     quantityInput.val(currentQuantity - 1);
+                // }
+
+                // // Update the disabled state of buttons based on quantity
+                // $('.quantity-control[data-type="minus"]').prop('disabled', currentQuantity <= 1);
+                // $('.quantity-control[data-type="plus"]').prop('disabled', currentQuantity >= 197);
+
+                // AJAX request to update quantity
+                $.ajax({
+                    url: '{{route("seller.update-price-preview")}}', // URL to your backend endpoint
+                    method: 'POST', // or 'GET' depending on your backend implementation
+                    data: { quantity: quantityInput.val() },
+                    success: function(response) {
+                        // Handle successful response
+                        console.log(response.unit_price)
+                        $("#qty-interval").text(response.unit_price+" AED")
+                        $("#quantity").val(response.qty)
+                        $("#chosen_price").text(response.total+" AED")
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle errors
+                        console.error('Error updating quantity:', error);
+                    }
+                });
+            });
+
+    // Function to gather checked attributes and values and send them via AJAX
+    function sendCheckedAttributes($currentRadio) {
+                var checkedAttributes = {};
+                $('.attribute_value input[type=radio]:checked').each(function () {
+                    var attributeId = $(this).attr('attributeId');
+
+                    var attributeValue = $(this).val();
+                    checkedAttributes[attributeId] = attributeValue;
+                });
+                console.log(checkedAttributes)
+                // Send checked attributes via AJAX
+                $.ajax({
+                    url: '{{route("seller.product.checked.attributes")}}',
+                    method: 'POST',
+                    data: { checkedAttributes: checkedAttributes },
+                    success: function (response) {
+                    // Handle success response
+                    console.log(response);
+                    if (response.anyMatched == false) {
+
+                        // Uncheck radio buttons for the current attribute
+                        // $('.attribute_value input[type=radio]').filter(':checked').prop('checked', false);
+                        $('.attribute_value input[type=radio]').not($currentRadio).prop('checked', false);
+
+                        $('label.attribute_value').each(function() {
+                            $(this).find('span').css('border-bottom-color', '');
+                        });
+                        sendCheckedAttributes($currentRadio) ;
+
+                    }
+                    // Iterate over each available attribute
+                    for (var attributeId in response.availableAttributes) {
+                        if (response.availableAttributes.hasOwnProperty(attributeId)) {
+                            var availableValues = response.availableAttributes[attributeId];
+                            console.log(availableValues );
+                            // Iterate over each radio button for this attribute
+                            $('.attribute_value input[type=radio][attributeId="' + attributeId + '"]').each(function () {
+                                var radioValue = $(this).val();
+                                var label = $(this).closest('.attribute_value');
+
+                                // Check if the radio button value is in the available values
+                                if (availableValues.indexOf(radioValue) === -1) {
+                                    // If not in available values, disable the radio button
+                                    // $(this).prop('disabled', true);
+                                    label.find('span').css('border-bottom-color', 'red'); // Change to the desired color
+                                } else {
+                                    // Otherwise, enable the radio button
+                                    // $(this).prop('disabled', false);
+                                    label.find('span').css('border-bottom-color', 'green'); // Change to the desired color
+
+                                }
+                            });
+                        }
+                    }
+                },
+
+                        error: function (xhr, status, error) {
+                            // Handle error
+                            console.error(error);
+                        }
+                });
+            }
+
+        // Trigger the function on radio button change
+        $('.attribute_value input[type=radio]').on('change', function () {
+            // var niveauThreshold = $(this).attr("niveau") ;
+            // // Iterate through all radio buttons
+            // $('.attribute_value input[type="radio"]').each(function() {
+            //     var niveau = parseInt($(this).attr('niveau'));
+
+            //     // Check if the radio button's niveau is greater than the threshold
+            //     if (!isNaN(niveau) && niveau > niveauThreshold) {
+            //         // Uncheck the radio button
+            //         $(this).prop('checked', false);
+            //     }
+            // });
+            sendCheckedAttributes($(this));
+        });
+
+
+        });
     </script>
 @endsection

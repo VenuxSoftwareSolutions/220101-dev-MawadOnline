@@ -62,13 +62,13 @@
             {{-- @if ($detailedProduct->auction_product != 1) --}}
             <div class="d-flex">
                 <!-- Add to wishlist button -->
-                <a href="javascript:void(0)" onclick="addToWishList()"
+                <a href="javascript:void(0)"
                     class="mr-3 fs-14 text-dark opacity-60 has-transitiuon hov-opacity-100">
                     <i class="la la-heart-o mr-1"></i>
                     {{ translate('Add to Wishlist') }}
                 </a>
                 <!-- Add to compare button -->
-                <a href="javascript:void(0)" onclick="addToCompare()"
+                <a href="javascript:void(0)"
                     class="fs-14 text-dark opacity-60 has-transitiuon hov-opacity-100">
                     <i class="las la-sync mr-1"></i>
                     {{ translate('Add to Compare') }}
@@ -145,11 +145,11 @@
         <div class="col-sm-10">
             <div class="d-flex align-items-center">
                 <!-- Discount Price -->
-                <strong class="fs-16 fw-700 text-primary">
+                <strong id="qty-interval" class="fs-16 fw-700 text-primary">
                     {{ $previewData['detailedProduct']['price'] }} AED
                 </strong>
                 <!-- Home Price -->
-                <del class="fs-14 opacity-60 ml-2">
+                {{-- <del class="fs-14 opacity-60 ml-2">
                     $90.000
                 </del>
                 <!-- Unit -->
@@ -176,11 +176,11 @@
                     </svg>
                     <small class="fs-11 fw-500 text-white ml-2">Club Point:
                         450</small>
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>
-    <form id="option-choice-form">
+    <form id="option-choice-form-preview">
         <input type="hidden" name="_token" value="4q2wUsXR8Psahk2hhNrRCBY6rAnlDDtK17T5izTc"> <input type="hidden"
             name="id" value="3">
 
@@ -191,26 +191,27 @@
         <!-- Quantity + Add to cart -->
         <div class="row no-gutters mb-3">
             <div class="col-sm-2">
-                <div class="text-secondary fs-14 fw-400 mt-2">Quantity</div>
+                <div  class="text-secondary fs-14 fw-400 mt-2">Quantity</div>
             </div>
             <div class="col-sm-10">
                 <div class="product-quantity d-flex align-items-center">
                     <div class="row no-gutters align-items-center aiz-plus-minus mr-3" style="width: 130px;">
-                        <button class="btn col-auto btn-icon btn-sm btn-light rounded-0" type="button"
+                        <button class="btn col-auto btn-icon btn-sm btn-light rounded-0 quantity-control" type="button"
                             data-type="minus" data-field="quantity" disabled="disabled">
                             <i class="las la-minus"></i>
                         </button>
-                        <input type="number" name="quantity"
+                        <input type="number" id="quantity" name="quantity"
                             class="col border-0 text-center flex-grow-1 fs-16 input-number" placeholder="1"
-                            value="{{$previewData['detailedProduct']['quantity'] }}" min="1" max="197" lang="en">
-                        <button class="btn col-auto btn-icon btn-sm btn-light rounded-0" type="button"
+                            value="{{ $previewData['detailedProduct']['quantity'] }}" min="1" max="197"
+                            lang="en">
+                        <button class="btn col-auto btn-icon btn-sm btn-light rounded-0 quantity-control" type="button"
                             data-type="plus" data-field="quantity">
                             <i class="las la-plus"></i>
                         </button>
                     </div>
                     <div class="avialable-amount opacity-60">
-                        (<span id="available-quantity">197</span>
-                        available)
+                        {{-- (<span id="available-quantity">197</span>
+                        available) --}}
                     </div>
                 </div>
             </div>
@@ -223,42 +224,122 @@
             </div>
             <div class="col-sm-10">
                 <div class="product-price">
-                    <strong id="chosen_price" class="fs-20 fw-700 text-primary">{{$previewData['detailedProduct']['total'] }} AED</strong>
+                    <strong id="chosen_price"
+                        class="fs-20 fw-700 text-primary">{{ $previewData['detailedProduct']['total'] }} AED</strong>
                 </div>
             </div>
         </div>
+        <div class="row no-gutters mb-3">
+            @php
+                $niveau = 0 ;
+            @endphp
+            @foreach ($previewData['detailedProduct']['attributes'] as  $attributeId=>$attributeValues)
+            @php
+                $niveau++ ;
+            @endphp
+            <div class="col-sm-2 mb-2">
+                <div class="text-secondary fs-14 fw-400 mt-2 ">
+                    {{$attributeId}}
+                </div>
+            </div>
+            <div class="col-sm-10">
 
+                <div class="aiz-radio-inline">
+                    {{-- @foreach ( $attributeValues as $key=>$value)
+                    <label class="aiz-megabox pl-0 mr-2 mb-0">
+                        <input  type="radio" data-attributeId="{{$attributeId}}" name="attribute_id_{{$attributeId}}"   checked >
+                        @if (preg_match('/^#[0-9A-F]{6}$/i', $value))
+                        <span
+                        class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center p-1">
+                        <span class="size-25px d-inline-block rounded"
+                            style="background: {{ $value }};"></span>
+                         </span>
+                        @else
+                        <span
+                            class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center py-1 px-3">
+                             {{$value}}
+                        </span>
+                        @endif
+                    </label>
+                    @endforeach --}}
+                    @foreach ($attributeValues as $key => $value)
+                    <label class="attribute_value aiz-megabox pl-0 mr-2 mb-0">
+                        <input niveau={{$niveau}} id="attribute_id_{{$attributeId}}_{{$value}}" type="radio" attributeId="{{$attributeId}}"  name="attribute_id_{{$attributeId}}" value="{{$value}}" >
+                        @if (preg_match('/^#[0-9A-F]{6}$/i', $value))
+                            <span class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center p-1">
+                                <span class="size-25px d-inline-block rounded" style="background: {{ $value }};"></span>
+                            </span>
+                        @else
+                            <span class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center py-1 px-3">
+                                {{$value}}
+                            </span>
+                        @endif
+                    </label>
+                @endforeach
+                </div>
+
+
+            </div>
+            @endforeach
+
+        </div>
     </form>
     <div class="mt-3">
-        <button type="button" class="btn btn-secondary-base mr-2 add-to-cart fw-600 min-w-150px rounded-0 text-white" onclick="showLoginModal()">
-        <i class="las la-shopping-bag"></i> Add to cart
+        <button type="button" class="btn btn-secondary-base mr-2 add-to-cart fw-600 min-w-150px rounded-0 text-white"
+           {{--  onclick="showLoginModal()" --}}>
+            <i class="las la-shopping-bag"></i> Add to cart
         </button>
-        <button type="button" class="btn btn-primary buy-now fw-600 add-to-cart min-w-150px rounded-0" onclick="showLoginModal()">
-        <i class="la la-shopping-cart"></i> Buy Now
+        <button type="button" class="btn btn-primary buy-now fw-600 add-to-cart min-w-150px rounded-0"
+           {{--  onclick="showLoginModal()" --}}>
+            <i class="la la-shopping-cart"></i> Buy Now
         </button>
         <button type="button" class="btn btn-secondary out-of-stock fw-600 d-none" disabled="">
-        <i class="la la-cart-arrow-down"></i> Out of Stock
+            <i class="la la-cart-arrow-down"></i> Out of Stock
         </button>
+    </div>
+    {{-- <div class="row no-gutters mt-3">
+        <div class="col-sm-2">
+            <div class="text-secondary fs-14 fw-400 mt-2">Refund</div>
         </div>
-        <div class="row no-gutters mt-3">
-            <div class="col-sm-2">
-                <div class="text-secondary fs-14 fw-400 mt-2">Refund</div>
-            </div>
-            <div class="col-sm-10">
-                                        <a href="https://demo.activeitzone.com/ecommerce/return-policy" target="_blank">
-                                                        <img src="https://demo.activeitzone.com/ecommerce/public/assets/img/refund-sticker.jpg" height="36">
-                                                </a>
-                    <a href="https://demo.activeitzone.com/ecommerce/return-policy" class="text-blue hov-text-primary fs-14 ml-3" target="_blank">View Policy</a>
-                                </div>
+        <div class="col-sm-10">
+            <a href="https://demo.activeitzone.com/ecommerce/return-policy" target="_blank">
+                <img src="https://demo.activeitzone.com/ecommerce/public/assets/img/refund-sticker.jpg"
+                    height="36">
+            </a>
+            <a href="https://demo.activeitzone.com/ecommerce/return-policy"
+                class="text-blue hov-text-primary fs-14 ml-3" target="_blank">View Policy</a>
         </div>
-        <div class="row no-gutters mt-4">
-            <div class="col-sm-2">
-                <div class="text-secondary fs-14 fw-400 mt-2">Share</div>
-            </div>
-            <div class="col-sm-10">
-                <div class="aiz-share jssocials"><div class="jssocials-shares"><div class="jssocials-share jssocials-share-email"><a target="_self" href="mailto:?subject=Product%20details%0AIs%20Discontinued%20By%20Manufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20No%0APackage%20Dimensions%20%E2%80%8F%20%3A%20%E2%80%8E%205.9%20x%204.2%20x%201.3%20inches%3B%201.59%20Ounces%0ADepartment%20%E2%80%8F%20%3A%20%E2%80%8E%20womens%0ADate%20First%20Available%20%E2%80%8F%20%3A%20%E2%80%8E%20October%203%2C%202017%0AManufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20Kate%20Spade%20New%20York%0AASIN%20%E2%80%8F%20%3A%20%20B077MMVB1B&amp;body=https%3A%2F%2Fdemo.activeitzone.com%2Fecommerce%2Fproduct%2Fbracelet-o0ru1952-rose-gold" class="jssocials-share-link"><i class="lar la-envelope jssocials-share-logo"></i></a></div><div class="jssocials-share jssocials-share-twitter"><a target="_blank" href="https://twitter.com/share?url=https%3A%2F%2Fdemo.activeitzone.com%2Fecommerce%2Fproduct%2Fbracelet-o0ru1952-rose-gold&amp;text=Product%20details%0AIs%20Discontinued%20By%20Manufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20No%0APackage%20Dimensions%20%E2%80%8F%20%3A%20%E2%80%8E%205.9%20x%204.2%20x%201.3%20inches%3B%201.59%20Ounces%0ADepartment%20%E2%80%8F%20%3A%20%E2%80%8E%20womens%0ADate%20First%20Available%20%E2%80%8F%20%3A%20%E2%80%8E%20October%203%2C%202017%0AManufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20Kate%20Spade%20New%20York%0AASIN%20%E2%80%8F%20%3A%20%20B077MMVB1B" class="jssocials-share-link"><i class="lab la-twitter jssocials-share-logo"></i></a></div><div class="jssocials-share jssocials-share-facebook"><a target="_blank" href="https://facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdemo.activeitzone.com%2Fecommerce%2Fproduct%2Fbracelet-o0ru1952-rose-gold" class="jssocials-share-link"><i class="lab la-facebook-f jssocials-share-logo"></i></a></div><div class="jssocials-share jssocials-share-linkedin"><a target="_blank" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3A%2F%2Fdemo.activeitzone.com%2Fecommerce%2Fproduct%2Fbracelet-o0ru1952-rose-gold" class="jssocials-share-link"><i class="lab la-linkedin-in jssocials-share-logo"></i></a></div><div class="jssocials-share jssocials-share-whatsapp"><a target="_self" href="whatsapp://send?text=https%3A%2F%2Fdemo.activeitzone.com%2Fecommerce%2Fproduct%2Fbracelet-o0ru1952-rose-gold Product%20details%0AIs%20Discontinued%20By%20Manufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20No%0APackage%20Dimensions%20%E2%80%8F%20%3A%20%E2%80%8E%205.9%20x%204.2%20x%201.3%20inches%3B%201.59%20Ounces%0ADepartment%20%E2%80%8F%20%3A%20%E2%80%8E%20womens%0ADate%20First%20Available%20%E2%80%8F%20%3A%20%E2%80%8E%20October%203%2C%202017%0AManufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20Kate%20Spade%20New%20York%0AASIN%20%E2%80%8F%20%3A%20%20B077MMVB1B" class="jssocials-share-link"><i class="lab la-whatsapp jssocials-share-logo"></i></a></div></div></div>
+    </div> --}}
+    <div class="row no-gutters mt-4">
+        <div class="col-sm-2">
+            <div class="text-secondary fs-14 fw-400 mt-2">Share</div>
+        </div>
+        <div class="col-sm-10">
+            <div class="aiz-share jssocials">
+                <div class="jssocials-shares">
+                    <div class="jssocials-share jssocials-share-email"><a target="_self"
+                            href="{{-- mailto:?subject=Product%20details%0AIs%20Discontinued%20By%20Manufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20No%0APackage%20Dimensions%20%E2%80%8F%20%3A%20%E2%80%8E%205.9%20x%204.2%20x%201.3%20inches%3B%201.59%20Ounces%0ADepartment%20%E2%80%8F%20%3A%20%E2%80%8E%20womens%0ADate%20First%20Available%20%E2%80%8F%20%3A%20%E2%80%8E%20October%203%2C%202017%0AManufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20Kate%20Spade%20New%20York%0AASIN%20%E2%80%8F%20%3A%20%20B077MMVB1B&amp;body=https%3A%2F%2Fdemo.activeitzone.com%2Fecommerce%2Fproduct%2Fbracelet-o0ru1952-rose-gold --}}"
+                            class="jssocials-share-link"><i class="lar la-envelope jssocials-share-logo"></i></a>
+                    </div>
+                    <div class="jssocials-share jssocials-share-twitter"><a target="_blank"
+                            href="{{-- https://twitter.com/share?url=https%3A%2F%2Fdemo.activeitzone.com%2Fecommerce%2Fproduct%2Fbracelet-o0ru1952-rose-gold&amp;text=Product%20details%0AIs%20Discontinued%20By%20Manufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20No%0APackage%20Dimensions%20%E2%80%8F%20%3A%20%E2%80%8E%205.9%20x%204.2%20x%201.3%20inches%3B%201.59%20Ounces%0ADepartment%20%E2%80%8F%20%3A%20%E2%80%8E%20womens%0ADate%20First%20Available%20%E2%80%8F%20%3A%20%E2%80%8E%20October%203%2C%202017%0AManufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20Kate%20Spade%20New%20York%0AASIN%20%E2%80%8F%20%3A%20%20B077MMVB1B --}}"
+                            class="jssocials-share-link"><i class="lab la-twitter jssocials-share-logo"></i></a></div>
+                    <div class="jssocials-share jssocials-share-facebook"><a target="_blank"
+                            href="{{-- https://facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdemo.activeitzone.com%2Fecommerce%2Fproduct%2Fbracelet-o0ru1952-rose-gold --}}"
+                            class="jssocials-share-link"><i class="lab la-facebook-f jssocials-share-logo"></i></a>
+                    </div>
+                    <div class="jssocials-share jssocials-share-linkedin"><a target="_blank"
+                            href="{{-- https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3A%2F%2Fdemo.activeitzone.com%2Fecommerce%2Fproduct%2Fbracelet-o0ru1952-rose-gold --}}"
+                            class="jssocials-share-link"><i class="lab la-linkedin-in jssocials-share-logo"></i></a>
+                    </div>
+                    <div class="jssocials-share jssocials-share-whatsapp"><a target="_self"
+                            href="{{-- whatsapp://send?text=https%3A%2F%2Fdemo.activeitzone.com%2Fecommerce%2Fproduct%2Fbracelet-o0ru1952-rose-gold Product%20details%0AIs%20Discontinued%20By%20Manufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20No%0APackage%20Dimensions%20%E2%80%8F%20%3A%20%E2%80%8E%205.9%20x%204.2%20x%201.3%20inches%3B%201.59%20Ounces%0ADepartment%20%E2%80%8F%20%3A%20%E2%80%8E%20womens%0ADate%20First%20Available%20%E2%80%8F%20%3A%20%E2%80%8E%20October%203%2C%202017%0AManufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20Kate%20Spade%20New%20York%0AASIN%20%E2%80%8F%20%3A%20%20B077MMVB1B --}}"
+                            class="jssocials-share-link"><i class="lab la-whatsapp jssocials-share-logo"></i></a>
+                    </div>
+                </div>
             </div>
         </div>
+    </div>
     {{-- <!-- For auction product -->
     @if ($detailedProduct->auction_product)
         <div class="row no-gutters mb-3">

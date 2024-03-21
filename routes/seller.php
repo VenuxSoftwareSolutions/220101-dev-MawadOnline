@@ -34,6 +34,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
     Route::controller(ProductController::class)->group(function () {
         Route::post('/product/temp-store', 'tempStore')->name('product.tempStore');
         Route::get('/product/preview/{slug}', 'preview')->name('product.preview');
+        Route::post('/update-price-preview','updatePricePreview')->name('update-price-preview');
+        Route::post('/send-checked-attributes','ProductCheckedAttributes')->name('product.checked.attributes');
 
         Route::get('/products', 'index')->name('products');
         Route::get('/product/create', 'create')->name('products.create');
