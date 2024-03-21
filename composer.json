@@ -23,6 +23,7 @@
         "laravel/framework": "^9.2",
         "laravel/sanctum": "^3.3",
         "laravel/socialite": "^5.6",
+        "laravel/telescope": "^5.0",
         "laravel/tinker": "^2.8",
         "laravel/ui": "^4.2",
         "lcobucci/jwt": "^4.0",
@@ -35,6 +36,7 @@
         "mpdf/mpdf": "^8.1",
         "myfatoorah/laravel-package": "^2.1",
         "niklasravnsborg/laravel-pdf": "^4.1",
+        "opcodesio/log-viewer": "^3.6",
         "paypal/paypal-checkout-sdk": "dev-master",
         "predis/predis": "^2.1",
         "psr/log": "^2.0",
@@ -95,6 +97,8 @@
         ]
     },
     "config": {
+        "minimum-stability": "beta",
+        "prefer-stable": true,
         "platform-check": false,
         "preferred-install": "dist",
         "sort-packages": true,
