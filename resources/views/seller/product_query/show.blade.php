@@ -30,7 +30,7 @@
                         </p>
                     </li>
                 </ul>
-                @if (Auth::user()->id == $query->seller_id)
+                @if (Auth::user()->owner_id == $query->seller_id)
                     <form action="{{ route('seller.product_query.reply',$query->id) }}" method="POST">
                         @method('put')
                         @csrf

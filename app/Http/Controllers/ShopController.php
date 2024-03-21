@@ -15,6 +15,7 @@ use App\Models\Role;
 use App\Models\Shop;
 use App\Models\User;
 use App\Models\Staff;
+use App\Models\Seller;
 use App\Models\Emirate;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
@@ -776,6 +777,37 @@ class ShopController extends Controller
 
             ]
         );
+
+        $shop = Seller::updateOrCreate(
+            [
+                'user_id' => Auth::user()->id
+            ],
+            [
+                'bank_name' => $request->bank_name,
+                'bank_acc_name' => $request->account_name,
+                'bank_acc_no' => $request->account_number,
+                'bank_routing_no' => $request->iban,
+                'verification_status' => 1,
+            ]
+        );
+
+        $seller = Shop::updateOrCreate(
+            [
+                'user_id' => Auth::user()->id
+            ],
+            [
+                'name' => Auth::user()->name,
+                'verification_status' => 1,
+                'slug' => $request->trade_name_english,
+                'meta_title' => $request->eshop_name_english,
+                'meta_description' => $request->eshop_desc_en,
+                'bank_name' => $request->bank_name,
+                'bank_acc_name' => $request->account_name,
+                'bank_acc_no' => $request->account_number,
+                'bank_routing_no' => $request->iban,
+            ]
+        );
+
         $user = Auth::user();
         $user->steps = 1;
         $user->status = 'Pending Approval';

@@ -38,7 +38,7 @@ class DigitalProductController  extends Controller
      */
     public function index(Request $request)
     {
-        $products = Product::where('user_id', Auth::user()->id)->where('digital', 1)->orderBy('created_at', 'desc')->paginate(10);
+        $products = Product::where('user_id', Auth::user()->owner_id)->where('digital', 1)->orderBy('created_at', 'desc')->paginate(10);
         return view('seller.product.digitalproducts.index', compact('products'));
     }
 
@@ -208,7 +208,7 @@ class DigitalProductController  extends Controller
     public function download(Request $request)
     {
         $product = Product::findOrFail(decrypt($request->id));
-        if (Auth::user()->id == $product->user_id) {
+        if (Auth::user()->owner_id == $product->user_id) {
             $upload = Upload::findOrFail($product->file_name);
             if (env('FILESYSTEM_DRIVER') == "s3") {
                 return \Storage::disk('s3')->download($upload->file_name, $upload->file_original_name . "." . $upload->extension);

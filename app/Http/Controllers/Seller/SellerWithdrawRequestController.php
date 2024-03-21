@@ -24,7 +24,7 @@ class SellerWithdrawRequestController extends Controller
      */
     public function index()
     {
-        $seller_withdraw_requests = SellerWithdrawRequest::where('user_id', Auth::user()->id)->latest()->paginate(9);
+        $seller_withdraw_requests = SellerWithdrawRequest::where('user_id', Auth::user()->owner_id)->latest()->paginate(9);
         return view('seller.money_withdraw_requests.index', compact('seller_withdraw_requests'));
     }
 
@@ -38,7 +38,7 @@ class SellerWithdrawRequestController extends Controller
     public function store(Request $request)
     {
         $seller_withdraw_request = new SellerWithdrawRequest;
-        $seller_withdraw_request->user_id = Auth::user()->id;
+        $seller_withdraw_request->user_id = Auth::user()->owner_id;
         $seller_withdraw_request->amount = $request->amount;
         $seller_withdraw_request->message = $request->message;
         $seller_withdraw_request->status = '0';
@@ -46,7 +46,8 @@ class SellerWithdrawRequestController extends Controller
         if ($seller_withdraw_request->save()) {
 
             $users = User::findMany([auth()->user()->id, User::where('user_type', 'admin')->first()->id]);
-            Notification::send($users, new PayoutNotification(Auth::user(), $request->amount, 'pending'));
+            $vendor = User::find(Auth::user()->owner_id);
+            Notification::send($users, new PayoutNotification($vendor, $request->amount, 'pending'));
 
             flash(translate('Request has been sent successfully'))->success();
             return redirect()->route('seller.money_withdraw_requests.index');

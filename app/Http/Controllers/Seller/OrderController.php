@@ -36,7 +36,7 @@ class OrderController extends Controller
         $sort_search = null;
         $orders = DB::table('orders')
             ->orderBy('id', 'desc')
-            ->where('seller_id', Auth::user()->id)
+            ->where('seller_id', Auth::user()->owner_id)
             ->select('orders.id')
             ->distinct();
 
@@ -92,7 +92,7 @@ class OrderController extends Controller
         }
 
 
-        foreach ($order->orderDetails->where('seller_id', Auth::user()->id) as $key => $orderDetail) {
+        foreach ($order->orderDetails->where('seller_id', Auth::user()->owner_id) as $key => $orderDetail) {
             $orderDetail->delivery_status = $request->status;
             $orderDetail->save();
 
@@ -154,7 +154,7 @@ class OrderController extends Controller
         $order->payment_status_viewed = '0';
         $order->save();
 
-        foreach ($order->orderDetails->where('seller_id', Auth::user()->id) as $key => $orderDetail) {
+        foreach ($order->orderDetails->where('seller_id', Auth::user()->owner_id) as $key => $orderDetail) {
             $orderDetail->payment_status = $request->status;
             $orderDetail->save();
         }

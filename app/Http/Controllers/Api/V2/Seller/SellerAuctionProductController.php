@@ -33,7 +33,7 @@ class SellerAuctionProductController extends Controller
     public function store(ProductRequest $request)
     {
         if (addon_is_activated('seller_subscription')) {
-            if (!seller_package_validity_check(auth()->user()->id)) {
+            if (!seller_package_validity_check(auth()->user()->owner_id)) {
                 return $this->failed(translate('Please upgrade your package.'));
             }
         }
@@ -80,7 +80,7 @@ class SellerAuctionProductController extends Controller
 
         $orders = Order::leftJoin('order_details', 'orders.id', '=', 'order_details.order_id')
             ->leftJoin('products', 'order_details.product_id', '=', 'products.id')
-            ->where('orders.seller_id', auth()->user()->id)
+            ->where('orders.seller_id', auth()->user()->owner_id)
             ->where('products.auction_product', '1')
             ->select("orders.*")
             ->orderBy('code', 'desc');

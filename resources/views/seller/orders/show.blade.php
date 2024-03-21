@@ -13,7 +13,7 @@
                 </div>
                 @php
                     $delivery_status = $order->delivery_status;
-                    $payment_status = $order->orderDetails->where('seller_id', Auth::user()->id)->first()->payment_status;
+                    $payment_status = $order->orderDetails->where('seller_id', Auth::user()->owner_id)->first()->payment_status;
                 @endphp
                 @if (get_setting('product_manage_by_admin') == 0)
                     <div class="col-md-3 ml-auto">
