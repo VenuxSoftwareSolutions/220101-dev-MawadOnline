@@ -947,7 +947,7 @@ class ProductController extends Controller
                 $value = $data["attribute_generale-$numeric_key"];
             // Add attribute name and value to the array
             if ($attribute) {
-                $attributesArray[$attribute->getTranslation('name')] = $value;
+                $attributesArray[$attribute->id] = $value;
             }
          }
         }
@@ -994,12 +994,20 @@ class ProductController extends Controller
                 $variations[$variationId]['storedFilePaths'] = $this->saveMainPhotos($data["photos_variant-$variationId"]);
 
                }
-               if (isset($data["variant_pricing-from$variationId"]) && is_array($data["variant_pricing-from$variationId"])) {
-                $variations[$variationId]['variant_pricing-from']['from'] =$data["variant_pricing-from$variationId"]['from'] ;
-                $variations[$variationId]['variant_pricing-from']['to'] =$data["variant_pricing-from$variationId"]['to'] ;
-                $variations[$variationId]['variant_pricing-from']['unit_price'] =$data["variant_pricing-from$variationId"]['unit_price'] ;
-
+               else {
+                $variations[$variationId]['storedFilePaths']= [] ;
                }
+               if (isset($data["variant_pricing-from$variationId"]) && is_array($data["variant_pricing-from$variationId"])) {
+                $variations[$variationId]['variant_pricing-from']['from'] =$data["variant_pricing-from$variationId"]['from'] ?? [] ;
+                $variations[$variationId]['variant_pricing-from']['to'] =$data["variant_pricing-from$variationId"]['to'] ?? [] ;
+                $variations[$variationId]['variant_pricing-from']['unit_price'] =$data["variant_pricing-from$variationId"]['unit_price'] ?? [] ;
+
+               } elseif (isset($data["variant-pricing-$variationId"]) && $data["variant-pricing-$variationId"] == 1 ){
+                    $variations[$variationId]['variant_pricing-from']['from'] =$data['from'] ?? []  ;
+                    $variations[$variationId]['variant_pricing-from']['to'] =$data['to']  ?? [] ;
+                    $variations[$variationId]['variant_pricing-from']['unit_price'] =$data['unit_price'] ?? []  ;
+               }
+
            }
        }
 
@@ -1041,8 +1049,10 @@ class ProductController extends Controller
         if ($data["video_provider"] === "youtube") {
              $this->getYoutubeVideoId($data["video_link"]) ;
         }
+        if (is_array($variations) && !empty($variations)) {
         $lastItem  = end($variations);
-
+        $variationId = key($variations); // Get the key (variation ID) of the last item
+        }
 
         // Prepare detailed product data
         $detailedProduct = [
@@ -1050,23 +1060,24 @@ class ProductController extends Controller
             'brand' => $brand ? $brand->name : "",
             'unit' => $data['unit'],
             'description' => $data['description'],
-            'main_photos' => $lastItem['storedFilePaths'] ?? [], // Add stored file paths to the detailed product data
+            'main_photos' => $lastItem['storedFilePaths'] ?? $storedFilePaths, // Add stored file paths to the detailed product data
             // 'quantity' => isset($data['from'][0]) ? $data['from'][0] : "" ,
             // 'price' => isset($data['unit_price'][0]) ? $data['unit_price'][0] : "",
             // 'quantity' => isset($fromPrice) ? $fromPrice  : $data['from'][0] ,
             // 'price' => isset($unitPrice) ? $unitPrice  : $data['unit_price'][0],
             // 'total' => $total,
-            'quantity' => $lastItem['variant_pricing-from']['from'][0] ?? "",
-            'price' => $lastItem['variant_pricing-from']['unit_price'][0] ?? "",
-            'total' => isset($lastItem['variant_pricing-from']['from'][0]) && isset($lastItem['variant_pricing-from']['unit_price'][0]) ? $lastItem['variant_pricing-from']['from'][0] * $lastItem['variant_pricing-from']['unit_price'][0] : "",
+            'quantity' => $lastItem['variant_pricing-from']['from'][0] ?? $data['from'][0] ?? '',
+            'price' => $lastItem['variant_pricing-from']['unit_price'][0] ?? $data['unit_price'][0] ?? '',
+            'total' => isset($lastItem['variant_pricing-from']['from'][0]) && isset($lastItem['variant_pricing-from']['unit_price'][0]) ? $lastItem['variant_pricing-from']['from'][0] * $lastItem['variant_pricing-from']['unit_price'][0] : $total,
 
             'general_attributes' =>$attributesArray,
             'attributes' =>$attributes ?? [] ,
             'description' =>$data['description'] ,
-            'from' =>$data['from'] ,
-            'to' =>$data['to'] ,
-            'unit_price' =>$data['unit_price'] ,
-            'variations' =>$variations
+            'from' =>$data['from'] ?? [] ,
+            'to' =>$data['to']  ?? [],
+            'unit_price' =>$data['unit_price'] ?? [] ,
+            'variations' =>$variations,
+            'variationId' => $variationId ?? null
         ];
 
 
@@ -1112,19 +1123,37 @@ class ProductController extends Controller
     public function updatePricePreview(Request $request) {
 
         $data=$request->session()->get('productPreviewData', null) ;
+        $variations = $data['detailedProduct']['variations'] ;
 
         // Given value
         $qty = $request->quantity;
 
+
         // Iterate through the ranges
         $unitPrice = null;
-        foreach ($data['detailedProduct']['from'] as $index => $from) {
-            $to = $data['detailedProduct']['to'][$index];
-            if ($qty >= $from && $qty <= $to) {
-                $unitPrice = $data['detailedProduct']['unit_price'][$index];
-                break; // Stop iterating once the range is found
+        if($request->variationId != null) {
+
+            foreach ($variations[$request->variationId]['variant_pricing-from']['from'] as $index => $from) {
+                $to = $variations[$request->variationId]['variant_pricing-from']['to'][$index];
+
+                if ($qty >= $from && $qty <= $to) {
+                    $unitPrice = $variations[$request->variationId]['variant_pricing-from']['unit_price'][$index];
+
+                    break; // Stop iterating once the range is found
+                }
+            }
+
+        }
+        else {
+            foreach ($data['detailedProduct']['from'] as $index => $from) {
+                $to = $data['detailedProduct']['to'][$index];
+                if ($qty >= $from && $qty <= $to) {
+                    $unitPrice = $data['detailedProduct']['unit_price'][$index];
+                    break; // Stop iterating once the range is found
+                }
             }
         }
+
 
         $total=$qty*$unitPrice ;
 
@@ -1137,10 +1166,11 @@ class ProductController extends Controller
         $data=$request->session()->get('productPreviewData', null) ;
         $variations = $data['detailedProduct']['variations'] ;
         $checkedAttributes = $request->checkedAttributes ; // Checked attribute and its value
-
+        // dd($variations,$checkedAttributes) ;
+        $matchedImages = [];
         $availableAttributes = [];
         $anyMatched = false ;
-        foreach ($variations as $variation) {
+        foreach ($variations as $variationIdKey =>$variation) {
             $matchesCheckedAttributes = true;
 
             // Check if the variation matches the checked attributes
@@ -1154,6 +1184,16 @@ class ProductController extends Controller
             // If the variation matches the checked attributes, collect other attributes
             if ($matchesCheckedAttributes) {
                 $anyMatched = true ;
+                if (isset($variation['storedFilePaths']) && is_array($variation['storedFilePaths']) && count($matchedImages) == 0  ) {
+                        foreach ($variation['storedFilePaths'] as $image) {
+                            $matchedImages[] = $image;
+                        }
+                        $variationId = $variationIdKey ;
+                        $quantity = $variation['variant_pricing-from']['from'][0] ?? "" ;
+                        $price = $variation['variant_pricing-from']['unit_price'][0] ?? "" ;
+                        $total =  isset($variation['variant_pricing-from']['from'][0]) && isset($variation['variant_pricing-from']['unit_price'][0]) ? $variation['variant_pricing-from']['from'][0] * $variation['variant_pricing-from']['unit_price'][0] : "" ;
+
+                 }
                 foreach ($variation as $attributeId => $value) {
                     if (!isset($checkedAttributes[$attributeId])) {
                         if (!isset($availableAttributes[$attributeId])) {
@@ -1166,10 +1206,17 @@ class ProductController extends Controller
                 }
             }
         }
+
         // Add matchesCheckedAttributes to the response
         $response = [
             'availableAttributes' => $availableAttributes,
-            'anyMatched' => $anyMatched
+            'anyMatched' => $anyMatched,
+            'matchedImages' => $matchedImages,
+            'variationId' => $variationId ?? null,
+            'quantity' => $quantity ?? null  ,
+            'price' => $price ?? null ,
+            'total' => $total ?? null
+
         ];
         // return response()->json($availableAttributes);
         return response()->json($response);

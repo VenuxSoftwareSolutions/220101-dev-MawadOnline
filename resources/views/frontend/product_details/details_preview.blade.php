@@ -208,10 +208,13 @@
                             data-type="plus" data-field="quantity">
                             <i class="las la-plus"></i>
                         </button>
+                        <input type="hidden" value="{{$previewData['detailedProduct']['variationId']}}" name="variationId" id="variationId">
+
                     </div>
                     <div class="avialable-amount opacity-60">
                         {{-- (<span id="available-quantity">197</span>
                         available) --}}
+
                     </div>
                 </div>
             </div>

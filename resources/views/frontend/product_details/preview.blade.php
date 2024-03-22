@@ -1277,7 +1277,7 @@
                 var action = $(this).data('type');
                 var quantityInput = $('#quantity');
                 var currentQuantity = parseInt(quantityInput.val());
-
+                var variationId = $('#variationId').val() ;
                 // if (action === 'plus') {
                 //     // Increment quantity
                 //     quantityInput.val(currentQuantity + 1);
@@ -1294,7 +1294,7 @@
                 $.ajax({
                     url: '{{route("seller.update-price-preview")}}', // URL to your backend endpoint
                     method: 'POST', // or 'GET' depending on your backend implementation
-                    data: { quantity: quantityInput.val() },
+                    data: { quantity: quantityInput.val(),variationId },
                     success: function(response) {
                         // Handle successful response
                         console.log(response.unit_price)
@@ -1327,6 +1327,7 @@
                     success: function (response) {
                     // Handle success response
                     console.log(response);
+
                     if (response.anyMatched == false) {
 
                         // Uncheck radio buttons for the current attribute
@@ -1339,30 +1340,187 @@
                         sendCheckedAttributes($currentRadio) ;
 
                     }
-                    // Iterate over each available attribute
-                    for (var attributeId in response.availableAttributes) {
-                        if (response.availableAttributes.hasOwnProperty(attributeId)) {
-                            var availableValues = response.availableAttributes[attributeId];
-                            console.log(availableValues );
-                            // Iterate over each radio button for this attribute
-                            $('.attribute_value input[type=radio][attributeId="' + attributeId + '"]').each(function () {
-                                var radioValue = $(this).val();
-                                var label = $(this).closest('.attribute_value');
+                    else {
+                        $('#variationId').val(response.variationId) ;
+                        $("#qty-interval").text(response.price+" AED")
+                        $("#quantity").val(response.quantity)
+                        $("#chosen_price").text(response.total+" AED")
+                        var images = response.matchedImages; // Assuming response contains matchedImages array
 
-                                // Check if the radio button value is in the available values
-                                if (availableValues.indexOf(radioValue) === -1) {
-                                    // If not in available values, disable the radio button
-                                    // $(this).prop('disabled', true);
-                                    label.find('span').css('border-bottom-color', 'red'); // Change to the desired color
-                                } else {
-                                    // Otherwise, enable the radio button
-                                    // $(this).prop('disabled', false);
-                                    label.find('span').css('border-bottom-color', 'green'); // Change to the desired color
+                        // Clear existing images
 
-                                }
+                        $('.product-gallery').slick('unslick').empty();
+                        $('.product-gallery-thumb').slick('unslick').empty();
+
+                        // Append images to the gallery and thumbnail divs
+                        for (var i = 0; i < images.length; i++) {
+                            var imageSrc = '{{ asset('/public') }}/' + images[i];
+                            var galleryImage = '<div class="carousel-box img-zoom rounded-0"><img class="img-fluid h-auto lazyload mx-auto" src="' + imageSrc + '" onerror="this.onerror=null;this.src=\'/assets/img/placeholder.jpg\';"></div>';
+                            var thumbnailImage = '<div class="carousel-box c-pointer rounded-0"><img class="lazyload mw-100 size-60px mx-auto border p-1" src="' + imageSrc + '" onerror="this.onerror=null;this.src=\'/assets/img/placeholder.jpg\';"></div>';
+
+                            $('.product-gallery').append(galleryImage);
+                            $('.product-gallery-thumb').append(thumbnailImage);
+
+                        }
+                        $(".aiz-carousel").not(".slick-initialized").each(function () {
+                            var $this = $(this);
+
+
+                            var slidesPerViewXs = $this.data("xs-items");
+                            var slidesPerViewSm = $this.data("sm-items");
+                            var slidesPerViewMd = $this.data("md-items");
+                            var slidesPerViewLg = $this.data("lg-items");
+                            var slidesPerViewXl = $this.data("xl-items");
+                            var slidesPerView = $this.data("items");
+
+                            var slidesCenterMode = $this.data("center");
+                            var slidesArrows = $this.data("arrows");
+                            var slidesDots = $this.data("dots");
+                            var slidesRows = $this.data("rows");
+                            var slidesAutoplay = $this.data("autoplay");
+                            var slidesAutoplaySpeed = $this.data("autoplay-speed");
+                            var slidesFade = $this.data("fade");
+                            var asNavFor = $this.data("nav-for");
+                            var infinite = $this.data("infinite");
+                            var focusOnSelect = $this.data("focus-select");
+                            var adaptiveHeight = $this.data("auto-height");
+
+
+                            var vertical = $this.data("vertical");
+                            var verticalXs = $this.data("vertical-xs");
+                            var verticalSm = $this.data("vertical-sm");
+                            var verticalMd = $this.data("vertical-md");
+                            var verticalLg = $this.data("vertical-lg");
+                            var verticalXl = $this.data("vertical-xl");
+
+                            slidesPerView = !slidesPerView ? 1 : slidesPerView;
+                            slidesPerViewXl = !slidesPerViewXl ? slidesPerView : slidesPerViewXl;
+                            slidesPerViewLg = !slidesPerViewLg ? slidesPerViewXl : slidesPerViewLg;
+                            slidesPerViewMd = !slidesPerViewMd ? slidesPerViewLg : slidesPerViewMd;
+                            slidesPerViewSm = !slidesPerViewSm ? slidesPerViewMd : slidesPerViewSm;
+                            slidesPerViewXs = !slidesPerViewXs ? slidesPerViewSm : slidesPerViewXs;
+
+
+                            vertical = !vertical ? false : vertical;
+                            verticalXl = (typeof verticalXl == 'undefined') ? vertical : verticalXl;
+                            verticalLg = (typeof verticalLg == 'undefined') ? verticalXl : verticalLg;
+                            verticalMd = (typeof verticalMd == 'undefined') ? verticalLg : verticalMd;
+                            verticalSm = (typeof verticalSm == 'undefined') ? verticalMd : verticalSm;
+                            verticalXs = (typeof verticalXs == 'undefined') ? verticalSm : verticalXs;
+
+
+                            slidesCenterMode = !slidesCenterMode ? false : slidesCenterMode;
+                            slidesArrows = !slidesArrows ? false : slidesArrows;
+                            slidesDots = !slidesDots ? false : slidesDots;
+                            slidesRows = !slidesRows ? 1 : slidesRows;
+                            slidesAutoplay = !slidesAutoplay ? false : slidesAutoplay;
+                            slidesAutoplaySpeed = !slidesAutoplaySpeed ? '5000' : slidesAutoplaySpeed;
+                            slidesFade = !slidesFade ? false : slidesFade;
+                            asNavFor = !asNavFor ? null : asNavFor;
+                            infinite = !infinite ? false : infinite;
+                            focusOnSelect = !focusOnSelect ? false : focusOnSelect;
+                            adaptiveHeight = !adaptiveHeight ? false : adaptiveHeight;
+
+
+                            var slidesRtl = ($("html").attr("dir") === "rtl" && !vertical) ? true : false;
+                            var slidesRtlXL = ($("html").attr("dir") === "rtl" && !verticalXl) ? true : false;
+                            var slidesRtlLg = ($("html").attr("dir") === "rtl" && !verticalLg) ? true : false;
+                            var slidesRtlMd = ($("html").attr("dir") === "rtl" && !verticalMd) ? true : false;
+                            var slidesRtlSm = ($("html").attr("dir") === "rtl" && !verticalSm) ? true : false;
+                            var slidesRtlXs = ($("html").attr("dir") === "rtl" && !verticalXs) ? true : false;
+
+                            $this.slick({
+                                slidesToShow: slidesPerView,
+                                autoplay: slidesAutoplay,
+                                autoplaySpeed: slidesAutoplaySpeed,
+                                dots: slidesDots,
+                                arrows: slidesArrows,
+                                infinite: infinite,
+                                vertical: vertical,
+                                rtl: slidesRtl,
+                                rows: slidesRows,
+                                centerPadding: "0px",
+                                centerMode: slidesCenterMode,
+                                fade: slidesFade,
+                                asNavFor: asNavFor,
+                                focusOnSelect: focusOnSelect,
+                                adaptiveHeight: adaptiveHeight,
+                                slidesToScroll: 1,
+                                prevArrow:
+                                    '<button type="button" class="slick-prev"><i class="las la-angle-left"></i></button>',
+                                nextArrow:
+                                    '<button type="button" class="slick-next"><i class="las la-angle-right"></i></button>',
+                                responsive: [
+                                    {
+                                        breakpoint: 1500,
+                                        settings: {
+                                            slidesToShow: slidesPerViewXl,
+                                            vertical: verticalXl,
+                                            rtl: slidesRtlXL,
+                                        },
+                                    },
+                                    {
+                                        breakpoint: 1200,
+                                        settings: {
+                                            slidesToShow: slidesPerViewLg,
+                                            vertical: verticalLg,
+                                            rtl: slidesRtlLg,
+                                        },
+                                    },
+                                    {
+                                        breakpoint: 992,
+                                        settings: {
+                                            slidesToShow: slidesPerViewMd,
+                                            vertical: verticalMd,
+                                            rtl: slidesRtlMd,
+                                        },
+                                    },
+                                    {
+                                        breakpoint: 768,
+                                        settings: {
+                                            slidesToShow: slidesPerViewSm,
+                                            vertical: verticalSm,
+                                            rtl: slidesRtlSm,
+                                        },
+                                    },
+                                    {
+                                        breakpoint: 576,
+                                        settings: {
+                                            slidesToShow: slidesPerViewXs,
+                                            vertical: verticalXs,
+                                            rtl: slidesRtlXs,
+                                        },
+                                    },
+                                ],
                             });
+                        });
+
+                        // Iterate over each available attribute
+                        for (var attributeId in response.availableAttributes) {
+                            if (response.availableAttributes.hasOwnProperty(attributeId)) {
+                                var availableValues = response.availableAttributes[attributeId];
+                                console.log(availableValues );
+                                // Iterate over each radio button for this attribute
+                                $('.attribute_value input[type=radio][attributeId="' + attributeId + '"]').each(function () {
+                                    var radioValue = $(this).val();
+                                    var label = $(this).closest('.attribute_value');
+
+                                    // Check if the radio button value is in the available values
+                                    if (availableValues.indexOf(radioValue) === -1) {
+                                        // If not in available values, disable the radio button
+                                        // $(this).prop('disabled', true);
+                                        label.find('span').css('border-bottom-color', 'red'); // Change to the desired color
+                                    } else {
+                                        // Otherwise, enable the radio button
+                                        // $(this).prop('disabled', false);
+                                        label.find('span').css('border-bottom-color', 'green'); // Change to the desired color
+
+                                    }
+                                });
+                            }
                         }
                     }
+
                 },
 
                         error: function (xhr, status, error) {
