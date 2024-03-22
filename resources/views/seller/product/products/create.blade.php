@@ -6,6 +6,12 @@
     .table th{
         font-size: 12px !important;
     }
+
+    .swal2-icon .swal2-icon-content {
+        display: flex;
+        align-items: center;
+        font-size: 0.75em !important;
+    }
 </style>
 
 @section('panel_content')
@@ -30,10 +36,13 @@
     <button type="button" onclick="submitForm()">Preview Product</button>
 
     <form class="" action="{{route('seller.products.store')}}" method="POST" enctype="multipart/form-data" id="choice_form">
+        @csrf
         <div class="row gutters-5">
             <div class="col-lg-12">
                 @csrf
                 {{-- Bloc Product Information --}}
+                <input type="hidden" id="published_after_approve" value="0" name="published" >
+                <input type="hidden" id="create_stock" value="0" name="stock">
                 <div class="card">
                     <div class="card-header">
                         <h5 class="mb-0 h6">{{translate('Product Information')}}</h5>
@@ -2332,6 +2341,7 @@
             }
         })
     });
+
 </script>
 <script>
     $(function() {
@@ -2464,4 +2474,45 @@
         });
     };
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script> <!-- Include SweetAlert2 JS -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('choice_form').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            Swal.fire({
+                title: "Product Publication",
+                text: "Do you want to publish or unpublish this product?",
+                icon: "info",
+                showCancelButton: false,
+                confirmButtonText: "Next",
+                html: '<input type="checkbox" id="publicationToggle" value="published" checked> Publish upon approval',
+                focusConfirm: false,
+                preConfirm: () => {
+                    const publicationStatus = document.getElementById('publicationToggle').checked ? 'published' : 'unpublished';
+                    if(publicationStatus == 'published'){
+                        $('#published_after_approve').val(1)
+                    }
+                    Swal.fire({
+                        title: "Create Stock Items",
+                        text: "Do you want to create stock items for this product?",
+                        icon: "info",
+                        showCancelButton: false,
+                        confirmButtonText: "Create",
+                        html: '<input type="checkbox" id="stockToggle" value="published" checked> Create stock',
+                        focusConfirm: false,
+                    }).then((result) => {
+                        var stockToggleStatus = document.getElementById('stockToggle').checked ? 'create' : 'not create';
+                        if(stockToggleStatus == 'create'){
+                            $('#create_stock').val(1)
+                        }
+                        
+                        document.getElementById('choice_form').submit();
+                    });
+                }
+            });
+        });
+    });
+</script>
+
 @endsection

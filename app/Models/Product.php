@@ -6,6 +6,7 @@ use App;
 use App\Models\UploadProducts;
 use App\Models\ProductCategory;
 use App\Models\ProductAttributeValues;
+use App\Models\PricingConfiguration;
 use App\Models\Category;
 use App\Models\Shipping;
 use Illuminate\Database\Eloquent\Model;
@@ -17,13 +18,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Product extends Model
 {
 
-    use EnhancedRevisionableTrait;
+    use EnhancedRevisionableTrait, SoftDeletes;
     
 
     protected $dontKeepRevisionOf = [
                                     'is_draft', 
                                     'approved', 
                                     'sku', 
+                                    'deleted_at', 
                                     'rejection_reason', 
                                     'slug', 
                                     'low_stock_quantity', 
@@ -301,6 +303,24 @@ class Product extends Model
 
     public function getIdsChildrens(){
         return Product::where('parent_id', $this->id)->pluck('id')->toArray();
+    }
+
+    public function getPriceRange(){
+        $firstPrice = PricingConfiguration::where('id_products', $this->id)
+            ->orderBy('unit_price', 'asc')
+            ->pluck('unit_price')
+            ->first();
+        
+        $lastPrice = PricingConfiguration::where('id_products', $this->id)
+            ->orderBy('unit_price', 'desc')
+            ->pluck('unit_price')
+            ->first();
+
+        if($lastPrice == $firstPrice){
+            return $firstPrice . " AED";
+        }else{
+            return $firstPrice . " AED - " . $lastPrice . " AED";
+        }
     }
 
 }

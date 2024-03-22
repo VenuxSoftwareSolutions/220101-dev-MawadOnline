@@ -18,27 +18,22 @@ class ApprovalProductMail extends Mailable
      *
      * @return void
      */
-    public $array;
+    public $status;
+    public $text;
 
-    public function __construct($array)
+    public function __construct($status, $text)
     {
-        $this->array = $array;
+        $this->status = $status;
+        $this->text = $text;
     }
-
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
+    
     public function build()
     {
-        return $this->view('emails.approval_product')
-                    ->from(env('MAIL_FROM_NAME'))
-                    ->subject('Approval Product')
-                    ->with([
-                        'message' => $this->array['message'],
-                        'status' => $this->array['status'],
-                        'reason' => $this->array['reason'],
-                    ]);
+        return $this
+            ->subject($this->status)
+            ->view('emails.approval_product')
+            ->with([
+                'text' => $this->text,
+            ]);
     }
 }

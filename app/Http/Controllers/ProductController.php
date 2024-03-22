@@ -16,6 +16,7 @@ use App\Models\BusinessInformation;
 use App\Models\ProductAttributeValues;
 use App\Models\UploadProducts;
 use App\Mail\ApprovalProductMail;
+use App\Mail\SellerStaffMail;
 use App\Models\Brand;
 use App\Models\Unity;
 use Auth;
@@ -28,6 +29,7 @@ use App\Models\Color;
 use App\Models\User;
 use App\Notifications\ShopProductNotification;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 use Combinations;
 use CoreComponentRepository;
 use Artisan;
@@ -679,11 +681,6 @@ class ProductController extends Controller
                 }
             }
 
-            
-
-
-            
-
             //Histroique General attributes
             $general_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->get();
             $general_attributes_ids_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->pluck('id_attribute')->toArray();
@@ -857,13 +854,14 @@ class ProductController extends Controller
     }
 
     public function approve_action(Request $request){
+        
         $product = Product::find($request->id_variant);
         if($product != null){
-            if(($request->status != 1) && ($request->status != 4)){
-                if(count($product->getChildrenProducts())){
-                    foreach ($product->getChildrenProducts() as $children){
-                        //Attribute section 
-                        $attributes_id = DB::table('product_attribute_values')->where('id_products', $children->id)->pluck('id')->toArray();
+            if(count($product->getChildrenProducts())){
+                foreach ($product->getChildrenProducts() as $children){
+                    //Attribute section 
+                    $attributes_id = DB::table('product_attribute_values')->where('id_products', $children->id)->pluck('id')->toArray();
+                    if(($request->status != 1) && ($request->status != 4)){
                         $historique_attributes = Revision::where('revisionable_type', 'App\Models\ProductAttributeValues')->whereIn('revisionable_id', $attributes_id)->get();
                         if(count($historique_attributes) > 0){
                             foreach($historique_attributes as $attribute_history){
@@ -886,10 +884,13 @@ class ProductController extends Controller
                                 $attribute_value = DB::table('product_attribute_values')->where('id',$attribute_history->revisionable_id)->update($update);
                             }
                         }
+                    }
 
-                        $historique_attributes = Revision::where('revisionable_type', 'App\Models\ProductAttributeValues')->whereIn('revisionable_id', $attributes_id)->delete();
+                    $historique_attributes = Revision::where('revisionable_type', 'App\Models\ProductAttributeValues')->whereIn('revisionable_id', $attributes_id)->delete();
 
-                        //Product section
+                    //Product section
+                    
+                    if(($request->status != 1) && ($request->status != 4)){
                         $historique_product_informations = Revision::where('revisionable_type', 'App\Models\Product')->where('revisionable_id', $children->id)->get();
                         if(count($historique_product_informations) > 0){
                             $data = [];
@@ -898,11 +899,13 @@ class ProductController extends Controller
                             }
                             $children_product = DB::table('products')->where('id', $children->id)->update($data);
                         }
+                    }
 
-                        $historique_product_informations = Revision::where('revisionable_type', 'App\Models\Product')->where('revisionable_id', $children->id)->delete();
+                    $historique_product_informations = Revision::where('revisionable_type', 'App\Models\Product')->where('revisionable_id', $children->id)->delete();
 
-                        //Images section & thumbnails
-                        $images_ids = DB::table('upload_products')->where('id_product', $children->id)->where('type', 'images')->orWhere('type', 'thumbnails')->pluck('id')->toArray();
+                    //Images section & thumbnails
+                    $images_ids = DB::table('upload_products')->where('id_product', $children->id)->where('type', 'images')->orWhere('type', 'thumbnails')->pluck('id')->toArray();
+                    if(($request->status != 1) && ($request->status != 4)){
                         $historique_images = Revision::whereIn('revisionable_id', $images_ids)->where('revisionable_type', 'App\Models\UploadProducts')->get();
                         if(count($historique_images) > 0){
                             foreach($historique_images as $image){
@@ -915,12 +918,16 @@ class ProductController extends Controller
                                 $uploaded = DB::table('upload_products')->where('id', $image->new_value)->delete();
                             }
                         }
-
-                        $historique_images = Revision::whereIn('revisionable_id', $images_ids)->where('revisionable_type', 'App\Models\UploadProducts')->delete();
                     }
-                }
 
-                $attributes_id = DB::table('product_attribute_values')->where('id_products', $product->id)->pluck('id')->toArray();
+                    $historique_images = Revision::whereIn('revisionable_id', $images_ids)->where('revisionable_type', 'App\Models\UploadProducts')->delete();
+                    $children->approved = $request->status;
+                    $children->save();
+                }
+            }
+
+            $attributes_id = DB::table('product_attribute_values')->where('id_products', $product->id)->pluck('id')->toArray();
+            if(($request->status != 1) && ($request->status != 4)){
                 $historique_attributes = Revision::where('revisionable_type', 'App\Models\ProductAttributeValues')->whereIn('revisionable_id', $attributes_id)->get();
                 if(count($historique_attributes) > 0){
                     foreach($historique_attributes as $attribute_history){
@@ -943,10 +950,11 @@ class ProductController extends Controller
                         $attribute_value = DB::table('product_attribute_values')->where('id',$attribute_history->revisionable_id)->update($update);
                     }
                 }
+            }
+            $historique_attributes = Revision::where('revisionable_type', 'App\Models\ProductAttributeValues')->whereIn('revisionable_id', $attributes_id)->delete();
 
-                $historique_attributes = Revision::where('revisionable_type', 'App\Models\ProductAttributeValues')->whereIn('revisionable_id', $attributes_id)->delete();
-
-                //Product section
+            //Product section
+            if(($request->status != 1) && ($request->status != 4)){
                 $historique_product_informations = Revision::where('revisionable_type', 'App\Models\Product')->where('revisionable_id', $product->id)->get();
                 if(count($historique_product_informations) > 0){
                     $data = [];
@@ -955,11 +963,13 @@ class ProductController extends Controller
                     }
                     $producted_update = DB::table('products')->where('id', $product->id)->update($data);
                 }
+            }
 
-                $historique_product_informations = Revision::where('revisionable_type', 'App\Models\Product')->where('revisionable_id', $product->id)->delete();
+            $historique_product_informations = Revision::where('revisionable_type', 'App\Models\Product')->where('revisionable_id', $product->id)->delete();
 
-                //Images section & thumbnails
-                $images_ids = DB::table('upload_products')->where('id_product', $product->id)->where('type', 'images')->orWhere('type', 'thumbnails')->pluck('id')->toArray();
+            //Images section & thumbnails
+            $images_ids = DB::table('upload_products')->where('id_product', $product->id)->where('type', 'images')->orWhere('type', 'thumbnails')->pluck('id')->toArray();
+            if(($request->status != 1) && ($request->status != 4)){
                 $historique_images = Revision::whereIn('revisionable_id', $images_ids)->where('revisionable_type', 'App\Models\UploadProducts')->get();
                 if(count($historique_images) > 0){
                     foreach($historique_images as $image){
@@ -972,11 +982,13 @@ class ProductController extends Controller
                         $uploaded = DB::table('upload_products')->where('id', $image->new_value)->delete();
                     }
                 }
+            }
 
-                $historique_images = Revision::whereIn('revisionable_id', $images_ids)->where('revisionable_type', 'App\Models\UploadProducts')->delete();
+            $historique_images = Revision::whereIn('revisionable_id', $images_ids)->where('revisionable_type', 'App\Models\UploadProducts')->delete();
 
-                //Documents section 
-                $documents_ids = DB::table('upload_products')->where('id_product', $product->id)->where('type', 'documents')->pluck('id')->toArray();
+            //Documents section 
+            $documents_ids = DB::table('upload_products')->where('id_product', $product->id)->where('type', 'documents')->pluck('id')->toArray();
+            if(($request->status != 1) && ($request->status != 4)){
                 $historique_documents = Revision::whereIn('revisionable_id', $documents_ids)->where('revisionable_type', 'App\Models\UploadProducts')->get();
                 if(count($historique_documents) > 0){
                     foreach($historique_documents as $document){
@@ -1003,38 +1015,45 @@ class ProductController extends Controller
                         
                     }
                 }
-
-                $historique_documents = Revision::whereIn('revisionable_id', $documents_ids)->where('revisionable_type', 'App\Models\UploadProducts')->delete();
-
-                $product->approved = $request->status;
-                //check if status is Revision Required or Rejected to set the rejection reason
-                if(($request->status == 2) || ($request->status == 3)){
-                    $product->rejection_reason = $request->reason;
-                }else{
-                    $product->rejection_reason = null;
-                }
-                $product->save();
-                // if(($request->status == 2) || ($request->status == 3)){
-                //     $details = [];
-                //     if($request->status == 2){
-                //         $details['status'] = 'Revision Required';
-                //         $details['message'] = 'Revision Required';
-                //     }else{
-                //         $details['status'] = 'Rejected';
-                //         $details['message'] = 'Revision Required';
-                //     }
-
-                //     $user = User::find($product->user_id);
-
-                //     $details['reason'] = $request->reason;
-                //     Mail::to($user->email)->queue(new ApprovalProductMail($details));
-                // }
-                    
-
-                return response()->json([
-                    'status' => 'success'
-                ]);
             }
+
+            $historique_documents = Revision::whereIn('revisionable_id', $documents_ids)->where('revisionable_type', 'App\Models\UploadProducts')->delete();
+
+            //check if status is Revision Required or Rejected to set the rejection reason
+            if(($request->status == 2) || ($request->status == 3)){
+                if($request->status == 2){
+                    $status = 'Revision Required for ' . $product->name . ' Listing';
+                    $text = 'Dear Mr/Mrs, 
+                    <br>We hope this message finds you well. Our team has reviewed the listing for <b>' . $product->name . '</b> on our marketplace and identified areas that require revision.
+                    <br>Please note the necessary correction(s):<br> ' . $request->reason . '<br>Kindly make the appropriate changes to ensure that the listing meets our marketplace standards. <br>We appreciate your prompt attention to this matter.
+                    Thank you for your cooperation.
+                    <br>Best regards,
+                    <br>MAWAD team.';
+                }else{
+                    $status = 'Rejection Notification for Product Listing';
+                    $text = 'Dear Mr/Mrs, 
+                    <br>I hope this email finds you well. <br>After careful review, we regret to inform you that the listing for <b>' . $product->name . '</b> on our marketplace has been rejected.
+                    <br>The reason for rejection is as follows:<br> ' . $request->reason . '<br>We understand that this may be disappointing, and we encourage you to review our marketplace guidelines to ensure future submissions meet our requirements.
+                    <br>Thank you for your understanding.
+                    <br>Best regards,
+                    <br>MAWAD team.';
+                }
+    
+                $user = User::find($product->user_id);
+                Mail::to($user->email)->send(new ApprovalProductMail($status, $text));  
+                
+                $product->rejection_reason = $request->reason;
+            }else{
+                $product->rejection_reason = null;
+            }
+
+            $product->approved = $request->status;
+            $product->save();
+            
+
+            return response()->json([
+                'status' => 'success'
+            ]);
         }else{
             return response()->json([
                 'status' => 'failed'

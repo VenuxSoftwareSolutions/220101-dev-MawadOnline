@@ -174,7 +174,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        //dd($request->all());
+        dd($request->all());
         $product = $this->productService->store($request->except([
             'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
         ]));
@@ -798,16 +798,19 @@ class ProductController extends Controller
 
     public function updatePublished(Request $request)
     {
-        $product = Product::findOrFail($request->id);
-        $product->published = $request->status;
-        if (addon_is_activated('seller_subscription') && $request->status == 1) {
-            $shop = $product->user->shop;
-            if (!seller_package_validity_check()) {
-                return 2;
-            }
+        $product = Product::find($request->id);
+        if($product != null){
+            $product->published = $request->status;
+            $product->save();
+
+            return response()->json([
+                'status' => "success"
+            ]);
+        }else{
+            return response()->json([
+                'status' => "failed"
+            ]);
         }
-        $product->save();
-        return 1;
     }
 
     public function updateFeatured(Request $request)
@@ -855,31 +858,39 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        if (Auth::user()->id != $product->user_id) {
-            flash(translate('This product is not yours.'))->warning();
-            return back();
+        //     if (Auth::user()->id != $product->user_id) {
+        //         flash(translate('This product is not yours.'))->warning();
+        //         return back();
+        //     }
+
+        //     $product->product_translations()->delete();
+        //     $product->categories()->detach();
+        //     $product->stocks()->delete();
+        //     $product->taxes()->delete();
+
+
+        //     if (Product::destroy($id)) {
+        //         Cart::where('product_id', $id)->delete();
+        //         Wishlist::where('product_id', $id)->delete();
+
+        //         flash(translate('Product has been deleted successfully'))->success();
+
+        //         Artisan::call('view:clear');
+        //         Artisan::call('cache:clear');
+
+        //         return back();
+        //     } else {
+        //         flash(translate('Something went wrong'))->error();
+        //         return back();
+        //     }
+
+        if(count($product->getChildrenProducts()) > 0){
+            foreach($product->getChildrenProducts() as $children){
+                $children->delete();
+            }
         }
-
-        $product->product_translations()->delete();
-        $product->categories()->detach();
-        $product->stocks()->delete();
-        $product->taxes()->delete();
-
-
-        if (Product::destroy($id)) {
-            Cart::where('product_id', $id)->delete();
-            Wishlist::where('product_id', $id)->delete();
-
-            flash(translate('Product has been deleted successfully'))->success();
-
-            Artisan::call('view:clear');
-            Artisan::call('cache:clear');
-
-            return back();
-        } else {
-            flash(translate('Something went wrong'))->error();
-            return back();
-        }
+        Product::destroy($id);
+        return back();
     }
 
     public function bulk_product_delete(Request $request)
