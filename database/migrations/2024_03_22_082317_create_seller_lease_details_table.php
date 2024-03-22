@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('lease_id') ;
             $table->unsignedBigInteger('role_id')->nullable() ;
-            $table->integer('amount')->nullable() ;
+            $table->decimal('amount', 11, 2)->nullable() ;
             $table->date('start_date') ;
             $table->date('end_date') ;
             $table->timestamps();

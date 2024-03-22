@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Role;
+use App\Models\User;
 use App\Models\Staff;
 use App\Models\SellerPackage;
 use Illuminate\Database\Seeder;
@@ -59,38 +60,45 @@ class PackagesSeeder extends Seeder
         $pro->givePermissionTo('seller_shop_settings');
         $pro->givePermissionTo('seller_view_support_tickets');
         $pro->givePermissionTo('seller_view_all_staffs');
+        $pro->givePermissionTo('seller_add_staff');
+        $pro->givePermissionTo('seller_edit_staff');
+        $pro->givePermissionTo('seller_delete_staff');
         $pro->givePermissionTo('seller_add_inventory');
         $pro->givePermissionTo('seller_edit_or_remove_inventory');
         $pro->givePermissionTo('seller_inventory_history');
 
-        $pro=Role::updateOrCreate(
-            ['name' => 'pro'],
-            ['guard_name' => 'web',
-            'role_type' => '1',
-            'created_by' => '1',
-            'package_id' => '4',
-        ]);
-
         // Step 1: Get users with the "seller" role
         $sellerRoleId = Role::where('name', 'seller')->value('id');
-        $usersWithSellerRole = User::whereHas('roles', function ($query) use ($sellerRoleId) {
-            $query->where('role_id', $sellerRoleId);
-        })->get();
+        $usersWithSellerRole = User::whereColumn('id','owner_id')->get();
+
+
+        $sellers=User::where('user_type','seller')->whereColumn('id','!=','owner_id')->get();
+        foreach($sellers as $seller){
+            $staff=Staff::where('user_id',$seller->id)->first();
+            if($staff){
+                $staff->delete();
+            }
+            $seller->banned=4;
+            $seller->save();
+        }
 
         // Step 2: Change their role to "pro"
-        $proRoleId = Role::where('name', 'pro')->value('id');
+        $proRoleId = Role::where('name', 'pro')->first();
         foreach ($usersWithSellerRole as $user) {
-            $staff=Staff::where('user_id',$user->id)->first();
-            $staff->role_id = $proRoleId;
-            $satff->save();
-            $user->roles()->sync([$proRoleId]);
+            if($staff=Staff::where('user_id',$user->id)->first()){
+                $staff->role_id = $pro->id;
+                $staff->save();
+            }else{
+                $staff=new Staff;
+                $staff->role_id = $pro->id;
+                $staff->user_id = $user->id;
+                $staff->save();
+            }
+
+            $user->syncRoles($pro->name);
         }
 
-        $sellers=User::where('type','seller')->whereColumn('id','!=','owner_id')->get();
-        foreach($sellers as $seller){
-            $staff=Staff::where('user_id',$seller->id)->delete();
-            $seller->delete();
-        }
+        
 
         $sales=Role::updateOrCreate(
             ['name' => 'Sales'],
@@ -126,6 +134,6 @@ class PackagesSeeder extends Seeder
         $management->givePermissionTo('seller_add_inventory');
         $management->givePermissionTo('seller_edit_or_remove_inventory');
         $management->givePermissionTo('seller_inventory_history');
-        
+
     }
 }

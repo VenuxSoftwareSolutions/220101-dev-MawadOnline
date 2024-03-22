@@ -17,8 +17,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('vendor_id') ;
             $table->integer('package_id') ;
-            $table->integer('total')->nullable() ;
-            $table->integer('discount')->nullable() ;
+            $table->decimal('total', 11, 2)->nullable() ;
+            $table->decimal('discount', 11, 2)->nullable() ;
             $table->date('start_date')->nullable() ;
             $table->date('end_date')->nullable() ;
             $table->text('roles')->nullable() ;
