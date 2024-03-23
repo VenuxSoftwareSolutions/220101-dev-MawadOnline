@@ -208,7 +208,13 @@ class ProductController extends Controller
         Artisan::call('view:clear');
         Artisan::call('cache:clear');
 
-        return redirect()->route('seller.products');
+        if($product->stock_after_create){
+            return redirect()->route('seller.stocks.index');
+        }else{
+            return redirect()->route('seller.products');
+        }
+
+        
     }
 
     public function store_draft(Request $request){

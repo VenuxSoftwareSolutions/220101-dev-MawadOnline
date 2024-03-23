@@ -1191,11 +1191,19 @@
 
         $('body .aiz-selectpicker').each(function(){
             if ($(this).attr('style') !== undefined) {
-                $(this).parent().find('button.btn.dropdown-toggle.btn-light').attr('style', 'border: 1px solid #FF3C50 !important');
-                var value = $(this).attr('data-value');
                 $(this).parent().find('button.btn.dropdown-toggle.btn-light').attr('data-tooltip-toggle', 'tooltip');
                 $(this).parent().find('button.btn.dropdown-toggle.btn-light').tooltip();
-                $(this).parent().find('button.btn.dropdown-toggle.btn-light').attr('data-original-title', 'Modified and old value is: ' + value);
+                var value = $(this).attr('data-value');
+                var added = $(this).attr('data-added');
+
+                if(added != undefined){
+                    $(this).parent().find('button.btn.dropdown-toggle.btn-light').attr('style', 'border: 1px solid green !important');
+                    $(this).parent().find('button.btn.dropdown-toggle.btn-light').attr('data-original-title', 'Attribute added');
+                }else{
+                    $(this).parent().find('button.btn.dropdown-toggle.btn-light').attr('style', 'border: 1px solid #FF3C50 !important');
+                    $(this).parent().find('button.btn.dropdown-toggle.btn-light').attr('data-original-title', 'Modified and old value is: ' + value);
+                }
+                
             }
         })
 

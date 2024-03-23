@@ -64,10 +64,16 @@ class ProductService
 
         unset($collection['parent_id']);
 
-        if(isset($collection['published'])){
+        if(isset($collection['published_modal'])){
             $collection['published'] = 1;
         }else{
             $collection['published'] = 0;
+        } 
+
+        if(isset($collection['create_stock'])){
+            $collection['stock_after_create'] = 1;
+        }else{
+            $collection['stock_after_create'] = 0;
         } 
 
         if(isset($collection['activate_third_party'])){
@@ -450,7 +456,7 @@ class ProductService
                 foreach($pricing['from'] as $key => $from){
                     $current_data = [];
 
-                    if($pricing['from'][$key] != null && $pricing['unit_price'][$key] != null){
+                    if(($from != null) && ($pricing['to'][$key] != null) && ($pricing['unit_price'][$key] != null)){
                             if($pricing['date_range_pricing'][$key] != null){
                                 if(($pricing['date_range_pricing'][$key]) && ($pricing['discount_type'][$key])){
                                     $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
@@ -751,17 +757,22 @@ class ProductService
 
                         foreach($variant['pricing']['from'] as $key => $from){
                             $current_data = [];
+                            if(($from != null) && ($variant['pricing']['to'][$key] != null) && ($variant['pricing']['unit_price'][$key] != null)){
+                                if(isset($variant['pricing']['discount_range'])){
+                                    if(($variant['pricing']['discount_range'] != null)){
+                                        if(($variant['pricing']['discount_range'][$key]) && ($variant['pricing']['discount_type'][$key])){
+                                            $date_var               = explode(" to ", $variant['pricing']['discount_range'][$key]);
+                                            $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
+                                            $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
 
-                            if(isset($variant['pricing']['discount_range'])){
-                                if(($variant['pricing']['discount_range'] != null)){
-                                    if(($variant['pricing']['discount_range'][$key]) && ($variant['pricing']['discount_type'][$key])){
-                                        $date_var               = explode(" to ", $variant['pricing']['discount_range'][$key]);
-                                        $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
-                                        $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
-
-                                        $current_data["discount_start_datetime"] = $discount_start_date;
-                                        $current_data["discount_end_datetime"] = $discount_end_date;
-                                        $current_data["discount_type"] = $variant['pricing']['discount_type'][$key];
+                                            $current_data["discount_start_datetime"] = $discount_start_date;
+                                            $current_data["discount_end_datetime"] = $discount_end_date;
+                                            $current_data["discount_type"] = $variant['pricing']['discount_type'][$key];
+                                        }else{
+                                            $current_data["discount_start_datetime"] = null;
+                                            $current_data["discount_end_datetime"] = null;
+                                            $current_data["discount_type"] = null;
+                                        }
                                     }else{
                                         $current_data["discount_start_datetime"] = null;
                                         $current_data["discount_end_datetime"] = null;
@@ -772,87 +783,89 @@ class ProductService
                                     $current_data["discount_end_datetime"] = null;
                                     $current_data["discount_type"] = null;
                                 }
-                            }else{
-                                $current_data["discount_start_datetime"] = null;
-                                $current_data["discount_end_datetime"] = null;
-                                $current_data["discount_type"] = null;
+
+
+
+                                $current_data["id_products"] = $product->id;
+                                $current_data["from"] = $from;
+                                $current_data["to"] = $variant['pricing']['to'][$key];
+                                $current_data["unit_price"] = $variant['pricing']['unit_price'][$key];
+
+                                if(isset($variant['pricing']['discount_amount'])){
+                                    $current_data["discount_amount"] = $variant['pricing']['discount_amount'][$key];
+                                }else{
+                                    $current_data["discount_amount"] = null;
+                                }
+                                if(isset($variant['pricing']['discount_percentage'])){
+                                    $current_data["discount_percentage"] = $variant['pricing']['discount_percentage'][$key];
+                                }else{
+                                    $current_data["discount_percentage"] = null;
+                                }
+
+
+                                array_push($all_data_to_insert, $current_data);
                             }
-
-
-
-                            $current_data["id_products"] = $product->id;
-                            $current_data["from"] = $from;
-                            $current_data["to"] = $variant['pricing']['to'][$key];
-                            $current_data["unit_price"] = $variant['pricing']['unit_price'][$key];
-
-                            if(isset($variant['pricing']['discount_amount'])){
-                                $current_data["discount_amount"] = $variant['pricing']['discount_amount'][$key];
-                            }else{
-                                $current_data["discount_amount"] = null;
-                            }
-                            if(isset($variant['pricing']['discount_percentage'])){
-                                $current_data["discount_percentage"] = $variant['pricing']['discount_percentage'][$key];
-                            }else{
-                                $current_data["discount_percentage"] = null;
-                            }
-
-
-                            array_push($all_data_to_insert, $current_data);
                         }
 
-                        PricingConfiguration::insert($all_data_to_insert);
+                        if(count($all_data_to_insert) > 0){
+                            PricingConfiguration::insert($all_data_to_insert);
+                        }
                     }else{
                         //get pricing by default
                         $all_data_to_insert = [];
 
                         foreach($pricing['from'] as $key => $from){
                             $current_data = [];
+                            if(($from != null) && ($pricing['to'][$key] != null) && ($pricing['unit_price'][$key] != null)){
+                                if(isset($pricing['date_range_pricing'])){
+                                    if(($pricing['date_range_pricing'] != null)){
+                                        if(($pricing['date_range_pricing'][$key]) && ($pricing['discount_type'][$key])){
+                                            $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
+                                            $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
+                                            $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
 
-                            if(isset($pricing['date_range_pricing'])){
-                                if(($pricing['date_range_pricing'] != null)){
-                                    if(($pricing['date_range_pricing'][$key]) && ($pricing['discount_type'][$key])){
-                                        $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
-                                        $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
-                                        $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
-
-                                        $current_data["discount_start_datetime"] = $discount_start_date;
-                                        $current_data["discount_end_datetime"] = $discount_end_date;
-                                        $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                            $current_data["discount_start_datetime"] = $discount_start_date;
+                                            $current_data["discount_end_datetime"] = $discount_end_date;
+                                            $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                        }
+                                    }else{
+                                        $current_data["discount_start_datetime"] = null;
+                                        $current_data["discount_end_datetime"] = null;
+                                        $current_data["discount_type"] = null;
                                     }
                                 }else{
                                     $current_data["discount_start_datetime"] = null;
                                     $current_data["discount_end_datetime"] = null;
                                     $current_data["discount_type"] = null;
                                 }
-                            }else{
-                                $current_data["discount_start_datetime"] = null;
-                                $current_data["discount_end_datetime"] = null;
-                                $current_data["discount_type"] = null;
+
+
+
+                                $current_data["id_products"] = $product->id;
+                                $current_data["from"] = $from;
+                                $current_data["to"] = $pricing['to'][$key];
+                                $current_data["unit_price"] = $pricing['unit_price'][$key];
+
+                                if(isset($pricing['discount_amount'])){
+                                    $current_data["discount_amount"] = $pricing['discount_amount'][$key];
+                                }else{
+                                    $current_data["discount_amount"] = null;
+                                }
+                                if(isset($pricing['discount_percentage'])){
+                                    $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
+                                }else{
+                                    $current_data["discount_percentage"] = null;
+                                }
+                                array_push($all_data_to_insert, $current_data);
                             }
 
 
-
-                            $current_data["id_products"] = $product->id;
-                            $current_data["from"] = $from;
-                            $current_data["to"] = $pricing['to'][$key];
-                            $current_data["unit_price"] = $pricing['unit_price'][$key];
-
-                            if(isset($pricing['discount_amount'])){
-                                $current_data["discount_amount"] = $pricing['discount_amount'][$key];
-                            }else{
-                                $current_data["discount_amount"] = null;
-                            }
-                            if(isset($pricing['discount_percentage'])){
-                                $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
-                            }else{
-                                $current_data["discount_percentage"] = null;
-                            }
-
-
-                            array_push($all_data_to_insert, $current_data);
+                            
                         }
-
-                        PricingConfiguration::insert($all_data_to_insert);
+                        if(count($all_data_to_insert) > 0){
+                            PricingConfiguration::insert($all_data_to_insert);
+                        }
+                        
                     }
 
                     //Shipping of variant
@@ -1507,12 +1520,14 @@ class ProductService
                 foreach ($general_attributes_data as $attr => $value) {
                     if($value != null){
                         $attribute_product = ProductAttributeValues::where('id_products', $product_update->id)->where('id_attribute', $attr)->first();
-                                
+                        
+                        $check_add = false;
                         if($attribute_product == null){
                             $attribute_product = new ProductAttributeValues();
                             $attribute_product->id_products = $product_update->id;
                             $attribute_product->id_attribute = $attr;
                             $attribute_product->is_general = 1;
+                            $check_add = true;
                         }
 
                         if(in_array($attr, $ids_attributes_list)){
@@ -1532,6 +1547,19 @@ class ProductService
                         }
 
                         $attribute_product->save();
+
+                        if($check_add == true){
+                            DB::table('revisions')->insert([
+                                "revisionable_type" => "App\Models\ProductAttributeValues",
+                                "revisionable_id" => $attribute_product->id,
+                                "user_id" => Auth::user()->id,
+                                "key" => 'add_attribute',
+                                "old_value" => NULL,
+                                "new_value" => $attribute_product->id,
+                                'created_at'            => new \DateTime(),
+                                'updated_at'            => new \DateTime(),
+                            ]);
+                        }
                     }
                 }
             }
@@ -1701,12 +1729,13 @@ class ProductService
                                 $attribute_name = Attribute::find($key)->name;
                                 $sku .= "_".$attribute_name;
                                 $attribute_product = ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->first();
-                                
+                                $check_add = false;
                                 if($attribute_product == null){
                                     $attribute_product = new ProductAttributeValues();
                                     $attribute_product->id_products = $product->id;
                                     $attribute_product->id_attribute = $key;
                                     $attribute_product->is_variant = 1;
+                                    $check_add = true;
                                 }
                                 if(in_array($key, $ids_attributes_list)){
                                     $value = AttributeValue::find($value_attribute);
@@ -1725,6 +1754,19 @@ class ProductService
                                 }
 
                                 $attribute_product->save();
+
+                                if($check_add == true){
+                                    DB::table('revisions')->insert([
+                                        "revisionable_type" => "App\Models\ProductAttributeValues",
+                                        "revisionable_id" => $attribute_product->id,
+                                        "user_id" => Auth::user()->id,
+                                        "key" => 'add_attribute',
+                                        "old_value" => NULL,
+                                        "new_value" => $attribute_product->id,
+                                        'created_at'            => new \DateTime(),
+                                        'updated_at'            => new \DateTime(),
+                                    ]);
+                                }
                             }
                         }
 
@@ -1882,26 +1924,29 @@ class ProductService
 
                         $shipping_to_delete = Shipping::where('product_id', $product->id)->delete();
                         $shipping_details = [];
+                        
                         if(array_key_exists('shipping_details', $variant)){
-                            foreach($variant['shipping_details']['from_shipping'] as $key => $from){
-                                if(($from != null) && ($variant['shipping_details']['to_shipping'][$key]!= null)&& ($variant['shipping_details']['shipper'][$key]!= null)&& ($variant['shipping_details']['estimated_order'][$key]!= null)){
-                                    $current_shipping = [];
-                                    $shippers = implode(',', $variant['shipping_details']['shipper'][$key]);
-                                    $current_shipping['from_shipping'] = $from;
-                                    $current_shipping['to_shipping'] = $variant['shipping_details']['to_shipping'][$key];
-                                    $current_shipping['shipper'] = $shippers;
-                                    $current_shipping['estimated_order'] = $variant['shipping_details']['estimated_order'][$key];
-                                    $current_shipping['paid'] = $variant['shipping_details']['estimated_shipping'][$key];
-                                    $current_shipping['paid'] = $variant['shipping_details']['paid'][$key];
-                                    $current_shipping['shipping_charge'] = $variant['shipping_details']['shipping_charge'][$key];
-                                    $current_shipping['flat_rate_shipping'] = $variant['shipping_details']['flat_rate_shipping'][$key];
-                                    $current_shipping['vat_shipping'] = $vat_user->vat_registered;
-                                    $current_shipping['product_id'] = $product->id;
-                                    $current_shipping['charge_per_unit_shipping'] = $variant['shipping_details']['charge_per_unit_shipping'][$key];
+                            if(count($variant['shipping_details']) > 0){
+                                foreach ($variant['shipping_details']['from_shipping'] as $key => $from){
+                                    if(($from != null) && ($variant['shipping_details']['to_shipping'][$key]!= null)&& ($variant['shipping_details']['shipper'][$key]!= null)&& ($variant['shipping_details']['estimated_order'][$key]!= null)){
+                                        $current_shipping = [];
+                                        $shippers = implode(',', $variant['shipping_details']['shipper'][$key]);
+                                        $current_shipping['from_shipping'] = $from;
+                                        $current_shipping['to_shipping'] = $variant['shipping_details']['to_shipping'][$key];
+                                        $current_shipping['shipper'] = $shippers;
+                                        $current_shipping['estimated_order'] = $variant['shipping_details']['estimated_order'][$key];
+                                        $current_shipping['paid'] = $variant['shipping_details']['estimated_shipping'][$key];
+                                        $current_shipping['paid'] = $variant['shipping_details']['paid'][$key];
+                                        $current_shipping['shipping_charge'] = $variant['shipping_details']['shipping_charge'][$key];
+                                        $current_shipping['flat_rate_shipping'] = $variant['shipping_details']['flat_rate_shipping'][$key];
+                                        $current_shipping['vat_shipping'] = $vat_user->vat_registered;
+                                        $current_shipping['product_id'] = $product->id;
+                                        $current_shipping['charge_per_unit_shipping'] = $variant['shipping_details']['charge_per_unit_shipping'][$key];
 
-                                    array_push($shipping_details, $current_shipping);
+                                        array_push($shipping_details, $current_shipping);
+                                    }
                                 }
-                            }
+                            }   
 
                             if(count($shipping_details) > 0){
                                 Shipping::insert($shipping_details);
@@ -2261,10 +2306,16 @@ class ProductService
             $collection['refundable'] = 0;
         }
         
-        if(isset($collection['published'])){
+        if(isset($collection['published_modal'])){
             $collection['published'] = 1;
         }else{
             $collection['published'] = 0;
+        } 
+
+        if(isset($collection['create_stock'])){
+            $collection['stock_after_create'] = 1;
+        }else{
+            $collection['stock_after_create'] = 0;
         } 
 
         if(isset($collection['activate_third_party'])){

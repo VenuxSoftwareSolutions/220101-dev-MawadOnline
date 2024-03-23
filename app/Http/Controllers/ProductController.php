@@ -694,16 +694,22 @@ class ProductController extends Controller
                     if(count($historique_parent) > 0){
                         foreach($historique_parent as $historique){
                             if($general_attribute->id == $historique->revisionable_id){
-                                $general_attribute->key = $historique->key;
-                                if($historique->key == 'id_units'){
-                                    $unit = Unity::find($historique->old_value);
-                                    if($unit != null){
-                                        $general_attribute->old_value = $unit->name;
+                                if($general_attribute->id == $historique->revisionable_id){
+                                    $general_attribute->key = $historique->key;
+                                    if($historique->key == "add_attribute"){
+                                        $general_attribute->added = true;
                                     }else{
-                                        $general_attribute->old_value = '';
+                                        if($historique->key == 'id_units'){
+                                            $unit = Unity::find($historique->old_value);
+                                            if($unit != null){
+                                                $general_attribute->old_value = $unit->name;
+                                            }else{
+                                                $general_attribute->old_value = '';
+                                            }
+                                        }else{
+                                            $general_attribute->old_value = $historique->old_value;
+                                        }
                                     }
-                                }else{
-                                    $general_attribute->old_value = $historique->old_value;
                                 }
                             }
                         }

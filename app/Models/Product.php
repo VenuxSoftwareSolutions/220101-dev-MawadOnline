@@ -202,11 +202,26 @@ class Product extends Model
             foreach($historique_children as $historique_child){
                 foreach($attributes as $variant){
                     if($variant->id == $historique_child->revisionable_id){
-                        $variant->old_value = $historique_child->old_value;
+                        $variant->key = $historique_child->key;
+                        if($historique_child->key == "add_attribute"){
+                            $variant->added = true;
+                        }else{
+                            if($historique_child->key == 'id_units'){
+                                $unit = Unity::find($historique_child->old_value);
+                                if($unit != null){
+                                    $variant->old_value = $unit->name;
+                                }else{
+                                    $variant->old_value = '';
+                                }
+                            }else{
+                                $variant->old_value = $historique_child->old_value;
+                            }
+                        }
                     }
                 }
             }
         }
+
         $data = [];
         if(count($attributes) > 0){
             foreach ($attributes as $attribute){

@@ -41,8 +41,8 @@
             <div class="col-lg-12">
                 @csrf
                 {{-- Bloc Product Information --}}
-                <input type="hidden" id="published_after_approve" value="0" name="published" >
-                <input type="hidden" id="create_stock" value="0" name="stock">
+                <input type="hidden" id="published_after_approve" value="0" name="published_modal">
+                <input type="hidden" id="create_stock" value="0" name="create_stock">
                 <div class="card">
                     <div class="card-header">
                         <h5 class="mb-0 h6">{{translate('Product Information')}}</h5>
@@ -114,7 +114,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group row">
+                        {{-- <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Published')}}</label>
                             <div class="col-md-8">
                                 <label class="aiz-switch aiz-switch-success mb-0">
@@ -122,7 +122,7 @@
                                     <span></span>
                                 </label>
                             </div>
-                        </div>
+                        </div> --}}
 
                         @if (addon_is_activated('pos_system'))
                         <div class="form-group row">

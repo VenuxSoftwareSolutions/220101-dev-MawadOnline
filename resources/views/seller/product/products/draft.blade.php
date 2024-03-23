@@ -3462,7 +3462,7 @@
                 }
 
                 $('#general_attributes').html(data.html_attributes_generale);
-                if($('body #bloc_variants_created').is(':empty')){
+                if($('body #bloc_variants_created div').length == 0){
                     $('body input[name="activate_attributes"]').prop("checked", false);
                 }else{
                     $('body input[name="activate_attributes"]').prop("checked", true);
