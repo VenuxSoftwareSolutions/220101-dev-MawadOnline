@@ -54,10 +54,22 @@
             @case ('boolean')
                 <div class="col-md-8 mb-3 attribute-variant-{{ $attribute->id }}" style="padding-top: 10px">
                     <label style="margin-right: 15px">
-                        <input type="radio" class="attributes" name="attribute_generale-{{ $attribute->id }}" @if(request()->route()->getName() === 'products.approve') @if(isset($general_attributes[$attribute->id]->old_value))  data-toggle="tooltip" data-html="true" title="Modified and old value is: {{ $general_attributes[$attribute->id]->old_value }}" style=" accent-color:red !important;" @endif @if($general_attributes[$attribute->id]->value == "yes") checked @endif  @if(isset($general_attributes[$attribute->id]->added)) data-toggle="tooltip" data-html="true" title="Attribute added" style="accent-color:green !important;" @endif @endif name="boolean" value="yes">Yes
+                        <input type="radio" class="attributes" name="attribute_generale-{{ $attribute->id }}"   @if(request()->route()->getName() === 'products.approve') 
+                                                                                                                    @if(isset($general_attributes[$attribute->id]->old_value))  
+                                                                                                                        data-toggle="tooltip" data-html="true" title="Modified and old value is: {{ $general_attributes[$attribute->id]->old_value }}" style=" accent-color:red !important;" 
+                                                                                                                    @endif 
+                                                                                                                    
+                                                                                                                    @if(isset($general_attributes[$attribute->id]->added)) 
+                                                                                                                        data-toggle="tooltip" data-html="true" title="Attribute added" style="accent-color:green !important;" 
+                                                                                                                    @endif 
+                                                                                                                @endif 
+                                                                                                                @if($general_attributes[$attribute->id]->value == "yes") 
+                                                                                                                    checked 
+                                                                                                                @endif  
+                                                                                                                name="boolean" value="yes">Yes
                     </label>
                     <label>
-                        <input type="radio" class="attributes" name="attribute_generale-{{ $attribute->id }}" name="boolean" @if(request()->route()->getName() === 'products.approve') @if(isset($general_attributes[$attribute->id]->old_value))  data-toggle="tooltip" data-html="true" title="Modified and old value is: {{ $general_attributes[$attribute->id]->old_value }}" style=" accent-color:red !important;" @endif @if($general_attributes[$attribute->id]->value == "no") checked @endif @if(isset($general_attributes[$attribute->id]->added)) data-toggle="tooltip" data-html="true" title="Attribute added" style="accent-color:green !important;" @endif @endif value="no"> No
+                        <input type="radio" class="attributes" name="attribute_generale-{{ $attribute->id }}" name="boolean" @if(request()->route()->getName() === 'products.approve') @if(isset($general_attributes[$attribute->id]->old_value))  data-toggle="tooltip" data-html="true" title="Modified and old value is: {{ $general_attributes[$attribute->id]->old_value }}" style=" accent-color:red !important;" @endif  @if(isset($general_attributes[$attribute->id]->added)) data-toggle="tooltip" data-html="true" title="Attribute added" style="accent-color:green !important;" @endif @endif @if($general_attributes[$attribute->id]->value == "no") checked @endif value="no"> No
                     </label>
                 </div>
                 @break;

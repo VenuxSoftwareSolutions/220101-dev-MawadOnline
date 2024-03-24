@@ -1472,25 +1472,24 @@
                     });
 
                     $("#general_attributes div").each(function(index, element) {
-                        if($(element).data('id') != undefined){
-                            $(element).find('.attributes').each(function(index, child_element) {
-                                // Change the attribute name of the current input
-                                if ($(child_element).attr("name") == undefined) {
-                                    var id_attribute = $(child_element).data('id_attributes');
-                                    var name = 'attribute_generale-'+ id_attribute
-                                    $(child_element).attr('name', name);
-                                }
-                                
-                            });
+                        $(element).find('.attributes').each(function(index, child_element) {
+                            // Change the attribute name of the current input
+                            if ($(child_element).attr("name") == undefined) {
+                                var id_attribute = $(child_element).data('id_attributes');
+                                var name = 'attribute_generale-'+ id_attribute
+                                $(child_element).attr('name', name);
+                            }
+                            
+                        });
 
-                            $(element).find('.attributes-units').each(function(index, child_element_units) {
-                                if ($(child_element_units).attr("name") == undefined) {
-                                    var id_attribute = $(child_element_units).data('id_attributes');
-                                    var name = 'unit_attribute_generale-'+ id_attribute
-                                    $(child_element_units).attr('name', name);
-                                }
-                            });
-                        }
+                        $(element).find('.attributes-units').each(function(index, child_element_units) {
+                            if ($(child_element_units).attr("name") == undefined) {
+                                var id_attribute = $(child_element_units).data('id_attributes');
+                                var name = 'unit_attribute_generale-'+ id_attribute
+                                $(child_element_units).attr('name', name);
+                            }
+                        });
+                        
                     });
 
                     AIZ.plugins.bootstrapSelect('refresh');

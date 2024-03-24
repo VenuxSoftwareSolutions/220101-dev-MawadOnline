@@ -1981,12 +1981,14 @@ class ProductService
                 foreach ($general_attributes_data as $attr => $value) {
                     if($value != null){
                         $attribute_product = ProductAttributeValues::where('id_products', $product_update->id)->where('id_attribute', $attr)->first();
-                            
+                        $check_add = false;  
                         if($attribute_product == null){
                             $attribute_product = new ProductAttributeValues();
                             $attribute_product->id_products = $product_update->id;
                             $attribute_product->id_attribute = $attr;
                             $attribute_product->is_general = 1;
+
+                            $check_add = true;
                         }
 
                         if(in_array($attr, $ids_attributes_list)){
@@ -2006,6 +2008,19 @@ class ProductService
                         }
 
                         $attribute_product->save();
+
+                        if($check_add == true){
+                            DB::table('revisions')->insert([
+                                "revisionable_type" => "App\Models\ProductAttributeValues",
+                                "revisionable_id" => $attribute_product->id,
+                                "user_id" => Auth::user()->id,
+                                "key" => 'add_attribute',
+                                "old_value" => NULL,
+                                "new_value" => $attribute_product->id,
+                                'created_at'            => new \DateTime(),
+                                'updated_at'            => new \DateTime(),
+                            ]);
+                        }
                     }
                 }
             }
