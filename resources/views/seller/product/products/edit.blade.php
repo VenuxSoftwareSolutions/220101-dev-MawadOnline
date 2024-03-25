@@ -51,7 +51,7 @@
                         <div class="form-group row" id="brand">
                             <label class="col-md-3 col-from-label">{{translate('Brand')}}</label>
                             <div class="col-md-8">
-                                <select class="form-control aiz-selectpicker" name="brand_id" id="brand_id" required data-live-search="true">
+                                <select required class="form-control aiz-selectpicker" name="brand_id" id="brand_id" required data-live-search="true">
                                     <option value="">{{ translate('Select Brand') }}</option>
                                     @foreach (\App\Models\Brand::all() as $brand)
                                     <option value="{{ $brand->id }}" @selected($product->brand_id == $brand->id)>{{ $brand->getTranslation('name') }}</option>
@@ -81,7 +81,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Manufacturer')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text"  class="form-control" name="manufacturer" value="{{ $product->manufacturer }}" placeholder="Manufacturer" >
+                                <input type="text" required class="form-control" name="manufacturer" value="{{ $product->manufacturer }}" placeholder="Manufacturer" >
                             </div>
                         </div>
                         <div class="form-group row">
@@ -419,7 +419,7 @@
                                             <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id=""></td>
                                             <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id=""></td>
                                             <td>
-                                                <select class="form-control shipper" name="shipper[]">
+                                                <select multiple class="form-control shipper" name="shipper[]">
                                                     <option value="" selected>{{translate('Choose shipper')}}</option>
                                                     <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                                     <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
@@ -657,7 +657,7 @@
                                         <span></span>
                                     </label>
                                 </div>
-                                <div id="bloc_pricing_configuration_variant">
+                                <div id="bloc_pricing_configuration_variant" class="bloc_pricing_configuration_variant">
 
                                 </div>
                             </div>
@@ -798,7 +798,7 @@
                                             </div>
                                             <div class="col-md-8">
                                                 <label class="aiz-switch aiz-switch-success mb-0">
-                                                    <input value="1" type="checkbox" name="variant-pricing-{{ $children->id }}" class="variant-pricing" @if(count($children->getPricingConfiguration()) == 0) checked @endif>
+                                                    <input value="1" type="checkbox" name="variant-pricing-{{ $children->id }}" data-old_variant="{{ $children->id }}" class="variant-pricing" @if(count($children->getPricingConfiguration()) == 0) checked @endif>
                                                     <span></span>
                                                 </label>
                                             </div>
@@ -807,7 +807,7 @@
                                                     <table class="table" class="bloc_pricing_configuration_variant">
                                                         <thead>
                                                             <tr>
-                                                                <th>{{translate('From Quantity')}}</th>
+                                                                <th>{{translate('Fromm Quantity')}}</th>
                                                                 <th>{{translate('To Quantity')}}</th>
                                                                 <th>{{translate('Unit Price (VAT Exclusive)')}}</th>
                                                                 <th>{{translate('Discount(Start/End)')}}</th>
@@ -1696,6 +1696,8 @@
 
             clonedDiv.find('.delete_shipping_canfiguration').attr('data-variant-id', numbers_variant);
             clonedDiv.find('.btn-add-shipping').attr('data-variant-id', numbers_variant);
+            clonedDiv.find('.btn-add-pricing').attr('data-newvariant-id', numbers_variant);
+            clonedDiv.find('.delete_pricing_canfiguration').attr('data-newvariant-id', numbers_variant);
 
             $('#bloc_variants_created').prepend(clonedDiv);
             var divId = "#bloc_variants_created";
@@ -1753,34 +1755,47 @@
         $('body').on('change', '.variant-pricing', function(){
             if ($(this).is(':not(:checked)')) {
                 var is_variant = $(this).data("variant");
+                var old_variant = $(this).data("old_variant");
                 var clonedElement = $("#table_pricing_configuration").clone();
                 clonedElement.find('.min-qty').each(function(index, element) {
                     $(element).removeClass("min-qty").addClass("min-qty-variant");
                     if(is_variant != undefined){
                         $(element).attr('name', 'variant_pricing-from' + is_variant + '[from][]');
+                    }else if(old_variant != undefined){
+                        $(element).attr('name', 'variant[from][' + old_variant + '][]');
+                    }else{
+                        $(element).removeAttr("name");
                     }
-                    $(element).removeAttr("name");
                 });
                 clonedElement.find('.max-qty').each(function(index, element) {
                     $(element).removeClass("max-qty").addClass("max-qty-variant");
                     if(is_variant != undefined){
                         $(element).attr('name', 'variant_pricing-from' + is_variant + '[to][]');
+                    }else if(old_variant != undefined){
+                        $(element).attr('name', 'variant[to][' + old_variant + '][]');
+                    }else{
+                        $(element).removeAttr("name");
                     }
-                    $(element).removeAttr("name");
                 });
                 clonedElement.find('.discount_percentage').each(function(index, element) {
                     $(element).removeClass("discount_percentage").addClass("discount_percentage-variant");
                     if(is_variant != undefined){
                         $(element).attr('name', 'variant_pricing-from' + is_variant + '[discount_percentage][]');
+                    }else if(old_variant != undefined){
+                        $(element).attr('name', 'variant[discount_percentage][' + old_variant + '][]');
+                    }else{
+                        $(element).removeAttr("name");
                     }
-                    $(element).removeAttr("name");
                 });
                 clonedElement.find('.discount_amount').each(function(index, element) {
                     $(element).removeClass("discount_amount").addClass("discount_amount-variant");
                     if(is_variant != undefined){
                         $(element).attr('name', 'variant_pricing-from' + is_variant + '[discount_amount][]');
+                    }else if(old_variant != undefined){
+                        $(element).attr('name', 'variant[discount_amount][' + old_variant + '][]');
+                    }else{
+                        $(element).removeAttr("name");
                     }
-                    $(element).removeAttr("name");
                 });
                 clonedElement.find('.discount-range').each(function(index, element) {
                     $(element).daterangepicker({
@@ -1792,31 +1807,51 @@
                         },
                     });
                     $(element).removeClass("discount-range").addClass("discount-range-variant");
-                    $(element).removeAttr("name");
+                    
                     if(is_variant != undefined){
                         $(element).attr('name', 'variant_pricing-from' + is_variant + '[discount_range][]');
+                    }else if(old_variant != undefined){
+                        $(element).attr('name', 'variant[date_range_pricing][' + old_variant + '][]');
+                    }else{
+                        $(element).removeAttr("name");
                     }
                 });
                 clonedElement.find('.unit-price').each(function(index, element) {
                     $(element).removeClass("unit-price").addClass("unit-price-variant");
                     if(is_variant != undefined){
                         $(element).attr('name', 'variant_pricing-from' + is_variant + '[unit_price][]');
+                    }else if(old_variant != undefined){
+                        $(element).attr('name', 'variant[unit_price][' + old_variant + '][]');
+                    }else{
+                        $(element).removeAttr("name");
                     }
-                    $(element).removeAttr("name");
                 });
                 clonedElement.find('.discount_type').each(function(index, element) {
                     $(element).removeClass("discount_type").addClass("discount_type-variant");
                     $(element).removeClass("aiz-selectpicker")
                     if(is_variant != undefined){
                         $(element).attr('name', 'variant_pricing-from' + is_variant + '[discount_type][]');
+                    }else if(old_variant != undefined){
+                        $(element).attr('name', 'variant[discount_type][' + old_variant + '][]');
+                    }else{
+                        $(element).removeAttr("name");
                     }
                     $('#bloc_pricing_configuration').find('.discount_type').each(function(key, element_original) {
                         if(index == key){
                             $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
                         }
                     })
-                    $(element).removeAttr("name");
                 });
+
+                if(is_variant != undefined){
+                    clonedElement.find('.btn-add-pricing').attr('data-newvariant-id', is_variant);
+                }else if(old_variant != undefined){
+                    clonedElement.find('.btn-add-pricing').attr('data-id_variant', old_variant);
+                    clonedElement.find('.delete_pricing_canfiguration').attr('data-pricing_id', old_variant);
+                }
+
+                
+                
                 $(this).parent().parent().parent().find('.bloc_pricing_configuration_variant').show();
                 $(this).parent().parent().parent().find('.bloc_pricing_configuration_variant').append(clonedElement);
             }else{
@@ -2001,8 +2036,9 @@
 
         });
         $('body').on('click', '.btn-add-pricing', function() {
-            
             var id_variant = $(this).data('id_variant');
+            var newvariant = $(this).data('newvariant-id');
+            
             if(id_variant != undefined){
                 var html_to_add = `
                                 <tr>
@@ -2021,10 +2057,30 @@
                                     <td><input type="number" class="form-control discount_percentage" name="variant[discount_percentage][`+ id_variant +`][]"></td>
                                     <td>
                                         <i class="las la-plus btn-add-pricing" data-id_variant="` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                        <i class="las la-trash delete_pricing_canfiguration" data-pricing_id="` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
                                     </td>
                                 </tr>
                             `;
+            }else if(newvariant != undefined){
+                var html_to_add = `<tr>
+                                    <td><input type="number" name="variant_pricing-from'`+ newvariant +`[from][]" class="form-control min-qty" id=""></td>
+                                    <td><input type="number" name="variant_pricing-from'`+ newvariant +`[to][]" class="form-control max-qty" id=""></td>
+                                    <td><input type="number" name="variant_pricing-from'`+ newvariant +`[unit_price][]" class="form-control unit-price-variant" id=""></td>
+                                    <td><input type="text" class="form-control aiz-date-range discount-range" name="variant_pricing-from'`+ newvariant +`[discount_range][]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
+                                    <td>
+                                        <select class="form-control discount_type" name="variant_pricing-from'`+ newvariant +`[discount_type][]">
+                                            <option value="" selected>{{translate('Choose type')}}</option>
+                                            <option value="amount" @selected(old('discount_type') == 'amount')>{{translate('Flat')}}</option>
+                                            <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" class="form-control discount_amount" name="variant_pricing-from'`+ newvariant +`[discount_amount][]"></td>
+                                    <td><input type="number" class="form-control discount_percentage" name="variant_pricing-from'`+ newvariant +`[discount_percentage][]"></td>
+                                    <td>
+                                        <i class="las la-plus btn-add-pricing" data-id_variant="` + newvariant + `" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
+                                        <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                    </td>
+                                </tr>`;
             }else{
                 var html_to_add = `
                                 <tr>

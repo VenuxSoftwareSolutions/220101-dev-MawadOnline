@@ -632,22 +632,6 @@
                                             <div class="col-3">
                                                 <h3 class="mb-3">Variant informations {{ $key + 1 }}</h3>
                                             </div>
-                                            <div class="col-7">
-                                                <span style="float: right; margin-top: 11px;"><b>{{translate('Variant status')}}: <span class="position-relative main-category-info-icon">
-                                                    <i class="las la-question-circle fs-18 text-info"></i>
-                                                    <span class="main-category-info bg-soft-info p-2 position-absolute d-none border">{{ translate("Choosing different items will completely change the product's status.") }}</span>
-                                                    </span></b>
-                                                </span> 
-                                            </div>
-                                            <div class="col-2">
-                                                <select class="form-control status" data-id="{{ $children->id }}">
-                                                    <option value="0" @if($product->approved == 0) selected @endif>Pending</option>
-                                                    <option value="4" @if($product->approved == 4) selected @endif>Under Review</option>
-                                                    <option value="2" @if($product->approved == 2) selected @endif>Revision Required</option>
-                                                    <option value="3" @if($product->approved == 3) selected @endif>Rejected</option>
-                                                    <option value="1" @if($product->approved == 1) selected @endif>Approved</option>
-                                                </select>
-                                            </div>
                                         </div>
                                         
                                         <hr>

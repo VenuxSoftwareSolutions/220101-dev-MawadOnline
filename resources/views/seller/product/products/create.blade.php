@@ -1217,36 +1217,42 @@
         })
 
         $('body').on('change', '.variant-pricing', function(){
+            
             if ($(this).is(':not(:checked)')) {
                 var is_variant = $(this).data("variant");
                 var clonedElement = $("#table_pricing_configuration").clone();
+
                 clonedElement.find('.min-qty').each(function(index, element) {
                     $(element).removeClass("min-qty").addClass("min-qty-variant");
                     if(is_variant != undefined){
                         $(element).attr('name', 'variant_pricing-from' + is_variant + '[from][]');
+                    }else{
+                        $(element).removeAttr("name");
                     }
-                    $(element).removeAttr("name");
                 });
                 clonedElement.find('.max-qty').each(function(index, element) {
                     $(element).removeClass("max-qty").addClass("max-qty-variant");
                     if(is_variant != undefined){
                         $(element).attr('name', 'variant_pricing-from' + is_variant + '[to][]');
+                    }else{
+                        $(element).removeAttr("name");
                     }
-                    $(element).removeAttr("name");
                 });
                 clonedElement.find('.discount_percentage').each(function(index, element) {
                     $(element).removeClass("discount_percentage").addClass("discount_percentage-variant");
                     if(is_variant != undefined){
                         $(element).attr('name', 'variant_pricing-from' + is_variant + '[discount_percentage][]');
+                    }else{
+                        $(element).removeAttr("name");
                     }
-                    $(element).removeAttr("name");
                 });
                 clonedElement.find('.discount_amount').each(function(index, element) {
                     $(element).removeClass("discount_amount").addClass("discount_amount-variant");
                     if(is_variant != undefined){
                         $(element).attr('name', 'variant_pricing-from' + is_variant + '[discount_amount][]');
+                    }else{
+                        $(element).removeAttr("name");
                     }
-                    $(element).removeAttr("name");
                 });
                 clonedElement.find('.discount-range').each(function(index, element) {
                     $(element).daterangepicker({
@@ -1267,21 +1273,23 @@
                     $(element).removeClass("unit-price").addClass("unit-price-variant");
                     if(is_variant != undefined){
                         $(element).attr('name', 'variant_pricing-from' + is_variant + '[unit_price][]');
+                    }else{
+                        $(element).removeAttr("name");
                     }
-                    $(element).removeAttr("name");
                 });
                 clonedElement.find('.discount_type').each(function(index, element) {
                     $(element).removeClass("discount_type").addClass("discount_type-variant");
                     $(element).removeClass("aiz-selectpicker")
                     if(is_variant != undefined){
                         $(element).attr('name', 'variant_pricing-from' + is_variant + '[discount_type][]');
+                    }else{
+                        $(element).removeAttr("name");
                     }
                     $('#bloc_pricing_configuration').find('.discount_type').each(function(key, element_original) {
                         if(index == key){
                             $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
                         }
                     })
-                    $(element).removeAttr("name");
                 });
                 $(this).parent().parent().parent().find('#bloc_pricing_configuration_variant').show();
                 $(this).parent().parent().parent().find('#bloc_pricing_configuration_variant').append(clonedElement);

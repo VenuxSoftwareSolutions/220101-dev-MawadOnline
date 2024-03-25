@@ -64,17 +64,19 @@ class ProductService
 
         unset($collection['parent_id']);
 
-        if(isset($collection['published_modal'])){
+        if($collection['published_modal'] == 1){
             $collection['published'] = 1;
         }else{
             $collection['published'] = 0;
         } 
 
-        if(isset($collection['create_stock'])){
+        if($collection['create_stock'] == 1){
             $collection['stock_after_create'] = 1;
         }else{
             $collection['stock_after_create'] = 0;
         } 
+
+        unset($collection['create_stock']);
 
         if(isset($collection['activate_third_party'])){
             $collection['activate_third_party'] = 1;
