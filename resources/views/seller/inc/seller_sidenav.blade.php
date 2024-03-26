@@ -74,6 +74,13 @@
                         </ul>
                     </li>
                 @endcanany
+                <li class="aiz-side-nav-item">
+                    <a href="{{ route('seller.catalog.search_page') }}"
+                        class="aiz-side-nav-link {{ areActiveRoutes(['seller.catalog.search_page']) }}">
+                        <i class="las la-folder-open aiz-side-nav-icon"></i>
+                        <span class="aiz-side-nav-text">{{ translate('MawadCatalog search page') }}</span>
+                    </a>
+                </li>
                 @canany(['seller_add_inventory', 'seller_inventory_history'])
                     <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link">

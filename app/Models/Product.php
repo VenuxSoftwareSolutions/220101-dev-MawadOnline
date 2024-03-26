@@ -338,4 +338,22 @@ class Product extends Model
         }
     }
 
+    public function getFirstImage(){
+        $upload = UploadProducts::where('id_product', $this->id)->first();
+        $path = '';
+        if($upload != null){
+            $path = $upload->path;
+        }
+
+        return $path;
+    }
+
+    public function checkIfParentToGetNumVariants(){
+        if($this->is_parent == 0){
+            return Product::where('parent_id', $this->parent_id)->count();
+        }else{
+            return Product::where('parent_id', $this->id)->count();
+        }
+    }
+
 }
