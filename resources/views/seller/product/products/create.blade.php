@@ -347,15 +347,15 @@
                                 <i class="las la-question-circle fs-18 text-info"></i>
                                 <span class="main-category-info bg-soft-info p-2 position-absolute d-none border">{{ translate('This will be used for commission based calculations and homepage category wise product Show.') }}</span>
                             </span>
-                            
+
                         </h6>
                     </div>
                     <input type="hidden" id="selected_parent_id" name="parent_id" value="">
 
                     <div class="card-body">
-                        
+
                         <div class="tree_main">
-                            
+
                             <input type="text" id="search_input" class="form-control" placeholder="Search">
                             <div class="h-300px overflow-auto c-scrollbar-light">
 
@@ -627,8 +627,8 @@
 <script>
     var previewUrlBase  = "{{ route('seller.product.preview', ['slug' => 'PLACEHOLDER']) }}";
     </script>
-    
-//<!--- category parent tree -->
+
+<!--- category parent tree -->
 <script type="text/javascript">
     function submitForm() {
         const formData = new FormData(document.getElementById('choice_form'));
@@ -717,11 +717,11 @@
                 var message = "<p>Remaining characters: <span style='color: red'>" + charactersLeft + "</span></p>"
                 $('#charCountShortDescription').html(message);
             }
-        });        
+        });
 
         $('body').on('change', '#attributes', function() {
             var ids_attributes = $(this).val();
-            
+
             var clicked = ids_attributes.diff( initial_attributes );
             if(clicked.length == 0){
                 clicked = initial_attributes.diff( ids_attributes );
@@ -752,7 +752,7 @@
                 success: function(data) {
                     var attribute_variant_exist = $('#bloc_attributes > .attribute-variant-' + clicked[0]).length
                     var numberOfChildren = $('#general_attributes > div').length;
-                    
+
                     if (numberOfChildren == 0) {
                         $('#general_attributes').append(data.html_attributes_generale);
                     }else{
@@ -761,7 +761,7 @@
                             $('#general_attributes').append(data.html_attributes_generale);
                         }else{
                             $('#general_attributes .attribute-variant-' + clicked[0]).remove();
-                        }  
+                        }
                     }
 
                     if(attribute_variant_exist > 0){
@@ -778,10 +778,10 @@
                             // Change the attribute name of the current input
                             if ($(child_element).attr("name") == undefined) {
                                 var id_attribute = $(child_element).data('id_attributes');
-                                var name = 'attributes-'+ id_attribute + '-' + id_variant 
+                                var name = 'attributes-'+ id_attribute + '-' + id_variant
                                 $(child_element).attr('name', name);
                             }
-                            
+
                         });
 
                         $(element).find('.attributes-units').each(function(index, child_element_units) {
@@ -791,7 +791,7 @@
                                 $(child_element_units).attr('name', name);
                             }
                         });
-                        
+
                     });
 
                     $("#general_attributes div").each(function(index, element) {
@@ -802,7 +802,7 @@
                                 var name = 'attribute_generale-'+ id_attribute
                                 $(child_element).attr('name', name);
                             }
-                            
+
                         });
 
                         $(element).find('.attributes-units').each(function(index, child_element_units) {
@@ -812,7 +812,7 @@
                                 $(child_element_units).attr('name', name);
                             }
                         });
-                        
+
                     });
 
                     var count_boolean = 1;
@@ -1256,7 +1256,7 @@
                     autoUpdateInput: false,
                     locale: {
                         format: 'DD-MM-Y HH:mm:ss',
-                        separator : " to ", 
+                        separator : " to ",
                     },
                 });
 
@@ -1666,10 +1666,10 @@
         }).on("changed.jstree", function(e, data) {
             if (data && data.selected && data.selected.length) {
                     var selectedId = data.selected[0]; // Get the ID of the first selected node
-                    
+
                     // Check if the selected node has children
                     var node = $('#jstree').jstree(true).get_node(selectedId);
-                    
+
                     if ((!node.children || node.children.length === 0) && node.state.loaded ==  true) {
                         $('#message-category').text("Correct choice.");
                         $('#message-category').css({'color': 'green', 'margin-right': '7px'});

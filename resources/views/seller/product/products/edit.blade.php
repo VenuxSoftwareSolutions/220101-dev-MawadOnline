@@ -20,6 +20,7 @@
             </ul>
         </div>
     @endif
+    <button type="button" onclick="submitForm()">Preview Product</button>
 
     <form class="" action="{{route('seller.products.update', $product->id)}}" method="POST" enctype="multipart/form-data" id="choice_form">
         <div class="row gutters-5">
@@ -339,15 +340,15 @@
                                 <i class="las la-question-circle fs-18 text-info"></i>
                                 <span class="main-category-info bg-soft-info p-2 position-absolute d-none border">{{ translate('This will be used for commission based calculations and homepage category wise product Show.') }}</span>
                             </span>
-                            
+
                         </h6>
                     </div>
                     <input type="hidden" id="selected_parent_id" name="parent_id" @if($categorie != null) value="{{ $categorie->id }}" @else value="" @endif>
 
                     <div class="card-body">
-                        
+
                         <div class="tree_main">
-                            
+
                             <input type="text" @if($categorie != null) value="{{ $categorie->name }}" @else value="" @endif id="search_input" class="form-control" placeholder="Search">
                             <small style="color: red">To select a different category, please clear the search field, However, you must choose other attributes to modify your variants</small>
                             <div class="h-300px overflow-auto c-scrollbar-light">
@@ -858,8 +859,32 @@
 
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
-
+<script>
+    var previewUrlBase  = "{{ route('seller.product.preview', ['slug' => 'PLACEHOLDER']) }}";
+    </script>
 <script type="text/javascript">
+    function submitForm() {
+        const formData = new FormData(document.getElementById('choice_form'));
+
+        fetch('{{route("seller.product.tempStore")}}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Replace 'PLACEHOLDER' with the actual slug from the response
+                var previewUrl = previewUrlBase.replace('PLACEHOLDER', data.data.slug);
+
+                // Open the URL in a new tab
+                window.open(previewUrl, '_blank');
+            }
+        });
+    }
+
     $(document).ready(function() {
         @if(count($product->getChildrenProducts()) > 0)
             $('#variant_informations').show();
@@ -872,7 +897,7 @@
         @else
             $('#btn-create-variant').hide();
         @endif
-        
+
         $('body #bloc_pricing_configuration_variant').hide();
         $('body #bloc_sample_pricing_configuration_variant').hide();
         $('body .btn-variant-pricing').hide();
@@ -965,7 +990,7 @@
             }
         });
 
-        //Check length short description 
+        //Check length short description
         $('#short_description').on('keyup', function(event) {
             var currentLength = $(this).val().length;
             var maxCharacters = 512;
@@ -1018,7 +1043,7 @@
         //Get value of attribute checked
         $('body').on('change', '#attributes', function() {
             var ids_attributes = $(this).val();
-            
+
             var clicked = ids_attributes.diff( initial_attributes );
             if(clicked.length == 0){
                 clicked = initial_attributes.diff( ids_attributes );
@@ -1049,7 +1074,7 @@
                 success: function(data) {
                     var attribute_variant_exist = $('#bloc_attributes > .attribute-variant-' + clicked[0]).length
                     var numberOfChildren = $('#general_attributes > div').length;
-                    
+
                     if (numberOfChildren == 0) {
                         $('#general_attributes').append(data.html_attributes_generale);
                     }else{
@@ -1058,7 +1083,7 @@
                             $('#general_attributes').append(data.html_attributes_generale);
                         }else{
                             $('#general_attributes .attribute-variant-' + clicked[0]).remove();
-                        }  
+                        }
                     }
 
                     if(attribute_variant_exist > 0){
@@ -1084,7 +1109,7 @@
                             }
                         });
                     });
-                    
+
                     $("#bloc_variants_created div").each(function(index, element) {
                         console.log('not done yet')
                         if($(element).data('id') != undefined){
@@ -1098,7 +1123,7 @@
                                     var name = 'variant[attributes]['+ id_variant +']['+ id_attribute +']'
                                     $(element).attr('name', name);
                                 }
-                                
+
                             });
 
                             $(element).find('.attributes-units').each(function(index, element) {
@@ -1109,7 +1134,7 @@
                                     $(element).attr('name', name);
                                 }
                             });
-                        } 
+                        }
                     });
 
                     $("#general_attributes div").each(function(index, element) {
@@ -1121,7 +1146,7 @@
                                     var name = 'attribute_generale-'+ id_attribute
                                     $(child_element).attr('name', name);
                                 }
-                                
+
                             });
 
                             $(element).find('.attributes-units').each(function(index, child_element_units) {
@@ -1137,8 +1162,8 @@
                     AIZ.plugins.bootstrapSelect('refresh');
                 }
             });
-            
-            
+
+
         })
 
         //Change label of input value by name of file selected
@@ -1540,7 +1565,7 @@
 
         });
         $('body').on('click', '.btn-add-pricing', function() {
-            
+
             var id_variant = $(this).data('id_variant');
             if(id_variant != undefined){
                 var html_to_add = `
@@ -1609,7 +1634,7 @@
             //remove bloc pricing configuration
             var current = $(this);
             var parent = $(this).parent().parent().parent();
-            
+
             var id_pricing = $(this).data('pricing_id')
 
             var html_added = `<tr>
@@ -1665,7 +1690,7 @@
                                     if(parent.find('tr').length == 0){
                                         parent.append(html_added);
                                     }
-                                    
+
                                 }else{
                                     swal(
                                         'Cancelled',
@@ -1684,8 +1709,8 @@
                     }
                 })
             }
-                                
-            
+
+
         })
 
         $('body').on('change', '.discount_type', function(){
@@ -1764,7 +1789,7 @@
             var old_files =  "{{ count($product->getImagesProduct()) }}";
             old_files = parseInt(old_files);
             var new_size = old_files + files.length;
-            
+
             //$('#dropifyUploadedFiles').empty();
             if (new_size > 10) {
                 swal(
@@ -2185,7 +2210,7 @@
                             cache: false,
                             dataType: 'JSON',
                             success: function(dataResult) {
-                               
+
                             }
                         })
                     } else if (result.dismiss === 'cancel') {
@@ -2237,10 +2262,10 @@
         }).on("changed.jstree", function(e, data) {
             if (data && data.selected && data.selected.length) {
                     var selectedId = data.selected[0]; // Get the ID of the first selected node
-                    
+
                     // Check if the selected node has children
                     var node = $('#jstree').jstree(true).get_node(selectedId);
-                    
+
                     if ((!node.children || node.children.length === 0) && node.state.loaded ==  true) {
                         $('#message-category').text("Correct choice.");
                         $('#message-category').css({'color': 'green', 'margin-right': '7px'});
@@ -2344,7 +2369,7 @@
                     $('body #attributes').prop("disabled", false);
                     $('body #bloc_attributes').empty();
                 }
-                
+
 
                 AIZ.plugins.bootstrapSelect('refresh');
             }

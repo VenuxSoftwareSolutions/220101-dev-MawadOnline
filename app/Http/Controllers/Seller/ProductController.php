@@ -833,6 +833,7 @@ class ProductController extends Controller
 
     public function tempStore(Request $request)
     {
+        // return response()->json([$request->all()]);
 
            // Assuming you have a method to prepare or simulate data needed for the preview
         $detailedProduct = $this->prepareDetailedProductData($request->all());
@@ -1011,6 +1012,31 @@ class ProductController extends Controller
            }
        }
 
+    //    dd($data['variant']['attributes']) ;
+       if (isset($data['variant']['attributes']))
+        foreach ($data['variant']['attributes'] as $variationId=>$variations_db) {
+            foreach ($variations_db as $attributeId=>$attribute) {
+                if (!isset($variations[$variationId])) {
+                    $variations[$variationId] = [];
+                }
+                $variations[$variationId][$attributeId] = $attribute;
+            }
+
+        }
+
+        if (isset($data['variant']['from']))
+        foreach ($data['variant']['from'] as $variationId=>$variations_db_from) {
+
+                if (!isset($variations[$variationId])) {
+                    $variations[$variationId] = [];
+                }
+                $variations[$variationId]['variant_pricing-from']['from'] = $variations_db_from;
+                $variations[$variationId]['variant_pricing-from']['to'] = $data['variant']['to'][$variationId] ?? [];
+                $variations[$variationId]['variant_pricing-from']['unit_price'] = $data['variant']['unit_price'][$variationId] ?? [];
+
+
+        }
+
 
        $attributes = [];
 
@@ -1170,7 +1196,9 @@ class ProductController extends Controller
         $matchedImages = [];
         $availableAttributes = [];
         $anyMatched = false ;
+        $pickedAnyVariation = false ;
         foreach ($variations as $variationIdKey =>$variation) {
+
             $matchesCheckedAttributes = true;
 
             // Check if the variation matches the checked attributes
@@ -1188,12 +1216,16 @@ class ProductController extends Controller
                         foreach ($variation['storedFilePaths'] as $image) {
                             $matchedImages[] = $image;
                         }
-                        $variationId = $variationIdKey ;
-                        $quantity = $variation['variant_pricing-from']['from'][0] ?? "" ;
-                        $price = $variation['variant_pricing-from']['unit_price'][0] ?? "" ;
-                        $total =  isset($variation['variant_pricing-from']['from'][0]) && isset($variation['variant_pricing-from']['unit_price'][0]) ? $variation['variant_pricing-from']['from'][0] * $variation['variant_pricing-from']['unit_price'][0] : "" ;
 
                  }
+                 if ($pickedAnyVariation == false) {
+                    $variationId = $variationIdKey ;
+                    $quantity = $variation['variant_pricing-from']['from'][0] ?? "" ;
+                    $price = $variation['variant_pricing-from']['unit_price'][0] ?? "" ;
+                    $total =  isset($variation['variant_pricing-from']['from'][0]) && isset($variation['variant_pricing-from']['unit_price'][0]) ? $variation['variant_pricing-from']['from'][0] * $variation['variant_pricing-from']['unit_price'][0] : "" ;
+                    $pickedAnyVariation = true ;
+                 }
+
                 foreach ($variation as $attributeId => $value) {
                     if (!isset($checkedAttributes[$attributeId])) {
                         if (!isset($availableAttributes[$attributeId])) {
