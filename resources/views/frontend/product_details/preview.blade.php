@@ -428,12 +428,16 @@
                                                                                 ‎&nbsp;</span>No</span>
                                                                     </li> --}}
                                                                     @foreach ($previewData['detailedProduct']['general_attributes'] as $key => $general_attribute)
+                                                                    @php
+                                                                    $attribue_general = App\Models\Attribute::find($key) ;
+
+                                                                    @endphp
 
                                                                     <li
                                                                         style="list-style: none; overflow-wrap: break-word; margin: 0px 0px 5.5px;">
                                                                         <span class="a-list-item"><span
                                                                                 class="a-text-bold"
-                                                                                style="font-weight: 700 !important;"> {{$key}} :
+                                                                                style="font-weight: 700 !important;"> {{$attribue_general ? $attribue_general->name : ""}} :
                                                                                 ‎&nbsp;</span>{{$general_attribute}}</span></li>
 
                                                                     @endforeach
@@ -1298,9 +1302,32 @@
                     success: function(response) {
                         // Handle successful response
                         console.log(response.unit_price)
-                        $("#qty-interval").text(response.unit_price+" AED")
-                        $("#quantity").val(response.qty)
-                        $("#chosen_price").text(response.total+" AED")
+                        if (response.unit_price != null) {
+                            $("#qty-interval").text(response.unit_price+" AED")
+                            $("#quantity").val(response.qty)
+                            $("#chosen_price").text(response.total+" AED")
+                            $('#quantity').attr('min', response.minimum); // Minimum value
+                            $('#quantity').attr('max', response.maximum); // Maximum value
+                            // $('.quantity-control[data-type="minus"]').prop('disabled', response.qty <= response.minimum);
+                            // $('.quantity-control[data-type="plus"]').prop('disabled', response.qty >= response.maximum);
+                            $('.aiz-plus-minus input').each(function() {
+                                var $this = $(this);
+                                var min = parseInt($(this).attr("min"));
+                                var max = parseInt($(this).attr("max"));
+                                var value = parseInt($(this).val());
+                                if(value <= min){
+                                    $this.siblings('[data-type="minus"]').attr('disabled',true)
+                                }else if($this.siblings('[data-type="minus"]').attr('disabled')){
+                                    $this.siblings('[data-type="minus"]').removeAttr('disabled')
+                                }
+                                if(value >= max){
+                                    $this.siblings('[data-type="plus"]').attr('disabled',true)
+                                }else if($this.siblings('[data-type="plus"]').attr('disabled')){
+                                    $this.siblings('[data-type="plus"]').removeAttr('disabled')
+                                }
+                            });
+                        }
+
                     },
                     error: function(xhr, status, error) {
                         // Handle errors
@@ -1341,10 +1368,14 @@
 
                     }
                     else {
+                        if (response.price > 0) {
                         $('#variationId').val(response.variationId) ;
                         $("#qty-interval").text(response.price+" AED")
                         $("#quantity").val(response.quantity)
                         $("#chosen_price").text(response.total+" AED")
+                        $('#quantity').attr('min', response.minimum); // Minimum value
+                        $('#quantity').attr('max', response.maximum); // Maximum value
+                        }
                         var images = response.matchedImages; // Assuming response contains matchedImages array
 
                         // Clear existing images

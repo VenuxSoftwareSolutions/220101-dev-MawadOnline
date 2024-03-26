@@ -882,7 +882,6 @@ class ProductController extends Controller
 
         $brand = Brand::find($data['brand_id']);
 
-        $total = isset($data['from'][0]) && isset($data['unit_price'][0]) ? $data['from'][0] * $data['unit_price'][0] : "";
         $numeric_keys = [];
 
         foreach ($data as $key => $value) {
@@ -952,6 +951,7 @@ class ProductController extends Controller
             }
          }
         }
+        // dd($data) ;
         // $variants = [];
 
         // foreach ($data as $key => $value) {
@@ -980,7 +980,7 @@ class ProductController extends Controller
        $variations = [];
 
        foreach ($data as $key => $value) {
-           if (strpos($key, 'attributes') === 0) {
+           if (strpos($key, 'attributes') === 0 && (strpos($key, 'attributes_units') === false)) {
                // Extract the attribute number and variation id
                $parts = explode('-', $key);
                $variationId = $parts[2];
@@ -1033,7 +1033,8 @@ class ProductController extends Controller
                 $variations[$variationId]['variant_pricing-from']['from'] = $variations_db_from;
                 $variations[$variationId]['variant_pricing-from']['to'] = $data['variant']['to'][$variationId] ?? [];
                 $variations[$variationId]['variant_pricing-from']['unit_price'] = $data['variant']['unit_price'][$variationId] ?? [];
-
+                $upload_products_db = UploadProducts::where('id_product',$variationId)->pluck('path')->toArray() ;
+                $variations[$variationId]['storedFilePaths'] = $upload_products_db ;
 
         }
 
@@ -1076,9 +1077,20 @@ class ProductController extends Controller
              $this->getYoutubeVideoId($data["video_link"]) ;
         }
         if (is_array($variations) && !empty($variations)) {
-        $lastItem  = end($variations);
-        $variationId = key($variations); // Get the key (variation ID) of the last item
+            $lastItem  = end($variations);
+            $variationId = key($variations); // Get the key (variation ID) of the last item
+            sort($lastItem['variant_pricing-from']['from']) ;
+            sort($lastItem['variant_pricing-from']['unit_price']) ;
+
         }
+        // if (isset($data['from']) && is_array($data['from']) && !empty($data['from'])) {
+        //     sort($data['from']);
+        // }
+
+        // if (isset($data['unit_price']) && is_array($data['unit_price']) && !empty($data['unit_price'])) {
+        //     sort($data['unit_price']);
+        // }
+        $total = isset($data['from'][0]) && isset($data['unit_price'][0]) ? $data['from'][0] * $data['unit_price'][0] : "";
 
         // Prepare detailed product data
         $detailedProduct = [
@@ -1103,7 +1115,8 @@ class ProductController extends Controller
             'to' =>$data['to']  ?? [],
             'unit_price' =>$data['unit_price'] ?? [] ,
             'variations' =>$variations,
-            'variationId' => $variationId ?? null
+            'variationId' => $variationId ?? null,
+            'lastItem' => $lastItem ?? [],
         ];
 
 
@@ -1121,7 +1134,7 @@ class ProductController extends Controller
             $filename = uniqid('main_photo_') . '.' . $photo->getClientOriginalExtension();
 
             // Store the file to the desired location (e.g., public storage)
-            $storedPath = $photo->storeAs('main_photos', $filename);
+            $storedPath = $photo->storeAs('preview_products', $filename);
 
             // Add the stored file path to the array
             $storedFilePaths[] = $storedPath;
@@ -1179,12 +1192,27 @@ class ProductController extends Controller
                 }
             }
         }
-
+        $maximum = 1 ;
+        $minimum = 1 ;
+        if($request->variationId != null) {
+            // Convert array values to integers
+            $valuesFrom = array_map('intval', $variations[$request->variationId]['variant_pricing-from']['from']);
+            $valuesMax = array_map('intval', $variations[$request->variationId]['variant_pricing-from']['to']);
+        } else {
+            $valuesFrom = array_map('intval', $data['detailedProduct']['from']);
+            $valuesMax = array_map('intval', $data['detailedProduct']['to']);
+        }
+            // Get the maximum value
+            if (!empty($valuesMax))
+                $maximum = max($valuesMax);
+            // Get the minimum value
+            if (!empty($valuesFrom))
+                $minimum = min($valuesFrom);
 
         $total=$qty*$unitPrice ;
 
      // Return the unit price as JSON response
-     return response()->json(['unit_price' => $unitPrice,"qty"=>$qty,'total'=>$total]);
+     return response()->json(['unit_price' => $unitPrice,"qty"=>$qty,'total'=>$total,'maximum'=>$maximum,'minimum'=>$minimum]);
     }
 
     public function ProductCheckedAttributes(Request $request) {
@@ -1197,6 +1225,8 @@ class ProductController extends Controller
         $availableAttributes = [];
         $anyMatched = false ;
         $pickedAnyVariation = false ;
+        $maximum = 1 ;
+        $minimum = 1 ;
         foreach ($variations as $variationIdKey =>$variation) {
 
             $matchesCheckedAttributes = true;
@@ -1223,6 +1253,17 @@ class ProductController extends Controller
                     $quantity = $variation['variant_pricing-from']['from'][0] ?? "" ;
                     $price = $variation['variant_pricing-from']['unit_price'][0] ?? "" ;
                     $total =  isset($variation['variant_pricing-from']['from'][0]) && isset($variation['variant_pricing-from']['unit_price'][0]) ? $variation['variant_pricing-from']['from'][0] * $variation['variant_pricing-from']['unit_price'][0] : "" ;
+
+
+                    // Convert array values to integers
+                    $valuesFrom = array_map('intval', $variation['variant_pricing-from']['from']);
+                    $valuesMax = array_map('intval', $variation['variant_pricing-from']['to']);
+                    // Get the maximum value
+                    if (!empty($valuesMax))
+                        $maximum = max($valuesMax);
+                    // Get the minimum value
+                    if (!empty($valuesFrom))
+                         $minimum = min($valuesFrom);
                     $pickedAnyVariation = true ;
                  }
 
@@ -1247,7 +1288,10 @@ class ProductController extends Controller
             'variationId' => $variationId ?? null,
             'quantity' => $quantity ?? null  ,
             'price' => $price ?? null ,
-            'total' => $total ?? null
+            'total' => $total ?? null,
+            'maximum' => $maximum ,
+            'minimum' => $minimum ,
+
 
         ];
         // return response()->json($availableAttributes);
