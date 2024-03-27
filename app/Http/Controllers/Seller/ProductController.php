@@ -935,7 +935,7 @@ class ProductController extends Controller
 
            // Assuming you have a method to prepare or simulate data needed for the preview
         $detailedProduct = $this->prepareDetailedProductData($request->all());
-        return response()->json(['data'=>['slug'=>gettype($detailedProduct)],'success' => true]);
+
         $product_queries = []; // Simulate or prepare this data
         $total_query = 0; // Calculate or simulate this
         $reviews = []; // Simulate or prepare this data
@@ -1045,13 +1045,7 @@ class ProductController extends Controller
                 $value = $data["attribute_generale-$numeric_key"];
             // Add attribute name and value to the array
             if ($attribute) {
-                if (isset($data["unit_attribute_generale-$numeric_key"])){
-                    $unit = Unity::find($data["unit_attribute_generale-$numeric_key"]) ;
-                    if ($unit)
-                        $attributesArray[$attribute->id] = $value.' '.$unit->name;
-                }
-                else
-                         $attributesArray[$attribute->id] = $value;
+                $attributesArray[$attribute->id] = $value;
             }
          }
         }
@@ -1094,14 +1088,7 @@ class ProductController extends Controller
                    $variations[$variationId] = [];
                }
                // Add attribute to variation
-               if (isset($data["attributes_units-$attributeId-$variationId"])){
-                $unit = Unity::find($data["attributes_units-$attributeId-$variationId"]) ;
-                if ($unit)
-                    $variations[$variationId][$attributeId] = $value.' '.$unit->name;
-                }
-                else
-                    $variations[$variationId][$attributeId] = $value;
-
+               $variations[$variationId][$attributeId] = $value;
                if (isset($data["photos_variant-$variationId"]) && is_array($data["photos_variant-$variationId"])) {
                 $variations[$variationId]['storedFilePaths'] = $this->saveMainPhotos($data["photos_variant-$variationId"]);
 
@@ -1130,13 +1117,7 @@ class ProductController extends Controller
                 if (!isset($variations[$variationId])) {
                     $variations[$variationId] = [];
                 }
-                if(isset($data['unit_variant'][$variationId][$attributeId])){
-                    $unit = Unity::find($data['unit_variant'][$variationId][$attributeId]) ;
-                    if ($unit)
-                        $variations[$variationId][$attributeId] = $attribute.' '.$unit->name;
-                 }
-                else
-                    $variations[$variationId][$attributeId] = $attribute;
+                $variations[$variationId][$attributeId] = $attribute;
             }
 
         }
@@ -1208,7 +1189,6 @@ class ProductController extends Controller
         //     sort($data['unit_price']);
         // }
         $total = isset($data['from'][0]) && isset($data['unit_price'][0]) ? $data['from'][0] * $data['unit_price'][0] : "";
-        return response()->json(['status', $attributesArray]);
         // Prepare detailed product data
         $detailedProduct = [
             'name' => $data['name'],
@@ -1416,6 +1396,8 @@ class ProductController extends Controller
 
     }
 
-    
+    public function displayPreviewProductInCatalogProduct($id){
+        
+    }
 
 }

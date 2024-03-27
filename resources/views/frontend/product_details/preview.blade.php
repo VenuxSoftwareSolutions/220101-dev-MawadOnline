@@ -1599,6 +1599,31 @@
             sendCheckedAttributes($(this));
         });
 
+        $('.add_product').on('click', function(){
+            var product_id = $(this).data('product_id');
+            var previewUrlBase  = "{{ route('seller.products.edit', ['id' => 'PLACEHOLDER']) }}";
+            if(product_id != undefined){
+                $.ajax({
+                    url: "{{route('seller.catalog.add_product')}}",
+                    type: "POST",
+                    data: {
+                        id: product_id
+                    },
+                    cache: false,
+                    dataType: 'JSON',
+                    success: function(dataResult) {
+                        console.log(dataResult);
+
+                        // Replace 'PLACEHOLDER' with the actual slug from the response
+                        // var previewUrl = previewUrlBase.replace('PLACEHOLDER', data.data.slug);
+
+                        // // Open the URL in a new tab
+                        // window.open(previewUrl, '_blank');
+                    }
+                })
+            }
+        })
+
 
         });
     </script>

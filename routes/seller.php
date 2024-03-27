@@ -211,7 +211,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
         Route::get('/catalog/search_page', 'search')->name('catalog.search_page');
         Route::get('/catalog/search/action', 'search_action')->name('catalog.search.action');
         Route::get('/catalog/search/see_all/{keyword}', 'see_all')->name('catalog.search.see_all');
-        Route::get('/catalog/catalog/preview_product/{id}', 'displayPreviewProductInCatalogProduct')->name('catalog.preview_product');
+        Route::get('/catalog/preview_product/{id}', 'displayPreviewProductInCatalogProduct')->name('catalog.preview_product');
+        Route::post('/catalog/add_product', 'add_product')->name('catalog.add_product');
     });
 });
 

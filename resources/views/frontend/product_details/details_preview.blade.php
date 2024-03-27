@@ -1,8 +1,21 @@
 <div class="text-left">
     <!-- Product Name -->
-    <h2 class="mb-4 fs-16 fw-700 text-dark">
-        {{ $previewData['detailedProduct']['name'] }}
-    </h2>
+    <div class="row">
+        <div class="col-6">
+            <h2 class="mb-4 fs-16 fw-700 text-dark">
+                {{ $previewData['detailedProduct']['name'] }}
+            </h2>
+        </div>
+        @if(($previewData['detailedProduct']['catalog'] == true) && (Auth::user()->user_type == "seller"))
+            <div class="col-6">
+                <button type="button" class="btn btn-secondary-base mr-2 add-to-cart fw-600 min-w-150px rounded-0 text-white add_product" data-product_id="{{ $previewData['detailedProduct']['product_id'] }}" style="float: right;
+                margin-top: -15px;">
+                    <i class="las la-plus"></i> {{ translate('Add product') }}
+                </button>
+            </div>
+        @endif
+    </div>
+    
 
     <div class="row align-items-center mb-3">
         <!-- Review -->
