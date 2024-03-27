@@ -1315,6 +1315,9 @@
                                 var min = parseInt($(this).attr("min"));
                                 var max = parseInt($(this).attr("max"));
                                 var value = parseInt($(this).val());
+                                console.log(min)
+                                console.log(max)
+                                console.log(value)
                                 if(value <= min){
                                     $this.siblings('[data-type="minus"]').attr('disabled',true)
                                 }else if($this.siblings('[data-type="minus"]').attr('disabled')){
@@ -1369,12 +1372,31 @@
                     }
                     else {
                         if (response.price > 0) {
-                        $('#variationId').val(response.variationId) ;
-                        $("#qty-interval").text(response.price+" AED")
-                        $("#quantity").val(response.quantity)
-                        $("#chosen_price").text(response.total+" AED")
-                        $('#quantity').attr('min', response.minimum); // Minimum value
-                        $('#quantity').attr('max', response.maximum); // Maximum value
+                            $('#variationId').val(response.variationId) ;
+                            $("#qty-interval").text(response.price+" AED")
+                            $("#quantity").val(response.quantity)
+                            $("#chosen_price").text(response.total+" AED")
+                            $('#quantity').attr('min', response.minimum); // Minimum value
+                            $('#quantity').attr('max', response.maximum); // Maximum value
+                            $('.aiz-plus-minus input').each(function() {
+                                    var $this = $(this);
+                                    var min = parseInt($(this).attr("min"));
+                                    var max = parseInt($(this).attr("max"));
+                                    var value = parseInt($(this).val());
+                                    console.log(min)
+                                    console.log(max)
+                                    console.log(value)
+                                    if(value <= min){
+                                        $this.siblings('[data-type="minus"]').attr('disabled',true)
+                                    }else if($this.siblings('[data-type="minus"]').attr('disabled')){
+                                        $this.siblings('[data-type="minus"]').removeAttr('disabled')
+                                    }
+                                    if(value >= max){
+                                        $this.siblings('[data-type="plus"]').attr('disabled',true)
+                                    }else if($this.siblings('[data-type="plus"]').attr('disabled')){
+                                        $this.siblings('[data-type="plus"]').removeAttr('disabled')
+                                    }
+                            });
                         }
                         var images = response.matchedImages; // Assuming response contains matchedImages array
 

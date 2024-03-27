@@ -947,7 +947,13 @@ class ProductController extends Controller
                 $value = $data["attribute_generale-$numeric_key"];
             // Add attribute name and value to the array
             if ($attribute) {
-                $attributesArray[$attribute->id] = $value;
+                if (isset($data["unit_attribute_generale-$numeric_key"])){
+                    $unit = Unity::find($data["unit_attribute_generale-$numeric_key"]) ;
+                    if ($unit)
+                        $attributesArray[$attribute->id] = $value.' '.$unit->name;
+                }
+                else
+                         $attributesArray[$attribute->id] = $value;
             }
          }
         }
@@ -990,7 +996,14 @@ class ProductController extends Controller
                    $variations[$variationId] = [];
                }
                // Add attribute to variation
-               $variations[$variationId][$attributeId] = $value;
+               if (isset($data["attributes_units-$attributeId-$variationId"])){
+                $unit = Unity::find($data["attributes_units-$attributeId-$variationId"]) ;
+                if ($unit)
+                    $variations[$variationId][$attributeId] = $value.' '.$unit->name;
+                }
+                else
+                    $variations[$variationId][$attributeId] = $value;
+
                if (isset($data["photos_variant-$variationId"]) && is_array($data["photos_variant-$variationId"])) {
                 $variations[$variationId]['storedFilePaths'] = $this->saveMainPhotos($data["photos_variant-$variationId"]);
 
@@ -1019,7 +1032,13 @@ class ProductController extends Controller
                 if (!isset($variations[$variationId])) {
                     $variations[$variationId] = [];
                 }
-                $variations[$variationId][$attributeId] = $attribute;
+                if(isset($data['unit_variant'][$variationId][$attributeId])){
+                    $unit = Unity::find($data['unit_variant'][$variationId][$attributeId]) ;
+                    if ($unit)
+                        $variations[$variationId][$attributeId] = $attribute.' '.$unit->name;
+                 }
+                else
+                    $variations[$variationId][$attributeId] = $attribute;
             }
 
         }
