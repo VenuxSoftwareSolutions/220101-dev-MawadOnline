@@ -202,7 +202,7 @@
                         </button>
                         <input type="number" id="quantity" name="quantity"
                             class="col border-0 text-center flex-grow-1 fs-16 input-number" placeholder="1"
-                            value="{{ $previewData['detailedProduct']['quantity'] }}" min="1" max="197"
+                            value="{{ $previewData['detailedProduct']['quantity'] }}" min="{{ $previewData['detailedProduct']['min'] }}" max="{{ $previewData['detailedProduct']['max'] }}"
                             lang="en">
                         <button class="btn col-auto btn-icon btn-sm btn-light rounded-0 quantity-control" type="button"
                             data-type="plus" data-field="quantity">
