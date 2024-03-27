@@ -935,7 +935,7 @@ class ProductController extends Controller
 
            // Assuming you have a method to prepare or simulate data needed for the preview
         $detailedProduct = $this->prepareDetailedProductData($request->all());
-
+        return response()->json(['data'=>['slug'=>gettype($detailedProduct)],'success' => true]);
         $product_queries = []; // Simulate or prepare this data
         $total_query = 0; // Calculate or simulate this
         $reviews = []; // Simulate or prepare this data
@@ -1189,7 +1189,7 @@ class ProductController extends Controller
         //     sort($data['unit_price']);
         // }
         $total = isset($data['from'][0]) && isset($data['unit_price'][0]) ? $data['from'][0] * $data['unit_price'][0] : "";
-
+        return response()->json(['status', $attributesArray]);
         // Prepare detailed product data
         $detailedProduct = [
             'name' => $data['name'],
@@ -1396,5 +1396,7 @@ class ProductController extends Controller
         return response()->json($response);
 
     }
+
+    
 
 }

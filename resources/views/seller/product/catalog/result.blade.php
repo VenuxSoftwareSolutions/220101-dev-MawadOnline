@@ -1,6 +1,6 @@
 @if(count($products) > 0)
     @foreach($products as $product)
-        <li class="list-group-item"><a href="">{{ $product->name }}</a></li>
+        <li class="list-group-item"><a href="{{ route('seller.catalog.preview_product', $product->id) }}">{{ $product->name }}</a></li>
     @endforeach
         <li class="list-group-item"><a href="{{ route('seller.catalog.search.see_all', $search) }}">{{ translate('See all') }}</a></li>
 @else

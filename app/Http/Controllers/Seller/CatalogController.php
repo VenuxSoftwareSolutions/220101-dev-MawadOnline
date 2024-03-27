@@ -40,8 +40,6 @@ class CatalogController extends Controller
                                 })->take(3)->get();
         }
 
-        return response()->json($products, 200);
-
         return view('seller.product.catalog.result')->with(['products' =>  $products, 'search' => $request->name]);
     }
 
@@ -75,6 +73,13 @@ class CatalogController extends Controller
             ]);
         }else{
             abort(404);
+        }
+    }
+
+    public function displayPreviewProductInCatalogProduct($id){
+        $product = Product::find($id);
+        if($product->is_parent != 0){
+            $brand = Brand::find($product->brand_id);
         }
     }
 }
