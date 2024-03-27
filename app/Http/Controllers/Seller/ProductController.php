@@ -148,7 +148,7 @@ class ProductController extends Controller
             ->with('childrenCategories')
             ->get();
             //dd($categories);
-        
+
         $shippers = Shipper::all();
         $supported_shippers = [];
         if(count($shippers) > 0){
@@ -165,10 +165,10 @@ class ProductController extends Controller
                         }
                     }
                 }
-                
+
             }
         }
-        
+
         return view('seller.product.products.create', compact('categories', 'vat_user', 'supported_shippers'));
     }
 
@@ -214,7 +214,7 @@ class ProductController extends Controller
             return redirect()->route('seller.products');
         }
 
-        
+
     }
 
     public function store_draft(Request $request){
@@ -534,7 +534,7 @@ class ProductController extends Controller
                         }
                     }
                 }
-                
+
             }
         }
 
@@ -686,7 +686,7 @@ class ProductController extends Controller
             $data['old_document_names'] = $request->old_document_names;
             $update = true;
             $this->productUploadsService->store_uploads($data, $update);
-            
+
 
             flash(translate('Product has been updated successfully'))->success();
 
@@ -935,7 +935,6 @@ class ProductController extends Controller
 
            // Assuming you have a method to prepare or simulate data needed for the preview
         $detailedProduct = $this->prepareDetailedProductData($request->all());
-
         $product_queries = []; // Simulate or prepare this data
         $total_query = 0; // Calculate or simulate this
         $reviews = []; // Simulate or prepare this data
@@ -996,7 +995,7 @@ class ProductController extends Controller
         foreach ($numeric_keys as $numeric_key) {
             // Access corresponding values
             if (isset($data["photos_variant-$numeric_key"]) && is_array($data["photos_variant-$numeric_key"]) && !$produitVariationImage ) {
-                        $storedFilePaths = $this->saveMainPhotos($data["photos_variant-$numeric_key"]);
+                        // $storedFilePaths = $this->saveMainPhotos($data["photos_variant-$numeric_key"]);
                         $produitVariationImage=true ;
 
 
@@ -1106,6 +1105,15 @@ class ProductController extends Controller
                     $variations[$variationId]['variant_pricing-from']['to'] =$data['to']  ?? [] ;
                     $variations[$variationId]['variant_pricing-from']['unit_price'] =$data['unit_price'] ?? []  ;
                }
+            //    if (isset($variations[$variationId]['variant_pricing-from'])) {
+            //     // Sorting each array if it's not empty
+            //     foreach ($variations[$variationId]['variant_pricing-from'] as &$subArray) {
+            //         if (!empty($subArray)) {
+            //             sort($subArray);
+            //         }
+            //     }
+            //     unset($subArray); // Unset the reference to avoid potential side-effects
+            //    }
 
            }
        }
@@ -1133,6 +1141,15 @@ class ProductController extends Controller
                 $variations[$variationId]['variant_pricing-from']['unit_price'] = $data['variant']['unit_price'][$variationId] ?? [];
                 $upload_products_db = UploadProducts::where('id_product',$variationId)->pluck('path')->toArray() ;
                 $variations[$variationId]['storedFilePaths'] = $upload_products_db ;
+                // if (isset($variations[$variationId]['variant_pricing-from'])) {
+                //     // Sorting each array if it's not empty
+                //     foreach ($variations[$variationId]['variant_pricing-from'] as &$subArray) {
+                //         if (!empty($subArray)) {
+                //             sort($subArray);
+                //         }
+                //     }
+                //     unset($subArray); // Unset the reference to avoid potential side-effects
+                //    }
 
         }
 
@@ -1177,10 +1194,15 @@ class ProductController extends Controller
         if (is_array($variations) && !empty($variations)) {
             $lastItem  = end($variations);
             $variationId = key($variations); // Get the key (variation ID) of the last item
-            sort($lastItem['variant_pricing-from']['from']) ;
-            sort($lastItem['variant_pricing-from']['unit_price']) ;
+            // sort($lastItem['variant_pricing-from']['from']) ;
+            // sort($lastItem['variant_pricing-from']['unit_price']) ;
+            // sort($lastItem['variant_pricing-from']['to']) ;
 
+            $max =max($lastItem['variant_pricing-from']['to']) ;
+            $min =min($lastItem['variant_pricing-from']['from']) ;
         }
+
+
         // if (isset($data['from']) && is_array($data['from']) && !empty($data['from'])) {
         //     sort($data['from']);
         // }
@@ -1188,6 +1210,22 @@ class ProductController extends Controller
         // if (isset($data['unit_price']) && is_array($data['unit_price']) && !empty($data['unit_price'])) {
         //     sort($data['unit_price']);
         // }
+        if (isset($data['from']) && is_array($data['from']) && count($data['from']) > 0) {
+            // sort($data['from']);
+            if(!isset($min))
+                $min = min($data['from']) ;
+        }
+
+        // if (isset($data['unit_price']) && is_array($data['unit_price']) && count($data['unit_price']) > 0) {
+        //     sort($data['unit_price']);
+        // }
+
+        if (isset($data['to']) && is_array($data['to']) && count($data['to']) > 0) {
+            // sort($data['to']);
+            if(!isset($max))
+                $max = max($data['to']) ;
+        }
+
         $total = isset($data['from'][0]) && isset($data['unit_price'][0]) ? $data['from'][0] * $data['unit_price'][0] : "";
         // Prepare detailed product data
         $detailedProduct = [
@@ -1204,7 +1242,8 @@ class ProductController extends Controller
             'quantity' => $lastItem['variant_pricing-from']['from'][0] ?? $data['from'][0] ?? '',
             'price' => $lastItem['variant_pricing-from']['unit_price'][0] ?? $data['unit_price'][0] ?? '',
             'total' => isset($lastItem['variant_pricing-from']['from'][0]) && isset($lastItem['variant_pricing-from']['unit_price'][0]) ? $lastItem['variant_pricing-from']['from'][0] * $lastItem['variant_pricing-from']['unit_price'][0] : $total,
-
+            'max' =>$max ?? 1 ,
+            'min' =>$min ?? 1 ,
             'general_attributes' =>$attributesArray,
             'attributes' =>$attributes ?? [] ,
             'description' =>$data['description'] ,
@@ -1214,6 +1253,7 @@ class ProductController extends Controller
             'variations' =>$variations,
             'variationId' => $variationId ?? null,
             'lastItem' => $lastItem ?? [],
+            'catalog' => false
         ];
 
 
