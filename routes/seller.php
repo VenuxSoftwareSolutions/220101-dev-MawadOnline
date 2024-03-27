@@ -6,6 +6,7 @@ use App\Http\Controllers\Seller\SellerStaffController;
 use App\Http\Controllers\Seller\StockController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SellerController;
+use App\Http\Controllers\Seller\CatalogController;
 
 //Upload
 Route::group(['prefix' => 'seller', 'middleware' => ['seller', 'verified', 'user', 'prevent-back-history'], 'as' => 'seller.'], function () {
@@ -51,9 +52,10 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
         Route::post('/products/sku_combination_edit', 'sku_combination_edit')->name('products.sku_combination_edit');
         Route::post('/products/add-more-choice-option', 'add_more_choice_option')->name('products.add-more-choice-option');
         Route::post('/products/seller/featured', 'updateFeatured')->name('products.featured');
-        Route::post('/products/published', 'updatePublished')->name('products.published');
+        Route::get('/products/published', 'updatePublished')->name('products.published');
         Route::get('/products/destroy/{id}', 'destroy')->name('products.destroy');
         Route::get('/products/draft/{id}', 'draft')->name('products.draft');
+        Route::get('/products/delete_shipping', 'delete_shipping')->name('products.delete_shipping');
         Route::get('/products/delete_image', 'delete_image')->name('products.delete_image');
         Route::get('/products/delete_pricing', 'delete_pricing')->name('products.delete_pricing');
         Route::post('/products/bulk-delete', 'bulk_product_delete')->name('products.bulk-delete');
@@ -62,8 +64,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
 
 
 
-         // Stocks
-      Route::controller(StockController::class)->group(function () {
+    // Stocks
+    Route::controller(StockController::class)->group(function () {
         Route::get('/stocks', [StockController::class, 'index'])->name('stocks.index');
         Route::post('/save-inventory-record', 'saveRecord')->name('save.inventory.record');
         Route::post('/add-remove-stock', 'storeAddRemoveStock')->name('stock.add_remove');
@@ -202,6 +204,14 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
 
         // Add Permissiom
         Route::post('/roles/add_permission', 'add_permission')->name('roles.permission');
+    });
+
+    //Catalog routes
+    Route::controller(CatalogController::class)->group(function () {
+        Route::get('/catalog/search_page', 'search')->name('catalog.search_page');
+        Route::get('/catalog/search/action', 'search_action')->name('catalog.search.action');
+        Route::get('/catalog/search/see_all/{keyword}', 'see_all')->name('catalog.search.see_all');
+        Route::get('/catalog/catalog/preview_product/{id}', 'displayPreviewProductInCatalogProduct')->name('catalog.preview_product');
     });
 });
 

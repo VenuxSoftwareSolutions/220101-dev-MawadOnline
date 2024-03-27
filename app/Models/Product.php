@@ -6,16 +6,51 @@ use App;
 use App\Models\UploadProducts;
 use App\Models\ProductCategory;
 use App\Models\ProductAttributeValues;
+use App\Models\PricingConfiguration;
 use App\Models\Category;
+use App\Models\Shipping;
 use Illuminate\Database\Eloquent\Model;
 use \Venturecraft\Revisionable\RevisionableTrait;
 use App\Traits\EnhancedRevisionableTrait;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
 
-    use EnhancedRevisionableTrait;
+    use EnhancedRevisionableTrait, SoftDeletes;
+    
+
+    protected $dontKeepRevisionOf = [
+                                    'is_draft', 
+                                    'approved', 
+                                    'sku', 
+                                    'deleted_at', 
+                                    'rejection_reason', 
+                                    'slug', 
+                                    'low_stock_quantity', 
+                                    'published', 
+                                    'shipping', 
+                                    'vat_sample', 
+                                    'sample_description', 
+                                    'vat', 
+                                    'sample_price', 
+                                    'activate_third_party',
+                                    'length',
+                                    'width',
+                                    'height',
+                                    'min_third_party',
+                                    'max_third_party',
+                                    'breakable',
+                                    'unit_third_party',
+                                    'shipper_sample',
+                                    'estimated_sample',
+                                    'estimated_shipping_sample',
+                                    'paid_sample',
+                                    'shipping_amount',
+                                    'sample_available',
+                                    'unit_weight'
+                                ];
 
     protected function getLastActionNumber()
     {
@@ -162,16 +197,31 @@ class Product extends Model
     public function getAttributesVariant(){
         $attributes = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->get();
         $variants_id = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->pluck('id')->toArray();
-        $historique_children = DB::table('revisions')->whereIn('revisionable_id', $variants_id)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
+        $historique_children = DB::table('revisions')->whereNull('deleted_at')->whereIn('revisionable_id', $variants_id)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
         if(count($historique_children) > 0){
             foreach($historique_children as $historique_child){
                 foreach($attributes as $variant){
                     if($variant->id == $historique_child->revisionable_id){
-                        $variant->old_value = $historique_child->old_value;
+                        $variant->key = $historique_child->key;
+                        if($historique_child->key == "add_attribute"){
+                            $variant->added = true;
+                        }else{
+                            if($historique_child->key == 'id_units'){
+                                $unit = Unity::find($historique_child->old_value);
+                                if($unit != null){
+                                    $variant->old_value = $unit->name;
+                                }else{
+                                    $variant->old_value = '';
+                                }
+                            }else{
+                                $variant->old_value = $historique_child->old_value;
+                            }
+                        }
                     }
                 }
             }
         }
+
         $data = [];
         if(count($attributes) > 0){
             foreach ($attributes as $attribute){
@@ -193,7 +243,6 @@ class Product extends Model
 
     public function getAttributesVariantChildren(){
         $attributes = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->get();
-
         $data = [];
         if(count($attributes) > 0){
             foreach ($attributes as $attribute){
@@ -225,8 +274,6 @@ class Product extends Model
                     }
                 }
             }
-
-
         }
 
         return $path;
@@ -262,6 +309,51 @@ class Product extends Model
 
         return $productVariantName ;
 
+    }
+
+    public function getShipping(){
+        $shipping = Shipping::where('product_id', $this->id)->get();
+        return $shipping;
+    }
+
+    public function getIdsChildrens(){
+        return Product::where('parent_id', $this->id)->pluck('id')->toArray();
+    }
+
+    public function getPriceRange(){
+        $firstPrice = PricingConfiguration::where('id_products', $this->id)
+            ->orderBy('unit_price', 'asc')
+            ->pluck('unit_price')
+            ->first();
+        
+        $lastPrice = PricingConfiguration::where('id_products', $this->id)
+            ->orderBy('unit_price', 'desc')
+            ->pluck('unit_price')
+            ->first();
+
+        if($lastPrice == $firstPrice){
+            return $firstPrice . " AED";
+        }else{
+            return $firstPrice . " AED - " . $lastPrice . " AED";
+        }
+    }
+
+    public function getFirstImage(){
+        $upload = UploadProducts::where('id_product', $this->id)->first();
+        $path = '';
+        if($upload != null){
+            $path = $upload->path;
+        }
+
+        return $path;
+    }
+
+    public function checkIfParentToGetNumVariants(){
+        if($this->is_parent == 0){
+            return Product::where('parent_id', $this->parent_id)->count();
+        }else{
+            return Product::where('parent_id', $this->id)->count();
+        }
     }
 
 }

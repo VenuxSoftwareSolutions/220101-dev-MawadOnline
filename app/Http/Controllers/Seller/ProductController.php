@@ -19,6 +19,10 @@ use App\Models\BusinessInformation;
 use App\Models\ProductTranslation;
 use App\Models\ProductAttributeValues;
 use App\Models\Wishlist;
+use App\Models\Shipper;
+use App\Models\Shipping;
+use App\Models\ShippersArea;
+use App\Models\Warehouse;
 use App\Models\UploadProducts;
 use App\Models\User;
 use App\Models\Attribute;
@@ -64,10 +68,10 @@ class ProductController extends Controller
         $this->productUploadsService = $productUploadsService;
         $this->productPricingService = $productPricingService;
 
-        // $this->middleware(['permission:seller_show_product'])->only('index');
-        // $this->middleware(['permission:seller_create_product'])->only('create');
-        // $this->middleware(['permission:seller_edit_product'])->only('edit');
-        // $this->middleware(['permission:seller_destroy_product'])->only('destroy');
+        $this->middleware(['permission:seller_show_product'])->only('index');
+        $this->middleware(['permission:seller_create_product'])->only('create');
+        $this->middleware(['permission:seller_edit_product'])->only('edit');
+        $this->middleware(['permission:seller_destroy_product'])->only('destroy');
     }
 
     public function index(Request $request)
@@ -132,26 +136,47 @@ class ProductController extends Controller
 
     public function create(Request $request)
     {
-        if (addon_is_activated('seller_subscription')) {
-            if (!seller_package_validity_check()) {
-                flash(translate('Please upgrade your package.'))->warning();
-                return back();
-            }
-        }
+        // if (addon_is_activated('seller_subscription')) {
+        //     if (!seller_package_validity_check()) {
+        //         flash(translate('Please upgrade your package.'))->warning();
+        //         return back();
+        //     }
+        // }
 
         $vat_user = BusinessInformation::where('user_id', Auth::user()->id)->first();
         $categories = Category::where('level', 1)
             ->with('childrenCategories')
             ->get();
             //dd($categories);
-        return view('seller.product.products.create', compact('categories', 'vat_user'));
+        
+        $shippers = Shipper::all();
+        $supported_shippers = [];
+        if(count($shippers) > 0){
+            foreach($shippers as $shipper){
+                $shipper_areas = ShippersArea::where('shipper_id', $shipper->id)->get();
+
+                if(count($shipper_areas) > 0){
+                    foreach($shipper_areas as $area){
+                        $warhouses = Warehouse::where('user_id', Auth::user()->id)->where('emirate_id', $area->emirate_id)->where('area_id', $area->area_id)->get();
+                        if(count($warhouses) > 0){
+                            if(!array_key_exists($shipper->id, $supported_shippers)){
+                                $supported_shippers[$shipper->id] = $shipper;
+                            }
+                        }
+                    }
+                }
+                
+            }
+        }
+        
+        return view('seller.product.products.create', compact('categories', 'vat_user', 'supported_shippers'));
     }
 
     public function store(Request $request)
     {
         //dd($request->all());
         $product = $this->productService->store($request->except([
-            'parent_id', 'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
+            'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
         ]));
 
         $request->merge(['product_id' => $product->id]);
@@ -174,7 +199,8 @@ class ProductController extends Controller
             $data['product'] = $product;
             $data['main_photos'] = $request->main_photos;
             $data['photosThumbnail'] = $request->photosThumbnail;
-            $this->productUploadsService->store_uploads($data);
+            $update = false;
+            $this->productUploadsService->store_uploads($data, $update);
         }
 
         flash(translate('Product has been inserted successfully'))->success();
@@ -182,7 +208,13 @@ class ProductController extends Controller
         Artisan::call('view:clear');
         Artisan::call('cache:clear');
 
-        return redirect()->route('seller.products');
+        if($product->stock_after_create){
+            return redirect()->route('seller.stocks.index');
+        }else{
+            return redirect()->route('seller.products');
+        }
+
+        
     }
 
     public function store_draft(Request $request){
@@ -190,7 +222,7 @@ class ProductController extends Controller
         $parent = Product::find($request->product_id);
         if($parent != null){
             $product = $this->productService->draft($request->except([
-                'parent_id', 'category_ids', 'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
+                'category_ids', 'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
             ]), $parent);
 
             //Product categories
@@ -212,6 +244,7 @@ class ProductController extends Controller
             $data['photosThumbnail'] = $request->photosThumbnail;
             $data['old_documents'] = $request->old_documents;
             $data['old_document_names'] = $request->old_document_names;
+            $update = false;
             $this->productUploadsService->store_uploads($data);
 
 
@@ -483,7 +516,41 @@ class ProductController extends Controller
         $general_attributes = [];
         $variants_attributes_ids_attributes = [];
         $general_attributes_ids_attributes = [];
+        $chargeable_weight = 0;
+
+        $shippers = Shipper::all();
+        $supported_shippers = [];
+        if(count($shippers) > 0){
+            foreach($shippers as $shipper){
+                $shipper_areas = ShippersArea::where('shipper_id', $shipper->id)->get();
+
+                if(count($shipper_areas) > 0){
+                    foreach($shipper_areas as $area){
+                        $warhouses = Warehouse::where('user_id', Auth::user()->id)->where('emirate_id', $area->emirate_id)->where('area_id', $area->area_id)->get();
+                        if(count($warhouses) > 0){
+                            if(!array_key_exists($shipper->id, $supported_shippers)){
+                                $supported_shippers[$shipper->id] = $shipper;
+                            }
+                        }
+                    }
+                }
+                
+            }
+        }
+
         if($product != null){
+            if($product->activate_third_party == 1){
+                $volumetric_weight = ($product->length * $product->height * $product->width) / 5000;
+                if($volumetric_weight > $product->weight){
+                    $chargeable_weight = $volumetric_weight;
+                }else{
+                    $chargeable_weight = $product->weight;
+                }
+
+                if($product->unit_weight == "pounds"){
+                    $chargeable_weight *= 2.2;
+                }
+            }
             if($product->is_parent == 1){
                 $childrens = Product::where('parent_id', $id)->get();
                 $childrens_ids = Product::where('parent_id', $id)->pluck('id')->toArray();
@@ -546,7 +613,9 @@ class ProductController extends Controller
                     'variants_attributes_ids_attributes' => $variants_attributes_ids_attributes,
                     'general_attributes_ids_attributes' => $general_attributes_ids_attributes,
                     'general_attributes' => $data_general_attributes,
-                    'colors' => $colors
+                    'colors' => $colors,
+                    'supported_shippers' => $supported_shippers,
+                    'chargeable_weight' => $chargeable_weight
                 ]);
             }else{
                 return view('seller.product.products.edit', [
@@ -561,7 +630,9 @@ class ProductController extends Controller
                     'variants_attributes_ids_attributes' => $variants_attributes_ids_attributes,
                     'general_attributes_ids_attributes' => $general_attributes_ids_attributes,
                     'general_attributes' => $data_general_attributes,
-                    'colors' => $colors
+                    'colors' => $colors,
+                    'supported_shippers' => $supported_shippers,
+                    'chargeable_weight' => $chargeable_weight
                 ]);
             }
         }else{
@@ -570,13 +641,28 @@ class ProductController extends Controller
         return view('seller.product.products.edit', compact('product', 'categories', 'tags', 'lang'));
     }
 
+    public function delete_shipping(Request $request){
+        $shipping = Shipping::find($request->id);
+        if($shipping != null){
+            $shipping->delete();
+
+            return response()->json([
+                'status' => 'success'
+            ]);
+        }else{
+            return response()->json([
+                'status' => 'failed'
+            ]);
+        }
+    }
+
     public function update(Request $request)
     {
         //dd($request->all());
         $parent = Product::find($request->product_id);
         if($parent != null){
             $product = $this->productService->update($request->except([
-                'parent_id', 'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
+                'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
             ]), $parent);
 
             //Product categories
@@ -598,8 +684,9 @@ class ProductController extends Controller
             $data['photosThumbnail'] = $request->photosThumbnail;
             $data['old_documents'] = $request->old_documents;
             $data['old_document_names'] = $request->old_document_names;
-            $this->productUploadsService->store_uploads($data);
-
+            $update = true;
+            $this->productUploadsService->store_uploads($data, $update);
+            
 
             flash(translate('Product has been updated successfully'))->success();
 
@@ -717,16 +804,19 @@ class ProductController extends Controller
 
     public function updatePublished(Request $request)
     {
-        $product = Product::findOrFail($request->id);
-        $product->published = $request->status;
-        if (addon_is_activated('seller_subscription') && $request->status == 1) {
-            $shop = $product->user->shop;
-            if (!seller_package_validity_check()) {
-                return 2;
-            }
+        $product = Product::find($request->id);
+        if($product != null){
+            $product->published = $request->status;
+            $product->save();
+
+            return response()->json([
+                'status' => "success"
+            ]);
+        }else{
+            return response()->json([
+                'status' => "failed"
+            ]);
         }
-        $product->save();
-        return 1;
     }
 
     public function updateFeatured(Request $request)
@@ -774,31 +864,39 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        if (Auth::user()->id != $product->user_id) {
-            flash(translate('This product is not yours.'))->warning();
-            return back();
+        //     if (Auth::user()->id != $product->user_id) {
+        //         flash(translate('This product is not yours.'))->warning();
+        //         return back();
+        //     }
+
+        //     $product->product_translations()->delete();
+        //     $product->categories()->detach();
+        //     $product->stocks()->delete();
+        //     $product->taxes()->delete();
+
+
+        //     if (Product::destroy($id)) {
+        //         Cart::where('product_id', $id)->delete();
+        //         Wishlist::where('product_id', $id)->delete();
+
+        //         flash(translate('Product has been deleted successfully'))->success();
+
+        //         Artisan::call('view:clear');
+        //         Artisan::call('cache:clear');
+
+        //         return back();
+        //     } else {
+        //         flash(translate('Something went wrong'))->error();
+        //         return back();
+        //     }
+
+        if(count($product->getChildrenProducts()) > 0){
+            foreach($product->getChildrenProducts() as $children){
+                $children->delete();
+            }
         }
-
-        $product->product_translations()->delete();
-        $product->categories()->detach();
-        $product->stocks()->delete();
-        $product->taxes()->delete();
-
-
-        if (Product::destroy($id)) {
-            Cart::where('product_id', $id)->delete();
-            Wishlist::where('product_id', $id)->delete();
-
-            flash(translate('Product has been deleted successfully'))->success();
-
-            Artisan::call('view:clear');
-            Artisan::call('cache:clear');
-
-            return back();
-        } else {
-            flash(translate('Something went wrong'))->error();
-            return back();
-        }
+        Product::destroy($id);
+        return back();
     }
 
     public function bulk_product_delete(Request $request)
@@ -837,7 +935,7 @@ class ProductController extends Controller
 
            // Assuming you have a method to prepare or simulate data needed for the preview
         $detailedProduct = $this->prepareDetailedProductData($request->all());
-
+        return response()->json(['data'=>['slug'=>gettype($detailedProduct)],'success' => true]);
         $product_queries = []; // Simulate or prepare this data
         $total_query = 0; // Calculate or simulate this
         $reviews = []; // Simulate or prepare this data
@@ -1110,7 +1208,7 @@ class ProductController extends Controller
         //     sort($data['unit_price']);
         // }
         $total = isset($data['from'][0]) && isset($data['unit_price'][0]) ? $data['from'][0] * $data['unit_price'][0] : "";
-
+        return response()->json(['status', $attributesArray]);
         // Prepare detailed product data
         $detailedProduct = [
             'name' => $data['name'],
@@ -1317,5 +1415,7 @@ class ProductController extends Controller
         return response()->json($response);
 
     }
+
+    
 
 }
