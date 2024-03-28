@@ -47,18 +47,36 @@
                 </div>
             </div>
             <div class="card-body">
-                @if($products->count() > 0)
-                    @foreach($products as $product)
-                        <div class="card" style="width: 18rem;">
-                            <img class="card-img-top" src="{{ asset('/public'.$product->getFirstImage()) }}">
-                            <div class="card-body">
-                            <h5 class="card-title">{{ $product->name }}</h5>
-                            <p class="card-text">Number of variants: {{ $product->checkIfParentToGetNumVariants() }}.</p>
-                            <a href="#" class="btn btn-primary" style="width: 100%;">{{ translate('View product') }}</a>
+                <div class="row">
+                    @if($products->count() > 0)
+                        @foreach($products as $product)
+                            <div class="col-3">
+                                <div class="card" style="width: 18rem;">
+                                    <img class="card-img-top" src="{{ asset('/public'.$product->getFirstImage()) }}">
+                                    <div class="card-body">
+                                    <h5 class="card-title">{{ $product->name }}</h5>
+                                    <p class="card-text">Number of variants: {{ $product->checkIfParentToGetNumVariants() }}.</p>
+                                    <a href="{{ route('catalog.preview_product', ['id' => $product->id, 'is_catalog' => 2]) }}" class="btn btn-primary" style="width: 100%;">{{ translate('View product') }}</a>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    @endforeach
-                @endif
+                        @endforeach
+                    @endif
+                    @if($catalogs->count() > 0)
+                        @foreach($catalogs as $catalog)
+                            <div class="col-3">
+                                <div class="card" style="width: 18rem;">
+                                    <img class="card-img-top" src="{{ asset('/public'.$catalog->getFirstImage()) }}">
+                                    <div class="card-body">
+                                    <h5 class="card-title">{{ $catalog->name }}</h5>
+                                    <p class="card-text">Number of variants: {{ $catalog->checkIfParentToGetNumVariants() }}.</p>
+                                    <a href="{{ route('catalog.preview_product', ['id' => $catalog->id, 'is_catalog' => 1]) }}" class="btn btn-primary" style="width: 100%;">{{ translate('View product') }}</a>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    @endif
+                </div>
             </div>
         </form>
     </div>
@@ -66,21 +84,5 @@
 @endsection
 
 @section('script')
-
-<script>
-    $('#search').keyup(function(){
-        var search = $('#search').val();
-        if(search==""){
-            $("#memList").html("");
-            $('#result').hide();
-        }else{
-            $.get("{{ route('seller.catalog.search.action') }}",{name:search}, function(data){
-                console.log('done');
-                $('#memList').empty().html(data);
-                $('#result').show();
-            })
-        }
-    });
-</script>
-   
+  
 @endsection

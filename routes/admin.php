@@ -50,6 +50,7 @@ use App\Http\Controllers\UpdateController;
 use App\Http\Controllers\WebsiteController;
 use App\Http\Controllers\ZoneController;
 use App\Http\Controllers\UnityController;
+use App\Http\Controllers\Seller\CatalogController;
 
 /*
   |--------------------------------------------------------------------------
@@ -72,6 +73,10 @@ Route::controller(UpdateController::class)->group(function () {
 
 Route::get('/admin', [AdminController::class, 'admin_dashboard'])->name('admin.dashboard')->middleware(['auth', 'admin', 'prevent-back-history']);
 Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-back-history']], function() {
+    //Product Catalog routes
+    Route::controller(CatalogController::class)->group(function () {
+        Route::post('/catalog/add_product_to_catalog', 'add_product_to_catalog')->name('catalog.add_product_to_catalog');
+    });
 
     // category
     Route::resource('categories', CategoryController::class);

@@ -339,7 +339,7 @@ class Product extends Model
     }
 
     public function getFirstImage(){
-        $upload = UploadProducts::where('id_product', $this->id)->first();
+        $upload = UploadProducts::where('id_product', $this->id)->where('type', 'images')->first();
         $path = '';
         if($upload != null){
             $path = $upload->path;

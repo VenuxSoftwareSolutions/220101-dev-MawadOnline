@@ -6,13 +6,24 @@
                 {{ $previewData['detailedProduct']['name'] }}
             </h2>
         </div>
-        @if(($previewData['detailedProduct']['catalog'] == true) && (Auth::user()->user_type == "seller"))
-            <div class="col-6">
-                <button type="button" class="btn btn-secondary-base mr-2 add-to-cart fw-600 min-w-150px rounded-0 text-white add_product" data-product_id="{{ $previewData['detailedProduct']['product_id'] }}" style="float: right;
-                margin-top: -15px;">
-                    <i class="las la-plus"></i> {{ translate('Add product') }}
-                </button>
-            </div>
+        @if($previewData['detailedProduct']['catalog'] == true)
+            @if(Auth::user()->user_type == "seller")
+                <div class="col-6">
+                    <button type="button" class="btn btn-secondary-base mr-2 add-to-cart fw-600 min-w-150px rounded-0 text-white add_product" data-product_id="{{ $previewData['detailedProduct']['product_id'] }}" style="float: right;
+                    margin-top: -15px;">
+                        <i class="las la-plus"></i> {{ translate('Add product') }}
+                    </button>
+                </div>
+            @else
+                @if($previewData['detailedProduct']['is_catalog'] == 2)
+                    <div class="col-6">
+                        <button type="button" class="btn btn-secondary-base mr-2 add-to-cart fw-600 min-w-150px rounded-0 text-white add_product_to_catalog" data-product_id="{{ $previewData['detailedProduct']['product_id'] }}" style="float: right;
+                        margin-top: -15px;">
+                            <i class="las la-plus"></i> {{ translate('Add product to catalog') }}
+                        </button>
+                    </div>
+                @endif
+            @endif
         @endif
     </div>
     
