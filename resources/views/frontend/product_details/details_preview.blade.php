@@ -200,7 +200,7 @@
                             data-type="minus" data-field="quantity" disabled="disabled">
                             <i class="las la-minus"></i>
                         </button>
-                        <input type="number" id="quantity" name="quantity"
+                        <input readonly type="number" id="quantity" name="quantity"
                             class="col border-0 text-center flex-grow-1 fs-16 input-number" placeholder="1"
                             value="{{ $previewData['detailedProduct']['quantity'] }}" min="{{ $previewData['detailedProduct']['min'] }}" max="{{ $previewData['detailedProduct']['max'] }}"
                             lang="en">
@@ -246,7 +246,7 @@
                         $attribue = App\Models\Attribute::find($attributeId) ;
 
                     @endphp
-                    {{$attribue ? $attribue->name : ""}}
+                    {{$attribue ? $attribue->getTranslation('name') : ""}}
                 </div>
             </div>
             <div class="col-sm-10">
@@ -322,7 +322,7 @@
                 class="text-blue hov-text-primary fs-14 ml-3" target="_blank">View Policy</a>
         </div>
     </div> --}}
-    <div class="row no-gutters mt-4">
+    {{-- <div class="row no-gutters mt-4">
         <div class="col-sm-2">
             <div class="text-secondary fs-14 fw-400 mt-2">Share</div>
         </div>
@@ -330,28 +330,28 @@
             <div class="aiz-share jssocials">
                 <div class="jssocials-shares">
                     <div class="jssocials-share jssocials-share-email"><a target="_self"
-                            href="{{-- mailto:?subject=Product%20details%0AIs%20Discontinued%20By%20Manufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20No%0APackage%20Dimensions%20%E2%80%8F%20%3A%20%E2%80%8E%205.9%20x%204.2%20x%201.3%20inches%3B%201.59%20Ounces%0ADepartment%20%E2%80%8F%20%3A%20%E2%80%8E%20womens%0ADate%20First%20Available%20%E2%80%8F%20%3A%20%E2%80%8E%20October%203%2C%202017%0AManufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20Kate%20Spade%20New%20York%0AASIN%20%E2%80%8F%20%3A%20%20B077MMVB1B&amp;body=https%3A%2F%2Fdemo.activeitzone.com%2Fecommerce%2Fproduct%2Fbracelet-o0ru1952-rose-gold --}}"
+                            href="mailto:?subject=Product%20details%0AIs%20Discontinued%20By%20Manufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20No%0APackage%20Dimensions%20%E2%80%8F%20%3A%20%E2%80%8E%205.9%20x%204.2%20x%201.3%20inches%3B%201.59%20Ounces%0ADepartment%20%E2%80%8F%20%3A%20%E2%80%8E%20womens%0ADate%20First%20Available%20%E2%80%8F%20%3A%20%E2%80%8E%20October%203%2C%202017%0AManufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20Kate%20Spade%20New%20York%0AASIN%20%E2%80%8F%20%3A%20%20B077MMVB1B&amp;body=https%3A%2F%2Fdemo.activeitzone.com%2Fecommerce%2Fproduct%2Fbracelet-o0ru1952-rose-gold"
                             class="jssocials-share-link"><i class="lar la-envelope jssocials-share-logo"></i></a>
                     </div>
                     <div class="jssocials-share jssocials-share-twitter"><a target="_blank"
-                            href="{{-- https://twitter.com/share?url=https%3A%2F%2Fdemo.activeitzone.com%2Fecommerce%2Fproduct%2Fbracelet-o0ru1952-rose-gold&amp;text=Product%20details%0AIs%20Discontinued%20By%20Manufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20No%0APackage%20Dimensions%20%E2%80%8F%20%3A%20%E2%80%8E%205.9%20x%204.2%20x%201.3%20inches%3B%201.59%20Ounces%0ADepartment%20%E2%80%8F%20%3A%20%E2%80%8E%20womens%0ADate%20First%20Available%20%E2%80%8F%20%3A%20%E2%80%8E%20October%203%2C%202017%0AManufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20Kate%20Spade%20New%20York%0AASIN%20%E2%80%8F%20%3A%20%20B077MMVB1B --}}"
+                            href="https://twitter.com/share?url=https%3A%2F%2Fdemo.activeitzone.com%2Fecommerce%2Fproduct%2Fbracelet-o0ru1952-rose-gold&amp;text=Product%20details%0AIs%20Discontinued%20By%20Manufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20No%0APackage%20Dimensions%20%E2%80%8F%20%3A%20%E2%80%8E%205.9%20x%204.2%20x%201.3%20inches%3B%201.59%20Ounces%0ADepartment%20%E2%80%8F%20%3A%20%E2%80%8E%20womens%0ADate%20First%20Available%20%E2%80%8F%20%3A%20%E2%80%8E%20October%203%2C%202017%0AManufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20Kate%20Spade%20New%20York%0AASIN%20%E2%80%8F%20%3A%20%20B077MMVB1B"
                             class="jssocials-share-link"><i class="lab la-twitter jssocials-share-logo"></i></a></div>
                     <div class="jssocials-share jssocials-share-facebook"><a target="_blank"
-                            href="{{-- https://facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdemo.activeitzone.com%2Fecommerce%2Fproduct%2Fbracelet-o0ru1952-rose-gold --}}"
+                            href="https://facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdemo.activeitzone.com%2Fecommerce%2Fproduct%2Fbracelet-o0ru1952-rose-gold"
                             class="jssocials-share-link"><i class="lab la-facebook-f jssocials-share-logo"></i></a>
                     </div>
                     <div class="jssocials-share jssocials-share-linkedin"><a target="_blank"
-                            href="{{-- https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3A%2F%2Fdemo.activeitzone.com%2Fecommerce%2Fproduct%2Fbracelet-o0ru1952-rose-gold --}}"
+                            href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3A%2F%2Fdemo.activeitzone.com%2Fecommerce%2Fproduct%2Fbracelet-o0ru1952-rose-gold"
                             class="jssocials-share-link"><i class="lab la-linkedin-in jssocials-share-logo"></i></a>
                     </div>
                     <div class="jssocials-share jssocials-share-whatsapp"><a target="_self"
-                            href="{{-- whatsapp://send?text=https%3A%2F%2Fdemo.activeitzone.com%2Fecommerce%2Fproduct%2Fbracelet-o0ru1952-rose-gold Product%20details%0AIs%20Discontinued%20By%20Manufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20No%0APackage%20Dimensions%20%E2%80%8F%20%3A%20%E2%80%8E%205.9%20x%204.2%20x%201.3%20inches%3B%201.59%20Ounces%0ADepartment%20%E2%80%8F%20%3A%20%E2%80%8E%20womens%0ADate%20First%20Available%20%E2%80%8F%20%3A%20%E2%80%8E%20October%203%2C%202017%0AManufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20Kate%20Spade%20New%20York%0AASIN%20%E2%80%8F%20%3A%20%20B077MMVB1B --}}"
+                            href="whatsapp://send?text=https%3A%2F%2Fdemo.activeitzone.com%2Fecommerce%2Fproduct%2Fbracelet-o0ru1952-rose-gold Product%20details%0AIs%20Discontinued%20By%20Manufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20No%0APackage%20Dimensions%20%E2%80%8F%20%3A%20%E2%80%8E%205.9%20x%204.2%20x%201.3%20inches%3B%201.59%20Ounces%0ADepartment%20%E2%80%8F%20%3A%20%E2%80%8E%20womens%0ADate%20First%20Available%20%E2%80%8F%20%3A%20%E2%80%8E%20October%203%2C%202017%0AManufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20Kate%20Spade%20New%20York%0AASIN%20%E2%80%8F%20%3A%20%20B077MMVB1B"
                             class="jssocials-share-link"><i class="lab la-whatsapp jssocials-share-logo"></i></a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
     {{-- <!-- For auction product -->
     @if ($detailedProduct->auction_product)
         <div class="row no-gutters mb-3">

@@ -12,6 +12,25 @@
         align-items: center;
         font-size: 0.75em !important;
     }
+    .button-container {
+        position: fixed;
+        top: 12%;
+        right: 2%;
+        z-index: 5;
+    }
+    .preview-button {
+        background-color: #4CAF50; /* Green background */
+        border: none;
+        color: white;
+        padding: 15px 25px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+
+        cursor: pointer;
+        border-radius: 8px;
+    }
+
 </style>
 
 @section('panel_content')
@@ -33,7 +52,11 @@
             </ul>
         </div>
     @endif
-    <button type="button" onclick="submitForm()">Preview Product</button>
+    {{-- <button type="button" onclick="submitForm()">Preview Product</button> --}}
+    <div class="button-container">
+        <button type="button" class="preview-button" onclick="submitForm()">Preview Product</button>
+    </div>
+
 
     <form class="" action="{{route('seller.products.store')}}" method="POST" enctype="multipart/form-data" id="choice_form">
         @csrf
@@ -990,7 +1013,7 @@
             $(this).next('.custom-file-label').html(labelText);
         });
 
-        $('body').on('click', '#btn-create-variant', function() { 
+        $('body').on('click', '#btn-create-variant', function() {
             // Clone the original div
             var clonedDiv = $('body #variant_informations').clone();
 
@@ -1046,7 +1069,7 @@
                 });
             });
             clonedDiv.find('.variant-shipping').attr('name', 'variant-shipping-' + numbers_variant);
-            
+
             clonedDiv.find('.stock-warning').attr('name', 'stock-warning-' + numbers_variant);
             clonedDiv.find('.discount_type-variant').each(function(index, element) {
                 $(element).attr('name', 'variant_pricing-from' + numbers_variant + '[discount_type][]');
@@ -1097,7 +1120,7 @@
 
             clonedDiv.find('.max-qty-shipping').each(function(index, element) {
                 $(element).attr('name', 'variant_shipping-' + numbers_variant + '[to][]');
-            }); 
+            });
 
             var id_shipper = 0;
             clonedDiv.find('.shipper').each(function(index, element) {
@@ -1106,7 +1129,7 @@
                     if(index == key){
                         $(element_original).val().forEach(value => {
                             $(element).find('option[value="' + value + '"]').prop('selected', true);
-                        });  
+                        });
                     }
                 })
 
@@ -1115,11 +1138,11 @@
 
             clonedDiv.find('.estimated_order').each(function(index, element) {
                 $(element).attr('name', 'variant_shipping-' + numbers_variant + '[estimated_order][]');
-            }); 
+            });
 
             clonedDiv.find('.estimated_shipping').each(function(index, element) {
                 $(element).attr('name', 'variant_shipping-' + numbers_variant + '[estimated_shipping][]');
-            }); 
+            });
 
             clonedDiv.find('.paid').each(function(index, element) {
                 $(element).attr('name', 'variant_shipping-' + numbers_variant + '[paid][]');
@@ -1217,7 +1240,7 @@
         })
 
         $('body').on('change', '.variant-pricing', function(){
-            
+
             if ($(this).is(':not(:checked)')) {
                 var is_variant = $(this).data("variant");
                 var clonedElement = $("#table_pricing_configuration").clone();
@@ -1468,7 +1491,7 @@
                 AIZ.plugins.bootstrapSelect('refresh');
 
         });
-      
+
         $('body').on('click', '.btn-add-pricing', function() {
             var html_to_add = `
                                 <tr>
@@ -2011,7 +2034,7 @@
                                 </tr>
                             `;
             }
-            
+
             // add another row in shipping configuration
             $(this).parent().parent().parent().append(html_to_add);
         });
@@ -2021,16 +2044,16 @@
             var current = $(this).parent().parent().parent();
             var variant_id = $(this).data('variant-id');
             $(this).parent().parent().remove();
-            
+
             var count = 0;
             current.find('.shipper').each(function(index) {
                 if(variant_id ==undefined){
-                    $(this).attr('name', 'shipper[' + count + '][]')  
+                    $(this).attr('name', 'shipper[' + count + '][]')
                 }else{
                     $(this).attr('name', 'variant_shipping-' + variant_id + '[shipper]['+ count +'][]')
-                    
+
                 }
-                
+
                 count++
             });
         })
@@ -2040,7 +2063,7 @@
                 count_shippers = parseInt(count_shippers);
             var selected = $(this).val();
 
-            
+
 
             if(selected.indexOf('third_party') !== -1){
                 if(count_shippers == 0){
@@ -2172,7 +2195,7 @@
                         if(index == key){
                             $(element_original).val().forEach(value => {
                                 $(element).find('option[value="' + value + '"]').prop('selected', true);
-                            });   
+                            });
                         }
                     })
                 });
@@ -2269,8 +2292,8 @@
                     html = '<span style="color: green">Chargeable Weight = ' + Number(chargeable_weight.toFixed(2)) + ", then accepted by Aramex </span>"
                 }
 
-                
-                
+
+
                 $('#result_calculate_third_party').html(html);
             }
         });
@@ -2514,7 +2537,7 @@
                         if(stockToggleStatus == 'create'){
                             $('#create_stock').val(1)
                         }
-                        
+
                         document.getElementById('choice_form').submit();
                     });
                 }
