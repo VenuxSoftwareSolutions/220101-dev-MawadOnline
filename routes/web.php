@@ -43,6 +43,7 @@ use App\Http\Controllers\ProductQueryController;
 use App\Http\Controllers\PurchaseHistoryController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\Seller\ProductController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\SupportTicketController;
@@ -489,3 +490,5 @@ Route::controller(PageController::class)->group(function () {
     //Custom page
     Route::get('/{slug}', 'show_custom_page')->name('custom-pages.show_custom_page');
 });
+Route::post('/update-price-preview',[ProductController::class, 'updatePricePreview'])->name('seller.update-price-preview');
+Route::post('/send-checked-attributes',[ProductController::class, 'ProductCheckedAttributes'])->name('seller.product.checked.attributes');

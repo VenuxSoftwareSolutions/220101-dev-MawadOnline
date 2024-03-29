@@ -1299,7 +1299,6 @@ class ProductController extends Controller
         // dd($detailedProduct['variations']) ;
 
 
-
         return $detailedProduct;
     }
 

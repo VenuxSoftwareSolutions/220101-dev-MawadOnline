@@ -274,7 +274,7 @@
                         $lastItem = $previewData['detailedProduct']['lastItem'] ?? null ;
                     @endphp
                     <label class="attribute_value aiz-megabox pl-0 mr-2 mb-0">
-                        <input @if (($lastItem) && $lastItem[$attributeId] == $value  )
+                        <input @if (($lastItem) && isset($lastItem[$attributeId]) && $lastItem[$attributeId] == $value  )
                             checked
                         @endif niveau={{$niveau}} id="attribute_id_{{$attributeId}}_{{$value}}" type="radio" attributeId="{{$attributeId}}"  name="attribute_id_{{$attributeId}}" value="{{$value}}" >
                         @if (preg_match('/^#[0-9A-F]{6}$/i', $value))

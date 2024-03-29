@@ -10,7 +10,7 @@
         z-index: 5;
     }
     .preview-button {
-        background-color: #4CAF50; /* Green background */
+        background-color: #cb774b !important; /* Green background */
         border: none;
         color: white;
         padding: 15px 25px;
