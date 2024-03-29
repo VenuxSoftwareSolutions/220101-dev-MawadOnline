@@ -127,6 +127,14 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::post('/products/sku_combination', 'sku_combination')->name('products.sku_combination');
         Route::post('/products/sku_combination_edit', 'sku_combination_edit')->name('products.sku_combination_edit');
         Route::post('/products/add-more-choice-option', 'add_more_choice_option')->name('products.add-more-choice-option');
+
+        // Product Catalog Routes 
+        Route::get('/products/catalog/search_page', 'search')->name('products.catalog.search_page');
+        Route::get('/products/catalog/search/action', 'search_action')->name('products.catalog.search.action');
+        Route::get('/products/catalog/search/see_all/{keyword}', 'see_all')->name('products.catalog.search.see_all');
+        Route::get('/products/catalog/preview_product/{id}/{is_catalog}', 'displayPreviewProductInCatalogProduct')->name('products.catalog.preview_product');
+        Route::post('/products/catalog/add_product', 'add_product')->name('products.catalog.add_product');
+        Route::post('/products/catalog/add_product_to_catalog', 'add_product_to_catalog')->name('products.catalog.add_product_to_catalog');
     });
 
     //   // Stocks

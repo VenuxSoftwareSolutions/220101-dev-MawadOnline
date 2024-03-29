@@ -15,7 +15,7 @@
                     </button>
                 </div>
             @else
-                @if($previewData['detailedProduct']['is_catalog'] == 2)
+                @if($previewData['detailedProduct']['is_catalog'] == 2 && $previewData['detailedProduct']['is_added_to_catalog'] == false)
                     <div class="col-6">
                         <button type="button" class="btn btn-secondary-base mr-2 add-to-cart fw-600 min-w-150px rounded-0 text-white add_product_to_catalog" data-product_id="{{ $previewData['detailedProduct']['product_id'] }}" style="float: right;
                         margin-top: -15px;">

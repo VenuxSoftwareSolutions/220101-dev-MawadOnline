@@ -94,13 +94,13 @@
                         </a>
                         <!--Submenu-->
                         <ul class="aiz-side-nav-list level-2">
-                            @can('add_new_product')
+                            {{-- @can('add_new_product')
                                 <li class="aiz-side-nav-item">
                                     <a class="aiz-side-nav-link" href="{{route('products.create')}}">
                                         <span class="aiz-side-nav-text">{{translate('Add New product')}}</span>
                                     </a>
                                 </li>
-                            @endcan
+                            @endcan --}}
                             @can('show_all_products')
                                 <li class="aiz-side-nav-item">
                                     <a href="{{route('products.all')}}" class="aiz-side-nav-link">
@@ -315,7 +315,7 @@
 
                 <!-- Product Catalog -->
                 <li class="aiz-side-nav-item">
-                    <a href="{{ route('catalog.search_page') }}" class="aiz-side-nav-link {{ areActiveRoutes(['catalog.search_page'])}}">
+                    <a href="{{ route('products.catalog.search_page') }}" class="aiz-side-nav-link {{ areActiveRoutes(['catalog.search_page'])}}">
                         <div class="aiz-side-nav-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
                                 <g id="layer1" transform="translate(-0.53 -0.53)">

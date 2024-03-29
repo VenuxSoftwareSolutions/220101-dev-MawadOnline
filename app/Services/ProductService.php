@@ -553,7 +553,6 @@ class ProductService
             
             foreach($pricing['from'] as $key => $from){
                 $current_data = [];
-
                 if($pricing['from'][$key] != null && $pricing['unit_price'][$key] != null){
                         if($pricing['date_range_pricing'][$key] != null){
                             if(($pricing['date_range_pricing'][$key]) && ($pricing['discount_type'][$key])){
@@ -921,6 +920,7 @@ class ProductService
 
                 if(count($general_attributes_data) > 0){
                     foreach ($general_attributes_data as $attr => $value) {
+                        if($value != null){
                             $attribute_product = new ProductAttributeValues();
                             $attribute_product->id_products = $product_parent->id;
                             $attribute_product->id_attribute = $attr;
@@ -942,6 +942,7 @@ class ProductService
                             }
 
                             $attribute_product->save();
+                        }
                     }
                 }
             }

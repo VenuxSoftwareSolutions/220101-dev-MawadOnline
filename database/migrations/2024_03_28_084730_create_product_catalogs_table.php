@@ -43,7 +43,7 @@ return new class extends Migration
             $table->unsignedInteger('seller_featured')->default(0);
             $table->unsignedInteger('current_stock')->default(0);
             $table->string('unit', 20)->nullable();
-            $table->string('weight', 191)->default('0.00');
+            $table->string('weight', 191)->default(0.00)->nullable();
             $table->unsignedInteger('min_qty')->default(1);
             $table->unsignedInteger('low_stock_quantity')->nullable();
             $table->double('discount', 20, 2)->nullable();
@@ -104,6 +104,7 @@ return new class extends Migration
             $table->softDeletes();
             $table->string('stock_after_create', 191)->nullable();
             $table->unsignedInteger('catalog')->default(0);
+            $table->integer('added_from_catalog')->default(0);
             $table->timestamps();
         });
     }

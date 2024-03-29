@@ -1,4 +1,4 @@
-@extends('seller.layouts.app')
+@extends('backend.layouts.app')
 <style>
     .search_bloc {
         display: flex;
@@ -28,8 +28,7 @@
         float: right;
     }
 </style>
-
-@section('panel_content')
+@section('content')
 
     <div class="aiz-titlebar mt-2 mb-4">
       <div class="row align-items-center">

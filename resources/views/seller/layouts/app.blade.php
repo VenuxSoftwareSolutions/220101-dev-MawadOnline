@@ -200,6 +200,12 @@
             visibility: hidden;
         }
 
+        .bloc-default-shipping-style{
+            border: 1px solid gainsboro;
+            border-radius: 5px;
+            padding: 15px 26px;
+        }
+
     </style>
 	<script>
     	var AIZ = AIZ || {};

@@ -1125,6 +1125,14 @@
     <!-- Size chart show Modal -->
     @include('modals.size_chart_show_modal')
 @endsection --}}
+<!-- Toastr CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
+
+<!-- jQuery (required by Toastr) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!-- Toastr JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
 @section('script')
     <script type="text/javascript">
@@ -1601,7 +1609,7 @@
 
         $('.add_product').on('click', function(){
             var product_id = $(this).data('product_id');
-            var previewUrlBase  = "{{ route('seller.products.edit', ['id' => 'PLACEHOLDER']) }}";
+            var editUrlBase  = "{{ route('seller.products.edit', ['id' => 'PLACEHOLDER']) }}";
             if(product_id != undefined){
                 $.ajax({
                     url: "{{route('catalog.add_product')}}",
@@ -1612,13 +1620,11 @@
                     cache: false,
                     dataType: 'JSON',
                     success: function(dataResult) {
-                        console.log(dataResult);
-
                         // Replace 'PLACEHOLDER' with the actual slug from the response
-                        // var previewUrl = previewUrlBase.replace('PLACEHOLDER', data.data.slug);
+                        var editUrl = editUrlBase.replace('PLACEHOLDER', dataResult.data);
 
-                        // // Open the URL in a new tab
-                        // window.open(previewUrl, '_blank');
+                        // Open the URL
+                        window.location.href = editUrl;
                     }
                 })
             }
@@ -1627,6 +1633,7 @@
         $('.add_product_to_catalog').on('click', function(){
             var product_id = $(this).data('product_id');
             var previewUrlBase  = "{{ route('seller.products.edit', ['id' => 'PLACEHOLDER']) }}";
+            var current = $(this);
             if(product_id != undefined){
                 $.ajax({
                     url: "{{route('catalog.add_product_to_catalog')}}",
@@ -1637,8 +1644,14 @@
                     cache: false,
                     dataType: 'JSON',
                     success: function(dataResult) {
-                        console.log(dataResult);
-
+                        current.remove();
+                        toastr.options =    {
+                                                positionClass: 'toast-top-right',
+                                                closeButton: true,
+                                                timeOut: 3000, // Set the duration for which the toast will be displayed (in milliseconds)
+                                            };
+                        toastr.success('Product added successfully');
+                        
                         // Replace 'PLACEHOLDER' with the actual slug from the response
                         // var previewUrl = previewUrlBase.replace('PLACEHOLDER', data.data.slug);
 

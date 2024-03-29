@@ -74,12 +74,17 @@ class CatalogController extends Controller
             $products = [];
             $catalogs = [];
             if(Auth::user()->user_type == "seller"){
-                $products = ProductCatalog::where(function ($query) use ($search) {
+                $catalogs = ProductCatalog::where(function ($query) use ($search) {
                                         $query->where('name', 'like', "%{$search}%")
                                             ->orWhereHas('brand', function ($query) use ($search) {
                                                 $query->where('name', 'like', "%{$search}%");
                                             });
                                     })->get();
+
+                return view('seller.product.catalog.see_all',[
+                    'products' => $products, 
+                    'catalogs' => $catalogs,
+                ]);
             }elseif(Auth::user()->user_type == "admin"){    
                 $products = Product::where(function ($query) use ($search) {
                                         $query->where('name', 'like', "%{$search}%")
@@ -109,19 +114,46 @@ class CatalogController extends Controller
                             });
                     })->get();
                 }
+
+                return view('backend.product.catalog.see_all',[
+                    'products' => $products, 
+                    'catalogs' => $catalogs,
+                ]);
             }
-            return view('seller.product.catalog.see_all',[
-                'products' => $products, 
-                'catalogs' => $catalogs,
-            ]);
         }else{
             abort(404);
         }
     }
 
+    public function getYoutubeVideoId($videoLink) {
+        // Parse the YouTube video URL to extract the video ID
+        $videoId = '';
+        parse_str(parse_url($videoLink, PHP_URL_QUERY), $queryParams);
+        if (isset($queryParams['v'])) {
+            $videoId = $queryParams['v'];
+        }
+        return $videoId;
+    }
+
+    public function getVimeoVideoId($videoLink) {
+        // Parse the Vimeo video URL to extract the video ID
+        $videoId = '';
+        $regex = '/(?:https?:\/\/)?(?:www\.)?(?:vimeo\.com)\/?(.+)/';
+        if (preg_match($regex, $videoLink, $matches)) {
+            $videoId = $matches[1];
+        }
+        return $videoId;
+    }
+
     public function displayPreviewProductInCatalogProduct($id, $is_catalog){
+        $is_added_to_catalog = false;
         if($is_catalog == 2){
             $parent = Product::find($id);
+            $product_catalog = ProductCatalog::where('product_id', $id)->first();
+            // Check if product is existe in catalog or not 
+            if($product_catalog != null){
+                $is_added_to_catalog = true;
+            }
         }else{
             $parent = ProductCatalog::find($id);
         }
@@ -250,14 +282,21 @@ class CatalogController extends Controller
             
         }
 
-        if (isset($data['from']) && is_array($data['from']) && count($data['from']) > 0) {
+        if (isset($pricing['from']) && is_array($pricing['from']) && count($pricing['from']) > 0) {
             if(!isset($min))
-                $min = min($data['from']) ; 
+                $min = min($pricing['from']) ; 
         }
 
-        if (isset($data['to']) && is_array($data['to']) && count($data['to']) > 0) {
+        if (isset($pricing['to']) && is_array($pricing['to']) && count($pricing['to']) > 0) {
             if(!isset($max))
-                $max = max($data['to']) ;
+                $max = max($pricing['to']) ;
+        } 
+
+        if ($parent->video_provider === "youtube") {
+            $getYoutubeVideoId=$this->getYoutubeVideoId($parent->video_link) ;
+        }
+        else {
+            $getVimeoVideoId=$this->getVimeoVideoId($parent->video_link) ;
         } 
 
         $total = isset($pricing['from'][0]) && isset($pricing['unit_price'][0]) ? $pricing['from'][0] * $pricing['unit_price'][0] : "";
@@ -284,7 +323,11 @@ class CatalogController extends Controller
                 'product_id' => $parent->id,
                 'max' =>$max ?? 1 ,
                 'min' =>$min ?? 1 ,
-                'is_catalog' => $is_catalog
+                'video_provider'  => $parent->video_provider,
+                'getYoutubeVideoId' =>$getYoutubeVideoId ?? null ,
+                'getVimeoVideoId' => $getVimeoVideoId ?? null,
+                'is_catalog' => $is_catalog,
+                'is_added_to_catalog' => $is_added_to_catalog
             ];
 
         $previewData['detailedProduct'] = $detailedProduct;
@@ -367,6 +410,7 @@ class CatalogController extends Controller
         
         if(count($existingProduct->getChildrenProducts()) > 0){
             foreach($existingProduct->getChildrenProducts() as $children){
+                $data = $children->attributesToArray(); 
                 unset($data['id']);
                 $data['parent_id'] = $newProduct;
                 $data['user_id'] = Auth::user()->id;
@@ -429,7 +473,9 @@ class CatalogController extends Controller
                 }
             }
         }
-        return response()->json($request->all(), 200);
+        return response()->json([
+            'data' => $newProduct
+        ]);
     }
 
     public function add_product_to_catalog(Request $request){
@@ -444,6 +490,7 @@ class CatalogController extends Controller
         $data = $existingProduct->attributesToArray();        
         // Make necessary updates to the attributes (if any)
         unset($data['id']);
+        $data['product_id'] = $request->id;
         $newProduct = ProductCatalog::insertGetId($data);
 
         $path = public_path('/upload_products/Product-'.$request->id);
@@ -507,7 +554,7 @@ class CatalogController extends Controller
                 // Make necessary updates to the attributes (if any)
                 unset($data['id']);
                 $data['parent_id'] = $newProduct;
-                $data['product_id'] = $children->id; ;
+                $data['product_id'] = $children->id;
                 $newProductChildren = ProductCatalog::insertGetId($data);
 
                 $path = public_path('/upload_products/Product-'.$children->id);
@@ -565,6 +612,8 @@ class CatalogController extends Controller
                 }
             }
         }
-        return response()->json($request->all(), 200);
+        return response()->json([
+            'data' => $newProduct
+        ]);
     }
 }

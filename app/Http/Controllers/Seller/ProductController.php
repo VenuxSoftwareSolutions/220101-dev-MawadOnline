@@ -1436,8 +1436,4 @@ class ProductController extends Controller
 
     }
 
-    public function displayPreviewProductInCatalogProduct($id){
-        
-    }
-
 }
