@@ -214,7 +214,7 @@
                                 </thead>
                                 <tbody id="bloc_pricing_configuration">
                                     @if(count($product->getPricingConfiguration()) > 0)
-                                        @foreach ($product->getPricingConfiguration() as $pricing)
+                                        @foreach ($product->getPricingConfiguration() as $key => $pricing)
                                             <tr>
                                                 <td><input type="number" name="from[]" class="form-control min-qty" id="" value="{{ $pricing->from }}"></td>
                                                 <td><input type="number" name="to[]" class="form-control max-qty" id="" value="{{ $pricing->to }}"></td>
@@ -243,7 +243,9 @@
                                                 <td><input type="number" class="form-control discount_percentage" value="{{ $pricing->discount_percentage }}" @if($pricing->discount_type != 'percent') readonly @endif name="discount_percentage[]"></td>
                                                 <td>
                                                     <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                                    <i class="las la-trash delete_pricing_canfiguration" data-pricing_id="{{ $pricing->id }}" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                                    @if($key != 0)
+                                                        <i class="las la-trash delete_pricing_canfiguration" data-pricing_id="{{ $pricing->id }}" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                                    @endif
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -264,7 +266,6 @@
                                             <td><input type="number" class="form-control discount_percentage" name="discount_percentage[]"></td>
                                             <td>
                                                 <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                                <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
                                             </td>
                                         </tr>
                                     @endif
@@ -659,7 +660,7 @@
                                         <span></span>
                                     </label>
                                 </div>
-                                <div id="bloc_pricing_configuration_variant">
+                                <div id="bloc_pricing_configuration_variant" class="bloc_pricing_configuration_variant">
 
                                 </div>
                             </div>
@@ -822,8 +823,8 @@
                                                         <tbody id="bloc_pricing_configuration">
                                                             @foreach ($children->getPricingConfiguration() as $pricing)
                                                                 <tr>
-                                                                    <td><input type="number" name="variant[from][{{ $children->id }}][]" class="form-control min-qty" id="" value="{{ $pricing->from }}"></td>
-                                                                    <td><input type="number" name="variant[to][{{ $children->id }}][]" class="form-control max-qty" id="" value="{{ $pricing->to }}"></td>
+                                                                    <td><input type="number" name="variant[from][{{ $children->id }}][]" class="form-control min-qty-variant" id="" value="{{ $pricing->from }}"></td>
+                                                                    <td><input type="number" name="variant[to][{{ $children->id }}][]" class="form-control max-qty-variant" id="" value="{{ $pricing->to }}"></td>
                                                                     <td><input type="number" name="variant[unit_price][{{ $children->id }}][]" class="form-control unit-price-variant" id="" value="{{ $pricing->unit_price }}"></td>
                                                                     @php
                                                                         $date_range = '';
@@ -837,16 +838,16 @@
                                                                             $date_range = $start_date_formatted.' to '.$end_date_formatted;
                                                                         }
                                                                     @endphp
-                                                                    <td><input type="text" class="form-control aiz-date-range discount-range" value="{{ $date_range }}" name="variant[date_range_pricing][{{ $children->id }}][]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
+                                                                    <td><input type="text" class="form-control aiz-date-range discount-range-variant" value="{{ $date_range }}" name="variant[date_range_pricing][{{ $children->id }}][]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                                                     <td>
-                                                                        <select class="form-control discount_type" name="variant[discount_type][{{ $children->id }}][]">
+                                                                        <select class="form-control discount_type-variant" name="variant[discount_type][{{ $children->id }}][]">
                                                                             <option value="" selected>{{translate('Choose type')}}</option>
                                                                             <option value="amount" @selected($pricing->discount_type == 'amount')>{{translate('Flat')}}</option>
                                                                             <option value="percent" @selected($pricing->discount_type == 'percent')>{{translate('Percent')}}</option>
                                                                         </select>
                                                                     </td>
-                                                                    <td><input type="number" class="form-control discount_amount" value="{{ $pricing->discount_amount }}" name="variant[discount_amount][{{ $children->id }}][]"></td>
-                                                                    <td><input type="number" class="form-control discount_percentage" value="{{ $pricing->discount_percentage }}" name="variant[discount_percentage][{{ $children->id }}][]"></td>
+                                                                    <td><input type="number" class="form-control discount_amount-variant" value="{{ $pricing->discount_amount }}" name="variant[discount_amount][{{ $children->id }}][]"></td>
+                                                                    <td><input type="number" class="form-control discount_percentage-variant" value="{{ $pricing->discount_percentage }}" name="variant[discount_percentage][{{ $children->id }}][]"></td>
                                                                     <td>
                                                                         <i class="las la-plus btn-add-pricing" data-id_variant="{{ $children->id }}" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                                                         <i class="las la-trash delete_pricing_canfiguration" data-pricing_id="{{ $pricing->id }}" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
@@ -1563,7 +1564,7 @@
                 $(element).attr('name', 'variant_pricing-from' + numbers_variant + '[discount_range][]');
                 $(element).daterangepicker({
                     timePicker: true,
-                    autoUpdateInput: true,
+                    autoUpdateInput: false,
                     locale: {
                         format: 'DD-MM-Y HH:mm:ss',
                         separator : " to ",
@@ -1805,7 +1806,7 @@
                 clonedElement.find('.discount-range').each(function(index, element) {
                     $(element).daterangepicker({
                         timePicker: true,
-                        autoUpdateInput: true,
+                        autoUpdateInput: false,
                         locale: {
                             format: 'DD-MM-Y HH:mm:ss',
                             separator : " to ",
@@ -1993,18 +1994,18 @@
                             `;
             }else if(newvariant != undefined){
                 var html_to_add = `<tr>
-                                    <td><input type="number" name="variant_pricing-from'`+ newvariant +`[from][]" class="form-control min-qty" id=""></td>
-                                    <td><input type="number" name="variant_pricing-from'`+ newvariant +`[to][]" class="form-control max-qty" id=""></td>
-                                    <td><input type="number" name="variant_pricing-from'`+ newvariant +`[unit_price][]" class="form-control unit-price-variant" id=""></td>
-                                    <td><input type="text" class="form-control aiz-date-range discount-range" name="variant_pricing-from'`+ newvariant +`[discount_range][]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
+                                    <td><input type="number" name="variant_pricing-from`+ newvariant +`[from][]" class="form-control min-qty" id=""></td>
+                                    <td><input type="number" name="variant_pricing-from`+ newvariant +`[to][]" class="form-control max-qty" id=""></td>
+                                    <td><input type="number" name="variant_pricing-from`+ newvariant +`[unit_price][]" class="form-control unit-price-variant" id=""></td>
+                                    <td><input type="text" class="form-control aiz-date-range discount-range" name="variant_pricing-from`+ newvariant +`[discount_range][]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                     <td>
-                                        <select class="form-control discount_type" name="variant_pricing-from'`+ newvariant +`[discount_type][]">
+                                        <select class="form-control discount_type" name="variant_pricing-from`+ newvariant +`[discount_type][]">
                                             <option value="" selected>{{translate('Choose type')}}</option>
                                             <option value="amount" @selected(old('discount_type') == 'amount')>{{translate('Flat')}}</option>
                                             <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control discount_amount" name="variant_pricing-from'`+ newvariant +`[discount_amount][]"></td>
+                                    <td><input type="number" class="form-control discount_amount" name="variant_pricing-from`+ newvariant +`[discount_amount][]"></td>
                                     <td><input type="number" class="form-control discount_percentage" name="variant_pricing-from'`+ newvariant +`[discount_percentage][]"></td>
                                     <td>
                                         <i class="las la-plus btn-add-pricing" data-id_variant="` + newvariant + `" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
@@ -2066,7 +2067,7 @@
                 //Initialize last date range picker
                 $(this).parent().parent().parent().find('.aiz-date-range:last').daterangepicker({
                     timePicker: true,
-                    autoUpdateInput: true,
+                    autoUpdateInput: false,
                     locale: {
                         format: 'DD-MM-Y HH:mm:ss',
                         separator : " to "
@@ -2891,7 +2892,7 @@
                                     <td><input type="number" class="form-control charge_per_unit_shipping" name="variant[charge_per_unit_shipping][` + id_variant + `][]" readonly></td>
                                     <td>
                                         <i class="las la-plus btn-add-shipping" data-id_variant="` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_shipping_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                        <i class="las la-trash delete_shipping_canfiguration" data-id_variant = "` id_variant `" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
                                     </td>
                                 </tr>
                             `;
@@ -3160,7 +3161,15 @@
 
                     $('#shipping_configuration_box #table_shipping_configuration').find('.shipper').each(function(key, element_original) {
                         if(index == key){
-                            $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
+                            var values = $(element_original).val(); // Array containing values to check
+        
+                            $(element).find('option').each(function() {
+                                var optionValue = $(this).val(); // Get value of the option
+                                
+                                if ($.inArray(optionValue, values) !== -1) {
+                                    $(this).prop('selected', true); // Select the option if value exists in array
+                                }
+                            });
                         }
                     })
                 });
@@ -3260,6 +3269,14 @@
                     clonedDiv.find('.charge_per_unit_shipping').attr('name', `variant_shipping-` + id + `[charge_per_unit_shipping][]`)
                 }else{
                     clonedDiv.find('.charge_per_unit_shipping').removeAttr('name');
+                }
+
+                if(id_variant != undefined){
+                    clonedDiv.find('.btn-add-shipping').attr('data-id_variant', id_variant);
+                    clonedDiv.find('.delete_shipping_canfiguration').attr('data-id_variant', id_variant);
+                }else if(id != undefined){
+                    clonedDiv.find('.btn-add-shipping').attr('data-id', id);
+                    clonedDiv.find('.delete_shipping_canfiguration').attr('data-variant-id', id);
                 }
 
                 $(this).parent().parent().parent().find('#bloc_default_shipping').append(clonedDiv);

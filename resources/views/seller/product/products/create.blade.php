@@ -752,6 +752,7 @@
                 <div class="mar-all text-right mb-2">
                     <button type="submit" name="button" value="draft" class="btn btn-success">Save as draft</button>
                     <button type="submit" name="button" value="publish" class="btn btn-primary">Upload Product</button>
+                    <input type="hidden" name="submit_button" id="submit_button">
                 </div>
             </div>
         </div>
@@ -1040,7 +1041,7 @@
                 $(element).attr('name', 'variant_pricing-from' + numbers_variant + '[discount_range][]');
                 $(element).daterangepicker({
                     timePicker: true,
-                    autoUpdateInput: true,
+                    autoUpdateInput: false,
                     locale: {
                         format: 'DD-MM-Y HH:mm:ss',
                         separator : " to ",
@@ -1260,7 +1261,7 @@
                 clonedElement.find('.discount-range').each(function(index, element) {
                     $(element).daterangepicker({
                         timePicker: true,
-                        autoUpdateInput: true,
+                        autoUpdateInput: false,
                         locale: {
                             format: 'DD-MM-Y HH:mm:ss',
                             separator : " to ",
@@ -1460,7 +1461,7 @@
                 //Initialize last date range picker
                 $('#bloc_pricing_configuration_variant .aiz-date-range-variant:last').daterangepicker({
                     timePicker: true,
-                    autoUpdateInput: true,
+                    autoUpdateInput: false,
                     locale: {
                         format: 'DD-MM-Y HH:mm:ss',
                         separator : " to ",
@@ -1477,19 +1478,19 @@
             
             if(newvariant != undefined){
                 var html_to_add = `<tr>
-                                    <td><input type="number" name="variant_pricing-from'`+ newvariant +`[from][]" class="form-control min-qty" id=""></td>
-                                    <td><input type="number" name="variant_pricing-from'`+ newvariant +`[to][]" class="form-control max-qty" id=""></td>
-                                    <td><input type="number" name="variant_pricing-from'`+ newvariant +`[unit_price][]" class="form-control unit-price-variant" id=""></td>
+                                    <td><input type="number" name="variant_pricing-from`+ newvariant +`[from][]" class="form-control min-qty" id=""></td>
+                                    <td><input type="number" name="variant_pricing-from`+ newvariant +`[to][]" class="form-control max-qty" id=""></td>
+                                    <td><input type="number" name="variant_pricing-from`+ newvariant +`[unit_price][]" class="form-control unit-price-variant" id=""></td>
                                     <td><input type="text" class="form-control aiz-date-range discount-range" name="variant_pricing-from'`+ newvariant +`[discount_range][]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                     <td>
-                                        <select class="form-control discount_type" name="variant_pricing-from'`+ newvariant +`[discount_type][]">
+                                        <select class="form-control discount_type" name="variant_pricing-from`+ newvariant +`[discount_type][]">
                                             <option value="" selected>{{translate('Choose type')}}</option>
                                             <option value="amount" @selected(old('discount_type') == 'amount')>{{translate('Flat')}}</option>
                                             <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control discount_amount" name="variant_pricing-from'`+ newvariant +`[discount_amount][]"></td>
-                                    <td><input type="number" class="form-control discount_percentage" name="variant_pricing-from'`+ newvariant +`[discount_percentage][]"></td>
+                                    <td><input type="number" class="form-control discount_amount" name="variant_pricing-from`+ newvariant +`[discount_amount][]"></td>
+                                    <td><input type="number" class="form-control discount_percentage" name="variant_pricing-from`+ newvariant +`[discount_percentage][]"></td>
                                     <td>
                                         <i class="las la-plus btn-add-pricing" data-id_variant="` + newvariant + `" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                         <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
@@ -1549,7 +1550,7 @@
             //Initialize last date range picker
             $(this).parent().parent().parent().find('.aiz-date-range:last').daterangepicker({
                 timePicker: true,
-                autoUpdateInput: true,
+                autoUpdateInput: false,
                 locale: {
                     format: 'DD-MM-Y HH:mm:ss',
                     separator : " to ",
@@ -2609,6 +2610,10 @@
                         if(stockToggleStatus == 'create'){
                             $('#create_stock').val(1)
                         }
+
+                        // Update the hidden input field with the value of the clicked button
+                        var clickedButtonValue = event.submitter.value;
+                        document.getElementById('submit_button').value = clickedButtonValue;
                         
                         document.getElementById('choice_form').submit();
                     });

@@ -245,7 +245,7 @@ class ProductController extends Controller
             $data['old_documents'] = $request->old_documents;
             $data['old_document_names'] = $request->old_document_names;
             $update = false;
-            $this->productUploadsService->store_uploads($data);
+            $this->productUploadsService->store_uploads($data, $update);
 
 
             flash(translate('Product has been inserted successfully'))->success();
