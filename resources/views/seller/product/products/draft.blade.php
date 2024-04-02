@@ -1572,6 +1572,16 @@
                         separator : " to ",
                     },
                 });
+
+                var format = 'DD-MM-Y HH:mm:ss';
+                var separator = " to ";
+                $(element).on("apply.daterangepicker", function (ev, picker) {
+                    $(this).val(
+                        picker.startDate.format(format) +
+                            separator +
+                            picker.endDate.format(format)
+                    );
+                });
             });
             clonedDiv.find('.variant-shipping').attr('name', 'variant-shipping-' + numbers_variant);
             clonedDiv.find('.variant-shipping').attr('data-id', numbers_variant);
@@ -1814,6 +1824,17 @@
                             separator : " to ",
                         },
                     });
+
+                    var format = 'DD-MM-Y HH:mm:ss';
+                    var separator = " to ";
+                    $(element).on("apply.daterangepicker", function (ev, picker) {
+                        $(this).val(
+                            picker.startDate.format(format) +
+                                separator +
+                                picker.endDate.format(format)
+                        );
+                    });
+
                     $(element).removeClass("discount-range").addClass("discount-range-variant");
                     
                     if(is_variant != undefined){
@@ -2074,6 +2095,16 @@
                         format: 'DD-MM-Y HH:mm:ss',
                         separator : " to "
                     },
+                });
+
+                var format = 'DD-MM-Y HH:mm:ss';
+                var separator = " to ";
+                $(this).parent().parent().parent().find('.aiz-date-range:last').on("apply.daterangepicker", function (ev, picker) {
+                    $(this).val(
+                        picker.startDate.format(format) +
+                            separator +
+                            picker.endDate.format(format)
+                    );
                 });
 
                 //refresh select discount type
