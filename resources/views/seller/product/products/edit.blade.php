@@ -475,9 +475,9 @@
                                                 <td>
                                                     <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                                 </td>
-                                            </tr> 
+                                            </tr>
                                         @endif
-                                        
+
                                     </tbody>
                                 </table>
                             </div>
@@ -2179,7 +2179,7 @@
                                     </td>
                                 </tr>
                             `;
-                } 
+                }
             }
 
                 // add another bloc in pricing configuration
@@ -3274,7 +3274,7 @@
                     if(id_variant != undefined){
                         $(element).attr('name', `variant[shipper][` + id_variant + `][` + index + `][]`)
                     }else if(id != undefined){
-                        
+
                         $(element).attr('name', `variant_shipping-` + id + `[shipper][` + index + `][]`)
                     }else{
                         $(element).removeAttr('name');
@@ -3283,10 +3283,10 @@
                     $('#shipping_configuration_box #table_shipping_configuration').find('.shipper').each(function(key, element_original) {
                         if(index == key){
                             var values = $(element_original).val(); // Array containing values to check
-        
+
                             $(element).find('option').each(function() {
                                 var optionValue = $(this).val(); // Get value of the option
-                                
+
                                 if ($.inArray(optionValue, values) !== -1) {
                                     $(this).prop('selected', true); // Select the option if value exists in array
                                 }
