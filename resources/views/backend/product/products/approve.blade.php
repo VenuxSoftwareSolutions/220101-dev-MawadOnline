@@ -33,6 +33,12 @@
         </div>
     @endif
 
+    @if($product->added_from_catalog == 1)
+        <div class="alert alert-warning" role="alert">
+            {{ translate('This product is added from Mawad catalog.') }}
+        </div>
+    @endif
+
     <form>
         <div class="row gutters-5">
             <div class="col-lg-12">

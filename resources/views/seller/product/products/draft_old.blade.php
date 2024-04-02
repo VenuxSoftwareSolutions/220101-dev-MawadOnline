@@ -1201,7 +1201,7 @@
                 $(element).attr('name', 'variant_pricing-from' + numbers_variant + '[discount_range][]');
                 $(element).daterangepicker({
                     timePicker: true,
-                    autoUpdateInput: false,
+                    autoUpdateInput: true,
                     locale: {
                         format: 'DD-MM-Y HH:mm:ss',
                         separator : " to ",
@@ -1325,7 +1325,7 @@
                 clonedElement.find('.discount-range').each(function(index, element) {
                     $(element).daterangepicker({
                         timePicker: true,
-                        autoUpdateInput: false,
+                        autoUpdateInput: true,
                         locale: {
                             format: 'DD-MM-Y HH:mm:ss',
                             separator : " to ",
@@ -1529,7 +1529,7 @@
                 //Initialize last date range picker
                 $('#bloc_pricing_configuration_variant .aiz-date-range-variant:last').daterangepicker({
                     timePicker: true,
-                    autoUpdateInput: false,
+                    autoUpdateInput: true,
                     locale: {
                         format: 'DD-MM-Y HH:mm:ss',
                         separator : " to ",
@@ -1594,7 +1594,7 @@
                 //Initialize last date range picker
                 $(this).parent().parent().parent().find('.aiz-date-range:last').daterangepicker({
                     timePicker: true,
-                    autoUpdateInput: false,
+                    autoUpdateInput: true,
                     locale: {
                         format: 'DD-MM-Y HH:mm:ss',
                         separator : " to "

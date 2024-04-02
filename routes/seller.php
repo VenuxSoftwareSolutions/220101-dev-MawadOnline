@@ -35,8 +35,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
     Route::controller(ProductController::class)->group(function () {
         Route::post('/product/temp-store', 'tempStore')->name('product.tempStore');
         Route::get('/product/preview/{slug}', 'preview')->name('product.preview');
-        // Route::post('/update-price-preview','updatePricePreview')->name('update-price-preview');
-        // Route::post('/send-checked-attributes','ProductCheckedAttributes')->name('product.checked.attributes');
+        Route::post('/update-price-preview','updatePricePreview')->name('update-price-preview')->middleware(['admin']);
+        Route::post('/send-checked-attributes','ProductCheckedAttributes')->name('product.checked.attributes');
 
         Route::get('/products', 'index')->name('products');
         Route::get('/product/create', 'create')->name('products.create');
@@ -205,13 +205,15 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
         // Add Permissiom
         Route::post('/roles/add_permission', 'add_permission')->name('roles.permission');
     });
+});
 
-    //Catalog routes
-    Route::controller(CatalogController::class)->group(function () {
-        Route::get('/catalog/search_page', 'search')->name('catalog.search_page');
-        Route::get('/catalog/search/action', 'search_action')->name('catalog.search.action');
-        Route::get('/catalog/search/see_all/{keyword}', 'see_all')->name('catalog.search.see_all');
-        Route::get('/catalog/catalog/preview_product/{id}', 'displayPreviewProductInCatalogProduct')->name('catalog.preview_product');
-    });
+ //Catalog routes
+ Route::controller(CatalogController::class)->group(function () {
+    Route::get('/catalog/search_page', 'search')->name('catalog.search_page');
+    Route::get('/catalog/search/action', 'search_action')->name('catalog.search.action');
+    Route::get('/catalog/search/see_all/{keyword}', 'see_all')->name('catalog.search.see_all');
+    Route::get('/catalog/preview_product/{id}/{is_catalog}', 'displayPreviewProductInCatalogProduct')->name('catalog.preview_product');
+    Route::post('/catalog/add_product', 'add_product')->name('catalog.add_product');
+    Route::post('/catalog/add_product_to_catalog', 'add_product_to_catalog')->name('catalog.add_product_to_catalog');
 });
 
