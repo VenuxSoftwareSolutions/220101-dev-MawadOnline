@@ -37,12 +37,12 @@
                         <span class="btn btn-icon p-0 d-flex justify-content-center align-items-center">
                             <span class="d-flex align-items-center position-relative">
                                 <i class="las la-bell fs-24"></i>
-                                @php
+                                {{-- @php
                                     $vendor = \App\Models\User::find(Auth::user()->owner_id);
                                 @endphp
                                 @if($vendor->unreadNotifications->count() > 0)
                                     <span class="badge badge-sm badge-dot badge-circle badge-primary position-absolute absolute-top-right"></span>
-                                @endif
+                                @endif --}}
                             </span>
                         </span>
                     </a>
@@ -67,7 +67,7 @@
                                 </li>
 
                             </ul>
-                            <div class="tab-content">
+                            {{-- <div class="tab-content">
                                 <div class="tab-pane active" id="orders-notifications" role="tabpanel">
                                     <x-notification :notifications="$vendor->unreadNotifications()->where('type', 'App\Notifications\OrderNotification')->take(20)->get()" />
                                 </div>
@@ -80,7 +80,7 @@
                                 <div class="tab-pane" id="status-notifications" role="tabpanel">
                                     <x-notification :notifications="$vendor->unreadNotifications()->where('type', 'App\Notifications\CustomStatusNotification')->take(20)->get()" />
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                         <div class="text-center border-top">
                             <a href="{{ route('seller.all-notification') }}" class="text-reset d-block py-2">

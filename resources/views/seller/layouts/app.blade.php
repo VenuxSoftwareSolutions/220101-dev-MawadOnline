@@ -121,6 +121,7 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <!-- Include MultiSelect CSS -->
     <link rel="stylesheet" href="https://cdn.rawgit.com/nobleclem/jQuery-MultiSelect/master/jquery.multiselect.css">
+    <link rel="stylesheet" href="{{ static_asset('assets/css/filter_multi_select.css') }}">
     <style>
         body {
             font-size: 12px;
@@ -184,6 +185,19 @@
 
         .width-badge{
             width: 100%;
+        }
+
+        .ms-options-wrap > .ms-options {
+            position: absolute;
+            left: 0;
+            width: 247%;
+            margin-top: 1px;
+            margin-bottom: 20px;
+            background: white;
+            z-index: 2000;
+            border: 1px solid #aaa;
+            overflow: auto;
+            visibility: hidden;
         }
 
     </style>

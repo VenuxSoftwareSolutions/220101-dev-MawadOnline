@@ -1,6 +1,38 @@
 @extends('seller.layouts.app')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
+<style>
+    .table th{
+        font-size: 12px !important;
+    }
+
+    .swal2-icon .swal2-icon-content {
+        display: flex;
+        align-items: center;
+        font-size: 0.75em !important;
+    }
+    .button-container {
+        position: fixed;
+        top: 12%;
+        right: 2%;
+        z-index: 5;
+    }
+    .preview-button {
+        background-color: #cb774b !important; /* Green background */
+        border: none;
+        color: white;
+        padding: 15px 25px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+
+        cursor: pointer;
+        border-radius: 8px;
+    }
+
+</style>
+
 @section('panel_content')
     <div class="aiz-titlebar mt-2 mb-4">
         <div class="row align-items-center">
@@ -20,12 +52,20 @@
             </ul>
         </div>
     @endif
+    {{-- <button type="button" onclick="submitForm()">Preview Product</button> --}}
+    <div class="button-container">
+        <button type="button" class="preview-button" onclick="submitForm()">Preview Product</button>
+    </div>
+
 
     <form class="" action="{{route('seller.products.store')}}" method="POST" enctype="multipart/form-data" id="choice_form">
+        @csrf
         <div class="row gutters-5">
             <div class="col-lg-12">
                 @csrf
                 {{-- Bloc Product Information --}}
+                <input type="hidden" id="published_after_approve" value="0" name="published_modal">
+                <input type="hidden" id="create_stock" value="0" name="create_stock">
                 <div class="card">
                     <div class="card-header">
                         <h5 class="mb-0 h6">{{translate('Product Information')}}</h5>
@@ -34,13 +74,13 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Product Name')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" name="name" value="{{ old('name') }}" placeholder="{{ translate('Product Name') }}" required >
+                                <input type="text" class="form-control" name="name" value="{{ old('name') }}" placeholder="{{ translate('Product Name') }}" >
                             </div>
                         </div>
                         <div class="form-group row" id="brand">
                             <label class="col-md-3 col-from-label">{{translate('Brand')}}</label>
                             <div class="col-md-8">
-                                <select class="form-control aiz-selectpicker" name="brand_id" id="brand_id" data-live-search="true" required>
+                                <select class="form-control aiz-selectpicker" name="brand_id" id="brand_id" data-live-search="true">
                                     <option value="">{{ translate('Select Brand') }}</option>
                                     @foreach (\App\Models\Brand::all() as $brand)
                                     <option value="{{ $brand->id }}" @selected(old('brand_id') == $brand->id)>{{ $brand->getTranslation('name') }}</option>
@@ -51,7 +91,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Unit of Sale')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" name="unit" value="{{ old('unit') }}" placeholder="{{ translate('Unit (e.g. KG, Pc etc)') }}" required>
+                                <input type="text" class="form-control" name="unit" value="{{ old('unit') }}" placeholder="{{ translate('Unit (e.g. KG, Pc etc)') }}">
                             </div>
                         </div>
                         <div class="form-group row">
@@ -76,7 +116,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Tags')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" required class="form-control aiz-tag-input" name="tags[]" placeholder="{{ translate('Type and hit enter to add a tag') }}">
+                                <input type="text" class="form-control aiz-tag-input" name="tags[]" placeholder="{{ translate('Type and hit enter to add a tag') }}">
                                 <small class="text-muted">{{translate('This is used for search. Input those words by which cutomer can find this product.')}}</small>
                             </div>
                         </div>
@@ -96,6 +136,16 @@
                                 </label>
                             </div>
                         </div>
+
+                        {{-- <div class="form-group row">
+                            <label class="col-md-3 col-from-label">{{translate('Published')}}</label>
+                            <div class="col-md-8">
+                                <label class="aiz-switch aiz-switch-success mb-0">
+                                    <input type="checkbox" name="published" checked value="1">
+                                    <span></span>
+                                </label>
+                            </div>
+                        </div> --}}
 
                         @if (addon_is_activated('pos_system'))
                         <div class="form-group row">
@@ -144,7 +194,7 @@
                 {{-- Bloc Pricing configuration --}}
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0 h6">{{translate('Pricing Configuration')}}</h5>
+                        <h5 class="mb-0 h6">{{translate('Default Pricing Configuration')}}</h5>
                     </div>
                     <div class="card-body">
                         <div class="row mb-3">
@@ -198,10 +248,145 @@
                         </div>
                     </div>
                 </div>
+                {{-- Bloc Default shipping configuration --}}
+                <div class="card" id="shipping_configuration_box">
+                    <div class="card-header">
+                        <h5 class="mb-0 h6">{{translate('Default Shipping Configuration')}}</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" value="{{translate('Do you want to activate MawadOnline 3rd Party ?')}}" disabled>
+                                <small style="color:red">Fill all required fields for shippers to confirm delivery ability.</small>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="aiz-switch aiz-switch-success mb-0">
+                                    <input value="1" type="checkbox" id="third_party_activate" name="activate_third_party">
+                                    <span></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <table class="table" id="table_third_party_configuration" class="bloc_third_configuration_variant">
+                                <thead>
+                                    <tr>
+                                        <th>{{translate('Length Package (Cm)')}}</th>
+                                        <th>{{translate('Width Package (Cm)')}}</th>
+                                        <th>{{translate('Height Package (Cm)')}}</th>
+                                        <th>{{translate('Weight Package')}}</th>
+                                        <th>{{translate('Weight unit')}}</th>
+                                        <th>{{translate('Breakable')}}</th>
+                                        <th>{{translate('Unit')}}</th>
+                                        <th>{{translate('Min')}}</th>
+                                        <th>{{translate('Max')}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bloc_third_party">
+                                    <tr>
+                                        <td><input type="number" name="length" class="form-control" id="length" step="0.1" readonly></td>
+                                        <td><input type="number" name="width" class="form-control" id="width" step="0.1" readonly></td>
+                                        <td><input type="number" name="height" class="form-control" id="height" step="0.1" readonly></td>
+                                        <td><input type="number" name="weight" class="form-control" id="weight" step="0.1" readonly></td>
+                                        <td>
+                                            <select class="form-control calculate" id="weight_unit" name="unit_weight" disabled>
+                                                <option value="kilograms">{{translate('Kilograms')}}</option>
+                                                <option value="pounds">{{translate('Pounds')}}</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control calculate" id="breakable" name="breakable" disabled>
+                                                <option value=""></option>
+                                                <option value="yes">{{translate('Yes')}}</option>
+                                                <option value="no">{{translate('No')}}</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control calculate" id="unit_third_party" name="unit_third_party" disabled>
+                                                <option value="celsius">{{translate('Celsius')}}</option>
+                                                <option value="kelvin">{{translate('Kelvin')}}</option>
+                                                <option value="fahrenheit">{{translate('Fahrenheit')}}</option>
+                                            </select>
+                                        </td>
+                                        <td><input type="number" class="form-control" name="min_third_party" id="min_third_party" step="0.1" readonly></td>
+                                        <td><input type="number" class="form-control" name="max_third_party" id="max_third_party" step="0.1" readonly></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div id="result_calculate_third_party">
+
+                            </div>
+                        </div>
+                        {{-- <div class="row div-btn">
+                            <button type="button" name="button" class="btn btn-primary" id="btn-calculate-formules">Calculate formules</button>
+                        </div> --}}
+                        <hr>
+                        <div>
+                            <table class="table" id="table_shipping_configuration" class="bloc_shipping_configuration_variant">
+                                <thead>
+                                    <tr>
+                                        <th>{{translate('From Quantity')}}</th>
+                                        <th>{{translate('To Quantity')}}</th>
+                                        <th>{{translate('Shipper')}}</th>
+                                        <th>{{translate('Estimated Order Preparation Days')}}</th>
+                                        <th>{{translate('Estimated Shipping Days')}}</th>
+                                        <th>{{translate('Paid by')}}</th>
+                                        <th>{{translate('VAT')}}</th>
+                                        <th>{{translate('Shipping Charge')}}</th>
+                                        <th>{{translate('Flat-rate Amount')}}</th>
+                                        <th>{{translate('Charge per Unit of Sale')}}</th>
+                                        <th>{{translate('Action')}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bloc_shipping_configuration">
+                                    <tr>
+                                        <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id=""></td>
+                                        <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id=""></td>
+                                        <td>
+                                            <select multiple class="form-control shipper" name="shipper[0][]">
+                                                <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                                <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
+                                            </select>
+                                        </td>
+
+                                        <div id="results"></div>
+
+                                        <td><input type="number" class="form-control estimated_order" name="estimated_order[]"></td>
+                                        <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]"></td>
+                                        <td>
+                                            <select class="form-control paid" name="paid[]">
+                                                <option value="" selected>{{translate('Choose option')}}</option>
+                                                <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                                <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <label class="aiz-switch aiz-switch-success mb-0">
+                                                <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping[]" @if($vat_user->vat_registered == 1) checked @endif>
+                                                <span></span>
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <select class="form-control shipping_charge" name="shipping_charge[]">
+                                                <option value="" selected>{{translate('Choose shipping charge')}}</option>
+                                                <option value="flat" @selected(old('shipping_charge') == 'flat')>{{translate('Flat-rate regardless of quantity')}}</option>
+                                                <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
+                                            </select>
+                                        </td>
+                                        <td><input type="number" class="form-control flat_rate_shipping" name="flat_rate_shipping[]" readonly></td>
+                                        <td><input type="number" class="form-control charge_per_unit_shipping" name="charge_per_unit_shipping[]" readonly></td>
+                                        <td>
+                                            <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
                 {{-- Bloc Sample pricing configuration --}}
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0 h6">{{translate('Sample Pricing Configuration')}}</h5>
+                        <h5 class="mb-0 h6">{{translate('Default Sample Pricing Configuration')}}</h5>
                     </div>
                     <div class="card-body">
                         <div class="row mb-3">
@@ -231,6 +416,45 @@
                                 <input type="text" class="form-control" name="sample_price">
                             </div>
                         </div>
+                        <table class="table" id="table_sample_configuration" class="bloc_sample_configuration_variant">
+                            <thead>
+                                <tr>
+                                    <th>{{translate('Shipping-by')}}</th>
+                                    <th>{{translate('Estimated Sample Preparation Days')}}</th>
+                                    <th>{{translate('Estimated Shipping Days')}}</th>
+                                    <th>{{translate('Paid by')}}</th>
+                                    <th>{{translate('VAT')}}</th>
+                                    <th>{{translate('Shipping amount')}}</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bloc_sample_configuration">
+                                <tr>
+                                    <td>
+                                        <select class="form-control shipper_sample" name="shipper_sample">
+                                            <option value="" selected>{{translate('Choose shipper')}}</option>
+                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                            <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" class="form-control estimated_sample" name="estimated_sample"></td>
+                                    <td><input type="number" class="form-control estimated_shipping_sample" name="estimated_shipping_sample"></td>
+                                    <td>
+                                        <select class="form-control paid_sample" name="paid_sample">
+                                            <option value="" selected>{{translate('Choose paid by')}}</option>
+                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                            <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <label class="aiz-switch aiz-switch-success mb-0">
+                                            <input value="1" type="checkbox" class="vat_sample" name="vat_sample" @if($vat_user->vat_registered == 1) checked @endif>
+                                            <span></span>
+                                        </label>
+                                    </td>
+                                    <td><input type="number" class="form-control shipping_amount" name="shipping_amount" step="0.1" readonly></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 {{-- Bloc Product videos --}}
@@ -268,15 +492,15 @@
                                 <i class="las la-question-circle fs-18 text-info"></i>
                                 <span class="main-category-info bg-soft-info p-2 position-absolute d-none border">{{ translate('This will be used for commission based calculations and homepage category wise product Show.') }}</span>
                             </span>
-                            
+
                         </h6>
                     </div>
                     <input type="hidden" id="selected_parent_id" name="parent_id" value="">
 
                     <div class="card-body">
-                        
+
                         <div class="tree_main">
-                            
+
                             <input type="text" id="search_input" class="form-control" placeholder="Search">
                             <div class="h-300px overflow-auto c-scrollbar-light">
 
@@ -292,19 +516,25 @@
                     </div>
                     <div class="card-body">
                         <div class="form-group row gutters-5">
-                            <div class="col-md-3">
+                            <div class="col-md-4">
+                                <input type="text" class="form-control mb-2" value="{{translate('Activate variant option')}}" disabled>
+                                <small style="color: red">Activate this option to select attribute</small>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="aiz-switch aiz-switch-success mb-0">
+                                    <input value="1" type="checkbox" name="activate_attributes">
+                                    <span></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group row gutters-5">
+                            <div class="col-md-4">
                                 <input type="text" class="form-control" value="{{translate('Attributes')}}" disabled>
                             </div>
                             <div class="col-md-8" id="attributes_bloc">
                                 <select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" id="attributes" multiple disabled data-placeholder="{{ translate('Choose Attributes') }}">
 
                                 </select>
-                            </div>
-                            <div class="col-md-1">
-                                <label class="aiz-switch aiz-switch-success mb-0">
-                                    <input value="1" type="checkbox" name="activate_attributes">
-                                    <span></span>
-                                </label>
                             </div>
                         </div>
                         <div>
@@ -323,7 +553,7 @@
                                 </div>
                             </div> --}}
                             <div class="row mb-3">
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Variant Photos')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
@@ -334,8 +564,8 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control" value="{{translate('Variant Pricing')}}" disabled>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" value="{{translate('Use default pricing configuration')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
                                     <label class="aiz-switch aiz-switch-success mb-0">
@@ -348,12 +578,38 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control" value="{{translate('Variant Sample Pricing')}}" disabled>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" value="{{translate('Use default Shipping')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
                                     <label class="aiz-switch aiz-switch-success mb-0">
-                                        <input value="1" type="checkbox" class="variant-sample-pricing" checked>
+                                        <input value="1" type="checkbox" class="variant-shipping" data-type="variant-information" checked>
+                                        <span></span>
+                                    </label>
+                                </div>
+
+                                <div class="col-12 mt-3" id="bloc_default_shipping">
+
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" value="{{translate('Sample Available?')}}" disabled>
+                                </div>
+                                <div class="col-md-8">
+                                    <label class="aiz-switch aiz-switch-success mb-0">
+                                        <input value="1" type="checkbox" class="variant-sample-available">
+                                        <span></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" value="{{translate('Use default sample pricing configuration')}}" disabled>
+                                </div>
+                                <div class="col-md-8">
+                                    <label class="aiz-switch aiz-switch-success mb-0">
+                                        <input value="1" type="checkbox" class="variant-sample-pricing" checked disabled>
                                         <span></span>
                                     </label>
                                 </div>
@@ -388,29 +644,21 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control" value="{{translate('Variant Shipping')}}" disabled>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" value="{{translate('Use default sample Shipping')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
                                     <label class="aiz-switch aiz-switch-success mb-0">
-                                        <input value="1" type="checkbox" class="variant-shipping">
+                                        <input value="1" type="checkbox" class="variant-sample-shipping" checked disabled>
                                         <span></span>
                                     </label>
                                 </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control" value="{{translate('VariantSample Shipping')}}" disabled>
-                                </div>
-                                <div class="col-md-8">
-                                    <label class="aiz-switch aiz-switch-success mb-0">
-                                        <input value="1" type="checkbox" class="variant-sample-shipping">
-                                        <span></span>
-                                    </label>
+                                <div class="col-12 mt-3" id="bloc-sample-shipping">
+
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Low-Stock Warning')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
@@ -450,7 +698,6 @@
                             <label class="col-md-3 col-from-label">{{translate('Description')}}</label>
                             <div class="col-md-8">
                                 <textarea class="aiz-text-editor" name="description"></textarea>
-                                <div id="charCount">Remaining characters: 512</div>
                                 <input type="hidden" id="hidden_value" value="">
                             </div>
                         </div>
@@ -539,9 +786,36 @@
 
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+<script src="{{ static_asset('assets/js/filter-multi-select-bundle.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js"></script>
+<script>
+    var previewUrlBase  = "{{ route('seller.product.preview', ['slug' => 'PLACEHOLDER']) }}";
+    </script>
 
-//<!--- category parent tree -->
+<!--- category parent tree -->
 <script type="text/javascript">
+    function submitForm() {
+        const formData = new FormData(document.getElementById('choice_form'));
+
+        fetch('{{route("seller.product.tempStore")}}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Replace 'PLACEHOLDER' with the actual slug from the response
+                var previewUrl = previewUrlBase.replace('PLACEHOLDER', data.data.slug);
+
+                // Open the URL in a new tab
+                window.open(previewUrl, '_blank');
+            }
+        });
+    }
+
     $(document).ready(function() {
         $('#variant_informations').hide();
         $('#btn-create-variant').hide();
@@ -550,6 +824,13 @@
         $('body .btn-variant-pricing').hide();
         var numbers_variant = 0;
         var initial_attributes = [];
+        //$('.shipper').multiselect();
+
+        // var shippers = $('.shipper').filterMultiSelect({
+        //     placeholderText: "{{ translate('click to select shippers') }}",
+        //     filterText: "{{ translate('Search') }}",
+        //     caseSensitive: false,
+        // })
 
         Array.prototype.diff = function(a) {
             return this.filter(function(i) {return a.indexOf(i) < 0;});
@@ -606,11 +887,11 @@
                 var message = "<p>Remaining characters: <span style='color: red'>" + charactersLeft + "</span></p>"
                 $('#charCountShortDescription').html(message);
             }
-        });        
+        });
 
         $('body').on('change', '#attributes', function() {
             var ids_attributes = $(this).val();
-            
+
             var clicked = ids_attributes.diff( initial_attributes );
             if(clicked.length == 0){
                 clicked = initial_attributes.diff( ids_attributes );
@@ -641,7 +922,7 @@
                 success: function(data) {
                     var attribute_variant_exist = $('#bloc_attributes > .attribute-variant-' + clicked[0]).length
                     var numberOfChildren = $('#general_attributes > div').length;
-                    
+
                     if (numberOfChildren == 0) {
                         $('#general_attributes').append(data.html_attributes_generale);
                     }else{
@@ -650,7 +931,7 @@
                             $('#general_attributes').append(data.html_attributes_generale);
                         }else{
                             $('#general_attributes .attribute-variant-' + clicked[0]).remove();
-                        }  
+                        }
                     }
 
                     if(attribute_variant_exist > 0){
@@ -667,10 +948,10 @@
                             // Change the attribute name of the current input
                             if ($(child_element).attr("name") == undefined) {
                                 var id_attribute = $(child_element).data('id_attributes');
-                                var name = 'attributes-'+ id_attribute + '-' + id_variant 
+                                var name = 'attributes-'+ id_attribute + '-' + id_variant
                                 $(child_element).attr('name', name);
                             }
-                            
+
                         });
 
                         $(element).find('.attributes-units').each(function(index, child_element_units) {
@@ -680,7 +961,7 @@
                                 $(child_element_units).attr('name', name);
                             }
                         });
-                        
+
                     });
 
                     $("#general_attributes div").each(function(index, element) {
@@ -691,7 +972,7 @@
                                 var name = 'attribute_generale-'+ id_attribute
                                 $(child_element).attr('name', name);
                             }
-                            
+
                         });
 
                         $(element).find('.attributes-units').each(function(index, child_element_units) {
@@ -701,7 +982,7 @@
                                 $(child_element_units).attr('name', name);
                             }
                         });
-                        
+
                     });
 
                     var count_boolean = 1;
@@ -761,7 +1042,6 @@
             clonedDiv.find('.custom-file-label').attr('for', 'photos_variant-' + numbers_variant);
             clonedDiv.find('.variant-pricing').attr('name', 'variant-pricing-' + numbers_variant);
             clonedDiv.find('.variant-pricing').attr('data-variant', numbers_variant);
-            clonedDiv.find('.variant-sample-pricing').attr('name', 'variant-sample-pricing-' + numbers_variant);
             clonedDiv.find('.min-qty-variant').each(function(index, element) {
                 $(element).attr('name', 'variant_pricing-from' + numbers_variant + '[from][]');
             });
@@ -789,6 +1069,7 @@
                 });
             });
             clonedDiv.find('.variant-shipping').attr('name', 'variant-shipping-' + numbers_variant);
+
             clonedDiv.find('.stock-warning').attr('name', 'stock-warning-' + numbers_variant);
             clonedDiv.find('.discount_type-variant').each(function(index, element) {
                 $(element).attr('name', 'variant_pricing-from' + numbers_variant + '[discount_type][]');
@@ -828,6 +1109,95 @@
                     }
                 })
             });
+
+            clonedDiv.find('.variant-sample-available').attr('name', 'variant-sample-available' + numbers_variant);
+            clonedDiv.find('.variant-sample-pricing').attr('name', 'variant-sample-pricing' + numbers_variant);
+            clonedDiv.find('.variant-sample-shipping').attr('name', 'variant-sample-shipping' + numbers_variant);
+
+            clonedDiv.find('.min-qty-shipping').each(function(index, element) {
+                $(element).attr('name', 'variant_shipping-' + numbers_variant + '[from][]');
+            });
+
+            clonedDiv.find('.max-qty-shipping').each(function(index, element) {
+                $(element).attr('name', 'variant_shipping-' + numbers_variant + '[to][]');
+            });
+
+            var id_shipper = 0;
+            clonedDiv.find('.shipper').each(function(index, element) {
+                $(element).attr('name', 'variant_shipping-' + numbers_variant + '[shipper]['+ id_shipper +'][]');
+                $('#variant_informations #table_shipping_configuration').find('.shipper').each(function(key, element_original) {
+                    if(index == key){
+                        $(element_original).val().forEach(value => {
+                            $(element).find('option[value="' + value + '"]').prop('selected', true);
+                        });
+                    }
+                })
+
+                id_shipper++;
+            });
+
+            clonedDiv.find('.estimated_order').each(function(index, element) {
+                $(element).attr('name', 'variant_shipping-' + numbers_variant + '[estimated_order][]');
+            });
+
+            clonedDiv.find('.estimated_shipping').each(function(index, element) {
+                $(element).attr('name', 'variant_shipping-' + numbers_variant + '[estimated_shipping][]');
+            });
+
+            clonedDiv.find('.paid').each(function(index, element) {
+                $(element).attr('name', 'variant_shipping-' + numbers_variant + '[paid][]');
+                $('#variant_informations #table_shipping_configuration').find('.paid').each(function(key, element_original) {
+                    if(index == key){
+                        $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
+                    }
+                })
+            });
+
+            clonedDiv.find('.vat_shipping').each(function(index, element) {
+                $(element).attr('name', 'variant_shipping-' + numbers_variant + '[vat_shipping][]');
+            });
+
+            clonedDiv.find('.shipping_charge').each(function(index, element) {
+                $(element).attr('name', 'variant_shipping-' + numbers_variant + '[shipping_charge][]');
+                $('#variant_informations #table_shipping_configuration').find('.shipping_charge').each(function(key, element_original) {
+                    if(index == key){
+                        $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
+                    }
+                })
+            });
+
+            clonedDiv.find('.flat_rate_shipping').each(function(index, element) {
+                $(element).attr('name', 'variant_shipping-' + numbers_variant + '[flat_rate_shipping][]');
+            });
+
+            clonedDiv.find('.charge_per_unit_shipping').each(function(index, element) {
+                $(element).attr('name', 'variant_shipping-' + numbers_variant + '[charge_per_unit_shipping][]');
+            });
+
+            clonedDiv.find('.shipper_sample').each(function(index, element) {
+                $(element).attr('name', 'variant_shipper_sample-' + numbers_variant);
+                $('#variant_informations #table_sample_configuration').find('.shipper_sample').each(function(key, element_original) {
+                    if(index == key){
+                        $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
+                    }
+                })
+            });
+
+            clonedDiv.find('.paid_sample').each(function(index, element) {
+                $(element).attr('name', 'paid_sample-' + numbers_variant);
+                $('#variant_informations #table_sample_configuration').find('.paid_sample').each(function(key, element_original) {
+                    if(index == key){
+                        $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
+                    }
+                })
+            });
+
+            clonedDiv.find('.estimated_sample').attr('name', 'estimated_sample-' + numbers_variant);
+            clonedDiv.find('.estimated_shipping_sample').attr('name', 'estimated_shipping_sample-' + numbers_variant);
+            clonedDiv.find('.shipping_amount').attr('name', 'shipping_amount-' + numbers_variant);
+
+            clonedDiv.find('.delete_shipping_canfiguration').attr('data-variant-id', numbers_variant);
+            clonedDiv.find('.btn-add-shipping').attr('data-variant-id', numbers_variant);
 
             $('#bloc_variants_created').show();
             $('#bloc_variants_created').prepend(clonedDiv);
@@ -870,36 +1240,42 @@
         })
 
         $('body').on('change', '.variant-pricing', function(){
+
             if ($(this).is(':not(:checked)')) {
                 var is_variant = $(this).data("variant");
                 var clonedElement = $("#table_pricing_configuration").clone();
+
                 clonedElement.find('.min-qty').each(function(index, element) {
                     $(element).removeClass("min-qty").addClass("min-qty-variant");
                     if(is_variant != undefined){
                         $(element).attr('name', 'variant_pricing-from' + is_variant + '[from][]');
+                    }else{
+                        $(element).removeAttr("name");
                     }
-                    $(element).removeAttr("name");
                 });
                 clonedElement.find('.max-qty').each(function(index, element) {
                     $(element).removeClass("max-qty").addClass("max-qty-variant");
                     if(is_variant != undefined){
                         $(element).attr('name', 'variant_pricing-from' + is_variant + '[to][]');
+                    }else{
+                        $(element).removeAttr("name");
                     }
-                    $(element).removeAttr("name");
                 });
                 clonedElement.find('.discount_percentage').each(function(index, element) {
                     $(element).removeClass("discount_percentage").addClass("discount_percentage-variant");
                     if(is_variant != undefined){
                         $(element).attr('name', 'variant_pricing-from' + is_variant + '[discount_percentage][]');
+                    }else{
+                        $(element).removeAttr("name");
                     }
-                    $(element).removeAttr("name");
                 });
                 clonedElement.find('.discount_amount').each(function(index, element) {
                     $(element).removeClass("discount_amount").addClass("discount_amount-variant");
                     if(is_variant != undefined){
                         $(element).attr('name', 'variant_pricing-from' + is_variant + '[discount_amount][]');
+                    }else{
+                        $(element).removeAttr("name");
                     }
-                    $(element).removeAttr("name");
                 });
                 clonedElement.find('.discount-range').each(function(index, element) {
                     $(element).daterangepicker({
@@ -920,21 +1296,23 @@
                     $(element).removeClass("unit-price").addClass("unit-price-variant");
                     if(is_variant != undefined){
                         $(element).attr('name', 'variant_pricing-from' + is_variant + '[unit_price][]');
+                    }else{
+                        $(element).removeAttr("name");
                     }
-                    $(element).removeAttr("name");
                 });
                 clonedElement.find('.discount_type').each(function(index, element) {
                     $(element).removeClass("discount_type").addClass("discount_type-variant");
                     $(element).removeClass("aiz-selectpicker")
                     if(is_variant != undefined){
                         $(element).attr('name', 'variant_pricing-from' + is_variant + '[discount_type][]');
+                    }else{
+                        $(element).removeAttr("name");
                     }
                     $('#bloc_pricing_configuration').find('.discount_type').each(function(key, element_original) {
                         if(index == key){
                             $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
                         }
                     })
-                    $(element).removeAttr("name");
                 });
                 $(this).parent().parent().parent().find('#bloc_pricing_configuration_variant').show();
                 $(this).parent().parent().parent().find('#bloc_pricing_configuration_variant').append(clonedElement);
@@ -1038,7 +1416,6 @@
             // add another ligne in pricing configuration when not any overlaps are found
         });
 
-
         $('#btn-add-pricing-variant').click(() => {
             var html_to_add = `
                             <div>
@@ -1114,6 +1491,7 @@
                 AIZ.plugins.bootstrapSelect('refresh');
 
         });
+
         $('body').on('click', '.btn-add-pricing', function() {
             var html_to_add = `
                                 <tr>
@@ -1145,7 +1523,7 @@
                     autoUpdateInput: false,
                     locale: {
                         format: 'DD-MM-Y HH:mm:ss',
-                        separator : " to ", 
+                        separator : " to ",
                     },
                 });
 
@@ -1428,7 +1806,6 @@
             }
         });
 
-
         let fileInputCounter = 1;
 
         $('body').on('click', '.dropify-clear', function(){
@@ -1531,7 +1908,471 @@
                 $(this).text("Variant informations  " + order);
             });
         })
+
+        //Shipping script
+        $('body').on('click', '#third_party_activate', function() {
+            if ($(this).is(':checked')) {
+                var count_shippers = "{{ count($supported_shippers) }}";
+                count_shippers = parseInt(count_shippers);
+                if(count_shippers == 0){
+                    $('body input[name="activate_third_party"]').prop('checked', false);
+                    swal(
+                            'Cancelled',
+                            "You don't have any warehouse supported by our shippers",
+                            'error'
+                        )
+                }else{
+                    $('#bloc_third_party input[type="number"]').each(function() {
+                        // Change readonly attribute from true to false
+                        $(this).prop('readonly', false);
+                    });
+
+                    $('#bloc_third_party select').each(function() {
+                        // Change readonly attribute from true to false
+                        $(this).prop('disabled', false);
+                    });
+                }
+            }else{
+                $('#bloc_third_party input[type="number"]').each(function() {
+                    // Change readonly attribute from true to false
+                    $(this).prop('readonly', true);
+                });
+
+                $('#bloc_third_party select').each(function() {
+                    // Change readonly attribute from true to false
+                    $(this).prop('disabled', true);
+                });
+
+                $('#bloc_third_party input[type="number"]').val('').prop('readonly', true);
+            }
+        });
+
+        $('body').on('click', '.btn-add-shipping', function() {
+            var row = $(this).parent().parent().parent().find('tr').length;
+            var id_variant = $(this).data('variant-id');
+
+            if(id_variant != undefined){
+                var html_to_add = `
+                                <tr>
+                                    <td><input type="number" name="variant_shipping-${id_variant}[from][]" class="form-control min-qty-shipping" id=""></td>
+                                    <td><input type="number" name="variant_shipping-${id_variant}[to][]" class="form-control max-qty-shipping" id=""></td>
+                                    <td>
+                                        <select multiple class="form-control shipper" name="variant_shipping-${id_variant}[shipper][${row}][]">
+                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                            <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" class="form-control estimated_order" name="variant_shipping-${id_variant}[estimated_order][]"></td>
+                                    <td><input type="number" class="form-control estimated_shipping" name="variant_shipping-${id_variant}[estimated_shipping][]"></td>
+                                    <td>
+                                        <select class="form-control paid" name="variant_shipping-${id_variant}[paid][]">
+                                            <option value="" selected>{{translate('Choose shipper')}}</option>
+                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                            <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <label class="aiz-switch aiz-switch-success mb-0">
+                                            <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping" @if($vat_user->vat_registered == 1) checked @endif>
+                                            <span></span>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <select class="form-control shipping_charge" name="variant_shipping-${id_variant}[shipping_charge][]">
+                                            <option value="" selected>{{translate('Choose shipping charge')}}</option>
+                                            <option value="flat" @selected(old('shipping_charge') == 'flat')>{{translate('Flat-rate regardless of quantity')}}</option>
+                                            <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" class="form-control flat_rate_shipping" name="variant_shipping-${id_variant}[flat_rate_shipping][]" readonly></td>
+                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="variant_shipping-${id_variant}[charge_per_unit_shipping][]" readonly></td>
+                                    <td>
+                                        <i class="las la-plus btn-add-shipping" data-variant-id="${id_variant}" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
+                                        <i class="las la-trash delete_shipping_canfiguration" data-variant-id="${id_variant}" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                    </td>
+                                </tr>
+                            `;
+            }else{
+                var html_to_add = `
+                                <tr>
+                                    <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id=""></td>
+                                    <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id=""></td>
+                                    <td>
+                                        <select multiple class="form-control shipper" name="shipper[${row}][]">
+                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                            <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" class="form-control estimated_order" name="estimated_order[]"></td>
+                                    <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]"></td>
+                                    <td>
+                                        <select class="form-control paid" name="paid[]">
+                                            <option value="" selected>{{translate('Choose shipper')}}</option>
+                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                            <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <label class="aiz-switch aiz-switch-success mb-0">
+                                            <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping" @if($vat_user->vat_registered == 1) checked @endif>
+                                            <span></span>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <select class="form-control shipping_charge" name="shipping_charge[]">
+                                            <option value="" selected>{{translate('Choose shipping charge')}}</option>
+                                            <option value="flat" @selected(old('shipping_charge') == 'flat')>{{translate('Flat-rate regardless of quantity')}}</option>
+                                            <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" class="form-control flat_rate_shipping" name="flat_rate_shipping[]" readonly></td>
+                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="charge_per_unit_shipping[]" readonly></td>
+                                    <td>
+                                        <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
+                                        <i class="las la-trash delete_shipping_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                    </td>
+                                </tr>
+                            `;
+            }
+
+            // add another row in shipping configuration
+            $(this).parent().parent().parent().append(html_to_add);
+        });
+
+        $('body').on('click', '.delete_shipping_canfiguration', function(){
+            //remove row in shipping configuration
+            var current = $(this).parent().parent().parent();
+            var variant_id = $(this).data('variant-id');
+            $(this).parent().parent().remove();
+
+            var count = 0;
+            current.find('.shipper').each(function(index) {
+                if(variant_id ==undefined){
+                    $(this).attr('name', 'shipper[' + count + '][]')
+                }else{
+                    $(this).attr('name', 'variant_shipping-' + variant_id + '[shipper]['+ count +'][]')
+
+                }
+
+                count++
+            });
+        })
+
+        $('body').on('change', '.shipper', function(){
+            var count_shippers = "{{ count($supported_shippers) }}";
+                count_shippers = parseInt(count_shippers);
+            var selected = $(this).val();
+
+
+
+            if(selected.indexOf('third_party') !== -1){
+                if(count_shippers == 0){
+                    swal(
+                        'Cancelled',
+                        "You cannot choose a third-party option because our shippers are unable to reach the warehouse.",
+                        'error'
+                    )
+
+                    $(this).find("option[value='third_party']").prop('disabled', false);
+                }else{
+                    var weight = $('#weight').val();
+                    var length = $('#length').val();
+                    var width = $('#width').val();
+                    var height = $('#height').val();
+                    var breakable = $('#breakable').val();
+                    var min_third_party = $('#min_third_party').val();
+                    var max_third_party = $('#max_third_party').val();
+                    var unit_third_party = $('#unit_third_party').val();
+                    if((weight == '') || (length == '') ||(width == '') ||(height == '') ||(min_third_party == '') ||(max_third_party == '')){
+                        swal(
+                                'Cancelled',
+                                "Please ensure that all required fields are filled to know all information about your package.",
+                                'error'
+                            )
+                            $(this).find("option[value='third_party']").prop('disabled', false);
+                            $(this).find("option[value='third_party']").prop('selected', false);
+                    }else{
+                        length = parseInt(length);
+                        height = parseInt(height);
+                        width = parseInt(width);
+                        weight = parseInt(weight);
+                        var volumetric_weight = (length * height * width) / 5000;
+                        var chargeable_weight = 0;
+                        var html = '';
+                        if(volumetric_weight > weight){
+                            chargeable_weight = volumetric_weight;
+                        }else{
+                            chargeable_weight = weight;
+                        }
+
+                        if(chargeable_weight > 30){
+                            swal(
+                                'Cancelled',
+                                "Chargeable Weight = " + Number(chargeable_weight.toFixed(2)) + ", then not accepted by our shipper",
+                                'error'
+                            )
+
+                            $(this).find("option[value='third_party']").prop("disabled", true);
+                            $(this).find("option[value='third_party']").prop('selected', false);
+                        }else{
+                            $(this).parent().parent().find('.estimated_shipping').prop('readonly', true);
+                            $(this).parent().parent().find('.shipping_charge').find("option:first").prop("selected", true);
+                            $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly', true);
+                            $(this).parent().parent().find('.charge_per_unit_shipping').val(null);
+                            $(this).parent().parent().find('.estimated_shipping').val(null);
+                            $(this).parent().parent().find('.paid').val(null);
+                            $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', true);
+                            $(this).parent().parent().find('.flat_rate_shipping').val(null);
+                        }
+                    }
+                }
+
+            }
+
+            if(selected.indexOf('vendor') !== -1){
+                $(this).parent().parent().find('.estimated_shipping').prop('readonly', false);
+                $(this).parent().parent().find('.shipping_charge').find("option:first").prop("selected", true);
+                $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly', true);
+                $(this).parent().parent().find('.charge_per_unit_shipping').val(null);
+                $(this).parent().parent().find('.paid').val(null);
+                $(this).parent().parent().find('.estimated_shipping').val(null);
+                $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', true);
+                $(this).parent().parent().find('.flat_rate_shipping').val(null);
+            }
+
+        })
+
+
+        $('body').on('change', '.paid', function(){
+            var shippers = $(this).parent().parent().find('.shipper').val();
+            if(shippers.indexOf('vendor') !== -1){
+                if($(this).val() != "buyer"){
+                    $(this).parent().parent().find('.shipping_charge').find("option:first").prop("selected", true);
+                    $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly', true);
+                    $(this).parent().parent().find('.charge_per_unit_shipping').val(null);
+                    $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', true);
+                    $(this).parent().parent().find('.flat_rate_shipping').val(null);
+                }
+            }else{
+                swal(
+                        'Cancelled',
+                        "You cannot selected, if you don't selected vendor in shippers",
+                        'error'
+                    )
+            }
+        })
+
+        $('body').on('change', '.shipping_charge', function(){
+            if($(this).parent().parent().find('.paid').val() == 'vendor'){
+                swal(
+                        'Cancelled',
+                        "You cannot choose shipping charge when it is paid by vendor.",
+                        'error'
+                    )
+
+                    $(this).find('option').eq(0).prop('selected', true);
+            }else{
+                if($(this).val() == "flat"){
+                    $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', false);
+                    $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly', true);
+                    $(this).parent().parent().find('.charge_per_unit_shipping').val(null);
+                }else{
+                    $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly', false);
+                    $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', true);
+                    $(this).parent().parent().find('.flat_rate_shipping').val(null);
+                }
+            }
+        })
+
+        $('body').on('change', '.variant-shipping', function(){
+            if ($(this).is(':not(:checked)')){
+                var clonedDiv = $('#table_shipping_configuration').clone();
+                var type_switch = $(this).data('type');
+
+                clonedDiv.find('.shipper').each(function(index, element) {
+                    $('#shipping_configuration_box #table_shipping_configuration').find('.shipper').each(function(key, element_original) {
+                        console.log('$(element_original).val(): ', $(element_original).val())
+                        if(index == key){
+                            $(element_original).val().forEach(value => {
+                                $(element).find('option[value="' + value + '"]').prop('selected', true);
+                            });
+                        }
+                    })
+                });
+
+                clonedDiv.find('.paid').each(function(index, element) {
+                    $('#shipping_configuration_box #table_shipping_configuration').find('.paid').each(function(key, element_original) {
+                        if(index == key){
+                            $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
+                        }
+                    })
+                });
+
+                clonedDiv.find('.shipping_charge').each(function(index, element) {
+                    $('#shipping_configuration_box #table_shipping_configuration').find('.shipping_charge').each(function(key, element_original) {
+                        if(index == key){
+                            $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
+                        }
+                    })
+                });
+
+                if(type_switch != undefined){
+                    clonedDiv.find('.min-qty-shipping').removeAttr('name');
+                }
+
+                if(type_switch != undefined){
+                    clonedDiv.find('.max-qty-shipping').removeAttr('name');
+                }
+
+                if(type_switch != undefined){
+                    clonedDiv.find('.estimated_order').removeAttr('name');
+                }
+
+                if(type_switch != undefined){
+                    clonedDiv.find('.estimated_shipping').removeAttr('name');
+                }
+
+                if(type_switch != undefined){
+                    clonedDiv.find('.shipping_charge').removeAttr('name');
+                }
+
+                if(type_switch != undefined){
+                    clonedDiv.find('.flat_rate_shipping').removeAttr('name');
+                }
+
+                if(type_switch != undefined){
+                    clonedDiv.find('.charge_per_unit_shipping').removeAttr('name');
+                }
+
+                $(this).parent().parent().parent().find('#bloc_default_shipping').append(clonedDiv);
+            }else{
+                $(this).parent().parent().parent().find('#bloc_default_shipping').empty();
+            }
+        })
+
+        $('#bloc_third_party input[type="number"], select.calculate').on('input change', function() {
+            var weight = $(this).parent().parent().find('#weight').val();
+            var length = $(this).parent().parent().find('#length').val();
+            var width = $(this).parent().parent().find('#width').val();
+            var height = $(this).parent().parent().find('#height').val();
+            var breakable = $(this).parent().parent().find('#breakable').val();
+            var min_third_party = $(this).parent().parent().find('#min_third_party').val();
+            var max_third_party = $(this).parent().parent().find('#max_third_party').val();
+            var unit_third_party = $(this).parent().parent().find('#unit_third_party').val();
+
+            if((weight == '') || (length == '') ||(width == '') ||(height == '') ||(min_third_party == '') ||(max_third_party == '')){
+                html = '<span style="color: green"> Chargeable Weight = 0, then accepted by our shipper </span>';
+                $('#result_calculate_third_party').html(html);
+            }else{
+                length = parseInt(length);
+                height = parseInt(height);
+                width = parseInt(width);
+                weight = parseInt(weight);
+                var volumetric_weight = (length * height * width) / 5000;
+                var chargeable_weight = 0;
+                var unit = $(this).parent().parent().find('#weight_unit').val();
+                var max = 30;
+                if(unit == "pounds"){
+                    max *= 2.2;
+                }
+                var html = '';
+                if(volumetric_weight > weight){
+                    chargeable_weight = volumetric_weight;
+                }else{
+                    chargeable_weight = weight;
+                }
+
+                if(unit == "pounds"){
+                    chargeable_weight *= 2.2;
+                }
+
+                if(chargeable_weight > max ){
+                    html = '<span style="color: red">Chargeable Weight = ' + Number(chargeable_weight.toFixed(2)) + ", then not accepted by Aramex </span>"
+                }else{
+                    html = '<span style="color: green">Chargeable Weight = ' + Number(chargeable_weight.toFixed(2)) + ", then accepted by Aramex </span>"
+                }
+
+
+
+                $('#result_calculate_third_party').html(html);
+            }
+        });
+
+        //sample script
+        $('body').on('click', '.btn-add-sample', function() {
+            var html_to_add = `
+                                <tr>
+                                    <td>
+                                        <select class="form-control shipper_sample" name="shipper_sample[]">
+                                            <option value="" disabled selected>{{translate('Choose shipper')}}</option>
+                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                            <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
+                                        </select>
+                                    </td>shipping_
+                                    <td><input type="number" class="form-control estimated_sample" name="estimated_sample[]"></td>
+                                    <td><input type="number" class="form-control estimated_shipping_sample" name="estimated_shipping_sample[]"></td>
+                                    <td>
+                                        <select class="form-control paid_sample" name="paid_sample[]">
+                                            <option value="" disabled selected>{{translate('Choose shipper')}}</option>
+                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                            <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <label class="aiz-switch aiz-switch-success mb-0">
+                                            <input value="1" type="checkbox" class="vat_sample" name="vat_sample" @if($vat_user->vat_registered == 1) checked @endif>
+                                            <span></span>
+                                        </label>
+                                    </td>
+                                    <td><input type="number" class="form-control shipping_amount" name="shipping_amount[]"></td>
+                                    <td>
+                                        <i class="las la-plus btn-add-sample" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
+                                        <i class="las la-trash delete_sample_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                    </td>
+                                </tr>
+                            `;
+                // add another row in shipping configuration
+                $(this).parent().parent().parent().append(html_to_add);
+        });
+
+        $('body').on('click', '.delete_sample_canfiguration', function(){
+            //remove row in shipping configuration
+            $(this).parent().parent().remove();
+        })
+
+        $('body').on('change', '.paid_sample', function(){
+            if($(this).val() == "buyer"){
+                $(this).parent().parent().find('.shipping_amount').prop('readonly', false);
+            }else{
+                $(this).parent().parent().find('.shipping_amount').prop('readonly', true);
+                $(this).parent().parent().find('.shipping_amount').val(null);
+            }
+        });
+
+        $('body').on('change', '.variant-sample-shipping', function(){
+            if ($(this).is(':not(:checked)')) {
+                var clonedDiv = $('#table_sample_configuration').clone();
+                var paid_sample = $('#table_sample_configuration').find('.paid_sample').val();
+                var shipper_sample = $('#table_sample_configuration').find('.shipper_sample').val();
+                clonedDiv.find('.paid_sample').find('option[value="' + paid_sample + '"]').prop('selected', true);
+                clonedDiv.find('.shipper_sample').find('option[value="' + shipper_sample + '"]').prop('selected', true);
+                $(this).parent().parent().parent().find('#bloc-sample-shipping').append(clonedDiv);
+            }else{
+                $(this).parent().parent().parent().find('#bloc-sample-shipping').empty();
+            }
+        })
+
+        $('body').on('change', '.variant-sample-available', function(){
+            if ($(this).is(':checked')) {
+                $(this).parent().parent().parent().parent().find('.variant-sample-pricing').prop('disabled', false);
+                $(this).parent().parent().parent().parent().find('.variant-sample-shipping').prop('disabled', false);
+            }else{
+                $(this).parent().parent().parent().parent().find('.variant-sample-pricing').prop('disabled', true);
+                $(this).parent().parent().parent().parent().find('.variant-sample-shipping').prop('disabled', true);
+            }
+        })
     });
+
 </script>
 <script>
     $(function() {
@@ -1555,10 +2396,10 @@
         }).on("changed.jstree", function(e, data) {
             if (data && data.selected && data.selected.length) {
                     var selectedId = data.selected[0]; // Get the ID of the first selected node
-                    
+
                     // Check if the selected node has children
                     var node = $('#jstree').jstree(true).get_node(selectedId);
-                    
+
                     if ((!node.children || node.children.length === 0) && node.state.loaded ==  true) {
                         $('#message-category').text("Correct choice.");
                         $('#message-category').css({'color': 'green', 'margin-right': '7px'});
@@ -1664,4 +2505,45 @@
         });
     };
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script> <!-- Include SweetAlert2 JS -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('choice_form').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            Swal.fire({
+                title: "Product Publication",
+                text: "Do you want to publish or unpublish this product?",
+                icon: "info",
+                showCancelButton: false,
+                confirmButtonText: "Next",
+                html: '<input type="checkbox" id="publicationToggle" value="published" checked> Publish upon approval',
+                focusConfirm: false,
+                preConfirm: () => {
+                    const publicationStatus = document.getElementById('publicationToggle').checked ? 'published' : 'unpublished';
+                    if(publicationStatus == 'published'){
+                        $('#published_after_approve').val(1)
+                    }
+                    Swal.fire({
+                        title: "Create Stock Items",
+                        text: "Do you want to create stock items for this product?",
+                        icon: "info",
+                        showCancelButton: false,
+                        confirmButtonText: "Create",
+                        html: '<input type="checkbox" id="stockToggle" value="published" checked> Create stock',
+                        focusConfirm: false,
+                    }).then((result) => {
+                        var stockToggleStatus = document.getElementById('stockToggle').checked ? 'create' : 'not create';
+                        if(stockToggleStatus == 'create'){
+                            $('#create_stock').val(1)
+                        }
+
+                        document.getElementById('choice_form').submit();
+                    });
+                }
+            });
+        });
+    });
+</script>
+
 @endsection
