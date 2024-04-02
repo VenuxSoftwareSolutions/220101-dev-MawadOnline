@@ -195,7 +195,7 @@ class ProductService
                 $current_data['to_shipping'] = $collection['to_shipping'][$key];
                 $current_data['shipper'] = $shippers;
                 $current_data['estimated_order'] = $collection['estimated_order'][$key];
-                $current_data['paid'] = $collection['estimated_shipping'][$key];
+                $current_data['estimated_shipping'] = $collection['estimated_shipping'][$key];
                 $current_data['paid'] = $collection['paid'][$key];
                 $current_data['shipping_charge'] = $collection['shipping_charge'][$key];
                 $current_data['flat_rate_shipping'] = $collection['flat_rate_shipping'][$key];
