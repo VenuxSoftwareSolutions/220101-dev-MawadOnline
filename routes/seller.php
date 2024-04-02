@@ -7,9 +7,6 @@ use App\Http\Controllers\SellerLeaseController;
 use App\Http\Controllers\Seller\StockController;
 use App\Http\Controllers\Seller\SellerRoleController;
 use App\Http\Controllers\Seller\SellerStaffController;
-use App\Http\Controllers\Seller\StockController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\SellerController;
 use App\Http\Controllers\Seller\CatalogController;
 
 //Upload
