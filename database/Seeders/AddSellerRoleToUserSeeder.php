@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\seeds;
+namespace Database\seeders;
 
 use App\Models\Role;
 use App\Models\User;
@@ -10,7 +10,6 @@ use App\Models\Shop;
 use App\Models\Seller;
 use App\Models\PayoutInformation;
 use App\Models\BusinessInformation;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class AddSellerRoleToUserSeeder extends Seeder
 {
