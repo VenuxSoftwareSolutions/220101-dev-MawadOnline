@@ -8,6 +8,7 @@ use App\Models\Staff;
 use App\Models\SellerPackage;
 use Illuminate\Database\Seeder;
 use App\Models\SellerPackageTranslation;
+use Spatie\Permission\Models\Permission;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class PackagesSeeder extends Seeder
@@ -41,6 +42,18 @@ class PackagesSeeder extends Seeder
 
         Role::where('role_type', '1')->where('name', '!=', 'seller')->delete();
 
+        Permission::updateOrCreate(
+            ['name' => 'seller_view_all_leases'],
+            ['section' => 'seller_leases',
+            'guard_name' => 'web']
+        );
+
+        Permission::updateOrCreate(
+            ['name' => 'seller_view_all_sales'],
+            ['section' => 'seller_sales',
+            'guard_name' => 'web']
+        );
+
         $pro=Role::updateOrCreate(
             ['name' => 'pro'],
             ['guard_name' => 'web',
@@ -59,6 +72,9 @@ class PackagesSeeder extends Seeder
         $pro->givePermissionTo('seller_view_order_details');
         $pro->givePermissionTo('seller_shop_settings');
         $pro->givePermissionTo('seller_view_support_tickets');
+        $pro->givePermissionTo('seller_add_support_tickets');
+        $pro->givePermissionTo('seller_show_support_tickets');
+        $pro->givePermissionTo('seller_reply_support_tickets');
         $pro->givePermissionTo('seller_view_all_staffs');
         $pro->givePermissionTo('seller_add_staff');
         $pro->givePermissionTo('seller_edit_staff');
@@ -66,10 +82,12 @@ class PackagesSeeder extends Seeder
         $pro->givePermissionTo('seller_add_inventory');
         $pro->givePermissionTo('seller_edit_or_remove_inventory');
         $pro->givePermissionTo('seller_inventory_history');
+        $pro->givePermissionTo('seller_view_all_leases');
+        $pro->givePermissionTo('seller_view_all_sales');
 
         // Step 1: Get users with the "seller" role
         $sellerRoleId = Role::where('name', 'seller')->value('id');
-        $usersWithSellerRole = User::whereColumn('id','owner_id')->get();
+        $usersWithSellerRole = User::where('user_type','seller')->whereColumn('id','owner_id')->get();
 
 
         $sellers=User::where('user_type','seller')->whereColumn('id','!=','owner_id')->get();
@@ -98,7 +116,7 @@ class PackagesSeeder extends Seeder
             $user->syncRoles($pro->name);
         }
 
-        
+
 
         $sales=Role::updateOrCreate(
             ['name' => 'Sales'],
@@ -125,6 +143,8 @@ class PackagesSeeder extends Seeder
             'created_by' => '1',
         ]);
 
+
+
         $sales->givePermissionTo('seller_show_product');
         $sales->givePermissionTo('seller_create_product');
         $sales->givePermissionTo('seller_edit_product');
@@ -134,6 +154,8 @@ class PackagesSeeder extends Seeder
         $management->givePermissionTo('seller_add_inventory');
         $management->givePermissionTo('seller_edit_or_remove_inventory');
         $management->givePermissionTo('seller_inventory_history');
+        $accounting->givePermissionTo('seller_view_all_leases');
+        $accounting->givePermissionTo('seller_view_all_sales');
 
     }
 }

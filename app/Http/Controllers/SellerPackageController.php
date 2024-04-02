@@ -149,18 +149,23 @@ class SellerPackageController extends Controller
     //@index
     public function packages_payment_list()
     {
+        seller_lease_creation($user=Auth::user());
+
         $seller_packages_payment = SellerPackagePayment::with('seller_package')->where('user_id', Auth::user()->id)->paginate(15);
         return view('seller_packages.frontend.packages_payment_list', compact('seller_packages_payment'));
     }
 
     public function seller_packages_list()
     {
+        seller_lease_creation($user=Auth::user());
+
         $seller_packages = SellerPackage::all();
         return view('seller_packages.frontend.seller_packages_list', compact('seller_packages'));
     }
 
     public function purchase_package(Request $request)
     {
+
         $data['seller_package_id'] = $request->seller_package_id;
         $data['payment_method'] = $request->payment_option;
 

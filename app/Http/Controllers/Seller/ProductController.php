@@ -71,6 +71,8 @@ class ProductController extends Controller
 
     public function index(Request $request)
     {
+        seller_lease_creation($user=Auth::user());
+        
         $search = null;
         $products = Product::where('user_id', Auth::user()->id)->where(function ($query) {
             $query->where('is_draft', '=', 1)
@@ -197,7 +199,7 @@ class ProductController extends Controller
             $data['old_documents'] = $request->old_documents;
             $data['old_document_names'] = $request->old_document_names;
             $this->productUploadsService->store_uploads($data);
-            
+
 
             flash(translate('Product has been inserted successfully'))->success();
 
@@ -209,7 +211,7 @@ class ProductController extends Controller
         }else{
             return redirect()->back();
         }
-        
+
     }
 
     public function getAttributeCategorie(Request $request){
@@ -316,7 +318,7 @@ class ProductController extends Controller
             $attributes_not_selected = array_diff($request->allValues, $request->selected);
         }else{
             $attributes_not_selected = array_diff($request->allValues, []);
-        }        
+        }
 
         $attributes_generale = Attribute::whereIn('id', $attributes_not_selected)->get();
 
@@ -459,7 +461,7 @@ class ProductController extends Controller
         }else{
             $categorie=null;
         }
-        
+
         $attributes = [];
         $childrens = [];
         $childrens_ids = [];
@@ -472,9 +474,9 @@ class ProductController extends Controller
                 $childrens = Product::where('parent_id', $id)->get();
                 $childrens_ids = Product::where('parent_id', $id)->pluck('id')->toArray();
                 $variants_attributes = ProductAttributeValues::whereIn('id_products', $childrens_ids)->where('is_variant', 1)->get();
-                
+
                 $variants_attributes_ids_attributes = ProductAttributeValues::whereIn('id_products', $childrens_ids)->where('is_variant', 1)->pluck('id_attribute')->toArray();
-                
+
             }
             $general_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->get();
             $general_attributes_ids_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->pluck('id_attribute')->toArray();
@@ -487,7 +489,7 @@ class ProductController extends Controller
             if($product_category != null){
                 $categorie = Category::find($product_category->category_id);
                 $current_categorie = $categorie;
-    
+
                 $parents = [];
                 if($current_categorie->parent_id == 0){
                     array_push($parents, $current_categorie->id);
@@ -499,7 +501,7 @@ class ProductController extends Controller
                         $current_categorie = $parent;
                     }
                 }
-    
+
                 if(count($parents) > 0){
                     $attributes_ids = DB::table('categories_has_attributes')->whereIn('category_id', $parents)->pluck('attribute_id')->toArray();
                     if(count($attributes_ids) > 0){
@@ -547,7 +549,7 @@ class ProductController extends Controller
                     'general_attributes' => $data_general_attributes,
                     'colors' => $colors
                 ]);
-            }                
+            }
         }else{
             abort(404);
         }
@@ -583,7 +585,7 @@ class ProductController extends Controller
             $data['old_documents'] = $request->old_documents;
             $data['old_document_names'] = $request->old_document_names;
             $this->productUploadsService->store_uploads($data);
-            
+
 
             flash(translate('Product has been updated successfully'))->success();
 
@@ -654,7 +656,7 @@ class ProductController extends Controller
             ]);
         }
     }
-    
+
 
     public function sku_combination_edit(Request $request)
     {

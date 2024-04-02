@@ -34,9 +34,9 @@
                     <div class="form-group row">
                         <label class="col-sm-3 col-from-label" for="name">{{translate('Role')}}</label>
                         <div class="col-sm-9">
-                            <select name="role_id" required class="form-control aiz-selectpicker">
+                            <select name="role_id[]" multiple required class="form-control aiz-selectpicker" onchange="checkRoleUsage()">
                                 @foreach($roles as $role)
-                                    <option value="{{$role->id}}" @php if($staff->role_id == $role->id) echo "selected"; @endphp >{{$role->name}}</option>
+                                    <option value="{{$role->id}}" @php if($staff->user->getRoleNames()->contains($role->name)) echo "selected"; @endphp >{{$role->name}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -50,4 +50,42 @@
     </div>
 </div>
 
+@endsection
+
+@section('script')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script>
+            toastr.options = {
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            timeOut: 3000, // Set the duration for which the toast will be displayed (in milliseconds)
+        };
+
+        function checkRoleUsage() {
+        // Get selected role ID
+        var selectedRoles = [];
+        var selectedOptions = document.querySelector('[name="role_id[]"]').selectedOptions;
+
+        for (var i = 0; i < selectedOptions.length; i++) {
+            selectedRoles.push(selectedOptions[i].value);
+        }
+        // Make AJAX request
+        $.ajax({
+            url: "{{ route('seller.check.role') }}",
+            type: 'GET',
+            data: { roles: selectedRoles,
+                staff_id: "{{ $staff->id }}"
+             },
+            success: function(response) {
+                // Check if the role is used
+                if (response.isUsed == 1) {
+                    // Display warning message
+                    toastr.error(response.message);
+                    //alert("Warning: The selected role is already in use!");
+                }
+            }
+        });
+    }
+</script>
 @endsection

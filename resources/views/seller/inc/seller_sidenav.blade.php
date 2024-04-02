@@ -183,7 +183,7 @@
                         </ul>
                     </li>
                 @endcanany --}}
-
+                @canany(['seller_view_all_leases', 'seller_view_all_sales'])
                     <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link">
                             <i class="las la-shopping-cart aiz-side-nav-icon"></i>
@@ -192,24 +192,25 @@
                         </a>
                         <!--Submenu-->
                         <ul class="aiz-side-nav-list level-2">
-
+                            @can('seller_view_all_leases')
                                 <li class="aiz-side-nav-item">
-                                    <a href="{{ route('seller.staffs.index') }}"
-                                    class="aiz-side-nav-link {{ areActiveRoutes(['seller.staffs.index', 'seller.staffs.create', 'seller.staffs.edit'])}}">
+                                    <a href="{{ route('seller.lease.index') }}"
+                                    class="aiz-side-nav-link {{ areActiveRoutes(['seller.lease.index'])}}">
                                         <span class="aiz-side-nav-text">{{ translate('e-Shop lease') }}</span>
                                     </a>
                                 </li>
-
+                            @endcan
+                            @can('seller_view_all_sales')
                                 <li class="aiz-side-nav-item">
-                                    <a href="{{route('seller.roles.index')}}"
-                                    class="aiz-side-nav-link {{ areActiveRoutes(['seller.roles.index', 'seller.roles.create', 'seller.roles.edit'])}}">
+                                    <a href="{{route('seller.sales.index')}}"
+                                    class="aiz-side-nav-link {{ areActiveRoutes(['seller.sales.index'])}}">
                                         <span class="aiz-side-nav-text">{{ translate('Sales') }}</span>
                                     </a>
                                 </li>
-
+                            @endcan
                         </ul>
                     </li>
-
+                @endcanany
 
                 @php
                 $support_ticket = DB::table('tickets')

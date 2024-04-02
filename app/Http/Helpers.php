@@ -2481,32 +2481,34 @@ if (!function_exists('seller_lease_creation')) {
     {
         $seller=$user->seller;
 
+        if($seller){
+            //$lease = SellerLease::where('vendor_id',$user->id)->get();
+            if($seller->seller_package_id == null && $user->status == "Enabled"){
+                // Get the current date and time using Carbon
+                $currentDate = Carbon::now();
 
-        //$lease = SellerLease::where('vendor_id',$user->id)->get();
-        if($seller->seller_package_id == null && $user->status == "Enabled"){
-            // Get the current date and time using Carbon
-            $currentDate = Carbon::now();
+                // Calculate the start date of the lease cycle
+                $startDate = Carbon::create($currentDate);
 
-            // Calculate the start date of the lease cycle
-            $startDate = Carbon::create($currentDate);
+                // Calculate the end date of the lease cycle
+                $endDate = $startDate->copy()->addMonth()->subDay();
 
-            // Calculate the end date of the lease cycle
-            $endDate = $startDate->copy()->addMonth()->subDay();
+                $package=SellerPackage::find('4');
+                $seller->seller_package_id = 4;
+                $seller->save();
 
-            $package=SellerPackage::find('4');
-            $seller->seller_package_id = 4;
-            $seller->save();
+                $seller_lease=new SellerLease;
+                $seller_lease->vendor_id=$user->id ;
+                $seller_lease->package_id=4 ;
+                $seller_lease->start_date = $startDate->format('Y-m-d') ;
+                $seller_lease->end_date = $endDate->format('Y-m-d') ;
+                $seller_lease->total = $package->amount;
+                $seller_lease->discount = $package->amount;
+                $seller_lease->save();
 
-            $seller_lease=new SellerLease;
-            $seller_lease->vendor_id=$user->id ;
-            $seller_lease->package_id=4 ;
-            $seller_lease->start_date = $startDate->format('Y-m-d') ;
-            $seller_lease->end_date = $endDate->format('Y-m-d') ;
-            $seller_lease->total = $package->amount;
-            $seller_lease->discount = $package->amount;
-            $seller_lease->save();
-
+            }
         }
+
         return true;
     }
 }

@@ -14,6 +14,13 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        if (Auth::user()->first_login == false) {
+            $user=Auth::user();
+            $user->first_login=true;
+            $user->save();
+            return view('seller.welcome');
+        }
+        else {
         seller_lease_creation($user=Auth::user());
 
         $data['products'] = filter_products(Product::where('user_id', Auth::user()->owner_id)->orderBy('num_of_sale', 'desc'))->limit(12)->get();
@@ -25,5 +32,7 @@ class DashboardController extends Controller
                                 ->get()->pluck('total', 'date');
 
         return view('seller.dashboard', $data);
+        }
+
     }
 }

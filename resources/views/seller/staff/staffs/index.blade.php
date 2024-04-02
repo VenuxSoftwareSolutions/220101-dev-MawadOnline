@@ -29,8 +29,8 @@
                     <th>{{translate('Name')}}</th>
                     <th data-breakpoints="lg">{{translate('Email')}}</th>
                     <th data-breakpoints="lg">{{translate('Phone')}}</th>
-                    <th data-breakpoints="lg">{{translate('Role')}}</th>
-                    <th data-breakpoints="lg">{{__('Approval')}}</th>
+                    <th data-breakpoints="lg">{{translate('Roles')}}</th>
+                    <th data-breakpoints="lg">{{__('Enabled')}}</th>
                     <th width="10%" class="text-right">{{translate('Options')}}</th>
                 </tr>
             </thead>
@@ -44,10 +44,14 @@
                             <td>{{$staff->user->email}}</td>
                             <td>{{$staff->user->phone}}</td>
                             <td>
-									{{ $staff->user->Role() }}
+                                @foreach ($staff->user->getRoleNames() as $name)
+                                {{ $name }}
+                                <br>
+                                @endforeach
+
 							</td>
                             @php
-                                dd($staffs);
+                               // dd($staff->user->getRoleNames());
                             @endphp
                             <td>
                                 <!-- Approval status column with toggle switch -->

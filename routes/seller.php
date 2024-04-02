@@ -1,11 +1,12 @@
 <?php
 
+use App\Http\Controllers\SellerController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\AizUploadController;
+use App\Http\Controllers\SellerLeaseController;
+use App\Http\Controllers\Seller\StockController;
 use App\Http\Controllers\Seller\SellerRoleController;
 use App\Http\Controllers\Seller\SellerStaffController;
-use App\Http\Controllers\Seller\StockController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\SellerController;
 
 //Upload
 Route::group(['prefix' => 'seller', 'middleware' => ['seller', 'verified', 'user', 'prevent-back-history'], 'as' => 'seller.'], function () {
@@ -184,6 +185,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
         Route::controller(SellerStaffController::class)->group(function () {
         Route::resource('staffs', SellerStaffController::class);
         Route::get('/staffs/destroy/{id}', [SellerStaffController::class, 'destroy'])->name('staffs.destroy');
+        Route::get('/check-role', [SellerStaffController::class, 'checkRole'])->name('check.role');
     });
     Route::post('vendors/{id}/approve', [SellerController::class,'approve'])->name('staff.approve');
 
@@ -196,6 +198,13 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
 
         // Add Permissiom
         Route::post('/roles/add_permission', 'add_permission')->name('roles.permission');
+    });
+
+
+    Route::controller(SellerLeaseController::class)->group(function () {
+        Route::get('/lease', 'index')->name('lease.index');
+        Route::get('/sales', 'allSales')->name('sales.index');
+
     });
 });
 

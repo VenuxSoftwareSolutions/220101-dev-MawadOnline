@@ -60,6 +60,7 @@ class StockController extends Controller
 
     public function index(Request $request, $type = null)
     {
+        seller_lease_creation($user=Auth::user());
 
         // Filter by product variant and warehouse if provided
         $productVariant = $request->input('productVariant');
@@ -251,6 +252,7 @@ class StockController extends Controller
      */
     public function checkInventory(Request $request)
     {
+
         // Retrieve product variant, warehouse, and seller ID from the request
         $productVariant = $request->input('product_variant');
         $warehouse = $request->input('warehouse');
@@ -285,6 +287,7 @@ class StockController extends Controller
      */
     public function stockOperationReport(Request $request)
     {
+        seller_lease_creation($user=Auth::user());
 
         // Retrieve the authenticated user (seller).
         $seller = User::find(Auth::user()->owner_id);

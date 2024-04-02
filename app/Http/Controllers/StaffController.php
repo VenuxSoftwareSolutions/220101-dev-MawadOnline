@@ -32,7 +32,8 @@ class StaffController extends Controller
     public function index()
     {
         $seller= Role::where('name','seller')->first();
-        $staffs = Staff::where('created_by',null)->where('role_id','!=',$seller->id)->orderBy('id','desc')->paginate(10);
+        $users=User::where('user_type','staff')->get();
+        $staffs = Staff::whereIn('user_id',$users->pluck('id'))->orderBy('id','desc')->paginate(10);
         return view('backend.staff.staffs.index', compact('staffs'));
     }
 

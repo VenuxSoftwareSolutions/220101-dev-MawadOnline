@@ -31,6 +31,8 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
+        seller_lease_creation($user=Auth::user());
+
         $payment_status = null;
         $delivery_status = null;
         $sort_search = null;
