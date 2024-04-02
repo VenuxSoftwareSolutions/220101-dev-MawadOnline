@@ -38,4 +38,13 @@ return [
     'contact_support' => 'Please contact MawadOnline support team for further details.',
     'View Status History' => 'View Status History',
     'View Staff' => 'View Staff',
+    'confirm_delete' => 'Are you sure?',
+    'delete_success' => 'Your warehouse has been deleted.',
+    'delete_error' => 'An error occurred while deleting the warehouse.',
+    'cancelled' => 'Cancelled',
+    'warehouse_safe' => 'Your warehouse is safe :)',
+    'confirm_button' => 'Yes, delete it!',
+    'cancel_button' => 'No, cancel!',
+    'delete_warning' => 'You will not be able to recover this warehouse!',
+
 ];

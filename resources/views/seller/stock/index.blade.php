@@ -41,7 +41,7 @@
 
                             <option @if (request('productVariant') == $product->id )
                                 selected
-                            @endif value="{{$product->id}}">{{$product->name.' '.$product->sku .$product->productVariantDetails()}}</option>
+                            @endif value="{{$product->id}}">{{$product->name.' '.$product->sku /* .$product->productVariantDetails() */}}</option>
                              @endforeach
 
                         </select>

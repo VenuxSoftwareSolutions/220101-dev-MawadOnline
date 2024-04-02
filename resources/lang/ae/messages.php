@@ -37,4 +37,13 @@ return [
     'contact_support' => 'يرجى الاتصال بفريق دعم مواد أونلاين للحصول على مزيد من التفاصيل.',
     'View Status History' => 'عرض سجل الحالة',
     'View Staff' => 'عرض الموظفين',
+    'confirm_delete' => 'هل أنت متأكد؟',
+    'delete_success' => 'تم حذف مستودعك.',
+    'delete_error' => 'حدث خطأ أثناء حذف المستودع.',
+    'cancelled' => 'تم الإلغاء',
+    'warehouse_safe' => 'مستودعك بأمان :)',
+    'confirm_button' => 'نعم، احذفه!',
+    'cancel_button' => 'لا، ألغِ',
+    'delete_warning' => 'لن تتمكن من استرداد هذا المستودع بعد الحذف!',
+
 ];

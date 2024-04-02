@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Seller;
 use App\Exports\StockSummaryExport;
 use App\Http\Requests\SaveRecordRequest;
 use App\Http\Requests\SearchStockRequest;
+use App\Models\Emirate;
 use App\Models\Product;
 use App\Models\StockDetails;
 use App\Models\StockSummary;
@@ -341,5 +342,23 @@ class StockController extends Controller
 
         // Return the view with the data required for the stock operation report.
         return view('seller.stock.stock_operation_report', compact('records',/* 'warehouses', */ 'productVariants', 'warehouses'));
+    }
+
+    public function warehouses() {
+        $seller = User::find(Auth::user()->owner_id);
+        $warehouses = Warehouse::where('user_id',$seller->id)->get() ;
+        $emirates=Emirate::all() ;
+        return view('seller.warehouses.index', compact('warehouses','emirates'));
+    }
+
+    public function removeWarehouse(Request $request) {
+
+        $warehouseId = $request->input('warehouse_id');
+
+        // Find and delete the warehouse
+        $warehouse = Warehouse::findOrFail($warehouseId);
+        $warehouse->delete();
+
+        return response()->json(['message' => 'Warehouse removed successfully']);
     }
 }

@@ -19,4 +19,5 @@ class Warehouse extends Model
         'address_unit',
         'saveasdraft'
     ];
+
 }
