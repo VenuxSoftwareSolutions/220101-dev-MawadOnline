@@ -20,6 +20,7 @@ use App\Models\Emirate;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use App\Models\ContactPerson;
+use App\Models\SellerPackage;
 use App\Models\BusinessSetting;
 use Illuminate\Validation\Rule;
 use App\Models\VerificationCode;
@@ -860,5 +861,10 @@ class ShopController extends Controller
     public function destroy($id)
     {
         //
+    }
+    public function seller_packages()
+    {
+        $seller_packages = SellerPackage::all();
+        return view('frontend.package', compact('seller_packages'));
     }
 }

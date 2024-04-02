@@ -214,7 +214,7 @@
                                 </thead>
                                 <tbody id="bloc_pricing_configuration">
                                     @if(count($product->getPricingConfiguration()) > 0)
-                                        @foreach ($product->getPricingConfiguration() as $pricing)
+                                        @foreach ($product->getPricingConfiguration() as $key => $pricing)
                                             <tr>
                                                 <td><input type="number" name="from[]" class="form-control min-qty" id="" value="{{ $pricing->from }}"></td>
                                                 <td><input type="number" name="to[]" class="form-control max-qty" id="" value="{{ $pricing->to }}"></td>
@@ -243,7 +243,9 @@
                                                 <td><input type="number" class="form-control discount_percentage" value="{{ $pricing->discount_percentage }}" @if($pricing->discount_type != 'percent') readonly @endif name="discount_percentage[]"></td>
                                                 <td>
                                                     <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                                    <i class="las la-trash delete_pricing_canfiguration" data-pricing_id="{{ $pricing->id }}" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                                    @if($key != 0)
+                                                        <i class="las la-trash delete_pricing_canfiguration" data-pricing_id="{{ $pricing->id }}" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                                    @endif
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -264,7 +266,6 @@
                                             <td><input type="number" class="form-control discount_percentage" name="discount_percentage[]"></td>
                                             <td>
                                                 <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                                <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
                                             </td>
                                         </tr>
                                     @endif
@@ -280,115 +281,159 @@
                         <h5 class="mb-0 h6">{{translate('Default Shipping Configuration')}}</h5>
                     </div>
                     <div class="card-body">
-                        <div class="row mb-3">
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" value="{{translate('Do you want to activate MawadOnline 3rd Party ?')}}" disabled>
-                                <small style="color:red">Fill all required fields for shippers to confirm delivery ability.</small>
+                        <div class="bloc-default-shipping-style">
+                            <h5>{{ translate('Mawadonline 3rd party configuration') }}</h5>
+                            <hr>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" value="{{translate('Do you want to activate MawadOnline 3rd Party ?')}}" disabled>
+                                    <small style="color:red">Fill all required fields for shippers to confirm delivery ability.</small>
+                                </div>
+                                <div class="col-md-8">
+                                    <label class="aiz-switch aiz-switch-success mb-0">
+                                        <input value="1" type="checkbox" id="third_party_activate" name="activate_third_party" @if($product->activate_third_party == 1) checked @endif>
+                                        <span></span>
+                                    </label>
+                                </div>
                             </div>
-                            <div class="col-md-8">
-                                <label class="aiz-switch aiz-switch-success mb-0">
-                                    <input value="1" type="checkbox" id="third_party_activate" name="activate_third_party" @if($product->activate_third_party == 1) checked @endif>
-                                    <span></span>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <table class="table" id="table_third_party_configuration" class="bloc_third_configuration_variant">
-                                <thead>
-                                    <tr>
-                                        <th>{{translate('Length Package (Cm)')}}</th>
-                                        <th>{{translate('Width Package (Cm)')}}</th>
-                                        <th>{{translate('Height Package (Cm)')}}</th>
-                                        <th>{{translate('Weight Package')}}</th>
-                                        <th>{{translate('Weight unit')}}</th>
-                                        <th>{{translate('Breakable')}}</th>
-                                        <th>{{translate('Unit')}}</th>
-                                        <th>{{translate('Min')}}</th>
-                                        <th>{{translate('Max')}}</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="bloc_third_party">
-                                    <tr>
-                                        <td><input type="number" name="length" class="form-control" id="length" step="0.1" @if($product->activate_third_party == 1) value="{{ $product->length }}" @else readonly @endif></td>
-                                        <td><input type="number" name="width" class="form-control" id="width" step="0.1" @if($product->activate_third_party == 1) value="{{ $product->width }}" @else readonly @endif></td>
-                                        <td><input type="number" name="height" class="form-control" id="height" step="0.1" @if($product->activate_third_party == 1) value="{{ $product->height }}" @else readonly @endif></td>
-                                        <td><input type="number" name="weight" class="form-control" id="weight" step="0.1" @if($product->activate_third_party == 1) value="{{ $product->weight }}" @else readonly @endif></td>
-                                        <td>
-                                            <select class="form-control calculate" id="weight_unit" name="unit_weight" @if($product->activate_third_party != 1) disabled @endif>
-                                                <option value="kilograms" @if($product->unit_weight == "kilograms") {{ 'selected' }} @endif>{{translate('Kilograms')}}</option>
-                                                <option value="pounds" @if($product->unit_weight == "pounds") {{ 'selected' }} @endif>{{translate('Pounds')}}</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <select class="form-control calculate" id="breakable" name="breakable" @if($product->activate_third_party != 1) disabled @endif>
-                                                <option value="" @if($product->breakable == null) {{ 'selected' }} @endif>{{translate('Choose option')}}</option>
-                                                <option value="yes" @if($product->breakable == "yes") {{ 'selected' }} @endif>{{translate('Yes')}}</option>
-                                                <option value="no" @if($product->breakable == "no") {{ 'selected' }} @endif>{{translate('No')}}</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <select class="form-control calculate" id="unit_third_party" name="unit_third_party" @if($product->activate_third_party != 1) disabled @endif>
-                                                <option value="celsius" @if($product->unit_third_party == "celsius") {{ 'selected' }} @endif>{{translate('Celsius')}}</option>
-                                                <option value="kelvin" @if($product->unit_third_party == "kelvin") {{ 'selected' }} @endif>{{translate('Kelvin')}}</option>
-                                                <option value="fahrenheit" @if($product->unit_third_party == "fahrenheit") {{ 'selected' }} @endif>{{translate('Fahrenheit')}}</option>
-                                            </select>
-                                        </td>
-                                        <td><input type="number" class="form-control" name="min_third_party" id="min_third_party" step="0.1" @if($product->activate_third_party == 1) value="{{ $product->min_third_party }}" @else readonly @endif></td>
-                                        <td><input type="number" class="form-control" name="max_third_party" id="max_third_party" step="0.1" @if($product->activate_third_party == 1) value="{{ $product->max_third_party }}" @else readonly @endif></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <div id="result_calculate_third_party">
-                                @if($product->activate_third_party == 1)
-                                    @if ($chargeable_weight > 30)
-                                        <span style="color: red"> Chargeable Weight = {{ number_format($chargeable_weight, 2) }}, then not accepted by our shipper </span>
-                                    @else
-                                        <span style="color: green"> Chargeable Weight = {{ number_format($chargeable_weight, 2) }}, then accepted by our shipper </span>
+                            <div class="row">
+                                <table class="table" id="table_third_party_configuration" class="bloc_third_configuration_variant">
+                                    <thead>
+                                        <tr>
+                                            <th>{{translate('Length Package (Cm)')}}</th>
+                                            <th>{{translate('Width Package (Cm)')}}</th>
+                                            <th>{{translate('Height Package (Cm)')}}</th>
+                                            <th>{{translate('Weight Package')}}</th>
+                                            <th>{{translate('Weight unit')}}</th>
+                                            <th>{{translate('Breakable')}}</th>
+                                            <th>{{translate('Unit')}}</th>
+                                            <th>{{translate('Min')}}</th>
+                                            <th>{{translate('Max')}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bloc_third_party">
+                                        <tr>
+                                            <td><input type="number" name="length" class="form-control" id="length" step="0.1" @if($product->activate_third_party == 1) value="{{ $product->length }}" @else readonly @endif></td>
+                                            <td><input type="number" name="width" class="form-control" id="width" step="0.1" @if($product->activate_third_party == 1) value="{{ $product->width }}" @else readonly @endif></td>
+                                            <td><input type="number" name="height" class="form-control" id="height" step="0.1" @if($product->activate_third_party == 1) value="{{ $product->height }}" @else readonly @endif></td>
+                                            <td><input type="number" name="weight" class="form-control" id="weight" step="0.1" @if($product->activate_third_party == 1) value="{{ $product->weight }}" @else readonly @endif></td>
+                                            <td>
+                                                <select class="form-control calculate" id="weight_unit" name="unit_weight" @if($product->activate_third_party != 1) disabled @endif>
+                                                    <option value="kilograms" @if($product->unit_weight == "kilograms") {{ 'selected' }} @endif>{{translate('Kilograms')}}</option>
+                                                    <option value="pounds" @if($product->unit_weight == "pounds") {{ 'selected' }} @endif>{{translate('Pounds')}}</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select class="form-control calculate" id="breakable" name="breakable" @if($product->activate_third_party != 1) disabled @endif>
+                                                    <option value="" @if($product->breakable == null) {{ 'selected' }} @endif>{{translate('Choose option')}}</option>
+                                                    <option value="yes" @if($product->breakable == "yes") {{ 'selected' }} @endif>{{translate('Yes')}}</option>
+                                                    <option value="no" @if($product->breakable == "no") {{ 'selected' }} @endif>{{translate('No')}}</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select class="form-control calculate" id="unit_third_party" name="unit_third_party" @if($product->activate_third_party != 1) disabled @endif>
+                                                    <option value="celsius" @if($product->unit_third_party == "celsius") {{ 'selected' }} @endif>{{translate('Celsius')}}</option>
+                                                    <option value="kelvin" @if($product->unit_third_party == "kelvin") {{ 'selected' }} @endif>{{translate('Kelvin')}}</option>
+                                                    <option value="fahrenheit" @if($product->unit_third_party == "fahrenheit") {{ 'selected' }} @endif>{{translate('Fahrenheit')}}</option>
+                                                </select>
+                                            </td>
+                                            <td><input type="number" class="form-control" name="min_third_party" id="min_third_party" step="0.1" @if($product->activate_third_party == 1) value="{{ $product->min_third_party }}" @else readonly @endif></td>
+                                            <td><input type="number" class="form-control" name="max_third_party" id="max_third_party" step="0.1" @if($product->activate_third_party == 1) value="{{ $product->max_third_party }}" @else readonly @endif></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div id="result_calculate_third_party">
+                                    @if($product->activate_third_party == 1)
+                                        @if ($chargeable_weight > 30)
+                                            <span style="color: red"> Chargeable Weight = {{ number_format($chargeable_weight, 2) }}, then not accepted by our shipper </span>
+                                        @else
+                                            <span style="color: green"> Chargeable Weight = {{ number_format($chargeable_weight, 2) }}, then accepted by our shipper </span>
+                                        @endif
                                     @endif
-                                @endif
+                                </div>
                             </div>
                         </div>
-                        {{-- <div class="row div-btn">
-                            <button type="button" name="button" class="btn btn-primary" id="btn-calculate-formules">Calculate formules</button>
-                        </div> --}}
-                        <hr>
-                        <div>
-                            <table class="table" id="table_shipping_configuration" class="bloc_shipping_configuration_variant">
-                                <thead>
-                                    <tr>
-                                        <th>{{translate('From Quantity')}}</th>
-                                        <th>{{translate('To Quantity')}}</th>
-                                        <th>{{translate('Shipper')}}</th>
-                                        <th>{{translate('Estimated Order Preparation Days')}}</th>
-                                        <th>{{translate('Estimated Shipping Days')}}</th>
-                                        <th>{{translate('Paid by')}}</th>
-                                        <th>{{translate('VAT')}}</th>
-                                        <th>{{translate('Shipping Charge')}}</th>
-                                        <th>{{translate('Flat-rate Amount')}}</th>
-                                        <th>{{translate('Charge per Unit of Sale')}}</th>
-                                        <th>{{translate('Action')}}</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="bloc_shipping_configuration">
-                                    @if (count($product->getShipping()) > 0)
-                                        @foreach ($product->getShipping() as $key => $shipping)
+                        <div class="bloc-default-shipping-style" style="margin-top: 22px;">
+                            <h5>{{ translate('Shipping configuration') }}</h5>
+                            <div>
+                                <table class="table" id="table_shipping_configuration" class="bloc_shipping_configuration_variant">
+                                    <thead>
+                                        <tr>
+                                            <th>{{translate('From Quantity')}}</th>
+                                            <th>{{translate('To Quantity')}}</th>
+                                            <th>{{translate('Shipper')}}</th>
+                                            <th>{{translate('Estimated Order Preparation Days')}}</th>
+                                            <th>{{translate('Estimated Shipping Days')}}</th>
+                                            <th>{{translate('Paid by')}}</th>
+                                            <th>{{translate('VAT')}}</th>
+                                            <th>{{translate('Shipping Charge')}}</th>
+                                            <th>{{translate('Flat-rate Amount')}}</th>
+                                            <th>{{translate('Charge per Unit of Sale')}}</th>
+                                            <th>{{translate('Action')}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bloc_shipping_configuration">
+                                        @if (count($product->getShipping()) > 0)
+                                            @foreach ($product->getShipping() as $key => $shipping)
+                                                <tr>
+                                                    <td><input type="number" name="from_shipping[]" value="{{ $shipping->from_shipping }}" class="form-control min-qty-shipping" id=""></td>
+                                                    <td><input type="number" name="to_shipping[]" value="{{ $shipping->to_shipping }}" class="form-control max-qty-shipping" id=""></td>
+                                                    <td>
+                                                        @php $shippers = explode(",", $shipping->shipper); @endphp
+                                                        <select multiple class="form-control shipper" name="shipper[{{ $key }}][]">
+                                                            <option value="vendor" @if(in_array("vendor", $shippers)) {{ 'selected' }} @endif>{{translate('vendor')}}</option>
+                                                            <option value="third_party" @if(in_array("third_party", $shippers)) {{ 'selected' }} @endif>{{translate('MawadOnline 3rd Party Shippers')}}</option>
+                                                        </select>
+                                                    </td>
+                                                    <td><input type="number" class="form-control estimated_order" value="{{ $shipping->estimated_order }}" name="estimated_order[]"></td>
+                                                    <td><input type="number" class="form-control estimated_shipping"  value="{{ $shipping->estimated_shipping }}" name="estimated_shipping[]"></td>
+                                                    <td>
+                                                        <select class="form-control paid" name="paid[]">
+                                                            <option value="" selected>{{translate('Choose shipper')}}</option>
+                                                            <option value="vendor" @if($shipping->paid == "vendor") {{ 'selected' }} @endif>{{translate('vendor')}}</option>
+                                                            <option value="buyer" @if($shipping->paid == "buyer") {{ 'selected' }} @endif>{{translate('Buyer')}}</option>
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <label class="aiz-switch aiz-switch-success mb-0">
+                                                            <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping[]" @if($vat_user->vat_registered == 1) checked @endif>
+                                                            <span></span>
+                                                        </label>
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-control shipping_charge" name="shipping_charge[]">
+                                                            <option value="" selected>{{translate('Choose shipping charge')}}</option>
+                                                            <option value="flat" @if($shipping->shipping_charge == "flat") {{ 'selected' }} @endif>{{translate('Flat-rate regardless of quantity')}}</option>
+                                                            <option value="charging" @if($shipping->shipping_charge == "charging") {{ 'selected' }} @endif>{{translate('Charging per Unit of Sale')}}</option>
+                                                        </select>
+                                                    </td>
+                                                    <td><input type="number" class="form-control flat_rate_shipping" value="{{ $shipping->flat_rate_shipping }}" name="flat_rate_shipping[]" readonly></td>
+                                                    <td><input type="number" class="form-control charge_per_unit_shipping" value="{{ $shipping->charge_per_unit_shipping }}" name="charge_per_unit_shipping[]" readonly></td>
+                                                    <td>
+                                                        <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
+                                                        @if($key != 0)
+                                                            <i class="las la-trash delete_shipping_canfiguration" data-id="{{ $shipping->id }}" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @else
                                             <tr>
-                                                <td><input type="number" name="from_shipping[]" value="{{ $shipping->from_shipping }}" class="form-control min-qty-shipping" id=""></td>
-                                                <td><input type="number" name="to_shipping[]" value="{{ $shipping->to_shipping }}" class="form-control max-qty-shipping" id=""></td>
+                                                <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id=""></td>
+                                                <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id=""></td>
                                                 <td>
-                                                    @php $shippers = explode(",", $shipping->shipper); @endphp
-                                                    <select multiple class="form-control shipper" name="shipper[{{ $key }}][]">
-                                                        <option value="vendor" @if(in_array("vendor", $shippers)) {{ 'selected' }} @endif>{{translate('vendor')}}</option>
-                                                        <option value="third_party" @if(in_array("third_party", $shippers)) {{ 'selected' }} @endif>{{translate('MawadOnline 3rd Party Shippers')}}</option>
+                                                    <select multiple class="form-control shipper" name="shipper[0][]">
+                                                        <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                                        <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                                     </select>
                                                 </td>
-                                                <td><input type="number" class="form-control estimated_order" value="{{ $shipping->estimated_order }}" name="estimated_order[]"></td>
-                                                <td><input type="number" class="form-control estimated_shipping"  value="{{ $shipping->estimated_shipping }}" name="estimated_shipping[]"></td>
+                                                <td><input type="number" class="form-control estimated_order" name="estimated_order[]"></td>
+                                                <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]"></td>
                                                 <td>
                                                     <select class="form-control paid" name="paid[]">
                                                         <option value="" selected>{{translate('Choose shipper')}}</option>
-                                                        <option value="vendor" @if($shipping->paid == "vendor") {{ 'selected' }} @endif>{{translate('vendor')}}</option>
-                                                        <option value="buyer" @if($shipping->paid == "buyer") {{ 'selected' }} @endif>{{translate('Buyer')}}</option>
+                                                        <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                                        <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
                                                     </select>
                                                 </td>
                                                 <td>
@@ -400,62 +445,21 @@
                                                 <td>
                                                     <select class="form-control shipping_charge" name="shipping_charge[]">
                                                         <option value="" selected>{{translate('Choose shipping charge')}}</option>
-                                                        <option value="flat" @if($shipping->shipping_charge == "flat") {{ 'selected' }} @endif>{{translate('Flat-rate regardless of quantity')}}</option>
-                                                        <option value="charging" @if($shipping->shipping_charge == "charging") {{ 'selected' }} @endif>{{translate('Charging per Unit of Sale')}}</option>
+                                                        <option value="flat" @selected(old('shipping_charge') == 'flat')>{{translate('Flat-rate regardless of quantity')}}</option>
+                                                        <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
                                                     </select>
                                                 </td>
-                                                <td><input type="number" class="form-control flat_rate_shipping" value="{{ $shipping->flat_rate_shipping }}" name="flat_rate_shipping[]" readonly></td>
-                                                <td><input type="number" class="form-control charge_per_unit_shipping" value="{{ $shipping->charge_per_unit_shipping }}" name="charge_per_unit_shipping[]" readonly></td>
+                                                <td><input type="number" class="form-control flat_rate_shipping" name="flat_rate_shipping[]" readonly></td>
+                                                <td><input type="number" class="form-control charge_per_unit_shipping" name="charge_per_unit_shipping[]" readonly></td>
                                                 <td>
                                                     <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                                    @if($key != 0)
-                                                        <i class="las la-trash delete_shipping_canfiguration" data-id="{{ $shipping->id }}" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
-                                                    @endif
                                                 </td>
-                                            </tr>
-                                        @endforeach
-                                    @else
-                                        <tr>
-                                            <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id=""></td>
-                                            <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id=""></td>
-                                            <td>
-                                                <select multiple class="form-control shipper" name="shipper[0][]">
-                                                    <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
-                                                    <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
-                                                </select>
-                                            </td>
-                                            <td><input type="number" class="form-control estimated_order" name="estimated_order[]"></td>
-                                            <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]"></td>
-                                            <td>
-                                                <select class="form-control paid" name="paid[]">
-                                                    <option value="" selected>{{translate('Choose shipper')}}</option>
-                                                    <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
-                                                    <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <label class="aiz-switch aiz-switch-success mb-0">
-                                                    <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping[]" @if($vat_user->vat_registered == 1) checked @endif>
-                                                    <span></span>
-                                                </label>
-                                            </td>
-                                            <td>
-                                                <select class="form-control shipping_charge" name="shipping_charge[]">
-                                                    <option value="" selected>{{translate('Choose shipping charge')}}</option>
-                                                    <option value="flat" @selected(old('shipping_charge') == 'flat')>{{translate('Flat-rate regardless of quantity')}}</option>
-                                                    <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
-                                                </select>
-                                            </td>
-                                            <td><input type="number" class="form-control flat_rate_shipping" name="flat_rate_shipping[]" readonly></td>
-                                            <td><input type="number" class="form-control charge_per_unit_shipping" name="charge_per_unit_shipping[]" readonly></td>
-                                            <td>
-                                                <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                            </td>
-                                        </tr> 
-                                    @endif
-                                    
-                                </tbody>
-                            </table>
+                                            </tr> 
+                                        @endif
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -656,7 +660,7 @@
                                         <span></span>
                                     </label>
                                 </div>
-                                <div id="bloc_pricing_configuration_variant">
+                                <div id="bloc_pricing_configuration_variant" class="bloc_pricing_configuration_variant">
 
                                 </div>
                             </div>
@@ -749,7 +753,9 @@
                                 </div>
                             </div>
                             <div id="bloc_attributes">
-
+                                @if (count($variants_attributes_ids_attributes) > 0)
+                                    @include('seller.product.products.attributes', ['attributes' => $attributes, 'variants_attributes_ids_attributes' => $variants_attributes_ids_attributes])
+                                @endif
                             </div>
                         </div>
                         <div class="row div-btn">
@@ -819,8 +825,8 @@
                                                         <tbody id="bloc_pricing_configuration">
                                                             @foreach ($children->getPricingConfiguration() as $pricing)
                                                                 <tr>
-                                                                    <td><input type="number" name="variant[from][{{ $children->id }}][]" class="form-control min-qty" id="" value="{{ $pricing->from }}"></td>
-                                                                    <td><input type="number" name="variant[to][{{ $children->id }}][]" class="form-control max-qty" id="" value="{{ $pricing->to }}"></td>
+                                                                    <td><input type="number" name="variant[from][{{ $children->id }}][]" class="form-control min-qty-variant" id="" value="{{ $pricing->from }}"></td>
+                                                                    <td><input type="number" name="variant[to][{{ $children->id }}][]" class="form-control max-qty-variant" id="" value="{{ $pricing->to }}"></td>
                                                                     <td><input type="number" name="variant[unit_price][{{ $children->id }}][]" class="form-control unit-price-variant" id="" value="{{ $pricing->unit_price }}"></td>
                                                                     @php
                                                                         $date_range = '';
@@ -834,16 +840,16 @@
                                                                             $date_range = $start_date_formatted.' to '.$end_date_formatted;
                                                                         }
                                                                     @endphp
-                                                                    <td><input type="text" class="form-control aiz-date-range discount-range" value="{{ $date_range }}" name="variant[date_range_pricing][{{ $children->id }}][]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
+                                                                    <td><input type="text" class="form-control aiz-date-range discount-range-variant" value="{{ $date_range }}" name="variant[date_range_pricing][{{ $children->id }}][]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                                                     <td>
-                                                                        <select class="form-control discount_type" name="variant[discount_type][{{ $children->id }}][]">
+                                                                        <select class="form-control discount_type-variant" name="variant[discount_type][{{ $children->id }}][]">
                                                                             <option value="" selected>{{translate('Choose type')}}</option>
                                                                             <option value="amount" @selected($pricing->discount_type == 'amount')>{{translate('Flat')}}</option>
                                                                             <option value="percent" @selected($pricing->discount_type == 'percent')>{{translate('Percent')}}</option>
                                                                         </select>
                                                                     </td>
-                                                                    <td><input type="number" class="form-control discount_amount" value="{{ $pricing->discount_amount }}" name="variant[discount_amount][{{ $children->id }}][]"></td>
-                                                                    <td><input type="number" class="form-control discount_percentage" value="{{ $pricing->discount_percentage }}" name="variant[discount_percentage][{{ $children->id }}][]"></td>
+                                                                    <td><input type="number" class="form-control discount_amount-variant" value="{{ $pricing->discount_amount }}" name="variant[discount_amount][{{ $children->id }}][]"></td>
+                                                                    <td><input type="number" class="form-control discount_percentage-variant" value="{{ $pricing->discount_percentage }}" name="variant[discount_percentage][{{ $children->id }}][]"></td>
                                                                     <td>
                                                                         <i class="las la-plus btn-add-pricing" data-id_variant="{{ $children->id }}" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                                                         <i class="las la-trash delete_pricing_canfiguration" data-pricing_id="{{ $pricing->id }}" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
@@ -1818,7 +1824,7 @@
                         $(element).removeAttr("name");
                     }
                 });
-                clonedElement.find('.unit-price').each(function(index, element) {
+                clonedElement.find('.unit-price-variant').each(function(index, element) {
                     $(element).removeClass("unit-price").addClass("unit-price-variant");
                     if(is_variant != undefined){
                         $(element).attr('name', 'variant_pricing-from' + is_variant + '[unit_price][]');
@@ -1990,18 +1996,18 @@
                             `;
             }else if(newvariant != undefined){
                 var html_to_add = `<tr>
-                                    <td><input type="number" name="variant_pricing-from'`+ newvariant +`[from][]" class="form-control min-qty" id=""></td>
-                                    <td><input type="number" name="variant_pricing-from'`+ newvariant +`[to][]" class="form-control max-qty" id=""></td>
-                                    <td><input type="number" name="variant_pricing-from'`+ newvariant +`[unit_price][]" class="form-control unit-price-variant" id=""></td>
-                                    <td><input type="text" class="form-control aiz-date-range discount-range" name="variant_pricing-from'`+ newvariant +`[discount_range][]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
+                                    <td><input type="number" name="variant_pricing-from`+ newvariant +`[from][]" class="form-control min-qty" id=""></td>
+                                    <td><input type="number" name="variant_pricing-from`+ newvariant +`[to][]" class="form-control max-qty" id=""></td>
+                                    <td><input type="number" name="variant_pricing-from`+ newvariant +`[unit_price][]" class="form-control unit-price-variant" id=""></td>
+                                    <td><input type="text" class="form-control aiz-date-range discount-range" name="variant_pricing-from`+ newvariant +`[discount_range][]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                     <td>
-                                        <select class="form-control discount_type" name="variant_pricing-from'`+ newvariant +`[discount_type][]">
+                                        <select class="form-control discount_type" name="variant_pricing-from`+ newvariant +`[discount_type][]">
                                             <option value="" selected>{{translate('Choose type')}}</option>
                                             <option value="amount" @selected(old('discount_type') == 'amount')>{{translate('Flat')}}</option>
                                             <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control discount_amount" name="variant_pricing-from'`+ newvariant +`[discount_amount][]"></td>
+                                    <td><input type="number" class="form-control discount_amount" name="variant_pricing-from`+ newvariant +`[discount_amount][]"></td>
                                     <td><input type="number" class="form-control discount_percentage" name="variant_pricing-from'`+ newvariant +`[discount_percentage][]"></td>
                                     <td>
                                         <i class="las la-plus btn-add-pricing" data-id_variant="` + newvariant + `" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
@@ -2009,7 +2015,31 @@
                                     </td>
                                 </tr>`;
             }else{
-                var html_to_add = `
+                // Check if the element or any of its parents has the specific Id
+                if ($(this).closest('#variant_informations').length) {
+                    var html_to_add = `
+                                <tr>
+                                    <td><input type="number" class="form-control min-qty-variant" id=""></td>
+                                    <td><input type="number" class="form-control max-qty-variant" id=""></td>
+                                    <td><input type="number" class="form-control unit-price-variant" id=""></td>
+                                    <td><input type="text" class="form-control aiz-date-range discount-range-variant" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
+                                    <td>
+                                        <select class="form-control discount_type-variant">
+                                            <option value="" selected>{{translate('Choose type')}}</option>
+                                            <option value="amount" @selected(old('discount_type') == 'amount')>{{translate('Flat')}}</option>
+                                            <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" class="form-control discount_amount-variant"></td>
+                                    <td><input type="number" class="form-control discount_percentage-variant"></td>
+                                    <td>
+                                        <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
+                                        <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                    </td>
+                                </tr>
+                            `;
+                }else{
+                    var html_to_add = `
                                 <tr>
                                     <td><input type="number" name="from[]" class="form-control min-qty" id=""></td>
                                     <td><input type="number" name="to[]" class="form-control max-qty" id=""></td>
@@ -2030,6 +2060,7 @@
                                     </td>
                                 </tr>
                             `;
+                } 
             }
 
                 // add another bloc in pricing configuration
@@ -2743,7 +2774,49 @@
             var id_variant = $(this).data('id_variant');
 
             if((id_variant == undefined) && (id_new_variant == undefined)){
-                var html_to_add = `
+                if ($(this).closest('#variant_informations').length) {
+                    var html_to_add = `
+                                <tr>
+                                    <td><input type="number"  class="form-control min-qty-shipping" id=""></td>
+                                    <td><input type="number"  class="form-control max-qty-shipping" id=""></td>
+                                    <td>
+                                        <select multiple class="form-control shipper" >
+                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                            <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" class="form-control estimated_order" ></td>
+                                    <td><input type="number" class="form-control estimated_shipping" ></td>
+                                    <td>
+                                        <select class="form-control paid" >
+                                            <option value="" selected>{{translate('Choose shipper')}}</option>
+                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                            <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <label class="aiz-switch aiz-switch-success mb-0">
+                                            <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping" @if($vat_user->vat_registered == 1) checked @endif>
+                                            <span></span>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <select class="form-control shipping_charge" >
+                                            <option value="" selected>{{translate('Choose shipping charge')}}</option>
+                                            <option value="flat" @selected(old('shipping_charge') == 'flat')>{{translate('Flat-rate regardless of quantity')}}</option>
+                                            <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" class="form-control flat_rate_shipping" readonly></td>
+                                    <td><input type="number" class="form-control charge_per_unit_shipping" readonly></td>
+                                    <td>
+                                        <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
+                                        <i class="las la-trash delete_shipping_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                    </td>
+                                </tr>
+                            `;
+                }else{
+                    var html_to_add = `
                                 <tr>
                                     <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id=""></td>
                                     <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id=""></td>
@@ -2783,6 +2856,7 @@
                                     </td>
                                 </tr>
                             `;
+                }
             }else if(id_variant != undefined){
                 var html_to_add = `
                                 <tr>
@@ -2820,7 +2894,7 @@
                                     <td><input type="number" class="form-control charge_per_unit_shipping" name="variant[charge_per_unit_shipping][` + id_variant + `][]" readonly></td>
                                     <td>
                                         <i class="las la-plus btn-add-shipping" data-id_variant="` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_shipping_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                        <i class="las la-trash delete_shipping_canfiguration" data-id_variant = "` id_variant `" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
                                     </td>
                                 </tr>
                             `;
@@ -3089,7 +3163,15 @@
 
                     $('#shipping_configuration_box #table_shipping_configuration').find('.shipper').each(function(key, element_original) {
                         if(index == key){
-                            $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
+                            var values = $(element_original).val(); // Array containing values to check
+        
+                            $(element).find('option').each(function() {
+                                var optionValue = $(this).val(); // Get value of the option
+                                
+                                if ($.inArray(optionValue, values) !== -1) {
+                                    $(this).prop('selected', true); // Select the option if value exists in array
+                                }
+                            });
                         }
                     })
                 });
@@ -3189,6 +3271,14 @@
                     clonedDiv.find('.charge_per_unit_shipping').attr('name', `variant_shipping-` + id + `[charge_per_unit_shipping][]`)
                 }else{
                     clonedDiv.find('.charge_per_unit_shipping').removeAttr('name');
+                }
+
+                if(id_variant != undefined){
+                    clonedDiv.find('.btn-add-shipping').attr('data-id_variant', id_variant);
+                    clonedDiv.find('.delete_shipping_canfiguration').attr('data-id_variant', id_variant);
+                }else if(id != undefined){
+                    clonedDiv.find('.btn-add-shipping').attr('data-id', id);
+                    clonedDiv.find('.delete_shipping_canfiguration').attr('data-variant-id', id);
                 }
 
                 $(this).parent().parent().parent().find('#bloc_default_shipping').append(clonedDiv);

@@ -32,7 +32,7 @@ class SellerStaffController extends Controller
      */
     public function index()
     {
-        $staffs = Staff::where('created_by',Auth::user()->owner_id)->orderBy('id','desc')->paginate(10);
+        $staffs = Staff::where('created_by',Auth::user()->owner_id)->orderBy('id','desc')->groupBy('user_id')->paginate(10);
         return view('seller.staff.staffs.index', compact('staffs'));
     }
 
@@ -43,7 +43,7 @@ class SellerStaffController extends Controller
      */
     public function create()
     {
-        $roles = Role::where('role_type',1)->whereIn('created_by',[1,Auth::user()->owner_id])->orderBy('id', 'desc')->get();
+        $roles = Role::where('role_type',1)->whereIn('created_by',[1,Auth::user()->owner_id])->where('package_id',null)->where('name','!=','seller')->get();
         return view('seller.staff.staffs.create', compact('roles'));
     }
 
@@ -75,12 +75,15 @@ class SellerStaffController extends Controller
                 $user->password = Hash::make($password);
 
                 if ($user->save()) {
+                    foreach ($request->role_id as $roleId) {
                     $staff = new Staff;
                     $staff->user_id = $user->id;
                     $staff->created_by = $vendor->owner_id;
-                    $staff->role_id = $request->role_id;
-                    $role = Role::findOrFail($request->role_id);
+                    $staff->role_id = $roleId;
+                    $role = Role::findOrFail($roleId);
                     $user->assignRole($role->name);
+                    $staff->save();
+                }
 
                     if ($staff->save()) {
                         Mail::to($user->email)->send(new SellerStaffMail($user, $role, $password, $vendor , $url));
@@ -151,7 +154,7 @@ class SellerStaffController extends Controller
     public function edit($id)
     {
         $staff = Staff::findOrFail(decrypt($id));
-        $roles = $roles = Role::where('role_type',1)->orderBy('id', 'desc')->get();
+        $roles = Role::where('role_type',1)->whereIn('created_by',[1,Auth::user()->owner_id])->where('package_id',null)->where('name','!=','seller')->get();
         return view('seller.staff.staffs.edit', compact('staff', 'roles'));
     }
 

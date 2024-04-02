@@ -179,6 +179,10 @@
         }
 
         .pac-container { z-index: 100000; }
+
+        .toast-success {
+            background-color: #16eb1a !important; /* Change this to your specific green color */
+        }
     </style>
 
 @if (get_setting('google_analytics') == 1)

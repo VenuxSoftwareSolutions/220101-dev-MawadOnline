@@ -2,8 +2,8 @@
 
 namespace Database\Seeds;
 
+use App\Models\Role;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
@@ -21,6 +21,7 @@ class RoleSeeder extends Seeder
             ['guard_name' => 'web',
             'role_type' => '1',
             'created_by' => '1',
+            'package_id' => '0',
         ]);
         $seller->givePermissionTo('seller_show_product');
         $seller->givePermissionTo('seller_create_product');

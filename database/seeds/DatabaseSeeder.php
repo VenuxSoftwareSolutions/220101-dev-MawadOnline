@@ -1,15 +1,16 @@
 <?php
 
+use Database\seeders\RoleSeeder;
 use Illuminate\Database\Seeder;
-use Database\seeds\RoleSeeder;
-use Database\seeds\CategorySeeder;
 use Database\seeds\EmirateSeeder;
+use Database\seeds\CategorySeeder;
 use Database\seeds\MigrationSeeder;
-use Database\seeds\PermissionSeeder;
+use Database\Seeders\PackagesSeeder;
 use Database\seeds\AreasTableSeeder;
+use Database\seeds\PermissionSeeder;
 use Database\seeds\TranslationsTableSeeder;
-use Database\seeds\CreateSellerAndShopSeeder;
 use Database\seeds\AddSellerRoleToUserSeeder;
+use Database\Seeders\CreateSellerAndShopSeeder;
 use Database\seeds\TranslationsRegisterVendorPart2;
 use Database\seeds\AddPermessionEnablingAttributeSeeder;
 

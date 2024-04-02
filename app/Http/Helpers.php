@@ -25,10 +25,12 @@ use App\Models\Wishlist;
 use App\Models\Attribute;
 use App\Models\ClubPoint;
 use App\Models\FlashDeal;
+use App\Models\UserCoupon;
 use App\Models\CouponUsage;
 use App\Models\DeliveryBoy;
 use App\Models\OrderDetail;
 use App\Models\PickupPoint;
+use App\Models\SellerLease;
 use App\Models\Translation;
 use App\Models\BlogCategory;
 use App\Models\Conversation;
@@ -42,19 +44,18 @@ use App\Models\BusinessSetting;
 use App\Models\CustomerPackage;
 use App\Models\CustomerProduct;
 use App\Utility\SendSMSUtility;
+use App\Models\FlashDealProduct;
 use App\Utility\CategoryUtility;
 use App\Models\AuctionProductBid;
 use App\Models\ManualPaymentMethod;
 use App\Models\SellerPackagePayment;
 use App\Utility\NotificationUtility;
+use Intervention\Image\Facades\Image;
 use App\Http\Resources\V2\CarrierCollection;
 use App\Http\Controllers\AffiliateController;
 use App\Http\Controllers\ClubPointController;
 use App\Http\Controllers\CommissionController;
 use AizPackages\ColorCodeConverter\Services\ColorCodeConverter;
-use App\Models\FlashDealProduct;
-use App\Models\UserCoupon;
-use Intervention\Image\Facades\Image;
 
 //sensSMS function for OTP
 if (!function_exists('sendSMS')) {
@@ -2472,5 +2473,40 @@ if (!function_exists('timezones')) {
             '(GMT+12:00) Wellington' => 'Pacific/Auckland',
             '(GMT+13:00) Nuku\'alofa' => 'Pacific/Tongatapu'
         );
+    }
+}
+
+if (!function_exists('seller_lease_creation')) {
+    function seller_lease_creation($user)
+    {
+        $seller=$user->seller;
+
+
+        //$lease = SellerLease::where('vendor_id',$user->id)->get();
+        if($seller->seller_package_id == null && $user->status == "Enabled"){
+            // Get the current date and time using Carbon
+            $currentDate = Carbon::now();
+
+            // Calculate the start date of the lease cycle
+            $startDate = Carbon::create($currentDate);
+
+            // Calculate the end date of the lease cycle
+            $endDate = $startDate->copy()->addMonth()->subDay();
+
+            $package=SellerPackage::find('4');
+            $seller->seller_package_id = 4;
+            $seller->save();
+
+            $seller_lease=new SellerLease;
+            $seller_lease->vendor_id=$user->id ;
+            $seller_lease->package_id=4 ;
+            $seller_lease->start_date = $startDate->format('Y-m-d') ;
+            $seller_lease->end_date = $endDate->format('Y-m-d') ;
+            $seller_lease->total = $package->amount;
+            $seller_lease->discount = $package->amount;
+            $seller_lease->save();
+
+        }
+        return true;
     }
 }

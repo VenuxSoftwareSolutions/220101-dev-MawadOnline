@@ -57,10 +57,12 @@
                          
                         </ul>
                     </div>
-                    <div class="col-12" style="width: 50%; padding: 0px 422px;">
-                        <small> <a href="{{ route('seller.products.create') }}">{{ translate('Create product manually.') }}</small></a> 
-                        <small>{{ translate('Bulk upload products') }}</small>
-                    </div>
+                    @if(Auth::user()->user_type == "seller")
+                        <div class="col-12" style="width: 50%; padding: 0px 422px;">
+                            <small> <a href="{{ route('seller.products.create') }}">{{ translate('Create product manually.') }}</small></a> 
+                            <small>{{ translate('Bulk upload products') }}</small>
+                        </div>
+                    @endif
                 </div>
             </div>
         </form>
@@ -77,7 +79,7 @@
             $("#memList").html("");
             $('#result').hide();
         }else{
-            $.get("{{ route('seller.catalog.search.action') }}",{name:search}, function(data){
+            $.get("{{ route('catalog.search.action') }}",{name:search}, function(data){
                 console.log('done');
                 $('#memList').empty().html(data);
                 $('#result').show();

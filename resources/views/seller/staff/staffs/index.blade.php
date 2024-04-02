@@ -37,16 +37,18 @@
             <tbody>
                 @foreach($staffs as $key => $staff)
                     @if($staff->user != null)
+
                         <tr>
                             <td>{{ ($key+1) + ($staffs->currentPage() - 1)*$staffs->perPage() }}</td>
                             <td>{{$staff->user->name}}</td>
                             <td>{{$staff->user->email}}</td>
                             <td>{{$staff->user->phone}}</td>
                             <td>
-								@if ($staff->role != null)
-									{{ $staff->role->getTranslation('name') }}
-								@endif
+									{{ $staff->user->Role() }}
 							</td>
+                            @php
+                                dd($staffs);
+                            @endphp
                             <td>
                                 <!-- Approval status column with toggle switch -->
                                 <label class="aiz-switch aiz-switch-success mb-0">

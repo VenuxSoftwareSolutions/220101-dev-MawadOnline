@@ -176,12 +176,15 @@ class ProductController extends Controller
     {
         $search = null;
         $products = Product::where(function ($query) {
-            $query->where('is_draft',0)
-                ->where('parent_id', 0)
-                ->where('is_parent', 0);
-        })->orWhere(function ($query) {
-            $query->where('is_draft',0)
-                ->where('is_parent', 1);
+            $query->where(function ($query) {
+                $query->where('is_draft',0)
+                    ->where('parent_id', 0)
+                    ->where('is_parent', 0);
+            })
+            ->orWhere(function ($query) {
+                $query->where('is_draft',0)
+                    ->where('is_parent', 1);
+            });
         })->orderBy('id','desc');
 
         if ($request->has('search')) {
@@ -1065,5 +1068,9 @@ class ProductController extends Controller
                 'status' => 'failed'
             ]);
         }
+    }
+
+    public function search(){
+        return view('backend.product.catalog.search');
     }
 }

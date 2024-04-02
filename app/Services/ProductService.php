@@ -130,12 +130,12 @@ class ProductService
         $published = 1;
         $is_draft = 0;
 
-        if(isset($collection['button'])){
+        if(isset($collection['submit_button'])){
             $published = 0;
-            if ($collection['button'] == 'draft') {
+            if ($collection['submit_button'] == 'draft') {
               $is_draft = 1;  
             }
-            unset($collection['button']);
+            unset($collection['submit_button']);
         }
 
         $file = base_path("/public/assets/myText.txt");
@@ -195,7 +195,7 @@ class ProductService
                 $current_data['to_shipping'] = $collection['to_shipping'][$key];
                 $current_data['shipper'] = $shippers;
                 $current_data['estimated_order'] = $collection['estimated_order'][$key];
-                $current_data['paid'] = $collection['estimated_shipping'][$key];
+                $current_data['estimated_shipping'] = $collection['estimated_shipping'][$key];
                 $current_data['paid'] = $collection['paid'][$key];
                 $current_data['shipping_charge'] = $collection['shipping_charge'][$key];
                 $current_data['flat_rate_shipping'] = $collection['flat_rate_shipping'][$key];
@@ -553,7 +553,6 @@ class ProductService
             
             foreach($pricing['from'] as $key => $from){
                 $current_data = [];
-
                 if($pricing['from'][$key] != null && $pricing['unit_price'][$key] != null){
                         if($pricing['date_range_pricing'][$key] != null){
                             if(($pricing['date_range_pricing'][$key]) && ($pricing['discount_type'][$key])){
@@ -604,15 +603,16 @@ class ProductService
                 $id = $product_parent->id;
                 $keyToPush = 'product_id';
                 $shipping = array_map(function($arr) use ($id, $keyToPush) {
-                    $arr[$keyToPush] = $id;
-                    return $arr;
-                }, $shipping);
+                                    $arr[$keyToPush] = $id;
+                                    return $arr;
+                                }, $shipping);
                 Shipping::insert($shipping);
             }
 
             unset($data['is_parent']);
             $data['parent_id'] = $product_parent->id;
-            if(isset($data['vat_sample'])){
+            if(isset($data['vat_sample']))
+            {
                 $data_sample = [
                     'vat_sample' => $data['vat_sample'],
                     'sample_description' => $data['sample_description'],
@@ -881,7 +881,7 @@ class ProductService
                                 $current_shipping['to_shipping'] = $variant['shipping_details']['to'][$key];
                                 $current_shipping['shipper'] = $shippers;
                                 $current_shipping['estimated_order'] = $variant['shipping_details']['estimated_order'][$key];
-                                $current_shipping['paid'] = $variant['shipping_details']['estimated_shipping'][$key];
+                                $current_shipping['estimated_shipping'] = $variant['shipping_details']['estimated_shipping'][$key];
                                 $current_shipping['paid'] = $variant['shipping_details']['paid'][$key];
                                 $current_shipping['shipping_charge'] = $variant['shipping_details']['shipping_charge'][$key];
                                 $current_shipping['flat_rate_shipping'] = $variant['shipping_details']['flat_rate_shipping'][$key];
@@ -921,6 +921,7 @@ class ProductService
 
                 if(count($general_attributes_data) > 0){
                     foreach ($general_attributes_data as $attr => $value) {
+                        if($value != null){
                             $attribute_product = new ProductAttributeValues();
                             $attribute_product->id_products = $product_parent->id;
                             $attribute_product->id_attribute = $attr;
@@ -942,6 +943,7 @@ class ProductService
                             }
 
                             $attribute_product->save();
+                        }
                     }
                 }
             }
@@ -1937,7 +1939,7 @@ class ProductService
                                         $current_shipping['to_shipping'] = $variant['shipping_details']['to_shipping'][$key];
                                         $current_shipping['shipper'] = $shippers;
                                         $current_shipping['estimated_order'] = $variant['shipping_details']['estimated_order'][$key];
-                                        $current_shipping['paid'] = $variant['shipping_details']['estimated_shipping'][$key];
+                                        $current_shipping['estimated_shipping'] = $variant['shipping_details']['estimated_shipping'][$key];
                                         $current_shipping['paid'] = $variant['shipping_details']['paid'][$key];
                                         $current_shipping['shipping_charge'] = $variant['shipping_details']['shipping_charge'][$key];
                                         $current_shipping['flat_rate_shipping'] = $variant['shipping_details']['flat_rate_shipping'][$key];
@@ -2118,7 +2120,7 @@ class ProductService
                             $uploaded_document->save();
                         }
                     }
-
+                    
                     //Pricing configuration of variant
                     if (array_key_exists('pricing', $variant)) {
                         $all_data_to_insert = [];
@@ -2229,15 +2231,15 @@ class ProductService
 
                     $shipping_details = [];
                     if(array_key_exists('shipping_details', $variant)){
-                        foreach($variant['shipping_details']['from_shipping'] as $key => $from){
-                            if(($from != null) && ($variant['shipping_details']['to_shipping'][$key]!= null)&& ($variant['shipping_details']['shipper'][$key]!= null)&& ($variant['shipping_details']['estimated_order'][$key]!= null)){
+                        foreach($variant['shipping_details']['from'] as $key => $from){
+                            if(($from != null) && ($variant['shipping_details']['to'][$key]!= null)&& ($variant['shipping_details']['shipper'][$key]!= null)&& ($variant['shipping_details']['estimated_order'][$key]!= null)){
                                 $current_shipping = [];
                                 $shippers = implode(',', $variant['shipping_details']['shipper'][$key]);
                                 $current_shipping['from_shipping'] = $from;
-                                $current_shipping['to_shipping'] = $variant['shipping_details']['to_shipping'][$key];
+                                $current_shipping['to_shipping'] = $variant['shipping_details']['to'][$key];
                                 $current_shipping['shipper'] = $shippers;
                                 $current_shipping['estimated_order'] = $variant['shipping_details']['estimated_order'][$key];
-                                $current_shipping['paid'] = $variant['shipping_details']['estimated_shipping'][$key];
+                                $current_shipping['estimated_shipping'] = $variant['shipping_details']['estimated_shipping'][$key];
                                 $current_shipping['paid'] = $variant['shipping_details']['paid'][$key];
                                 $current_shipping['shipping_charge'] = $variant['shipping_details']['shipping_charge'][$key];
                                 $current_shipping['flat_rate_shipping'] = $variant['shipping_details']['flat_rate_shipping'][$key];
@@ -2301,7 +2303,8 @@ class ProductService
         Product::destroy($id);
     }
 
-    public function draft(array $data, Product $product_draft){
+    public function draft(array $data, Product $product_draft)
+    {
        
         $collection = collect($data);
         
@@ -2797,7 +2800,6 @@ class ProductService
 
         // dump($variants_data);
         // dump($collection);
-        // dd($variants_new_data);
 
         $shipping_sample_parent = [];
         $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
@@ -3264,7 +3266,7 @@ class ProductService
                                     $current_shipping['to_shipping'] = $variant['shipping_details']['to_shipping'][$key];
                                     $current_shipping['shipper'] = $variant['shipping_details']['shipper'][$key];
                                     $current_shipping['estimated_order'] = $variant['shipping_details']['estimated_order'][$key];
-                                    $current_shipping['paid'] = $variant['shipping_details']['estimated_shipping'][$key];
+                                    $current_shipping['estimated_shipping'] = $variant['shipping_details']['estimated_shipping'][$key];
                                     $current_shipping['paid'] = $variant['shipping_details']['paid'][$key];
                                     $current_shipping['shipping_charge'] = $variant['shipping_details']['shipping_charge'][$key];
                                     $current_shipping['flat_rate_shipping'] = $variant['shipping_details']['flat_rate_shipping'][$key];
@@ -3540,15 +3542,15 @@ class ProductService
 
                     $shipping_details = [];
                     if(array_key_exists('shipping_details', $variant)){
-                        foreach($variant['shipping_details']['from_shipping'] as $key => $from){
-                            if(($from != null) && ($variant['shipping_details']['to_shipping'][$key]!= null)&& ($variant['shipping_details']['shipper'][$key]!= null)&& ($variant['shipping_details']['estimated_order'][$key]!= null)){
+                        foreach($variant['shipping_details']['from'] as $key => $from){
+                            if(($from != null) && ($variant['shipping_details']['to'][$key]!= null)&& ($variant['shipping_details']['shipper'][$key]!= null)&& ($variant['shipping_details']['estimated_order'][$key]!= null)){
                                 $current_shipping = [];
                                 $shippers = implode(',', $variant['shipping_details']['shipper'][$key]);
                                 $current_shipping['from_shipping'] = $from;
-                                $current_shipping['to_shipping'] = $variant['shipping_details']['to_shipping'][$key];
+                                $current_shipping['to_shipping'] = $variant['shipping_details']['to'][$key];
                                 $current_shipping['shipper'] = $shippers;
                                 $current_shipping['estimated_order'] = $variant['shipping_details']['estimated_order'][$key];
-                                $current_shipping['paid'] = $variant['shipping_details']['estimated_shipping'][$key];
+                                $current_shipping['estimated_shipping'] = $variant['shipping_details']['estimated_shipping'][$key];
                                 $current_shipping['paid'] = $variant['shipping_details']['paid'][$key];
                                 $current_shipping['shipping_charge'] = $variant['shipping_details']['shipping_charge'][$key];
                                 $current_shipping['flat_rate_shipping'] = $variant['shipping_details']['flat_rate_shipping'][$key];
