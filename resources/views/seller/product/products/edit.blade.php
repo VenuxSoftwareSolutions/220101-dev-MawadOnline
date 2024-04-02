@@ -754,7 +754,9 @@
                                 </div>
                             </div>
                             <div id="bloc_attributes">
-
+                                @if (count($variants_attributes_ids_attributes) > 0)
+                                    @include('seller.product.products.attributes', ['attributes' => $attributes, 'variants_attributes_ids_attributes' => $variants_attributes_ids_attributes])
+                                @endif
                             </div>
                         </div>
                         <div class="row div-btn">

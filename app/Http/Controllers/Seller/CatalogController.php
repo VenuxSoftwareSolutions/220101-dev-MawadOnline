@@ -10,9 +10,11 @@ use App\Models\ProductAttributeValues;
 use Illuminate\Support\Facades\File;
 use App\Models\Unity;
 use App\Models\ProductCatalog;
+use App\Models\ProductCategory;
 use App\Models\ProductAttributeValueCatalog;
 use App\Models\UploadProductCatalog;
 use App\Models\Brand;
+use Illuminate\Support\Facades\DB;
 use Auth;
 use Illuminate\Http\Request;
 
@@ -33,6 +35,8 @@ class CatalogController extends Controller
                                             $query->where('name', 'like', "%{$searchTerm}%");
                                         });
                                 })->take(3)->get();
+
+            return view('seller.product.catalog.result')->with(['products' =>  $products, 'catalogs' => $catalogs, 'search' => $request->name]);
         }elseif(Auth::user()->user_type == "admin"){    
             $products = Product::where(function ($query) use ($searchTerm) {
                                     $query->where('name', 'like', "%{$searchTerm}%")
@@ -64,9 +68,11 @@ class CatalogController extends Controller
             }
 
             //return response()->json($products, 200);
+
+            return view('backend.product.catalog.result')->with(['products' =>  $products, 'catalogs' => $catalogs, 'search' => $request->name]);
         }
 
-        return view('seller.product.catalog.result')->with(['products' =>  $products, 'catalogs' => $catalogs, 'search' => $request->name]);
+        
     }
 
     public function see_all($search){
@@ -99,21 +105,12 @@ class CatalogController extends Controller
                                             });
                                     })->get();
 
-                if(count($products) == 0){
-                    $catalogs = ProductCatalog::where(function ($query) use ($search) {
-                        $query->where('name', 'like', "%{$search}%")
-                            ->orWhereHas('brand', function ($query) use ($search) {
-                                $query->where('name', 'like', "%{$search}%");
-                            });
-                    })->get();
-                }else{
-                    $catalogs = ProductCatalog::where(function ($query) use ($search) {
-                        $query->where('name', 'like', "%{$search}%")
-                            ->orWhereHas('brand', function ($query) use ($search) {
-                                $query->where('name', 'like', "%{$search}%");
-                            });
-                    })->get();
-                }
+                $catalogs = ProductCatalog::where(function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%")
+                        ->orWhereHas('brand', function ($query) use ($search) {
+                            $query->where('name', 'like', "%{$search}%");
+                        });
+                })->get();
 
                 return view('backend.product.catalog.see_all',[
                     'products' => $products, 
@@ -353,6 +350,11 @@ class CatalogController extends Controller
         $data['user_id'] = Auth::user()->id;
         $newProduct = Product::insertGetId($data);
 
+        DB::table('product_categories')->insert([
+            'product_id' => $newProduct,
+            'category_id' => $existingProduct->category_id
+        ]);
+
         $path = public_path('/upload_products_catalog/Product-'.$request->id);
         $destinationFolder = public_path('/upload_products/Product-'.$newProduct);
         if (!File::isDirectory($destinationFolder)) {
@@ -417,6 +419,11 @@ class CatalogController extends Controller
                 unset($data['product_id']);
                 $data['added_from_catalog'] = 1;
                 $newProductChildren = Product::insertGetId($data);
+
+                DB::table('product_categories')->insert([
+                    'product_id' => $newProductChildren,
+                    'category_id' => $children->category_id
+                ]);
 
                 $path = public_path('/upload_products_catalog/Product-'.$children->id);
                 $destinationFolder = public_path('/upload_products/Product-'.$newProductChildren);

@@ -53,7 +53,7 @@
                                 <div class="card" style="width: 18rem;">
                                     <img class="card-img-top" src="{{ asset('/public'.$product->getFirstImage()) }}">
                                     <div class="card-body">
-                                    <h5 class="card-title">{{ $product->name }}</h5>
+                                    <h5 class="card-title">{{ $product->sku }}</h5>
                                     <p class="card-text">Number of variants: {{ $product->checkIfParentToGetNumVariants() }}.</p>
                                     <a href="{{ route('catalog.preview_product', ['id' => $product->id, 'is_catalog' => 2]) }}" class="btn btn-primary" style="width: 100%;">{{ translate('View product') }}</a>
                                     </div>
@@ -67,7 +67,7 @@
                                 <div class="card" style="width: 18rem;">
                                     <img class="card-img-top" src="{{ asset('/public'.$catalog->getFirstImage()) }}">
                                     <div class="card-body">
-                                    <h5 class="card-title">{{ $catalog->name }}</h5>
+                                    <h5 class="card-title">{{ $catalog->sku }}</h5>
                                     <p class="card-text">Number of variants: {{ $catalog->checkIfParentToGetNumVariants() }}.</p>
                                     <a href="{{ route('catalog.preview_product', ['id' => $catalog->id, 'is_catalog' => 1]) }}" class="btn btn-primary" style="width: 100%;">{{ translate('View product') }}</a>
                                     </div>

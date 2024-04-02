@@ -1,4 +1,5 @@
 @foreach ($attributes as $attribute)
+
     @if (in_array($attribute->id, $variants_attributes_ids_attributes))
     <div class="row attribute-variant-{{ $attribute->id }}">
         <div class="col-md-4 mb-3">
@@ -52,7 +53,7 @@
                                 @if($variants_attributes[$attribute->id]->id_colors == $color->id) 
                                     selected 
                                 @endif 
-                                data-content="<span><span class='size-15px d-inline-block mr-2 rounded border' style='background:{{ $color->code }}'></span><span>{{ $color->name }}</span></span>"></option>'
+                                data-content="<span><span class='size-15px d-inline-block mr-2 rounded border' style='background:{{ $color->code }}'></span><span>{{ $color->name }}</span></span>"></option>
                         @endforeach
                     </select>
                 </div>
