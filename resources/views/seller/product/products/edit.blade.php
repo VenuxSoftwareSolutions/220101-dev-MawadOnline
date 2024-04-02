@@ -3274,13 +3274,8 @@
                     if(id_variant != undefined){
                         $(element).attr('name', `variant[shipper][` + id_variant + `][` + index + `][]`)
                     }else if(id != undefined){
-<<<<<<< HEAD
-
-                        $(element).attr('name', `variant_shipping-` + id + `[shipper][]`)
-=======
                         
                         $(element).attr('name', `variant_shipping-` + id + `[shipper][` + index + `][]`)
->>>>>>> 6f895f2be899a09e3e4161a1e7f7d6d0a159203d
                     }else{
                         $(element).removeAttr('name');
                     }
