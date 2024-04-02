@@ -27,7 +27,7 @@
 
         <div class="col-md-4 mx-auto mb-3" >
             @can('seller_create_product')
-            <a href="{{ route('seller.products.create')}}">
+            <a href="{{ route('catalog.search_page')}}">
                 <div class="p-3 rounded mb-3 c-pointer text-center bg-white shadow-sm hov-shadow-lg has-transition">
                     <span class="size-60px rounded-circle mx-auto bg-secondary d-flex align-items-center justify-content-center mb-3">
                         <i class="las la-plus la-3x text-white"></i>
@@ -100,7 +100,7 @@
                             <th>{{ translate('Base Price')}}</th>
                             <th data-breakpoints="md">{{ translate('Status')}}</th>
                             <th data-breakpoints="md">{{ translate('Draft')}}</th>
-                            <th data-breakpoints="md">{{ translate('Featured')}}</th>
+                            <th data-breakpoints="md">{{ translate('Published')}}</th>
                             <th data-breakpoints="md" class="text-right">{{ translate('Options')}}</th>
                         </tr>
                     </thead>
@@ -135,7 +135,7 @@
                                         echo $qty;
                                     @endphp
                                 </td>
-                                <td>{{ $product->unit_price }}</td>
+                                <td>{{ count($product->getChildrenProducts()) > 0 ? '--' : $product->getPriceRange() }}</td>
                                 <td>
                                     @if ($product->is_draft == 0)
                                         @if($product->is_parent == 0)
@@ -168,21 +168,26 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <label class="aiz-switch aiz-switch-success mb-0">
-                                        <input onchange="update_featured(this)" value="{{ $product->id }}" type="checkbox" <?php if($product->seller_featured == 1) echo "checked";?> >
-                                        <span class="slider round"></span>
-                                    </label>
+                                    @if(count($product->getChildrenProducts()) == 0)
+                                        <label class="aiz-switch aiz-switch-success mb-0">
+                                            <input value="{{ $product->id }}" class="publsihed_product" type="checkbox" <?php if($product->published == 1) echo "checked";?> >
+                                            <span class=""></span>
+                                        </label>
+                                    @endif
                                 </td>
                                 <td class="text-right">
-                                    <a class="btn btn-soft-info btn-icon btn-circle btn-sm" href="{{route('seller.products.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')])}}" title="{{ translate('Edit') }}">
-                                        <i class="las la-edit"></i>
-                                    </a>
-                                    {{-- <a href="{{route('seller.products.duplicate', $product->id)}}" class="btn btn-soft-success btn-icon btn-circle btn-sm"  title="{{ translate('Duplicate') }}">
-                                        <i class="las la-copy"></i>
-                                    </a> --}}
-                                    <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('seller.products.destroy', $product->id)}}" title="{{ translate('Delete') }}">
-                                        <i class="las la-trash"></i>
-                                    </a>
+                                    @if($product->approved != 4)
+                                        <a class="btn btn-soft-info btn-icon btn-circle btn-sm" href="{{route('seller.products.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')])}}" title="{{ translate('Edit') }}">
+                                            <i class="las la-edit"></i>
+                                        </a>
+                                        {{-- <a href="{{route('seller.products.duplicate', $product->id)}}" class="btn btn-soft-success btn-icon btn-circle btn-sm"  title="{{ translate('Duplicate') }}">
+                                            <i class="las la-copy"></i>
+                                        </a> --}}
+                                    
+                                        <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('seller.products.destroy', $product->id)}}" title="{{ translate('Delete') }}">
+                                            <i class="las la-trash"></i>
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                             @if((count($product->getChildrenProducts()) > 0) && ($product->is_draft == 0))
@@ -210,7 +215,7 @@
                                                 echo $qty;
                                             @endphp
                                         </td>
-                                        <td>{{ $children->unit_price }}</td>
+                                        <td>{{ $children->getPriceRange() }}</td>
                                         <td>
                                             @if ($children->is_draft == 0)
                                                 @switch($children->approved)
@@ -242,8 +247,8 @@
                                         </td>
                                         <td>
                                             <label class="aiz-switch aiz-switch-success mb-0">
-                                                <input onchange="update_featured(this)" value="{{ $children->id }}" type="checkbox" <?php if($children->seller_featured == 1) echo "checked";?> >
-                                                <span class="slider round"></span>
+                                                <input value="{{ $children->id }}" class="publsihed_product" type="checkbox" <?php if($children->published == 1) echo "checked";?> >
+                                                <span class=""></span>
                                             </label>
                                         </td>
                                         <td class="text-right">
@@ -253,9 +258,11 @@
                                             <a href="{{route('seller.products.duplicate', $children->id)}}" class="btn btn-soft-success btn-icon btn-circle btn-sm"  title="{{ translate('Duplicate') }}">
                                                 <i class="las la-copy"></i>
                                             </a> --}}
-                                            <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('seller.products.destroy', $children->id)}}" title="{{ translate('Delete') }}">
-                                                <i class="las la-trash"></i>
-                                            </a>
+                                            @if($product->approved != 4)
+                                                <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('seller.products.destroy', $children->id)}}" title="{{ translate('Delete') }}">
+                                                    <i class="las la-trash"></i>
+                                                </a>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
@@ -294,6 +301,66 @@
                 });
             }
 
+        });
+
+        $('body').on('change', '.publsihed_product', function(){
+            var current = $(this);
+            var id = $(this).val();
+            if($(this).is(':not(:checked)')){
+                var published = 0;
+                var message = "Do you want to unpublish ?";
+                var_message_button = "Unpublish";
+                var message_success = "The product unpublished successfully";
+                var message_icon = "Unpublished"
+            }else{
+                var published = 1;
+                var message = "Do you want to publish ?";
+                var_message_button = "Publish";
+                var message_success = "The product published successfully";
+                var message_icon = "Published"
+            }
+            
+                swal({
+                    title: message,
+                    type: "warning",
+                    confirmButtonText: var_message_button,
+                    showCancelButton: true
+                })
+                .then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            url: "{{ route('seller.products.published') }}",
+                            type: "GET",
+                            data: {
+                                status: published,
+                                id: id
+                            },
+                            cache: false,
+                            dataType: 'JSON',
+                            success: function(dataResult) {
+                               if(dataResult.status == 'success'){
+                                swal(
+                                        message_icon,
+                                        message_success,
+                                        'success'
+                                    )
+                                }
+                            }
+                        })
+                    } else if (result.dismiss === 'cancel') {
+                        if(published == 0){
+                            current.prop('checked', true)
+                        }else{
+                            current.prop('checked', false)
+                        }
+                            
+                        swal(
+                            'Cancelled',
+                            'Published/Unpublished successfully reverted.',
+                            'warning'
+                        )
+                    }
+                })
         });
 
         function update_featured(el){

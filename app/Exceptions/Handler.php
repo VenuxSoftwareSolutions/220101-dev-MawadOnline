@@ -36,21 +36,22 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->reportable(function (Throwable $e) {
-            if (app()->bound('sentry')) {
-                app('sentry')->captureException($e);
-            }
+            //
         });
     }
 
     public function render($request, Throwable $e)
     {
-        if ($this->isHttpException($e)) {
+        if($this->isHttpException($e))
+        {
             if ($request->is('customer-products/admin')) {
                 return NgeniusUtility::initPayment();
             }
-
+            
             return parent::render($request, $e);
-        } else {
+        }
+        else
+        {
             return parent::render($request, $e);
         }
     }
