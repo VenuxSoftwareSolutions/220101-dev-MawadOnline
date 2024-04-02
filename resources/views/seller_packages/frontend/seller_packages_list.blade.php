@@ -181,7 +181,7 @@
                                             @endif
                                             @if (get_setting('khalti_payment') == 1)
                                                 <option value="khalti">{{ translate('Khalti') }}</option>
-                                            @endif                                            
+                                            @endif
                                         @endif
                                     </select>
                                 </div>

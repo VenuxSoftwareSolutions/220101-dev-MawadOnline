@@ -379,6 +379,7 @@ Route::resource('shops', ShopController::class)->middleware('handle-demo-login')
 //     return view('frontend.pending-approval');
 // })->name('pending_approval');
 Route::get('/status/{status}', [ShopController::class,"showStatus"])->name('seller.status');
+Route::get('/shop-packages', [ShopController::class,"seller_packages"])->name('shops.packages');
 
 
 Route::post('verify-code', [ShopController::class,"verifyCode"])->name('verify.code')->middleware('throttle:5,1');

@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\SellerLoginRequestValidation;
 use App\Models\Cart;
-use App\Rules\ReCaptchaV3;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Session;
@@ -14,8 +12,10 @@ class SellerLoginController extends Controller
 {
     use AuthenticatesUsers;
 
-    public function login(SellerLoginRequestValidation $request)
+    public function login(Request $request)
     {
+        $this->validateLogin($request);
+
         if (session('temp_user_id') != null) {
             Cart::where('temp_user_id', session('temp_user_id'))
                 ->update([

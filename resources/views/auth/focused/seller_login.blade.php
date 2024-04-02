@@ -11,7 +11,7 @@
                         <img src="{{ uploaded_asset(get_setting('seller_login_page_image')) }}" alt="" class="img-fit h-100">
                     </div>
                 </div>
-
+                
                 <!-- Right Side Image -->
                 <div class="col-xxl-3 col-lg-4">
                     <div class="d-flex align-items-center right-content">
@@ -30,7 +30,7 @@
                                 <div class="">
                                     <form class="form-default" role="form" action="{{ route('login') }}" method="POST">
                                         @csrf
-
+                                        
                                         <div class="form-group">
                                             <label for="email" class="fs-12 fw-700 text-soft-dark">{{  translate('Email') }}</label>
                                             <input type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }} rounded-0" value="{{ old('email') }}" placeholder="{{  translate('johndoe@example.com') }}" name="email" id="email" autocomplete="off">
@@ -40,7 +40,7 @@
                                                 </span>
                                             @endif
                                         </div>
-
+                                            
                                         <!-- password -->
                                         <div class="form-group">
                                             <label for="password" class="fs-12 fw-700 text-soft-dark">{{  translate('Password') }}</label>
@@ -108,7 +108,6 @@
 @endsection
 
 @section('script')
-
     <script type="text/javascript">
         function autoFillSeller(){
             $('#email').val('seller@example.com');

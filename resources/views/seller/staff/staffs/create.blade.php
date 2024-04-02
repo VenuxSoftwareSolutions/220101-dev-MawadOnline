@@ -41,9 +41,9 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-sm-3 col-from-label" for="name">{{ translate('Role') }}</label>
+                            <label class="col-sm-3 col-form-label" for="name">{{ translate('Role') }}</label>
                             <div class="col-sm-9">
-                                <select name="role_id" required class="form-control aiz-selectpicker">
+                                <select name="role_id[]" multiple required class="form-control aiz-selectpicker">
                                     @foreach ($roles as $role)
                                         <option value="{{ $role->id }}">{{ $role->name }}</option>
                                     @endforeach
