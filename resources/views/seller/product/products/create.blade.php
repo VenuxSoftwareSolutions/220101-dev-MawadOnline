@@ -1551,6 +1551,7 @@
             $(this).parent().parent().parent().find('.aiz-date-range:last').daterangepicker({
                 timePicker: true,
                 autoUpdateInput: false,
+                minDate: "2024-04-04T00:00:00+05:30",
                 locale: {
                     format: 'DD-MM-Y HH:mm:ss',
                     separator : " to ",
