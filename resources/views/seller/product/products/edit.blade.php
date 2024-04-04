@@ -3,6 +3,24 @@
     .table th{
         font-size: 12px !important;
     }
+    .button-container {
+        position: fixed;
+        top: 12%;
+        right: 2%;
+        z-index: 5;
+    }
+    .preview-button {
+        background-color: #cb774b !important; /* Green background */
+        border: none;
+        color: white;
+        padding: 15px 25px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+
+        cursor: pointer;
+        border-radius: 8px;
+    }
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 
@@ -25,7 +43,9 @@
             </ul>
         </div>
     @endif
-    <button type="button" onclick="submitForm()">Preview Product</button>
+    <div class="button-container">
+        <button type="button" class="preview-button" onclick="submitForm()">Preview Product</button>
+    </div>
 
     <form class="" action="{{route('seller.products.update', $product->id)}}" method="POST" enctype="multipart/form-data" id="choice_form">
         <div class="row gutters-5">
@@ -455,9 +475,9 @@
                                                 <td>
                                                     <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                                 </td>
-                                            </tr> 
+                                            </tr>
                                         @endif
-                                        
+
                                     </tbody>
                                 </table>
                             </div>
@@ -872,7 +892,7 @@
                                                     <span></span>
                                                 </label>
                                             </div>
-            
+
                                             <div class="col-12 mt-3" id="bloc_default_shipping">
                                                 @if(count($children->getShipping()) > 0)
                                                 <table class="table" id="table_shipping_configuration" class="bloc_shipping_configuration_variant">
@@ -992,7 +1012,7 @@
                                                     </div>
                                                 @endif
                                             </div>
-                                        </div>  
+                                        </div>
                                         <div class="row mb-3">
                                             <div class="col-md-4">
                                                 <input type="text" class="form-control" value="{{translate('Use default sample shipping')}}" disabled>
@@ -1511,7 +1531,7 @@
                                 var name = 'attribute_generale-'+ id_attribute
                                 $(child_element).attr('name', name);
                             }
-                            
+
                         });
 
                         $(element).find('.attributes-units').each(function(index, child_element_units) {
@@ -1521,7 +1541,7 @@
                                 $(child_element_units).attr('name', name);
                             }
                         });
-                        
+
                     });
 
                     AIZ.plugins.bootstrapSelect('refresh');
@@ -1596,6 +1616,16 @@
                         separator : " to ",
                     },
                 });
+
+                var format = 'DD-MM-Y HH:mm:ss';
+                var separator = " to ";
+                $(element).on("apply.daterangepicker", function (ev, picker) {
+                    $(this).val(
+                        picker.startDate.format(format) +
+                            separator +
+                            picker.endDate.format(format)
+                    );
+                });
             });
             clonedDiv.find('.variant-shipping').attr('name', 'variant-shipping-' + numbers_variant);
             clonedDiv.find('.variant-shipping').attr('data-id', numbers_variant);
@@ -1650,7 +1680,7 @@
 
             clonedDiv.find('.max-qty-shipping').each(function(index, element) {
                 $(element).attr('name', 'variant_shipping-' + numbers_variant + '[to][]');
-            }); 
+            });
 
             var id_shipper = 0;
             clonedDiv.find('.shipper').each(function(index, element) {
@@ -1659,7 +1689,7 @@
                     if(index == key){
                         $(element_original).val().forEach(value => {
                             $(element).find('option[value="' + value + '"]').prop('selected', true);
-                        });  
+                        });
                     }
                 })
 
@@ -1668,11 +1698,11 @@
 
             clonedDiv.find('.estimated_order').each(function(index, element) {
                 $(element).attr('name', 'variant_shipping-' + numbers_variant + '[estimated_order][]');
-            }); 
+            });
 
             clonedDiv.find('.estimated_shipping').each(function(index, element) {
                 $(element).attr('name', 'variant_shipping-' + numbers_variant + '[estimated_shipping][]');
-            }); 
+            });
 
             clonedDiv.find('.paid').each(function(index, element) {
                 $(element).attr('name', 'variant_shipping-' + numbers_variant + '[paid][]');
@@ -1838,8 +1868,18 @@
                             separator : " to ",
                         },
                     });
+
+                    var format = 'DD-MM-Y HH:mm:ss';
+                    var separator = " to ";
+                    $(element).on("apply.daterangepicker", function (ev, picker) {
+                        $(this).val(
+                            picker.startDate.format(format) +
+                                separator +
+                                picker.endDate.format(format)
+                        );
+                    });
                     $(element).removeClass("discount-range").addClass("discount-range-variant");
-                    
+
                     if(is_variant != undefined){
                         $(element).attr('name', 'variant_pricing-from' + is_variant + '[discount_range][]');
                     }else if(old_variant != undefined){
@@ -1882,8 +1922,8 @@
                     clonedElement.find('.delete_pricing_canfiguration').attr('data-pricing_id', old_variant);
                 }
 
-                
-                
+
+
                 $(this).parent().parent().parent().find('.bloc_pricing_configuration_variant').show();
                 $(this).parent().parent().parent().find('.bloc_pricing_configuration_variant').append(clonedElement);
             }else{
@@ -2063,6 +2103,16 @@
                     },
                 });
 
+                var format = 'DD-MM-Y HH:mm:ss';
+                var separator = " to ";
+                $('#bloc_pricing_configuration_variant .aiz-date-range-variant:last').on("apply.daterangepicker", function (ev, picker) {
+                    $(this).val(
+                        picker.startDate.format(format) +
+                            separator +
+                            picker.endDate.format(format)
+                    );
+                });
+
                 //refresh select discount type
                 AIZ.plugins.bootstrapSelect('refresh');
 
@@ -2070,7 +2120,7 @@
         $('body').on('click', '.btn-add-pricing', function() {
             var id_variant = $(this).data('id_variant');
             var newvariant = $(this).data('newvariant-id');
-            
+
             if(id_variant != undefined){
                 var html_to_add = `
                                 <tr>
@@ -2159,7 +2209,7 @@
                                     </td>
                                 </tr>
                             `;
-                } 
+                }
             }
 
                 // add another bloc in pricing configuration
@@ -2173,6 +2223,16 @@
                         format: 'DD-MM-Y HH:mm:ss',
                         separator : " to "
                     },
+                });
+
+                var format = 'DD-MM-Y HH:mm:ss';
+                var separator = " to ";
+                $(this).parent().parent().parent().find('.aiz-date-range-variant:last').on("apply.daterangepicker", function (ev, picker) {
+                    $(this).val(
+                        picker.startDate.format(format) +
+                            separator +
+                            picker.endDate.format(format)
+                    );
                 });
 
                 //refresh select discount type
@@ -2861,8 +2921,8 @@
                     html = '<span style="color: green"> Chargeable Weight = ' + Number(chargeable_weight.toFixed(2)) + ", then accepted by our shipper </span>"
                 }
 
-                
-                
+
+
                 $('#result_calculate_third_party').html(html);
             }
         });
@@ -3039,7 +3099,7 @@
                                 </tr>
                             `;
             }
-            
+
             // add another row in shipping configuration
             $(this).parent().parent().parent().append(html_to_add);
         });
@@ -3051,16 +3111,16 @@
             var current = $(this);
             var new_variant_id = $(this).data('variant-id');
             var old_variant_id = $(this).data('id_variant');
-            
+
             if((id_shipping == undefined) && (new_variant_id == undefined) && (old_variant_id == undefined)){
                 $(this).parent().parent().remove();
                 var count = 0;
                 current.find('.shipper').each(function(index) {
-                    $(this).attr('name', 'shipper[' + count + '][]') 
+                    $(this).attr('name', 'shipper[' + count + '][]')
                     count++
                 });
             }else{
-                
+
                 swal({
                     title: 'Are you sure you want to delete this shipping ?',
                     type: "warning",
@@ -3088,14 +3148,14 @@
                                 var count =0;
                                 current_parent.find('.shipper').each(function(index) {
                                     if((new_variant_id == undefined) && (old_variant_id == undefined)){
-                                        $(this).attr('name', 'shipper[' + count + '][]') 
+                                        $(this).attr('name', 'shipper[' + count + '][]')
                                     }else if(new_variant_id != undefined){
                                         $(this).attr('name', 'variant_shipping-' + new_variant_id + '[shipper]['+ count +'][]')
-                                        
+
                                     }else if(old_variant_id != undefined){
                                         $(this).attr('name', 'variant[shipper][' + old_variant_id + ']['+ count +'][]')
                                     }
-                                    
+
                                     count++
                                 });
                                }else{
@@ -3116,7 +3176,7 @@
                     }
                 })
             }
-           
+
         })
 
         $('body').on('change', '.shipper', function(){
@@ -3124,7 +3184,7 @@
                 count_shippers = parseInt(count_shippers);
             var selected = $(this).val();
 
-            
+
 
             if(selected.indexOf('third_party') !== -1){
                 if(count_shippers == 0){
@@ -3254,7 +3314,7 @@
                     if(id_variant != undefined){
                         $(element).attr('name', `variant[shipper][` + id_variant + `][` + index + `][]`)
                     }else if(id != undefined){
-                        
+
                         $(element).attr('name', `variant_shipping-` + id + `[shipper][` + index + `][]`)
                     }else{
                         $(element).removeAttr('name');
@@ -3263,10 +3323,10 @@
                     $('#shipping_configuration_box #table_shipping_configuration').find('.shipper').each(function(key, element_original) {
                         if(index == key){
                             var values = $(element_original).val(); // Array containing values to check
-        
+
                             $(element).find('option').each(function() {
                                 var optionValue = $(this).val(); // Get value of the option
-                                
+
                                 if ($.inArray(optionValue, values) !== -1) {
                                     $(this).prop('selected', true); // Select the option if value exists in array
                                 }
@@ -3279,12 +3339,12 @@
                     if(id_variant != undefined){
                         $(element).attr('name', `variant[paid][` + id_variant + `][]`)
                     }else if(id != undefined){
-                        
+
                         $(element).attr('name', `variant_shipping-` + id + `[paid][]`)
                     }else{
                         $(element).removeAttr('name');
                     }
-                    
+
                     $('#shipping_configuration_box #table_shipping_configuration').find('.paid').each(function(key, element_original) {
                         if(index == key){
                             $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
@@ -3296,7 +3356,7 @@
                     if(id_variant != undefined){
                         $(element).attr('name', `variant[shipping_charge][` + id_variant + `][]`)
                     }else if(id != undefined){
-                        
+
                         $(element).attr('name', `variant_shipping-` + id + `[shipping_charge][]`)
                     }else{
                         $(element).removeAttr('name');
@@ -3312,7 +3372,7 @@
                 if(id_variant != undefined){
                     clonedDiv.find('.min-qty-shipping').attr('name', `variant[from_shipping][` + id_variant + `][]`)
                 }else if(id != undefined){
-                    
+
                     clonedDiv.find('.min-qty-shipping').attr('name', `variant_shipping-` + id + `[from][]`)
                 }else{
                     clonedDiv.find('.min-qty-shipping').removeAttr('name');
@@ -3321,7 +3381,7 @@
                 if(id_variant != undefined){
                     clonedDiv.find('.max-qty-shipping').attr('name', `variant[to_shipping][` + id_variant + `][]`)
                 }else if(id != undefined){
-                    
+
                     clonedDiv.find('.max-qty-shipping').attr('name', `variant_shipping-` + id + `[to][]`)
                 }else{
                     clonedDiv.find('.max-qty-shipping').removeAttr('name');
@@ -3330,7 +3390,7 @@
                 if(id_variant != undefined){
                     clonedDiv.find('.estimated_order').attr('name', `variant[estimated_order][` + id_variant + `][]`)
                 }else if(id != undefined){
-                    
+
                     clonedDiv.find('.estimated_order').attr('name', `variant_shipping-` + id + `[estimated_order][]`)
                 }else{
                     clonedDiv.find('.estimated_order').removeAttr('name');
@@ -3339,7 +3399,7 @@
                 if(id_variant != undefined){
                     clonedDiv.find('.estimated_shipping').attr('name', `variant[estimated_shipping][` + id_variant + `][]`)
                 }else if(id != undefined){
-                    
+
                     clonedDiv.find('.estimated_shipping').attr('name', `variant_shipping-` + id + `[estimated_shipping][]`)
                 }else{
                     clonedDiv.find('.estimated_shipping').removeAttr('name');
@@ -3348,7 +3408,7 @@
                 if(id_variant != undefined){
                     clonedDiv.find('.shipping_charge').attr('name', `variant[shipping_charge][` + id_variant + `][]`)
                 }else if(id != undefined){
-                    
+
                     clonedDiv.find('.shipping_charge').attr('name', `variant_shipping-` + id + `[shipping_charge][]`)
                 }else{
                     clonedDiv.find('.shipping_charge').removeAttr('name');
@@ -3357,7 +3417,7 @@
                 if(id_variant != undefined){
                     clonedDiv.find('.flat_rate_shipping').attr('name', `variant[flat_rate_shipping][` + id_variant + `][]`)
                 }else if(id != undefined){
-                    
+
                     clonedDiv.find('.flat_rate_shipping').attr('name', `variant_shipping-` + id + `[flat_rate_shipping][]`)
                 }else{
                     clonedDiv.find('.flat_rate_shipping').removeAttr('name');
@@ -3366,7 +3426,7 @@
                 if(id_variant != undefined){
                     clonedDiv.find('.charge_per_unit_shipping').attr('name', `variant[charge_per_unit_shipping][` + id_variant + `][]`)
                 }else if(id != undefined){
-                    
+
                     clonedDiv.find('.charge_per_unit_shipping').attr('name', `variant_shipping-` + id + `[charge_per_unit_shipping][]`)
                 }else{
                     clonedDiv.find('.charge_per_unit_shipping').removeAttr('name');
@@ -3428,8 +3488,8 @@
                     html = '<span style="color: green">Chargeable Weight = ' + Number(chargeable_weight.toFixed(2)) + ", then accepted by Aramex </span>"
                 }
 
-                
-                
+
+
                 $('#result_calculate_third_party').html(html);
             }
         });

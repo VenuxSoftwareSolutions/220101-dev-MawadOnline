@@ -86,7 +86,7 @@
                             <div class="p-3 p-sm-4 fs-16 fw-600">
                                 Top Selling Products
                             </div>
-                            <div class="px-3 px-sm-4 pb-4">
+                            {{-- <div class="px-3 px-sm-4 pb-4">
                                 <ul class="list-group list-group-flush">
                                     <li class="py-3 px-0 list-group-item border-0">
                                         <div
@@ -290,7 +290,7 @@
                                         </div>
                                     </li>
                                 </ul>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                 </div>
@@ -432,13 +432,20 @@
                                                                     $attribue_general = App\Models\Attribute::find($key) ;
 
                                                                     @endphp
+                                                                      @if (preg_match('/^#[0-9A-F]{6}$/i', $general_attribute))
+                                                                      <li style="list-style: none; overflow-wrap: break-word; margin: 0px 0px 5.5px;">
+                                                                        <span  style="font-weight: 700 !important;" class="a-list-item ">Color :</span>
+                                                                        <span class="color-preview" style="display: inline-block; width: 20px; height: 20px; background-color: {{$general_attribute}};"></span>
+                                                                    </li>
 
-                                                                    <li
-                                                                        style="list-style: none; overflow-wrap: break-word; margin: 0px 0px 5.5px;">
-                                                                        <span class="a-list-item"><span
-                                                                                class="a-text-bold"
-                                                                                style="font-weight: 700 !important;"> {{$attribue_general ? $attribue_general->name : ""}} :
-                                                                                ‎&nbsp;</span>{{$general_attribute}}</span></li>
+                                                                      @else
+                                                                     <li
+                                                                     style="list-style: none; overflow-wrap: break-word; margin: 0px 0px 5.5px;">
+                                                                     <span class="a-list-item"><span
+                                                                             class="a-text-bold"
+                                                                             style="font-weight: 700 !important;"> {{$attribue_general ? $attribue_general->getTranslation('name') : ""}} :
+                                                                             ‎&nbsp;</span>{{$general_attribute}}</span></li>
+                                                                     @endif
 
                                                                     @endforeach
 
@@ -457,7 +464,12 @@
                             <div class="tab-pane fade" id="tab_default_2">
                                 <div class="py-5">
                                     <div class="embed-responsive embed-responsive-16by9">
-                                        {{-- <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/{{ $youtubeVideoId }}" allowfullscreen></iframe> --}}
+                                        @if(isset($previewData['detailedProduct']['video_provider']) && $previewData['detailedProduct']['video_provider'] == "youtube")
+                                        <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/{{ $previewData['detailedProduct']['getYoutubeVideoId'] }}" allowfullscreen></iframe>
+                                        @elseif(isset($previewData['detailedProduct']['video_provider']) && $previewData['detailedProduct']['video_provider'] == "vimeo")
+                                          <iframe class="embed-responsive-item" src="https://player.vimeo.com/video/{{ $previewData['detailedProduct']['getVimeoVideoId'] }}" allowfullscreen></iframe>
+
+                                        @endif
                                         {{-- @if ($videoData['video_provider'] === 'youtube') --}}
                                         {{-- <iframe class="embed-responsive-item" src="https://www.youtube.com/watch?v=nk1n4wYSGAs&t=2245s" allowfullscreen></iframe> --}}
                                         {{-- @endif --}}
@@ -475,7 +487,7 @@
                         </div>
                     </div>
                     <!-- Related products -->
-                    <div class="bg-white border">
+                    {{-- <div class="bg-white border">
                         <div class="p-3 p-sm-4">
                             <h3 class="fs-16 fw-700 mb-0">
                                 <span class="mr-4">Frequently Brought Products</span>
@@ -491,7 +503,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                     <!-- Product Query -->
                     <div class="bg-white border mt-4 mb-4" id="product_query">
                         <div class="p-3 p-sm-4">
@@ -733,7 +745,7 @@
 
                     <!-- Top Selling Products -->
                     <div class="d-lg-none">
-                        <div class="bg-white border mb-4">
+                        {{-- <div class="bg-white border mb-4">
                             <div class="p-3 p-sm-4 fs-16 fw-600">
                                 Top Selling Products
                             </div>
@@ -942,7 +954,7 @@
                                     </li>
                                 </ul>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
 
                 </div>
@@ -1125,14 +1137,6 @@
     <!-- Size chart show Modal -->
     @include('modals.size_chart_show_modal')
 @endsection --}}
-<!-- Toastr CSS -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
-
-<!-- jQuery (required by Toastr) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
-<!-- Toastr JavaScript -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
 @section('script')
     <script type="text/javascript">
@@ -1606,61 +1610,6 @@
             // });
             sendCheckedAttributes($(this));
         });
-
-        $('.add_product').on('click', function(){
-            var product_id = $(this).data('product_id');
-            var editUrlBase  = "{{ route('seller.products.edit', ['id' => 'PLACEHOLDER']) }}";
-            if(product_id != undefined){
-                $.ajax({
-                    url: "{{route('catalog.add_product')}}",
-                    type: "POST",
-                    data: {
-                        id: product_id
-                    },
-                    cache: false,
-                    dataType: 'JSON',
-                    success: function(dataResult) {
-                        // Replace 'PLACEHOLDER' with the actual slug from the response
-                        var editUrl = editUrlBase.replace('PLACEHOLDER', dataResult.data);
-
-                        // Open the URL
-                        window.location.href = editUrl;
-                    }
-                })
-            }
-        })
-
-        $('.add_product_to_catalog').on('click', function(){
-            var product_id = $(this).data('product_id');
-            var previewUrlBase  = "{{ route('seller.products.edit', ['id' => 'PLACEHOLDER']) }}";
-            var current = $(this);
-            if(product_id != undefined){
-                $.ajax({
-                    url: "{{route('catalog.add_product_to_catalog')}}",
-                    type: "POST",
-                    data: {
-                        id: product_id
-                    },
-                    cache: false,
-                    dataType: 'JSON',
-                    success: function(dataResult) {
-                        current.remove();
-                        toastr.options =    {
-                                                positionClass: 'toast-top-right',
-                                                closeButton: true,
-                                                timeOut: 3000, // Set the duration for which the toast will be displayed (in milliseconds)
-                                            };
-                        toastr.success('Product added successfully');
-                        
-                        // Replace 'PLACEHOLDER' with the actual slug from the response
-                        // var previewUrl = previewUrlBase.replace('PLACEHOLDER', data.data.slug);
-
-                        // // Open the URL in a new tab
-                        // window.open(previewUrl, '_blank');
-                    }
-                })
-            }
-        })
 
 
         });

@@ -87,12 +87,6 @@ return [
             'driver' => 'errorlog',
             'level' => 'debug',
         ],
-
-        'custom_exception_log' => [
-            'driver' => 'daily',
-            'path' => storage_path('logs/custom/exception_log.log'),
-            'level' => 'error',
-        ],
     ],
 
 ];
