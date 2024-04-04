@@ -791,6 +791,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 <script src="{{ static_asset('assets/js/filter-multi-select-bundle.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
 <script>
     var previewUrlBase  = "{{ route('seller.product.preview', ['slug' => 'PLACEHOLDER']) }}";
     </script>
@@ -826,6 +828,7 @@
         $('body #bloc_sample_pricing_configuration_variant').hide();
         $('body .btn-variant-pricing').hide();
         var numbers_variant = 0;
+        var today = moment().startOf("day");
         var initial_attributes = [];
         //$('.shipper').multiselect();
 
@@ -1065,6 +1068,7 @@
                 $(element).daterangepicker({
                     timePicker: true,
                     autoUpdateInput: false,
+                    minDate: today,
                     locale: {
                         format: 'DD-MM-Y HH:mm:ss',
                         separator : " to ",
@@ -1295,6 +1299,7 @@
                     $(element).daterangepicker({
                         timePicker: true,
                         autoUpdateInput: false,
+                        minDate: today,
                         locale: {
                             format: 'DD-MM-Y HH:mm:ss',
                             separator : " to ",
@@ -1303,7 +1308,7 @@
 
                     var format = 'DD-MM-Y HH:mm:ss';
                     var separator = " to ";
-                    $element.on("apply.daterangepicker", function (ev, picker) {
+                    $(element).on("apply.daterangepicker", function (ev, picker) {
                         $(this).val(
                             picker.startDate.format(format) +
                                 separator +
@@ -1506,6 +1511,7 @@
                 $('#bloc_pricing_configuration_variant .aiz-date-range-variant:last').daterangepicker({
                     timePicker: true,
                     autoUpdateInput: false,
+                    minDate: today,
                     locale: {
                         format: 'DD-MM-Y HH:mm:ss',
                         separator : " to ",
@@ -1600,12 +1606,13 @@
             }
             // add another bloc in pricing configuration
             $(this).parent().parent().parent().append(html_to_add);
+            
 
             //Initialize last date range picker
             $(this).parent().parent().parent().find('.aiz-date-range:last').daterangepicker({
                 timePicker: true,
                 autoUpdateInput: false,
-                minDate: "2024-04-04T00:00:00+05:30",
+                minDate: today,
                 locale: {
                     format: 'DD-MM-Y HH:mm:ss',
                     separator : " to ",

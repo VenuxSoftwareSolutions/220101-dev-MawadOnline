@@ -1221,6 +1221,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
 <script type="text/javascript">
     $(document).ready(function() {
@@ -1241,7 +1242,7 @@
         $('body .btn-variant-pricing').hide();
         var numbers_variant = "{{ count($product->getChildrenProducts()) }}";
         numbers_variant = parseInt(numbers_variant);
-
+        var today = moment().startOf("day");
         var initial_attributes = $('#attributes').val();
         Array.prototype.diff = function(a) {
             return this.filter(function(i) {return a.indexOf(i) < 0;});
@@ -1567,6 +1568,7 @@
                 $(element).daterangepicker({
                     timePicker: true,
                     autoUpdateInput: false,
+                    minDate: today,
                     locale: {
                         format: 'DD-MM-Y HH:mm:ss',
                         separator : " to ",
@@ -1819,6 +1821,7 @@
                     $(element).daterangepicker({
                         timePicker: true,
                         autoUpdateInput: false,
+                        minDate: today,
                         locale: {
                             format: 'DD-MM-Y HH:mm:ss',
                             separator : " to ",
@@ -2091,6 +2094,7 @@
                 $(this).parent().parent().parent().find('.aiz-date-range:last').daterangepicker({
                     timePicker: true,
                     autoUpdateInput: false,
+                    minDate: today,
                     locale: {
                         format: 'DD-MM-Y HH:mm:ss',
                         separator : " to "
