@@ -207,7 +207,7 @@
                         <h5 class="mb-0 h6">{{translate('Default Pricing Configuration')}}</h5>
                     </div>
                     <div class="card-body">
-                        <div class="row mb-3">
+                        {{-- <div class="row mb-3">
                             <div class="col-md-3">
                                 <input type="text" class="form-control" value="{{translate('VAT')}}" disabled>
                             </div>
@@ -218,7 +218,7 @@
                                 </label>
                             </div>
                         </div>
-                        <hr>
+                        <hr> --}}
                         <div>
                             <table class="table" id="table_pricing_configuration" class="bloc_pricing_configuration_variant">
                                 <thead>
@@ -386,7 +386,7 @@
                                             <th>{{translate('Estimated Order Preparation Days')}}</th>
                                             <th>{{translate('Estimated Shipping Days')}}</th>
                                             <th>{{translate('Paid by')}}</th>
-                                            <th>{{translate('VAT')}}</th>
+                                            {{-- <th>{{translate('VAT')}}</th> --}}
                                             <th>{{translate('Shipping Charge')}}</th>
                                             <th>{{translate('Flat-rate Amount')}}</th>
                                             <th>{{translate('Charge per Unit of Sale')}}</th>
@@ -415,12 +415,12 @@
                                                             <option value="buyer" @if($shipping->paid == "buyer") {{ 'selected' }} @endif>{{translate('Buyer')}}</option>
                                                         </select>
                                                     </td>
-                                                    <td>
+                                                    {{-- <td>
                                                         <label class="aiz-switch aiz-switch-success mb-0">
                                                             <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping[]" @if($vat_user->vat_registered == 1) checked @endif>
                                                             <span></span>
                                                         </label>
-                                                    </td>
+                                                    </td> --}}
                                                     <td>
                                                         <select class="form-control shipping_charge" name="shipping_charge[]">
                                                             <option value="" selected>{{translate('Choose shipping charge')}}</option>
@@ -457,12 +457,12 @@
                                                         <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
                                                     </select>
                                                 </td>
-                                                <td>
+                                                {{-- <td>
                                                     <label class="aiz-switch aiz-switch-success mb-0">
                                                         <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping[]" @if($vat_user->vat_registered == 1) checked @endif>
                                                         <span></span>
                                                     </label>
-                                                </td>
+                                                </td> --}}
                                                 <td>
                                                     <select class="form-control shipping_charge" name="shipping_charge[]">
                                                         <option value="" selected>{{translate('Choose shipping charge')}}</option>
@@ -491,7 +491,7 @@
                     </div>
                     <div class="card-body">
                         <div id="sample_parent">
-                            <div class="row mb-3">
+                            {{-- <div class="row mb-3">
                                 <div class="col-md-3">
                                     <input type="text" class="form-control" value="{{translate('VAT')}}" disabled>
                                 </div>
@@ -501,7 +501,7 @@
                                         <span></span>
                                     </label>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="row mb-3">
                                 <div class="col-md-3">
                                     <input type="text" class="form-control" value="{{translate('Sample description')}}" disabled>
@@ -526,7 +526,7 @@
                                     <th>{{translate('Estimated Sample Preparation Days')}}</th>
                                     <th>{{translate('Estimated Shipping Days')}}</th>
                                     <th>{{translate('Paid by')}}</th>
-                                    <th>{{translate('VAT')}}</th>
+                                    {{-- <th>{{translate('VAT')}}</th> --}}
                                     <th>{{translate('Shipping amount')}}</th>
                                 </tr>
                             </thead>
@@ -548,12 +548,12 @@
                                             <option value="buyer" @if($product->paid_sample == 'buyer') {{ 'selected' }} @endif>{{translate('Buyer')}}</option>
                                         </select>
                                     </td>
-                                    <td>
+                                    {{-- <td>
                                         <label class="aiz-switch aiz-switch-success mb-0">
                                             <input value="1" type="checkbox" class="vat_sample" name="vat_sample" @if($vat_user->vat_registered == 1) checked @endif>
                                             <span></span>
                                         </label>
-                                    </td>
+                                    </td> --}}
                                     <td><input type="number" class="form-control shipping_amount" name="shipping_amount" @if($product->shipping_amount != null) value="{{ $product->shipping_amount }}" @else readonly @endif></td>
                                 </tr>
                             </tbody>
@@ -722,7 +722,7 @@
                                     </label>
                                 </div>
                                 <div id="bloc_sample_pricing_configuration_variant" class="bloc_sample_pricing_configuration_variant">
-                                    <div class="row mb-3">
+                                    {{-- <div class="row mb-3">
                                         <div class="col-md-3">
                                             <input type="text" class="form-control" value="{{translate('VAT')}}" disabled>
                                         </div>
@@ -732,7 +732,7 @@
                                                 <span></span>
                                             </label>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <div class="row mb-3">
                                         <div class="col-md-3">
                                             <input type="text" class="form-control" value="{{translate('Sample description')}}" disabled>
@@ -904,7 +904,7 @@
                                                             <th>{{translate('Estimated Order Preparation Days')}}</th>
                                                             <th>{{translate('Estimated Shipping Days')}}</th>
                                                             <th>{{translate('Paid by')}}</th>
-                                                            <th>{{translate('VAT')}}</th>
+                                                            {{-- <th>{{translate('VAT')}}</th> --}}
                                                             <th>{{translate('Shipping Charge')}}</th>
                                                             <th>{{translate('Flat-rate Amount')}}</th>
                                                             <th>{{translate('Charge per Unit of Sale')}}</th>
@@ -932,12 +932,12 @@
                                                                         <option value="buyer" @if($shipping->paid == "buyer") {{ 'selected' }} @endif>{{translate('Buyer')}}</option>
                                                                     </select>
                                                                 </td>
-                                                                <td>
+                                                                {{-- <td>
                                                                     <label class="aiz-switch aiz-switch-success mb-0">
                                                                         <input value="1" type="checkbox" class="vat_shipping" @if($vat_user->vat_registered == 1) checked @endif>
                                                                         <span></span>
                                                                     </label>
-                                                                </td>
+                                                                </td> --}}
                                                                 <td>
                                                                     <select class="form-control shipping_charge" name="variant[shipping_charge][{{ $children->id }}][]">
                                                                         <option value="" selected>{{translate('Choose shipping charge')}}</option>
@@ -983,7 +983,7 @@
                                             </div>
                                             <div class="bloc_sample_pricing_configuration_variant">
                                                 @if($children->sample_price != null)
-                                                    <div class="row mb-3">
+                                                    {{-- <div class="row mb-3">
                                                         <div class="col-md-3">
                                                             <input type="text" class="form-control" value="{{translate('VAT')}}" disabled>
                                                         </div>
@@ -993,7 +993,7 @@
                                                                 <span></span>
                                                             </label>
                                                         </div>
-                                                    </div>
+                                                    </div> --}}
                                                     <div class="row mb-3">
                                                         <div class="col-md-3">
                                                             <input type="text" class="form-control" value="{{translate('Sample description')}}" disabled>
@@ -1032,7 +1032,7 @@
                                                                 <th>{{translate('Estimated Sample Preparation Days')}}</th>
                                                                 <th>{{translate('Estimated Shipping Days')}}</th>
                                                                 <th>{{translate('Paid by')}}</th>
-                                                                <th>{{translate('VAT')}}</th>
+                                                                {{-- <th>{{translate('VAT')}}</th> --}}
                                                                 <th>{{translate('Shipping amount')}}</th>
                                                             </tr>
                                                         </thead>
@@ -1054,12 +1054,12 @@
                                                                         <option value="buyer" @if($children->paid_sample == 'buyer') {{ 'selected' }} @endif>{{translate('Buyer')}}</option>
                                                                     </select>
                                                                 </td>
-                                                                <td>
+                                                                {{-- <td>
                                                                     <label class="aiz-switch aiz-switch-success mb-0">
                                                                         <input value="1" type="checkbox" class="vat_sample" @if($vat_user->vat_registered == 1) checked @endif>
                                                                         <span></span>
                                                                     </label>
-                                                                </td>
+                                                                </td> --}}
                                                                 <td><input type="number" class="form-control shipping_amount" name="variant[shipping_amount][{{ $children->id }}]" @if($children->shipping_amount != null) value="{{ $children->shipping_amount }}" @else readonly @endif></td>
                                                             </tr>
                                                         </tbody>
@@ -1585,6 +1585,8 @@
             clonedDiv.find('.vat_sample').attr('name', 'vat_sample-' + numbers_variant);
             clonedDiv.find('.sample_description').attr('name', 'sample_description-' + numbers_variant);
             clonedDiv.find('.sample_price').attr('name', 'sample_price-' + numbers_variant);
+            clonedDiv.find('.sample_description_parent').attr('name', 'sample_description-' + numbers_variant);
+            clonedDiv.find('.sample_price_parent').attr('name', 'sample_price-' + numbers_variant);
             clonedDiv.find('.photos_variant').attr('name', 'photos_variant-' + numbers_variant + '[]');
             clonedDiv.find('.photos_variant').attr('id', 'photos_variant-' + numbers_variant);
             clonedDiv.find('.custom-file-label').attr('for', 'photos_variant-' + numbers_variant);
@@ -2959,12 +2961,6 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <label class="aiz-switch aiz-switch-success mb-0">
-                                            <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping" @if($vat_user->vat_registered == 1) checked @endif>
-                                            <span></span>
-                                        </label>
-                                    </td>
-                                    <td>
                                         <select class="form-control shipping_charge" >
                                             <option value="" selected>{{translate('Choose shipping charge')}}</option>
                                             <option value="flat" @selected(old('shipping_charge') == 'flat')>{{translate('Flat-rate regardless of quantity')}}</option>
@@ -2998,12 +2994,6 @@
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
                                         </select>
-                                    </td>
-                                    <td>
-                                        <label class="aiz-switch aiz-switch-success mb-0">
-                                            <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping" @if($vat_user->vat_registered == 1) checked @endif>
-                                            <span></span>
-                                        </label>
                                     </td>
                                     <td>
                                         <select class="form-control shipping_charge" name="shipping_charge[]">
@@ -3042,12 +3032,6 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <label class="aiz-switch aiz-switch-success mb-0">
-                                            <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping" @if($vat_user->vat_registered == 1) checked @endif>
-                                            <span></span>
-                                        </label>
-                                    </td>
-                                    <td>
                                         <select class="form-control shipping_charge" name="variant[shipping_charge][` + id_variant + `][]">
                                             <option value="" selected>{{translate('Choose shipping charge')}}</option>
                                             <option value="flat" @selected(old('shipping_charge') == 'flat')>{{translate('Flat-rate regardless of quantity')}}</option>
@@ -3081,12 +3065,6 @@
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
                                         </select>
-                                    </td>
-                                    <td>
-                                        <label class="aiz-switch aiz-switch-success mb-0">
-                                            <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping" @if($vat_user->vat_registered == 1) checked @endif>
-                                            <span></span>
-                                        </label>
                                     </td>
                                     <td>
                                         <select class="form-control shipping_charge" name="variant_shipping-${id_new_variant}[shipping_charge][]">
@@ -3518,12 +3496,6 @@
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
                                         </select>
-                                    </td>
-                                    <td>
-                                        <label class="aiz-switch aiz-switch-success mb-0">
-                                            <input value="1" type="checkbox" class="vat_sample" name="vat_sample" @if($vat_user->vat_registered == 1) checked @endif>
-                                            <span></span>
-                                        </label>
                                     </td>
                                     <td><input type="number" class="form-control shipping_amount" name="shipping_amount[]"></td>
                                     <td>
