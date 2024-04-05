@@ -595,7 +595,7 @@
                 {{-- Bloc variant & attributes --}}
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0 h6">{{translate('Product Variation')}}</h5>
+                        <h5 class="mb-0 h6">{{translate('Create variants')}}</h5>
                     </div>
                     <div class="card-body">
                         <div class="form-group row gutters-5">

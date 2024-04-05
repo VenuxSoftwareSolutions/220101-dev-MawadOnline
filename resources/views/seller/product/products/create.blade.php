@@ -514,7 +514,7 @@
                 {{-- Bloc variant & attributes --}}
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0 h6">{{translate('Product Variation')}}</h5>
+                        <h5 class="mb-0 h6">{{translate('Create variants')}}</h5>
                     </div>
                     <div class="card-body">
                         <div class="form-group row gutters-5">
@@ -546,15 +546,15 @@
                         <div id="variant_informations">
                             <h3 class="mb-3">Variant informations</h3>
                             <hr>
-                            {{-- <div class="row mb-3">
+                            <div class="row mb-3">
                                 <div class="col-md-3">
                                     <input type="text" class="form-control" value="{{translate('Variant SKU')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
                                     <input type="text" class="form-control sku" id="sku">
                                 </div>
-                            </div> --}}
-                            <div class="row mb-3">
+                            </div>
+                            <div class="row mb-3" style="display: none">
                                 <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Variant Photos')}}" disabled>
                                 </div>
@@ -565,7 +565,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row mb-3">
+                            <div class="row mb-3" style="display: none">
                                 <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Use default pricing configuration')}}" disabled>
                                 </div>
@@ -579,7 +579,7 @@
 
                                 </div>
                             </div>
-                            <div class="row mb-3">
+                            <div class="row mb-3" style="display: none">
                                 <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Use default Shipping')}}" disabled>
                                 </div>
@@ -594,7 +594,7 @@
 
                                 </div>
                             </div>
-                            <div class="row mb-3">
+                            <div class="row mb-3" style="display: none">
                                 <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Sample Available?')}}" disabled>
                                 </div>
@@ -605,7 +605,7 @@
                                     </label>
                                 </div>
                             </div>
-                            <div class="row mb-3">
+                            <div class="row mb-3" style="display: none">
                                 <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Use default sample pricing configuration')}}" disabled>
                                 </div>
@@ -645,7 +645,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row mb-3">
+                            <div class="row mb-3" style="display: none">
                                 <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Use default sample Shipping')}}" disabled>
                                 </div>
@@ -659,7 +659,7 @@
 
                                 </div>
                             </div>
-                            <div class="row mb-3">
+                            <div class="row mb-3" style="display: none">
                                 <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Low-Stock Warning')}}" disabled>
                                 </div>
@@ -1028,7 +1028,7 @@
             clonedDiv.removeAttr('id');
             clonedDiv.attr('data-id', numbers_variant);
             // Disable all input elements in the cloned div
-            clonedDiv.find('input').prop('readonly', true);
+            //clonedDiv.find('input').prop('readonly', true);
 
             // Append the cloned div to the container
 
@@ -1040,6 +1040,13 @@
             clonedDiv.find('.fa-circle-check').hide();
             clonedDiv.find('#btn-add-pricing-variant').hide();
             //clonedDiv.find('.sku').attr('name', 'sku-' + numbers_variant);
+            clonedDiv.find('div.row').each(function() {
+                // Check if the div has display:none set
+                if ($(this).css('display') === 'none') {
+                    // If it's set to display:none, change it to its default value
+                    $(this).css('display', '');
+                }
+            });
             clonedDiv.find('.vat_sample').attr('name', 'vat_sample-' + numbers_variant);
             clonedDiv.find('.sample_description').attr('name', 'sample_description-' + numbers_variant);
             clonedDiv.find('.sample_price').attr('name', 'sample_price-' + numbers_variant);
@@ -1086,6 +1093,7 @@
                 });
             });
             clonedDiv.find('.variant-shipping').attr('name', 'variant-shipping-' + numbers_variant);
+            clonedDiv.find('.variant-shipping').attr('data-id_variant', numbers_variant);
 
             clonedDiv.find('.stock-warning').attr('name', 'stock-warning-' + numbers_variant);
             clonedDiv.find('.discount_type-variant').each(function(index, element) {
@@ -2314,11 +2322,11 @@
         $('body').on('change', '.variant-shipping', function(){
             if ($(this).is(':not(:checked)')){
                 var clonedDiv = $('#table_shipping_configuration').clone();
-                var type_switch = $(this).data('type');
+                var id = $(this).data('id_variant');
 
                 clonedDiv.find('.shipper').each(function(index, element) {
+                    $(element).attr('name', `variant_shipping-` + id + `[shipper][` + index + `][]`)
                     $('#shipping_configuration_box #table_shipping_configuration').find('.shipper').each(function(key, element_original) {
-                        console.log('$(element_original).val(): ', $(element_original).val())
                         if(index == key){
                             $(element_original).val().forEach(value => {
                                 $(element).find('option[value="' + value + '"]').prop('selected', true);
@@ -2328,6 +2336,8 @@
                 });
 
                 clonedDiv.find('.paid').each(function(index, element) {
+                    $(element).attr('name', `variant_shipping-` + id + `[paid][]`)
+
                     $('#shipping_configuration_box #table_shipping_configuration').find('.paid').each(function(key, element_original) {
                         if(index == key){
                             $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
@@ -2336,6 +2346,7 @@
                 });
 
                 clonedDiv.find('.shipping_charge').each(function(index, element) {
+                    $(element).attr('name', `variant_shipping-` + id + `[shipping_charge][]`)
                     $('#shipping_configuration_box #table_shipping_configuration').find('.shipping_charge').each(function(key, element_original) {
                         if(index == key){
                             $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
@@ -2343,33 +2354,16 @@
                     })
                 });
 
-                if(type_switch != undefined){
-                    clonedDiv.find('.min-qty-shipping').removeAttr('name');
-                }
-
-                if(type_switch != undefined){
-                    clonedDiv.find('.max-qty-shipping').removeAttr('name');
-                }
-
-                if(type_switch != undefined){
-                    clonedDiv.find('.estimated_order').removeAttr('name');
-                }
-
-                if(type_switch != undefined){
-                    clonedDiv.find('.estimated_shipping').removeAttr('name');
-                }
-
-                if(type_switch != undefined){
-                    clonedDiv.find('.shipping_charge').removeAttr('name');
-                }
-
-                if(type_switch != undefined){
-                    clonedDiv.find('.flat_rate_shipping').removeAttr('name');
-                }
-
-                if(type_switch != undefined){
-                    clonedDiv.find('.charge_per_unit_shipping').removeAttr('name');
-                }
+                
+                clonedDiv.find('.min-qty-shipping').attr('name', `variant_shipping-` + id + `[from][]`)
+                clonedDiv.find('.max-qty-shipping').attr('name', `variant_shipping-` + id + `[to][]`)
+                clonedDiv.find('.estimated_order').attr('name', `variant_shipping-` + id + `[estimated_order][]`)
+                clonedDiv.find('.estimated_shipping').attr('name', `variant_shipping-` + id + `[estimated_shipping][]`)
+                clonedDiv.find('.shipping_charge').attr('name', `variant_shipping-` + id + `[shipping_charge][]`)
+                clonedDiv.find('.flat_rate_shipping').attr('name', `variant_shipping-` + id + `[flat_rate_shipping][]`)
+                clonedDiv.find('.charge_per_unit_shipping').attr('name', `variant_shipping-` + id + `[charge_per_unit_shipping][]`)
+                clonedDiv.find('.btn-add-shipping').attr('data-id', id);
+                clonedDiv.find('.delete_shipping_canfiguration').attr('data-variant-id', id);
 
                 $(this).parent().parent().parent().find('#bloc_default_shipping').append(clonedDiv);
             }else{
