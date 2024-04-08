@@ -547,7 +547,7 @@
                             <h3 class="mb-3">Variant informations</h3>
                             <hr>
                             <div class="row mb-3">
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Variant SKU')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
@@ -674,6 +674,7 @@
                         <div class="row div-btn">
                             <button type="button" name="button" class="btn btn-primary" id="btn-create-variant">Create variant</button>
                         </div>
+                        <hr>
                         <div id="bloc_variants_created">
 
                         </div>

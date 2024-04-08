@@ -693,14 +693,16 @@ class ProductService
                         $data['sample_available'] = $shipping_sample_parent['sample_available'];
                     }
 
+                    $data['sku'] =  $variant['sku'];
+
                     $product = Product::create($data);
 
                     //attributes of variant
-                    $sku = "";
+                    //$sku = "";
                     foreach($variant['attributes'] as $key => $value_attribute){
                         if($value_attribute != null){
-                            $attribute_name = Attribute::find($key)->name;
-                            $sku .= "_".$attribute_name;
+                            // $attribute_name = Attribute::find($key)->name;
+                            // $sku .= "_".$attribute_name;
                             $attribute_product = new ProductAttributeValues();
                             $attribute_product->id_products = $product->id;
                             $attribute_product->id_attribute = $key;
@@ -725,8 +727,8 @@ class ProductService
                         }
                     }
 
-                    $product->sku = $product_parent->name . $sku;
-                    $product->save();
+                    // $product->sku = $product_parent->name . $sku;
+                    // $product->save();
 
                     //Images of variant
                     if (array_key_exists('photo', $variant)) {

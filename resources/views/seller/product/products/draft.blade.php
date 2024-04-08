@@ -631,15 +631,15 @@
                         <div id="variant_informations">
                             <h3 class="mb-3">Variant informations</h3>
                             <hr>
-                            {{-- <div class="row mb-3">
-                                <div class="col-md-3">
+                            <div class="row mb-3">
+                                <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Variant SKU')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
                                     <input type="text" class="form-control sku" id="sku">
                                 </div>
-                            </div> --}}
-                            <div class="row mb-3">
+                            </div>
+                            <div class="row mb-3" style="display: none">
                                 <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Variant Photos')}}" disabled>
                                 </div>
@@ -650,7 +650,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row mb-3">
+                            <div class="row mb-3" style="display: none">
                                 <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Use default pricing configuration')}}" disabled>
                                 </div>
@@ -664,7 +664,7 @@
 
                                 </div>
                             </div>
-                            <div class="row mb-3">
+                            <div class="row mb-3" style="display: none">
                                 <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Use default Shipping')}}" disabled>
                                 </div>
@@ -679,7 +679,7 @@
 
                                 </div>
                             </div>
-                            <div class="row mb-3">
+                            <div class="row mb-3" style="display: none">
                                 <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Sample Available?')}}" disabled>
                                 </div>
@@ -690,7 +690,7 @@
                                     </label>
                                 </div>
                             </div>
-                            <div class="row mb-3">
+                            <div class="row mb-3" style="display: none">
                                 <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Use default sample pricing configuration')}}" disabled>
                                 </div>
@@ -730,7 +730,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row mb-3">
+                            <div class="row mb-3" style="display: none">
                                 <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Use default sample Shipping')}}" disabled>
                                 </div>
@@ -744,7 +744,7 @@
 
                                 </div>
                             </div>
-                            <div class="row mb-3">
+                            <div class="row mb-3" style="display: none">
                                 <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Low-Stock Warning')}}" disabled>
                                 </div>
@@ -761,6 +761,7 @@
                         <div class="row div-btn">
                             <button type="button" name="button" class="btn btn-primary" id="btn-create-variant">Create variant</button>
                         </div>
+                        <hr>
                         <div id="bloc_variants_created">
                             @if(count($product->getChildrenProductsDesc()) > 0)
                                 @foreach ($product->getChildrenProductsDesc() as $key => $children)
@@ -1527,7 +1528,7 @@
             clonedDiv.attr('class', 'clonedDiv');
             clonedDiv.attr('data-id', numbers_variant);
             // Disable all input elements in the cloned div
-            clonedDiv.find('input').prop('readonly', true);
+            //clonedDiv.find('input').prop('readonly', true);
 
             // Append the cloned div to the container
             var count = numbers_variant + 1;
@@ -1537,6 +1538,13 @@
             //clonedDiv.find('.fa-circle-xmark').hide();
             clonedDiv.find('.fa-circle-check').hide();
             clonedDiv.find('#btn-add-pricing-variant').hide();
+            clonedDiv.find('div.row').each(function() {
+                // Check if the div has display:none set
+                if ($(this).css('display') === 'none') {
+                    // If it's set to display:none, change it to its default value
+                    $(this).css('display', '');
+                }
+            });
             clonedDiv.find('.sku').attr('name', 'sku-' + numbers_variant);
             clonedDiv.find('.vat_sample').attr('name', 'vat_sample-' + numbers_variant);
             clonedDiv.find('.sample_description').attr('name', 'sample_description-' + numbers_variant);
@@ -2807,7 +2815,7 @@
 
         $('body').on('click', '.btn-add-shipping', function() {
             var row = $(this).parent().parent().parent().find('tr').length;
-            var id_new_variant = $(this).data('variant-id');
+            var id_new_variant = $(this).data('id');
             var id_variant = $(this).data('id_variant');
 
             if((id_variant == undefined) && (id_new_variant == undefined)){
@@ -2913,7 +2921,7 @@
                                     <td><input type="number" class="form-control charge_per_unit_shipping" name="variant[charge_per_unit_shipping][` + id_variant + `][]" readonly></td>
                                     <td>
                                         <i class="las la-plus btn-add-shipping" data-id_variant="` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_shipping_canfiguration" data-id_variant = "` id_variant `" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                        <i class="las la-trash delete_shipping_canfiguration" data-id_variant = "` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
                                     </td>
                                 </tr>
                             `;
