@@ -870,8 +870,8 @@
                                                                             <option value="percent" @selected($pricing->discount_type == 'percent')>{{translate('Percent')}}</option>
                                                                         </select>
                                                                     </td>
-                                                                    <td><input type="number" class="form-control discount_amount-variant" value="{{ $pricing->discount_amount }}" name="variant[discount_amount][{{ $children->id }}][]"></td>
-                                                                    <td><input type="number" class="form-control discount_percentage-variant" value="{{ $pricing->discount_percentage }}" name="variant[discount_percentage][{{ $children->id }}][]"></td>
+                                                                    <td><input type="number" class="form-control discount_amount-variant" value="{{ $pricing->discount_amount }}" @if($pricing->discount_type != 'amount') readonly @endif name="variant[discount_amount][{{ $children->id }}][]"></td>
+                                                                    <td><input type="number" class="form-control discount_percentage-variant" value="{{ $pricing->discount_percentage }}" @if($pricing->discount_type != 'percent') readonly @endif name="variant[discount_percentage][{{ $children->id }}][]"></td>
                                                                     <td>
                                                                         <i class="las la-plus btn-add-pricing" data-id_variant="{{ $children->id }}" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                                                         <i class="las la-trash delete_pricing_canfiguration" data-pricing_id="{{ $pricing->id }}" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
@@ -1349,6 +1349,7 @@
                 $('body #attributes').prop('disabled', true);
                 $('#variant_informations').hide();
                 $('#btn-create-variant').hide();
+                $('body #bloc_variants_created').hide();
                 AIZ.plugins.bootstrapSelect('refresh');
             } else {
                 var category_choosen = $("#selected_parent_id").val();
@@ -2226,32 +2227,32 @@
                 }
             }
 
-                // add another bloc in pricing configuration
-                $(this).parent().parent().parent().append(html_to_add);
+            // add another bloc in pricing configuration
+            $(this).parent().parent().parent().append(html_to_add);
 
-                //Initialize last date range picker
-                $(this).parent().parent().parent().find('.aiz-date-range:last').daterangepicker({
-                    timePicker: true,
-                    autoUpdateInput: false,
-                    minDate: today,
-                    locale: {
-                        format: 'DD-MM-Y HH:mm:ss',
-                        separator : " to "
-                    },
-                });
+            //Initialize last date range picker
+            $(this).parent().parent().parent().find('.aiz-date-range:last').daterangepicker({
+                timePicker: true,
+                autoUpdateInput: false,
+                minDate: today,
+                locale: {
+                    format: 'DD-MM-Y HH:mm:ss',
+                    separator : " to ",
+                },
+            });
 
-                var format = 'DD-MM-Y HH:mm:ss';
-                var separator = " to ";
-                $(this).parent().parent().parent().find('.aiz-date-range-variant:last').on("apply.daterangepicker", function (ev, picker) {
-                    $(this).val(
-                        picker.startDate.format(format) +
-                            separator +
-                            picker.endDate.format(format)
-                    );
-                });
+            var format = 'DD-MM-Y HH:mm:ss';
+            var separator = " to ";
+            $(this).parent().parent().parent().find('.aiz-date-range:last').on("apply.daterangepicker", function (ev, picker) {
+                $(this).val(
+                    picker.startDate.format(format) +
+                        separator +
+                        picker.endDate.format(format)
+                );
+            });
 
-                //refresh select discount type
-                AIZ.plugins.bootstrapSelect('refresh');
+            //refresh select discount type
+            AIZ.plugins.bootstrapSelect('refresh');
         });
 
         $('body').on('click', '.delete_pricing_canfiguration', function(){

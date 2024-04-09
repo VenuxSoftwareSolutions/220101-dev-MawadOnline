@@ -849,6 +849,7 @@
                 $('body #attributes').prop('disabled', true);
                 $('#variant_informations').hide();
                 $('#btn-create-variant').hide();
+                $('body #bloc_variants_created').hide();
                 AIZ.plugins.bootstrapSelect('refresh');
             } else {
                 var category_choosen = $("#selected_parent_id").val();
@@ -1040,7 +1041,7 @@
             //clonedDiv.find('.fa-circle-xmark').hide();
             clonedDiv.find('.fa-circle-check').hide();
             clonedDiv.find('#btn-add-pricing-variant').hide();
-            //clonedDiv.find('.sku').attr('name', 'sku-' + numbers_variant);
+            clonedDiv.find('.sku').attr('name', 'sku-' + numbers_variant);
             clonedDiv.find('div.row').each(function() {
                 // Check if the div has display:none set
                 if ($(this).css('display') === 'none') {
