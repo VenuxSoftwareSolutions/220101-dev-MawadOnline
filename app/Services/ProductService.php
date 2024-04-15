@@ -2170,12 +2170,8 @@ class ProductService
                     $new_product = Product::create($collection);
 
                     //attributes of variant
-                    $sku = "";
                     foreach($variant['attributes'] as $key => $value_attribute){
                         if($value_attribute != null){
-                            $attribute_name = Attribute::find($key)->name;
-                            $sku .= "_".$attribute_name;
-
                             $attribute_product = new ProductAttributeValues();
                             $attribute_product->id_products = $new_product->id;
                             $attribute_product->id_attribute = $key;
@@ -2199,9 +2195,6 @@ class ProductService
                             $attribute_product->save();
                         }
                     }
-
-                    $new_product->sku = $product_update->name . $sku;
-                    $new_product->save();
 
                     //Images of variant
                     if (array_key_exists('photo', $variant)) {
@@ -2324,7 +2317,7 @@ class ProductService
                                 }else{
                                     $current_data["discount_amount"] = null;
                                 }
-                                if(isset($current_data["discount_percentage"])){
+                                if(isset($pricing["discount_percentage"])){
                                     $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
                                 }else{
                                     $current_data["discount_percentage"] = null;
@@ -3542,12 +3535,8 @@ class ProductService
                     $new_product = Product::create($collection);
 
                     //attributes of variant
-                    $sku = "";
                     foreach($variant['attributes'] as $key => $value_attribute){
                         if($value_attribute != null){
-                            $attribute_name = Attribute::find($key)->name;
-                            $sku .= "_".$attribute_name;
-
                             $attribute_product = new ProductAttributeValues();
                             $attribute_product->id_products = $new_product->id;
                             $attribute_product->id_attribute = $key;
@@ -3571,9 +3560,6 @@ class ProductService
                             $attribute_product->save();
                         }
                     }
-
-                    $new_product->sku = $product_draft->name . $sku;
-                    $new_product->save();
 
                     //Images of variant
                     if (array_key_exists('photo', $variant)) {
@@ -3696,7 +3682,7 @@ class ProductService
                                 }else{
                                     $current_data["discount_amount"] = null;
                                 }
-                                if(isset($current_data["discount_percentage"])){
+                                if(isset($pricing["discount_percentage"])){
                                     $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
                                 }else{
                                     $current_data["discount_percentage"] = null;
