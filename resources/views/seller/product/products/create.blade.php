@@ -197,7 +197,7 @@
                         <h5 class="mb-0 h6">{{translate('Default Pricing Configuration')}}</h5>
                     </div>
                     <div class="card-body">
-                        <div class="row mb-3">
+                        {{-- <div class="row mb-3">
                             <div class="col-md-3">
                                 <input type="text" class="form-control" value="{{translate('VAT')}}" disabled>
                             </div>
@@ -208,7 +208,7 @@
                                 </label>
                             </div>
                         </div>
-                        <hr>
+                        <hr> --}}
                         <div>
                             <table class="table" id="table_pricing_configuration" class="bloc_pricing_configuration_variant">
                                 <thead>
@@ -331,7 +331,7 @@
                                             <th>{{translate('Estimated Order Preparation Days')}}</th>
                                             <th>{{translate('Estimated Shipping Days')}}</th>
                                             <th>{{translate('Paid by')}}</th>
-                                            <th>{{translate('VAT')}}</th>
+                                            {{-- <th>{{translate('VAT')}}</th> --}}
                                             <th>{{translate('Shipping Charge')}}</th>
                                             <th>{{translate('Flat-rate Amount')}}</th>
                                             <th>{{translate('Charge per Unit of Sale')}}</th>
@@ -360,12 +360,12 @@
                                                     <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
                                                 </select>
                                             </td>
-                                            <td>
+                                            {{-- <td>
                                                 <label class="aiz-switch aiz-switch-success mb-0">
                                                     <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping[]" @if($vat_user->vat_registered == 1) checked @endif>
                                                     <span></span>
                                                 </label>
-                                            </td>
+                                            </td> --}}
                                             <td>
                                                 <select class="form-control shipping_charge" name="shipping_charge[]">
                                                     <option value="" selected>{{translate('Choose shipping charge')}}</option>
@@ -392,7 +392,7 @@
                     </div>
                     <div class="card-body">
                         <div class="row mb-3">
-                            <div class="col-md-3">
+                            {{-- <div class="col-md-3">
                                 <input type="text" class="form-control" value="{{translate('VAT')}}" disabled>
                             </div>
                             <div class="col-md-8">
@@ -400,7 +400,7 @@
                                     <input value="1" type="checkbox" name="vat_sample" @if($vat_user->vat_registered == 1) checked @endif>
                                     <span></span>
                                 </label>
-                            </div>
+                            </div> --}}
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-3">
@@ -425,7 +425,7 @@
                                     <th>{{translate('Estimated Sample Preparation Days')}}</th>
                                     <th>{{translate('Estimated Shipping Days')}}</th>
                                     <th>{{translate('Paid by')}}</th>
-                                    <th>{{translate('VAT')}}</th>
+                                    {{-- <th>{{translate('VAT')}}</th> --}}
                                     <th>{{translate('Shipping amount')}}</th>
                                 </tr>
                             </thead>
@@ -447,12 +447,12 @@
                                             <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
                                         </select>
                                     </td>
-                                    <td>
+                                    {{-- <td>
                                         <label class="aiz-switch aiz-switch-success mb-0">
                                             <input value="1" type="checkbox" class="vat_sample" name="vat_sample" @if($vat_user->vat_registered == 1) checked @endif>
                                             <span></span>
                                         </label>
-                                    </td>
+                                    </td> --}}
                                     <td><input type="number" class="form-control shipping_amount" name="shipping_amount" step="0.1" readonly></td>
                                 </tr>
                             </tbody>
@@ -514,7 +514,7 @@
                 {{-- Bloc variant & attributes --}}
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0 h6">{{translate('Product Variation')}}</h5>
+                        <h5 class="mb-0 h6">{{translate('Create variants')}}</h5>
                     </div>
                     <div class="card-body">
                         <div class="form-group row gutters-5">
@@ -546,15 +546,15 @@
                         <div id="variant_informations">
                             <h3 class="mb-3">Variant informations</h3>
                             <hr>
-                            {{-- <div class="row mb-3">
+                            <div class="row mb-3">
                                 <div class="col-md-3">
                                     <input type="text" class="form-control" value="{{translate('Variant SKU')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
                                     <input type="text" class="form-control sku" id="sku">
                                 </div>
-                            </div> --}}
-                            <div class="row mb-3">
+                            </div>
+                            <div class="row mb-3" style="display: none">
                                 <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Variant Photos')}}" disabled>
                                 </div>
@@ -565,7 +565,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row mb-3">
+                            <div class="row mb-3" style="display: none">
                                 <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Use default pricing configuration')}}" disabled>
                                 </div>
@@ -579,7 +579,7 @@
 
                                 </div>
                             </div>
-                            <div class="row mb-3">
+                            <div class="row mb-3" style="display: none">
                                 <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Use default Shipping')}}" disabled>
                                 </div>
@@ -594,7 +594,7 @@
 
                                 </div>
                             </div>
-                            <div class="row mb-3">
+                            <div class="row mb-3" style="display: none">
                                 <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Sample Available?')}}" disabled>
                                 </div>
@@ -605,7 +605,7 @@
                                     </label>
                                 </div>
                             </div>
-                            <div class="row mb-3">
+                            <div class="row mb-3" style="display: none">
                                 <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Use default sample pricing configuration')}}" disabled>
                                 </div>
@@ -616,7 +616,7 @@
                                     </label>
                                 </div>
                                 <div id="bloc_sample_pricing_configuration_variant" class="bloc_sample_pricing_configuration_variant">
-                                    <div class="row mb-3">
+                                    {{-- <div class="row mb-3">
                                         <div class="col-md-3">
                                             <input type="text" class="form-control" value="{{translate('VAT')}}" disabled>
                                         </div>
@@ -626,7 +626,7 @@
                                                 <span></span>
                                             </label>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <div class="row mb-3">
                                         <div class="col-md-3">
                                             <input type="text" class="form-control" value="{{translate('Sample description')}}" disabled>
@@ -645,7 +645,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row mb-3">
+                            <div class="row mb-3" style="display: none">
                                 <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Use default sample Shipping')}}" disabled>
                                 </div>
@@ -659,7 +659,7 @@
 
                                 </div>
                             </div>
-                            <div class="row mb-3">
+                            <div class="row mb-3" style="display: none">
                                 <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Low-Stock Warning')}}" disabled>
                                 </div>
@@ -791,6 +791,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 <script src="{{ static_asset('assets/js/filter-multi-select-bundle.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
 <script>
     var previewUrlBase  = "{{ route('seller.product.preview', ['slug' => 'PLACEHOLDER']) }}";
     </script>
@@ -826,6 +828,7 @@
         $('body #bloc_sample_pricing_configuration_variant').hide();
         $('body .btn-variant-pricing').hide();
         var numbers_variant = 0;
+        var today = moment().startOf("day");
         var initial_attributes = [];
         //$('.shipper').multiselect();
 
@@ -1025,7 +1028,7 @@
             clonedDiv.removeAttr('id');
             clonedDiv.attr('data-id', numbers_variant);
             // Disable all input elements in the cloned div
-            clonedDiv.find('input').prop('readonly', true);
+            //clonedDiv.find('input').prop('readonly', true);
 
             // Append the cloned div to the container
 
@@ -1037,6 +1040,13 @@
             clonedDiv.find('.fa-circle-check').hide();
             clonedDiv.find('#btn-add-pricing-variant').hide();
             //clonedDiv.find('.sku').attr('name', 'sku-' + numbers_variant);
+            clonedDiv.find('div.row').each(function() {
+                // Check if the div has display:none set
+                if ($(this).css('display') === 'none') {
+                    // If it's set to display:none, change it to its default value
+                    $(this).css('display', '');
+                }
+            });
             clonedDiv.find('.vat_sample').attr('name', 'vat_sample-' + numbers_variant);
             clonedDiv.find('.sample_description').attr('name', 'sample_description-' + numbers_variant);
             clonedDiv.find('.sample_price').attr('name', 'sample_price-' + numbers_variant);
@@ -1065,6 +1075,7 @@
                 $(element).daterangepicker({
                     timePicker: true,
                     autoUpdateInput: false,
+                    minDate: today,
                     locale: {
                         format: 'DD-MM-Y HH:mm:ss',
                         separator : " to ",
@@ -1073,7 +1084,7 @@
 
                 var format = 'DD-MM-Y HH:mm:ss';
                 var separator = " to ";
-                $element.on("apply.daterangepicker", function (ev, picker) {
+                $(element).on("apply.daterangepicker", function (ev, picker) {
                     $(this).val(
                         picker.startDate.format(format) +
                             separator +
@@ -1082,6 +1093,7 @@
                 });
             });
             clonedDiv.find('.variant-shipping').attr('name', 'variant-shipping-' + numbers_variant);
+            clonedDiv.find('.variant-shipping').attr('data-id_variant', numbers_variant);
 
             clonedDiv.find('.stock-warning').attr('name', 'stock-warning-' + numbers_variant);
             clonedDiv.find('.discount_type-variant').each(function(index, element) {
@@ -1295,6 +1307,7 @@
                     $(element).daterangepicker({
                         timePicker: true,
                         autoUpdateInput: false,
+                        minDate: today,
                         locale: {
                             format: 'DD-MM-Y HH:mm:ss',
                             separator : " to ",
@@ -1303,7 +1316,7 @@
 
                     var format = 'DD-MM-Y HH:mm:ss';
                     var separator = " to ";
-                    $element.on("apply.daterangepicker", function (ev, picker) {
+                    $(element).on("apply.daterangepicker", function (ev, picker) {
                         $(this).val(
                             picker.startDate.format(format) +
                                 separator +
@@ -1506,6 +1519,7 @@
                 $('#bloc_pricing_configuration_variant .aiz-date-range-variant:last').daterangepicker({
                     timePicker: true,
                     autoUpdateInput: false,
+                    minDate: today,
                     locale: {
                         format: 'DD-MM-Y HH:mm:ss',
                         separator : " to ",
@@ -1600,11 +1614,13 @@
             }
             // add another bloc in pricing configuration
             $(this).parent().parent().parent().append(html_to_add);
+            
 
             //Initialize last date range picker
             $(this).parent().parent().parent().find('.aiz-date-range:last').daterangepicker({
                 timePicker: true,
                 autoUpdateInput: false,
+                minDate: today,
                 locale: {
                     format: 'DD-MM-Y HH:mm:ss',
                     separator : " to ",
@@ -2066,12 +2082,6 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <label class="aiz-switch aiz-switch-success mb-0">
-                                            <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping" @if($vat_user->vat_registered == 1) checked @endif>
-                                            <span></span>
-                                        </label>
-                                    </td>
-                                    <td>
                                         <select class="form-control shipping_charge" name="variant_shipping-${id_variant}[shipping_charge][]">
                                             <option value="" selected>{{translate('Choose shipping charge')}}</option>
                                             <option value="flat" @selected(old('shipping_charge') == 'flat')>{{translate('Flat-rate regardless of quantity')}}</option>
@@ -2108,12 +2118,6 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <label class="aiz-switch aiz-switch-success mb-0">
-                                            <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping" @if($vat_user->vat_registered == 1) checked @endif>
-                                            <span></span>
-                                        </label>
-                                    </td>
-                                    <td>
                                         <select class="form-control shipping_charge" >
                                             <option value="" selected>{{translate('Choose shipping charge')}}</option>
                                             <option value="flat" @selected(old('shipping_charge') == 'flat')>{{translate('Flat-rate regardless of quantity')}}</option>
@@ -2147,12 +2151,6 @@
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
                                         </select>
-                                    </td>
-                                    <td>
-                                        <label class="aiz-switch aiz-switch-success mb-0">
-                                            <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping" @if($vat_user->vat_registered == 1) checked @endif>
-                                            <span></span>
-                                        </label>
                                     </td>
                                     <td>
                                         <select class="form-control shipping_charge" name="shipping_charge[]">
@@ -2324,11 +2322,11 @@
         $('body').on('change', '.variant-shipping', function(){
             if ($(this).is(':not(:checked)')){
                 var clonedDiv = $('#table_shipping_configuration').clone();
-                var type_switch = $(this).data('type');
+                var id = $(this).data('id_variant');
 
                 clonedDiv.find('.shipper').each(function(index, element) {
+                    $(element).attr('name', `variant_shipping-` + id + `[shipper][` + index + `][]`)
                     $('#shipping_configuration_box #table_shipping_configuration').find('.shipper').each(function(key, element_original) {
-                        console.log('$(element_original).val(): ', $(element_original).val())
                         if(index == key){
                             $(element_original).val().forEach(value => {
                                 $(element).find('option[value="' + value + '"]').prop('selected', true);
@@ -2338,6 +2336,8 @@
                 });
 
                 clonedDiv.find('.paid').each(function(index, element) {
+                    $(element).attr('name', `variant_shipping-` + id + `[paid][]`)
+
                     $('#shipping_configuration_box #table_shipping_configuration').find('.paid').each(function(key, element_original) {
                         if(index == key){
                             $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
@@ -2346,6 +2346,7 @@
                 });
 
                 clonedDiv.find('.shipping_charge').each(function(index, element) {
+                    $(element).attr('name', `variant_shipping-` + id + `[shipping_charge][]`)
                     $('#shipping_configuration_box #table_shipping_configuration').find('.shipping_charge').each(function(key, element_original) {
                         if(index == key){
                             $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
@@ -2353,33 +2354,16 @@
                     })
                 });
 
-                if(type_switch != undefined){
-                    clonedDiv.find('.min-qty-shipping').removeAttr('name');
-                }
-
-                if(type_switch != undefined){
-                    clonedDiv.find('.max-qty-shipping').removeAttr('name');
-                }
-
-                if(type_switch != undefined){
-                    clonedDiv.find('.estimated_order').removeAttr('name');
-                }
-
-                if(type_switch != undefined){
-                    clonedDiv.find('.estimated_shipping').removeAttr('name');
-                }
-
-                if(type_switch != undefined){
-                    clonedDiv.find('.shipping_charge').removeAttr('name');
-                }
-
-                if(type_switch != undefined){
-                    clonedDiv.find('.flat_rate_shipping').removeAttr('name');
-                }
-
-                if(type_switch != undefined){
-                    clonedDiv.find('.charge_per_unit_shipping').removeAttr('name');
-                }
+                
+                clonedDiv.find('.min-qty-shipping').attr('name', `variant_shipping-` + id + `[from][]`)
+                clonedDiv.find('.max-qty-shipping').attr('name', `variant_shipping-` + id + `[to][]`)
+                clonedDiv.find('.estimated_order').attr('name', `variant_shipping-` + id + `[estimated_order][]`)
+                clonedDiv.find('.estimated_shipping').attr('name', `variant_shipping-` + id + `[estimated_shipping][]`)
+                clonedDiv.find('.shipping_charge').attr('name', `variant_shipping-` + id + `[shipping_charge][]`)
+                clonedDiv.find('.flat_rate_shipping').attr('name', `variant_shipping-` + id + `[flat_rate_shipping][]`)
+                clonedDiv.find('.charge_per_unit_shipping').attr('name', `variant_shipping-` + id + `[charge_per_unit_shipping][]`)
+                clonedDiv.find('.btn-add-shipping').attr('data-id', id);
+                clonedDiv.find('.delete_shipping_canfiguration').attr('data-variant-id', id);
 
                 $(this).parent().parent().parent().find('#bloc_default_shipping').append(clonedDiv);
             }else{
@@ -2454,12 +2438,6 @@
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
                                         </select>
-                                    </td>
-                                    <td>
-                                        <label class="aiz-switch aiz-switch-success mb-0">
-                                            <input value="1" type="checkbox" class="vat_sample" name="vat_sample" @if($vat_user->vat_registered == 1) checked @endif>
-                                            <span></span>
-                                        </label>
                                     </td>
                                     <td><input type="number" class="form-control shipping_amount" name="shipping_amount[]"></td>
                                     <td>

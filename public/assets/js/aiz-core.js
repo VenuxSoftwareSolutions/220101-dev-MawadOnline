@@ -939,8 +939,10 @@ $.fn.toggleAttr = function (attr, attr1, attr2) {
         },
         dateRange: function () {
             $("body .aiz-date-range").each(function () {
+                
                 var $this = $(this);
                 var today = moment().startOf("day");
+                
                 var value = $this.val();
                 var startDate = false;
                 var minDate = false;
@@ -978,7 +980,7 @@ $.fn.toggleAttr = function (attr, attr1, attr2) {
                 monthYearDrop = !monthYearDrop ? false : monthYearDrop;
                 format = !format ? "YYYY-MM-DD" : format;
                 separator = !separator ? " / " : separator;
-                minDate = !pastDisable ? minDate : today;
+                minDate = today;
                 maxDate = !futureDisable ? maxDate : today;
                 timePicker = !timePicker ? false : timePicker;
                 timePickerIncrement = !timePickerIncrement ? 1 : timePickerIncrement;
