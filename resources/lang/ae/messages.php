@@ -45,5 +45,7 @@ return [
     'confirm_button' => 'نعم، احذفه!',
     'cancel_button' => 'لا، ألغِ',
     'delete_warning' => 'لن تتمكن من استرداد هذا المستودع بعد الحذف!',
+    'Warehouses' => 'المستودعات',
+    'admin_review_message' => 'الحقول المميزة قيد المراجعة من قبل المشرف.',
 
 ];

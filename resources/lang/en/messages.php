@@ -46,5 +46,8 @@ return [
     'confirm_button' => 'Yes, delete it!',
     'cancel_button' => 'No, cancel!',
     'delete_warning' => 'You will not be able to recover this warehouse!',
+    'Status' => 'Status',
+    'Warehouses' => 'Warehouses',
+    'admin_review_message' => 'Highlighted fields are pending for admin\'s review.',
 
 ];

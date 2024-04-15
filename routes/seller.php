@@ -75,6 +75,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
         Route::get('/stock-details/search', [StockController::class, 'searchStockDetails'])->name('stock.search');
         Route::get('/warehouses', [StockController::class, 'warehouses'])->name('warehouses.index');
         Route::post('remove-warehouse', [StockController::class, 'removeWarehouse'])->name('warehouses.remove');
+        Route::post('store-warehouses', [StockController::class, 'storeWarehouses'])->name('warehouses.store');
 
     }) ;
 
@@ -139,6 +140,10 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
     Route::controller(ProfileController::class)->group(function () {
         Route::get('/profile', 'index')->name('profile.index');
         Route::post('/profile/update/{id}', 'update')->name('profile.update');
+        Route::post('/profile-seller/update/{id}', 'updateProfile')->name('profile.seller.update');
+        Route::post('/profile-seller/update/{id}', 'updateProfile')->name('profile.seller.update');
+        Route::post('/personal-info/update}', 'updatePersonalInfo')->name('personal-info.update');
+
     });
 
     // Address

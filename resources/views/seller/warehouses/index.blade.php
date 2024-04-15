@@ -9,7 +9,7 @@
         </div>
     </div>
     <div class="card">
-        <form class="form-horizontal" id="add_inventory_record" action="{{ route('seller.save.inventory.record') }}"
+        <form class="form-horizontal" id="add_inventory_record" action="{{ route('seller.warehouses.store') }}"
             method="POST">
             @csrf
             {{-- <div class="card-header row gutters-5">
@@ -19,6 +19,21 @@
         </div> --}}
             <div class="card-body">
                 <div class="p-3">
+                    @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                @if (session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
 
                     <div class="row warehouseRow" id="warehouseRows">
                         <div class="col-md-6">
@@ -102,7 +117,9 @@
                             <tr class="warehouseRow" data-warehouse-id="{{ $warehouse->id }}">
                                 <td><input value="{{ $warehouse->warehouse_name }}"
                                         type="text" class="form-control"
-                                        name="warehouse_name[]" required></td>
+                                        name="warehouse_name[]" required>
+                                    <input name="warehouse_id[]" type="hidden" value="{{ $warehouse->id }}">
+                                    </td>
                                 <td>
 
                                     <select required name="state_warehouse[]" class="form-control rounded-0 emirateSelect" id="emirateempire">
@@ -141,8 +158,12 @@
                                 <td><input type="text" class="form-control"
                                         value="{{ $warehouse->address_unit }}"
                                         name="unit_warehouse[]" required></td>
-                                <td><button type="button"
-                                        class="btn btn-danger removeRow">{{ translate('Remove') }}</button>
+                                <td>
+                                    @if (!$warehouse->checkWhHasProducts())
+                                    <button type="button"
+                                     class="btn btn-danger removeRow">{{ translate('Remove') }}</button>
+                                    @endif
+
                                 </td>
                             </tr>
                         @endforeach
@@ -155,15 +176,16 @@
                 </div>
             </div>
 
-            <div class="card-footer">
-
+            <div class="card-footer d-flex justify-content-end">
+                <button type="submit" id="saveButton" class="btn btn-primary">Save</button>
             </div>
         </form>
     </div>
 @endsection
 @section('script')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
         $(document).on('change', '.emirateSelect', function() {
 
@@ -214,8 +236,8 @@
          $('#warehouseTable').on('click', '.removeRow', function() {
             var row = $(this).closest('tr');
             var warehouseId = row.data('warehouse-id'); // Assuming each row has a data attribute for warehouse ID
-
-            // Show confirmation dialog
+            if (typeof warehouseId !== 'undefined') {
+                 // Show confirmation dialog
             Swal.fire({
                 title: '{{ trans('messages.confirm_delete') }}',
                 text: '{{ trans('messages.delete_warning') }}',
@@ -236,6 +258,11 @@
 
                         },
                         success: function(response) {
+                             // Check if the response contains an error
+                            if (response.error) {
+                                // Show error message
+                                toastr.error(response.error);
+                            } else {
                             // Remove the row from the table on success
                             row.remove();
                             Swal.fire(
@@ -243,6 +270,8 @@
                                 '{{ trans('messages.delete_success') }}',
                                 'success'
                             );
+                            }
+
                         },
                         error: function(error) {
                             console.error('Error removing warehouse:', error);
@@ -261,6 +290,60 @@
                     );
                 }
             });
+            } else {
+                row.remove();
+            }
+
+
         });
+        $('#addRow').on('click', function() {
+                var warehouseName = $('input[name="warehouse_name_add"]').val();
+                var state = $('select[name="state_warehouse_add"]').val();
+                var stateText = $('select[name="state_warehouse_add"] option:selected').text();
+                var area = $('select[name="area_warehouse_add"]').val();
+                var areaText = $('select[name="area_warehouse_add"] option:selected').text();
+                var street = $('input[name="street_warehouse_add"]').val();
+                var building = $('input[name="building_warehouse_add"]').val();
+                var unit = $('input[name="unit_add"]').val();
+                // Check if any input is empty
+                if (!warehouseName || !state || !area || !street || !building || !unit) {
+                    // Show toast with translated message
+                    toastr.error('{{ translate('Please fill in all fields.') }}');
+                    return; // Stop execution if any input is empty
+                }
+                const newRow = $('<tr>');
+
+                // Create cells
+                newRow.append(
+                    '<td><input type="text" class="form-control" name="warehouse_name[]" value="' +
+                    warehouseName + '" required></td>');
+                newRow.append(
+                    '<td><select required name="state_warehouse[]" class="form-control rounded-0 emirateSelect"><option value="' +
+                    state + '" selected>' + stateText + '</option></select></td>');
+                newRow.append(
+                    '<td><select class="form-control areaSelect" name="area_warehouse[]" required><option value="' +
+                    area + '" selected>' + areaText + '</option></select></td>');
+                newRow.append(
+                    '<td><input type="text" class="form-control" name="street_warehouse[]" value="' +
+                    street + '" required></td>');
+                newRow.append(
+                    '<td><input type="text" class="form-control" name="building_warehouse[]" value="' +
+                    building + '" required></td>');
+                newRow.append(
+                    '<td><input type="text" class="form-control" name="unit_warehouse[]" value="' +
+                    unit + '" required></td>');
+                newRow.append(
+                    '<td><button type="button" class="btn btn-danger removeRow">Remove</button></td>');
+
+                $('#warehouseTable tbody').append(newRow);
+
+                // Clear input fields
+                $('input[name="warehouse_name_add"]').val('');
+                $('select[name="state_warehouse_add"]').val('');
+                $('select[name="area_warehouse_add"]').val('');
+                $('input[name="street_warehouse_add"]').val('');
+                $('input[name="building_warehouse_add"]').val('');
+                $('input[name="unit_add"]').val('');
+            });
     </script>
 @endsection

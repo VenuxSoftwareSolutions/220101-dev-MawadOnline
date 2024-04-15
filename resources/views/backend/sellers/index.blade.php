@@ -223,6 +223,11 @@
 
 
                             <td id="status-{{ $seller->id}}"> {{$seller->status}}
+                               {{-- Check if there are pending profile changes --}}
+                                @if ($seller->checkProposedChanges())
+                                {{-- Display a message indicating pending changes --}}
+                                <span class="text-danger"> - Changes Pending Approval</span>
+                                @endif
                                 {{-- @if($seller->status == 'Rejected')
                                     <span class="badge bg-danger">{{ __('Rejected') }}</span>
                                 @elseif($seller->steps == 0)

@@ -208,4 +208,10 @@ class User extends Authenticatable implements MustVerifyEmail
             }
         });
     }
+    public function checkProposedChanges(){
+        $proposedChange = ProposedPayoutChange::where('user_id', $this->id)->latest()->first();
+         return ($proposedChange && $proposedChange->status=="pending" ) ;
+
+    }
+
 }
