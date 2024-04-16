@@ -1,14 +1,27 @@
 @extends('seller.layouts.app')
+@php
+    use Carbon\Carbon;
+@endphp
+<style>
+    .color-modified {
+        border-color: #FF0017 !important;
+        /* Your desired border color */
+    }
 
+    .color-modified-file {
+        color: #FF0017 !important;
+        /* Your desired border color */
+    }
+</style>
 @section('panel_content')
     <div class="aiz-titlebar mt-2 mb-4">
-      <div class="row align-items-center">
-        <div class="col-md-6">
-            <h1 class="h3">{{ translate('Manage Profile') }}</h1>
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="h3">{{ translate('Manage Profile') }}</h1>
+            </div>
         </div>
-      </div>
     </div>
-    <form action="{{ route('seller.profile.update', $user->id) }}" method="POST" enctype="multipart/form-data">
+    {{-- <form action="{{ route('seller.profile.update', $user->id) }}" method="POST" enctype="multipart/form-data">
         <input name="_method" type="hidden" value="POST">
         @csrf
         <!-- Basic Info-->
@@ -239,12 +252,866 @@
               </div>
           </div>
         </div>
-    </form>
+    </form> --}}
+
+    <div class="card">
+        <div class="card-body">
+
+
+            <ul class="nav nav-tabs" id="registerTabs">
+                <li class="nav-item">
+                    <a class="nav-link active" id="personal-info-tab" data-toggle="tab"
+                        href="#personal-info">{{ translate('Personal Info') }}</a>
+                </li>
+                @if ($user->id == $user->owner_id)
+                <li class="nav-item">
+                    <a class="nav-link" id="business-info-tab" data-toggle="tab"
+                        href="#business-info">{{ translate('Business Information') }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="contact-person-tab" data-toggle="tab"
+                        href="#contact-person">{{ translate('Contact Person') }}</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" id="payout-info-tab" data-toggle="tab"
+                        href="#payout-info">{{ translate('Payout Information') }}</a>
+                </li>
+                @endif
+
+            </ul>
+            <div class="tab-content" id="registerTabsContent">
+
+                <div class="tab-pane fade show active" id="personal-info">
+
+                    <form method="POST" action="{{route('seller.personal-info.update')}}">
+                    @csrf
+                    <!-- ... Personal Info form fields ... -->
+                    <div class="bg-white border mb-4">
+                        <div class="fs-15 fw-600 p-3">
+                            {{ translate('Personal Info') }}
+                        </div>
+                        {{-- <div id="validation-errors" class="alert alert-danger" style="display: none;">
+                        </div> --}}
+                        @if ($proposedPayoutChange)
+                        <!-- Display message indicating pending review -->
+                        <div class="alert alert-info">
+                            {{ __('messages.admin_review_message') }}
+                        </div>
+                        @endif
+                        @if(session('success'))
+                        <div class="alert alert-success">
+                            {{ session('success') }}
+                        </div>
+                        @endif
+                        @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                         @endif
+
+                        <div class="p-3">
+                            <div class="form-group">
+                                <label>{{ translate('First Name') }} <span class="text-primary">*</span></label>
+                                <input type="text" class="form-control rounded-0"
+                                    value="{{ auth()->check() ? auth()->user()->first_name : old('first_name_personal') }}"
+                                    id="first_name" placeholder="{{ translate('First Name') }}" name="first_name_personal" required>
+                                    @error('first_name_personal')
+                                    <div class="text-danger">{{ $message }}</div>
+                                     @enderror
+                            </div>
+                            <div class="form-group">
+                                <label>{{ translate('Last name') }} <span class="text-primary">*</span></label>
+                                <input type="text" class="form-control rounded-0" id="last_name"
+                                    value="{{ auth()->check() ? auth()->user()->last_name : old('last_name_personal') }}"
+                                    placeholder="{{ translate('Last name') }}" name="last_name_personal" required>
+                                    @error('last_name_personal')
+                                    <div class="text-danger">{{ $message }}</div>
+                                     @enderror
+                            </div>
+                            <div class="form-group">
+                                <label>{{ translate('Email') }} <span class="text-primary">*</span></label>
+                                <input disabled  type="text" class="form-control rounded-0"
+                                    value="{{ auth()->check() ? auth()->user()->email : '' }}"
+                                    placeholder="{{ translate('Email') }}" name="email" >
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-primary fw-600 rounded-0"
+                            {{-- onclick="switchTab('business-info')" --}}>{{ translate('Save') }}</button>
+                    </div>
+                    </form>
+                </div>
+                @if ($user->id == $user->owner_id)
+                <div class="tab-pane fade" id="business-info">
+                    <form id="profileForm" class="" action="{{ route('seller.profile.seller.update', $user->id) }}"
+                        method="POST" enctype="multipart/form-data" data-next-tab="contact-person">
+                        @csrf
+                        <!-- ... Business Info form fields ... -->
+
+                        <div class="bg-white border mb-4">
+                            <div class="fs-15 fw-600 p-3">
+                                {{ translate('Business Information') }}
+                            </div>
+                            {{-- <div id="validation-errors" class="alert alert-danger"
+                            style="display: none;"></div> --}}
+                            <?php
+                            // $proposedPayoutChange = App\Models\ProposedPayoutChange::where('user_id', $user->id)
+                            //     ->latest()
+                            //     ->first();
+                                $trade_name_english = $proposedPayoutChange && $proposedPayoutChange->getNewValue('trade_name_english')
+                                ? $proposedPayoutChange->getNewValue('trade_name_english')
+                                : $user->business_information->getTranslation('trade_name', 'en', false) ?? '';
+                                $trade_name_arabic = $proposedPayoutChange && $proposedPayoutChange->getNewValue('trade_name_arabic')
+                                ? $proposedPayoutChange->getNewValue('trade_name_arabic')
+                                : $user->business_information->getTranslation('trade_name', 'ar', false) ?? '';
+
+                                 $trade_license_doc = $proposedPayoutChange && $proposedPayoutChange->getNewValue('trade_license_doc') ? $proposedPayoutChange->getNewValue('trade_license_doc') : $user->business_information->trade_license_doc ?? '';
+                                 $eshop_name_english = $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_name_english')
+                                ? $proposedPayoutChange->getNewValue('eshop_name_english')
+                                : $user->business_information->getTranslation('eshop_name', 'en', false) ?? '';
+                                $eshop_name_arabic = $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_name_arabic')
+                                ? $proposedPayoutChange->getNewValue('eshop_name_arabic')
+                                : $user->business_information->getTranslation('eshop_name', 'ar', false) ?? '';
+                                $eshop_desc_english = $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_desc_english')
+                                ? $proposedPayoutChange->getNewValue('eshop_desc_english')
+                                : $user->business_information->getTranslation('eshop_desc', 'en', false) ?? '';
+                                $eshop_desc_arabic = $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_desc_arabic')
+                                ? $proposedPayoutChange->getNewValue('eshop_desc_arabic')
+                                : $user->business_information->getTranslation('eshop_desc', 'ar', false) ?? '';
+                                $license_issue_date = $proposedPayoutChange && $proposedPayoutChange->getNewValue('license_issue_date') ? $proposedPayoutChange->getNewValue('license_issue_date') : $user->business_information->license_issue_date ?? '';
+                                if (!empty($license_issue_date))
+                                    $license_issue_date = Carbon::createFromFormat('Y-m-d', $license_issue_date)->format('d M Y');
+
+                                $license_expiry_date = $proposedPayoutChange && $proposedPayoutChange->getNewValue('license_expiry_date') ? $proposedPayoutChange->getNewValue('license_expiry_date') : $user->business_information->license_expiry_date ?? '';
+                                if (!empty($license_expiry_date))
+                                    $license_expiry_date = Carbon::createFromFormat('Y-m-d', $license_expiry_date)->format('d M Y');
+
+                                $state = $proposedPayoutChange && $proposedPayoutChange->getNewValue('state') ? $proposedPayoutChange->getNewValue('state') : $user->business_information->state ?? '';
+                                $area_id = $proposedPayoutChange && $proposedPayoutChange->getNewValue('area_id') ? $proposedPayoutChange->getNewValue('area_id') : $user->business_information->area_id ?? '';
+
+                                $street = $proposedPayoutChange && $proposedPayoutChange->getNewValue('street') ? $proposedPayoutChange->getNewValue('street') : $user->business_information->street ?? '';
+                                $building = $proposedPayoutChange && $proposedPayoutChange->getNewValue('building') ? $proposedPayoutChange->getNewValue('building') : $user->business_information->building ?? '';
+                                $unit = $proposedPayoutChange && $proposedPayoutChange->getNewValue('unit') ? $proposedPayoutChange->getNewValue('unit') : $user->business_information->unit ?? '';
+                                $po_box = $proposedPayoutChange && $proposedPayoutChange->getNewValue('po_box') ? $proposedPayoutChange->getNewValue('po_box') : $user->business_information->po_box ?? '';
+                                $landline = $proposedPayoutChange && $proposedPayoutChange->getNewValue('landline') ? $proposedPayoutChange->getNewValue('landline') : $user->business_information->landline ?? '';
+                                $vat_registered = $proposedPayoutChange && $proposedPayoutChange->getNewValue('vat_registered') != null ? $proposedPayoutChange->getNewValue('vat_registered') : $user->business_information->vat_registered ?? '';
+
+                                $vat_certificate = $proposedPayoutChange && $proposedPayoutChange->getNewValue('vat_certificate') ? $proposedPayoutChange->getNewValue('vat_certificate') : $user->business_information->vat_certificate ?? '';
+                                $trn = $proposedPayoutChange && $proposedPayoutChange->getNewValue('trn') ? $proposedPayoutChange->getNewValue('trn') : $user->business_information->trn ?? '';
+                                $tax_waiver = $proposedPayoutChange && $proposedPayoutChange->getNewValue('tax_waiver') ? $proposedPayoutChange->getNewValue('tax_waiver') : $user->business_information->tax_waiver ?? '';
+
+                                $civil_defense_approval = $proposedPayoutChange && $proposedPayoutChange->getNewValue('civil_defense_approval') ? $proposedPayoutChange->getNewValue('civil_defense_approval') : $user->business_information->civil_defense_approval ?? '';
+
+                           ?>
+                            <div class="p-3">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{ translate('English Trade Name') }} <span
+                                                    class="text-primary">*</span></label>
+                                            <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('trade_name_english') ? 'color-modified' : '' }}"
+                                                placeholder="{{ translate('English Trade Name') }}"
+                                                value="{{$trade_name_english }}"
+                                                name="trade_name_english" required>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{ translate('Arabic Trade Name') }} <span
+                                                    class="text-primary">*</span></label>
+                                            <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('trade_name_arabic') ? 'color-modified' : '' }}"
+                                                placeholder="{{ translate('Arabic Trade Name') }}"
+                                                value="{{$trade_name_arabic }}"
+                                                name="trade_name_arabic" required>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{ translate('Trade License Doc') }} <span
+                                                    class="text-primary">*</span><small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small></label>
+
+
+                                            @if ($trade_license_doc)
+                                                <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('trade_license_doc') ? 'color-modified-file' : '' }}"
+                                                    href="{{ static_asset($trade_license_doc) }}"
+                                                    target="_blank">{{ translate('View Trade License Doc') }}</a>
+                                                <input type="hidden" name="trade_license_doc"
+                                                    value="{{ $trade_license_doc }}">
+                                            @endif
+                                            <input type="file" class="form-control rounded-0"
+                                                placeholder="{{ translate('Trade License Doc') }}" name="trade_license_doc"
+                                                required>
+
+
+                                            {{-- <div class="custom-file">
+                                        <input name="trade_license_doc" type="file" class="custom-file-input" id="inputGroupFile01">
+                                        <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                                      </div> --}}
+
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{ translate('English E-shop Name') }} <span
+                                                    class="text-primary">*</span></label>
+                                            <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_name_english') ? 'color-modified' : '' }}"
+                                                placeholder="{{ translate('English E-shop Name') }}"
+                                                value="{{ $eshop_name_english }}"
+                                                name="eshop_name_english" required>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{ translate('Arabic E-shop Name') }} <span
+                                                    class="text-primary">*</span></label>
+                                            <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_name_arabic') ? 'color-modified' : '' }}"
+                                                placeholder="{{ translate('Arabic E-shop Name') }}"
+                                                value="{{$eshop_name_arabic }}"
+                                                name="eshop_name_arabic" required>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{ translate('English e-Shop description') }} <span
+                                                    class="text-primary"></span></label>
+
+                                            <textarea class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_desc_english') ? 'color-modified' : '' }}" placeholder="{{ translate('English e-Shop description') }}"
+                                                name="eshop_desc_english">{{ $eshop_desc_english }}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{ translate('Arabic e-Shop description') }} <span
+                                                    class="text-primary"></span></label>
+
+                                            <textarea class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_desc_arabic') ? 'color-modified' : '' }}" placeholder="{{ translate('Arabic e-Shop description') }}"
+                                                name="eshop_desc_arabic">{{ $eshop_desc_arabic  }}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{ translate('License Issue Date') }} <span
+                                                    class="text-primary">*</span>
+                                            </label>
+
+                                            <input dir="auto" required type="{{-- date --}}text"
+                                                class="datepicker form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('license_issue_date') ? 'color-modified' : '' }}"
+                                                placeholder="{{ translate('License Issue Date') }}"
+                                                id="license_issue_date"
+                                                value="{{ $license_issue_date }}"
+                                                name="license_issue_date">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{ translate('License Expiry Date') }} <span
+                                                    class="text-primary">*</span></label>
+
+                                            <input dir="auto" required type="text"
+                                                class="datepicker form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('license_expiry_date') ? 'color-modified' : '' }}" {{-- value="{{ $user->business_information->license_expiry_date ?? '' }}" --}}
+                                                value="{{ $license_expiry_date }}"
+                                                placeholder="{{ translate('License Expiry Date') }}"
+                                                name="license_expiry_date">
+                                        </div>
+                                    </div>
+                                    {{-- @if (isset($user->business_information) && !empty($user->business_information->state)) --}}
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>{{ translate('State/Emirate') }} <span
+                                                        class="text-primary">*</span></label>
+                                                <select required name="state" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('state') ? 'color-modified' : '' }}"
+                                                    id="emirateempire">
+                                                    <option value="">{{ translate('please_choose') }}</option>
+                                                    @foreach ($emirates as $emirate)
+                                                        <option value="{{ $emirate->id }}"
+                                                            @if ( $state == $emirate->id) selected @endif>
+                                                            {{ $emirate->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>{{ translate('Area') }} <span class="text-primary">*</span></label>
+                                                <select required name="area_id" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('area_id') ? 'color-modified' : '' }}"
+                                                    id="areaempire">
+                                                    @php
+                                                        $areas = App\Models\Area::where(
+                                                            'emirate_id',
+                                                            $state,
+                                                        )->get();
+                                                    @endphp
+                                                    {{-- <option value="" selected>{{ translate('please_choose') }}
+                                                    </option> --}}
+                                                    @foreach ($areas as $area)
+                                                        <option value="{{ $area->id }}"
+                                                            @if ($area->id == $area_id) selected @endif>
+                                                            {{ $area->name }}</option>
+                                                    @endforeach
+
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                    {{-- @else
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>{{ translate('State/Emirate') }} <span
+                                                        class="text-primary">*</span></label>
+                                                <select required name="state" class="form-control rounded-0"
+                                                    id="emirateempire">
+                                                    <option value="" selected>{{ translate('please_choose') }}
+                                                    </option>
+                                                    @foreach ($emirates as $emirate)
+                                                        <option value="{{ $emirate->id }}">{{ $emirate->name }}</option>
+                                                    @endforeach
+                                                </select>
+
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>{{ translate('Area') }} <span class="text-primary">*</span></label>
+                                                <select required name="area_id" class="form-control rounded-0"
+                                                    id="areaempire">
+                                                    <option value="" selected>
+                                                        {{ translate('please_choose') }}
+                                                    </option>
+
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                    @endif --}}
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{ translate('Street') }} <span class="text-primary">*</span></label>
+                                            <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('street') ? 'color-modified' : '' }}"
+                                                value="{{ $street }}"
+                                                placeholder="{{ translate('Street') }}" name="street" required>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{ translate('Building') }} <span class="text-primary">*</span></label>
+                                            <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('building') ? 'color-modified' : '' }}"
+                                                value="{{$building }}"
+                                                placeholder="{{ translate('Building') }}" name="building" required>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{ translate('Unit/Office No.') }} <span
+                                                    class="text-primary"></span></label>
+                                            <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('unit') ? 'color-modified' : '' }}"
+                                                value="{{$unit }}"
+                                                placeholder="{{ translate('Unit/Office No.') }}" name="unit">
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{ translate('PO Box') }} <span class="text-primary "></span></label>
+                                            <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('po_box') ? 'color-modified' : '' }}"
+                                                value="{{ $po_box }}"
+                                                placeholder="{{ translate('PO Box') }}" name="po_box">
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{ translate('Landline Phone No.') }} <span
+                                                    class="text-primary"></span></label>
+                                            <input value="{{$landline }}"
+                                                type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('landline') ? 'color-modified' : '' }}"
+                                                placeholder="{{ translate('Landline Phone No.') }}" name="landline">
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="{{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('vat_registered') != null ? 'color-modified-file' : '' }}">{{ translate('Vat Registered') }} <span class="text-primary">*
+                                                </span></label> <br>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" value="1"
+                                                    id="vatRegisteredYes" name="vat_registered"
+                                                    @if (
+                                                        ($vat_registered == 1) ||
+                                                        empty($vat_registered)) checked @endif>
+                                                <label class="form-check-label" for="vatRegisteredYes">
+                                                    {{ translate('Yes') }}
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" value="0"
+                                                    id="vatRegisteredNo" @if ( $vat_registered == 0) checked @endif
+                                                    name="vat_registered">
+                                                <label class="form-check-label" for="vatRegisteredNo">
+                                                    {{ translate('No') }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6" id="vatCertificateGroup">
+                                        <div class="form-group">
+                                            <label>{{ translate('Vat Certificate') }} <span
+                                                    class="text-primary">*</span><small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small></label>
+                                            @if ($vat_certificate)
+                                                <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('vat_certificate') ? 'color-modified-file' : '' }}"
+                                                    href="{{ static_asset($vat_certificate) }}"
+                                                    target="_blank">{{ translate('View Vat Certificate') }}</a>
+                                                <input type="hidden" name="vat_certificate"
+                                                    value="{{ $vat_certificate}}">
+                                            @endif
+                                            <input type="file" class="form-control rounded-0"
+                                                placeholder="{{ translate('Vat Certificate') }}" name="vat_certificate">
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6" id="trnGroup">
+                                        <div class="form-group">
+                                            <label>{{ translate('TRN') }} <span class="text-primary">*</span></label>
+                                            <input value="{{ $trn }}" type="text"
+                                                class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('trn') ? 'color-modified' : '' }}" placeholder="{{ translate('TRN') }}"
+                                                name="trn">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6" id="taxWaiverGroup" {{-- style="display: none;" --}}>
+                                        <div class="form-group">
+                                            <label>{{ translate('Tax Waiver Certificate') }} <span
+                                                    class="text-primary">*</span><small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small></label>
+                                            @if ($tax_waiver)
+                                                <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('tax_waiver') ? 'color-modified-file' : '' }}"
+                                                    href="{{ static_asset($tax_waiver) }}"
+                                                    target="_blank">{{ translate('View Tax Waiver Certificate') }}</a>
+                                                <input type="hidden" name="tax_waiver"
+                                                    value="{{ $tax_waiver }}">
+                                            @endif
+                                            <input type="file" class="form-control rounded-0" name="tax_waiver">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{ translate('Civil Defense Approval') }} <span
+                                                    class="text-primary"></span><small>{{ translate('Max file size is 5MB and accepted file types are PDF and image formats.') }}</small></label>
+                                            {{-- <input  type="file" class="form-control rounded-0"
+                                            name="civil_defense_approval"> --}}
+                                            @if ($civil_defense_approval )
+                                                <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('civil_defense_approval') ? 'color-modified-file' : '' }}"
+                                                    href="{{ static_asset($civil_defense_approval ) }}"
+                                                    target="_blank">{{ translate('View Civil Defense Approval') }}</a>
+                                                <input type="hidden" name="civil_defense_approval"
+                                                    value="{{ $civil_defense_approval  }}">
+                                            @endif
+                                            <input type="file" class="form-control rounded-0"
+                                                name="civil_defense_approval">
+
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="text-right">
+                            <!-- Previous Button -->
+                            <button type="button" data-prv='personal-info'
+                                class="btn btn-info fw-600 rounded-0 prv-tab">
+                                {{ translate('Previous') }}
+                            </button>
+
+                            <button type="button" class="btn btn-primary fw-600 rounded-0"
+                                onclick="switchTab('contact-person')">{{ translate('Next') }}</button>
+
+                        </div>
+
+                </div>
+                <div class="tab-pane fade" id="contact-person">
+
+                    <!-- ... Contact Person form fields ... -->
+                    <div class="bg-white border mb-4">
+                        <div class="fs-15 fw-600 p-3">
+                            {{ translate('Contact Person') }}
+                        </div>
+                        {{-- <div id="validation-errors" class="alert alert-danger"
+                                style="display: none;"></div> --}}
+                        <?php
+
+                        $first_name = $proposedPayoutChange && $proposedPayoutChange->getNewValue('first_name') ? $proposedPayoutChange->getNewValue('first_name') : $user->contact_people->first_name ?? '';
+                        $last_name = $proposedPayoutChange && $proposedPayoutChange->getNewValue('last_name') ? $proposedPayoutChange->getNewValue('last_name') : $user->contact_people->last_name ?? '';
+                        $email = $proposedPayoutChange && $proposedPayoutChange->getNewValue('email') ? $proposedPayoutChange->getNewValue('email') : $user->contact_people->email ?? '';
+                        $mobile_phone = $proposedPayoutChange && $proposedPayoutChange->getNewValue('mobile_phone') ? $proposedPayoutChange->getNewValue('mobile_phone') : $user->contact_people->mobile_phone ?? '';
+                        $additional_mobile_phone = $proposedPayoutChange && $proposedPayoutChange->getNewValue('additional_mobile_phone') ? $proposedPayoutChange->getNewValue('additional_mobile_phone') : $user->contact_people->additional_mobile_phone ?? '';
+                        $nationality = $proposedPayoutChange && $proposedPayoutChange->getNewValue('nationality') ? $proposedPayoutChange->getNewValue('nationality') : $user->contact_people->nationality ?? '';
+
+                        $date_of_birth = $proposedPayoutChange && $proposedPayoutChange->getNewValue('date_of_birth') ? $proposedPayoutChange->getNewValue('date_of_birth') : $user->contact_people->date_of_birth ?? '';
+                        if (!empty($date_of_birth))
+                            $date_of_birth = Carbon::createFromFormat('Y-m-d', $date_of_birth)->format('d M Y');
+
+                        $emirates_id_number = $proposedPayoutChange && $proposedPayoutChange->getNewValue('emirates_id_number') ? $proposedPayoutChange->getNewValue('emirates_id_number') : $user->contact_people->emirates_id_number ?? '';
+                        $emirates_id_expiry_date = $proposedPayoutChange && $proposedPayoutChange->getNewValue('emirates_id_expiry_date') ? $proposedPayoutChange->getNewValue('emirates_id_expiry_date') : $user->contact_people->emirates_id_expiry_date ?? '';
+                        if (!empty($emirates_id_expiry_date))
+                            $emirates_id_expiry_date = Carbon::createFromFormat('Y-m-d', $emirates_id_expiry_date)->format('d M Y')  ;
+                        $emirates_id_file_path = $proposedPayoutChange && $proposedPayoutChange->getNewValue('emirates_id_file_path') ? $proposedPayoutChange->getNewValue('emirates_id_file_path') : $user->contact_people->emirates_id_file_path ?? '';
+                        $business_owner = $proposedPayoutChange && $proposedPayoutChange->getNewValue('business_owner') !=null ? $proposedPayoutChange->getNewValue('business_owner') : $user->contact_people->business_owner ?? 1;
+                        $designation = $proposedPayoutChange && $proposedPayoutChange->getNewValue('designation') ? $proposedPayoutChange->getNewValue('designation') : $user->contact_people->designation ?? '';
+
+                        ?>
+                        <div class="p-3">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ translate('First Name') }} <span class="text-primary">*</span></label>
+                                        {{-- @php
+                                                $fistName = null;
+                                                if (isset($user->contact_people->first_name) && !empty($user->contact_people->first_name)) {
+                                                    $fistName = $user->contact_people->first_name;
+                                                }
+
+                                            @endphp --}}
+                                        <input id="first_name_bi" type="text"
+                                            class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('first_name') ? 'color-modified' : '' }}"
+                                            placeholder="{{ translate('First Name') }}" value="{{ $first_name }}"
+                                            name="first_name" required>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ translate('Last Name') }} <span class="text-primary">*</span></label>
+                                        {{-- @php
+                                                $lastName = null;
+                                                if (isset($user->contact_people->last_name) && !empty($user->contact_people->last_name)) {
+                                                    $lastName = $user->contact_people->last_name;
+                                                }
+
+                                            @endphp --}}
+                                        <input type="text"
+                                            class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('last_name') ? 'color-modified' : '' }}"
+                                            placeholder="{{ translate('Last Name') }}" id="last_name_bi"
+                                            value="{{ $last_name }}" name="last_name" required>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ translate('Email') }} <span class="text-primary">*</span></label>
+                                        {{-- @php
+                                                $emailUser = null;
+                                                if (isset($user->contact_people->email) && !empty($user->contact_people->email)) {
+                                                    $emailUser = $user->contact_people->email;
+                                                }
+
+                                            @endphp --}}
+                                        <input type="email"
+                                            class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('email') ? 'color-modified' : '' }}"
+                                            id="email_bi" placeholder="{{ translate('Email') }}"
+                                            value="{{ $email }}" name="email" required>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ translate('Mobile Phone') }} <span
+                                                class="text-primary">*</span></label>
+                                        <small class="text-muted">{{ translate('Example') }}:
+                                            +971123456789 {{ translate('or') }}
+                                            00971123456789</small>
+
+                                        <input type="text" dir="auto"
+                                            class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('mobile_phone') ? 'color-modified' : '' }}"
+                                            placeholder="{{ translate('Mobile Phone') }}" value="{{ $mobile_phone }}"
+                                            name="mobile_phone" required>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ translate('Additional Mobile Phone') }} <span
+                                                class="text-primary"></span><small
+                                                class="text-muted">{{ translate('Example') }}:
+                                                +971123456789 {{ translate('or') }}
+                                                00971123456789</small></label>
+                                        <input type="text" dir="auto"
+                                            class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('additional_mobile_phone') ? 'color-modified' : '' }}"
+                                            placeholder="{{ translate('Additional Mobile Phone') }}"
+                                            value="{{ $additional_mobile_phone }}" name="additional_mobile_phone">
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ translate('Nationality') }} <span class="text-primary">*</span></label>
+                                        <br>
+                                        <select id="nationality" title="{{ translate('Select Nationality') }}" name="nationality"
+                                            class="form-control selectpicker countrypicker {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('nationality') ? 'color-modified' : '' }}"
+                                            @if ($nationality) data-default="{{ $nationality }}" @else data-default="" @endif
+                                            data-flag="true"></select>
+                                            <input type="hidden" value="{{$nationality }}" id="nationalityHidden" name="nationality"> <!-- Hidden input for nationality -->
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ translate('Date Of Birth') }} <span
+                                                class="text-primary">*</span></label>
+                                        <input dir="auto" type="text" class="datepicker form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('date_of_birth') ? 'color-modified' : '' }}"
+                                            placeholder="{{ translate('Date Of Birth') }}" {{-- value="{{ $user->contact_people->date_of_birth ?? '' }}" --}}
+                                            value="{{ $date_of_birth }}"
+                                            name="date_of_birth" required>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ translate('Emirates ID - Number') }} <span
+                                                class="text-primary">*</span></label> <small
+                                            class="text-muted">{{ translate('Example') }}:123456789012345
+                                        </small>
+                                        <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('emirates_id_number') ? 'color-modified' : '' }}"
+                                            placeholder="{{ translate('Emirates ID - Number') }}"
+                                            value="{{  $emirates_id_number }}" required
+                                            name="emirates_id_number">
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ translate('Emirates ID - Expiry Date') }} <span
+                                                class="text-primary">*</span></label>
+                                        <input dir="auto" type="text" class="datepicker form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('emirates_id_expiry_date') ? 'color-modified' : '' }}"
+                                            placeholder="{{ translate('Emirates ID - Expiry Date') }}"
+                                            {{-- value="{{ $user->contact_people->emirates_id_expiry_date ?? '' }}" --}}
+                                            value="{{ $emirates_id_expiry_date }}"
+                                            required name="emirates_id_expiry_date">
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ translate('Emirates ID') }} <span
+                                                class="text-primary">*</span><small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}
+                                            </small></label>
+                                        @if ($emirates_id_file_path)
+                                            <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('emirates_id_file_path') ? 'color-modified-file' : '' }}"
+                                                href="{{ static_asset($emirates_id_file_path) }}"
+                                                target="_blank">{{ translate('View Emirates ID') }}</a>
+                                            <input type="hidden" name="emirates_id_file_path"
+                                                value="{{ $emirates_id_file_path }}">
+                                        @endif
+                                        <input type="file" class="form-control rounded-0"
+                                            placeholder="{{ translate('Emirates ID') }}" required
+                                            name="emirates_id_file_path">
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="{{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('business_owner') != null ? 'color-modified-file' : '' }}">{{ translate('Business Owner') }} <span class="text-primary">*
+                                            </span></label> <br>
+                                        <div class="form-check form-check-inline">
+
+                                            <input @if (
+                                                ($business_owner == 1) || empty($business_owner)
+                                                  ) checked @endif
+                                                class="form-check-input" type="radio" value="1"
+                                                id="" name="business_owner">
+                                            <label class="form-check-label" for="">
+                                                {{ translate('Yes') }}
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio"
+                                                @if ($business_owner == 0) checked @endif value="0"
+                                                id="" name="business_owner">
+                                            <label class="form-check-label" for="">
+                                                {{ translate('No') }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ translate('Designation') }} <span class="text-primary">*</span></label>
+                                        <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('designation') ? 'color-modified' : '' }}" required
+                                            placeholder="{{ translate('Designation') }}"
+                                            value="{{ $designation }}" name="designation">
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-right">
+                        <!-- Previous Button -->
+                        <button type="button" data-prv='business-info' class="btn btn-info fw-600 rounded-0 prv-tab">
+                            {{ translate('Previous') }}
+                        </button>
+
+                        <button type="button" class="btn btn-primary fw-600 rounded-0"
+                            onclick="switchTab('payout-info')">{{ translate('Next') }}</button>
+                    </div>
+
+                </div>
+
+                <div class="tab-pane fade" id="payout-info">
+
+                    <!-- ... Payout Info form fields ... -->
+                    <div class="bg-white border mb-4">
+                        <div class="fs-15 fw-600 p-3">
+                            {{ translate('Payout Information') }}
+                        </div>
+                        {{-- <div id="validation-errors" class="alert alert-danger"
+                                style="display: none;"></div> --}}
+                        <?php
+
+                        $bankName = $proposedPayoutChange && $proposedPayoutChange->getNewValue('bank_name') ? $proposedPayoutChange->getNewValue('bank_name') : $user->payout_information->bank_name ?? '';
+                        $accountName = $proposedPayoutChange && $proposedPayoutChange->getNewValue('account_name') ? $proposedPayoutChange->getNewValue('account_name') : $user->payout_information->account_name ?? '';
+                        $accountNumber = $proposedPayoutChange && $proposedPayoutChange->getNewValue('account_number') ? $proposedPayoutChange->getNewValue('account_number') : $user->payout_information->account_number ?? '';
+                        $iban = $proposedPayoutChange && $proposedPayoutChange->getNewValue('iban') ? $proposedPayoutChange->getNewValue('iban') : $user->payout_information->iban ?? '';
+                        $swiftCode = $proposedPayoutChange && $proposedPayoutChange->getNewValue('swift_code') ? $proposedPayoutChange->getNewValue('swift_code') : $user->payout_information->swift_code ?? '';
+                        $ibanCertificate = $proposedPayoutChange && $proposedPayoutChange->getNewValue('iban_certificate') ? $proposedPayoutChange->getNewValue('iban_certificate') : $user->payout_information->iban_certificate ?? '';
+
+                        ?>
+
+                        <div class="p-3">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ translate('Bank Name') }} <span class="text-primary">*</span></label>
+                                        <input value="{{ $bankName }}" type="text"
+                                            class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('bank_name') ? 'color-modified' : '' }}"
+                                            placeholder="{{ translate('Bank Name') }}" name="bank_name" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ translate('Account Name') }} <span
+                                                class="text-primary">*</span></label>
+                                        <input value="{{ $accountName }}" type="text"
+                                            class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('account_name') ? 'color-modified' : '' }}"
+                                            placeholder="{{ translate('Account Name') }}" name="account_name" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ translate('Account Number') }} <span
+                                                class="text-primary">*</span></label>
+                                        <input value="{{ $accountNumber }}" type="text"
+                                            class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('account_number') ? 'color-modified' : '' }}"
+                                            placeholder="{{ translate('Account Number') }}" name="account_number"
+                                            required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ translate('IBAN') }} <span class="text-primary">*</span></label>
+                                        <input value="{{ $iban }}" type="text"
+                                            class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('iban') ? 'color-modified' : '' }}"
+                                            placeholder="{{ translate('IBAN') }}" name="iban" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ translate('Swift Code') }} <span class="text-primary">*</span></label>
+                                        <input value="{{ $swiftCode }}" type="text"
+                                            class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('swift_code') ? 'color-modified' : '' }}"
+                                            placeholder="{{ translate('Swift Code') }}" name="swift_code" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ translate('IBAN Certificate') }}<span
+                                                class="text-primary">*</span><small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small></label>
+                                        @if ($ibanCertificate)
+                                            <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('iban_certificate') ? 'color-modified-file' : '' }}"
+                                                href="{{ static_asset($ibanCertificate) }}"
+                                                target="_blank">{{ translate('View IBAN Certificate') }}</a>
+                                            <input type="hidden" name="iban_certificate"
+                                                value="{{ $ibanCertificate }}">
+                                        @endif
+                                        <input required type="file" class="form-control rounded-0"
+                                            name="iban_certificate">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="text-right">
+                        <!-- Previous Button -->
+                        <button type="button" data-prv='contact-person' class="btn btn-info fw-600 rounded-0 prv-tab">
+                            {{ translate('Previous') }}
+                        </button>
+                        @if ($proposedPayoutChange && $proposedPayoutChange->admin_viewed == 0 || !$proposedPayoutChange)
+                        <!-- Submit for Review Button -->
+                        <button type="button" id="submitForReviewBtn" class="btn btn-primary fw-600 rounded-0">
+                            {{ translate('Submit for Review') }}
+                        </button>
+                        @endif
+
+
+                    </div>
+
+                </div>
+                @endif
+            </div>
+            <!-- Bootstrap Modal Dialog for Reject -->
+            {{-- <div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <form enctype="multipart/form-data"  method="POST" action="{{ route('resubmit.registration', $user->id) }}">
+                        @csrf
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="rejectModalLabel">Reject Vendor</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        </div>
+                        <div class="modal-body">
+                            <textarea name="reject_reason" id="editor"></textarea>
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" id="submitRejection" class="btn btn-danger">Submit</button>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+            </div> --}}
+
+        </div>
+    </div>
 
 @endsection
 
-@section('modal')
-    {{-- New Address Modal --}}
+{{-- @section('modal')
+
     <div class="modal fade" id="new-address-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -281,7 +1148,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="row">
                                 <div class="col-md-2">
                                     <label>{{ translate('State')}}</label>
@@ -334,7 +1201,7 @@
                                     </div>
                                 </div>
                             @endif
-                            
+
                             <div class="row">
                                 <div class="col-md-2">
                                     <label>{{ translate('Postal code')}}</label>
@@ -361,7 +1228,7 @@
         </div>
     </div>
 
-    {{-- Edit Address Modal --}}
+
     <div class="modal fade" id="edit-address-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -371,7 +1238,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                
+
                 <div class="modal-body" id="edit_modal_body">
 
                 </div>
@@ -379,11 +1246,11 @@
         </div>
     </div>
 
-@endsection
+@endsection --}}
 
 @section('script')
-    <script type="text/javascript">
-        
+    {{-- <script type="text/javascript">
+
         $('.new-email-verification').on('click', function() {
             $(this).find('.loading').removeClass('d-none');
             $(this).find('.default').addClass('d-none');
@@ -409,7 +1276,7 @@
         function edit_address(address) {
             var url = '{{ route("seller.addresses.edit", ":id") }}';
             url = url.replace(':id', address);
-            
+
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -435,7 +1302,7 @@
                 }
             });
         }
-        
+
         $(document).on('change', '[name=country_id]', function() {
             var country_id = $(this).val();
             get_states(country_id);
@@ -445,7 +1312,7 @@
             var state_id = $(this).val();
             get_city(state_id);
         });
-        
+
         function get_states(country_id) {
             $('[name="state"]').html("");
             $.ajax({
@@ -491,9 +1358,144 @@
     </script>
 
     @if (get_setting('google_map') == 1)
-        
-        @include('frontend.'.get_setting('homepage_select').'.partials.google_map')
-        
-    @endif
 
+        @include('frontend.'.get_setting('homepage_select').'.partials.google_map')
+
+    @endif --}}
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+    <link rel="stylesheet" href="{{ static_asset('assets/css/bootstrap-select-country.min.css') }}">
+    <script src="{{ static_asset('assets/js/bootstrap-select-country.min.js') }}"></script>
+    <script src="//code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function switchTab(tabId) {
+
+            $('#registerTabs').find('.nav-link').removeClass('active');
+            $('#registerTabsContent').find('.tab-pane').removeClass('show active');
+
+            $('#' + tabId + '-tab').addClass('active');
+            $('#' + tabId).addClass('show active');
+
+            // Focus on the first input with 'is-invalid' class within the active tab
+            $('#' + tabId).find('.is-invalid').first().focus();
+        }
+        $(document).ready(function() {
+            $('.datepicker').datepicker({
+                dateFormat: 'dd M yy', // Setting the display format
+                changeYear: true, // Enable year dropdown
+                yearRange: "-100:+10" // Optional: specify the range of years available
+            });
+            $('#nationality').change(function() {
+                $('#nationalityHidden').val($(this).val());
+            });
+
+            isVatRegistered = $('input[name="vat_registered"]:checked').val();
+
+            if (isVatRegistered == 1) {
+                // If VAT is registered
+                $('#vatCertificateGroup').show();
+                $('#trnGroup').show();
+                $('#taxWaiverGroup').hide();
+                $('#vatCertificate').prop('required', true);
+                $('#trn').prop('required', true);
+                $('#taxWaiver').prop('required', false);
+            } else {
+
+                // If VAT is not registered
+                $('#vatCertificateGroup').hide();
+                $('#trnGroup').hide();
+                $('#taxWaiverGroup').show();
+                $('#vatCertificate').prop('required', false);
+                $('#trn').prop('required', false);
+                $('#taxWaiver').prop('required', true);
+            }
+            $('.prv-tab').on('click', function() {
+                switchTab($(this).data('prv'));
+                var form = $(this).closest('form');
+                $(form).find('.is-invalid').first().focus();
+
+            });
+
+            $('input[name="vat_registered"]').change(function() {
+                var isVatRegistered = $(this).val() == 1;
+
+                // Show/hide relevant form groups based on VAT registration status
+                $('#vatCertificateGroup').toggle(isVatRegistered);
+                $('#trnGroup').toggle(isVatRegistered);
+                $('#taxWaiverGroup').toggle(!isVatRegistered);
+
+                // Set or remove the "required" attribute based on VAT registration status
+                $('#vatCertificate').prop('required', isVatRegistered);
+                $('#trn').prop('required', isVatRegistered);
+                $('#taxWaiver').prop('required', !isVatRegistered);
+            });
+            $('#emirateempire').change(function() {
+                var getAreaUrl = "{{ route('get.area', ['id' => ':id']) }}";
+
+                var id = $(this).val();
+                // $('#areaempire').find('option').not(':first').remove();
+                $('#areaempire').find('option').remove();
+
+                // AJAX request
+                $.ajax({
+                    //  url: '/user/getArea/'+id,
+
+                    url: getAreaUrl.replace(':id', id), // Use the route variable
+                    type: 'get',
+                    dataType: 'json',
+                    success: function(response) {
+
+                        var len = 0;
+                        if (response['data'] != null) {
+                            len = response['data'].length;
+                        }
+
+                        if (len > 0) {
+                            // Read data and create <option >
+                            for (var i = 0; i < len; i++) {
+
+                                var id = response['data'][i].id;
+                                var name = response['data'][i].name_translated;
+
+                                var option = "<option value='" + id + "'>" + name + "</option>";
+
+                                $("#areaempire").append(option);
+                            }
+                        }
+
+                    }
+                });
+            });
+            // Submit for Review Button Click Event
+            $('#submitForReviewBtn').on('click', function() {
+                // Show confirmation dialog
+                Swal.fire({
+                    title: 'Confirm',
+                    text: 'Changes in all tabs will be submitted for admin’s review. Are you sure?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // If user clicks "Yes", submit the form
+                        submitChangesForReview();
+                    }
+                });
+            });
+
+            // Function to submit the form for review
+            function submitChangesForReview() {
+                // Submit the form
+                document.getElementById('profileForm').submit();
+            }
+            // Check if select element has class 'color-modified' on page load
+            if ($('#nationality').hasClass('color-modified')) {
+                    // If select element has class 'color-modified', add class to the button
+                    $('.btn[data-id="nationality"]').addClass('color-modified');
+                }
+        })
+    </script>
 @endsection

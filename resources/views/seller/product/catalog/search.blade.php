@@ -61,6 +61,9 @@
                         <div class="col-12" style="width: 50%; padding: 0px 422px;">
                             <small> <a href="{{ route('seller.products.create') }}">{{ translate('Create product manually.') }}</small></a>
                             <small>{{ translate('Bulk upload products') }}</small>
+                        <div class="col-12" style="width: 50%; padding: 0px 422px; display: flex; ">
+                            <small> <a href="{{ route('seller.products.create') }}">{{ translate('Create product manually.') }}</small></a>
+                            {{-- <small>{{ translate('Bulk upload products') }}</small> --}}
                         </div>
                     @endif
                 </div>

@@ -97,6 +97,11 @@
                                 </a>
                             </li>
                             @endcan
+                            <li class="aiz-side-nav-item">
+                                <a href="{{ route('seller.warehouses.index') }}" class="aiz-side-nav-link">
+                                    <span class="aiz-side-nav-text">{{__('stock.Warehouses')}}</span>
+                                </a>
+                            </li>
                             @can('seller_inventory_history')
                             <li id="stock_details" class="aiz-side-nav-item">
                                 <a href="{{ route('seller.stock.operation.report') }}" class="aiz-side-nav-link {{ areActiveRoutes(['seller.stock.search']) }}">

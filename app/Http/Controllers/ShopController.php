@@ -272,7 +272,7 @@ class ShopController extends Controller
             if (isset($request->vat_certificate_old) && !$request->hasFile('vat_certificate'))
                 $vatCertificatePath = $request->vat_certificate_old;
             elseif ($request->hasFile('vat_certificate'))
-                $vatCertificatePath = Storage::putFile('vat_certificates', $request->file('vat_certificate'));
+                $vatCertificatePath = Storage::putFile('vat_certificate', $request->file('vat_certificate'));
 
             $trn = $request->input('trn');
         } else {
@@ -280,7 +280,7 @@ class ShopController extends Controller
             if (isset($request->tax_waiver_old) && !$request->hasFile('tax_waiver'))
                 $taxWaiverPath = $request->tax_waiver_old;
             elseif ($request->hasFile('tax_waiver'))
-                $taxWaiverPath = Storage::putFile('tax_waivers', $request->file('tax_waiver'));
+                $taxWaiverPath = Storage::putFile('tax_waiver', $request->file('tax_waiver'));
         }
 
         $civil_defense_approval = null;
@@ -314,7 +314,7 @@ class ShopController extends Controller
                 'vat_certificate' => isset($vatCertificatePath) ? $vatCertificatePath : null,
                 'trn' => isset($trn) ? $trn : null,
                 'tax_waiver' => isset($taxWaiverPath) ? $taxWaiverPath : null,
-                'civil_defense_approval' => $request->hasFile('civil_defense_approval') ?  $request->file('civil_defense_approval')->store('civil_defense_approvals') : $civil_defense_approval,
+                'civil_defense_approval' => $request->hasFile('civil_defense_approval') ?  $request->file('civil_defense_approval')->store('civil_defense_approval') : $civil_defense_approval,
                 'saveasdraft' => isset($action) ? true : false,
 
             ]
@@ -657,7 +657,7 @@ class ShopController extends Controller
             if (isset($request->vat_certificate_old) && !$request->hasFile('vat_certificate'))
                 $vatCertificatePath = $request->vat_certificate_old;
             elseif ($request->hasFile('vat_certificate'))
-                $vatCertificatePath = Storage::putFile('vat_certificates', $request->file('vat_certificate'));
+                $vatCertificatePath = Storage::putFile('vat_certificate', $request->file('vat_certificate'));
 
             $trn = $request->input('trn');
         } else {
@@ -665,7 +665,7 @@ class ShopController extends Controller
             if (isset($request->tax_waiver_old) && !$request->hasFile('tax_waiver'))
                 $taxWaiverPath = $request->tax_waiver_old;
             elseif ($request->hasFile('tax_waiver'))
-                $taxWaiverPath = Storage::putFile('tax_waivers', $request->file('tax_waiver'));
+                $taxWaiverPath = Storage::putFile('tax_waiver', $request->file('tax_waiver'));
         }
 
         $civil_defense_approval = null;
@@ -699,7 +699,7 @@ class ShopController extends Controller
                 'vat_certificate' => isset($vatCertificatePath) ? $vatCertificatePath : null,
                 'trn' => isset($trn) ? $trn : null,
                 'tax_waiver' => isset($taxWaiverPath) ? $taxWaiverPath : null,
-                'civil_defense_approval' => $request->hasFile('civil_defense_approval') ?  $request->file('civil_defense_approval')->store('civil_defense_approvals') : $civil_defense_approval,
+                'civil_defense_approval' => $request->hasFile('civil_defense_approval') ?  $request->file('civil_defense_approval')->store('civil_defense_approval') : $civil_defense_approval,
 
 
             ]

@@ -25,7 +25,7 @@ class DashboardController extends Controller
         seller_lease_creation($user=Auth::user());
 
         $tour_steps=Tour::orderBy('step_number')->get();
-        $data['products'] = filter_products(Product::where('user_id', Auth::user()->owner_id)->orderBy('num_of_sale', 'desc'))->limit(12)->get();
+        $data['products'] = Product::where('user_id', Auth::user()->owner_id)->orderBy('num_of_sale', 'desc')->limit(12)->get();
         $data['last_7_days_sales'] = Order::where('created_at', '>=', Carbon::now()->subDays(7))
                                 ->where('seller_id', '=', Auth::user()->owner_id)
                                 ->where('delivery_status', '=', 'delivered')

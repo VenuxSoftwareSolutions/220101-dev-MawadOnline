@@ -173,23 +173,49 @@ class ProductUploadsService
             if(count($data['main_photos']) > 0){
                 foreach($data['main_photos'] as $key => $image){
                     $imageName = time().rand(5, 15).'.jpg';
+                    $extension = $image->getClientOriginalExtension();
+
+                    if ($extension == 'jpg' || $extension == 'jpeg' || $extension == 'png') {
                     
-                    $path = '/upload_products/Product-'.$collection['product']->id.'/images'.'/'.$imageName;
-    
-                    //check if vendor not uploaded thumbnails, the system will create a thumbnail from a gallery image
-                    if($data['photosThumbnail'] == null){
-                        //$this->createThumbnail(public_path($path), $imageName,$collection['product']->id);
-                        $img3 = Image::make($image);
-                        $img3->resize(300, 300);
-                        $path_thumbnail = '/upload_products/Product-'.$collection['product']->id.'/thumbnails'.'/'.$imageName;
-                        $path_to_save = public_path('/upload_products/Product-'.$collection['product']->id.'/thumbnails'.'/'.$imageName);
-                        $img3->save($path_to_save);
-    
+                        $path = '/upload_products/Product-'.$collection['product']->id.'/images'.'/'.$imageName;
+        
+                        //check if vendor not uploaded thumbnails, the system will create a thumbnail from a gallery image
+                        if($data['photosThumbnail'] == null){
+                            //$this->createThumbnail(public_path($path), $imageName,$collection['product']->id);
+                            $img3 = Image::make($image);
+                            $img3->resize(300, 300);
+                            $path_thumbnail = '/upload_products/Product-'.$collection['product']->id.'/thumbnails'.'/'.$imageName;
+                            $path_to_save = public_path('/upload_products/Product-'.$collection['product']->id.'/thumbnails'.'/'.$imageName);
+                            $img3->save($path_to_save);
+        
+                            $uploaded_document = new UploadProducts();
+                            $uploaded_document->id_product = $collection['product']->id;
+                            $uploaded_document->path = $path_thumbnail;
+                            $uploaded_document->extension = 'jpg';
+                            $uploaded_document->type = 'thumbnails';
+                            $uploaded_document->save();
+
+                            if(($collection['product']->is_draft == 0) && ($update == true)){
+                                DB::table('revisions')->insert([
+                                    "revisionable_type" => "App\Models\UploadProducts",
+                                    "revisionable_id" => $uploaded_document->id,
+                                    "user_id" => Auth::user()->id,
+                                    "key" => 'add_image',
+                                    "old_value" => NULL,
+                                    "new_value" => $uploaded_document->id,
+                                    'created_at'            => new \DateTime(),
+                                    'updated_at'            => new \DateTime(),
+                                ]);
+                            }
+                        }
+
+                        $image->move(public_path('/upload_products/Product-'.$collection['product']->id.'/images') , $imageName);
+        
                         $uploaded_document = new UploadProducts();
                         $uploaded_document->id_product = $collection['product']->id;
-                        $uploaded_document->path = $path_thumbnail;
+                        $uploaded_document->path = $path;
                         $uploaded_document->extension = 'jpg';
-                        $uploaded_document->type = 'thumbnails';
+                        $uploaded_document->type = 'images';
                         $uploaded_document->save();
 
                         if(($collection['product']->is_draft == 0) && ($update == true)){
@@ -205,14 +231,31 @@ class ProductUploadsService
                             ]);
                         }
                     }
+                }
+            }
+        }
+        
 
-                    $image->move(public_path('/upload_products/Product-'.$collection['product']->id.'/images') , $imageName);
-    
+        //insert paths of thumbnails in DB and upload thumbnails in folder under public/upload_products/Product{id_porduct}/thumbnails
+        if($data['photosThumbnail'] != null){
+            foreach($data['photosThumbnail'] as $key => $image){
+                $imageName = time().rand(5, 15).'.jpg';
+                // $image->move(public_path('/upload_products/Product-'.$collection['product']->id.'/thumbnails') , $imageName);
+                // $path = '/upload_products/Product-'.$collection['product']->id.'/thumbnails'.'/'.$imageName;
+                $extension = $image->getClientOriginalExtension();
+
+                if ($extension == 'jpg' || $extension == 'jpeg' || $extension == 'png') {
+                    $img3 = Image::make($image);
+                    $img3->resize(300, 300);
+                    $path_thumbnail = '/upload_products/Product-'.$collection['product']->id.'/thumbnails'.'/'.$imageName;
+                    $path_to_save = public_path('/upload_products/Product-'.$collection['product']->id.'/thumbnails'.'/'.$imageName);
+                    $img3->save($path_to_save);
+
                     $uploaded_document = new UploadProducts();
                     $uploaded_document->id_product = $collection['product']->id;
-                    $uploaded_document->path = $path;
+                    $uploaded_document->path = $path_thumbnail;
                     $uploaded_document->extension = 'jpg';
-                    $uploaded_document->type = 'images';
+                    $uploaded_document->type = 'thumbnails';
                     $uploaded_document->save();
 
                     if(($collection['product']->is_draft == 0) && ($update == true)){
@@ -227,41 +270,6 @@ class ProductUploadsService
                             'updated_at'            => new \DateTime(),
                         ]);
                     }
-                }
-            }
-        }
-        
-
-        //insert paths of thumbnails in DB and upload thumbnails in folder under public/upload_products/Product{id_porduct}/thumbnails
-        if($data['photosThumbnail'] != null){
-            foreach($data['photosThumbnail'] as $key => $image){
-                $imageName = time().rand(5, 15).'.jpg';
-                // $image->move(public_path('/upload_products/Product-'.$collection['product']->id.'/thumbnails') , $imageName);
-                // $path = '/upload_products/Product-'.$collection['product']->id.'/thumbnails'.'/'.$imageName;
-                $img3 = Image::make($image);
-                $img3->resize(300, 300);
-                $path_thumbnail = '/upload_products/Product-'.$collection['product']->id.'/thumbnails'.'/'.$imageName;
-                $path_to_save = public_path('/upload_products/Product-'.$collection['product']->id.'/thumbnails'.'/'.$imageName);
-                $img3->save($path_to_save);
-
-                $uploaded_document = new UploadProducts();
-                $uploaded_document->id_product = $collection['product']->id;
-                $uploaded_document->path = $path_thumbnail;
-                $uploaded_document->extension = 'jpg';
-                $uploaded_document->type = 'thumbnails';
-                $uploaded_document->save();
-
-                if(($collection['product']->is_draft == 0) && ($update == true)){
-                    DB::table('revisions')->insert([
-                        "revisionable_type" => "App\Models\UploadProducts",
-                        "revisionable_id" => $uploaded_document->id,
-                        "user_id" => Auth::user()->id,
-                        "key" => 'add_image',
-                        "old_value" => NULL,
-                        "new_value" => $uploaded_document->id,
-                        'created_at'            => new \DateTime(),
-                        'updated_at'            => new \DateTime(),
-                    ]);
                 }
             }
         }

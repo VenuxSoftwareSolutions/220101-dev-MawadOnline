@@ -213,4 +213,10 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(SellerLease::class);
     }
+    public function checkProposedChanges(){
+        $proposedChange = ProposedPayoutChange::where('user_id', $this->id)->latest()->first();
+         return ($proposedChange && $proposedChange->status=="pending" ) ;
+
+    }
+
 }

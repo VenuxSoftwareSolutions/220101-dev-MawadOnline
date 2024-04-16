@@ -12,7 +12,7 @@
         <!-- Image -->
         <a href="{{ $product_url }}" class="d-block h-100">
             <img class="lazyload mx-auto img-fit has-transition"
-                src="{{ get_image($product->thumbnail) }}"
+                src="{{ asset('/public/'.$product->getFirstImage()) }}"
                 alt="{{ $product->getTranslation('name') }}" title="{{ $product->getTranslation('name') }}"
                 onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
         </a>

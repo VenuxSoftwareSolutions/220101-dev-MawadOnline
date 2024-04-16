@@ -1073,4 +1073,548 @@ class ProductController extends Controller
     public function search(){
         return view('backend.product.catalog.search');
     }
+
+    public function tempStore(Request $request)
+    {
+        // return response()->json([$request->all()]);
+
+           // Assuming you have a method to prepare or simulate data needed for the preview
+        $detailedProduct = $this->prepareDetailedProductData($request->all());
+        // return response()->json(['data'=>['slug'=>gettype($detailedProduct)],'success' => true]);
+        $product_queries = []; // Simulate or prepare this data
+        $total_query = 0; // Calculate or simulate this
+        $reviews = []; // Simulate or prepare this data
+        $review_status = false; // Determine this based on your logic
+
+        // Store all necessary data in the session for preview
+        $request->session()->put('productPreviewData', compact('detailedProduct', 'product_queries', 'total_query', 'reviews', 'review_status'));
+
+
+        $slug = $request->name;
+        return response()->json(['data'=>['slug'=>$slug],'success' => true]);
+    }
+
+    public function getYoutubeVideoId($videoLink) {
+        // Parse the YouTube video URL to extract the video ID
+        $videoId = '';
+        parse_str(parse_url($videoLink, PHP_URL_QUERY), $queryParams);
+        if (isset($queryParams['v'])) {
+            $videoId = $queryParams['v'];
+        }
+        return $videoId;
+    }
+    public function getVimeoVideoId($videoLink) {
+        // Parse the Vimeo video URL to extract the video ID
+        $videoId = '';
+        $regex = '/(?:https?:\/\/)?(?:www\.)?(?:vimeo\.com)\/?(.+)/';
+        if (preg_match($regex, $videoLink, $matches)) {
+            $videoId = $matches[1];
+        }
+        return $videoId;
+    }
+
+    public function prepareDetailedProductData($data){
+        // dd($data) ;
+        // Check if main_photos has files
+        // if (isset($data['photos_variant-0']) && is_array($data['photos_variant-0'])) {
+        //     // Process and save main photos
+        //     $storedFilePaths = $this->saveMainPhotos($data['photos_variant-0']);
+        // }
+        // else {
+        //     if (isset($data['main_photos']) && is_array($data['main_photos'])) {
+        //         // Process and save main photos
+        //         $storedFilePaths = $this->saveMainPhotos($data['main_photos']);
+        //     } else {
+        //         // If no main photos are provided, set an empty array
+        //         $storedFilePaths = [];
+        //     }
+        // }
+
+        // dd($data) ;
+        // Retrieve the brand information
+
+        $brand = Brand::find($data['brand_id']);
+
+        $numeric_keys = [];
+
+        foreach ($data as $key => $value) {
+            // Extract numeric part from the key
+            $numeric_part = substr($key, strrpos($key, '-') + 1);
+            // Check if the extracted part is numeric and not already added
+            if (is_numeric($numeric_part) && !in_array($numeric_part, $numeric_keys)) {
+                // Add to the array of numeric keys
+                $numeric_keys[] = $numeric_part;
+            }
+        }
+        $produitVariationImage=false ;
+        // dd($numeric_keys) ;
+        foreach ($numeric_keys as $numeric_key) {
+            // Access corresponding values
+            if (isset($data["photos_variant-$numeric_key"]) && is_array($data["photos_variant-$numeric_key"]) && !$produitVariationImage ) {
+                        // $storedFilePaths = $this->saveMainPhotos($data["photos_variant-$numeric_key"]);
+                        $produitVariationImage=true ;
+
+
+            }
+        }
+        if(!$produitVariationImage) {
+            if (isset($data['main_photos']) && is_array($data['main_photos'])) {
+                // Process and save main photos
+                $storedFilePaths = $this->saveMainPhotos($data['main_photos']);
+            } else {
+                // If no main photos are provided, set an empty array
+                $storedFilePaths = [];
+            }
+        }
+        // if (isset($variationId)) {
+        //     if (isset($data["variant_pricing-from$variationId"]) && is_array($data["variant_pricing-from$variationId"])) {
+        //         $firstValue = $data["variant_pricing-from$variationId"]['from'][0];
+        //         dd($firstValue) ;
+        //     } else {
+        //         // If no main photos are provided, set an empty array
+        //         $storedFilePaths = [];
+        //     }
+        // }
+
+        // $produitVariationprice=false ;
+        // // dd($numeric_keys) ;
+        // foreach ($numeric_keys as $numeric_key) {
+        //     // Access corresponding values
+        //     if (isset($data["variant_pricing-from$numeric_key"]) && is_array($data["variant_pricing-from$numeric_key"]) && !$produitVariationprice ) {
+        //         $fromPrice = $data["variant_pricing-from$numeric_key"]['from'][0];
+        //         $toPrice = $data["variant_pricing-from$numeric_key"]['to'][0];
+        //         $unitPrice = $data["variant_pricing-from$numeric_key"]['unit_price'][0];
+        //         $total = isset($fromPrice) && isset($toPrice) ? $fromPrice * $unitPrice : "";
+        //         $produitVariationprice=true ;
+        //     }
+        // }
+
+       // Now $numeric_keys array contains the unique numeric parts
+       $attributesArray = [];
+        foreach ($numeric_keys as $numeric_key) {
+            // Access corresponding values
+            if (isset($data["attribute_generale-$numeric_key"])) {
+                // Value is set, you can do something with it here
+                $attribute = Attribute::find($numeric_key) ;
+
+                $value = $data["attribute_generale-$numeric_key"];
+            // Add attribute name and value to the array
+            if ($attribute) {
+                if (isset($data["unit_attribute_generale-$numeric_key"])){
+                    $unit = Unity::find($data["unit_attribute_generale-$numeric_key"]) ;
+                    if ($unit)
+                        $attributesArray[$attribute->id] = $value.' '.$unit->name;
+                }
+                else
+                         $attributesArray[$attribute->id] = $value;
+            }
+         }
+        }
+        // dd($data) ;
+        // $variants = [];
+
+        // foreach ($data as $key => $value) {
+        //     // Split the key to extract variant ID and attribute ID
+        //     $parts = explode('-', $key);
+
+        //     // Ensure the key format is valid
+        //     if (count($parts) === 3 && $parts[0] === 'attributes') {
+        //         $variantId = $parts[1];
+        //         $attributeId = $parts[2];
+
+        //         // Initialize variant if not exists
+        //         if (!isset($variants[$variantId])) {
+        //             $variants[$variantId] = [];
+        //         }
+
+        //         // Add attribute value to the variant
+        //         $variants[$variantId][$attributeId] = $value;
+        //     }
+        // }
+
+
+        // dd($data) ;
+       // Extract unique attribute IDs and their values
+    //    $attributes = $this->extractAttributes($variants);
+       $variations = [];
+
+       foreach ($data as $key => $value) {
+           if (strpos($key, 'attributes') === 0 && (strpos($key, 'attributes_units') === false)) {
+               // Extract the attribute number and variation id
+               $parts = explode('-', $key);
+               $variationId = $parts[2];
+               $attributeId = $parts[1];
+               // Initialize the variation if not exists
+               if (!isset($variations[$variationId])) {
+                   $variations[$variationId] = [];
+               }
+               // Add attribute to variation
+               if (isset($data["attributes_units-$attributeId-$variationId"])){
+                $unit = Unity::find($data["attributes_units-$attributeId-$variationId"]) ;
+                if ($unit)
+                    $variations[$variationId][$attributeId] = $value.' '.$unit->name;
+                }
+                else
+                    $variations[$variationId][$attributeId] = $value;
+
+               if (isset($data["photos_variant-$variationId"]) && is_array($data["photos_variant-$variationId"])) {
+                $variations[$variationId]['storedFilePaths'] = $this->saveMainPhotos($data["photos_variant-$variationId"]);
+
+               }
+               else {
+                $variations[$variationId]['storedFilePaths']= [] ;
+               }
+               if (isset($data["variant_pricing-from$variationId"]) && is_array($data["variant_pricing-from$variationId"])) {
+                $variations[$variationId]['variant_pricing-from']['from'] =$data["variant_pricing-from$variationId"]['from'] ?? [] ;
+                $variations[$variationId]['variant_pricing-from']['to'] =$data["variant_pricing-from$variationId"]['to'] ?? [] ;
+                $variations[$variationId]['variant_pricing-from']['unit_price'] =$data["variant_pricing-from$variationId"]['unit_price'] ?? [] ;
+
+               } elseif (isset($data["variant-pricing-$variationId"]) && $data["variant-pricing-$variationId"] == 1 ){
+                    $variations[$variationId]['variant_pricing-from']['from'] =$data['from'] ?? []  ;
+                    $variations[$variationId]['variant_pricing-from']['to'] =$data['to']  ?? [] ;
+                    $variations[$variationId]['variant_pricing-from']['unit_price'] =$data['unit_price'] ?? []  ;
+               }
+            //    if (isset($variations[$variationId]['variant_pricing-from'])) {
+            //     // Sorting each array if it's not empty
+            //     foreach ($variations[$variationId]['variant_pricing-from'] as &$subArray) {
+            //         if (!empty($subArray)) {
+            //             sort($subArray);
+            //         }
+            //     }
+            //     unset($subArray); // Unset the reference to avoid potential side-effects
+            //    }
+
+           }
+       }
+
+    //    dd($data['variant']['attributes']) ;
+       if (isset($data['variant']['attributes']))
+        foreach ($data['variant']['attributes'] as $variationId=>$variations_db) {
+            foreach ($variations_db as $attributeId=>$attribute) {
+                if (!isset($variations[$variationId])) {
+                    $variations[$variationId] = [];
+                }
+                if(isset($data['unit_variant'][$variationId][$attributeId])){
+                    $unit = Unity::find($data['unit_variant'][$variationId][$attributeId]) ;
+                    if ($unit)
+                        $variations[$variationId][$attributeId] = $attribute.' '.$unit->name;
+                 }
+                else
+                    $variations[$variationId][$attributeId] = $attribute;
+            }
+
+        }
+
+        if (isset($data['variant']['from']))
+        foreach ($data['variant']['from'] as $variationId=>$variations_db_from) {
+
+                if (!isset($variations[$variationId])) {
+                    $variations[$variationId] = [];
+                }
+                $variations[$variationId]['variant_pricing-from']['from'] = $variations_db_from;
+                $variations[$variationId]['variant_pricing-from']['to'] = $data['variant']['to'][$variationId] ?? [];
+                $variations[$variationId]['variant_pricing-from']['unit_price'] = $data['variant']['unit_price'][$variationId] ?? [];
+                $upload_products_db = UploadProducts::where('id_product',$variationId)->pluck('path')->toArray() ;
+                $variations[$variationId]['storedFilePaths'] = $upload_products_db ;
+                // if (isset($variations[$variationId]['variant_pricing-from'])) {
+                //     // Sorting each array if it's not empty
+                //     foreach ($variations[$variationId]['variant_pricing-from'] as &$subArray) {
+                //         if (!empty($subArray)) {
+                //             sort($subArray);
+                //         }
+                //     }
+                //     unset($subArray); // Unset the reference to avoid potential side-effects
+                //    }
+
+        }
+
+
+       $attributes = [];
+
+       foreach ($variations as $variation) {
+           foreach ($variation as $attributeId => $value) {
+               if ($attributeId != "storedFilePaths" && $attributeId != "variant_pricing-from" ) {
+                if (!isset($attributes[$attributeId])) {
+                    $attributes[$attributeId] = [];
+                }
+                // Add value to the unique attributes array if it doesn't already exist
+                if (!in_array($value, $attributes[$attributeId])) {
+                    $attributes[$attributeId][] = $value;
+                }
+               }
+
+           }
+       }
+
+
+
+    //    dd($variations) ;
+    //    $attributeAvailable= [] ;
+    //    $attributeId = 6; // Example attribute ID
+    //    $attributeValue = 5 ;
+    //    foreach ($variations as $key => $variation) {
+    //         foreach($variation as $key=>$attribute) {
+    //             if ($key ==$attributeId && $attribute==$attributeValue ) {
+    //                 $attributeAvailable[] = array_keys($variation) ;
+    //                 break ;
+    //             }
+    //         }
+
+    //    }
+    //    dd($attributeAvailable) ;
+
+        if ($data["video_provider"] === "youtube") {
+             $getYoutubeVideoId=$this->getYoutubeVideoId($data["video_link"]) ;
+
+        }
+        else {
+            $getVimeoVideoId=$this->getVimeoVideoId($data["video_link"]) ;
+        }
+        if (is_array($variations) && !empty($variations)) {
+            $lastItem  = end($variations);
+            $variationId = key($variations); // Get the key (variation ID) of the last item
+            // sort($lastItem['variant_pricing-from']['from']) ;
+            // sort($lastItem['variant_pricing-from']['unit_price']) ;
+            // sort($lastItem['variant_pricing-from']['to']) ;
+
+            $max =max($lastItem['variant_pricing-from']['to']) ;
+            $min =min($lastItem['variant_pricing-from']['from']) ;
+        }
+
+
+        // if (isset($data['from']) && is_array($data['from']) && !empty($data['from'])) {
+        //     sort($data['from']);
+        // }
+
+        // if (isset($data['unit_price']) && is_array($data['unit_price']) && !empty($data['unit_price'])) {
+        //     sort($data['unit_price']);
+        // }
+        if (isset($data['from']) && is_array($data['from']) && count($data['from']) > 0) {
+            // sort($data['from']);
+            if(!isset($min))
+                $min = min($data['from']) ;
+        }
+
+        // if (isset($data['unit_price']) && is_array($data['unit_price']) && count($data['unit_price']) > 0) {
+        //     sort($data['unit_price']);
+        // }
+
+        if (isset($data['to']) && is_array($data['to']) && count($data['to']) > 0) {
+            // sort($data['to']);
+            if(!isset($max))
+                $max = max($data['to']) ;
+        }
+
+        $total = isset($data['from'][0]) && isset($data['unit_price'][0]) ? $data['from'][0] * $data['unit_price'][0] : "";
+        // return response()->json(['status', $attributesArray]);
+        // Prepare detailed product data
+        $detailedProduct = [
+            'name' => $data['name'],
+            'brand' => $brand ? $brand->name : "",
+            'unit' => $data['unit'],
+            'description' => $data['description'],
+            'main_photos' => $lastItem['storedFilePaths'] ?? $storedFilePaths, // Add stored file paths to the detailed product data
+            // 'quantity' => isset($data['from'][0]) ? $data['from'][0] : "" ,
+            // 'price' => isset($data['unit_price'][0]) ? $data['unit_price'][0] : "",
+            // 'quantity' => isset($fromPrice) ? $fromPrice  : $data['from'][0] ,
+            // 'price' => isset($unitPrice) ? $unitPrice  : $data['unit_price'][0],
+            // 'total' => $total,
+            'quantity' => $lastItem['variant_pricing-from']['from'][0] ?? $data['from'][0] ?? '',
+            'price' => $lastItem['variant_pricing-from']['unit_price'][0] ?? $data['unit_price'][0] ?? '',
+            'total' => isset($lastItem['variant_pricing-from']['from'][0]) && isset($lastItem['variant_pricing-from']['unit_price'][0]) ? $lastItem['variant_pricing-from']['from'][0] * $lastItem['variant_pricing-from']['unit_price'][0] : $total,
+            'max' =>$max ?? 1 ,
+            'min' =>$min ?? 1 ,
+            'general_attributes' =>$attributesArray,
+            'attributes' =>$attributes ?? [] ,
+            'description' =>$data['description'] ,
+            'from' =>$data['from'] ?? [] ,
+            'to' =>$data['to']  ?? [],
+            'unit_price' =>$data['unit_price'] ?? [] ,
+            'variations' =>$variations,
+            'variationId' => $variationId ?? null,
+            'lastItem' => $lastItem ?? [],
+            'catalog' => false,
+            'video_provider'  => $data["video_provider"] ,
+            'getYoutubeVideoId' =>$getYoutubeVideoId ?? null ,
+            'getVimeoVideoId' => $getVimeoVideoId ?? null,
+        ];
+        // dd($detailedProduct['variations']) ;
+
+
+        return $detailedProduct;
+    }
+
+    private function saveMainPhotos($photos){
+
+        $storedFilePaths = [];
+
+        foreach ($photos as $photo) {
+            // Generate a unique filename
+            $filename = uniqid('main_photo_') . '.' . $photo->getClientOriginalExtension();
+
+            // Store the file to the desired location (e.g., public storage)
+            $storedPath = $photo->storeAs('preview_products', $filename);
+
+            // Add the stored file path to the array
+            $storedFilePaths[] = $storedPath;
+        }
+
+        return $storedFilePaths;
+    }
+
+
+    public function preview(Request $request)
+    {
+        $previewData = $request->session()->get('productPreviewData', null);
+
+        // dd($previewData);
+        if (!$previewData) {
+            return redirect()->back()->withErrors('No preview data found.');
+        }
+
+        // Extract all variables required for the view
+        extract($previewData);
+
+        return view('frontend.product_details.preview', compact('previewData'));
+    }
+
+    public function updatePricePreview(Request $request) {
+
+        $data=$request->session()->get('productPreviewData', null) ;
+        $variations = $data['detailedProduct']['variations'] ;
+
+        // Given value
+        $qty = $request->quantity;
+
+
+        // Iterate through the ranges
+        $unitPrice = null;
+        if($request->variationId != null) {
+
+            foreach ($variations[$request->variationId]['variant_pricing-from']['from'] as $index => $from) {
+                $to = $variations[$request->variationId]['variant_pricing-from']['to'][$index];
+
+                if ($qty >= $from && $qty <= $to) {
+                    $unitPrice = $variations[$request->variationId]['variant_pricing-from']['unit_price'][$index];
+
+                    break; // Stop iterating once the range is found
+                }
+            }
+
+        }
+        else {
+            foreach ($data['detailedProduct']['from'] as $index => $from) {
+                $to = $data['detailedProduct']['to'][$index];
+                if ($qty >= $from && $qty <= $to) {
+                    $unitPrice = $data['detailedProduct']['unit_price'][$index];
+                    break; // Stop iterating once the range is found
+                }
+            }
+        }
+        $maximum = 1 ;
+        $minimum = 1 ;
+        if($request->variationId != null) {
+            // Convert array values to integers
+            $valuesFrom = array_map('intval', $variations[$request->variationId]['variant_pricing-from']['from']);
+            $valuesMax = array_map('intval', $variations[$request->variationId]['variant_pricing-from']['to']);
+        } else {
+            $valuesFrom = array_map('intval', $data['detailedProduct']['from']);
+            $valuesMax = array_map('intval', $data['detailedProduct']['to']);
+        }
+            // Get the maximum value
+            if (!empty($valuesMax))
+                $maximum = max($valuesMax);
+            // Get the minimum value
+            if (!empty($valuesFrom))
+                $minimum = min($valuesFrom);
+
+        $total=$qty*$unitPrice ;
+
+     // Return the unit price as JSON response
+     return response()->json(['unit_price' => $unitPrice,"qty"=>$qty,'total'=>$total,'maximum'=>$maximum,'minimum'=>$minimum]);
+    }
+
+    public function ProductCheckedAttributes(Request $request) {
+        // dd($request->all()) ;
+        $data=$request->session()->get('productPreviewData', null) ;
+        $variations = $data['detailedProduct']['variations'] ;
+        $checkedAttributes = $request->checkedAttributes ; // Checked attribute and its value
+        // dd($variations,$checkedAttributes) ;
+        $matchedImages = [];
+        $availableAttributes = [];
+        $anyMatched = false ;
+        $pickedAnyVariation = false ;
+        $maximum = 1 ;
+        $minimum = 1 ;
+        foreach ($variations as $variationIdKey =>$variation) {
+
+            $matchesCheckedAttributes = true;
+
+            // Check if the variation matches the checked attributes
+            foreach ($checkedAttributes as $attributeId => $value) {
+                if (!isset($variation[$attributeId]) || $variation[$attributeId] !== $value) {
+                    $matchesCheckedAttributes = false;
+                    break;
+                }
+            }
+
+            // If the variation matches the checked attributes, collect other attributes
+            if ($matchesCheckedAttributes) {
+                $anyMatched = true ;
+                if (isset($variation['storedFilePaths']) && is_array($variation['storedFilePaths']) && count($matchedImages) == 0  ) {
+                        foreach ($variation['storedFilePaths'] as $image) {
+                            $matchedImages[] = $image;
+                        }
+
+                 }
+                 if ($pickedAnyVariation == false) {
+                    $variationId = $variationIdKey ;
+                    $quantity = $variation['variant_pricing-from']['from'][0] ?? "" ;
+                    $price = $variation['variant_pricing-from']['unit_price'][0] ?? "" ;
+                    $total =  isset($variation['variant_pricing-from']['from'][0]) && isset($variation['variant_pricing-from']['unit_price'][0]) ? $variation['variant_pricing-from']['from'][0] * $variation['variant_pricing-from']['unit_price'][0] : "" ;
+
+
+                    // Convert array values to integers
+                    $valuesFrom = array_map('intval', $variation['variant_pricing-from']['from']);
+                    $valuesMax = array_map('intval', $variation['variant_pricing-from']['to']);
+                    // Get the maximum value
+                    if (!empty($valuesMax))
+                        $maximum = max($valuesMax);
+                    // Get the minimum value
+                    if (!empty($valuesFrom))
+                         $minimum = min($valuesFrom);
+                    $pickedAnyVariation = true ;
+                 }
+
+                foreach ($variation as $attributeId => $value) {
+                    if (!isset($checkedAttributes[$attributeId])) {
+                        if (!isset($availableAttributes[$attributeId])) {
+                            $availableAttributes[$attributeId] = [];
+                        }
+                        if (!in_array($value, $availableAttributes[$attributeId])) {
+                            $availableAttributes[$attributeId][] = $value;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Add matchesCheckedAttributes to the response
+        $response = [
+            'availableAttributes' => $availableAttributes,
+            'anyMatched' => $anyMatched,
+            'matchedImages' => $matchedImages,
+            'variationId' => $variationId ?? null,
+            'quantity' => $quantity ?? null  ,
+            'price' => $price ?? null ,
+            'total' => $total ?? null,
+            'maximum' => $maximum ,
+            'minimum' => $minimum ,
+
+
+        ];
+        // return response()->json($availableAttributes);
+        return response()->json($response);
+
+    }
 }
