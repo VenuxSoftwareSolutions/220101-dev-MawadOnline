@@ -253,7 +253,7 @@
                         @endphp
                         {{ translate('Last Month') }}: {{ single_price($orderTotal) }}
                     </p>
-                </div> 
+                </div>
             </div> --}}
         </div>
         <div class="col-sm-6 col-md-6 col-lg-3 mb-4">
@@ -482,7 +482,7 @@
                     <div class="my-2 py-1">
                         <img src="{{ static_asset('assets/img/verified.png') }}" alt="" width="">
                     </div>
-                @endif 
+                @endif
             </div>--}}
         </div>
     </div>
@@ -511,7 +511,7 @@
                 </div>
             </a>
         </div>
-        
+
         <div class="col-sm-6 col-md-6 col-lg-3">
             <div class="card mb-4 p-4 text-center bg-soft-primary">
                 <div class="fs-16 fw-600 text-primary">
@@ -538,7 +538,7 @@
                     {{ translate('Configure Now') }}
                 </a>
             </div>
-        </div> 
+        </div>
     </div> --}}
 
     <div class="card">
@@ -652,7 +652,6 @@
         if ({{Auth::user()->tour}} == true | {{Auth::user()->id}} != {{Auth::user()->owner_id}}) {
             return;
         }
-        alert('okk')
     //  var  steps : [
     //         @foreach($tour_steps as $key => $step)
     //         {
