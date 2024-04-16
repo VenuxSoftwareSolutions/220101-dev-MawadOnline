@@ -1,7 +1,8 @@
 <?php
 
-use Database\seeders\RoleSeeder;
 use Illuminate\Database\Seeder;
+use Database\seeders\RoleSeeder;
+use Database\Seeds\TourSeeder;
 use Database\seeds\EmirateSeeder;
 use Database\seeds\CategorySeeder;
 use Database\seeds\MigrationSeeder;
@@ -32,9 +33,10 @@ class DatabaseSeeder extends Seeder
         // $this->call(TranslationsTableSeeder::class);
       //  $this->call(TranslationsRegisterVendorPart2::class);
         //$this->call(CategorySeeder::class);
-        $this->call(PermissionSeeder::class);
+        //$this->call(PermissionSeeder::class);
         //$this->call(RoleSeeder::class);
-        $this->call(AddSellerRoleToUserSeeder::class);
+        //$this->call(AddSellerRoleToUserSeeder::class);
         //$this->call(CreateSellerAndShopSeeder::class);
+        $this->call(TourSeeder::class);
     }
 }

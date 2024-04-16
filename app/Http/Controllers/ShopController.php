@@ -815,7 +815,7 @@ class ShopController extends Controller
         $user->owner_id = $user->id ;
         $user->save();
 
-        $role = Role::where('name','seller')->first();
+        $role = Role::where('name','pro')->first();
         $user->assignRole($role) ;
         $staff = new Staff;
         $staff->user_id = $user->id;

@@ -24,7 +24,7 @@
             <ul class="aiz-side-nav-list" id="search-menu">
             </ul>
             <ul class="aiz-side-nav-list" id="main-menu" data-toggle="aiz-side-menu">
-                <li class="aiz-side-nav-item">
+                <li id="dashboard" class="aiz-side-nav-item">
                     <a href="{{ route('seller.dashboard') }}" class="aiz-side-nav-link">
                         <i class="las la-home aiz-side-nav-icon"></i>
                         <span class="aiz-side-nav-text">{{ translate('Dashboard') }}</span>
@@ -40,7 +40,7 @@
                         <!--Submenu-->
                         <ul class="aiz-side-nav-list level-2">
                             @can('seller_show_product')
-                            <li class="aiz-side-nav-item">
+                            <li id="products" class="aiz-side-nav-item">
                                 <a href="{{ route('seller.products') }}"
                                     class="aiz-side-nav-link {{ areActiveRoutes(['seller.products', 'seller.products.create', 'seller.products.edit']) }}">
                                     <span class="aiz-side-nav-text">{{ translate('Products') }}</span>
@@ -64,7 +64,7 @@
                             </li>
                             @endcan --}}
                             @can('seller_view_product_reviews')
-                            <li class="aiz-side-nav-item">
+                            <li id="reviews" class="aiz-side-nav-item">
                                 <a href="{{ route('seller.reviews') }}"
                                     class="aiz-side-nav-link {{ areActiveRoutes(['seller.reviews']) }}">
                                     <span class="aiz-side-nav-text">{{ translate('Product Reviews') }}</span>
@@ -74,7 +74,7 @@
                         </ul>
                     </li>
                 @endcanany
-                <li class="aiz-side-nav-item">
+                <li id="catalog" class="aiz-side-nav-item">
                     <a href="{{ route('catalog.search_page') }}"
                         class="aiz-side-nav-link {{ areActiveRoutes(['catalog.search_page']) }}">
                         <i class="las la-folder-open aiz-side-nav-icon"></i>
@@ -91,15 +91,15 @@
                         <!--Submenu-->
                         <ul class="aiz-side-nav-list level-2">
                             @can('seller_add_inventory')
-                            <li class="aiz-side-nav-item">
+                            <li id="stock" class="aiz-side-nav-item">
                                 <a href="{{ route('seller.stocks.index') }}" class="aiz-side-nav-link">
                                     <span class="aiz-side-nav-text">{{__('stock.Add/Remove Stock')}}</span>
                                 </a>
                             </li>
                             @endcan
                             @can('seller_inventory_history')
-                            <li class="aiz-side-nav-item">
-                                <a href="{{ route('seller.stock.operation.report') }}" class="aiz-side-nav-link">
+                            <li id="stock_details" class="aiz-side-nav-item">
+                                <a href="{{ route('seller.stock.operation.report') }}" class="aiz-side-nav-link {{ areActiveRoutes(['seller.stock.search']) }}">
                                     <span class="aiz-side-nav-text">{{__('stock.Stock Operation Details')}}</span>
                                 </a>
                             </li>
@@ -115,7 +115,7 @@
                     </a>
                 </li> --}}
                 @can('seller_view_all_orders')
-                    <li class="aiz-side-nav-item">
+                    <li id="order" class="aiz-side-nav-item">
                         <a href="{{ route('seller.orders.index') }}"
                             class="aiz-side-nav-link {{ areActiveRoutes(['seller.orders.index', 'seller.orders.show']) }}">
                             <i class="las la-money-bill aiz-side-nav-icon"></i>
@@ -133,14 +133,14 @@
                             </a>
                             <ul class="aiz-side-nav-list level-2">
                                 @can('seller_view_package_list')
-                                <li class="aiz-side-nav-item">
+                                <li id="packages" class="aiz-side-nav-item">
                                     <a href="{{ route('seller.seller_packages_list') }}" class="aiz-side-nav-link">
                                         <span class="aiz-side-nav-text">{{ translate('Packages') }}</span>
                                     </a>
                                 </li>
                                 @endcan
                                 @can('seller_view_all_packages')
-                                <li class="aiz-side-nav-item">
+                                <li id="package_list" class="aiz-side-nav-item">
                                     <a href="{{ route('seller.packages_payment_list') }}" class="aiz-side-nav-link">
                                         <span class="aiz-side-nav-text">{{ translate('Purchase Packages') }}</span>
                                     </a>
@@ -152,7 +152,7 @@
                 @endif
 
                 @can('seller_view_all_staffs')
-                    <li class="aiz-side-nav-item">
+                    <li id="staff" class="aiz-side-nav-item">
                         <a href="{{ route('seller.staffs.index') }}"
                         class="aiz-side-nav-link {{ areActiveRoutes(['seller.staffs.index', 'seller.staffs.create', 'seller.staffs.edit'])}}">
                             <i class="las la-users aiz-side-nav-icon"></i>
@@ -200,7 +200,7 @@
                         <!--Submenu-->
                         <ul class="aiz-side-nav-list level-2">
                             @can('seller_view_all_leases')
-                                <li class="aiz-side-nav-item">
+                                <li id="lease" class="aiz-side-nav-item">
                                     <a href="{{ route('seller.lease.index') }}"
                                     class="aiz-side-nav-link {{ areActiveRoutes(['seller.lease.index'])}}">
                                         <span class="aiz-side-nav-text">{{ translate('e-Shop lease') }}</span>
@@ -208,7 +208,7 @@
                                 </li>
                             @endcan
                             @can('seller_view_all_sales')
-                                <li class="aiz-side-nav-item">
+                                <li id="sales" class="aiz-side-nav-item">
                                     <a href="{{route('seller.sales.index')}}"
                                     class="aiz-side-nav-link {{ areActiveRoutes(['seller.sales.index'])}}">
                                         <span class="aiz-side-nav-text">{{ translate('Sales') }}</span>
@@ -226,7 +226,7 @@
                     ->count();
                 @endphp
                 @can('seller_view_support_tickets')
-                    <li class="aiz-side-nav-item">
+                    <li id="support_tickets" class="aiz-side-nav-item">
                         <a href="{{ route('seller.support_ticket.index') }}"
                             class="aiz-side-nav-link {{ areActiveRoutes(['seller.support_ticket.index']) }}">
                             <i class="las la-atom aiz-side-nav-icon"></i>
@@ -239,7 +239,7 @@
                 @endcan
 
                 @can('seller_shop_settings')
-                    <li class="aiz-side-nav-item">
+                    <li id="setting" class="aiz-side-nav-item">
                         <a href="{{ route('seller.shop.index') }}"
                             class="aiz-side-nav-link {{ areActiveRoutes(['seller.shop.index']) }}">
                             <i class="las la-cog aiz-side-nav-icon"></i>

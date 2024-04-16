@@ -18,7 +18,8 @@ class ReviewController extends Controller
     public function index(Request $request)
     {
         seller_lease_creation($user=Auth::user());
-        return view('seller.coming_soon');
+        $step=3;
+        return view('seller.coming_soon',compact('step'));
 
         // $reviews = DB::table('reviews')
         //             ->orderBy('id', 'desc')

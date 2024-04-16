@@ -110,7 +110,7 @@ class SellerLeaseController extends Controller
     public function allSales()
     {
         seller_lease_creation($user=Auth::user());
-
-        return view('seller.coming_soon');
+        $step=12;
+        return view('seller.coming_soon',compact('step'));
     }
 }

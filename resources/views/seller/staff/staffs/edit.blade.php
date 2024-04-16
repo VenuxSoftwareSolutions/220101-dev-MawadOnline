@@ -31,7 +31,7 @@
                             <input type="text" placeholder="{{translate('Phone')}}" id="mobile" name="mobile" value="{{ $staff->user->phone }}" class="form-control" required disabled>
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row" id="role-selet">
                         <label class="col-sm-3 col-from-label" for="name">{{translate('Role')}}</label>
                         <div class="col-sm-9">
                             <select name="role_id[]" multiple required class="form-control aiz-selectpicker" onchange="checkRoleUsage()">
@@ -53,39 +53,48 @@
 @endsection
 
 @section('script')
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script>
-            toastr.options = {
-            positionClass: 'toast-top-right',
-            closeButton: true,
-            timeOut: 3000, // Set the duration for which the toast will be displayed (in milliseconds)
-        };
-
-        function checkRoleUsage() {
-        // Get selected role ID
+    function checkRoleUsage() {
+        // Get selected role IDs
         var selectedRoles = [];
         var selectedOptions = document.querySelector('[name="role_id[]"]').selectedOptions;
 
         for (var i = 0; i < selectedOptions.length; i++) {
             selectedRoles.push(selectedOptions[i].value);
         }
+
         // Make AJAX request
         $.ajax({
             url: "{{ route('seller.check.role') }}",
             type: 'GET',
-            data: { roles: selectedRoles,
-                staff_id: "{{ $staff->id }}"
-             },
+            data: { roles: selectedRoles },
             success: function(response) {
                 // Check if the role is used
                 if (response.isUsed == 1) {
                     // Display warning message
-                    toastr.error(response.message);
-                    //alert("Warning: The selected role is already in use!");
+                    var errorMessage = document.createElement('div');
+                    errorMessage.classList.add('text-danger');
+                    errorMessage.classList.add('role-error-message');
+                    errorMessage.innerHTML = response.message;
+
+                    var selectElement = document.querySelector('[id="role-selet"]');
+                    // Check if error message already exists, if yes, remove it
+                    var existingErrorMessage = document.querySelector('.role-error-message');
+                    if (existingErrorMessage) {
+                        existingErrorMessage.remove();
+                    }
+                    // Insert error message before select element
+                    selectElement.parentNode.insertBefore(errorMessage, selectElement);
+                } else {
+                    // Remove error message if no error
+                    var existingErrorMessage = document.querySelector('.role-error-message');
+                    if (existingErrorMessage) {
+                        existingErrorMessage.remove();
+                    }
                 }
             }
         });
     }
+
 </script>
 @endsection

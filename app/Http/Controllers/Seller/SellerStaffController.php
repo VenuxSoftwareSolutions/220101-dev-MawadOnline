@@ -234,9 +234,16 @@ class SellerStaffController extends Controller
         $current_lease = SellerLease::where('vendor_id',Auth::user()->owner_id)->where('start_date', '<=', $currentDate)
                                         ->where('end_date', '>=', $currentDate)->first();
         foreach ($staffs as $key => $st) {
-            $staff_role=SellerLeaseDetail::where('lease_id',$current_lease->id)->where('role_id',$st->role_id)->where('is_used',true)->first();
-            $staff_role->is_used = 0;
-            $staff_role->save();
+            $staff_role=SellerLeaseDetail::where('lease_id',$current_lease->id)->where('role_id',$st->role_id)->where('is_used',true)->where('amount','!=',0)->first();
+            if($staff_role) {
+                $staff_role->delete();
+
+            }else{
+                $staff_role=SellerLeaseDetail::where('lease_id',$current_lease->id)->where('role_id',$st->role_id)->where('is_used',true)->first();
+                $staff_role->is_used = 0;
+                $staff_role->save();
+            }
+
             $st->delete();
         }
         //dd($staffs);
@@ -326,9 +333,16 @@ class SellerStaffController extends Controller
         $staffs=Staff::where('user_id',$staff->user->id)->get();
 
         foreach ($staffs as $key => $st) {
-            $staff_role=SellerLeaseDetail::where('lease_id',$current_lease->id)->where('role_id',$st->role_id)->where('is_used',true)->first();
-            $staff_role->is_used = 0;
-            $staff_role->save();
+            $staff_role=SellerLeaseDetail::where('lease_id',$current_lease->id)->where('role_id',$st->role_id)->where('is_used',true)->where('amount','!=',0)->first();
+            if($staff_role) {
+                $staff_role->delete();
+
+            }else{
+                $staff_role=SellerLeaseDetail::where('lease_id',$current_lease->id)->where('role_id',$st->role_id)->where('is_used',true)->first();
+                $staff_role->is_used = 0;
+                $staff_role->save();
+            }
+
             $st->delete();
         }
 
@@ -356,33 +370,35 @@ class SellerStaffController extends Controller
             $staff=Staff::where('id',$request->staff_id)->first();
             $staffs=Staff::where('user_id',$staff->user->id)->get();
         }
+        if($request->roles!=null){
+            foreach ($request->roles as $role_id) {
+                //dd($staffs->pluck('role_id')->contains($role_id),$staffs->pluck('role_id'),$role_id);
+                foreach ($roles_id as $role_detail) {
+                    if(isset($staffs) && $staffs->pluck('role_id')->contains($role_id)){
+                        break;
+                    }
+                    // Check if the role_id matches and is not marked as used
+                    elseif ($role_detail->role_id == $role_id && $role_detail->is_used == false){
+                        break;
+                    }
+                    elseif ($role_detail->role_id == $role_id && $role_detail->is_used == true) {
+                        $cycleEnd = Carbon::parse($current_lease->end_date)->endOfDay();
+                        $daysToCycleEnd = $cycleEnd->diffInDays($currentDate);
 
-        foreach ($request->roles as $role_id) {
-            //dd($staffs->pluck('role_id')->contains($role_id),$staffs->pluck('role_id'),$role_id);
-            foreach ($roles_id as $role_detail) {
-                if(isset($staffs) && $staffs->pluck('role_id')->contains($role_id)){
-                    break;
+                    // Calculate the lease cycle days
+                        $start_date = Carbon::parse($current_lease->start_date);
+                        $end_date = Carbon::parse($current_lease->end_date);
+                        $leaseCycleDays = $start_date->diffInDays($end_date)+1;
+
+                        $proratedLease = (10 * $daysToCycleEnd) / $leaseCycleDays;
+                        $amount+= $proratedLease ;
+                        $roles += 1 ;
+                        break;
+                    }
                 }
-                // Check if the role_id matches and is not marked as used
-                elseif ($role_detail->role_id == $role_id && $role_detail->is_used == false){
-                    break;
-                }
-                elseif ($role_detail->role_id == $role_id && $role_detail->is_used == true) {
-                    $cycleEnd = Carbon::parse($current_lease->end_date)->endOfDay();
-                    $daysToCycleEnd = $cycleEnd->diffInDays($currentDate);
-
-                // Calculate the lease cycle days
-                    $start_date = Carbon::parse($current_lease->start_date);
-                    $end_date = Carbon::parse($current_lease->end_date);
-                    $leaseCycleDays = $start_date->diffInDays($end_date)+1;
-
-                    $proratedLease = (10 * $daysToCycleEnd) / $leaseCycleDays;
-                    $amount+= $proratedLease ;
-                    $roles += 1 ;
-                    break;
             }
         }
-    }
+
         if($amount>0){
             return response()->json(['isUsed' => 1,'message' => 'You will be charged with '.
             number_format($amount,2) .' for the '.$roles.' extra roles']);
