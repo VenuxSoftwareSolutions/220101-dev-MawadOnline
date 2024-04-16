@@ -28,7 +28,7 @@ use Carbon\Carbon;
 
 
 
-        <form  id="rejectionForm" enctype="multipart/form-data" method="POST" action="{{ route('resubmit.registration', $user->id) }}">
+        <form  id="rejectionForm" enctype="multipart/form-data" method="POST" action="{{ route('resubmit.registration', [$user->id,$proposedId] ) }}">
             @csrf
             <div class="form-group">
                 <label for="reject_reason">Reject Reason</label>

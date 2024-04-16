@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
-use App\Models\Cart;
-use Laravel\Sanctum\HasApiTokens;
-use App\Notifications\EmailVerificationNotification;
 use Auth;
+use App\Models\Cart;
+use App\Models\SellerLease;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Notifications\EmailVerificationNotification;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -208,4 +209,14 @@ class User extends Authenticatable implements MustVerifyEmail
             }
         });
     }
+    public function leases()
+    {
+        return $this->hasMany(SellerLease::class);
+    }
+    public function checkProposedChanges(){
+        $proposedChange = ProposedPayoutChange::where('user_id', $this->id)->latest()->first();
+         return ($proposedChange && $proposedChange->status=="pending" ) ;
+
+    }
+
 }

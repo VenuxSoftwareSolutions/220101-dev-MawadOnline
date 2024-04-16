@@ -40,10 +40,10 @@
                                     class="form-control" required value="{{ old('mobile') }}">
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-from-label" for="name">{{ translate('Role') }}</label>
+                        <div class="form-group row" id="role-selet">
+                            <label class="col-sm-3 col-form-label" for="name">{{ translate('Role') }}</label>
                             <div class="col-sm-9">
-                                <select name="role_id" required class="form-control aiz-selectpicker">
+                                <select name="role_id[]" multiple required class="form-control aiz-selectpicker" onchange="checkRoleUsage()">
                                     @foreach ($roles as $role)
                                         <option value="{{ $role->id }}">{{ $role->name }}</option>
                                     @endforeach
@@ -60,4 +60,51 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('script')
+<script>
+    function checkRoleUsage() {
+        // Get selected role IDs
+        var selectedRoles = [];
+        var selectedOptions = document.querySelector('[name="role_id[]"]').selectedOptions;
+
+        for (var i = 0; i < selectedOptions.length; i++) {
+            selectedRoles.push(selectedOptions[i].value);
+        }
+
+        // Make AJAX request
+        $.ajax({
+            url: "{{ route('seller.check.role') }}",
+            type: 'GET',
+            data: { roles: selectedRoles },
+            success: function(response) {
+                // Check if the role is used
+                if (response.isUsed == 1) {
+                    // Display warning message
+                    var errorMessage = document.createElement('div');
+                    errorMessage.classList.add('text-danger');
+                    errorMessage.classList.add('role-error-message');
+                    errorMessage.innerHTML = response.message;
+
+                    var selectElement = document.querySelector('[id="role-selet"]');
+                    // Check if error message already exists, if yes, remove it
+                    var existingErrorMessage = document.querySelector('.role-error-message');
+                    if (existingErrorMessage) {
+                        existingErrorMessage.remove();
+                    }
+                    // Insert error message before select element
+                    selectElement.parentNode.insertBefore(errorMessage, selectElement);
+                } else {
+                    // Remove error message if no error
+                    var existingErrorMessage = document.querySelector('.role-error-message');
+                    if (existingErrorMessage) {
+                        existingErrorMessage.remove();
+                    }
+                }
+            }
+        });
+    }
+
+</script>
 @endsection

@@ -50,6 +50,7 @@ use App\Http\Controllers\UpdateController;
 use App\Http\Controllers\WebsiteController;
 use App\Http\Controllers\ZoneController;
 use App\Http\Controllers\UnityController;
+use App\Http\Controllers\Seller\CatalogController;
 
 /*
   |--------------------------------------------------------------------------
@@ -72,6 +73,10 @@ Route::controller(UpdateController::class)->group(function () {
 
 Route::get('/admin', [AdminController::class, 'admin_dashboard'])->name('admin.dashboard')->middleware(['auth', 'admin', 'prevent-back-history']);
 Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-back-history']], function() {
+    //Product Catalog routes
+    Route::controller(CatalogController::class)->group(function () {
+        Route::post('/catalog/add_product_to_catalog', 'add_product_to_catalog')->name('catalog.add_product_to_catalog');
+    });
 
     // category
     Route::resource('categories', CategoryController::class);
@@ -122,6 +127,14 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::post('/products/sku_combination', 'sku_combination')->name('products.sku_combination');
         Route::post('/products/sku_combination_edit', 'sku_combination_edit')->name('products.sku_combination_edit');
         Route::post('/products/add-more-choice-option', 'add_more_choice_option')->name('products.add-more-choice-option');
+
+        // Product Catalog Routes
+        Route::get('/products/catalog/search_page', 'search')->name('products.catalog.search_page');
+        Route::get('/products/catalog/search/action', 'search_action')->name('products.catalog.search.action');
+        Route::get('/products/catalog/search/see_all/{keyword}', 'see_all')->name('products.catalog.search.see_all');
+        Route::get('/products/catalog/preview_product/{id}/{is_catalog}', 'displayPreviewProductInCatalogProduct')->name('products.catalog.preview_product');
+        Route::post('/products/catalog/add_product', 'add_product')->name('products.catalog.add_product');
+        Route::post('/products/catalog/add_product_to_catalog', 'add_product_to_catalog')->name('products.catalog.add_product_to_catalog');
     });
 
     //   // Stocks
@@ -175,12 +188,12 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::post('/sellers/profile_modal', 'profile_modal')->name('sellers.profile_modal');
         Route::post('/sellers/approved', 'updateApproved')->name('sellers.approved');
         // Route for resubmitting vendor registration
-        Route::post('/seller/{id}/resubmit-registration', [SellerController::class, 'resubmitRegistration'])
+        Route::post('/seller/{id}/resubmit-registration/{proposedId?}', [SellerController::class, 'resubmitRegistration'])
         ->name('resubmit.registration');
         Route::get('/vendor-registration/view/{id}', 'view')->name('vendor.registration.view');
         Route::post('/upload-image', 'upload')->name('upload.image');
         Route::delete('/delete-image', 'delete')->name('delete.image');
-        Route::get('/reject-seller-registration/{id}', 'reject')->name('reject.seller.registration');
+        Route::get('/reject-seller-registration/{id}/{proposedId?}', 'reject')->name('reject.seller.registration');
 
 
         Route::post('vendors/{id}/approve', 'approve')->name('vendors.approve');
@@ -196,6 +209,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::get('/vendors-status-history-report', 'VendorsStatusHistory')->name('vendors.status-history-report');
         Route::get('/vendor/{id}/details-reason', 'suspensionReasonDetail')->name('vendor.suspension_reason');
         Route::post('/update-drop-down',  'updateSellerDropDown')->name('update.seller.dropdown');
+        Route::get('/approve-changes/{id}', 'approveChanges')->name('approve-changes');
 
 
     });

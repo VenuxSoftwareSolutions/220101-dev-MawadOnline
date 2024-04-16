@@ -19,4 +19,16 @@ class Warehouse extends Model
         'address_unit',
         'saveasdraft'
     ];
+
+    public function checkWhHasProducts()
+    {
+        // Count the number of associated products in stock summaries
+        $stockSummaryCount = StockSummary::where('warehouse_id', $this->id)->count();
+
+        // If there are associated products, return true; otherwise, return false
+        return $stockSummaryCount > 0;
+    }
+
+
+
 }

@@ -23,7 +23,7 @@
                     <h4 class="text-dark fs-14 fw-700 mt-3">{{ translate('Terms & conditions') }}</h4>
                 </a>
             </div>
-            
+
             <!-- Return Policy -->
             <div class="col-lg-3 col-6 policy-file">
                 <a class="text-reset h-100  border-right border-bottom border-soft-light text-center p-2 p-md-4 d-block hov-ls-1" href="{{ route('returnpolicy') }}">
@@ -104,7 +104,7 @@
                     </form>
                 </div>
             </div>
-            
+
             <div class="col d-none d-lg-block"></div>
 
             <!-- Follow & Apps -->
@@ -278,8 +278,8 @@
                         <ul class="list-unstyled">
                             <li class="mb-2">
                                 <p class="fs-13 text-soft-light mb-0">
-                                    {{ translate('Become A Seller') }} 
-                                    <a href="{{ route('shops.create') }}" class="fs-13 fw-700 text-secondary-base ml-2">{{ translate('Apply Now') }}</a>
+                                    {{ translate('Become A Seller') }}
+                                    <a href="{{ route('shops.packages') }}" class="fs-13 fw-700 text-secondary-base ml-2">{{ translate('Apply Now') }}</a>
                                 </p>
                             </li>
                             @guest
@@ -310,7 +310,7 @@
                                     </a>
                                 </li>
                             @endguest
-                            
+
                             @if(get_setting('delivery_boy_app_link'))
                                 <li class="mb-2">
                                     <a class="fs-13 text-soft-light animate-underline-white" target="_blank" href="{{ get_setting('delivery_boy_app_link')}}">
@@ -355,7 +355,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Contacts -->
         <div class="aiz-accordion-wrap bg-black">
             <div class="aiz-accordion-heading container bg-black">
@@ -442,7 +442,7 @@
                     <ul class="list-unstyled mt-3">
                         <li class="mb-2 pb-2 {{ areActiveRoutes(['shops.create'],' active')}}">
                             <p class="fs-13 text-soft-light text-sm-secondary mb-0">
-                                {{ translate('Become A Seller') }} 
+                                {{ translate('Become A Seller') }}
                                 <a href="{{ route('shops.create') }}" class="fs-13 fw-700 text-secondary-base ml-2">{{ translate('Apply Now') }}</a>
                             </p>
                         </li>

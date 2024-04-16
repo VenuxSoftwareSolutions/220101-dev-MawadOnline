@@ -38,7 +38,8 @@
                             <span class="d-flex align-items-center position-relative">
                                 <i class="las la-bell fs-24"></i>
                                 @php
-                                    $vendor = \App\Models\User::find(Auth::user()->owner_id);
+                                    // $vendor = \App\Models\User::find(Auth::user()->owner_id);
+                                    $vendor = Auth::user() ;
                                 @endphp
                                 @if($vendor->unreadNotifications->count() > 0)
                                     <span class="badge badge-sm badge-dot badge-circle badge-primary position-absolute absolute-top-right"></span>
@@ -69,16 +70,19 @@
                             </ul>
                             <div class="tab-content">
                                 <div class="tab-pane active" id="orders-notifications" role="tabpanel">
-                                    <x-notification :notifications="$vendor->unreadNotifications()->where('type', 'App\Notifications\OrderNotification')->take(20)->get()" />
+                                    {{-- <x-notification :notifications="$vendor->unreadNotifications()->where('type', 'App\Notifications\OrderNotification')->take(20)->get()" /> --}}
                                 </div>
                                 <div class="tab-pane" id="sellers-notifications" role="tabpanel">
-                                    <x-notification :notifications="$vendor->unreadNotifications()->where('type', 'like', '%shop%')->take(20)->get()" />
+                                    {{-- <x-notification :notifications="$vendor->unreadNotifications()->where('type', 'like', '%shop%')->take(20)->get()" /> --}}
                                 </div>
                                 <div class="tab-pane" id="payouts-notifications" role="tabpanel">
-                                    <x-notification :notifications="$vendor->unreadNotifications()->where('type', 'App\Notifications\PayoutNotification')->take(20)->get()" />
+                                    {{-- <x-notification :notifications="$vendor->unreadNotifications()->where('type', 'App\Notifications\PayoutNotification')->take(20)->get()" /> --}}
                                 </div>
                                 <div class="tab-pane" id="status-notifications" role="tabpanel">
-                                    <x-notification :notifications="$vendor->unreadNotifications()->where('type', 'App\Notifications\CustomStatusNotification')->take(20)->get()" />
+
+                                    <x-notification :notifications="$vendor->unreadNotifications()->whereIn('type', ['App\Notifications\ChangesApprovedNotification','App\Notifications\CustomStatusNotification','App\Notifications\ModificationRejectedNotification'])->take(20)->get()" />
+
+                                    {{-- <x-notification :notifications="$vendor->unreadNotifications()->where('type', 'App\Notifications\CustomStatusNotification')->take(20)->get()" /> --}}
                                 </div>
                             </div>
                         </div>
@@ -140,7 +144,7 @@
                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-animated dropdown-menu-md">
                         <a href="{{ route('seller.profile.index') }}" class="dropdown-item">
                             <i class="las la-user-circle"></i>
-                            <span>{{translate('Profile')}}</span>
+                            <span>{{translate('e-Shop Profile')}}</span>
                         </a>
 
                         <a href="{{ route('logout')}}" class="dropdown-item">

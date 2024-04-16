@@ -30,6 +30,8 @@
 
     <link rel="stylesheet" href="{{ static_asset('assets/css/countrySelect.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/introjs.min.css" rel="stylesheet">
+
     <style>
         /* Override Dropify's default message font size */
         .dropify-wrapper .dropify-message p {
@@ -121,6 +123,7 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <!-- Include MultiSelect CSS -->
     <link rel="stylesheet" href="https://cdn.rawgit.com/nobleclem/jQuery-MultiSelect/master/jquery.multiselect.css">
+    <link rel="stylesheet" href="{{ static_asset('assets/css/filter_multi_select.css') }}">
     <style>
         body {
             font-size: 12px;
@@ -186,6 +189,25 @@
             width: 100%;
         }
 
+        .ms-options-wrap > .ms-options {
+            position: absolute;
+            left: 0;
+            width: 247%;
+            margin-top: 1px;
+            margin-bottom: 20px;
+            background: white;
+            z-index: 2000;
+            border: 1px solid #aaa;
+            overflow: auto;
+            visibility: hidden;
+        }
+
+        .bloc-default-shipping-style{
+            border: 1px solid gainsboro;
+            border-radius: 5px;
+            padding: 15px 26px;
+        }
+
     </style>
 	<script>
     	var AIZ = AIZ || {};
@@ -244,6 +266,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.all.min.js"></script>
     <!-- Include MultiSelect JS -->
     <script src="https://cdn.rawgit.com/nobleclem/jQuery-MultiSelect/master/jquery.multiselect.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/intro.min.js"></script>
 
     <script type="text/javascript">
 	    @foreach (session('flash_notification', collect())->toArray() as $message)

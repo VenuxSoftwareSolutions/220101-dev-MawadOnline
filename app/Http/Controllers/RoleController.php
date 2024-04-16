@@ -89,7 +89,7 @@ class RoleController extends Controller
         ]);
         $role->givePermissionTo($request->permissions);
 
-        $role_translation = RoleTranslation::firstOrNew(['lang' => env('DEFAULT_LANGUAGE'), 'role_id' => $role->id]);
+        $role_translation = RoleTranslation::firstOrNew(['lang' => env('DEFAULT_LANGUAGE', 'en'), 'role_id' => $role->id]);
         $role_translation->name = $request->name;
         $role_translation->save();
 

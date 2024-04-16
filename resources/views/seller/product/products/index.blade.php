@@ -27,7 +27,7 @@
 
         <div class="col-md-4 mx-auto mb-3" >
             @can('seller_create_product')
-            <a href="{{ route('seller.products.create')}}">
+            <a id="step1" href="{{ route('catalog.search_page')}}">
                 <div class="p-3 rounded mb-3 c-pointer text-center bg-white shadow-sm hov-shadow-lg has-transition">
                     <span class="size-60px rounded-circle mx-auto bg-secondary d-flex align-items-center justify-content-center mb-3">
                         <i class="las la-plus la-3x text-white"></i>
@@ -75,13 +75,13 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="input-group input-group-sm">
+                    <div id="step3" class="input-group input-group-sm">
                         <input type="text" class="form-control" id="search" name="search" @isset($search) value="{{ $search }}" @endisset placeholder="{{ translate('Search product') }}">
                     </div>
                 </div>
             </div>
             <div class="card-body">
-                <table class="table aiz-table mb-0">
+                <table id="step2" class="table aiz-table mb-0">
                     <thead>
                         <tr>
                             <th>
@@ -100,7 +100,7 @@
                             <th>{{ translate('Base Price')}}</th>
                             <th data-breakpoints="md">{{ translate('Status')}}</th>
                             <th data-breakpoints="md">{{ translate('Draft')}}</th>
-                            <th data-breakpoints="md">{{ translate('Featured')}}</th>
+                            <th data-breakpoints="md">{{ translate('Published')}}</th>
                             <th data-breakpoints="md" class="text-right">{{ translate('Options')}}</th>
                         </tr>
                     </thead>
@@ -135,7 +135,7 @@
                                         echo $qty;
                                     @endphp
                                 </td>
-                                <td>{{ $product->unit_price }}</td>
+                                <td>{{ count($product->getChildrenProducts()) > 0 ? '--' : $product->getPriceRange() }}</td>
                                 <td>
                                     @if ($product->is_draft == 0)
                                         @if($product->is_parent == 0)
@@ -143,7 +143,7 @@
                                                 @case(0)
                                                     <span class="badge badge-primary width-badge width-badge">{{ translate('Pending')}}</span>
                                                 @break
-                                            
+
                                                 @case(1)
                                                 <span class="badge badge-success width-badge width-badge">{{ translate('Approved')}}</span>
                                                     @break
@@ -168,21 +168,26 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <label class="aiz-switch aiz-switch-success mb-0">
-                                        <input onchange="update_featured(this)" value="{{ $product->id }}" type="checkbox" <?php if($product->seller_featured == 1) echo "checked";?> >
-                                        <span class="slider round"></span>
-                                    </label>
+                                    @if(count($product->getChildrenProducts()) == 0)
+                                        <label class="aiz-switch aiz-switch-success mb-0">
+                                            <input value="{{ $product->id }}" class="publsihed_product" type="checkbox" <?php if($product->published == 1) echo "checked";?> >
+                                            <span class=""></span>
+                                        </label>
+                                    @endif
                                 </td>
                                 <td class="text-right">
-                                    <a class="btn btn-soft-info btn-icon btn-circle btn-sm" href="{{route('seller.products.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')])}}" title="{{ translate('Edit') }}">
-                                        <i class="las la-edit"></i>
-                                    </a>
-                                    {{-- <a href="{{route('seller.products.duplicate', $product->id)}}" class="btn btn-soft-success btn-icon btn-circle btn-sm"  title="{{ translate('Duplicate') }}">
-                                        <i class="las la-copy"></i>
-                                    </a> --}}
-                                    <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('seller.products.destroy', $product->id)}}" title="{{ translate('Delete') }}">
-                                        <i class="las la-trash"></i>
-                                    </a>
+                                    @if($product->approved != 4)
+                                        <a class="btn btn-soft-info btn-icon btn-circle btn-sm" href="{{route('seller.products.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')])}}" title="{{ translate('Edit') }}">
+                                            <i class="las la-edit"></i>
+                                        </a>
+                                        {{-- <a href="{{route('seller.products.duplicate', $product->id)}}" class="btn btn-soft-success btn-icon btn-circle btn-sm"  title="{{ translate('Duplicate') }}">
+                                            <i class="las la-copy"></i>
+                                        </a> --}}
+
+                                        <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('seller.products.destroy', $product->id)}}" title="{{ translate('Delete') }}">
+                                            <i class="las la-trash"></i>
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                             @if((count($product->getChildrenProducts()) > 0) && ($product->is_draft == 0))
@@ -210,14 +215,14 @@
                                                 echo $qty;
                                             @endphp
                                         </td>
-                                        <td>{{ $children->unit_price }}</td>
+                                        <td>{{ $children->getPriceRange() }}</td>
                                         <td>
                                             @if ($children->is_draft == 0)
                                                 @switch($children->approved)
                                                     @case(0)
                                                         <span class="badge badge-primary width-badge">{{ translate('Pending')}}</span>
                                                     @break
-                                                
+
                                                     @case(1)
                                                     <span class="badge badge-success width-badge">{{ translate('Approved')}}</span>
                                                         @break
@@ -242,8 +247,8 @@
                                         </td>
                                         <td>
                                             <label class="aiz-switch aiz-switch-success mb-0">
-                                                <input onchange="update_featured(this)" value="{{ $children->id }}" type="checkbox" <?php if($children->seller_featured == 1) echo "checked";?> >
-                                                <span class="slider round"></span>
+                                                <input value="{{ $children->id }}" class="publsihed_product" type="checkbox" <?php if($children->published == 1) echo "checked";?> >
+                                                <span class=""></span>
                                             </label>
                                         </td>
                                         <td class="text-right">
@@ -253,9 +258,11 @@
                                             <a href="{{route('seller.products.duplicate', $children->id)}}" class="btn btn-soft-success btn-icon btn-circle btn-sm"  title="{{ translate('Duplicate') }}">
                                                 <i class="las la-copy"></i>
                                             </a> --}}
-                                            <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('seller.products.destroy', $children->id)}}" title="{{ translate('Delete') }}">
-                                                <i class="las la-trash"></i>
-                                            </a>
+                                            @if($product->approved != 4)
+                                                <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('seller.products.destroy', $children->id)}}" title="{{ translate('Delete') }}">
+                                                    <i class="las la-trash"></i>
+                                                </a>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
@@ -294,6 +301,66 @@
                 });
             }
 
+        });
+
+        $('body').on('change', '.publsihed_product', function(){
+            var current = $(this);
+            var id = $(this).val();
+            if($(this).is(':not(:checked)')){
+                var published = 0;
+                var message = "Do you want to unpublish ?";
+                var_message_button = "Unpublish";
+                var message_success = "The product unpublished successfully";
+                var message_icon = "Unpublished"
+            }else{
+                var published = 1;
+                var message = "Do you want to publish ?";
+                var_message_button = "Publish";
+                var message_success = "The product published successfully";
+                var message_icon = "Published"
+            }
+
+                swal({
+                    title: message,
+                    type: "warning",
+                    confirmButtonText: var_message_button,
+                    showCancelButton: true
+                })
+                .then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            url: "{{ route('seller.products.published') }}",
+                            type: "GET",
+                            data: {
+                                status: published,
+                                id: id
+                            },
+                            cache: false,
+                            dataType: 'JSON',
+                            success: function(dataResult) {
+                               if(dataResult.status == 'success'){
+                                swal(
+                                        message_icon,
+                                        message_success,
+                                        'success'
+                                    )
+                                }
+                            }
+                        })
+                    } else if (result.dismiss === 'cancel') {
+                        if(published == 0){
+                            current.prop('checked', true)
+                        }else{
+                            current.prop('checked', false)
+                        }
+
+                        swal(
+                            'Cancelled',
+                            'Published/Unpublished successfully reverted.',
+                            'warning'
+                        )
+                    }
+                })
         });
 
         function update_featured(el){
@@ -356,5 +423,145 @@
             });
         }
 
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if ({{Auth::user()->tour}} == true | {{Auth::user()->id}} != {{Auth::user()->owner_id}}) {
+            return;
+        }
+        let tour = introJs();
+        let step_number = 0 ;
+        tour.setOptions({
+            steps: [
+                {
+                    element: document.querySelector('#dashboard'),
+                    title: 'Dashboard',
+                    intro: "Welcome to your e-Shop dashboard! This is your central hub for managing your shop's performance, sales, and settings.",
+                    position: 'right'
+                },
+                {
+                    element: document.querySelector('#products'),
+                    title: 'Step 1: Manage Products',
+                    intro: "Here, you can add, edit, and manage your products. Showcase your offerings to attract buyers and keep your inventory up to date.",
+                    position: 'right'
+                },
+                {
+                    element: document.querySelector('#reviews'),
+                    title: 'Step 2: Monitor Reviews',
+                    intro: "Stay informed about what customers are saying. Manage and respond to reviews to maintain a positive reputation and improve your products.",
+                    position: 'right'
+                },
+                {
+                    element: document.querySelector('#catalog'),
+                    title: 'Step 3: Catalog Management',
+                    intro: "Organize your products into categories and collections. Enhance discoverability and make it easier for customers to find what they're looking for.",
+                    position: 'right'
+                },
+                {
+                    element: document.querySelector('#stock'),
+                    title: 'Step 4: Stock Management',
+                    intro: "Track your inventory levels and manage stock efficiently. Avoid overselling and keep your customers satisfied with accurate stock updates.",
+                    position: 'right'
+                },
+                {
+                    element: document.querySelector('#stock_details'),
+                    title: 'Step 5: Stock Details',
+                    intro: "View detailed information about your stock, including quantities, variations, and restocking options. Keep your inventory organized and up to date.",
+                    position: 'right'
+                },
+                {
+                    element: document.querySelector('#order'),
+                    title: 'Step 6: Order Management',
+                    intro: "Keep track of incoming orders, process payments, and manage order fulfillment. Ensure smooth transactions and timely delivery to your customers.",
+                    position: 'right'
+                },
+                {
+                    element: document.querySelector('#packages'),
+                    title: 'Step 7: Package Management',
+                    intro: "Manage packaging options and shipping details for your products. Choose the best packaging solutions to protect your items during transit.",
+                    position: 'right'
+                },
+                {
+                    element: document.querySelector('#package_list'),
+                    title: 'Step 8: Package List',
+                    intro: "View a list of all packages associated with your orders. Keep track of shipments and delivery status to provide accurate updates to customers.",
+                    position: 'right'
+                },
+                {
+                    element: document.querySelector('#staff'),
+                    title: 'Step 9: Staff Management',
+                    intro: "Add, remove, or manage staff members who assist with running your shop. Delegate tasks and collaborate effectively to streamline operations.",
+                    position: 'right'
+                },
+                {
+                    element: document.querySelector('#lease'),
+                    title: 'Step 10: Lease Management',
+                    intro: "Manage lease agreements for your shop premises or equipment. Stay organized and ensure compliance with lease terms and conditions.",
+                    position: 'right'
+                },
+                {
+                    element: document.querySelector('#lease_details'),
+                    title: 'Step 11: Lease Details',
+                    intro: "View detailed information about your lease agreements, including terms, renewal dates, and rental payments. Stay on top of lease obligations.",
+                    position: 'right'
+                },
+                {
+                    element: document.querySelector('#support_tickets'),
+                    title: 'Step 12: Support Tickets',
+                    intro: "Handle customer inquiries, feedback, and support requests. Provide timely assistance and resolve issues to maintain customer satisfaction.",
+                    position: 'right'
+                },
+                {
+                    element: document.querySelector('#setting'),
+                    title: 'Step 13: Account Settings',
+                    intro: "Adjust your account settings and preferences. Customize your dashboard experience to suit your needs and optimize your workflow.",
+                    position: 'right'
+                }
+            ],
+
+            doneLabel: 'Next', // Replace the "Done" button with "Next"
+            exitOnEsc : false ,
+            exitOnOverlayClick : false ,
+            disableInteraction : true ,
+            overlayOpacity : 0.4 ,
+            showStepNumbers : true ,
+            hidePrev : true ,
+            showProgress :true ,
+        });
+
+            tour.onexit(function() {
+                $.ajax({
+                url: "{{ route('seller.tour') }}",
+                type: 'POST',
+                data: { _token: '{{ csrf_token() }}' }, // Include CSRF token for Laravel
+                success: function(response) {
+                    // Handle success
+                    console.log('User tour status updated successfully');
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    console.error('Error updating user tour status:', error);
+                }
+            });
+            setTimeout(function() {
+                window.location.href = '{{ route("seller.dashboard") }}';
+            }, 500);
+            });
+
+            tour.onbeforechange(function(targetElement) {
+                step_number += 1 ;
+                if (step_number == 3) {
+
+                window.location.href = '{{ route("seller.reviews") }}';
+                sleep(60000);
+                }
+
+                //tour.exit();
+            });
+
+        tour.start();
+        tour.goToStepNumber(2);
+        });
     </script>
 @endsection

@@ -94,13 +94,13 @@
                         </a>
                         <!--Submenu-->
                         <ul class="aiz-side-nav-list level-2">
-                            @can('add_new_product')
+                            {{-- @can('add_new_product')
                                 <li class="aiz-side-nav-item">
                                     <a class="aiz-side-nav-link" href="{{route('products.create')}}">
                                         <span class="aiz-side-nav-text">{{translate('Add New product')}}</span>
                                     </a>
                                 </li>
-                            @endcan
+                            @endcan --}}
                             @can('show_all_products')
                                 <li class="aiz-side-nav-item">
                                     <a href="{{route('products.all')}}" class="aiz-side-nav-link">
@@ -312,6 +312,20 @@
                         </li>
                     @endcanany
                 @endif
+
+                <!-- Product Catalog -->
+                <li class="aiz-side-nav-item">
+                    <a href="{{ route('products.catalog.search_page') }}" class="aiz-side-nav-link {{ areActiveRoutes(['catalog.search_page'])}}">
+                        <div class="aiz-side-nav-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                                <g id="layer1" transform="translate(-0.53 -0.53)">
+                                  <path id="path3159" d="M3.386.53A2.862,2.862,0,0,0,.53,3.386V13.67a2.865,2.865,0,0,0,2.856,2.86H13.67a2.869,2.869,0,0,0,2.86-2.86V3.386A2.865,2.865,0,0,0,13.67.53Zm0,1.143H13.67a1.7,1.7,0,0,1,1.718,1.713V13.67a1.7,1.7,0,0,1-1.718,1.718H3.386A1.7,1.7,0,0,1,1.673,13.67V3.386A1.7,1.7,0,0,1,3.386,1.673ZM8.12,3.557,5.34,6.37a.572.572,0,0,0,0,.809.564.564,0,0,0,.81,0l1.8-1.824V10.8a.571.571,0,0,0,1.143,0V5.347l1.8,1.829a.571.571,0,0,0,.81-.806L8.935,3.557a.511.511,0,0,0-.815,0Zm-4.156,8.97a.571.571,0,0,0,0,1.143h9.128a.571.571,0,0,0,0-1.143Z" fill="#575b6a"/>
+                                </g>
+                            </svg>
+                        </div>
+                        <span class="aiz-side-nav-text">{{ translate('MawadCatalog search page') }}</span>
+                    </a>
+                </li>
 
                 <!-- Wholesale Product -->
                 @if(addon_is_activated('wholesale'))

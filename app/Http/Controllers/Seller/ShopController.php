@@ -20,6 +20,8 @@ class ShopController extends Controller
 
     public function index()
     {
+        seller_lease_creation($user=Auth::user());
+
         $vendor = User::find(Auth::user()->owner_id);
         $shop = $vendor->shop;
         return view('seller.shop', compact('shop'));

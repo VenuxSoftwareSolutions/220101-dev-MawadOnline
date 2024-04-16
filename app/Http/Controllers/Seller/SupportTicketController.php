@@ -29,6 +29,8 @@ class SupportTicketController extends Controller
      */
     public function index()
     {
+        seller_lease_creation($user=Auth::user());
+
         $tickets = Ticket::where('user_id', Auth::user()->owner_id)->orderBy('created_at', 'desc')->paginate(9);
         return view('seller.support_ticket.index', compact('tickets'));
     }

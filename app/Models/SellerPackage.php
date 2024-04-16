@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App;
+use App\Models\SellerLease;
+use Illuminate\Database\Eloquent\Model;
 
 class SellerPackage extends Model
 {
@@ -27,6 +28,10 @@ class SellerPackage extends Model
     public function shop()
     {
         return $this->hasOne(Shop::class);
+    }
+    public function leases()
+    {
+        return $this->hasMany(SellerLease::class ,'package_id');
     }
 
 }

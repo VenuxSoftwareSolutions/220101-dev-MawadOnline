@@ -15,10 +15,12 @@ use App\Models\Role;
 use App\Models\Shop;
 use App\Models\User;
 use App\Models\Staff;
+use App\Models\Seller;
 use App\Models\Emirate;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use App\Models\ContactPerson;
+use App\Models\SellerPackage;
 use App\Models\BusinessSetting;
 use Illuminate\Validation\Rule;
 use App\Models\VerificationCode;
@@ -270,7 +272,7 @@ class ShopController extends Controller
             if (isset($request->vat_certificate_old) && !$request->hasFile('vat_certificate'))
                 $vatCertificatePath = $request->vat_certificate_old;
             elseif ($request->hasFile('vat_certificate'))
-                $vatCertificatePath = Storage::putFile('vat_certificates', $request->file('vat_certificate'));
+                $vatCertificatePath = Storage::putFile('vat_certificate', $request->file('vat_certificate'));
 
             $trn = $request->input('trn');
         } else {
@@ -278,7 +280,7 @@ class ShopController extends Controller
             if (isset($request->tax_waiver_old) && !$request->hasFile('tax_waiver'))
                 $taxWaiverPath = $request->tax_waiver_old;
             elseif ($request->hasFile('tax_waiver'))
-                $taxWaiverPath = Storage::putFile('tax_waivers', $request->file('tax_waiver'));
+                $taxWaiverPath = Storage::putFile('tax_waiver', $request->file('tax_waiver'));
         }
 
         $civil_defense_approval = null;
@@ -312,7 +314,7 @@ class ShopController extends Controller
                 'vat_certificate' => isset($vatCertificatePath) ? $vatCertificatePath : null,
                 'trn' => isset($trn) ? $trn : null,
                 'tax_waiver' => isset($taxWaiverPath) ? $taxWaiverPath : null,
-                'civil_defense_approval' => $request->hasFile('civil_defense_approval') ?  $request->file('civil_defense_approval')->store('civil_defense_approvals') : $civil_defense_approval,
+                'civil_defense_approval' => $request->hasFile('civil_defense_approval') ?  $request->file('civil_defense_approval')->store('civil_defense_approval') : $civil_defense_approval,
                 'saveasdraft' => isset($action) ? true : false,
 
             ]
@@ -655,7 +657,7 @@ class ShopController extends Controller
             if (isset($request->vat_certificate_old) && !$request->hasFile('vat_certificate'))
                 $vatCertificatePath = $request->vat_certificate_old;
             elseif ($request->hasFile('vat_certificate'))
-                $vatCertificatePath = Storage::putFile('vat_certificates', $request->file('vat_certificate'));
+                $vatCertificatePath = Storage::putFile('vat_certificate', $request->file('vat_certificate'));
 
             $trn = $request->input('trn');
         } else {
@@ -663,7 +665,7 @@ class ShopController extends Controller
             if (isset($request->tax_waiver_old) && !$request->hasFile('tax_waiver'))
                 $taxWaiverPath = $request->tax_waiver_old;
             elseif ($request->hasFile('tax_waiver'))
-                $taxWaiverPath = Storage::putFile('tax_waivers', $request->file('tax_waiver'));
+                $taxWaiverPath = Storage::putFile('tax_waiver', $request->file('tax_waiver'));
         }
 
         $civil_defense_approval = null;
@@ -697,7 +699,7 @@ class ShopController extends Controller
                 'vat_certificate' => isset($vatCertificatePath) ? $vatCertificatePath : null,
                 'trn' => isset($trn) ? $trn : null,
                 'tax_waiver' => isset($taxWaiverPath) ? $taxWaiverPath : null,
-                'civil_defense_approval' => $request->hasFile('civil_defense_approval') ?  $request->file('civil_defense_approval')->store('civil_defense_approvals') : $civil_defense_approval,
+                'civil_defense_approval' => $request->hasFile('civil_defense_approval') ?  $request->file('civil_defense_approval')->store('civil_defense_approval') : $civil_defense_approval,
 
 
             ]
@@ -776,22 +778,59 @@ class ShopController extends Controller
 
             ]
         );
+
+        $shop = Seller::updateOrCreate(
+            [
+                'user_id' => Auth::user()->id
+            ],
+            [
+                'bank_name' => $request->bank_name,
+                'bank_acc_name' => $request->account_name,
+                'bank_acc_no' => $request->account_number,
+                'bank_routing_no' => $request->iban,
+                'verification_status' => 1,
+            ]
+        );
+
+        $seller = Shop::updateOrCreate(
+            [
+                'user_id' => Auth::user()->id
+            ],
+            [
+                'name' => Auth::user()->name,
+                'verification_status' => 1,
+                'slug' => $request->trade_name_english,
+                'meta_title' => $request->eshop_name_english,
+                'meta_description' => $request->eshop_desc_en,
+                'bank_name' => $request->bank_name,
+                'bank_acc_name' => $request->account_name,
+                'bank_acc_no' => $request->account_number,
+                'bank_routing_no' => $request->iban,
+            ]
+        );
+
         $user = Auth::user();
         $user->steps = 1;
         $user->status = 'Pending Approval';
         $user->owner_id = $user->id ;
         $user->save();
 
-        $role = Role::where('name','seller')->first();
+        $role = Role::where('name','pro')->first();
         $user->assignRole($role) ;
         $staff = new Staff;
         $staff->user_id = $user->id;
         $staff->role_id = $role->id;
         $staff->save();
         // Trigger the notification
-        $admin = User::where('user_type','admin')->first(); // Fetch the first admin
-        $admin->notify(new NewVendorRegistration($user));
-        Notification::send($admin, new NewRegistrationNotification($user));
+        $admins = User::where('user_type','admin')->get(); // Fetch the first admin
+        if ($admins->isNotEmpty()) {
+            // Notify each admin user via Laravel notifications
+            foreach ($admins as $admin) {
+                $admin->notify(new NewVendorRegistration($user));
+                Notification::send($admin, new NewRegistrationNotification($user));
+            }
+         }
+
         return response()->json(['finish' => true, 'success' => true, 'message' => 'Shop stored successfully']);
 
 
@@ -828,5 +867,10 @@ class ShopController extends Controller
     public function destroy($id)
     {
         //
+    }
+    public function seller_packages()
+    {
+        $seller_packages = SellerPackage::all();
+        return view('frontend.package', compact('seller_packages'));
     }
 }

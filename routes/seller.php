@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\SellerController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\AizUploadController;
+use App\Http\Controllers\SellerLeaseController;
+use App\Http\Controllers\Seller\StockController;
 use App\Http\Controllers\Seller\SellerRoleController;
 use App\Http\Controllers\Seller\SellerStaffController;
-use App\Http\Controllers\Seller\StockController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\SellerController;
+use App\Http\Controllers\Seller\CatalogController;
 
 //Upload
 Route::group(['prefix' => 'seller', 'middleware' => ['seller', 'verified', 'user', 'prevent-back-history'], 'as' => 'seller.'], function () {
@@ -26,12 +28,18 @@ Route::group(['prefix' => 'seller', 'middleware' => ['seller', 'verified', 'user
 Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller', 'middleware' => ['seller', 'verified', 'user', 'prevent-back-history'], 'as' => 'seller.'], function () {
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'index')->name('dashboard');
+        Route::post('/tour', 'updateTour')->name('tour');
 
     });
 
     // Product
 
     Route::controller(ProductController::class)->group(function () {
+        Route::post('/product/temp-store', 'tempStore')->name('product.tempStore');
+        Route::get('/product/preview/{slug}', 'preview')->name('product.preview');
+        Route::post('/update-price-preview','updatePricePreview')->name('update-price-preview')->middleware(['admin']);
+        Route::post('/send-checked-attributes','ProductCheckedAttributes')->name('product.checked.attributes');
+
         Route::get('/products', 'index')->name('products');
         Route::get('/product/create', 'create')->name('products.create');
         Route::get('/product/delete_variant', 'delete_variant')->name('products.delete_variant');
@@ -46,18 +54,20 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
         Route::post('/products/sku_combination_edit', 'sku_combination_edit')->name('products.sku_combination_edit');
         Route::post('/products/add-more-choice-option', 'add_more_choice_option')->name('products.add-more-choice-option');
         Route::post('/products/seller/featured', 'updateFeatured')->name('products.featured');
-        Route::post('/products/published', 'updatePublished')->name('products.published');
+        Route::get('/products/published', 'updatePublished')->name('products.published');
         Route::get('/products/destroy/{id}', 'destroy')->name('products.destroy');
         Route::get('/products/draft/{id}', 'draft')->name('products.draft');
+        Route::get('/products/delete_shipping', 'delete_shipping')->name('products.delete_shipping');
         Route::get('/products/delete_image', 'delete_image')->name('products.delete_image');
+        Route::get('/products/delete_pricing', 'delete_pricing')->name('products.delete_pricing');
         Route::post('/products/bulk-delete', 'bulk_product_delete')->name('products.bulk-delete');
     });
          // categories
 
 
 
-         // Stocks
-      Route::controller(StockController::class)->group(function () {
+    // Stocks
+    Route::controller(StockController::class)->group(function () {
         Route::get('/stocks', [StockController::class, 'index'])->name('stocks.index');
         Route::post('/save-inventory-record', 'saveRecord')->name('save.inventory.record');
         Route::post('/add-remove-stock', 'storeAddRemoveStock')->name('stock.add_remove');
@@ -65,7 +75,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
         Route::get('/export-stock', 'export')->name('stocks.export');
         Route::get('/stock-operation-report', 'stockOperationReport')->name('stock.operation.report');
         Route::get('/stock-details/search', [StockController::class, 'searchStockDetails'])->name('stock.search');
-
+        Route::get('/warehouses', [StockController::class, 'warehouses'])->name('warehouses.index');
+        Route::post('remove-warehouse', [StockController::class, 'removeWarehouse'])->name('warehouses.remove');
+        Route::post('store-warehouses', [StockController::class, 'storeWarehouses'])->name('warehouses.store');
 
     }) ;
 
@@ -130,6 +142,10 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
     Route::controller(ProfileController::class)->group(function () {
         Route::get('/profile', 'index')->name('profile.index');
         Route::post('/profile/update/{id}', 'update')->name('profile.update');
+        Route::post('/profile-seller/update/{id}', 'updateProfile')->name('profile.seller.update');
+        Route::post('/profile-seller/update/{id}', 'updateProfile')->name('profile.seller.update');
+        Route::post('/personal-info/update}', 'updatePersonalInfo')->name('personal-info.update');
+
     });
 
     // Address
@@ -184,6 +200,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
         Route::controller(SellerStaffController::class)->group(function () {
         Route::resource('staffs', SellerStaffController::class);
         Route::get('/staffs/destroy/{id}', [SellerStaffController::class, 'destroy'])->name('staffs.destroy');
+        Route::get('/check-role', [SellerStaffController::class, 'checkRole'])->name('check.role');
     });
     Route::post('vendors/{id}/approve', [SellerController::class,'approve'])->name('staff.approve');
 
@@ -197,5 +214,22 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
         // Add Permissiom
         Route::post('/roles/add_permission', 'add_permission')->name('roles.permission');
     });
+
+
+    Route::controller(SellerLeaseController::class)->group(function () {
+        Route::get('/lease', 'index')->name('lease.index');
+        Route::get('/sales', 'allSales')->name('sales.index');
+
+    });
+});
+
+ //Catalog routes
+ Route::controller(CatalogController::class)->group(function () {
+    Route::get('/catalog/search_page', 'search')->name('catalog.search_page');
+    Route::get('/catalog/search/action', 'search_action')->name('catalog.search.action');
+    Route::get('/catalog/search/see_all/{keyword}', 'see_all')->name('catalog.search.see_all');
+    Route::get('/catalog/preview_product/{id}/{is_catalog}', 'displayPreviewProductInCatalogProduct')->name('catalog.preview_product');
+    Route::post('/catalog/add_product', 'add_product')->name('catalog.add_product');
+    Route::post('/catalog/add_product_to_catalog', 'add_product_to_catalog')->name('catalog.add_product_to_catalog');
 });
 

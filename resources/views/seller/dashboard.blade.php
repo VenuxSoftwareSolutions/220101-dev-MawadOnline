@@ -11,7 +11,7 @@
 
     <div class="row">
         <div class="col-sm-6 col-md-6 col-xxl-3">
-            <div class="card shadow-none mb-4 bg-primary py-4">
+            <div id="step1" class="card shadow-none mb-4 bg-primary py-4">
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col">
@@ -36,7 +36,7 @@
             </div>
         </div>
         <div class="col-sm-6 col-md-6 col-xxl-3">
-            <div class="card shadow-none mb-4 bg-primary py-4">
+            <div id="step2" class="card shadow-none mb-4 bg-primary py-4">
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col">
@@ -61,7 +61,7 @@
             </div>
         </div>
         <div class="col-sm-6 col-md-6 col-xxl-3">
-            <div class="card shadow-none mb-4 bg-primary py-4">
+            <div id="step3" class="card shadow-none mb-4 bg-primary py-4">
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col">
@@ -117,7 +117,7 @@
             </div>
         </div>
         <div class="col-sm-6 col-md-6 col-xxl-3">
-            <div class="card shadow-none mb-4 bg-primary py-4">
+            <div id="step4" class="card shadow-none mb-4 bg-primary py-4">
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col">
@@ -164,6 +164,55 @@
     </div>
 
     <div class="row">
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <a href="{{ route('seller.products') }}" class="card mb-4 p-4 text-center h-180px">
+                <div class="fs-16 fw-600 text-primary">
+                    {{ translate('Add New Product') }}
+                </div>
+                <div class="m-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+                        <g id="Group_22724" data-name="Group 22724" transform="translate(-1284 -875)">
+                            <rect id="Rectangle_17080" data-name="Rectangle 17080" width="2" height="48" rx="1"
+                                transform="translate(1307 875)" fill="#2E294E" />
+                            <rect id="Rectangle_17081" data-name="Rectangle 17081" width="2" height="48" rx="1"
+                                transform="translate(1332 898) rotate(90)" fill="#2E294E" />
+                        </g>
+                    </svg>
+                </div>
+            </a>
+        </div>
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <div class="card mb-4 p-4 text-center bg-soft-primary">
+                <div class="fs-16 fw-600 text-primary">
+                    {{ translate('Shop Settings') }}
+                </div>
+                <div class=" m-3">
+                    <svg id="Group_31" data-name="Group 31" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                        viewBox="0 0 32 32">
+                        <path id="Path_78" data-name="Path 78"
+                            d="M2,25.723a1,1,0,0,0,.629.928L16,32l3.361-1.344a.5.5,0,0,0-.186-.965.491.491,0,0,0-.185.036L16,30.923l-13-5.2v-11.6a4.428,4.428,0,0,1-1-.2Z"
+                            fill="#2E294E" />
+                        <path id="Path_79" data-name="Path 79"
+                            d="M19.681,24.189a.5.5,0,0,0-.5-.5.493.493,0,0,0-.186.036l-3,1.2L7.432,21.5a.5.5,0,0,0-.65.278.512.512,0,0,0-.035.186.5.5,0,0,0,.314.464L16,26l3.367-1.347a.5.5,0,0,0,.314-.464"
+                            fill="#2E294E" />
+                        <path id="Path_80" data-name="Path 80"
+                            d="M31.5,25.126h-.087a1.368,1.368,0,0,1-.967-2.336l.061-.061a.5.5,0,0,0,0-.707l-.265-.265-.264-.264a.5.5,0,0,0-.707,0l-.061.06a1.368,1.368,0,0,1-2.336-.967V20.5a.5.5,0,0,0-.5-.5h-.748a.5.5,0,0,0-.5.5v.086a1.368,1.368,0,0,1-2.336.967l-.061-.06a.5.5,0,0,0-.707,0l-.265.264-.265.265a.5.5,0,0,0,0,.707l.061.061a1.368,1.368,0,0,1-.967,2.336H20.5a.5.5,0,0,0-.5.5v.748a.5.5,0,0,0,.5.5h.086a1.368,1.368,0,0,1,.967,2.336l-.061.061a.5.5,0,0,0,0,.707l.265.264.265.265a.5.5,0,0,0,.707,0l.061-.061a1.368,1.368,0,0,1,2.336.968V31.5a.5.5,0,0,0,.5.5h.748a.5.5,0,0,0,.5-.5v-.086a1.368,1.368,0,0,1,2.336-.968l.061.061a.5.5,0,0,0,.707,0l.264-.265.265-.264a.5.5,0,0,0,0-.707l-.061-.061a1.368,1.368,0,0,1,.967-2.336H31.5a.5.5,0,0,0,.5-.5v-.748a.5.5,0,0,0-.5-.5M29.171,29a2.373,2.373,0,0,0,.118.285,2.368,2.368,0,0,0-3.171,1.078,2.22,2.22,0,0,0-.118.285,2.369,2.369,0,0,0-3-1.481,2.516,2.516,0,0,0-.285.118A2.367,2.367,0,0,0,21.348,26a2.369,2.369,0,0,0,1.48-3,2.344,2.344,0,0,0-.118-.285,2.37,2.37,0,0,0,3.172-1.077A2.516,2.516,0,0,0,26,21.348a2.367,2.367,0,0,0,3,1.48,2.28,2.28,0,0,0,.285-.118,2.37,2.37,0,0,0,1.077,3.172,2.457,2.457,0,0,0,.286.118,2.367,2.367,0,0,0-1.481,3"
+                            fill="#2E294E" />
+                        <path id="Path_81" data-name="Path 81" d="M27.5,26A1.5,1.5,0,1,0,26,27.5,1.5,1.5,0,0,0,27.5,26"
+                            fill="#2E294E" />
+                        <path id="Path_82" data-name="Path 82"
+                            d="M16,0A46.43,46.43,0,0,1,0,8.4v2a3.451,3.451,0,0,0,5.333,2.133,3.452,3.452,0,0,0,5.333,2.134A3.453,3.453,0,0,0,16,16.8a3.451,3.451,0,0,0,5.333-2.133,3.451,3.451,0,0,0,5.333-2.134A3.454,3.454,0,0,0,32,10.4v-2A46.421,46.421,0,0,1,16,0M31.021,10.194a2.452,2.452,0,0,1-3.788,1.515,1,1,0,0,0-1.545.618A2.453,2.453,0,0,1,21.9,13.843a1,1,0,0,0-1.545.618A2.451,2.451,0,0,1,16,15.434a2.452,2.452,0,0,1-4.355-.973,1,1,0,0,0-1.545-.618,2.454,2.454,0,0,1-3.789-1.516,1,1,0,0,0-1.184-.772,1.015,1.015,0,0,0-.361.154A2.451,2.451,0,0,1,.978,10.194V9.148A47.458,47.458,0,0,0,16,1.277,47.442,47.442,0,0,0,31.021,9.148Z"
+                            fill="#2E294E" />
+                    </svg>
+                </div>
+                <a href="{{ route('seller.shop.index') }}" class="btn btn-primary">
+                    {{ translate('Go to setting') }}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
         <div class="col-sm-6 col-md-6 col-lg-3 mb-4">
             <div class="card shadow-none bg-soft-primary">
                 <div class="card-body">
@@ -173,7 +222,7 @@
                     <canvas id="graph-1" class="w-100" height="150"></canvas>
                 </div>
             </div>
-            <div class="card shadow-none bg-soft-primary mb-0">
+            {{-- <div class="card shadow-none bg-soft-primary mb-0">
 
                 @php
                     $date = date('Y-m-d');
@@ -205,7 +254,7 @@
                         {{ translate('Last Month') }}: {{ single_price($orderTotal) }}
                     </p>
                 </div>
-            </div>
+            </div> --}}
         </div>
         <div class="col-sm-6 col-md-6 col-lg-3 mb-4">
             <div class="card shadow-none h-450px mb-0 h-100">
@@ -229,7 +278,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6 col-md-6 col-lg-3 mb-4">
+        <div class="col-sm-12 col-md-12 col-lg-6 mb-4">
             <div class="card h-450px mb-0 h-100">
                 <div class="card-body">
                     <div class="card-title text-primary fs-16 fw-600">
@@ -381,7 +430,7 @@
             </div>
         </div>
         <div class="col-sm-6 col-md-6 col-lg-3 mb-4">
-            @if (addon_is_activated('seller_subscription'))
+            {{-- @if (addon_is_activated('seller_subscription'))
                 <div class="card">
                     <div class="card-body">
                         <div class="card-title">
@@ -419,10 +468,10 @@
 
                     </div>
                 </div>
-            @endif
-            <div
+            @endif --}}
+           {{-- <div
                 class="card mb-0 @if (addon_is_activated('seller_subscription')) px-4 py-5 @else p-5 h-100 @endif d-flex align-items-center justify-content-center">
-                {{-- @if (Auth::user()->shop->verification_status == 0)
+                 @if (Auth::user()->shop->verification_status == 0)
                     <div class="my-n4 py-1 text-center">
                         <img src="{{ static_asset('assets/img/non_verified.png') }}" alt=""
                             class="w-xxl-130px w-90px d-block">
@@ -433,12 +482,12 @@
                     <div class="my-2 py-1">
                         <img src="{{ static_asset('assets/img/verified.png') }}" alt="" width="">
                     </div>
-                @endif --}}
-            </div>
+                @endif
+            </div>--}}
         </div>
     </div>
 
-    <div class="row">
+    {{-- <div class="row">
         <div class="col-sm-6 col-md-6 col-lg-3">
             <a href="{{ route('seller.money_withdraw_requests.index') }}"
                 class="card mb-4 p-4 text-center bg-soft-primary h-180px">
@@ -462,52 +511,7 @@
                 </div>
             </a>
         </div>
-        <div class="col-sm-6 col-md-6 col-lg-3">
-            <a href="{{ route('seller.products') }}" class="card mb-4 p-4 text-center h-180px">
-                <div class="fs-16 fw-600 text-primary">
-                    {{ translate('Add New Product') }}
-                </div>
-                <div class="m-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
-                        <g id="Group_22724" data-name="Group 22724" transform="translate(-1284 -875)">
-                            <rect id="Rectangle_17080" data-name="Rectangle 17080" width="2" height="48" rx="1"
-                                transform="translate(1307 875)" fill="#2E294E" />
-                            <rect id="Rectangle_17081" data-name="Rectangle 17081" width="2" height="48" rx="1"
-                                transform="translate(1332 898) rotate(90)" fill="#2E294E" />
-                        </g>
-                    </svg>
-                </div>
-            </a>
-        </div>
-        <div class="col-sm-6 col-md-6 col-lg-3">
-            <div class="card mb-4 p-4 text-center bg-soft-primary">
-                <div class="fs-16 fw-600 text-primary">
-                    {{ translate('Shop Settings') }}
-                </div>
-                <div class=" m-3">
-                    <svg id="Group_31" data-name="Group 31" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                        viewBox="0 0 32 32">
-                        <path id="Path_78" data-name="Path 78"
-                            d="M2,25.723a1,1,0,0,0,.629.928L16,32l3.361-1.344a.5.5,0,0,0-.186-.965.491.491,0,0,0-.185.036L16,30.923l-13-5.2v-11.6a4.428,4.428,0,0,1-1-.2Z"
-                            fill="#2E294E" />
-                        <path id="Path_79" data-name="Path 79"
-                            d="M19.681,24.189a.5.5,0,0,0-.5-.5.493.493,0,0,0-.186.036l-3,1.2L7.432,21.5a.5.5,0,0,0-.65.278.512.512,0,0,0-.035.186.5.5,0,0,0,.314.464L16,26l3.367-1.347a.5.5,0,0,0,.314-.464"
-                            fill="#2E294E" />
-                        <path id="Path_80" data-name="Path 80"
-                            d="M31.5,25.126h-.087a1.368,1.368,0,0,1-.967-2.336l.061-.061a.5.5,0,0,0,0-.707l-.265-.265-.264-.264a.5.5,0,0,0-.707,0l-.061.06a1.368,1.368,0,0,1-2.336-.967V20.5a.5.5,0,0,0-.5-.5h-.748a.5.5,0,0,0-.5.5v.086a1.368,1.368,0,0,1-2.336.967l-.061-.06a.5.5,0,0,0-.707,0l-.265.264-.265.265a.5.5,0,0,0,0,.707l.061.061a1.368,1.368,0,0,1-.967,2.336H20.5a.5.5,0,0,0-.5.5v.748a.5.5,0,0,0,.5.5h.086a1.368,1.368,0,0,1,.967,2.336l-.061.061a.5.5,0,0,0,0,.707l.265.264.265.265a.5.5,0,0,0,.707,0l.061-.061a1.368,1.368,0,0,1,2.336.968V31.5a.5.5,0,0,0,.5.5h.748a.5.5,0,0,0,.5-.5v-.086a1.368,1.368,0,0,1,2.336-.968l.061.061a.5.5,0,0,0,.707,0l.264-.265.265-.264a.5.5,0,0,0,0-.707l-.061-.061a1.368,1.368,0,0,1,.967-2.336H31.5a.5.5,0,0,0,.5-.5v-.748a.5.5,0,0,0-.5-.5M29.171,29a2.373,2.373,0,0,0,.118.285,2.368,2.368,0,0,0-3.171,1.078,2.22,2.22,0,0,0-.118.285,2.369,2.369,0,0,0-3-1.481,2.516,2.516,0,0,0-.285.118A2.367,2.367,0,0,0,21.348,26a2.369,2.369,0,0,0,1.48-3,2.344,2.344,0,0,0-.118-.285,2.37,2.37,0,0,0,3.172-1.077A2.516,2.516,0,0,0,26,21.348a2.367,2.367,0,0,0,3,1.48,2.28,2.28,0,0,0,.285-.118,2.37,2.37,0,0,0,1.077,3.172,2.457,2.457,0,0,0,.286.118,2.367,2.367,0,0,0-1.481,3"
-                            fill="#2E294E" />
-                        <path id="Path_81" data-name="Path 81" d="M27.5,26A1.5,1.5,0,1,0,26,27.5,1.5,1.5,0,0,0,27.5,26"
-                            fill="#2E294E" />
-                        <path id="Path_82" data-name="Path 82"
-                            d="M16,0A46.43,46.43,0,0,1,0,8.4v2a3.451,3.451,0,0,0,5.333,2.133,3.452,3.452,0,0,0,5.333,2.134A3.453,3.453,0,0,0,16,16.8a3.451,3.451,0,0,0,5.333-2.133,3.451,3.451,0,0,0,5.333-2.134A3.454,3.454,0,0,0,32,10.4v-2A46.421,46.421,0,0,1,16,0M31.021,10.194a2.452,2.452,0,0,1-3.788,1.515,1,1,0,0,0-1.545.618A2.453,2.453,0,0,1,21.9,13.843a1,1,0,0,0-1.545.618A2.451,2.451,0,0,1,16,15.434a2.452,2.452,0,0,1-4.355-.973,1,1,0,0,0-1.545-.618,2.454,2.454,0,0,1-3.789-1.516,1,1,0,0,0-1.184-.772,1.015,1.015,0,0,0-.361.154A2.451,2.451,0,0,1,.978,10.194V9.148A47.458,47.458,0,0,0,16,1.277,47.442,47.442,0,0,0,31.021,9.148Z"
-                            fill="#2E294E" />
-                    </svg>
-                </div>
-                <a href="{{ route('seller.shop.index') }}" class="btn btn-primary">
-                    {{ translate('Go to setting') }}
-                </a>
-            </div>
-        </div>
+
         <div class="col-sm-6 col-md-6 col-lg-3">
             <div class="card mb-4 p-4 text-center bg-soft-primary">
                 <div class="fs-16 fw-600 text-primary">
@@ -535,7 +539,7 @@
                 </a>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <div class="card">
         <div class="card-body">
@@ -642,4 +646,175 @@
             }
         });
     </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        if ({{Auth::user()->tour}} == true | {{Auth::user()->id}} != {{Auth::user()->owner_id}}) {
+            return;
+        }
+    //  var  steps : [
+    //         @foreach($tour_steps as $key => $step)
+    //         {
+    //             element: document.querySelector('#'+{{$step->element_id}}),
+    //             title: '{{$step->title}}',
+    //             intro: "{{$step->description}}",
+    //             position: 'right'
+    //         },
+    //         @endforeach
+
+    //  ];
+
+    let tour = introJs();
+    let step_number = 0 ;
+    tour.setOptions({
+        steps: [
+            {
+                element: document.querySelector('#dashboard'),
+                title: 'Dashboard',
+                intro: "Welcome to your e-Shop dashboard! This is your central hub for managing your shop's performance, sales, and settings.",
+                position: 'right'
+            },
+            {
+                element: document.querySelector('#products'),
+                title: 'Step 1: Manage Products',
+                intro: "Here, you can add, edit, and manage your products. Showcase your offerings to attract buyers and keep your inventory up to date.",
+                position: 'right'
+            },
+            {
+                element: document.querySelector('#reviews'),
+                title: 'Step 2: Monitor Reviews',
+                intro: "Stay informed about what customers are saying. Manage and respond to reviews to maintain a positive reputation and improve your products.",
+                position: 'right'
+            },
+            {
+                element: document.querySelector('#catalog'),
+                title: 'Step 3: Catalog Management',
+                intro: "Organize your products into categories and collections. Enhance discoverability and make it easier for customers to find what they're looking for.",
+                position: 'right'
+            },
+            {
+                element: document.querySelector('#stock'),
+                title: 'Step 4: Stock Management',
+                intro: "Track your inventory levels and manage stock efficiently. Avoid overselling and keep your customers satisfied with accurate stock updates.",
+                position: 'right'
+            },
+            {
+                element: document.querySelector('#stock_details'),
+                title: 'Step 5: Stock Details',
+                intro: "View detailed information about your stock, including quantities, variations, and restocking options. Keep your inventory organized and up to date.",
+                position: 'right'
+            },
+            {
+                element: document.querySelector('#order'),
+                title: 'Step 6: Order Management',
+                intro: "Keep track of incoming orders, process payments, and manage order fulfillment. Ensure smooth transactions and timely delivery to your customers.",
+                position: 'right'
+            },
+            {
+                element: document.querySelector('#packages'),
+                title: 'Step 7: Package Management',
+                intro: "Manage packaging options and shipping details for your products. Choose the best packaging solutions to protect your items during transit.",
+                position: 'right'
+            },
+            {
+                element: document.querySelector('#package_list'),
+                title: 'Step 8: Package List',
+                intro: "View a list of all packages associated with your orders. Keep track of shipments and delivery status to provide accurate updates to customers.",
+                position: 'right'
+            },
+            {
+                element: document.querySelector('#staff'),
+                title: 'Step 9: Staff Management',
+                intro: "Add, remove, or manage staff members who assist with running your shop. Delegate tasks and collaborate effectively to streamline operations.",
+                position: 'right'
+            },
+            {
+                element: document.querySelector('#lease'),
+                title: 'Step 10: Lease Management',
+                intro: "Manage lease agreements for your shop premises or equipment. Stay organized and ensure compliance with lease terms and conditions.",
+                position: 'right'
+            },
+            {
+                element: document.querySelector('#lease_details'),
+                title: 'Step 11: Lease Details',
+                intro: "View detailed information about your lease agreements, including terms, renewal dates, and rental payments. Stay on top of lease obligations.",
+                position: 'right'
+            },
+            {
+                element: document.querySelector('#support_tickets'),
+                title: 'Step 12: Support Tickets',
+                intro: "Handle customer inquiries, feedback, and support requests. Provide timely assistance and resolve issues to maintain customer satisfaction.",
+                position: 'right'
+            },
+            {
+                element: document.querySelector('#setting'),
+                title: 'Step 13: Account Settings',
+                intro: "Adjust your account settings and preferences. Customize your dashboard experience to suit your needs and optimize your workflow.",
+                position: 'right'
+            }
+        ],
+
+        doneLabel: 'Next', // Replace the "Done" button with "Next"
+        exitOnEsc : false ,
+        exitOnOverlayClick : false ,
+        disableInteraction : true ,
+        overlayOpacity : 0.4 ,
+        showStepNumbers : true ,
+        hidePrev : true ,
+        showProgress :true ,
+    });
+
+        tour.onexit(function() {
+            $.ajax({
+                url: "{{ route('seller.tour') }}",
+                type: 'POST',
+                data: { _token: '{{ csrf_token() }}' }, // Include CSRF token for Laravel
+                success: function(response) {
+                    // Handle success
+                    console.log('User tour status updated successfully');
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    console.error('Error updating user tour status:', error);
+                }
+            });
+            setTimeout(function() {
+                window.location.href = '{{ route("seller.dashboard") }}';
+            }, 500);
+            });
+
+        tour.onbeforechange(function(targetElement) {
+            step_number += 1 ;
+            if (step_number == 2) {
+            window.location.href = '{{ route("seller.products") }}';
+            sleep(60000);
+            }
+        });
+        // tour.onbeforeexit(function() {
+        //     if (step_number == 6) {
+        //         //alert(step_number);
+        //         window.location.href = '{{ route("seller.products") }}';
+        //     }else{
+        //         //alert("ok");
+        //         window.location.href = '{{ route("seller.dashboard") }}';
+        //     }
+
+
+        //     // returning false means don't exit the intro
+        //     return false;
+        //     });
+
+    // Define oncomplete callback outside the steps array
+    // tour.oncomplete(function() {
+    //     // Redirect to another page when the tour is completed
+    //     window.location.href = '{{ route("seller.products") }}';
+    // });
+    // tour.onexit(function() {
+    //     // Redirect to another page when the tour is completed
+    //     window.location.href = '{{ route("seller.dashboard") }}';
+    // });
+    tour.start();
+    });
+</script>
+
 @endsection

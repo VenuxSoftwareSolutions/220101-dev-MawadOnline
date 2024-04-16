@@ -14,9 +14,15 @@
             	@csrf
                 <div class="card-body">
                     <div class="form-group row">
-                        <label class="col-sm-3 col-from-label" for="name">{{translate('Name')}}</label>
+                        <label class="col-sm-3 col-from-label" for="name">{{translate('First name')}}</label>
                         <div class="col-sm-9">
-                            <input type="text" placeholder="{{translate('Name')}}" id="name" name="name" value="{{ $staff->user->name }}" class="form-control" required disabled>
+                            <input type="text" placeholder="{{translate('First name')}}" id="first_name" name="first_name" value="{{ $staff->user->first_name }}" class="form-control" required disabled>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-from-label" for="name">{{translate('Last name')}}</label>
+                        <div class="col-sm-9">
+                            <input type="text" placeholder="{{translate('Last name')}}" id="last_name" name="last_name" value="{{ $staff->user->last_name }}" class="form-control" required disabled>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -28,13 +34,7 @@
                     <div class="form-group row">
                         <label class="col-sm-3 col-from-label" for="mobile">{{translate('Phone')}}</label>
                         <div class="col-sm-9">
-                            <input type="text" placeholder="{{translate('Phone')}}" id="mobile" name="mobile" value="{{ $staff->user->phone }}" class="form-control" required disabled>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-3 col-from-label" for="password">{{translate('Password')}}</label>
-                        <div class="col-sm-9">
-                            <input type="password" placeholder="{{translate('Password')}}" id="password" name="password" class="form-control">
+                            <input type="text" placeholder="{{translate('Phone')}}" id="mobile" name="mobile" value="{{ $staff->user->phone }}" class="form-control" required >
                         </div>
                     </div>
                     <div class="form-group row">

@@ -31,37 +31,42 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        $payment_status = null;
-        $delivery_status = null;
-        $sort_search = null;
-        $orders = DB::table('orders')
-            ->orderBy('id', 'desc')
-            ->where('seller_id', Auth::user()->owner_id)
-            ->select('orders.id')
-            ->distinct();
+        seller_lease_creation($user=Auth::user());
 
-        if ($request->payment_status != null) {
-            $orders = $orders->where('payment_status', $request->payment_status);
-            $payment_status = $request->payment_status;
-        }
-        if ($request->delivery_status != null) {
-            $orders = $orders->where('delivery_status', $request->delivery_status);
-            $delivery_status = $request->delivery_status;
-        }
-        if ($request->has('search')) {
-            $sort_search = $request->search;
-            $orders = $orders->where('code', 'like', '%' . $sort_search . '%');
-        }
+        $step=7;
+        return view('seller.coming_soon',compact('step'));
 
-        $orders = $orders->paginate(15);
+        // $payment_status = null;
+        // $delivery_status = null;
+        // $sort_search = null;
+        // $orders = DB::table('orders')
+        //     ->orderBy('id', 'desc')
+        //     ->where('seller_id', Auth::user()->owner_id)
+        //     ->select('orders.id')
+        //     ->distinct();
 
-        foreach ($orders as $key => $value) {
-            $order = Order::find($value->id);
-            $order->viewed = 1;
-            $order->save();
-        }
+        // if ($request->payment_status != null) {
+        //     $orders = $orders->where('payment_status', $request->payment_status);
+        //     $payment_status = $request->payment_status;
+        // }
+        // if ($request->delivery_status != null) {
+        //     $orders = $orders->where('delivery_status', $request->delivery_status);
+        //     $delivery_status = $request->delivery_status;
+        // }
+        // if ($request->has('search')) {
+        //     $sort_search = $request->search;
+        //     $orders = $orders->where('code', 'like', '%' . $sort_search . '%');
+        // }
 
-        return view('seller.orders.index', compact('orders', 'payment_status', 'delivery_status', 'sort_search'));
+        // $orders = $orders->paginate(15);
+
+        // foreach ($orders as $key => $value) {
+        //     $order = Order::find($value->id);
+        //     $order->viewed = 1;
+        //     $order->save();
+        // }
+
+        // return view('seller.orders.index', compact('orders', 'payment_status', 'delivery_status', 'sort_search'));
     }
 
     public function show($id)

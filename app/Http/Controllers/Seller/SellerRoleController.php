@@ -130,9 +130,8 @@ class SellerRoleController extends Controller
         if($role->created_by != Auth::user()->owner_id || $role->role_type == 0){
             return back();
         }
-        if ($request->lang == env("DEFAULT_LANGUAGE")) {
-            $role->name = $request->name;
-        }
+
+        $role->name = $request->name;
         $role->description= $request->description ;
         $role->syncPermissions($request->permissions);
         $role->save();
