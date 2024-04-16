@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Seller;
 use App\Exports\StockSummaryExport;
 use App\Http\Requests\SaveRecordRequest;
 use App\Http\Requests\SearchStockRequest;
+use App\Http\Requests\StoreWarehouseRequest;
+use App\Models\Emirate;
 use App\Models\Product;
 use App\Models\StockDetails;
 use App\Models\StockSummary;
@@ -14,6 +16,7 @@ use Auth;
 use Carbon\Carbon;
 use Excel;
 use Illuminate\Http\Request;
+use Validator;
 
 class StockController extends Controller
 {
@@ -84,13 +87,13 @@ class StockController extends Controller
         }
         $warehouses = Warehouse::where('user_id', $seller->id)->get();
         $products = Product::where('is_parent', 0)   // Filter products where 'is_parent' column is 0
-        ->where('is_draft', 0)                   // Filter products where 'is_draft' column is 0
-        ->where('approved', 1)                   // Filter products where 'approved' column is 1
-        ->where('user_id', $seller->id)          // Filter products where 'user_id' column matches the seller's id
-        ->get();
+            ->where('is_draft', 0)                   // Filter products where 'is_draft' column is 0
+            ->where('approved', 1)                   // Filter products where 'approved' column is 1
+            ->where('user_id', $seller->id)          // Filter products where 'user_id' column matches the seller's id
+            ->get();
 
 
-        return view('seller.stock.index', compact('inventoryData', 'warehouses','products'));
+        return view('seller.stock.index', compact('inventoryData', 'warehouses', 'products'));
     }
 
     /**
@@ -315,8 +318,8 @@ class StockController extends Controller
         $stockDetails = StockDetails::with('productVariant', 'warehouse')->where('seller_id', $seller->id)
             ->whereBetween('created_at', [$request->from_date . ' 00:00:00', $request->to_date . ' 23:59:59'])->get();
         // Use collections to get unique product variants and warehouses
-        $productVariants= $stockDetails->pluck('productVariant')->unique()->values();
-        $warehouses=$stockDetails->pluck('warehouse')->unique()->values() ;
+        $productVariants = $stockDetails->pluck('productVariant')->unique()->values();
+        $warehouses = $stockDetails->pluck('warehouse')->unique()->values();
 
         // Create a query to fetch stock details with potential filters applied.
         $query = StockDetails::with('productVariant', 'warehouse')->where('seller_id', $seller->id)
@@ -342,4 +345,82 @@ class StockController extends Controller
         // Return the view with the data required for the stock operation report.
         return view('seller.stock.stock_operation_report', compact('records',/* 'warehouses', */ 'productVariants', 'warehouses'));
     }
+
+    public function warehouses()
+    {
+        $seller = User::find(Auth::user()->owner_id);
+        $warehouses = Warehouse::where('user_id', $seller->id)->get();
+        $emirates = Emirate::all();
+        return view('seller.warehouses.index', compact('warehouses', 'emirates'));
+    }
+
+    public function removeWarehouse(Request $request)
+    {
+
+        $warehouseId = $request->input('warehouse_id');
+
+        // Find and delete the warehouse
+        $warehouse = Warehouse::findOrFail($warehouseId);
+        // Check if the warehouse has associated products
+        if ($warehouse->checkWhHasProducts()) {
+            return response()->json(['error' => 'Warehouse has associated products. Cannot delete.']);
+        }
+        $warehouse->delete();
+
+        return response()->json(['message' => 'Warehouse removed successfully']);
+    }
+
+    public function storeWarehouses(Request $request)
+    {
+           // Validate the incoming request data
+        $validator = Validator::make($request->all(), [
+            'warehouse_name.*' => 'required|max:128|regex:/\D/',
+            'state_warehouse.*' => 'required|max:128',
+            'area_warehouse.*' => 'required|max:128',
+            'street_warehouse.*' => 'required|max:128|regex:/\D/',
+            'building_warehouse.*' => 'required|max:64|regex:/\D/',
+            'unit_warehouse.*' => 'nullable|max:64',
+        ]);
+
+        // Check if validation fails
+        if ($validator->fails()) {
+            // Redirect back with errors and old input
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+        $user = Auth::user();
+
+        // Iterate over the submitted data
+        foreach ($request->warehouse_name as $key => $warehouse_name) {
+            if (!empty($request->warehouse_id[$key])) {
+                // If warehouse_id is provided, update existing warehouse
+                $warehouse = Warehouse::findOrFail($request->warehouse_id[$key]);
+                $warehouse->update([
+                    'warehouse_name' => $warehouse_name,
+                    'emirate_id' => $request->state_warehouse[$key],
+                    'area_id' => $request->area_warehouse[$key],
+                    'address_street' => $request->street_warehouse[$key],
+                    'address_building' => $request->building_warehouse[$key],
+                    'address_unit' => $request->unit_warehouse[$key],
+                    'saveasdraft' => isset($request->saveasdraft[$key]) ? true : false,
+                ]);
+            } else {
+                // If warehouse_id is not provided, create new warehouse
+                Warehouse::create([
+                    'user_id' => $user->id,
+                    'warehouse_name' => $warehouse_name,
+                    'emirate_id' => $request->state_warehouse[$key],
+                    'area_id' => $request->area_warehouse[$key],
+                    'address_street' => $request->street_warehouse[$key],
+                    'address_building' => $request->building_warehouse[$key],
+                    'address_unit' => $request->unit_warehouse[$key],
+                    'saveasdraft' => isset($request->saveasdraft[$key]) ? true : false,
+                ]);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Warehouses saved successfully');
+
+    }
+
+
 }

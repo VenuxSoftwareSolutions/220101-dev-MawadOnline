@@ -10,10 +10,13 @@ use App\Models\Shop;
 use App\Models\Product;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\ProposedPayoutChange;
 use App\Models\VendorStatusHistory;
+use App\Notifications\ChangesApprovedNotification;
 use App\Notifications\CustomStatusNotification;
 use Illuminate\Support\Facades\Hash;
 use App\Notifications\EmailVerificationNotification;
+use App\Notifications\ModificationRejectedNotification;
 use App\Notifications\ShopVerificationNotification;
 use App\Notifications\VendorStatusChangedNotification;
 use Cache;
@@ -427,31 +430,43 @@ class SellerController extends Controller
         return response()->json(['message' => 'Image not found'], 404);
     }
 
-    public function resubmitRegistration($id,Request $request)
+    public function resubmitRegistration($id,Request $request,$proposedId = null)
     {
-
-        $seller = User::findOrFail($id);
-        $oldStatus = $seller->status;
-
-        // Update status and other necessary fields
-        $seller->status = 'Rejected'; // Change status to "Pending Approval"
-        $seller->save();
-
-
-        // $this->logStatusChange($seller, 'Rejected');
-        // Store suspension details in the database
-        $suspension = new VendorStatusHistory();
-        $suspension->vendor_id = $seller->id;
-        $suspension->details = $request->input('reject_reason');
-        $suspension->status = "Rejected";
-        $suspension->save();
         // Get the reject reason and image URL from the request
         $rejectReason = $request->input('reject_reason');
+        $seller = User::findOrFail($id);
+        if (!$proposedId) {
 
-        // Send an email notification to the seller with old and new status
-        $seller->notify(new VendorStatusChangedNotification($oldStatus, $seller->status,$rejectReason,$seller->email,'Your account is rejected'));
-        Notification::send($seller, new CustomStatusNotification($oldStatus, $seller->status));
+            $oldStatus = $seller->status;
 
+            // Update status and other necessary fields
+            $seller->status = 'Rejected'; // Change status to "Pending Approval"
+            $seller->save();
+
+
+            // $this->logStatusChange($seller, 'Rejected');
+            // Store suspension details in the database
+            $suspension = new VendorStatusHistory();
+            $suspension->vendor_id = $seller->id;
+            $suspension->details = $request->input('reject_reason');
+            $suspension->status = "Rejected";
+            $suspension->save();
+
+
+            // Send an email notification to the seller with old and new status
+            $seller->notify(new VendorStatusChangedNotification($oldStatus, $seller->status,$rejectReason,$seller->email,'Your account is rejected'));
+            Notification::send($seller, new CustomStatusNotification($oldStatus, $seller->status));
+        }
+
+        if($proposedId) {
+            $seller->notify(new ModificationRejectedNotification($seller, $rejectReason));
+
+            $proposedChange = ProposedPayoutChange::findOrFail($proposedId);
+            // Mark the proposed change as rejected
+            $proposedChange->update(['status' => 'rejected']);
+            return redirect()->route('sellers.index')->with('success', 'Modifications rejected successfully.');
+
+        }
         // // Redirect the user back or to any other page
         // return response()->json(['success' => true]);
         // Redirect the user back to sellers.index with a success message
@@ -544,12 +559,26 @@ class SellerController extends Controller
     {
         $user = User::findOrFail($id);
         $emirates=Emirate::all() ;
-        return view('backend.sellers.view', compact('user','emirates'));
+        $proposedPayoutChange = ProposedPayoutChange::where('user_id', $user->id)
+        ->latest()
+        ->first();
+
+        if ($proposedPayoutChange  && !$proposedPayoutChange->admin_viewed ) {
+            $proposedPayoutChange->admin_viewed = true ;
+            $proposedPayoutChange->save() ;
+        }
+
+        if ($proposedPayoutChange && ($proposedPayoutChange->status=="approved" || $proposedPayoutChange->status=="rejected" )  ) {
+            $proposedPayoutChange = null ;
+        }
+
+        return view('backend.sellers.view', compact('user','emirates','proposedPayoutChange'));
     }
 
-    public function reject($id) {
+    public function reject($id,$proposedId = null) {
+
         $user = User::find($id) ;
-        return view('backend.sellers.reject_seller_registration',compact('user'));
+        return view('backend.sellers.reject_seller_registration',compact('user','proposedId'));
     }
 
     public function suspendView($id) {
@@ -595,7 +624,102 @@ class SellerController extends Controller
         // Return the HTML as JSON
         return response()->json(['html' => $dropdownHtml]);
     }
+  // Controller method to approve proposed changes
+  public function approveChanges($proposedChangeId)
+{
+    $proposedChange = ProposedPayoutChange::findOrFail($proposedChangeId);
 
+    // Retrieve the user and their existing payout information
+    $user = User::find($proposedChange->user_id);
+    $existingPayoutInformation = $user->payout_information;
+    $existingContactPeople = $user->contact_people;
+    $existingBusinessInformation = $user->business_information;
+
+    // Decode the modified fields from the proposed change
+    $modified_fields = json_decode($proposedChange->modified_fields);
+
+    if (is_array($modified_fields)) {
+        foreach ($modified_fields as $field) {
+            // Check if the field exists in the existing payout information
+            if (isset($existingPayoutInformation->{$field->field})) {
+
+                // Update the field with the new value
+                $existingPayoutInformation->{$field->field} = $field->new_value;
+            }
+            else if (isset($existingContactPeople->{$field->field})){
+                $existingContactPeople->{$field->field} = $field->new_value;
+
+            }
+            else if (isset($existingBusinessInformation->{$field->field}) || is_null($existingBusinessInformation->{$field->field})){
+
+                $existingBusinessInformation->{$field->field} = $field->new_value;
+
+            }
+
+
+            // else if ($field->field == "trade_name_english") {
+            //     $trade_name['en'] = $field->new_value ;
+            // }
+            // else if ($field->field == "trade_name_arabic") {
+            //     $trade_name['ar'] = $field->new_value ;
+            // }
+            else if (strpos($field->field, '_english') !== false || strpos($field->field, '_arabic') !== false) {
+                if (strpos($field->field, '_english') !== false) {
+                    // English translation
+                    $language = 'en';
+                    // Remove the '_english' suffix from $key
+                    $translationKey = str_replace('_english', '', $field->field);
+                } else {
+                    // Arabic translation
+                    $language = 'ar';
+                    // Remove the '_arabic' suffix from $key
+                    $translationKey = str_replace('_arabic', '', $field->field);
+                }
+                // dd($translationKey) ;
+                if (isset($existingBusinessInformation->{$translationKey}))
+                    $existingBusinessInformation->{$translationKey} = [$language=>$field->new_value]  ;
+
+            }
+
+        }
+        // $existingBusinessInformation->trade_name = $trade_name ;
+        // dd($existingBusinessInformation) ;
+        // Save the updated payout information
+        $existingPayoutInformation->save();
+        // Save the updated contact people
+        $existingContactPeople->save();
+          // Save the business information
+        $existingBusinessInformation->save() ;
+        // Mark the proposed change as approved
+        $proposedChange->update(['status' => 'approved']);
+
+        // Notify the user that their changes have been approved
+        $proposedChange->vendorAdmin->notify(new ChangesApprovedNotification());
+
+        // Implement notification logic here
+
+        return redirect()->route('sellers.index')->with('success', 'Informations updated successfully.');
+    }
+
+    // Handle case where modified_fields is not an array
+    // This block will be executed if modified_fields is not a valid JSON array
+    return redirect()->route('sellers.index')->with('error', 'Invalid modified_fields data.');
+}
+
+
+  // Controller method to reject proposed changes
+  public function rejectPayoutChanges($proposedChangeId)
+  {
+      $proposedChange = ProposedPayoutChange::findOrFail($proposedChangeId);
+
+      // Mark the proposed change as rejected
+      $proposedChange->update(['status' => 'rejected']);
+
+      // Notify the user that their changes have been rejected
+      // You can also implement notification logic here
+
+      return redirect()->route('admin.dashboard')->with('success', 'Payout information changes rejected.');
+  }
 
 
 }

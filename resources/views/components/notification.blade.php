@@ -108,9 +108,24 @@
                         @endif
 
 
-                    @else
+                    @elseif ($notification->type == 'App\Notifications\VendorProfileChangesWebNotification')
                         <!-- Handle other notification types -->
+                        <p>{{ $notification->data['message'] }}</p>
+                        <p>User Name: {{ $notification->data['vendor_name'] }}</p>
+                        <p>User Email: {{ $notification->data['email'] }}</p>
+                        <p>
+                            <a href="{{route('vendor.registration.view',$notification->data['vendor_id']) }}">View Vendor Profile</a>
+                        </p>
+                        @elseif ($notification->type == 'App\Notifications\ChangesApprovedNotification')
+                        <!-- Handle other notification types -->
+
+                        <p>{{ $notification->data['message'] }}</p>
+                        @elseif ($notification->type == 'App\Notifications\ModificationRejectedNotification')
+                        <!-- Handle other notification types -->
+
+                        <p>{{ $notification->data['message'] }}</p>
                     @endif
+
                 </p>
                 <small class="text-muted">
                     {{ date('F j Y, g:i a', strtotime($notification->created_at)) }}

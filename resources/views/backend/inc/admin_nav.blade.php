@@ -147,8 +147,10 @@
                                 </div>
                                 <div class="tab-pane" id="sellers-notifications" role="tabpanel">
                                     {{-- <x-notification :notifications="auth()->user()->unreadNotifications()->where('type', 'like', '%shop%')->take(20)->get()" /> --}}
-                                        <x-notification :notifications="auth()->user()->unreadNotifications()->where('type', 'App\Notifications\NewRegistrationNotification')->take(20)->get()" />
-
+                                        <x-notification :notifications="auth()->user()->unreadNotifications() ->whereIn('type', [
+                                            'App\Notifications\NewRegistrationNotification',
+                                            'App\Notifications\VendorProfileChangesWebNotification',
+                                        ])->take(20)->get()" />
                                 </div>
                                 <div class="tab-pane" id="payouts-notifications" role="tabpanel">
                                     <x-notification :notifications="auth()->user()->unreadNotifications()->where('type', 'App\Notifications\PayoutNotification')->take(20)->get()" />
