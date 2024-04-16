@@ -293,6 +293,14 @@
                                                                 {{ __('messages.registration_rejected') }}
                                                             @endif
                                                         </span>
+                                                        @elseif ($notification->type == 'App\Notifications\ChangesApprovedNotification')
+                                                        <!-- Handle other notification types -->
+
+                                                        <p>{{ $notification->data['message'] }}</p>
+                                                        @elseif ($notification->type == 'App\Notifications\ModificationRejectedNotification')
+                                                        <!-- Handle other notification types -->
+
+                                                        <p>{{ $notification->data['message'] }}</p>
                                                         @endif
                                                     </li>
                                                 @empty
