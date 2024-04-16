@@ -4,43 +4,163 @@ use Carbon\Carbon;
 @endphp
 
 @section('style')
-    <style>
-        #password-strength {
-            margin-top: 10px;
-            /* padding: 10px; */
-            /* border: 1px solid #ddd; */
-            border-radius: 5px;
+<style>
+@media (max-width: 540px) {
+ ul.nav.nav-tabs.shop {
+        background: #f8f9fa;
+        margin: 0;
+        display: block !important;
+        justify-content: space-between;
+        align-items: center;
+}
+}
+
+@media (min-width:822px) and (max-width:1198px ) {
+    ul.nav.nav-tabs.shop {
+        background: #f8f9fa;
+        margin: 0;
+        display: block !important;
+        justify-content: space-between;
+        align-items: center;
+}
+}
+
+@media (min-width:579px) and (max-width:805px ) {
+    ul.nav.nav-tabs.shop {
+        background: #f8f9fa;
+        margin: 0;
+        display: block !important;
+        justify-content: space-between;
+        align-items: center;
+}
+}
+
+
+#password-strength {
+     margin-top: 10px;
+    /* padding: 10px; */
+    /* border: 1px solid #ddd; */
+     border-radius: 5px;
+    }
+
+#password-strength p {
+    margin: 5px 0;
+}
+
+#password-strength.valid {
+    border-color: #4caf50;
+    background-color: #dff0d8;
+}
+
+.removeRow {
+    margin-bottom: 8px;
+}
+
+.has-errors{
+     background-color: #f8d7da;
+    /* Highlight color for errors */
+    color: #721c24;
+    /* Text color for errors */
+}
+.countrypicker{
+    width: 100% !important
         }
 
-        #password-strength p {
-            margin: 5px 0;
-        }
+.orange-text{
+    color: #CB774B;
 
-        #password-strength.valid {
-            border-color: #4caf50;
-            background-color: #dff0d8;
-        }
+    }
+.custom-file-input:lang(en)~.custom-file-label::after {
+    content: "Browse";
+    background-color: #CB774B;
+    color:#fff
+}
+.nav-tabs .nav-item{
+    border-radius: 0px;
+}
 
-        .removeRow {
-            margin-bottom: 8px;
-        }
+.col-md-6{
+    padding-left: 18px;
+    padding-right: 30px;
+}
 
-        .has-errors {
-            background-color: #f8d7da;
-            /* Highlight color for errors */
-            color: #721c24;
-            /* Text color for errors */
-        }
-        .countrypicker {
-            width: 100% !important
-        }
-    </style>
+
+.nav-tabs .nav-item .nav-link.active {
+    background-color: #CB774B;
+    color: white;
+    padding: 12px 20px;
+}
+
+
+.nav-tabs .nav-item .nav-link {
+    background-color: #f8f9fa;
+    color: gray;
+    padding: 12px 20px;
+}
+
+.nav-tabs .nav-link {
+    border: 1px solid transparent;
+    border-top-left-radius: .0rem;
+    border-top-right-radius: .0rem;
+}
+
+.smaller-gray-text {
+  font-size: 0.9rem;
+  color: rgb(160, 158, 158);
+  margin-bottom: 30px;
+
+}
+
+.number-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    border-radius: 50%;
+    text-align: center;
+    color: white;
+    background-color: rgb(160, 158, 158);
+}
+
+.nav-link.active .number-icon {
+    background-color: white;
+    color: #CB774B;
+}
+
+ul.nav.nav-tabs.shop{
+    background: #f8f9fa;
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.btn.btn-secondary.save-as-draft {
+    background-color: rgb(218 218 218);
+    color: rgb(0, 0, 0);
+    font-weight: 700;
+    border: none;
+    border-radius: 0;
+    font-size: 0.95rem;
+}
+
+.btn.btn-secondary.save-as-draft:hover {
+    background-color: rgb(218 218 218);
+    color: rgb(3, 3, 3);
+}
+.Grand-title{
+    padding-left: 0px;
+}
+.location{
+    padding-right: 80px;
+}
+</style>
 @endsection
 @section('content')
     <section class="pt-4 mb-4">
-        <!-- ... Existing HTML code ... -->
+    <!-- ... Existing HTML code ... -->
     </section>
-
     <section class="pt-4 mb-4">
         <div class="container">
             <div class="row">
@@ -48,42 +168,47 @@ use Carbon\Carbon;
                     <h1 class="fw-700 fs-20 fs-md-24 text-dark text-center mb-3">
                         @if (!Auth::user() || (Auth::user() && Auth::user()->owner_id == null))
                             {{ translate('Register Your Shop') }}
-
+                            <h1 class="smaller-gray-text text-center">Start selling on our platform by filling in your business details. It's the first step to reaching customers <br> globally and growing your brand. Let's get started!</h1>
                         @else
                             {{ translate('Account verification') }}
 
                         @endif
                         </h1>
-
                     <div class="row">
                         <div class="col-12">
-                            <ul class="nav nav-tabs" id="registerTabs">
+                            <ul class="nav nav-tabs shop" id="registerTabs">
                                 @if (!Auth::user() || (Auth::check() && !Auth::user()->email_verified_at))
                                     <li class="nav-item">
-                                        <a class="nav-link active" id="personal-info-tab" data-toggle="tab"
-                                            href="#personal-info">{{ translate('Personal Info') }}</a>
+                                        <a class="nav-link active" id="personal-info-tab" data-toggle="tab" href="#personal-info">
+                                            <span class="number-icon">1</span> {{ translate('Personal Info') }}
+                                        </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" id="code-verification-tab" data-toggle="tab"
-                                            href="#code-verification">{{ translate('Code Verification Email') }}</a>
+                                        <a class="nav-link" id="code-verification-tab" data-toggle="tab" href="#code-verification">
+                                            <span class="number-icon">2</span> {{ translate('Code Verification Email') }}
+                                        </a>
                                     </li>
                                 @endif
                                 @if (!Auth::user() || (Auth::user() && (Auth::user()->owner_id == null || Auth::user()->owner_id == Auth::user()->id)) )
                                     <li class="nav-item">
-                                        <a class="nav-link" id="business-info-tab" data-toggle="tab"
-                                            href="#business-info">{{ translate('Business Information') }}</a>
+                                        <a class="nav-link" id="business-info-tab" data-toggle="tab" href="#business-info">
+                                            <span class="number-icon">3</span> {{ translate('Business Information') }}
+                                        </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" id="contact-person-tab" data-toggle="tab"
-                                            href="#contact-person">{{ translate('Contact Person') }}</a>
+                                        <a class="nav-link" id="contact-person-tab" data-toggle="tab" href="#contact-person">
+                                            <span class="number-icon">4</span> {{ translate('Contact Person') }}
+                                        </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" id="warehouses-tab" data-toggle="tab"
-                                            href="#warehouses">{{ translate('Warehouses') }}</a>
+                                        <a class="nav-link" id="warehouses-tab" data-toggle="tab" href="#warehouses">
+                                            <span class="number-icon">5</span> {{ translate('Warehouses') }}
+                                        </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" id="payout-info-tab" data-toggle="tab"
-                                            href="#payout-info">{{ translate('Payout Information') }}</a>
+                                        <a class="nav-link" id="payout-info-tab" data-toggle="tab" href="#payout-info">
+                                            <span class="number-icon">6</span> {{ translate('Payout Information') }}
+                                        </a>
                                     </li>
                                 @endif
                             </ul>
@@ -119,7 +244,6 @@ use Carbon\Carbon;
                                                             value="{{ auth()->check() ? auth()->user()->last_name : old('last_name') }}"
                                                             placeholder="{{ translate('Last name') }}" name="last_name"
                                                             required>
-
                                                     </div>
                                                     <div class="form-group">
                                                         <label>{{ translate('Your Email') }} <span
@@ -127,7 +251,6 @@ use Carbon\Carbon;
                                                         <input id="email" type="email" class="form-control rounded-0"
                                                             value="{{ auth()->check() ? auth()->user()->email : '' }}"
                                                             placeholder="{{ translate('Email') }}" name="email" required>
-
                                                     </div>
                                                     <div class="form-group">
                                                         <label>{{!Auth::user() || (Auth::user() && (Auth::user()->owner_id == null || Auth::user()->owner_id == Auth::user()->id)) ? translate('Your Password')  : translate('Your New Password') }} <span
@@ -137,8 +260,6 @@ use Carbon\Carbon;
                                                             placeholder="{{ translate('Password') }}" name="password"
                                                             required>
                                                         <div id="password-strength"></div>
-
-
                                                     </div>
                                                     <div class="form-group">
                                                         <label>{{ translate('Repeat Password') }} <span
@@ -156,7 +277,6 @@ use Carbon\Carbon;
                                             </div>
                                         </form>
                                     </div>
-
                                     <div class="tab-pane fade" id="code-verification">
                                         <form id="codeVerificationForm" class="" action="{{ route('verify.code') }}"
                                             method="POST" data-next-tab="business-info">
@@ -213,28 +333,29 @@ use Carbon\Carbon;
                                         <!-- ... Business Info form fields ... -->
 
                                         <div class="bg-white border mb-4">
-                                            <div class="fs-15 fw-600 p-3">
+                                            {{-- <div class="fs-15 fw-600 p-3">
                                                 {{ translate('Business Information') }}
-                                            </div>
+                                            </div> --}}
                                             {{-- <div id="validation-errors" class="alert alert-danger"
                                                 style="display: none;"></div> --}}
-
+                                                <div class="fs-20 fw-600 p-3 orange-text">
+                                                    Trade Information
+                                                </div>
                                             <div class="p-3">
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('English Trade Name') }} <span
+                                                            <label><b>{{ translate('English Trade Name') }}</b> <span
                                                                     class="text-primary">*</span></label>
                                                             <input type="text" class="form-control rounded-0"
                                                                 placeholder="{{ translate('English Trade Name') }}"
                                                                 value="{{ isset($user->business_information->trade_name) ? $user->business_information->getTranslation('trade_name', 'en', false) : '' }}"
                                                                 name="trade_name_english" required>
-
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('Arabic Trade Name') }} <span
+                                                            <label><b>{{ translate('Arabic Trade Name') }}</b> <span
                                                                     class="text-primary">*</span></label>
                                                             <input type="text" class="form-control rounded-0"
                                                                 placeholder="{{ translate('Arabic Trade Name') }}"
@@ -243,12 +364,10 @@ use Carbon\Carbon;
 
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6">
+
+                                                    <div class="col-md-12">
                                                         <div class="form-group">
-                                                            <label>{{ translate('Trade License Doc') }} <span
-                                                                    class="text-primary">*</span><small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small></label>
-
-
+                                                            <label><b>{{ translate('Trade License Doc') }} </b> <span class="text-primary">*</span></label>
                                                             @if (isset($user) && isset($user->business_information) && $user->business_information->trade_license_doc)
                                                                 <a class="old_file"
                                                                     href="{{ static_asset($user->business_information->trade_license_doc) }}"
@@ -256,22 +375,26 @@ use Carbon\Carbon;
                                                                 <input type="hidden" name="trade_license_doc_old"
                                                                     value="{{ $user->business_information->trade_license_doc }}">
                                                             @endif
-                                                            <input type="file" class="form-control rounded-0"
-                                                                placeholder="{{ translate('Trade License Doc') }}"
-                                                                name="trade_license_doc" required>
-
-
-                                                            {{-- <div class="custom-file">
-                                                            <input name="trade_license_doc" type="file" class="custom-file-input" id="inputGroupFile01">
-                                                            <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
-                                                          </div> --}}
-
+                                                            <div class="input-group">
+                                                                <div class="custom-file">
+                                                                    <input type="file" class="custom-file-input" id="trade_license_doc_input"
+                                                                        name="trade_license_doc" required>
+                                                                    <label class="custom-file-label" for="trade_license_doc_input">{{ translate('Choose a file') }}</label>
+                                                                </div>
+                                                            </div>
+                                                            <small>{{ translate('Max file size is 5MB and accepted file types are PDF and image formats.') }}</small>
                                                         </div>
-
                                                     </div>
+
+                                                    <div class="col-md-12" style="padding-left: 0px">
+                                                    <div class="fs-20 fw-600 p-3 orange-text">
+                                                        E-Shop Information
+                                                    </div>   </div>
+
+
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('English E-shop Name') }} <span
+                                                            <label><b>{{ translate('English E-shop Name') }}</b> <span
                                                                     class="text-primary">*</span></label>
                                                             <input type="text" class="form-control rounded-0"
                                                                 placeholder="{{ translate('English E-shop Name') }}"
@@ -280,9 +403,11 @@ use Carbon\Carbon;
 
                                                         </div>
                                                     </div>
+
+
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('Arabic E-shop Name') }} <span
+                                                            <label><b>{{ translate('Arabic E-shop Name') }} </b><span
                                                                     class="text-primary">*</span></label>
                                                             <input type="text" class="form-control rounded-0"
                                                                 placeholder="{{ translate('Arabic E-shop Name') }}"
@@ -293,8 +418,8 @@ use Carbon\Carbon;
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('English e-Shop description') }} <span
-                                                                    class="text-primary"></span></label>
+                                                            <label><b>{{ translate('English e-Shop description') }} </b><span
+                                                                    class="text-primary"> (Optional)</span></label>
 
                                                             <textarea class="form-control rounded-0" placeholder="{{ translate('English e-Shop description') }}"
                                                                 name="eshop_desc_en">{{ isset($user->business_information->eshop_desc) ? $user->business_information->getTranslation('eshop_desc', 'en', false) : '' }}</textarea>
@@ -302,16 +427,22 @@ use Carbon\Carbon;
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('Arabic e-Shop description') }} <span
-                                                                    class="text-primary"></span></label>
+                                                            <label><b>{{ translate('Arabic e-Shop description') }}</b> <span
+                                                                    class="text-primary"> (Optional)</span></label>
 
                                                             <textarea class="form-control rounded-0" placeholder="{{ translate('Arabic e-Shop description') }}"
                                                                 name="eshop_desc_ar">{{ isset($user->business_information->eshop_desc) ? $user->business_information->getTranslation('eshop_desc', 'ar', false) : '' }}</textarea>
                                                         </div>
                                                     </div>
+
+                                                    <div class="col-md-12 Grand-title">
+                                                 <div class="fs-20 fw-600 p-3 orange-text">
+                                                        License Information
+                                                    </div>
+                                                </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('License Issue Date') }} <span
+                                                            <label><b>{{ translate('License Issue Date') }} </b><span
                                                                     class="text-primary">*</span>
                                                             </label>
 
@@ -324,7 +455,7 @@ use Carbon\Carbon;
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('License Expiry Date') }} <span
+                                                            <label><b>{{ translate('License Expiry Date') }} </b><span
                                                                     class="text-primary">*</span></label>
 
                                                             <input dir="auto" required type="text" class="datepicker form-control rounded-0"
@@ -334,10 +465,15 @@ use Carbon\Carbon;
                                                                 name="license_expiry_date">
                                                         </div>
                                                     </div>
+                                                    <div class="fs-20 fw-600 p-3 orange-text">
+                                                       Location Information
+                                                    </div>
+                                                    <div class="p-3">
+                                                        <div class="row">
                                                     @if (isset($user->business_information) && !empty($user->business_information->state))
-                                                        <div class="col-md-6">
+                                                        <div class="col-md-6 location">
                                                             <div class="form-group">
-                                                                <label>{{ translate('State/Emirate') }} <span
+                                                                <label><b>{{ translate('State/Emirate') }} </b><span
                                                                         class="text-primary">*</span></label>
                                                                         <select required name="state" class="form-control rounded-0" id="emirateempire">
                                                                             <option value="">{{ translate('please_choose') }}</option>
@@ -347,13 +483,12 @@ use Carbon\Carbon;
                                                                                 </option>
                                                                             @endforeach
                                                                         </select>
-
-
                                                             </div>
                                                         </div>
+                                                        <div class="col-md-1"></div>
                                                         <div class="col-md-6">
                                                             <div class="form-group">
-                                                                <label>{{ translate('Area') }} <span
+                                                                <label><b>{{ translate('Area') }} </b><span
                                                                         class="text-primary">*</span></label>
                                                                 <select required name="area_id"
                                                                     class="form-control rounded-0" id="areaempire">
@@ -374,7 +509,7 @@ use Carbon\Carbon;
                                                     @else
                                                         <div class="col-md-6">
                                                             <div class="form-group">
-                                                                <label>{{ translate('State/Emirate') }} <span
+                                                                <label><b>{{ translate('State/Emirate') }}</b> <span
                                                                         class="text-primary">*</span></label>
                                                                         <select required name="state" class="form-control rounded-0" id="emirateempire">
                                                                             <option value="" selected>{{ translate('please_choose') }}</option>
@@ -388,7 +523,7 @@ use Carbon\Carbon;
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="form-group">
-                                                                <label>{{ translate('Area') }} <span
+                                                                <label><b>{{ translate('Area') }} </b><span
                                                                         class="text-primary">*</span></label>
                                                                 <select required name="area_id"
                                                                     class="form-control rounded-0" id="areaempire">
@@ -403,7 +538,7 @@ use Carbon\Carbon;
                                                     @endif
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('Street') }} <span
+                                                            <label><b>{{ translate('Street') }} </b><span
                                                                     class="text-primary">*</span></label>
                                                             <input type="text" class="form-control rounded-0"
                                                                 value="{{ $user->business_information->street ?? '' }}"
@@ -414,7 +549,7 @@ use Carbon\Carbon;
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('Building') }} <span
+                                                            <label><b>{{ translate('Building') }}</b> <span
                                                                     class="text-primary">*</span></label>
                                                             <input type="text" class="form-control rounded-0"
                                                                 value="{{ $user->business_information->building ?? '' }}"
@@ -425,8 +560,8 @@ use Carbon\Carbon;
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('Unit/Office No.') }} <span
-                                                                    class="text-primary"></span></label>
+                                                            <label><b>{{ translate('Unit/Office No.') }}</b> <span
+                                                                    class="text-primary"> (Optional)</span></label>
                                                             <input type="text" class="form-control rounded-0"
                                                                 value="{{ $user->business_information->unit ?? '' }}"
                                                                 placeholder="{{ translate('Unit/Office No.') }}"
@@ -436,18 +571,23 @@ use Carbon\Carbon;
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('PO Box') }} <span
-                                                                    class="text-primary"></span></label>
+                                                            <label><b>{{ translate('PO Box') }} </b><span
+                                                                    class="text-primary"> (Optional)</span> </label>
                                                             <input type="text" class="form-control rounded-0"
                                                                 value="{{ $user->business_information->po_box ?? '' }}"
                                                                 placeholder="{{ translate('PO Box') }}" name="po_box">
 
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6">
+                                                </div>
+                                            </div>
+                                            <div class="fs-20 fw-600 p-3 orange-text">
+                                               Contact Information
+                                            </div>
+                                                    <div class="col-md-12">
                                                         <div class="form-group">
-                                                            <label>{{ translate('Landline Phone No.') }} <span
-                                                                    class="text-primary"></span></label>
+                                                            <label><b>{{ translate('Landline Phone No.') }}</b><span
+                                                                    class="text-primary"> (Optional) </span></label>
                                                             <input
                                                                 value="{{ $user->business_information->landline ?? '' }}"
                                                                 type="text" class="form-control rounded-0"
@@ -456,9 +596,13 @@ use Carbon\Carbon;
 
                                                         </div>
                                                     </div>
+                                                    <div class="col-md-12" style="padding-left: 0px">
+                                                        <div class="fs-20 fw-600 p-3 orange-text">
+                                                            Tax Information
+                                                        </div>   </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('Vat Registered') }} <span
+                                                            <label><b>{{ translate('Vat Registered') }} </b><span
                                                                     class="text-primary">*
                                                                 </span></label> <br>
                                                             <div class="form-check form-check-inline">
@@ -485,8 +629,7 @@ use Carbon\Carbon;
                                                     </div>
                                                     <div class="col-md-6" id="vatCertificateGroup">
                                                         <div class="form-group">
-                                                            <label>{{ translate('Vat Certificate') }} <span
-                                                                    class="text-primary">*</span><small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small></label>
+                                                            <label><b>{{ translate('Vat Certificate') }} File upload</b> <span class="text-primary">*</span></label>
                                                             @if (isset($user) && isset($user->business_information) && $user->business_information->vat_certificate)
                                                                 <a class="old_file"
                                                                     href="{{ static_asset($user->business_information->vat_certificate) }}"
@@ -494,19 +637,24 @@ use Carbon\Carbon;
                                                                 <input type="hidden" name="vat_certificate_old"
                                                                     value="{{ $user->business_information->vat_certificate }}">
                                                             @endif
-                                                            <input type="file" class="form-control rounded-0"
-                                                                placeholder="{{ translate('Vat Certificate') }}"
-                                                                name="vat_certificate">
-
+                                                            <div class="input-group">
+                                                                <div class="custom-file">
+                                                                    <input type="file" class="custom-file-input" id="vat_certificate_input"
+                                                                        name="vat_certificate">
+                                                                    <label class="custom-file-label" for="vat_certificate_input">{{ translate('Choose a file') }}</label>
+                                                                </div>
+                                                            </div>
+                                                            <small>{{ translate('Max file size is 5MB and accepted file types are PDF and image formats.') }}</small>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6" id="trnGroup">
+
+                                                    <div class="col-md-12" id="trnGroup">
                                                         <div class="form-group">
-                                                            <label>{{ translate('TRN') }} <span
+                                                            <label><b>{{ translate('TRN') }} (Tax Registration Number)</b><span
                                                                     class="text-primary">*</span></label>
                                                             <input value="{{ $user->business_information->trn ?? '' }}"
                                                                 type="text" class="form-control rounded-0"
-                                                                placeholder="{{ translate('TRN') }}" name="trn">
+                                                                placeholder="{{ translate('TRN (Tax Registration Number)') }}" name="trn">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6" id="taxWaiverGroup" {{-- style="display: none;" --}}>
@@ -524,12 +672,13 @@ use Carbon\Carbon;
                                                                 name="tax_waiver">
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6">
+                                                    <div class="fs-20 fw-600 p-3 orange-text">
+                                                        Regulatory Information
+                                                    </div>
+                                                    <div class="col-md-12">
                                                         <div class="form-group">
-                                                            <label>{{ translate('Civil Defense Approval') }} <span
-                                                                    class="text-primary"></span><small>{{ translate('Max file size is 5MB and accepted file types are PDF and image formats.') }}</small></label>
-                                                            {{-- <input  type="file" class="form-control rounded-0"
-                                                                name="civil_defense_approval"> --}}
+                                                            <label><b>{{ translate('Civil Defense Approval') }}</b>  <span class="text-primary"></span></label>
+                                                            {{-- <input  type="file" class="form-control rounded-0" name="civil_defense_approval"> --}}
                                                             @if (isset($user) && isset($user->business_information) && $user->business_information->civil_defense_approval)
                                                                 <a class="old_file"
                                                                     href="{{ static_asset($user->business_information->civil_defense_approval) }}"
@@ -537,19 +686,19 @@ use Carbon\Carbon;
                                                                 <input type="hidden" name="civil_defense_approval_old"
                                                                     value="{{ $user->business_information->civil_defense_approval }}">
                                                             @endif
-                                                            <input type="file" class="form-control rounded-0"
-                                                                name="civil_defense_approval">
-
+                                                            <div class="input-group">
+                                                                <div class="custom-file">
+                                                                    <input type="file" class="custom-file-input" id="civil_defense_approval_input"
+                                                                        name="civil_defense_approval">
+                                                                    <label class="custom-file-label" for="civil_defense_approval_input">{{ translate('Choisir un fichier') }}</label>
+                                                                </div>
+                                                            </div>
+                                                            <small>{{ translate('Max file size is 5MB and accepted file types are PDF and image formats.') }}</small>
                                                         </div>
-
                                                     </div>
-
-
                                                 </div>
                                             </div>
                                         </div>
-
-
                                         <div class="text-right">
                                             <button type="button"
                                                 class="btn btn-secondary fw-600 rounded-0 save-as-draft"
@@ -557,7 +706,6 @@ use Carbon\Carbon;
 
                                             <button type="button" class="btn btn-primary fw-600 rounded-0"
                                                 {{-- onclick="switchTab('contact-person')" --}}>{{ translate('Save and Continue') }}</button>
-
                                         </div>
                                     </form>
                                 </div>
@@ -830,8 +978,6 @@ use Carbon\Carbon;
                                                                             <option value="{{ $emirate->id }}">{{ $emirate->name }}</option>
                                                                         @endforeach
                                                                     </select>
-
-
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
@@ -1266,6 +1412,7 @@ use Carbon\Carbon;
 
                                             <button id="registerShop" type="submit"
                                                 class="btn btn-primary fw-600 rounded-0">{{ translate('Register Your Shop') }}</button>
+
                                         </div>
                                     </form>
                                 </div>
