@@ -120,7 +120,7 @@ class ProfileController extends Controller
         // Get the existing payout information
         $user = Auth::user();
         $user_id = $user->id ;
-              // Validate the incoming request data
+        // Validate the incoming request data
         $request->validate([
             'bank_name' => 'nullable|string|max:128|regex:/\D/',
             'account_name' => 'nullable|string|max:128|regex:/\D/',
@@ -380,6 +380,7 @@ class ProfileController extends Controller
                 }
 
         }
+
         if (count($modifiedFields) > 0) {
             // Store modified fields in the database or an array
             ProposedPayoutChange::create([
@@ -388,9 +389,14 @@ class ProfileController extends Controller
                 'status' => 'pending',
             ]);
         // Trigger the notification
-        $admin = User::where('user_type','admin')->first(); // Fetch the first admin
-        $admin->notify(new VendorProfileChangesNotification($user));
-        Notification::send($admin, new VendorProfileChangesWebNotification($user));
+        $admins = User::where('user_type','admin')->get(); // Fetch the first admin
+        if ($admins->isNotEmpty()) {
+            // Notify each admin user via Laravel notifications
+            foreach ($admins as $admin) {
+                $admin->notify(new VendorProfileChangesNotification($user));
+                Notification::send($admin, new VendorProfileChangesWebNotification($user));
+            }
+         }
         return back()->with('success', 'Your changes have been proposed for review.');
 
         }

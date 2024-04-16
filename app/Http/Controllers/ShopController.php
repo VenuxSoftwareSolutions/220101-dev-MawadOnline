@@ -822,9 +822,15 @@ class ShopController extends Controller
         $staff->role_id = $role->id;
         $staff->save();
         // Trigger the notification
-        $admin = User::where('user_type','admin')->first(); // Fetch the first admin
-        $admin->notify(new NewVendorRegistration($user));
-        Notification::send($admin, new NewRegistrationNotification($user));
+        $admins = User::where('user_type','admin')->get(); // Fetch the first admin
+        if ($admins->isNotEmpty()) {
+            // Notify each admin user via Laravel notifications
+            foreach ($admins as $admin) {
+                $admin->notify(new NewVendorRegistration($user));
+                Notification::send($admin, new NewRegistrationNotification($user));
+            }
+         }
+
         return response()->json(['finish' => true, 'success' => true, 'message' => 'Shop stored successfully']);
 
 
