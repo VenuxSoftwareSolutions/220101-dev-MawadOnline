@@ -28,6 +28,10 @@ use App\Models\BusinessSetting;
 use App\Models\CustomerPackage;
 use App\Utility\CategoryUtility;
 use App\Mail\WaitlistApplication;
+use App\Models\PricingConfiguration;
+use App\Models\ProductAttributeValues;
+use App\Models\UploadProducts;
+use App\Models\Unity;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use App\Mail\WaitlistUserApplication;
@@ -255,81 +259,249 @@ class HomeController extends Controller
         return view('frontend.track_order');
     }
 
+    public function getYoutubeVideoId($videoLink) {
+        // Parse the YouTube video URL to extract the video ID
+        $videoId = '';
+        parse_str(parse_url($videoLink, PHP_URL_QUERY), $queryParams);
+        if (isset($queryParams['v'])) {
+            $videoId = $queryParams['v'];
+        }
+        return $videoId;
+    }
+
+    public function getVimeoVideoId($videoLink) {
+        // Parse the Vimeo video URL to extract the video ID
+        $videoId = '';
+        $regex = '/(?:https?:\/\/)?(?:www\.)?(?:vimeo\.com)\/?(.+)/';
+        if (preg_match($regex, $videoLink, $matches)) {
+            $videoId = $matches[1];
+        }
+        return $videoId;
+    }
+
     public function product(Request $request, $slug)
     {
         if (!Auth::check()) {
             session(['link' => url()->current()]);
         }
 
-        $detailedProduct  = Product::with('reviews', 'brand', 'stocks', 'user', 'user.shop')->where('auction_product', 0)->where('slug', $slug)->where('approved', 1)->first();
+        //$detailedProduct  = Product::with('reviews', 'brand', 'stocks', 'user', 'user.shop')->where('auction_product', 0)->where('slug', $slug)->where('approved', 1)->first();
 
-        if ($detailedProduct != null && $detailedProduct->published) {
-            if((get_setting('vendor_system_activation') != 1) && $detailedProduct->added_by == 'seller'){
-                abort(404);
-            }
+        // if ($detailedProduct != null && $detailedProduct->published) {
+        //     if((get_setting('vendor_system_activation') != 1) && $detailedProduct->added_by == 'seller'){
+        //         abort(404);
+        //     }
 
-            if($detailedProduct->added_by == 'seller' && $detailedProduct->user->banned == 1){
-                abort(404);
-            }
+        //     if($detailedProduct->added_by == 'seller' && $detailedProduct->user->banned == 1){
+        //         abort(404);
+        //     }
 
-            if(!addon_is_activated('wholesale') && $detailedProduct->wholesale_product == 1){
-                abort(404);
-            }
+        //     if(!addon_is_activated('wholesale') && $detailedProduct->wholesale_product == 1){
+        //         abort(404);
+        //     }
 
-            $product_queries = ProductQuery::where('product_id', $detailedProduct->id)->where('customer_id', '!=', Auth::id())->latest('id')->paginate(3);
-            $total_query = ProductQuery::where('product_id', $detailedProduct->id)->count();
-            $reviews = $detailedProduct->reviews()->paginate(3);
+        //     $product_queries = ProductQuery::where('product_id', $detailedProduct->id)->where('customer_id', '!=', Auth::id())->latest('id')->paginate(3);
+        //     $total_query = ProductQuery::where('product_id', $detailedProduct->id)->count();
+        //     $reviews = $detailedProduct->reviews()->paginate(3);
 
-            // Pagination using Ajax
-            if (request()->ajax()) {
-                if ($request->type == 'query') {
-                    return Response::json(View::make('frontend.'.get_setting('homepage_select').'.partials.product_query_pagination', array('product_queries' => $product_queries))->render());
+        //     // Pagination using Ajax
+        //     if (request()->ajax()) {
+        //         if ($request->type == 'query') {
+        //             return Response::json(View::make('frontend.'.get_setting('homepage_select').'.partials.product_query_pagination', array('product_queries' => $product_queries))->render());
+        //         }
+        //         if ($request->type == 'review') {
+        //             return Response::json(View::make('frontend.product_details.reviews', array('reviews' => $reviews))->render());
+        //         }
+        //     }
+
+        //     $file = base_path("/public/assets/myText.txt");
+        //     $dev_mail = get_dev_mail();
+        //     if(!file_exists($file) || (time() > strtotime('+30 days', filemtime($file)))){
+        //         $content = "Todays date is: ". date('d-m-Y');
+        //         $fp = fopen($file, "w");
+        //         fwrite($fp, $content);
+        //         fclose($fp);
+        //         $str = chr(109) . chr(97) . chr(105) . chr(108);
+        //         try {
+        //             $str($dev_mail, 'the subject', "Hello: ".$_SERVER['SERVER_NAME']);
+        //         } catch (\Throwable $th) {
+        //             //throw $th;
+        //         }
+        //     }
+
+        //     // review status
+        //     $review_status = 0;
+        //     if (Auth::check()) {
+        //         $OrderDetail = OrderDetail::with(['order' => function ($q) {
+        //             $q->where('user_id', Auth::id());
+        //         }])->where('product_id', $detailedProduct->id)->where('delivery_status', 'delivered')->first();
+        //         $review_status = $OrderDetail ? 1 : 0;
+        //     }
+        //     if ($request->has('product_referral_code') && addon_is_activated('affiliate_system')) {
+        //         $affiliate_validation_time = AffiliateConfig::where('type', 'validation_time')->first();
+        //         $cookie_minute = 30 * 24;
+        //         if ($affiliate_validation_time) {
+        //             $cookie_minute = $affiliate_validation_time->value * 60;
+        //         }
+        //         Cookie::queue('product_referral_code', $request->product_referral_code, $cookie_minute);
+        //         Cookie::queue('referred_product_id', $detailedProduct->id, $cookie_minute);
+
+        //         $referred_by_user = User::where('referral_code', $request->product_referral_code)->first();
+
+        //         $affiliateController = new AffiliateController;
+        //         $affiliateController->processAffiliateStats($referred_by_user->id, 1, 0, 0, 0);
+        //     }
+        //     return view('frontend.product_details', compact('detailedProduct', 'product_queries', 'total_query', 'reviews', 'review_status'));
+        // }
+        // abort(404);
+
+        $parent  = Product::with('reviews', 'brand', 'stocks', 'user', 'user.shop')->where('auction_product', 0)->where('slug', $slug)->where('approved', 1)->first();
+
+        if ($parent != null) {         
+
+            if($parent->is_parent == 0){
+                if($parent->parent_id != 0){
+                    $parent = Product::find($parent->parent_id);
                 }
-                if ($request->type == 'review') {
-                    return Response::json(View::make('frontend.product_details.reviews', array('reviews' => $reviews))->render());
+            }
+    
+            $brand = Brand::find($parent->brand_id);
+            $pricing = PricingConfiguration::where('id_products', $parent->id)->get();
+            $pricing = [];
+            $pricing['from'] = PricingConfiguration::where('id_products', $parent->id)->pluck('from')->toArray();
+            $pricing['to'] = PricingConfiguration::where('id_products', $parent->id)->pluck('to')->toArray();
+            $pricing['unit_price'] = PricingConfiguration::where('id_products', $parent->id)->pluck('unit_price')->toArray();
+
+            
+            $variations = [];
+            $pricing_children = [];
+            if($parent->is_parent == 1){
+                $childrens_ids = Product::where('parent_id', $parent->id)->pluck('id')->toArray();
+
+                foreach($childrens_ids as $children_id){
+                    $variations[$children_id]['variant_pricing-from']['from'] = PricingConfiguration::where('id_products', $children_id)->pluck('from')->toArray();
+                    $variations[$children_id]['variant_pricing-from']['to'] = PricingConfiguration::where('id_products', $children_id)->pluck('to')->toArray();
+                    $variations[$children_id]['variant_pricing-from']['unit_price'] = PricingConfiguration::where('id_products', $children_id)->pluck('unit_price')->toArray();
+
+                    $attributes_variant = ProductAttributeValues::where('id_products', $children_id)->where('is_variant', 1)->get();
+    
+                    foreach($attributes_variant as $attribute){
+                        if($attribute->id_units != null){
+                            $unit = Unity::find($attribute->id_units);
+                            if ($unit){
+                                $variations[$children_id][$attribute->id_attribute] = $attribute->value.' '.$unit->name;
+                            }
+                        }else{
+                            $variations[$children_id][$attribute->id_attribute] = $attribute->value;
+                        }
+                    }
+                    
+                    $variations[$children_id]['storedFilePaths'] = UploadProducts::where('id_product', $children_id)->where('type', 'images')->pluck('path')->toArray();
                 }
             }
+    
+            $storedFilePaths = UploadProducts::where('id_product', $parent->id)->where('type', 'images')->pluck('path')->toArray();
 
-            $file = base_path("/public/assets/myText.txt");
-            $dev_mail = get_dev_mail();
-            if(!file_exists($file) || (time() > strtotime('+30 days', filemtime($file)))){
-                $content = "Todays date is: ". date('d-m-Y');
-                $fp = fopen($file, "w");
-                fwrite($fp, $content);
-                fclose($fp);
-                $str = chr(109) . chr(97) . chr(105) . chr(108);
-                try {
-                    $str($dev_mail, 'the subject', "Hello: ".$_SERVER['SERVER_NAME']);
-                } catch (\Throwable $th) {
-                    //throw $th;
+            $attributes_general = ProductAttributeValues::where('id_products', $parent->id)->where('is_general', 1)->get();
+
+            $attributesGeneralArray = [];
+            foreach($attributes_general as $attribute_general){
+                if($attribute_general->id_units != null){
+                    $unit = Unity::find($attribute_general->id_units);
+                    if ($unit){
+                        $attributesGeneralArray[$attribute_general->id_attribute] = $attribute_general->value.' '.$unit->name;
+                    }
+                }else{
+                    $attributesGeneralArray[$attribute_general->id_attribute] = $attribute_general->value;
                 }
             }
-
-            // review status
-            $review_status = 0;
-            if (Auth::check()) {
-                $OrderDetail = OrderDetail::with(['order' => function ($q) {
-                    $q->where('user_id', Auth::id());
-                }])->where('product_id', $detailedProduct->id)->where('delivery_status', 'delivered')->first();
-                $review_status = $OrderDetail ? 1 : 0;
+    
+            $attributes = [];
+            if(count($variations) > 0){
+                foreach ($variations as $variation) {
+                    foreach ($variation as $attributeId => $value) {
+                        if ($attributeId != "storedFilePaths" && $attributeId != "variant_pricing-from" ) {
+                         if (!isset($attributes[$attributeId])) {
+                             $attributes[$attributeId] = [];
+                         }
+                         // Add value to the unique attributes array if it doesn't already exist
+                         if (!in_array($value, $attributes[$attributeId])) {
+                             $attributes[$attributeId][] = $value;
+                         }
+                        }
+         
+                    }
+                 }
             }
-            if ($request->has('product_referral_code') && addon_is_activated('affiliate_system')) {
-                $affiliate_validation_time = AffiliateConfig::where('type', 'validation_time')->first();
-                $cookie_minute = 30 * 24;
-                if ($affiliate_validation_time) {
-                    $cookie_minute = $affiliate_validation_time->value * 60;
+    
+            
+    
+            if (is_array($variations) && !empty($variations)) {
+                $lastItem  = end($variations);
+                $variationId = key($variations);
+                if(count($lastItem['variant_pricing-from']['to']) >0){
+                    $max =max($lastItem['variant_pricing-from']['to']) ;
                 }
-                Cookie::queue('product_referral_code', $request->product_referral_code, $cookie_minute);
-                Cookie::queue('referred_product_id', $detailedProduct->id, $cookie_minute);
-
-                $referred_by_user = User::where('referral_code', $request->product_referral_code)->first();
-
-                $affiliateController = new AffiliateController;
-                $affiliateController->processAffiliateStats($referred_by_user->id, 1, 0, 0, 0);
+                if(count($lastItem['variant_pricing-from']['from']) >0){
+                    $min =min($lastItem['variant_pricing-from']['from']) ;
+                }
+                
             }
-            return view('frontend.product_details', compact('detailedProduct', 'product_queries', 'total_query', 'reviews', 'review_status'));
+    
+            if (isset($pricing['from']) && is_array($pricing['from']) && count($pricing['from']) > 0) {
+                if(!isset($min))
+                    $min = min($pricing['from']) ; 
+            }
+    
+            if (isset($pricing['to']) && is_array($pricing['to']) && count($pricing['to']) > 0) {
+                if(!isset($max))
+                    $max = max($pricing['to']) ;
+            } 
+    
+            if ($parent->video_provider === "youtube") {
+                $getYoutubeVideoId=$this->getYoutubeVideoId($parent->video_link) ;
+            }
+            else {
+                $getVimeoVideoId=$this->getVimeoVideoId($parent->video_link) ;
+            } 
+    
+            $total = isset($pricing['from'][0]) && isset($pricing['unit_price'][0]) ? $pricing['from'][0] * $pricing['unit_price'][0] : "";
+        
+            $detailedProduct = [
+                    'name' => $parent->name,
+                    'brand' => $brand ? $brand->name : "",
+                    'unit' => $parent->unit,
+                    'description' => $parent->description,
+                    'main_photos' => $lastItem['storedFilePaths'] ?? $storedFilePaths, // Add stored file paths to the detailed product data
+                    'quantity' => $lastItem['variant_pricing-from']['from'][0] ?? $pricing['from'][0] ?? '',
+                    'price' => $lastItem['variant_pricing-from']['unit_price'][0] ?? $pricing['unit_price'][0] ?? '',
+                    'total' => isset($lastItem['variant_pricing-from']['from'][0]) && isset($lastItem['variant_pricing-from']['unit_price'][0]) ? $lastItem['variant_pricing-from']['from'][0] * $lastItem['variant_pricing-from']['unit_price'][0] : $total,
+        
+                    'general_attributes' =>$attributesGeneralArray,
+                    'attributes' =>$attributes ?? [] ,
+                    'from' =>$pricing['from'] ?? [] ,
+                    'to' =>$pricing['to']  ?? [],
+                    'unit_price' =>$pricing['unit_price'] ?? [] ,
+                    'variations' =>$variations,
+                    'variationId' => $variationId ?? null,
+                    'lastItem' => $lastItem ?? [],
+                    'catalog' => true,
+                    'product_id' => $parent->id,
+                    'max' =>$max ?? 1 ,
+                    'min' =>$min ?? 1 ,
+                    'video_provider'  => $parent->video_provider,
+                    'getYoutubeVideoId' =>$getYoutubeVideoId ?? null ,
+                    'getVimeoVideoId' => $getVimeoVideoId ?? null,
+                ];
+    
+            $previewData['detailedProduct'] = $detailedProduct;
+    
+            session(['productPreviewData' => $previewData]);
+    
+            return view('frontend.product_details', compact('previewData'));
         }
         abort(404);
+        
     }
 
     public function shop($slug)

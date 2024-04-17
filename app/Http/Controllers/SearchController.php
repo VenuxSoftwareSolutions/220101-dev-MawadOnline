@@ -199,9 +199,9 @@ class SearchController extends Controller
             }
         }
 
-        $products_query = filter_products(Product::query());
+        $products_query = Product::query();
 
-        $products_query = $products_query->where('published', 1)
+        $products_query = $products_query->where('approved', 1)->where('published', 1)
             ->where(function ($q) use ($query) {
                 foreach (explode(' ', trim($query)) as $word) {
                     $q->where('name', 'like', '%' . $word . '%')
