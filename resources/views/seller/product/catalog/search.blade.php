@@ -52,7 +52,7 @@
             <div class="card-body">
                 <div class="row row_center">
                     <div  class="col-12 search_bloc">
-                        <input id="step1" type="text" required class="form-control search" style="width: 50%" id="search" placeholder="{{ translate('Search by product name, model, brand …') }}">
+                        <input  type="text" required class="form-control search" style="width: 50%" placeholder="{{ translate('Search by product name, model, brand …') }}">
 
                     </div>
                     <div id="result" class="col-12 search_bloc panel panel-default" style="display:none">
@@ -76,8 +76,9 @@
 @section('script')
 
 <script>
-    $('#search').keyup(function(){
-        var search = $('#search').val();
+    console.log('alert')
+    $('.search').keyup(function(){
+        var search = $(this).val();
         if(search==""){
             $("#memList").html("");
             $('#result').hide();
