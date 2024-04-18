@@ -28,6 +28,7 @@ class CatalogController extends Controller
         $products = [];
         $catalogs = [];
         $searchTerm = $request->name;
+        
         if(Auth::user()->user_type == "seller"){
             $catalogs = ProductCatalog::where(function ($query) use ($searchTerm) {
                                     $query->where('name', 'like', "%{$searchTerm}%")
@@ -37,7 +38,7 @@ class CatalogController extends Controller
                                 })->take(3)->get();
 
             return view('seller.product.catalog.result')->with(['products' =>  $products, 'catalogs' => $catalogs, 'search' => $request->name]);
-        }elseif(Auth::user()->user_type == "admin"){    
+        }elseif((Auth::user()->user_type == "admin") || (Auth::user()->user_type == "staff")){    
             $products = Product::where(function ($query) use ($searchTerm) {
                                     $query->where('name', 'like', "%{$searchTerm}%")
                                         ->orWhereHas('brand', function ($query) use ($searchTerm) {
@@ -50,7 +51,7 @@ class CatalogController extends Controller
                                                     ->where('approved', 1);
                                         });
                                 })->take(1)->get();
-
+                                
             if(count($products) == 0){
                 $catalogs = ProductCatalog::where(function ($query) use ($searchTerm) {
                     $query->where('name', 'like', "%{$searchTerm}%")
@@ -91,7 +92,7 @@ class CatalogController extends Controller
                     'products' => $products, 
                     'catalogs' => $catalogs,
                 ]);
-            }elseif(Auth::user()->user_type == "admin"){    
+            }elseif((Auth::user()->user_type == "admin") || (Auth::user()->user_type == "staff")){    
                 $products = Product::where(function ($query) use ($search) {
                                         $query->where('name', 'like', "%{$search}%")
                                             ->orWhereHas('brand', function ($query) use ($search) {

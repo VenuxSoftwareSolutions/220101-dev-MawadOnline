@@ -70,7 +70,7 @@ class HomeController extends Controller
     {
         $newest_products = Cache::remember('newest_products', 3600, function () {
             //return filter_products(Product::latest())->limit(12)->get();
-            return Product::where('is_parent', 0)->where('approved', 1)->orderBy('id','desc')->limit(12)->get();
+            return Product::where('is_parent', 0)->where('published', 1)->where('approved', 1)->orderBy('id','desc')->limit(12)->get();
         });
 
         return view('frontend.'.get_setting('homepage_select').'.partials.newest_products_section', compact('newest_products'));
