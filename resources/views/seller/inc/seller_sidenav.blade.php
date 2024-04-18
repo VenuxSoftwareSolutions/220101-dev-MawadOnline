@@ -30,6 +30,12 @@
                         <span class="aiz-side-nav-text">{{ translate('Dashboard') }}</span>
                     </a>
                 </li>
+                <li id="profile" class="aiz-side-nav-item">
+                    <a href="{{ route('seller.profile.index') }}" class="aiz-side-nav-link">
+                        <i class="las la-user aiz-side-nav-icon"></i>
+                        <span class="aiz-side-nav-text">{{ translate('e-Shop Profile') }}</span>
+                    </a>
+                </li>
                 @canany(['seller_show_product','seller_view_product_reviews'])
                     <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link">
