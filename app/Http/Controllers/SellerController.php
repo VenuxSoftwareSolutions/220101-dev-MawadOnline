@@ -432,6 +432,10 @@ class SellerController extends Controller
 
     public function resubmitRegistration($id,Request $request,$proposedId = null)
     {
+          // Validate the incoming request data
+          $request->validate([
+            'reject_reason' => 'required|string|max:5000', // Validate reject_reason field
+        ]);
         // Get the reject reason and image URL from the request
         $rejectReason = $request->input('reject_reason');
         $seller = User::findOrFail($id);

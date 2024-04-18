@@ -8,6 +8,9 @@
     .note-modal .note-group-select-from-files {
     display: block !important;
 }
+.invalid-feedback {
+    display: block !important ;
+}
 </style>
 @endsection
 @php
@@ -32,7 +35,11 @@ use Carbon\Carbon;
             @csrf
             <div class="form-group">
                 <label for="reject_reason">Reject Reason</label>
+
                 <textarea required class="form-control" name="reject_reason" id="editor" rows="3"></textarea>
+                @error('reject_reason')
+                <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
             <div class="form-group">
                 <button type="submit" id="submitRejection" class="btn btn-danger">Submit</button>
