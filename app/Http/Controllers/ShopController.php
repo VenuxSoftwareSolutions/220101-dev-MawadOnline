@@ -48,6 +48,27 @@ class ShopController extends Controller
         $this->middleware('user', ['only' => ['index']]);
     }
 
+
+    public function generateSalt(Request $request) {
+        
+        // Your secret key for HMAC-SHA256 algorithm
+        $secretKey = env('SALT_GENERATION_KEY'); // Make sure to set this in your .env file
+
+        $numHashingRounds = env('NUMBER_HASHING_ROUNDS');
+
+        // Generate the salt using HMAC-SHA256 algorithm
+        $salt = hash_hmac('sha256', $request->email, $secretKey);
+
+        // Trim the salt to 32 characters
+        $salt = substr($salt, 0, 32);
+
+        return response()->json([
+            'salt' => $salt,
+            'num_hashing_rounds' => $numHashingRounds
+        ]);
+    }
+
+
     /**
      * Display a listing of the resource.
      *

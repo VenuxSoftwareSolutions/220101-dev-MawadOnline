@@ -2423,6 +2423,32 @@ ul.nav.nav-tabs.shop{
                  yearRange: "-100:+10"  // Optional: specify the range of years available
             });
 
+
+
+            $('#email').on('change', function() {
+                var email = $(this).val();
+                var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                $.ajax({
+                    url: '{{route("generateSalt")}}', // Replace this with your Laravel backend route
+                    method: 'POST', // or 'GET', depending on your backend setup
+                    data: {
+                        email: email // Send email data to the backend
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken // Include CSRF token in headers
+                    },
+                    success: function(response) {
+                        // Handle successful response from the backend
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle errors
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+
         });
     </script>
 
