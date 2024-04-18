@@ -9,6 +9,13 @@
         right: 2%;
         z-index: 5;
     }
+
+    .swal2-icon .swal2-icon-content {
+        display: flex;
+        align-items: center;
+        font-size: 0.75em !important;
+    }
+
     .preview-button {
         background-color: #cb774b !important; /* Green background */
         border: none;
@@ -57,6 +64,7 @@
                 @endif
                 @csrf
                 <input type="hidden" name="product_id" value="{{ $product->id }}">
+                <input type="hidden" name="last_version" id="last_version" value="0">
                 {{-- Bloc Product Information --}}
                 <div class="card">
                     <div class="card-header">
@@ -1119,7 +1127,7 @@
                                         <input type="number" class="form-control" value="{{ translate('Low-Stock Warning') }}" disabled>
                                     </div>
                                     <div class="col-md-8 mb-3">
-                                        <input type="text" name="stock_qty_warning" class="form-control" value="{{ $product->low_stock_quantity }}">
+                                        <input type="text" name="quantite_stock_warning" class="form-control" value="{{ $product->low_stock_quantity }}">
                                     </div>
                                 </div>
                             </div>
@@ -3737,5 +3745,31 @@
             }
         });
     };
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script> <!-- Include SweetAlert2 JS -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('choice_form').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            Swal.fire({
+                title: "Do wants to keep the last approved product published on the marketplace or it shall be turned to unpublished ?",
+                text: "Do wants to keep the last approved product published on the marketplace or it shall be turned to unpublished ?",
+                icon: "info",
+                showCancelButton: false,
+                confirmButtonText: "Next",
+                html: '<input type="checkbox" id="publicationToggle" value="published" checked> keep the last version approved',
+                focusConfirm: false,
+                preConfirm: () => {
+                    const publicationStatus = document.getElementById('publicationToggle').checked ? 'use' : 'not use';
+                    if(publicationStatus == 'use'){
+                        $('#last_version').val(1)
+                    }
+                    document.getElementById('choice_form').submit();
+                }
+            });
+        });
+    });
 </script>
 @endsection

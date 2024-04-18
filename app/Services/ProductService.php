@@ -131,9 +131,9 @@ class ProductService
         $is_draft = 0;
 
         if(isset($collection['submit_button'])){
-            $published = 0;
             if ($collection['submit_button'] == 'draft') {
-              $is_draft = 1;  
+              $is_draft = 1; 
+              $published = 0; 
             }
             unset($collection['submit_button']);
         }
@@ -424,10 +424,10 @@ class ProductService
         }
 
         $collection['sku'] = $collection['product_sk'];
-        $collection['low_stock_quantity'] = $collection['stock_qty_warning'];
+        $collection['low_stock_quantity'] = $collection['quantite_stock_warning'];
         
         unset($collection['product_sk']);
-        unset($collection['stock_qty_warning']);
+        unset($collection['quantite_stock_warning']);
 
         $data = $collection->merge(compact(
             'user_id',
@@ -1323,8 +1323,6 @@ class ProductService
 
             unset($collection['variant']);
         }
-
-        //dd($variants_data);
         
         //Check if porduct has new variants
         foreach ($data as $key => $value) {
@@ -1529,7 +1527,6 @@ class ProductService
         $shipping_sample_parent['estimated_shipping_sample'] = $collection['estimated_shipping_sample'];
         $shipping_sample_parent['paid_sample'] = $collection['paid_sample'];
         $shipping_sample_parent['shipping_amount'] = $collection['shipping_amount'];
-        $collection['low_stock_quantity'] = $collection['stock_qty_warning'];
 
         if(isset($collection['product_sk'])){
             $collection['sku'] = $collection['product_sk'];
@@ -1538,16 +1535,16 @@ class ProductService
             $collection['sku'] = null;
         }
 
-        if(isset($collection['stock_qty_warning'])){
-            $collection['low_stock_quantity'] = $collection['stock_qty_warning'];
-            unset($collection['stock_qty_warning']);
+        if(isset($collection['quantite_stock_warning'])){
+            $collection['low_stock_quantity'] = $collection['quantite_stock_warning'];
+            unset($collection['quantite_stock_warning']);
         }else{
             $collection['low_stock_quantity'] = null;
         }     
 
         unset($collection['from_shipping']);
         unset($collection['sk_product']);
-        unset($collection['stock_qty_warning']);
+        unset($collection['quantite_stock_warning']);
         unset($collection['to_shipping']);
         unset($collection['shipper']);
         unset($collection['estimated_order']);
@@ -2169,7 +2166,7 @@ class ProductService
                     }else{
                         $collection['shipping'] = $variant['shipping'];
                     }
-                    $collection['low_stock'] = $variant['stock'];
+                    $collection['low_stock_quantity'] = $variant['stock'];
                     if(array_key_exists('sku', $variant)){
                         $collection['sku'] = $variant['sku'];
                     }else{
@@ -2521,9 +2518,9 @@ class ProductService
             $collection['sku'] = null;
         }
 
-        if(isset($collection['stock_qty_warning'])){
-            $collection['low_stock_quantity'] = $collection['stock_qty_warning'];
-            unset($collection['stock_qty_warning']);
+        if(isset($collection['quantite_stock_warning'])){
+            $collection['low_stock_quantity'] = $collection['quantite_stock_warning'];
+            unset($collection['quantite_stock_warning']);
         }else{
             $collection['low_stock_quantity'] = null;
         }       
@@ -3604,7 +3601,7 @@ class ProductService
                     }else{
                         $collection['shipping'] = $variant['shipping'];
                     }
-                    $collection['low_stock'] = $variant['stock'];
+                    $collection['low_stock_quantity'] = $variant['stock'];
                     if(array_key_exists('sku', $variant)){
                         $collection['sku'] = $variant['sku'];
                     }else{

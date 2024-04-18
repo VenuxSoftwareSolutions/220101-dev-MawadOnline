@@ -1098,7 +1098,7 @@
                                         <input type="text" class="form-control" value="{{ translate('Low stock warning') }}" disabled>
                                     </div>
                                     <div class="col-md-8 mb-3">
-                                        <input type="text" name="stock_qty_warning" class="form-control" value="{{ $product->low_stock_quantity }}" id="stock_qty_warning">
+                                        <input type="text" name="quantite_stock_warning" class="form-control" value="{{ $product->low_stock_quantity }}" id="stock_qty_warning">
                                     </div>
                                 </div>
                             </div>
