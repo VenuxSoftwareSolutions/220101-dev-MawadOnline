@@ -68,9 +68,20 @@ class HomeController extends Controller
 
     public function load_newest_product_section()
     {
+        
         $newest_products = Cache::remember('newest_products', 3600, function () {
-            //return filter_products(Product::latest())->limit(12)->get();
-            return Product::where('is_parent', 0)->where('published', 1)->where('approved', 1)->orderBy('id','desc')->limit(12)->get();
+            return Product::where(function($query) {
+                $query->where('published', 1)
+                    ->where('approved', 1)
+                    ->where('is_parent', 0);
+            })
+            ->orWhere(function($query) {
+                $query->where('published', 1)
+                    ->where('is_parent', 0)
+                    ->where('last_version', 1)
+                    ->whereIn('approved', [0, 2, 4]);
+            })
+            ->orderBy('id','desc')->limit(12)->get();
         });
 
         return view('frontend.'.get_setting('homepage_select').'.partials.newest_products_section', compact('newest_products'));
@@ -355,7 +366,7 @@ class HomeController extends Controller
         // }
         // abort(404);
 
-        $parent  = Product::with('reviews', 'brand', 'stocks', 'user', 'user.shop')->where('auction_product', 0)->where('slug', $slug)->where('approved', 1)->first();
+        $parent  = Product::where('slug', $slug)->where('approved', 1)->first();
 
         if ($parent != null) {         
 

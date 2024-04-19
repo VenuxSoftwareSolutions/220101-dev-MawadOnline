@@ -706,6 +706,8 @@ class ProductService
                     }
 
                     $data['sku'] =  $variant['sku'];
+                    $randomString = Str::random(5);
+                    $data['slug'] =  $data['slug'] . '-' . $randomString;
 
                     $product = Product::create($data);
 
@@ -2218,6 +2220,10 @@ class ProductService
                         $collection['sample_description'] = $variant['sample_description'];
                         $collection['sample_price'] = $variant['sample_price'];
                     }
+
+                    $randomString = Str::random(5);
+                    $collection['slug'] =  $collection['slug'] . '-' . $randomString;
+
                     $new_product = Product::create($collection);
 
                     //attributes of variant
@@ -3617,6 +3623,9 @@ class ProductService
                         $collection['sample_description'] = $variant['sample_description'];
                         $collection['sample_price'] = $variant['sample_price'];
                     }
+
+                    $randomString = Str::random(5);
+                    $collection['slug'] =  $collection['slug'] . '-' . $randomString;
 
                     $new_product = Product::create($collection);
 

@@ -176,7 +176,7 @@
                                     @endif
                                 </td>
                                 <td class="text-right">
-                                    @if($product->approved != 4)
+                                    @if(($product->approved != 4) && ($product->approved != 3))
                                         <a class="btn btn-soft-info btn-icon btn-circle btn-sm" href="{{route('seller.products.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')])}}" title="{{ translate('Edit') }}">
                                             <i class="las la-edit"></i>
                                         </a>

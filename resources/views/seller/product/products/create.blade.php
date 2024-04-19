@@ -1081,6 +1081,7 @@
             clonedDiv.find('.fa-circle-check').hide();
             clonedDiv.find('#btn-add-pricing-variant').hide();
             clonedDiv.find('.sku').attr('name', 'sku-' + numbers_variant);
+            clonedDiv.find('.sku').prop('readonly', true);
             clonedDiv.find('div.row').each(function() {
                 // Check if the div has display:none set
                 if ($(this).css('display') === 'none') {
