@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Seller;
 
-use App\Mail\SupportMailManager;
-use Illuminate\Http\Request;
-use App\Models\Ticket;
-use App\Models\TicketReply;
-use App\Models\User;
 use Auth;
 use Mail;
+use App\Models\Tour;
+use App\Models\User;
+use App\Models\Ticket;
+use App\Models\TicketReply;
+use Illuminate\Http\Request;
+use App\Mail\SupportMailManager;
 use Spatie\Permission\Models\Role;
 
 class SupportTicketController extends Controller
@@ -31,8 +32,9 @@ class SupportTicketController extends Controller
     {
         seller_lease_creation($user=Auth::user());
 
+        $tour_steps=Tour::orderBy('step_number')->get();
         $tickets = Ticket::where('user_id', Auth::user()->owner_id)->orderBy('created_at', 'desc')->paginate(9);
-        return view('seller.support_ticket.index', compact('tickets'));
+        return view('seller.support_ticket.index', compact('tickets','tour_steps'));
     }
 
     /**

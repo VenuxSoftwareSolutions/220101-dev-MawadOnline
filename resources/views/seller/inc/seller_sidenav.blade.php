@@ -98,7 +98,7 @@
                             </li>
                             @endcan
                             <li class="aiz-side-nav-item">
-                                <a href="{{ route('seller.warehouses.index') }}" class="aiz-side-nav-link">
+                                <a id="warehouses" href="{{ route('seller.warehouses.index') }}" class="aiz-side-nav-link">
                                     <span class="aiz-side-nav-text">{{__('stock.Warehouses')}}</span>
                                 </a>
                             </li>

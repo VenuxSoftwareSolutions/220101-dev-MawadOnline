@@ -42,61 +42,67 @@ class TourSeeder extends Seeder
         Tour::updateOrCreate(
             ['step_number' => 5],
             ['element_id' => 'stock',
-            'title' => 'Step 4: Stock Management',
+            'title' => 'Step 5: Stock Management',
             'description' => 'Track your inventory levels and manage stock efficiently. Avoid overselling and keep your customers satisfied with accurate stock updates.']
         );
         Tour::updateOrCreate(
             ['step_number' => 6],
-            ['element_id' => 'stock_details',
-            'title' => 'Step 5: Stock Details',
-            'description' => 'View detailed information about your stock, including quantities, variations, and restocking options. Keep your inventory organized and up to date.']
+            ['element_id' => 'warehouses',
+            'title' => 'Step 4: Warehouses',
+            'description' => 'Manage warehouses where your stock is stored. Organize your inventory across different locations for efficient stock management.']
         );
         Tour::updateOrCreate(
             ['step_number' => 7],
-            ['element_id' => 'order',
-            'title' => 'Step 6: Order Management',
-            'description' => 'Keep track of incoming orders, process payments, and manage order fulfillment. Ensure smooth transactions and timely delivery to your customers.']
+            ['element_id' => 'stock_details',
+            'title' => 'Step 6: Stock Details',
+            'description' => 'View detailed information about your stock, including quantities, variations, and restocking options. Keep your inventory organized and up to date.']
         );
         Tour::updateOrCreate(
             ['step_number' => 8],
-            ['element_id' => 'packages',
-            'title' => 'Step 7: Package Management',
-            'description' => 'Manage packaging options and shipping details for your products. Choose the best packaging solutions to protect your items during transit.']
+            ['element_id' => 'order',
+            'title' => 'Step 7: Order Management',
+            'description' => 'Keep track of incoming orders, process payments, and manage order fulfillment. Ensure smooth transactions and timely delivery to your customers.']
         );
         Tour::updateOrCreate(
             ['step_number' => 9],
-            ['element_id' => 'package_list',
-            'title' => 'Step 8: Package List',
-            'description' => 'View a list of all packages associated with your orders. Keep track of shipments and delivery status to provide accurate updates to customers.']
+            ['element_id' => 'packages',
+            'title' => 'Step 8: Package Management',
+            'description' => 'Manage packaging options and shipping details for your products. Choose the best packaging solutions to protect your items during transit.']
         );
         Tour::updateOrCreate(
             ['step_number' => 10],
-            ['element_id' => 'staff',
-            'title' => 'Step 9: Staff Management',
-            'description' => 'Add, remove, or manage staff members who assist with running your shop. Delegate tasks and collaborate effectively to streamline operations.']
+            ['element_id' => 'package_list',
+            'title' => 'Step 9: Package List',
+            'description' => 'View a list of all packages associated with your orders. Keep track of shipments and delivery status to provide accurate updates to customers.']
         );
         Tour::updateOrCreate(
             ['step_number' => 11],
-            ['element_id' => 'lease',
-            'title' => 'Step 10: Lease Management',
-            'description' => 'Manage lease agreements for your shop premises or equipment. Stay organized and ensure compliance with lease terms and conditions.']
+            ['element_id' => 'staff',
+            'title' => 'Step 10: Staff Management',
+            'description' => 'Add, remove, or manage staff members who assist with running your shop. Delegate tasks and collaborate effectively to streamline operations.']
         );
         Tour::updateOrCreate(
             ['step_number' => 12],
-            ['element_id' => 'lease_details',
-            'title' => 'Step 11: Lease Details',
-            'description' => 'View detailed information about your lease agreements, including terms, renewal dates, and rental payments. Stay on top of lease obligations.']
+            ['element_id' => 'lease',
+            'title' => 'Step 11: Lease Management',
+            'description' => 'Manage lease agreements for your shop premises or equipment. Stay organized and ensure compliance with lease terms and conditions.']
         );
         Tour::updateOrCreate(
             ['step_number' => 13],
-            ['element_id' => 'support_tickets',
-            'title' => 'Step 12: Support Tickets',
-            'description' => 'Handle customer inquiries, feedback, and support requests. Provide timely assistance and resolve issues to maintain customer satisfaction.']
+            ['element_id' => 'sales',
+            'title' => 'Step 12: Sales',
+            'description' => 'Monitor your sales performance, analyze trends, and track revenue. Gain insights into your business growth and make informed decisions to drive success.']
         );
         Tour::updateOrCreate(
             ['step_number' => 14],
+            ['element_id' => 'support_tickets',
+            'title' => 'Step 13: Support Tickets',
+            'description' => 'Handle customer inquiries, feedback, and support requests. Provide timely assistance and resolve issues to maintain customer satisfaction.']
+        );
+        Tour::updateOrCreate(
+            ['step_number' => 15],
             ['element_id' => 'setting',
-            'title' => 'Step 13: Account Settings',
+            'title' => 'Step 14: Account Settings',
             'description' => 'Adjust your account settings and preferences. Customize your dashboard experience to suit your needs and optimize your workflow.']
         );
     }
