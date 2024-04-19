@@ -432,6 +432,10 @@ class SellerController extends Controller
 
     public function resubmitRegistration($id,Request $request,$proposedId = null)
     {
+          // Validate the incoming request data
+          $request->validate([
+            'reject_reason' => 'required|string|max:5000', // Validate reject_reason field
+        ]);
         // Get the reject reason and image URL from the request
         $rejectReason = $request->input('reject_reason');
         $seller = User::findOrFail($id);
@@ -637,25 +641,42 @@ class SellerController extends Controller
 
     // Decode the modified fields from the proposed change
     $modified_fields = json_decode($proposedChange->modified_fields);
-
+    // $propertyExists = array_key_exists('tax_waiver', $existingBusinessInformation->toArray());
+    // dd($propertyExists) ;
+    // $propertyExists = property_exists($existingBusinessInformation, 'po_box');
+    // dd($propertyExists) ;
     if (is_array($modified_fields)) {
         foreach ($modified_fields as $field) {
             // Check if the field exists in the existing payout information
-            if (isset($existingPayoutInformation->{$field->field})) {
+            // if (isset($existingPayoutInformation->{$field->field})) {
 
-                // Update the field with the new value
+            //     // Update the field with the new value
+            //     $existingPayoutInformation->{$field->field} = $field->new_value;
+            // }
+            // else if (isset($existingContactPeople->{$field->field})){
+            //     $existingContactPeople->{$field->field} = $field->new_value;
+
+            // }
+            // else if (isset($existingBusinessInformation->{$field->field}) /* || is_null($existingBusinessInformation->{$field->field}) */){
+
+            //     $existingBusinessInformation->{$field->field} = $field->new_value;
+
+            // }
+            if (array_key_exists($field->field, $existingPayoutInformation->toArray())){
+
                 $existingPayoutInformation->{$field->field} = $field->new_value;
+
             }
-            else if (isset($existingContactPeople->{$field->field})){
+            else if (array_key_exists($field->field, $existingContactPeople->toArray())){
+
                 $existingContactPeople->{$field->field} = $field->new_value;
 
             }
-            else if (isset($existingBusinessInformation->{$field->field}) || is_null($existingBusinessInformation->{$field->field})){
+            else if (array_key_exists($field->field, $existingBusinessInformation->toArray())){
 
                 $existingBusinessInformation->{$field->field} = $field->new_value;
 
             }
-
 
             // else if ($field->field == "trade_name_english") {
             //     $trade_name['en'] = $field->new_value ;
@@ -676,8 +697,13 @@ class SellerController extends Controller
                     $translationKey = str_replace('_arabic', '', $field->field);
                 }
                 // dd($translationKey) ;
-                if (isset($existingBusinessInformation->{$translationKey}))
-                    $existingBusinessInformation->{$translationKey} = [$language=>$field->new_value]  ;
+                // if (isset($existingBusinessInformation->{$translationKey}))
+                //     $existingBusinessInformation->{$translationKey} = [$language=>$field->new_value]  ;
+                if (array_key_exists($translationKey, $existingBusinessInformation->toArray())){
+
+                    $existingBusinessInformation->{$translationKey} = [$language=>$field->new_value] ;
+
+                }
 
             }
 

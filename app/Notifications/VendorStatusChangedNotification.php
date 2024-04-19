@@ -49,15 +49,36 @@ class VendorStatusChangedNotification extends Notification implements ShouldQueu
      * @param  mixed  $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
+    // public function toMail($notifiable)
+    // {
+    //     $logo = asset('public/uploads/all/CxeI3PF3NMzjzHp6Ct3xf8dPS1q2pFYmwAwbHQii.png'); // Path to your custom logo
+    //     $admin = User::where('user_type','admin')->first(); // Fetch the first admin
+    //     $reasonTitle = $this->reasonTitle ;
+    //     if (is_null($reasonTitle))
+    //         $reasonTitle="Vendor Status Changed" ;
+    //     return (new MailMessage)
+    //         ->bcc($admin->email) // Blind copy (BCC) to admin
+    //         ->subject($reasonTitle)
+    //         ->view('seller.notification.email', [
+    //             'oldStatus' => $this->oldStatus,
+    //             'newStatus' => $this->newStatus,
+    //             'logo' => $logo,
+    //             'reason' => $this->reason,
+    //             'vendorEmail' => $this->vendorEmail
+
+    //         ]);
+    // }
     public function toMail($notifiable)
     {
         $logo = asset('public/uploads/all/CxeI3PF3NMzjzHp6Ct3xf8dPS1q2pFYmwAwbHQii.png'); // Path to your custom logo
-        $admin = User::where('user_type','admin')->first(); // Fetch the first admin
-        $reasonTitle = $this->reasonTitle ;
-        if (is_null($reasonTitle))
-            $reasonTitle="Vendor Status Changed" ;
-        return (new MailMessage)
-            ->bcc($admin->email) // Blind copy (BCC) to admin
+        $admins = User::where('user_type', 'admin')->get(); // Fetch all admins
+
+        $reasonTitle = $this->reasonTitle;
+        if (is_null($reasonTitle)) {
+            $reasonTitle = "Vendor Status Changed";
+        }
+
+        $mailMessage = (new MailMessage)
             ->subject($reasonTitle)
             ->view('seller.notification.email', [
                 'oldStatus' => $this->oldStatus,
@@ -65,8 +86,14 @@ class VendorStatusChangedNotification extends Notification implements ShouldQueu
                 'logo' => $logo,
                 'reason' => $this->reason,
                 'vendorEmail' => $this->vendorEmail
-
             ]);
+
+        // Loop through each admin and add them as a BCC recipient
+        foreach ($admins as $admin) {
+            $mailMessage->bcc($admin->email);
+        }
+
+        return $mailMessage;
     }
 
     /**

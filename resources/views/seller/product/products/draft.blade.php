@@ -783,7 +783,7 @@
                                             </div>
                                             <div class="col-md-8">
                                                 <div class="custom-file mb-3">
-                                                    <input type="file" class="custom-file-input photos_variant" name="variant[photo][{{ $children->id }}][]" id="photos_variant{{ $key }}" accept=".jpeg, .jpg, .png" multiple>
+                                                    <input type="file" class="custom-file-input photos_variant" data-count = "{{ count($children->getImagesProduct()) }}" name="variant[photo][{{ $children->id }}][]" id="photos_variant{{ $key }}" accept=".jpeg, .jpg, .png" multiple>
                                                     <label class="custom-file-label" for="photos_variant{{ $key }}">Choose files</label>
                                                 </div>
                                                 @if(count($children->getImagesProduct()) > 0)
@@ -1083,6 +1083,26 @@
                         <h5 class="mb-0 h6">{{translate('General Attributes')}}</h5>
                     </div>
                     <div class="card-body">
+                        @if(count($product->getChildrenProductsDesc()) == 0)
+                            <div id="sku_product_product" style="margin-left: -15px;">
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <input type="text" class="form-control" value="{{ translate('SKU') }}" disabled>
+                                    </div>
+                                    <div class="col-md-8 mb-3">
+                                        <input type="text" name="product_sk" class="form-control" value="{{ $product->sku }}" id="product_sk">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <input type="text" class="form-control" value="{{ translate('Low stock warning') }}" disabled>
+                                    </div>
+                                    <div class="col-md-8 mb-3">
+                                        <input type="text" name="stock_qty_warning" class="form-control" value="{{ $product->low_stock_quantity }}" id="stock_qty_warning">
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                         <div class="row">
                             <div id="general_attributes">
                                 @if (count($general_attributes_ids_attributes) > 0)
@@ -1189,7 +1209,7 @@
                                 <textarea name="meta_description" rows="8" class="form-control">{{ $product->meta_description }}</textarea>
                             </div>
                         </div>
-                        <div class="form-group row">
+                        {{-- <div class="form-group row">
                             <label class="col-md-3 col-form-label" for="signinSrEmail">{{ translate('Meta Image') }}</label>
                             <div class="col-md-8">
                                 <div class="input-group" data-toggle="aizuploader" data-type="image">
@@ -1202,7 +1222,7 @@
                                 <div class="file-preview box sm">
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>
@@ -1305,6 +1325,7 @@
                 $('body #attributes').prop('disabled', true);
                 $('#variant_informations').hide();
                 $('#btn-create-variant').hide();
+                $('body #sku_product_product').show();
                 $('body #bloc_variants_created').hide();
                 AIZ.plugins.bootstrapSelect('refresh');
             } else {
@@ -1313,6 +1334,9 @@
                     if ($('#attributes option').length > 0) {
                         $('body #attributes').prop('disabled', false);
                         $('#variant_informations').show();
+                        $('body #sku_product_product').hide();
+                        $('body #product_sk').val(null);
+                        $('body #stock_qty_warning').val(null);
                         $('#btn-create-variant').show();
                         $('.div-btn').show();
                         AIZ.plugins.bootstrapSelect('refresh');
@@ -1514,14 +1538,36 @@
         $('body').on('change', '.photos_variant', function() {
             // Get the number of selected files
             var numFiles = $(this)[0].files.length;
+            var files = this.files;
+            var uploaded_files = $(this).data('count');
+            var all_files_length = files.length + uploaded_files
 
-            // Update the label text accordingly
-            var labelText = numFiles === 1 ? '1 file selected' : numFiles + ' files selected';
-            $(this).next('.custom-file-label').html(labelText);
+            // Maximum number of allowed files
+            var maxFiles = 10;
+            if (all_files_length > maxFiles) {
+                swal(
+                    'Cancelled',
+                    '{{ translate("You can only upload a maximum of 10 files.")}}',
+                    'error'
+                )
+                this.value = ''; // Clear the file input
+            }else if(all_files_length == 0){
+                swal(
+                    'Cancelled',
+                    '{{ translate("You need to select at least one picture.")}}',
+                    'error'
+                )
+                var labelText = '0 file selected';
+                $(this).next('.custom-file-label').html(labelText);
+            }else if( (all_files_length <= maxFiles) && (all_files_length > 0)){
+                // Update the label text accordingly
+                var labelText = numFiles === 1 ? '1 file selected' : numFiles + ' files selected';
+                $(this).next('.custom-file-label').html(labelText);
+            }
         });
 
         //Create variant when click on button create variant
-        $('#btn-create-variant').on('click', function() {
+        $('body').on('click', '#btn-create-variant', function() {
             // Clone the original div
             var clonedDiv = $('#variant_informations').clone();
 
@@ -1534,7 +1580,7 @@
             // Append the cloned div to the container
             var count = numbers_variant + 1;
             //add attribute name for each input cloned
-            var html_to_add = '<div style="float: right; margin-top: -35px"><i class="fa-regular fa-circle-check fa-xl square-variant" title="End edit"></i><i class="fa-regular fa-pen-to-square fa-xl square-variant" title="Edit variant"></i><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
+            var html_to_add = '<div style="float: right; margin-top: -35px"><i class="fa-regular fa-pen-to-square fa-xl square-variant" title="Edit variant"></i><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
             clonedDiv.find('h3').after(html_to_add);
             //clonedDiv.find('.fa-circle-xmark').hide();
             clonedDiv.find('.fa-circle-check').hide();

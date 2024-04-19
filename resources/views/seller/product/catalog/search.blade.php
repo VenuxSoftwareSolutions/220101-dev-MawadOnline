@@ -27,6 +27,9 @@
     .row_center small:last-child{
         float: right;
     }
+    .row_center small:first-child{
+        float: left;
+    }
 </style>
 
 @section('panel_content')
@@ -49,7 +52,7 @@
             <div class="card-body">
                 <div class="row row_center">
                     <div  class="col-12 search_bloc">
-                        <input id="step1" type="text" required class="form-control search" style="width: 50%" id="search" placeholder="{{ translate('Search by product name, model, brand …') }}">
+                        <input  type="text" required class="form-control search" style="width: 50%" placeholder="{{ translate('Search by product name, model, brand …') }}">
 
                     </div>
                     <div id="result" class="col-12 search_bloc panel panel-default" style="display:none">
@@ -59,9 +62,6 @@
                     </div>
                     @if(Auth::user()->user_type == "seller")
                         <div class="col-12" style="width: 50%; padding: 0px 422px;">
-                            <small> <a href="{{ route('seller.products.create') }}">{{ translate('Create product manually.') }}</small></a>
-                            <small>{{ translate('Bulk upload products') }}</small>
-                        <div class="col-12" style="width: 50%; padding: 0px 422px; display: flex; ">
                             <small> <a href="{{ route('seller.products.create') }}">{{ translate('Create product manually.') }}</small></a>
                             {{-- <small>{{ translate('Bulk upload products') }}</small> --}}
                         </div>
@@ -76,8 +76,9 @@
 @section('script')
 
 <script>
-    $('#search').keyup(function(){
-        var search = $('#search').val();
+    console.log('alert')
+    $('.search').keyup(function(){
+        var search = $(this).val();
         if(search==""){
             $("#memList").html("");
             $('#result').hide();

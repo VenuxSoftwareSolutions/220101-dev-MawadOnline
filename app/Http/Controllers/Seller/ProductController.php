@@ -292,7 +292,7 @@ class ProductController extends Controller
                     foreach ($attributes as $key=>$attribute){
                         $html .= "<option  value='".$attribute->id."'>". $attribute->getTranslation('name') ."</option>";
                         $html_attributes_generale .= '<div class="row attribute-variant-'. $attribute->id .' mb-3">
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <input type="text" class="form-control" value="'.translate($attribute->getTranslation('name')).'" disabled>
                         </div>';
 

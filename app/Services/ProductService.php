@@ -212,7 +212,7 @@ class ProductService
         $shipping_sample_parent['estimated_shipping_sample'] = $collection['estimated_shipping_sample'];
         $shipping_sample_parent['paid_sample'] = $collection['paid_sample'];
         $shipping_sample_parent['shipping_amount'] = $collection['shipping_amount'];
-
+        
         unset($collection['from_shipping']);
         unset($collection['to_shipping']);
         unset($collection['shipper']);
@@ -228,15 +228,7 @@ class ProductService
         
         $vat = $vat_user->vat_registered;
 
-        $data = $collection->merge(compact(
-            'user_id',
-            'shipping_cost',
-            'slug',
-            'colors',
-            'published',
-            'is_draft',
-            'vat'
-        ))->toArray();
+        
 
         $variants_data = [];
         $general_attributes_data = [];
@@ -431,12 +423,28 @@ class ProductService
             }
         }
 
+        $collection['sku'] = $collection['product_sk'];
+        $collection['low_stock_quantity'] = $collection['stock_qty_warning'];
+        
+        unset($collection['product_sk']);
+        unset($collection['stock_qty_warning']);
+
+        $data = $collection->merge(compact(
+            'user_id',
+            'shipping_cost',
+            'slug',
+            'colors',
+            'published',
+            'is_draft',
+            'vat'
+        ))->toArray();
+
         //dd($variants_data);
 
         $ids_attributes_color = Attribute::where('type_value', 'color')->pluck('id')->toArray();
         $ids_attributes_list = Attribute::where('type_value', 'list')->pluck('id')->toArray();
         $ids_attributes_numeric = Attribute::where('type_value', 'numeric')->pluck('id')->toArray();
-        $data['sku'] = $data['name'];
+        
         $prefixToRemove = 'attribute_generale';
         $prefixToRemoveUnit = 'unit_attribute_generale';
 
@@ -448,6 +456,8 @@ class ProductService
               unset($data[$key]);
             }
         }
+
+        
 
         //dd($data);
         if(!isset($data['activate_attributes'])){
@@ -956,7 +966,6 @@ class ProductService
             }
             return $product_parent;
         }
-
     }
 
     public function update(array $data, Product $product_update)
@@ -1124,10 +1133,37 @@ class ProductService
                         $shipping_variant['charge_per_unit_shipping'] = $data['variant']['charge_per_unit_shipping'][$key];
                         $variants_data[$key]['shipping_details'] = $shipping_variant;
                     }else{
-                        $variants_data[$key]['shipping_details'] = $shipping;
+                        $shipping_parent = [];
+                        if($collection['from_shipping'][0] && ($collection['to_shipping'][0]!= null)&& ($collection['shipper'][0]!= null)&& ($collection['estimated_order'][0]!= null)){
+                            $shipping_parent['from_shipping'] = $collection['from_shipping'];
+                            $shipping_parent['to_shipping'] = $collection['to_shipping'];
+                            $shipping_parent['shipper'] = $collection['shipper'];
+                            $shipping_parent['estimated_order'] = $collection['estimated_order'];
+                            $shipping_parent['estimated_shipping'] = $collection['estimated_shipping'];
+                            $shipping_parent['paid'] = $collection['paid'];
+                            $shipping_parent['shipping_charge'] = $collection['shipping_charge'];
+                            $shipping_parent['flat_rate_shipping'] = $collection['flat_rate_shipping'];
+                            $shipping_parent['vat_shipping'] = $vat_user->vat_registered;
+                            $shipping_parent['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'];
+                        }
+                        $variants_data[$key]['shipping_details'] = $shipping_parent;
                     }
                 }else{
-                    $variants_data[$key]['shipping_details'] = $shipping;
+                    $shipping_parent = [];
+                        if($collection['from_shipping'][0] && ($collection['to_shipping'][0]!= null)&& ($collection['shipper'][0]!= null)&& ($collection['estimated_order'][0]!= null)){
+                            $shipping_parent['from_shipping'] = $collection['from_shipping'];
+                            $shipping_parent['to_shipping'] = $collection['to_shipping'];
+                            $shipping_parent['shipper'] = $collection['shipper'];
+                            $shipping_parent['estimated_order'] = $collection['estimated_order'];
+                            $shipping_parent['estimated_shipping'] = $collection['estimated_shipping'];
+                            $shipping_parent['paid'] = $collection['paid'];
+                            $shipping_parent['shipping_charge'] = $collection['shipping_charge'];
+                            $shipping_parent['flat_rate_shipping'] = $collection['flat_rate_shipping'];
+                            $shipping_parent['vat_shipping'] = $vat_user->vat_registered;
+                            $shipping_parent['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'];
+                        }
+
+                    $variants_data[$key]['shipping_details'] = $shipping_parent;
                 }
 
                 if(array_key_exists('sample_available', $data['variant'])){
@@ -1482,8 +1518,9 @@ class ProductService
             }
         }
 
+        // dump($shipping);
         // dump($variants_data);
-        // dump($collection);
+        // dd($data);
         // dd($variants_new_data);
 
         $shipping_sample_parent = [];
@@ -1492,8 +1529,25 @@ class ProductService
         $shipping_sample_parent['estimated_shipping_sample'] = $collection['estimated_shipping_sample'];
         $shipping_sample_parent['paid_sample'] = $collection['paid_sample'];
         $shipping_sample_parent['shipping_amount'] = $collection['shipping_amount'];
+        $collection['low_stock_quantity'] = $collection['stock_qty_warning'];
+
+        if(isset($collection['product_sk'])){
+            $collection['sku'] = $collection['product_sk'];
+            unset($collection['product_sk']);
+        }else{
+            $collection['sku'] = null;
+        }
+
+        if(isset($collection['stock_qty_warning'])){
+            $collection['low_stock_quantity'] = $collection['stock_qty_warning'];
+            unset($collection['stock_qty_warning']);
+        }else{
+            $collection['low_stock_quantity'] = null;
+        }     
 
         unset($collection['from_shipping']);
+        unset($collection['sk_product']);
+        unset($collection['stock_qty_warning']);
         unset($collection['to_shipping']);
         unset($collection['shipper']);
         unset($collection['estimated_order']);
@@ -1505,7 +1559,7 @@ class ProductService
         unset($collection['charge_per_unit_shipping']);
         unset($collection['date_range_pricing']);
 
-        $collection['sku'] = $collection['name'];
+        
         $collection['vat'] = $vat_user->vat_registered;
 
         $ids_attributes_color = Attribute::where('type_value', 'color')->pluck('id')->toArray();
@@ -1751,7 +1805,7 @@ class ProductService
             unset($collection['sample_description']);
             unset($collection['sample_price']);
 
-            
+            //dd($variants_data);
             if(count($variants_data) > 0){          
                 foreach ($variants_data as $id => $variant){
                     
@@ -2460,6 +2514,20 @@ class ProductService
             unset($collection['button']);
         }
 
+        if(isset($collection['product_sk'])){
+            $collection['sku'] = $collection['product_sk'];
+            unset($collection['product_sk']);
+        }else{
+            $collection['sku'] = null;
+        }
+
+        if(isset($collection['stock_qty_warning'])){
+            $collection['low_stock_quantity'] = $collection['stock_qty_warning'];
+            unset($collection['stock_qty_warning']);
+        }else{
+            $collection['low_stock_quantity'] = null;
+        }       
+
         $collection['is_draft'] = $is_draft;
 
         $pricing = [];
@@ -2587,10 +2655,37 @@ class ProductService
                         $shipping_variant['charge_per_unit_shipping'] = $data['variant']['charge_per_unit_shipping'][$key];
                         $variants_data[$key]['shipping_details'] = $shipping_variant;
                     }else{
-                        $variants_data[$key]['shipping_details'] = $shipping;
+                        $shipping_parent = [];
+                        if($collection['from_shipping'][0] && ($collection['to_shipping'][0]!= null)&& ($collection['shipper'][0]!= null)&& ($collection['estimated_order'][0]!= null)){
+                            $shipping_parent['from_shipping'] = $collection['from_shipping'];
+                            $shipping_parent['to_shipping'] = $collection['to_shipping'];
+                            $shipping_parent['shipper'] = $collection['shipper'];
+                            $shipping_parent['estimated_order'] = $collection['estimated_order'];
+                            $shipping_parent['estimated_shipping'] = $collection['estimated_shipping'];
+                            $shipping_parent['paid'] = $collection['paid'];
+                            $shipping_parent['shipping_charge'] = $collection['shipping_charge'];
+                            $shipping_parent['flat_rate_shipping'] = $collection['flat_rate_shipping'];
+                            $shipping_parent['vat_shipping'] = $vat_user->vat_registered;
+                            $shipping_parent['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'];
+                        }
+                        $variants_data[$key]['shipping_details'] = $shipping_parent;
                     }
                 }else{
-                    $variants_data[$key]['shipping_details'] = $shipping;
+                    $shipping_parent = [];
+                        if($collection['from_shipping'][0] && ($collection['to_shipping'][0]!= null)&& ($collection['shipper'][0]!= null)&& ($collection['estimated_order'][0]!= null)){
+                            $shipping_parent['from_shipping'] = $collection['from_shipping'];
+                            $shipping_parent['to_shipping'] = $collection['to_shipping'];
+                            $shipping_parent['shipper'] = $collection['shipper'];
+                            $shipping_parent['estimated_order'] = $collection['estimated_order'];
+                            $shipping_parent['estimated_shipping'] = $collection['estimated_shipping'];
+                            $shipping_parent['paid'] = $collection['paid'];
+                            $shipping_parent['shipping_charge'] = $collection['shipping_charge'];
+                            $shipping_parent['flat_rate_shipping'] = $collection['flat_rate_shipping'];
+                            $shipping_parent['vat_shipping'] = $vat_user->vat_registered;
+                            $shipping_parent['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'];
+                        }
+                        
+                    $variants_data[$key]['shipping_details'] = $shipping_parent;
                 }
 
                 if(array_key_exists('sample_available', $data['variant'])){
@@ -2750,8 +2845,6 @@ class ProductService
 
             unset($collection['variant']);
         }
-
-        //dd($variants_data);
         
         //Check if porduct has new variants
         foreach ($data as $key => $value) {
@@ -2945,9 +3038,6 @@ class ProductService
             }
         }
 
-        // dump($variants_data);
-        // dump($collection);
-
         $shipping_sample_parent = [];
         $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
         $shipping_sample_parent['estimated_sample'] = $collection['estimated_sample'];
@@ -2967,7 +3057,6 @@ class ProductService
         unset($collection['charge_per_unit_shipping']);
         unset($collection['date_range_pricing']);
 
-        $collection['sku'] = $collection['name'];
         $collection['vat'] = $vat_user->vat_registered;
 
         $ids_attributes_color = Attribute::where('type_value', 'color')->pluck('id')->toArray();
