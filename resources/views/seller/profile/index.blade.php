@@ -12,6 +12,10 @@
         color: #FF0017 !important;
         /* Your desired border color */
     }
+       /* Custom CSS for highlighted tabs */
+       .highlighted-tab {
+        border-color: red !important;
+    }
 </style>
 @section('panel_content')
     <div class="aiz-titlebar mt-2 mb-4">
@@ -421,6 +425,9 @@
                                                 placeholder="{{ translate('English Trade Name') }}"
                                                 value="{{$trade_name_english }}"
                                                 name="trade_name_english" required>
+                                                @error('trade_name_english')
+                                                <div class="text-danger">{{ $message }}</div>
+                                                 @enderror
 
                                         </div>
                                     </div>
@@ -432,7 +439,9 @@
                                                 placeholder="{{ translate('Arabic Trade Name') }}"
                                                 value="{{$trade_name_arabic }}"
                                                 name="trade_name_arabic" required>
-
+                                                @error('trade_name_arabic')
+                                                <div class="text-danger">{{ $message }}</div>
+                                                 @enderror
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -451,7 +460,9 @@
                                             <input type="file" class="form-control rounded-0"
                                                 placeholder="{{ translate('Trade License Doc') }}" name="trade_license_doc"
                                                 required>
-
+                                                @error('trade_license_doc')
+                                                <div class="text-danger">{{ $message }}</div>
+                                                 @enderror
 
                                             {{-- <div class="custom-file">
                                         <input name="trade_license_doc" type="file" class="custom-file-input" id="inputGroupFile01">
@@ -469,7 +480,9 @@
                                                 placeholder="{{ translate('English E-shop Name') }}"
                                                 value="{{ $eshop_name_english }}"
                                                 name="eshop_name_english" required>
-
+                                                @error('eshop_name_english')
+                                                <div class="text-danger">{{ $message }}</div>
+                                                 @enderror
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -480,7 +493,9 @@
                                                 placeholder="{{ translate('Arabic E-shop Name') }}"
                                                 value="{{$eshop_name_arabic }}"
                                                 name="eshop_name_arabic" required>
-
+                                                @error('eshop_name_arabic')
+                                                <div class="text-danger">{{ $message }}</div>
+                                                 @enderror
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -490,6 +505,9 @@
 
                                             <textarea class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_desc_english') ? 'color-modified' : '' }}" placeholder="{{ translate('English e-Shop description') }}"
                                                 name="eshop_desc_english">{{ $eshop_desc_english }}</textarea>
+                                                @error('eshop_desc_english')
+                                                <div class="text-danger">{{ $message }}</div>
+                                                 @enderror
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -499,6 +517,9 @@
 
                                             <textarea class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_desc_arabic') ? 'color-modified' : '' }}" placeholder="{{ translate('Arabic e-Shop description') }}"
                                                 name="eshop_desc_arabic">{{ $eshop_desc_arabic  }}</textarea>
+                                                @error('eshop_desc_arabic')
+                                                <div class="text-danger">{{ $message }}</div>
+                                                 @enderror
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -513,6 +534,9 @@
                                                 id="license_issue_date"
                                                 value="{{ $license_issue_date }}"
                                                 name="license_issue_date">
+                                                @error('license_issue_date')
+                                                <div class="text-danger">{{ $message }}</div>
+                                                 @enderror
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -525,6 +549,9 @@
                                                 value="{{ $license_expiry_date }}"
                                                 placeholder="{{ translate('License Expiry Date') }}"
                                                 name="license_expiry_date">
+                                                @error('license_expiry_date')
+                                                <div class="text-danger">{{ $message }}</div>
+                                                 @enderror
                                         </div>
                                     </div>
                                     {{-- @if (isset($user->business_information) && !empty($user->business_information->state)) --}}
@@ -542,7 +569,9 @@
                                                         </option>
                                                     @endforeach
                                                 </select>
-
+                                                @error('state')
+                                                <div class="text-danger">{{ $message }}</div>
+                                                 @enderror
 
                                             </div>
                                         </div>
@@ -567,6 +596,9 @@
 
 
                                                 </select>
+                                                @error('area_id')
+                                                <div class="text-danger">{{ $message }}</div>
+                                                 @enderror
                                             </div>
                                         </div>
                                     {{-- @else
@@ -606,7 +638,9 @@
                                             <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('street') ? 'color-modified' : '' }}"
                                                 value="{{ $street }}"
                                                 placeholder="{{ translate('Street') }}" name="street" required>
-
+                                                @error('street')
+                                                <div class="text-danger">{{ $message }}</div>
+                                                 @enderror
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -615,7 +649,9 @@
                                             <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('building') ? 'color-modified' : '' }}"
                                                 value="{{$building }}"
                                                 placeholder="{{ translate('Building') }}" name="building" required>
-
+                                                @error('building')
+                                                <div class="text-danger">{{ $message }}</div>
+                                                 @enderror
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -625,7 +661,9 @@
                                             <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('unit') ? 'color-modified' : '' }}"
                                                 value="{{$unit }}"
                                                 placeholder="{{ translate('Unit/Office No.') }}" name="unit">
-
+                                                @error('unit')
+                                                <div class="text-danger">{{ $message }}</div>
+                                                 @enderror
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -634,7 +672,9 @@
                                             <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('po_box') ? 'color-modified' : '' }}"
                                                 value="{{ $po_box }}"
                                                 placeholder="{{ translate('PO Box') }}" name="po_box">
-
+                                                @error('po_box')
+                                                <div class="text-danger">{{ $message }}</div>
+                                                 @enderror
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -644,7 +684,9 @@
                                             <input value="{{$landline }}"
                                                 type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('landline') ? 'color-modified' : '' }}"
                                                 placeholder="{{ translate('Landline Phone No.') }}" name="landline">
-
+                                                @error('landline')
+                                                <div class="text-danger">{{ $message }}</div>
+                                                 @enderror
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -684,7 +726,9 @@
                                             @endif
                                             <input type="file" class="form-control rounded-0"
                                                 placeholder="{{ translate('Vat Certificate') }}" name="vat_certificate">
-
+                                                @error('vat_certificate')
+                                                <div class="text-danger">{{ $message }}</div>
+                                                 @enderror
                                         </div>
                                     </div>
                                     <div class="col-md-6" id="trnGroup">
@@ -693,6 +737,9 @@
                                             <input value="{{ $trn }}" type="text"
                                                 class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('trn') ? 'color-modified' : '' }}" placeholder="{{ translate('TRN') }}"
                                                 name="trn">
+                                                @error('trn')
+                                                <div class="text-danger">{{ $message }}</div>
+                                                 @enderror
                                         </div>
                                     </div>
                                     <div class="col-md-6" id="taxWaiverGroup" {{-- style="display: none;" --}}>
@@ -707,6 +754,9 @@
                                                     value="{{ $tax_waiver }}">
                                             @endif
                                             <input type="file" class="form-control rounded-0" name="tax_waiver">
+                                            @error('tax_waiver')
+                                            <div class="text-danger">{{ $message }}</div>
+                                             @enderror
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -724,7 +774,9 @@
                                             @endif
                                             <input type="file" class="form-control rounded-0"
                                                 name="civil_defense_approval">
-
+                                                @error('civil_defense_approval')
+                                                <div class="text-danger">{{ $message }}</div>
+                                                 @enderror
                                         </div>
 
                                     </div>
@@ -795,6 +847,9 @@
                                             class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('first_name') ? 'color-modified' : '' }}"
                                             placeholder="{{ translate('First Name') }}" value="{{ $first_name }}"
                                             name="first_name" required>
+                                            @error('first_name')
+                                            <div class="text-danger">{{ $message }}</div>
+                                             @enderror
 
                                     </div>
                                 </div>
@@ -812,7 +867,9 @@
                                             class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('last_name') ? 'color-modified' : '' }}"
                                             placeholder="{{ translate('Last Name') }}" id="last_name_bi"
                                             value="{{ $last_name }}" name="last_name" required>
-
+                                            @error('last_name')
+                                            <div class="text-danger">{{ $message }}</div>
+                                             @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -829,7 +886,9 @@
                                             class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('email') ? 'color-modified' : '' }}"
                                             id="email_bi" placeholder="{{ translate('Email') }}"
                                             value="{{ $email }}" name="email" required>
-
+                                            @error('email')
+                                            <div class="text-danger">{{ $message }}</div>
+                                             @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -844,7 +903,9 @@
                                             class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('mobile_phone') ? 'color-modified' : '' }}"
                                             placeholder="{{ translate('Mobile Phone') }}" value="{{ $mobile_phone }}"
                                             name="mobile_phone" required>
-
+                                            @error('mobile_phone')
+                                            <div class="text-danger">{{ $message }}</div>
+                                             @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -858,7 +919,9 @@
                                             class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('additional_mobile_phone') ? 'color-modified' : '' }}"
                                             placeholder="{{ translate('Additional Mobile Phone') }}"
                                             value="{{ $additional_mobile_phone }}" name="additional_mobile_phone">
-
+                                            @error('additional_mobile_phone')
+                                            <div class="text-danger">{{ $message }}</div>
+                                             @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -870,7 +933,9 @@
                                             @if ($nationality) data-default="{{ $nationality }}" @else data-default="" @endif
                                             data-flag="true"></select>
                                             <input type="hidden" value="{{$nationality }}" id="nationalityHidden" name="nationality"> <!-- Hidden input for nationality -->
-
+                                            @error('nationality')
+                                            <div class="text-danger">{{ $message }}</div>
+                                             @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -881,7 +946,9 @@
                                             placeholder="{{ translate('Date Of Birth') }}" {{-- value="{{ $user->contact_people->date_of_birth ?? '' }}" --}}
                                             value="{{ $date_of_birth }}"
                                             name="date_of_birth" required>
-
+                                            @error('date_of_birth')
+                                            <div class="text-danger">{{ $message }}</div>
+                                             @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -894,7 +961,9 @@
                                             placeholder="{{ translate('Emirates ID - Number') }}"
                                             value="{{  $emirates_id_number }}" required
                                             name="emirates_id_number">
-
+                                            @error('emirates_id_number')
+                                            <div class="text-danger">{{ $message }}</div>
+                                             @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -906,7 +975,9 @@
                                             {{-- value="{{ $user->contact_people->emirates_id_expiry_date ?? '' }}" --}}
                                             value="{{ $emirates_id_expiry_date }}"
                                             required name="emirates_id_expiry_date">
-
+                                            @error('emirates_id_expiry_date')
+                                            <div class="text-danger">{{ $message }}</div>
+                                             @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -924,7 +995,9 @@
                                         <input type="file" class="form-control rounded-0"
                                             placeholder="{{ translate('Emirates ID') }}" required
                                             name="emirates_id_file_path">
-
+                                            @error('emirates_id_file_path')
+                                            <div class="text-danger">{{ $message }}</div>
+                                             @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -958,7 +1031,9 @@
                                         <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('designation') ? 'color-modified' : '' }}" required
                                             placeholder="{{ translate('Designation') }}"
                                             value="{{ $designation }}" name="designation">
-
+                                            @error('designation')
+                                            <div class="text-danger">{{ $message }}</div>
+                                             @enderror
                                     </div>
                                 </div>
 
@@ -1006,6 +1081,9 @@
                                         <input value="{{ $bankName }}" type="text"
                                             class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('bank_name') ? 'color-modified' : '' }}"
                                             placeholder="{{ translate('Bank Name') }}" name="bank_name" required>
+                                            @error('bank_name')
+                                            <div class="text-danger">{{ $message }}</div>
+                                             @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -1015,6 +1093,9 @@
                                         <input value="{{ $accountName }}" type="text"
                                             class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('account_name') ? 'color-modified' : '' }}"
                                             placeholder="{{ translate('Account Name') }}" name="account_name" required>
+                                            @error('account_name')
+                                            <div class="text-danger">{{ $message }}</div>
+                                             @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -1025,6 +1106,9 @@
                                             class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('account_number') ? 'color-modified' : '' }}"
                                             placeholder="{{ translate('Account Number') }}" name="account_number"
                                             required>
+                                            @error('account_number')
+                                            <div class="text-danger">{{ $message }}</div>
+                                             @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -1033,6 +1117,9 @@
                                         <input value="{{ $iban }}" type="text"
                                             class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('iban') ? 'color-modified' : '' }}"
                                             placeholder="{{ translate('IBAN') }}" name="iban" required>
+                                            @error('iban')
+                                            <div class="text-danger">{{ $message }}</div>
+                                             @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -1041,6 +1128,9 @@
                                         <input value="{{ $swiftCode }}" type="text"
                                             class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('swift_code') ? 'color-modified' : '' }}"
                                             placeholder="{{ translate('Swift Code') }}" name="swift_code" required>
+                                            @error('swift_code')
+                                            <div class="text-danger">{{ $message }}</div>
+                                             @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -1056,6 +1146,9 @@
                                         @endif
                                         <input required type="file" class="form-control rounded-0"
                                             name="iban_certificate">
+                                            @error('iban_certificate')
+                                            <div class="text-danger">{{ $message }}</div>
+                                             @enderror
                                     </div>
                                 </div>
                             </div>
@@ -1370,6 +1463,16 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
+           // Function to highlight tabs with text-danger content
+           function highlightDangerousTabs() {
+                    $('.tab-pane').each(function() {
+                        if ($(this).find('.text-danger').length > 0) {
+                            var tabPaneId = $(this).attr('id');
+
+                            $('.nav-tabs a[href="#' + tabPaneId + '"]').addClass('highlighted-tab');
+                        }
+                    });
+                }
         function switchTab(tabId) {
 
             $('#registerTabs').find('.nav-link').removeClass('active');
@@ -1380,6 +1483,9 @@
 
             // Focus on the first input with 'is-invalid' class within the active tab
             $('#' + tabId).find('.is-invalid').first().focus();
+            // Remove all <div> elements with class "text-danger"
+            $(this).parent().parent().parent().find('div.text-danger').remove();
+
         }
         $(document).ready(function() {
             $('.datepicker').datepicker({
@@ -1390,6 +1496,9 @@
             $('#nationality').change(function() {
                 $('#nationalityHidden').val($(this).val());
             });
+
+        // Call the function initially when document is ready
+        highlightDangerousTabs();
 
             isVatRegistered = $('input[name="vat_registered"]:checked').val();
 

@@ -164,10 +164,10 @@ class ProfileController extends Controller
                         // If the input value is a file (UploadedFile), validate file upload
                         $allowedMimeTypes = ['application/pdf', 'image/jpeg', 'image/png'];
                         if (!in_array($value->getMimeType(), $allowedMimeTypes)) {
-                            $fail('The '.$attribute.' must be a PDF, JPEG, or PNG file.');
+                            $fail('The Emirates ID must be a PDF, JPEG, or PNG file.');
                         }
                         if ($value->getSize() > 5120 * 1024) {
-                            $fail('The '.$attribute.' must be less than or equal to 5120 KB.');
+                            $fail('The Emirates ID must be less than or equal to 5120 KB.');
                         }
                     }
                 },
@@ -288,7 +288,7 @@ class ProfileController extends Controller
                     ];
                 } else {
                     // Compare the value with the existing value if it exists
-                    if ($existingPayoutInformation && $existingPayoutInformation->{$key} != $value) {
+                    if ($existingPayoutInformation && $value && $existingPayoutInformation->{$key} != $value) {
                         $modifiedFields[] = [
                             'field' => $key,
                             'old_value' => $existingPayoutInformation->{$key},
