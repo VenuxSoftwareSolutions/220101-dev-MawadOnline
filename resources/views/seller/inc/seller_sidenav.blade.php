@@ -30,12 +30,7 @@
                         <span class="aiz-side-nav-text">{{ translate('Dashboard') }}</span>
                     </a>
                 </li>
-                <li id="profile" class="aiz-side-nav-item">
-                    <a href="{{ route('seller.profile.index') }}" class="aiz-side-nav-link">
-                        <i class="las la-user aiz-side-nav-icon"></i>
-                        <span class="aiz-side-nav-text">{{ translate('e-Shop Profile') }}</span>
-                    </a>
-                </li>
+
                 @canany(['seller_show_product','seller_view_product_reviews'])
                     <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link">
@@ -205,7 +200,7 @@
                     <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link">
                             <i class="las la-shopping-cart aiz-side-nav-icon"></i>
-                            <span class="aiz-side-nav-text">{{ translate('Belling') }}</span>
+                            <span class="aiz-side-nav-text">{{ translate('Billing') }}</span>
                             <span class="aiz-side-nav-arrow"></span>
                         </a>
                         <!--Submenu-->
@@ -249,7 +244,13 @@
                     </li>
                 @endcan
 
-                @can('seller_shop_settings')
+                <li id="setting" id="profile" class="aiz-side-nav-item">
+                    <a href="{{ route('seller.profile.index') }}" class="aiz-side-nav-link">
+                        <i class="las la-user aiz-side-nav-icon"></i>
+                        <span class="aiz-side-nav-text">{{ translate('e-Shop Profile') }}</span>
+                    </a>
+                </li>
+                {{-- @can('seller_shop_settings')
                     <li id="setting" class="aiz-side-nav-item">
                         <a href="{{ route('seller.shop.index') }}"
                             class="aiz-side-nav-link {{ areActiveRoutes(['seller.shop.index']) }}">
@@ -257,7 +258,7 @@
                             <span class="aiz-side-nav-text">{{ translate('Shop Setting') }}</span>
                         </a>
                     </li>
-                @endcan
+                @endcan --}}
 
                 {{-- @can('seller_shop_payment_history')
                     <li class="aiz-side-nav-item">
