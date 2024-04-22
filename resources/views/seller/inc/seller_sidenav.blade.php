@@ -48,11 +48,17 @@
                             @can('seller_show_product')
                             <li id="products" class="aiz-side-nav-item">
                                 <a href="{{ route('seller.products') }}"
-                                    class="aiz-side-nav-link {{ areActiveRoutes(['seller.products', 'seller.products.create', 'seller.products.edit']) }}">
+                                    class="aiz-side-nav-link {{ areActiveRoutes(['catalog.search_page']) }}">
                                     <span class="aiz-side-nav-text">{{ translate('Products') }}</span>
                                 </a>
                             </li>
                             @endcan
+                            <li id="products" class="aiz-side-nav-item">
+                                <a href="{{ route('catalog.search_page') }}"
+                                    class="aiz-side-nav-link {{ areActiveRoutes(['seller.products', 'seller.products.create', 'seller.products.edit']) }}">
+                                    <span class="aiz-side-nav-text">{{ translate('Mawad catalogue') }}</span>
+                                </a>
+                            </li>
                             {{-- @can('seller_product_bulk_import')
                             <li class="aiz-side-nav-item">
                                 <a href="{{ route('seller.product_bulk_upload.index') }}"
@@ -80,13 +86,13 @@
                         </ul>
                     </li>
                 @endcanany
-                <li id="catalog" class="aiz-side-nav-item">
+                {{-- <li id="catalog" class="aiz-side-nav-item">
                     <a href="{{ route('catalog.search_page') }}"
                         class="aiz-side-nav-link {{ areActiveRoutes(['catalog.search_page']) }}">
                         <i class="las la-folder-open aiz-side-nav-icon"></i>
                         <span class="aiz-side-nav-text">{{ translate('MawadCatalog search page') }}</span>
                     </a>
-                </li>
+                </li> --}}
                 @canany(['seller_add_inventory', 'seller_inventory_history'])
                     <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link">

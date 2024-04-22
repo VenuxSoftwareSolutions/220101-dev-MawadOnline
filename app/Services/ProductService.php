@@ -1668,7 +1668,7 @@ class ProductService
                                 "user_id" => Auth::user()->id,
                                 "key" => 'add_attribute',
                                 "old_value" => NULL,
-                                "new_value" => $attribute_product->id,
+                                "new_value" => $value,
                                 'created_at'            => new \DateTime(),
                                 'updated_at'            => new \DateTime(),
                             ]);
@@ -1895,7 +1895,7 @@ class ProductService
                                         "user_id" => Auth::user()->id,
                                         "key" => 'add_attribute',
                                         "old_value" => NULL,
-                                        "new_value" => $attribute_product->id,
+                                        "new_value" => $value_attribute,
                                         'created_at'            => new \DateTime(),
                                         'updated_at'            => new \DateTime(),
                                     ]);
@@ -2149,7 +2149,7 @@ class ProductService
                                 "user_id" => Auth::user()->id,
                                 "key" => 'add_attribute',
                                 "old_value" => NULL,
-                                "new_value" => $attribute_product->id,
+                                "new_value" => $value,
                                 'created_at'            => new \DateTime(),
                                 'updated_at'            => new \DateTime(),
                             ]);
