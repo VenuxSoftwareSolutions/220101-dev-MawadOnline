@@ -529,7 +529,7 @@ class ProductService
                         }elseif(in_array($attr, $ids_attributes_color)){
                             $value = Color::where('code', $value)->first();
                             $attribute_product->id_colors = $value->id;
-                            $attribute_product->value = $value;
+                            $attribute_product->value = $value->code;
                         }elseif(in_array($attr, $ids_attributes_numeric)){
                             $attribute_product->id_units = $unit_general_attributes_data[$attr];
                             $attribute_product->value = $value;
@@ -1650,7 +1650,7 @@ class ProductService
                         }elseif(in_array($attr, $ids_attributes_color)){
                             $value = Color::where('code', $value)->first();
                             $attribute_product->id_colors = $value->id;
-                            $attribute_product->value = $value;
+                            $attribute_product->value = $value->code;
                         }elseif(in_array($attr, $ids_attributes_numeric)){
                             $attribute_product->id_units = $unit_general_attributes_data[$attr];
                             $attribute_product->value = $value;
@@ -3148,7 +3148,7 @@ class ProductService
                         }elseif(in_array($attr, $ids_attributes_color)){
                             $value = Color::where('code', $value)->first();
                             $attribute_product->id_colors = $value->id;
-                            $attribute_product->value = $value;
+                            $attribute_product->value = $value->code;
                         }elseif(in_array($attr, $ids_attributes_numeric)){
                             $attribute_product->id_units = $unit_general_attributes_data[$attr];
                             $attribute_product->value = $value;

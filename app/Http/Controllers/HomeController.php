@@ -428,9 +428,8 @@ class HomeController extends Controller
                     $variations[$children_id]['variant_pricing-from']['unit_price'] = PricingConfiguration::where('id_products', $children_id)->pluck('unit_price')->toArray();
 
                     $attributes_variant = ProductAttributeValues::where('id_products', $children_id)->where('is_variant', 1)->get();
-    
                     foreach($attributes_variant as $attribute){
-                        $revision_children_attribute = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','ProductAttributeValues')->where('revisionable_id', $attribute->id)->latest()->first();
+                        $revision_children_attribute = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\ProductAttributeValues')->where('revisionable_id', $attribute->id)->latest()->first();
                         if($revision_children_attribute != null && $parent->last_version == 1){
                             if($attribute->id_units != null){
                                 $unit = null;
@@ -502,7 +501,7 @@ class HomeController extends Controller
 
             $attributesGeneralArray = [];
             foreach($attributes_general as $attribute_general){
-                $revision_parent_attribute = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','ProductAttributeValues')->where('revisionable_id', $attribute_general->id)->latest()->first();
+                $revision_parent_attribute = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\ProductAttributeValues')->where('revisionable_id', $attribute_general->id)->latest()->first();
                 if($revision_parent_attribute != null && $parent->last_version == 1){
                     if($attribute->id_units != null){
                         $unit = null;
@@ -629,7 +628,6 @@ class HomeController extends Controller
                 ];
     
             $previewData['detailedProduct'] = $detailedProduct;
-    
             session(['productPreviewData' => $previewData]);
     
             return view('frontend.product_details', compact('previewData'));
