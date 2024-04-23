@@ -1430,6 +1430,7 @@ ul.nav.nav-tabs.shop{
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha3/0.9.3/sha3.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             // Your existing logic here
@@ -2428,7 +2429,7 @@ ul.nav.nav-tabs.shop{
             $('#email').on('change', function() {
                 var email = $(this).val();
                 var csrfToken = $('meta[name="csrf-token"]').attr('content');
-
+               
                 $.ajax({
                     url: '{{route("generateSalt")}}', // Replace this with your Laravel backend route
                     method: 'POST', // or 'GET', depending on your backend setup
@@ -2440,7 +2441,11 @@ ul.nav.nav-tabs.shop{
                     },
                     success: function(response) {
                         // Handle successful response from the backend
-                        console.log(response);
+                        localStorage.setItem('salt', response.salt);
+                        localStorage.setItem('num_hashing_rounds', response.num_hashing_rounds);
+
+                        var hashedPassword = hashPass(email, $('#password').val(), response.salt, response.num_hashing_rounds);
+                        console.log(hashedPassword);
                     },
                     error: function(xhr, status, error) {
                         // Handle errors
@@ -2450,6 +2455,17 @@ ul.nav.nav-tabs.shop{
             });
 
         });
+
+
+
+        function hashPass(username, password, salt, rounds) {
+            let hash = username;
+            for (var i=0; i < rounds; i++) {
+                hash = password + salt + hash;
+                hash = sha3_512(hash);
+            }
+            return hash;
+        }
     </script>
 
 @endsection

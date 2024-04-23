@@ -68,6 +68,14 @@ class ShopController extends Controller
         ]);
     }
 
+    function hashPass($username, $password, $salt, $rounds) {
+        $hash = $username;
+        for ($i=0; $i < $rounds; $i++) {
+            $hash = $password . $salt . $hash;
+            $hash = hash('sha3-512', $hash);
+        }
+        return $hash;
+    }
 
     /**
      * Display a listing of the resource.
@@ -155,8 +163,9 @@ class ShopController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(SellerRegistrationRequest  $request)
+    public function store(Request  $request)
     {
+        dd($request->all());
 
         // $validator = Validator::make($request->all(), [
         //     'first_name' => 'required|string|max:255',
