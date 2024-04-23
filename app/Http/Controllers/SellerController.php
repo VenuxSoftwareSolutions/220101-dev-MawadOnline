@@ -332,8 +332,11 @@ class SellerController extends Controller
             $this->logStatusChange($seller, 'Pending Approval');
 
     // Send an email notification to the seller with old and new status
-    $seller->notify(new VendorStatusChangedNotification($oldStatus, $seller->status));
-    Notification::send($seller, new CustomStatusNotification($oldStatus, $seller->status));
+    if ($seller->id == $seller->owner_id) {
+        $seller->notify(new VendorStatusChangedNotification($oldStatus, $seller->status));
+        Notification::send($seller, new CustomStatusNotification($oldStatus, $seller->status));
+    }
+
 
         // Check if it's an AJAX request
         return response()->json([

@@ -16,7 +16,7 @@
 
     <section class="py-4 py-lg-5">
         <div class="container">
-            <div class="row row-cols-xxl-4 row-cols-lg-3 row-cols-md-2 row-cols-1 gutters-10 justify-content-center">
+            <div class="row row-cols-xxl-3 row-cols-lg-3 row-cols-md-2 row-cols-1 gutters-10 justify-content-center">
                     <div class="col">
                         <div class="card overflow-hidden">
                             <div class="card-body">
@@ -128,7 +128,7 @@
             </div>
             <div class="row mt-2 justify-content-center">
                 <div class="fs-15">
-                    <a href=""><u>Terms & Conditions</u></a>
+                    <a href=""><u>Terms & Conditions<i class="las la-external-link-alt"></i></u> </a>
                 </div>
             </div>
         </div>

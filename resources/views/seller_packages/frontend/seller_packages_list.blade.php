@@ -13,6 +13,120 @@
 
     <section class="py-4 py-lg-5">
         <div class="container">
+            <div class="row row-cols-xxl-3 row-cols-lg-3 row-cols-md-2 row-cols-1 gutters-10 justify-content-center">
+                    <div class="col">
+                        <div class="card overflow-hidden">
+                            <div class="card-body">
+                                <div class="text-center mb-4 mt-3">
+                                    <h5 class="mb-1 h5 fw-600">{{ $seller_packages[0]->getTranslation('name') }}</h5>
+                                </div>
+                                <div class="mb-3 d-flex align-items-center justify-content-center">
+                                    @if ($seller_packages[0]->amount == 0)
+                                        <span class="fs-30 fw-600 lh-1 mb-0">-</span>
+                                    @else
+                                        <span
+                                            class="fs-30 fw-700 lh-1 mb-0">AED {{ $seller_packages[0]->amount }} / month</span>
+                                    @endif
+                                    {{-- <span
+                                        class="text-secondary border-left ml-2 pl-2">{{ $seller_packages->duration }}<br>{{ translate('Days') }}</span> --}}
+                                </div>
+
+                                <ul class="list-group list-group-raw fs-13 mb-5">
+                                    <li class="list-group-item py-2 fw-700">
+                                        <i class="las la-check text-success mr-2"></i>
+                                        {{ translate('Full access to all e-Shop essentials') }}
+                                    </li>
+                                    <li class="list-group-item py-2 fw-700">
+                                        <i class="las la-check text-success mr-2"></i>
+                                         {{ translate('Unlimited products') }}
+                                    </li>
+                                    <li class="list-group-item py-2 fw-700">
+                                        <i class="las la-check text-success mr-2"></i>
+                                         {{ translate('Free e-Shop adminstrator + 4 positions') }}
+                                    </li>
+                                    <li class="list-group-item py-2 fw-700">
+                                        <i class="las la-check text-success mr-2"></i>
+                                         {{ translate('Additional staff position just for AED 10/month') }}
+                                    </li>
+                                </ul>
+
+                                <div class="text-center">
+                                    {{-- @if ($seller_packages->amount == 0)
+                                        <button class="btn btn-primary fw-600"
+                                            onclick="get_free_package({{ $seller_packages->id }})">{{ translate('Free Package') }}</button>
+                                    @else
+                                        @if (addon_is_activated('offline_payment'))
+                                            <button class="btn btn-primary fw-600"
+                                                onclick="select_package({{ $seller_packages->id }})">{{ translate('Purchase Package') }}</button>
+                                        @else
+                                            <button class="btn btn-primary fw-600"
+                                                onclick="show_price_modal({{ $seller_packages->id }})">{{ translate('Purchase Package') }}</button>
+                                        @endif
+                                    @endif --}}
+                                    <button class="btn btn-primary fw-600 col-10"
+                                                onclick="select_package({{ $seller_packages[0]->id }})">{{ translate('Register your e-Shop') }}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card overflow-hidden">
+                            <div class="card-body">
+                                <div class="text-center mb-4 mt-3">
+                                    <h5 class="mb-1 h5 fw-600">{{ $seller_packages[1]->getTranslation('name') }}</h5>
+                                </div>
+                                <div class="mb-3 d-flex align-items-center justify-content-center">
+                                    @if ($seller_packages[1]->amount == 0)
+                                        <span class="fs-30 fw-600 lh-1 mb-0">-</span>
+                                    @else
+                                        <span
+                                            class="fs-32 fw-700 lh-1 mb-0">AED {{ $seller_packages[1]->amount }} / month</span>
+                                    @endif
+                                    {{-- <span
+                                        class="text-secondary border-left ml-2 pl-2">{{ $seller_packages->duration }}<br>{{ translate('Days') }}</span> --}}
+                                </div>
+                                <ul class="list-group list-group-raw fs-13 mb-5">
+                                    <li class="list-group-item py-2 fw-700">
+                                        <i class="las la-check text-success mr-2"></i>
+                                        {{ translate('Everything in the Pro Plan') }}
+                                    </li>
+                                    <li class="list-group-item py-2 fw-700">
+                                        <i class="las la-check text-success mr-2"></i>
+                                         {{ translate('Customized e-Shop roles') }}
+                                    </li>
+                                    <li class="list-group-item py-2 fw-700">
+                                        <i class="las la-check text-success mr-2"></i>
+                                         {{ translate('Marketing analytics') }}
+                                    </li>
+                                    <li class="list-group-item py-2 fw-700">
+                                        <i class="las la-check text-success mr-2"></i>
+                                         {{ translate('And much more...') }}
+                                    </li>
+                                </ul>
+
+                                <div class=" text-center">
+                                    {{-- @if ($seller_packages->amount == 0)
+                                        <button class="btn btn-primary fw-600"
+                                            onclick="get_free_package({{ $seller_packages->id }})">{{ translate('Free Package') }}</button>
+                                    @else
+                                        @if (addon_is_activated('offline_payment'))
+                                            <button class="btn btn-primary fw-600"
+                                                onclick="select_package({{ $seller_packages->id }})">{{ translate('Purchase Package') }}</button>
+                                        @else
+                                            <button class="btn btn-primary fw-600"
+                                                onclick="show_price_modal({{ $seller_packages->id }})">{{ translate('Purchase Package') }}</button>
+                                        @endif
+                                    @endif --}}
+                                    <button class="btn btn-primary fw-600 col-10" disabled>{{ translate('Coming soon') }}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </section>
+    {{-- <section class="py-4 py-lg-5">
+        <div class="container">
             <div class="row row-cols-xxl-4 row-cols-lg-3 row-cols-md-2 row-cols-1 gutters-10 justify-content-center">
                 @foreach ($seller_packages as $key => $seller_package)
                     <div id="step1" class="col">
@@ -60,7 +174,7 @@
                 @endforeach
             </div>
         </div>
-    </section>
+    </section> --}}
 @endsection
 
 @section('modal')
@@ -257,96 +371,21 @@
             if ({{Auth::user()->tour}} == true | {{Auth::user()->id}} != {{Auth::user()->owner_id}}) {
                 return;
             }
+            var tour_steps = [
+            @foreach($tour_steps as $key => $step)
+            {
+                element: document.querySelector('#{{$step->element_id}}'),
+                title: '{{$step->title}}',
+                intro: "{{$step->description}}",
+                position: 'right'
+            },
+            @endforeach
+        ];
+
         let tour = introJs();
         let step_number = 0 ;
         tour.setOptions({
-            steps: [
-                {
-                    element: document.querySelector('#dashboard'),
-                    title: 'Dashboard',
-                    intro: "Welcome to your e-Shop dashboard! This is your central hub for managing your shop's performance, sales, and settings.",
-                    position: 'right'
-                },
-                {
-                    element: document.querySelector('#products'),
-                    title: 'Step 1: Manage Products',
-                    intro: "Here, you can add, edit, and manage your products. Showcase your offerings to attract buyers and keep your inventory up to date.",
-                    position: 'right'
-                },
-                {
-                    element: document.querySelector('#reviews'),
-                    title: 'Step 2: Monitor Reviews',
-                    intro: "Stay informed about what customers are saying. Manage and respond to reviews to maintain a positive reputation and improve your products.",
-                    position: 'right'
-                },
-                {
-                    element: document.querySelector('#catalog'),
-                    title: 'Step 3: Catalog Management',
-                    intro: "Organize your products into categories and collections. Enhance discoverability and make it easier for customers to find what they're looking for.",
-                    position: 'right'
-                },
-                {
-                    element: document.querySelector('#stock'),
-                    title: 'Step 4: Stock Management',
-                    intro: "Track your inventory levels and manage stock efficiently. Avoid overselling and keep your customers satisfied with accurate stock updates.",
-                    position: 'right'
-                },
-                {
-                    element: document.querySelector('#stock_details'),
-                    title: 'Step 5: Stock Details',
-                    intro: "View detailed information about your stock, including quantities, variations, and restocking options. Keep your inventory organized and up to date.",
-                    position: 'right'
-                },
-                {
-                    element: document.querySelector('#order'),
-                    title: 'Step 6: Order Management',
-                    intro: "Keep track of incoming orders, process payments, and manage order fulfillment. Ensure smooth transactions and timely delivery to your customers.",
-                    position: 'right'
-                },
-                {
-                    element: document.querySelector('#packages'),
-                    title: 'Step 7: Package Management',
-                    intro: "Manage packaging options and shipping details for your products. Choose the best packaging solutions to protect your items during transit.",
-                    position: 'right'
-                },
-                {
-                    element: document.querySelector('#package_list'),
-                    title: 'Step 8: Package List',
-                    intro: "View a list of all packages associated with your orders. Keep track of shipments and delivery status to provide accurate updates to customers.",
-                    position: 'right'
-                },
-                {
-                    element: document.querySelector('#staff'),
-                    title: 'Step 9: Staff Management',
-                    intro: "Add, remove, or manage staff members who assist with running your shop. Delegate tasks and collaborate effectively to streamline operations.",
-                    position: 'right'
-                },
-                {
-                    element: document.querySelector('#lease'),
-                    title: 'Step 10: Lease Management',
-                    intro: "Manage lease agreements for your shop premises or equipment. Stay organized and ensure compliance with lease terms and conditions.",
-                    position: 'right'
-                },
-                {
-                    element: document.querySelector('#lease_details'),
-                    title: 'Step 11: Lease Details',
-                    intro: "View detailed information about your lease agreements, including terms, renewal dates, and rental payments. Stay on top of lease obligations.",
-                    position: 'right'
-                },
-                {
-                    element: document.querySelector('#support_tickets'),
-                    title: 'Step 12: Support Tickets',
-                    intro: "Handle customer inquiries, feedback, and support requests. Provide timely assistance and resolve issues to maintain customer satisfaction.",
-                    position: 'right'
-                },
-                {
-                    element: document.querySelector('#setting'),
-                    title: 'Step 13: Account Settings',
-                    intro: "Adjust your account settings and preferences. Customize your dashboard experience to suit your needs and optimize your workflow.",
-                    position: 'right'
-                }
-            ],
-
+            steps: tour_steps ,
             doneLabel: 'Next', // Replace the "Done" button with "Next"
             exitOnEsc : false ,
             exitOnOverlayClick : false ,
@@ -387,7 +426,7 @@
             });
 
         tour.start();
-        tour.goToStepNumber(8);
+        tour.goToStepNumber(9);
         });
     </script>
 @endsection
