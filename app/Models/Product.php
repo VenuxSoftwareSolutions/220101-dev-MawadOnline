@@ -49,7 +49,8 @@ class Product extends Model
                                     'paid_sample',
                                     'shipping_amount',
                                     'sample_available',
-                                    'unit_weight'
+                                    'unit_weight',
+                                    'last_version'
                                 ];
 
     protected function getLastActionNumber()

@@ -2,33 +2,35 @@
 
 namespace App\Http\Controllers\Seller;
 
-use App\Http\Controllers\Controller;
-use App\Models\Product;
-use App\Models\UploadProducts;
-use App\Models\PricingConfiguration;
-use App\Models\ProductAttributeValues;
-use Illuminate\Support\Facades\File;
-use App\Models\Unity;
-use App\Models\ProductCatalog;
-use App\Models\ProductCategory;
-use App\Models\ProductAttributeValueCatalog;
-use App\Models\UploadProductCatalog;
-use App\Models\Brand;
-use Illuminate\Support\Facades\DB;
 use Auth;
+use App\Models\Tour;
+use App\Models\Brand;
+use App\Models\Unity;
+use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Models\ProductCatalog;
+use App\Models\UploadProducts;
+use App\Models\ProductCategory;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use App\Models\PricingConfiguration;
+use App\Models\UploadProductCatalog;
+use Illuminate\Support\Facades\File;
+use App\Models\ProductAttributeValues;
+use App\Models\ProductAttributeValueCatalog;
 
 class CatalogController extends Controller
 {
     public function search(){
-        return view('seller.product.catalog.search');
+        $tour_steps=Tour::orderBy('step_number')->get();
+        return view('seller.product.catalog.search',compact('tour_steps'));
     }
 
     public function search_action(Request $request){
         $products = [];
         $catalogs = [];
         $searchTerm = $request->name;
-        
+
         if(Auth::user()->user_type == "seller"){
             $catalogs = ProductCatalog::where(function ($query) use ($searchTerm) {
                                     $query->where('name', 'like', "%{$searchTerm}%")
@@ -38,7 +40,8 @@ class CatalogController extends Controller
                                 })->take(3)->get();
 
             return view('seller.product.catalog.result')->with(['products' =>  $products, 'catalogs' => $catalogs, 'search' => $request->name]);
-        }elseif((Auth::user()->user_type == "admin") || (Auth::user()->user_type == "staff")){    
+        }elseif(Auth::user()->user_type == "admin"){
+        }elseif((Auth::user()->user_type == "admin") || (Auth::user()->user_type == "staff")){
             $products = Product::where(function ($query) use ($searchTerm) {
                                     $query->where('name', 'like', "%{$searchTerm}%")
                                         ->orWhereHas('brand', function ($query) use ($searchTerm) {
@@ -51,7 +54,7 @@ class CatalogController extends Controller
                                                     ->where('approved', 1);
                                         });
                                 })->take(1)->get();
-                                
+
             if(count($products) == 0){
                 $catalogs = ProductCatalog::where(function ($query) use ($searchTerm) {
                     $query->where('name', 'like', "%{$searchTerm}%")
@@ -73,7 +76,7 @@ class CatalogController extends Controller
             return view('backend.product.catalog.result')->with(['products' =>  $products, 'catalogs' => $catalogs, 'search' => $request->name]);
         }
 
-        
+
     }
 
     public function see_all($search){
@@ -89,10 +92,11 @@ class CatalogController extends Controller
                                     })->get();
 
                 return view('seller.product.catalog.see_all',[
-                    'products' => $products, 
+                    'products' => $products,
                     'catalogs' => $catalogs,
                 ]);
-            }elseif((Auth::user()->user_type == "admin") || (Auth::user()->user_type == "staff")){    
+            }elseif(Auth::user()->user_type == "admin"){
+            }elseif((Auth::user()->user_type == "admin") || (Auth::user()->user_type == "staff")){
                 $products = Product::where(function ($query) use ($search) {
                                         $query->where('name', 'like', "%{$search}%")
                                             ->orWhereHas('brand', function ($query) use ($search) {
@@ -114,7 +118,7 @@ class CatalogController extends Controller
                 })->get();
 
                 return view('backend.product.catalog.see_all',[
-                    'products' => $products, 
+                    'products' => $products,
                     'catalogs' => $catalogs,
                 ]);
             }
@@ -148,15 +152,15 @@ class CatalogController extends Controller
         if($is_catalog == 2){
             $parent = Product::find($id);
             $product_catalog = ProductCatalog::where('product_id', $id)->first();
-            // Check if product is existe in catalog or not 
+            // Check if product is existe in catalog or not
             if($product_catalog != null){
                 $is_added_to_catalog = true;
             }
         }else{
             $parent = ProductCatalog::find($id);
         }
-        
-        
+
+
         if($parent->is_parent == 0){
             if($parent->parent_id != 0){
                 if($is_catalog == 2){
@@ -180,11 +184,11 @@ class CatalogController extends Controller
             $pricing['to'] = [0];
             $pricing['unit_price'] = [0];
         }
-        
+
         $variations = [];
         $pricing_children = [];
         if($parent->is_parent == 1){
-           
+
             if($is_catalog == 2){
                 $childrens_ids = Product::where('parent_id', $parent->id)->pluck('id')->toArray();
             }else{
@@ -261,12 +265,12 @@ class CatalogController extends Controller
                          $attributes[$attributeId][] = $value;
                      }
                     }
-     
+
                 }
              }
         }
 
-        
+
 
         if (is_array($variations) && !empty($variations)) {
             $lastItem  = end($variations);
@@ -277,28 +281,28 @@ class CatalogController extends Controller
             if(count($lastItem['variant_pricing-from']['from']) >0){
                 $min =min($lastItem['variant_pricing-from']['from']) ;
             }
-            
+
         }
 
         if (isset($pricing['from']) && is_array($pricing['from']) && count($pricing['from']) > 0) {
             if(!isset($min))
-                $min = min($pricing['from']) ; 
+                $min = min($pricing['from']) ;
         }
 
         if (isset($pricing['to']) && is_array($pricing['to']) && count($pricing['to']) > 0) {
             if(!isset($max))
                 $max = max($pricing['to']) ;
-        } 
+        }
 
         if ($parent->video_provider === "youtube") {
             $getYoutubeVideoId=$this->getYoutubeVideoId($parent->video_link) ;
         }
         else {
             $getVimeoVideoId=$this->getVimeoVideoId($parent->video_link) ;
-        } 
+        }
 
         $total = isset($pricing['from'][0]) && isset($pricing['unit_price'][0]) ? $pricing['from'][0] * $pricing['unit_price'][0] : "";
-    
+
         $detailedProduct = [
                 'name' => $parent->name,
                 'brand' => $brand ? $brand->name : "",
@@ -308,7 +312,7 @@ class CatalogController extends Controller
                 'quantity' => $lastItem['variant_pricing-from']['from'][0] ?? $pricing['from'][0] ?? '',
                 'price' => $lastItem['variant_pricing-from']['unit_price'][0] ?? $pricing['unit_price'][0] ?? '',
                 'total' => isset($lastItem['variant_pricing-from']['from'][0]) && isset($lastItem['variant_pricing-from']['unit_price'][0]) ? $lastItem['variant_pricing-from']['from'][0] * $lastItem['variant_pricing-from']['unit_price'][0] : $total,
-    
+
                 'general_attributes' =>$attributesGeneralArray,
                 'attributes' =>$attributes ?? [] ,
                 'from' =>$pricing['from'] ?? [] ,
@@ -343,7 +347,7 @@ class CatalogController extends Controller
             return redirect()->back()->with('error', 'Product not found');
         }
 
-        $data = $existingProduct->attributesToArray();        
+        $data = $existingProduct->attributesToArray();
         // Make necessary updates to the attributes (if any)
         unset($data['id']);
         unset($data['product_id']);
@@ -361,7 +365,7 @@ class CatalogController extends Controller
         if (!File::isDirectory($destinationFolder)) {
             File::makeDirectory($destinationFolder);
         }
-        
+
         if (File::isDirectory($path)) {
             File::copyDirectory($path, $destinationFolder);
         }
@@ -386,9 +390,9 @@ class CatalogController extends Controller
                 UploadProducts::insert($new_records);
             }
         }
-         
+
         $attributes = ProductAttributeValueCatalog::where('catalog_id', $request->id)->get();
-        
+
         $new_records_attributes = [];
 
         if(count($attributes) > 0){
@@ -410,10 +414,10 @@ class CatalogController extends Controller
                 ProductAttributeValues::insert($new_records_attributes);
             }
         }
-        
+
         if(count($existingProduct->getChildrenProducts()) > 0){
             foreach($existingProduct->getChildrenProducts() as $children){
-                $data = $children->attributesToArray(); 
+                $data = $children->attributesToArray();
                 unset($data['id']);
                 $data['parent_id'] = $newProduct;
                 $data['user_id'] = Auth::user()->id;
@@ -431,7 +435,7 @@ class CatalogController extends Controller
                 if (!File::isDirectory($destinationFolder)) {
                     File::makeDirectory($destinationFolder);
                 }
-                
+
                 if (File::isDirectory($path)) {
                     File::copyDirectory($path, $destinationFolder);
                 }
@@ -456,7 +460,7 @@ class CatalogController extends Controller
                         UploadProducts::insert($new_records);
                     }
                 }
-                
+
                 $attributes = ProductAttributeValueCatalog::where('catalog_id', $children->id)->get();
                 $new_records_attributes = [];
 
@@ -487,7 +491,7 @@ class CatalogController extends Controller
     }
 
     public function add_product_to_catalog(Request $request){
-        
+
         $existingProduct = Product::find($request->id);
 
         if (!$existingProduct) {
@@ -495,7 +499,7 @@ class CatalogController extends Controller
             return redirect()->back()->with('error', 'Product not found');
         }
 
-        $data = $existingProduct->attributesToArray();        
+        $data = $existingProduct->attributesToArray();
         // Make necessary updates to the attributes (if any)
         unset($data['id']);
         $data['product_id'] = $request->id;
@@ -506,7 +510,7 @@ class CatalogController extends Controller
         if (!File::isDirectory($destinationFolder)) {
             File::makeDirectory($destinationFolder);
         }
-        
+
         if (File::isDirectory($path)) {
             File::copyDirectory($path, $destinationFolder);
         }
@@ -531,9 +535,9 @@ class CatalogController extends Controller
                 UploadProductCatalog::insert($new_records);
             }
         }
-         
+
         $attributes = ProductAttributeValues::where('id_products', $request->id)->get();
-        
+
         $new_records_attributes = [];
 
         if(count($attributes) > 0){
@@ -555,10 +559,10 @@ class CatalogController extends Controller
                 ProductAttributeValueCatalog::insert($new_records_attributes);
             }
         }
-        
+
         if(count($existingProduct->getChildrenProducts()) > 0){
             foreach($existingProduct->getChildrenProducts() as $children){
-                $data = $children->attributesToArray();        
+                $data = $children->attributesToArray();
                 // Make necessary updates to the attributes (if any)
                 unset($data['id']);
                 $data['parent_id'] = $newProduct;
@@ -570,7 +574,7 @@ class CatalogController extends Controller
                 if (!File::isDirectory($destinationFolder)) {
                     File::makeDirectory($destinationFolder);
                 }
-                
+
                 if (File::isDirectory($path)) {
                     File::copyDirectory($path, $destinationFolder);
                 }
@@ -595,7 +599,7 @@ class CatalogController extends Controller
                         UploadProductCatalog::insert($new_records);
                     }
                 }
-                
+
                 $attributes = ProductAttributeValues::where('id_products', $children->id)->get();
                 $new_records_attributes = [];
 

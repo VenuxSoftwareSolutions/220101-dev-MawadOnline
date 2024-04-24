@@ -2,47 +2,48 @@
 
 namespace App\Http\Controllers\Seller;
 
-use AizPackages\CombinationGenerate\Services\CombinationService;
-use App\Http\Requests\ProductRequest;
+use Str;
+use Auth;
+use Artisan;
+use Combinations;
+use Carbon\Carbon;
+use App\Models\Cart;
+use App\Models\Tour;
+use App\Models\User;
+use App\Models\Brand;
+use App\Models\Color;
+use App\Models\Unity;
+use App\Models\Product;
+use App\Models\Shipper;
+use App\Models\Category;
+use App\Models\Shipping;
+use App\Models\Wishlist;
+use App\Models\Attribute;
+use App\Models\Warehouse;
+use App\Models\ProductTax;
+use App\Models\ShippersArea;
 use Illuminate\Http\Request;
 use App\Models\AttributeValue;
-use App\Models\Cart;
-use App\Models\Color;
-use App\Models\Category;
-use App\Models\ProductCategory;
-use App\Models\PricingConfiguration;
-use App\Models\Product;
-use App\Models\Unity;
-use App\Models\Brand;
-use App\Models\ProductTax;
-use App\Models\BusinessInformation;
-use App\Models\ProductTranslation;
-use App\Models\ProductAttributeValues;
-use App\Models\Wishlist;
-use App\Models\Shipper;
-use App\Models\Shipping;
-use App\Models\ShippersArea;
-use App\Models\Warehouse;
 use App\Models\UploadProducts;
-use App\Models\User;
-use App\Models\Attribute;
-use App\Notifications\ShopProductNotification;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
-use Combinations;
-use Artisan;
-use Auth;
-use Str;
-use Illuminate\Support\Facades\File;
-
+use App\Models\ProductCategory;
 use App\Services\ProductService;
+use App\Models\ProductTranslation;
+use Illuminate\Support\Facades\DB;
+use App\Models\BusinessInformation;
 use App\Services\ProductTaxService;
-use App\Services\ProductFlashDealService;
+use App\Models\PricingConfiguration;
+use Illuminate\Support\Facades\File;
+use App\Http\Requests\ProductRequest;
+
 use App\Services\ProductStockService;
-use App\Services\ProductUploadsService;
+use App\Models\ProductAttributeValues;
 use App\Services\ProductPricingService;
 use DateTime;
+use App\Services\ProductUploadsService;
+use App\Services\ProductFlashDealService;
 use Illuminate\Support\Facades\Notification;
+use App\Notifications\ShopProductNotification;
+use AizPackages\CombinationGenerate\Services\CombinationService;
 
 class ProductController extends Controller
 {
@@ -99,7 +100,8 @@ class ProductController extends Controller
             $products = $products->where('name', 'like', '%' . $search . '%');
         }
         $products = $products->paginate(10);
-        return view('seller.product.products.index', compact('products', 'search'));
+        $tour_steps=Tour::orderBy('step_number')->get();
+        return view('seller.product.products.index', compact('products', 'search','tour_steps'));
     }
 
     public function delete_image(Request $request){

@@ -2,21 +2,22 @@
 
 namespace App\Http\Controllers\Seller;
 
+use Auth;
+use Excel;
+use Validator;
+use Carbon\Carbon;
+use App\Models\Tour;
+use App\Models\User;
+use App\Models\Emirate;
+use App\Models\Product;
+use App\Models\Warehouse;
+use App\Models\StockDetails;
+use App\Models\StockSummary;
+use Illuminate\Http\Request;
 use App\Exports\StockSummaryExport;
 use App\Http\Requests\SaveRecordRequest;
 use App\Http\Requests\SearchStockRequest;
 use App\Http\Requests\StoreWarehouseRequest;
-use App\Models\Emirate;
-use App\Models\Product;
-use App\Models\StockDetails;
-use App\Models\StockSummary;
-use App\Models\User;
-use App\Models\Warehouse;
-use Auth;
-use Carbon\Carbon;
-use Excel;
-use Illuminate\Http\Request;
-use Validator;
 
 class StockController extends Controller
 {
@@ -93,8 +94,8 @@ class StockController extends Controller
             ->where('user_id', $seller->id)          // Filter products where 'user_id' column matches the seller's id
             ->get();
 
-
-        return view('seller.stock.index', compact('inventoryData', 'warehouses', 'products'));
+        $tour_steps=Tour::orderBy('step_number')->get();
+        return view('seller.stock.index', compact('inventoryData', 'warehouses', 'products','tour_steps'));
     }
 
     /**
@@ -298,7 +299,8 @@ class StockController extends Controller
         // Fetch all warehouses associated with the seller.
         $warehouses = Warehouse::where("user_id", $seller->id)->get();
         // Return the view for the stock operation report with the warehouses data.
-        return view('seller.stock.stock_operation_report', compact('warehouses'));
+        $tour_steps=Tour::orderBy('step_number')->get();
+        return view('seller.stock.stock_operation_report', compact('warehouses','tour_steps'));
     }
 
     /**
@@ -354,7 +356,8 @@ class StockController extends Controller
         $seller = User::find(Auth::user()->owner_id);
         $warehouses = Warehouse::where('user_id', $seller->id)->get();
         $emirates = Emirate::all();
-        return view('seller.warehouses.index', compact('warehouses', 'emirates'));
+        $tour_steps=Tour::orderBy('step_number')->get();
+        return view('seller.warehouses.index', compact('warehouses', 'emirates','tour_steps'));
     }
 
     public function removeWarehouse(Request $request)

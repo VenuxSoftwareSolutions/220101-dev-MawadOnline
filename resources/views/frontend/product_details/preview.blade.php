@@ -1288,6 +1288,8 @@
             });
         }
     </script>
+    <!-- Toastr JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.all.min.js"></script>
     <script>
         $(document).ready(function() {
               // Set the CSRF token for all AJAX requests
@@ -1647,6 +1649,70 @@
             // });
             sendCheckedAttributes($(this));
         });
+
+        $('.add_product').on('click', function(){
+            var product_id = $(this).data('product_id');
+            var editUrlBase  = "{{ route('seller.products.edit', ['id' => 'PLACEHOLDER']) }}";
+            if(product_id != undefined){
+                $.ajax({
+                    url: "{{route('catalog.add_product')}}",
+                    type: "POST",
+                    data: {
+                        id: product_id
+                    },
+                    cache: false,
+                    dataType: 'JSON',
+                    success: function(dataResult) {
+                        // Replace 'PLACEHOLDER' with the actual slug from the response
+                        var editUrl = editUrlBase.replace('PLACEHOLDER', dataResult.data);
+
+                        // Open the URL
+                        window.location.href = editUrl;
+                    }
+                })
+            }
+        })
+
+        $('.add_product_to_catalog').on('click', function(){
+            var product_id = $(this).data('product_id');
+            var previewUrlBase  = "{{ route('seller.products.edit', ['id' => 'PLACEHOLDER']) }}";
+            var current = $(this);
+            if(product_id != undefined){
+                $.ajax({
+                    url: "{{route('catalog.add_product_to_catalog')}}",
+                    type: "POST",
+                    data: {
+                        id: product_id
+                    },
+                    cache: false,
+                    dataType: 'JSON',
+                    success: function(dataResult) {
+                        
+                        // toastr.options =    {
+                        //                         positionClass: 'toast-top-right',
+                        //                         closeButton: true,
+                        //                         timeOut: 3000, // Set the duration for which the toast will be displayed (in milliseconds)
+                        //                     };
+                                            
+                        // toastr.success('Product added successfully');
+
+                        current.remove();
+                        swal(
+                            'Added',
+                            'Product added successfully',
+                            'success'
+                        )
+                        
+                        // Replace 'PLACEHOLDER' with the actual slug from the response
+                        // var previewUrl = previewUrlBase.replace('PLACEHOLDER', data.data.slug);
+
+                        // // Open the URL in a new tab
+                        // window.open(previewUrl, '_blank');
+                    }
+                })
+            }
+        })
+
 
 
         });

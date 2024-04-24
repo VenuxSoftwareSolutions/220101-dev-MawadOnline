@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\SellerPackage;
-use App\Models\SellerPackageTranslation;
-use App\Models\SellerPackagePayment;
-use App\Models\Shop;
-use Artisan;
 use Auth;
+use Artisan;
 use Session;
 use Carbon\Carbon;
+use App\Models\Shop;
+use App\Models\Tour;
+use Illuminate\Http\Request;
+use App\Models\SellerPackage;
+use App\Models\SellerPackagePayment;
+use App\Models\SellerPackageTranslation;
 
 class SellerPackageController extends Controller
 {
@@ -151,8 +152,9 @@ class SellerPackageController extends Controller
     {
         seller_lease_creation($user=Auth::user());
 
+        $tour_steps=Tour::orderBy('step_number')->get();
         $seller_packages_payment = SellerPackagePayment::with('seller_package')->where('user_id', Auth::user()->id)->paginate(15);
-        return view('seller_packages.frontend.packages_payment_list', compact('seller_packages_payment'));
+        return view('seller_packages.frontend.packages_payment_list', compact('seller_packages_payment','tour_steps'));
     }
 
     public function seller_packages_list()
@@ -160,7 +162,8 @@ class SellerPackageController extends Controller
         seller_lease_creation($user=Auth::user());
 
         $seller_packages = SellerPackage::all();
-        return view('seller_packages.frontend.seller_packages_list', compact('seller_packages'));
+        $tour_steps=Tour::orderBy('step_number')->get();
+        return view('seller_packages.frontend.seller_packages_list', compact('seller_packages','tour_steps'));
     }
 
     public function purchase_package(Request $request)

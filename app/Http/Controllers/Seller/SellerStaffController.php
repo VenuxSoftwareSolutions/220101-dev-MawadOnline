@@ -6,6 +6,7 @@ use Auth;
 use Hash;
 use Carbon\Carbon;
 use App\Models\Role;
+use App\Models\Tour;
 use App\Models\User;
 use App\Models\Staff;
 use App\Models\SellerLease;
@@ -38,8 +39,9 @@ class SellerStaffController extends Controller
     {
         seller_lease_creation($user=Auth::user());
 
+        $tour_steps=Tour::orderBy('step_number')->get();
         $staffs = Staff::where('created_by',Auth::user()->owner_id)->orderBy('id','desc')->groupBy('user_id')->paginate(10);
-        return view('seller.staff.staffs.index', compact('staffs'));
+        return view('seller.staff.staffs.index', compact('staffs','tour_steps'));
     }
 
     /**
@@ -88,7 +90,7 @@ class SellerStaffController extends Controller
                 $user->phone = $request->mobile;
                 $user->user_type = "seller";
                 $user->step_number = 0;
-                $user->status ="Draft";
+                $user->status ="Enabled";
                 $user->owner_id = $vendor->id;
                 $password = $this->generatePassword(12);
                 $user->password = Hash::make($password);
@@ -365,7 +367,6 @@ class SellerStaffController extends Controller
         $current_lease = SellerLease::where('vendor_id',Auth::user()->owner_id)->where('start_date', '<=', $currentDate)
             ->where('end_date', '>=', $currentDate)->first();
         $roles_id=SellerLeaseDetail::where('lease_id',$current_lease->id)->orderBy('is_used')->get();
-        //dd($request->staff_id);
         if (isset($request->staff_id)) {
             $staff=Staff::where('id',$request->staff_id)->first();
             $staffs=Staff::where('user_id',$staff->user->id)->get();
