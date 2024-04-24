@@ -130,22 +130,23 @@
                     </li>
                 @endcan
                 @if (addon_is_activated('seller_subscription'))
-                    @canany(['seller_view_package_list', 'seller_view_all_packages'])
+                    {{-- @canany(['seller_view_package_list', 'seller_view_all_packages'])
                         <li class="aiz-side-nav-item">
                             <a href="#" class="aiz-side-nav-link">
                                 <i class="las la-shopping-cart aiz-side-nav-icon"></i>
                                 <span class="aiz-side-nav-text">{{ translate('e-Shop Package') }}</span>
                                 <span class="aiz-side-nav-arrow"></span>
                             </a>
-                            <ul class="aiz-side-nav-list level-2">
+                            <ul class="aiz-side-nav-list level-2"> --}}
                                 @can('seller_view_package_list')
                                 <li id="packages" class="aiz-side-nav-item">
                                     <a href="{{ route('seller.seller_packages_list') }}" class="aiz-side-nav-link">
+                                        <i class="las la-shopping-cart aiz-side-nav-icon"></i>
                                         <span class="aiz-side-nav-text">{{ translate('Packages') }}</span>
                                     </a>
                                 </li>
                                 @endcan
-                                @can('seller_view_all_packages')
+                                {{-- @can('seller_view_all_packages')
                                 <li id="package_list" class="aiz-side-nav-item">
                                     <a href="{{ route('seller.packages_payment_list') }}" class="aiz-side-nav-link">
                                         <span class="aiz-side-nav-text">{{ translate('Purchase Packages') }}</span>
@@ -154,7 +155,7 @@
                                 @endcan
                             </ul>
                         </li>
-                    @endcanany
+                    @endcanany --}}
                 @endif
 
                 @can('seller_view_all_staffs')
@@ -162,7 +163,7 @@
                         <a href="{{ route('seller.staffs.index') }}"
                         class="aiz-side-nav-link {{ areActiveRoutes(['seller.staffs.index', 'seller.staffs.create', 'seller.staffs.edit'])}}">
                             <i class="las la-users aiz-side-nav-icon"></i>
-                            <span class="aiz-side-nav-text">{{ translate('All staffs') }}</span>
+                            <span class="aiz-side-nav-text">{{ translate('Staffs') }}</span>
                         </a>
                     </li>
                 @endcan
