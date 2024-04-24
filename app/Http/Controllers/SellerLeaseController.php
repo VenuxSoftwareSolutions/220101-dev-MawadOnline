@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Auth;
 use Carbon\Carbon;
+use App\Models\Tour;
 use App\Models\SellerLease;
 use Illuminate\Http\Request;
 use App\Models\SellerLeaseDetail;
@@ -39,7 +40,8 @@ class SellerLeaseController extends Controller
 // Remove the first element, as it's the current lease
         $leases = $leases->splice(1);
         //$leases=SellerLease::where('vendor_id',Auth::user()->owner_id)->get();
-        return view('seller.lease',compact('current_lease','current_details','leases'));
+        $tour_steps=Tour::orderBy('step_number')->get();
+        return view('seller.lease',compact('current_lease','current_details','leases','tour_steps'));
     }
 
     /**
@@ -111,6 +113,7 @@ class SellerLeaseController extends Controller
     {
         seller_lease_creation($user=Auth::user());
         $step=12;
-        return view('seller.coming_soon',compact('step'));
+        $tour_steps=Tour::orderBy('step_number')->get();
+        return view('seller.coming_soon',compact('step','tour_steps'));
     }
 }

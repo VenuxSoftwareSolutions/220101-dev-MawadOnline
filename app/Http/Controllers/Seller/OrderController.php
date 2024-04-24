@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Seller;
 
-use App\Models\Order;
-use App\Models\ProductStock;
-use App\Models\SmsTemplate;
-use App\Models\User;
-use App\Utility\NotificationUtility;
-use App\Utility\SmsUtility;
-use Illuminate\Http\Request;
-use Auth;
 use DB;
+use Auth;
+use App\Models\Tour;
+use App\Models\User;
+use App\Models\Order;
+use App\Models\SmsTemplate;
+use App\Utility\SmsUtility;
+use App\Models\ProductStock;
+use Illuminate\Http\Request;
+use App\Utility\NotificationUtility;
 
 class OrderController extends Controller
 {
@@ -34,7 +35,8 @@ class OrderController extends Controller
         seller_lease_creation($user=Auth::user());
 
         $step=7;
-        return view('seller.coming_soon',compact('step'));
+        $tour_steps=Tour::orderBy('step_number')->get();
+        return view('seller.coming_soon',compact('step','tour_steps'));
 
         // $payment_status = null;
         // $delivery_status = null;

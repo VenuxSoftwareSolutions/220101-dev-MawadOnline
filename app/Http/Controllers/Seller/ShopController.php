@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Seller;
 
-use App\Models\BusinessSetting;
-use Illuminate\Http\Request;
-use App\Models\Shop;
-use App\Models\User;
-use App\Notifications\ShopVerificationNotification;
 use Auth;
+use App\Models\Shop;
+use App\Models\Tour;
+use App\Models\User;
+use Illuminate\Http\Request;
+use App\Models\BusinessSetting;
 use Illuminate\Support\Facades\Notification;
+use App\Notifications\ShopVerificationNotification;
 
 class ShopController extends Controller
 {
@@ -22,9 +23,10 @@ class ShopController extends Controller
     {
         seller_lease_creation($user=Auth::user());
 
+        $tour_steps=Tour::orderBy('step_number')->get();
         $vendor = User::find(Auth::user()->owner_id);
         $shop = $vendor->shop;
-        return view('seller.shop', compact('shop'));
+        return view('seller.shop', compact('shop','tour_steps'));
     }
 
     public function update(Request $request)

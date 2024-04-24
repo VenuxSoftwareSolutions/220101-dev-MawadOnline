@@ -67,7 +67,8 @@
         $.ajax({
             url: "{{ route('seller.check.role') }}",
             type: 'GET',
-            data: { roles: selectedRoles },
+            data: { roles: selectedRoles,
+                    staff_id :'{{ $staff->id }}' },
             success: function(response) {
                 // Check if the role is used
                 if (response.isUsed == 1) {
