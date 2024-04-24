@@ -121,6 +121,9 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/terms-and-conditions', function () {
         return view('email.terms');
     })->name('terms-and-conditions');
+    Route::get('/terms', function () {
+        return view('terms_and_condition.blade');
+    })->name('terms');
     Route::get('/business', function () {
         return view('email.waitlist-email');
     })->name('business');

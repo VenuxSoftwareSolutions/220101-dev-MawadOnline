@@ -54,6 +54,15 @@
         content="{{ get_system_default_currency()->code }}" />
     <meta property="fb:app_id" content="{{ env('FACEBOOK_PIXEL_ID') }}">
 @endsection --}}
+@section('style')
+<style>
+    .btn-secondary-base:hover {
+        background-color: #CB774B !important;
+        border-color: #CB774B !important;
+        cursor: default !important; /* Inherit cursor style from the parent element on hover */
+    }
+</style>
+@endsection
 
 @section('content')
     <section class="mb-4 pt-3">
@@ -1315,9 +1324,22 @@
                         // Handle successful response
                         console.log(response.unit_price)
                         if (response.unit_price != null) {
-                            $("#qty-interval").text(response.unit_price+" AED")
+                            if (response.discountPrice > 0) {
+                                $("#qty-interval").text(response.discountPrice+" AED")
+                                $("#chosen_price").text(response.totalDiscount+" AED")
+                                $("#previous-price").text(response.unit_price+" AED")
+
+                            }
+                            else {
+                                $("#previous-price").text('') ;
+
+                                $("#qty-interval").text(response.unit_price+" AED")
+                                $("#chosen_price").text(response.total+" AED")
+                            }
+
                             $("#quantity").val(response.qty)
-                            $("#chosen_price").text(response.total+" AED")
+
+
                             $('#quantity').attr('min', response.minimum); // Minimum value
                             $('#quantity').attr('max', response.maximum); // Maximum value
                             // $('.quantity-control[data-type="minus"]').prop('disabled', response.qty <= response.minimum);
@@ -1384,12 +1406,27 @@
                     }
                     else {
                         if (response.price > 0) {
+
                             $('#variationId').val(response.variationId) ;
                             $("#qty-interval").text(response.price+" AED")
                             $("#quantity").val(response.quantity)
                             $("#chosen_price").text(response.total+" AED")
                             $('#quantity').attr('min', response.minimum); // Minimum value
                             $('#quantity').attr('max', response.maximum); // Maximum value
+
+                            if (response.discountedPrice > 0) {
+
+                                $("#qty-interval").text(response.discountedPrice+" AED")
+                                $("#chosen_price").text(response.totalDiscount+" AED")
+                                $("#previous-price").text(response.price+" AED")
+
+                            }
+                            else {
+                                $("#previous-price").text('') ;
+                                $("#qty-interval").text(response.price+" AED")
+                                $("#chosen_price").text(response.total+" AED")
+                            }
+
                             $('.aiz-plus-minus input').each(function() {
                                     var $this = $(this);
                                     var min = parseInt($(this).attr("min"));
