@@ -999,7 +999,7 @@
                                             </div>
                                             <div class="col-md-8">
                                                 <label class="aiz-switch aiz-switch-success mb-0">
-                                                    <input value="1" type="checkbox" class="variant-sample-shipping" name="variant[sample_shipping][{{ $children->id }}]" @if($children->shipper_sample != null) checked @endif @if($children->sample_available != 1) disabled @endif>
+                                                    <input value="1" type="checkbox" data-id_old_variant= "{{ $children->id }}" class="variant-sample-shipping" name="variant[sample_shipping][{{ $children->id }}]" @if($children->shipper_sample == null) checked @endif @if($children->sample_available != 1) disabled @endif>
                                                     <span></span>
                                                 </label>
                                             </div>
@@ -1098,7 +1098,7 @@
                                         <input type="text" class="form-control" value="{{ translate('Low stock warning') }}" disabled>
                                     </div>
                                     <div class="col-md-8 mb-3">
-                                        <input type="text" name="stock_qty_warning" class="form-control" value="{{ $product->low_stock_quantity }}" id="stock_qty_warning">
+                                        <input type="text" name="quantite_stock_warning" class="form-control" value="{{ $product->low_stock_quantity }}" id="stock_qty_warning">
                                     </div>
                                 </div>
                             </div>
@@ -1580,7 +1580,7 @@
             // Append the cloned div to the container
             var count = numbers_variant + 1;
             //add attribute name for each input cloned
-            var html_to_add = '<div style="float: right; margin-top: -35px"><i class="fa-regular fa-pen-to-square fa-xl square-variant" title="Edit variant"></i><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
+            var html_to_add = '<div style="float: right; margin-top: -35px"><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
             clonedDiv.find('h3').after(html_to_add);
             //clonedDiv.find('.fa-circle-xmark').hide();
             clonedDiv.find('.fa-circle-check').hide();
@@ -1593,6 +1593,7 @@
                 }
             });
             clonedDiv.find('.sku').attr('name', 'sku-' + numbers_variant);
+            clonedDiv.find('.sku').prop('readonly', true);
             clonedDiv.find('.vat_sample').attr('name', 'vat_sample-' + numbers_variant);
             clonedDiv.find('.sample_description').attr('name', 'sample_description-' + numbers_variant);
             clonedDiv.find('.sample_price').attr('name', 'sample_price-' + numbers_variant);
@@ -1688,6 +1689,7 @@
             clonedDiv.find('.variant-sample-pricing').attr('name', 'variant-sample-pricing' + numbers_variant);
             clonedDiv.find('.variant-sample-pricing').attr('data-id_newvariant', numbers_variant);
             clonedDiv.find('.variant-sample-shipping').attr('name', 'variant-sample-shipping' + numbers_variant);
+            clonedDiv.find('.variant-sample-shipping').attr('data-id_new_variant', numbers_variant);
 
             clonedDiv.find('.min-qty-shipping').each(function(index, element) {
                 $(element).attr('name', 'variant_shipping-' + numbers_variant + '[from][]');
@@ -3448,6 +3450,7 @@
             }
         });
 
+
         $('body').on('change', '.variant-sample-shipping', function(){
             if ($(this).is(':not(:checked)')) {
                 var clonedDiv = $('#table_sample_configuration').clone();
@@ -3455,6 +3458,23 @@
                 var shipper_sample = $('#table_sample_configuration').find('.shipper_sample').val();
                 clonedDiv.find('.paid_sample').find('option[value="' + paid_sample + '"]').prop('selected', true);
                 clonedDiv.find('.shipper_sample').find('option[value="' + shipper_sample + '"]').prop('selected', true);
+                if($(this).data('id_old_variant') != undefined){
+                    var id_variant = $(this).data('id_old_variant');
+
+                    clonedDiv.find('.shipper_sample').attr('name', 'variant[shipper_sample][' + id_variant + ']');
+                    clonedDiv.find('.estimated_sample').attr('name', 'variant[estimated_sample][' + id_variant + ']');
+                    clonedDiv.find('.estimated_shipping_sample').attr('name', 'variant[estimated_shipping_sample][' + id_variant + ']');
+                    clonedDiv.find('.paid_sample').attr('name', 'variant[paid_sample][' + id_variant + ']');
+                    clonedDiv.find('.shipping_amount').attr('name', 'variant[shipping_amount][' + id_variant + ']');
+                }else if($(this).data('id_new_variant') != undefined){
+                    var id_variant = $(this).data('id_new_variant');
+
+                    clonedDiv.find('.shipper_sample').attr('name', 'variant_shipper_sample-' + numbers_variant);
+                    clonedDiv.find('.paid_sample').attr('name', 'paid_sample-' + numbers_variant);
+                    clonedDiv.find('.estimated_sample').attr('name', 'estimated_sample-' + numbers_variant);
+                    clonedDiv.find('.estimated_shipping_sample').attr('name', 'estimated_shipping_sample-' + numbers_variant);
+                    clonedDiv.find('.shipping_amount').attr('name', 'shipping_amount-' + numbers_variant);
+                }
                 $(this).parent().parent().parent().find('#bloc-sample-shipping').append(clonedDiv);
             }else{
                 $(this).parent().parent().parent().find('#bloc-sample-shipping').empty();
@@ -3466,8 +3486,12 @@
                 $(this).parent().parent().parent().parent().find('.variant-sample-pricing').prop('disabled', false);
                 $(this).parent().parent().parent().parent().find('.variant-sample-shipping').prop('disabled', false);
             }else{
+                $(this).parent().parent().parent().parent().find('.variant-sample-pricing').prop('checked', true);
+                $(this).parent().parent().parent().parent().find('.variant-sample-shipping').prop('checked', true);
                 $(this).parent().parent().parent().parent().find('.variant-sample-pricing').prop('disabled', true);
-                $(this).parent().parent().parent().parent().find('.variant-sample-shipping').prop('disabled', true);
+                $(this).parent().parent().parent().parent().find('.variant-sample-shipping').prop('disabled', true);  
+                $(this).parent().parent().parent().parent().find('.bloc_sample_pricing_configuration_variant').empty();
+                $(this).parent().parent().parent().parent().find('#bloc-sample-shipping').empty();
             }
         })
     });

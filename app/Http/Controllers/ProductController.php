@@ -931,6 +931,9 @@ class ProductController extends Controller
 
                     $historique_images = Revision::whereIn('revisionable_id', $images_ids)->where('revisionable_type', 'App\Models\UploadProducts')->delete();
                     $children->approved = $request->status;
+                    if(($request->status == 1) || ($request->status == 3)){
+                        $children->last_version = 0;
+                    }
                     $children->save();
                 }
             }
@@ -1057,6 +1060,9 @@ class ProductController extends Controller
             }
 
             $product->approved = $request->status;
+            if(($request->status == 1) || ($request->status == 3)){
+                $product->last_version = 0;
+            }
             $product->save();
             
 
@@ -1235,7 +1241,7 @@ class ProductController extends Controller
 
         // dd($data) ;
        // Extract unique attribute IDs and their values
-    //    $attributes = $this->extractAttributes($variants);
+        //    $attributes = $this->extractAttributes($variants);
        $variations = [];
 
        foreach ($data as $key => $value) {
@@ -1287,7 +1293,7 @@ class ProductController extends Controller
            }
        }
 
-    //    dd($data['variant']['attributes']) ;
+        //    dd($data['variant']['attributes']) ;
        if (isset($data['variant']['attributes']))
         foreach ($data['variant']['attributes'] as $variationId=>$variations_db) {
             foreach ($variations_db as $attributeId=>$attribute) {
@@ -1348,20 +1354,20 @@ class ProductController extends Controller
 
 
 
-    //    dd($variations) ;
-    //    $attributeAvailable= [] ;
-    //    $attributeId = 6; // Example attribute ID
-    //    $attributeValue = 5 ;
-    //    foreach ($variations as $key => $variation) {
-    //         foreach($variation as $key=>$attribute) {
-    //             if ($key ==$attributeId && $attribute==$attributeValue ) {
-    //                 $attributeAvailable[] = array_keys($variation) ;
-    //                 break ;
-    //             }
-    //         }
+        //    dd($variations) ;
+        //    $attributeAvailable= [] ;
+        //    $attributeId = 6; // Example attribute ID
+        //    $attributeValue = 5 ;
+        //    foreach ($variations as $key => $variation) {
+        //         foreach($variation as $key=>$attribute) {
+        //             if ($key ==$attributeId && $attribute==$attributeValue ) {
+        //                 $attributeAvailable[] = array_keys($variation) ;
+        //                 break ;
+        //             }
+        //         }
 
-    //    }
-    //    dd($attributeAvailable) ;
+        //    }
+        //    dd($attributeAvailable) ;
 
         if ($data["video_provider"] === "youtube") {
              $getYoutubeVideoId=$this->getYoutubeVideoId($data["video_link"]) ;
