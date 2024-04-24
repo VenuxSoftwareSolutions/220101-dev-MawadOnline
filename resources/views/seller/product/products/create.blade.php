@@ -31,6 +31,26 @@
         border-radius: 8px;
     }
 
+    #short_description{
+        height: 83px;
+    }
+
+    th{
+        border: none !important;
+    }
+
+    .table td, .table th {
+        padding: 7px !important;
+    }
+
+    .table input[type="number"]{
+        width: 96px !important;
+    }
+
+    #table_sample_configuration input[type="number"]{
+        width: auto !important;
+    }
+
 </style>
 
 @section('panel_content')
@@ -71,110 +91,123 @@
                         <h5 class="mb-0 h6">{{translate('Product Information')}}</h5>
                     </div>
                     <div class="card-body">
-                        <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Product Name')}} <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control" name="name" value="{{ old('name') }}" placeholder="{{ translate('Product Name') }}" >
-                            </div>
-                        </div>
-                        <div class="form-group row" id="brand">
-                            <label class="col-md-3 col-from-label">{{translate('Brand')}}</label>
-                            <div class="col-md-8">
-                                <select class="form-control aiz-selectpicker" name="brand_id" id="brand_id" data-live-search="true">
-                                    <option value="">{{ translate('Select Brand') }}</option>
-                                    @foreach (\App\Models\Brand::all() as $brand)
-                                    <option value="{{ $brand->id }}" @selected(old('brand_id') == $brand->id)>{{ $brand->getTranslation('name') }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Unit of Sale')}} <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control" name="unit" value="{{ old('unit') }}" placeholder="{{ translate('Unit (e.g. KG, Pc etc)') }}">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Country of origin')}}</label>
-                            <div class="col-md-8">
-                                <div class="form-item">
-                                    <input id="country_selector" type="text">
-                                    <label for="country_selector" style="display:none;">Select a country here...</label>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-from-label">{{translate('Product Name')}} <span class="text-danger">*</span></label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" required name="name" value="{{ old('name') }}" placeholder="{{ translate('Product Name') }}" >
+                                    </div>
                                 </div>
-                                <div class="form-item" style="display:none;">
-                                    <input type="text" id="country_selector_code" name="country_code" data-countrycodeinput="1" readonly="readonly" placeholder="Selected country code will appear here" />
-                                    <label for="country_selector_code">...and the selected country code will be updated here</label>
+                                <div class="form-group row" id="brand">
+                                    <label class="col-md-3 col-from-label">{{translate('Brand')}}</label>
+                                    <div class="col-md-8">
+                                        <select class="form-control aiz-selectpicker" name="brand_id" required id="brand_id" data-live-search="true">
+                                            <option value="">{{ translate('Select Brand') }}</option>
+                                            @foreach (\App\Models\Brand::all() as $brand)
+                                            <option value="{{ $brand->id }}" @selected(old('brand_id') == $brand->id)>{{ $brand->getTranslation('name') }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-from-label">{{translate('Unit of Sale')}} <span class="text-danger">*</span></label>
+                                    <div class="col-md-8">
+                                        <input type="text" required class="form-control" name="unit" value="{{ old('unit') }}" placeholder="{{ translate('Unit (e.g. KG, Pc etc)') }}">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-from-label">{{translate('Country of origin')}}</label>
+                                    <div class="col-md-8">
+                                        <div class="form-item">
+                                            <input id="country_selector" type="text">
+                                            <label for="country_selector" style="display:none;">Select a country here...</label>
+                                        </div>
+                                        <div class="form-item" style="display:none;">
+                                            <input type="text" id="country_selector_code" name="country_code" data-countrycodeinput="1" readonly="readonly" placeholder="Selected country code will appear here" />
+                                            <label for="country_selector_code">...and the selected country code will be updated here</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-from-label">{{translate('Manufacturer')}} <span class="text-danger">*</span></label>
+                                    <div class="col-md-8">
+                                        <input type="text" required class="form-control" name="manufacturer" value="{{ old('manufacturer') }}" placeholder="Manufacturer" >
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Manufacturer')}} <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" required class="form-control" name="manufacturer" value="{{ old('manufacturer') }}" placeholder="Manufacturer" >
+                            <div class="col-6">
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-from-label">{{translate('Tags')}} <span class="text-danger">*</span></label>
+                                    <div class="col-md-8">
+                                        <input type="text" required class="form-control aiz-tag-input" name="tags[]" placeholder="{{ translate('Type and hit enter to add a tag') }}">
+                                        <small class="text-muted">{{translate('This is used for search. Input those words by which cutomer can find this product.')}}</small>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-from-label">{{translate('Short description')}} <span class="text-danger">*</span></label>
+                                    <div class="col-md-8">
+                                        <textarea class="form-control" name="short_description" id="short_description"></textarea>
+                                        <div id="charCountShortDescription">Remaining characters: 512</div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-from-label">{{translate('Show Stock Quantity')}}</label>
+                                    <div class="col-md-8">
+                                        <label class="aiz-switch aiz-switch-success mb-0">
+                                            <input type="checkbox" name="stock_visibility_state" value="1" checked="checked">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </div>
+        
+                                {{-- <div class="form-group row">
+                                    <label class="col-md-3 col-from-label">{{translate('Published')}}</label>
+                                    <div class="col-md-8">
+                                        <label class="aiz-switch aiz-switch-success mb-0">
+                                            <input type="checkbox" name="published" checked value="1">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </div> --}}
+        
+                                @if (addon_is_activated('pos_system'))
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-from-label">{{translate('Barcode')}}</label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" name="barcode" value="{{ old('barcode') }}" placeholder="{{ translate('Barcode') }}">
+                                    </div>
+                                </div>
+                                @endif
+        
+                                @if (addon_is_activated('refund_request'))
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-from-label">{{translate('Refundable')}}</label>
+                                    <div class="col-md-8">
+                                        <label class="aiz-switch aiz-switch-success mb-0">
+                                            <input type="checkbox" name="refundable" checked value="1">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                @endif
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Tags')}} <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control aiz-tag-input" name="tags[]" placeholder="{{ translate('Type and hit enter to add a tag') }}">
-                                <small class="text-muted">{{translate('This is used for search. Input those words by which cutomer can find this product.')}}</small>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Short description')}} <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <textarea class="form-control" name="short_description" id="short_description"></textarea>
-                                <div id="charCountShortDescription">Remaining characters: 512</div>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Show Stock Quantity')}}</label>
-                            <div class="col-md-8">
-                                <label class="aiz-switch aiz-switch-success mb-0">
-                                    <input type="checkbox" name="stock_visibility_state" value="1" checked="checked">
-                                    <span></span>
-                                </label>
-                            </div>
-                        </div>
-
-                        {{-- <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Published')}}</label>
-                            <div class="col-md-8">
-                                <label class="aiz-switch aiz-switch-success mb-0">
-                                    <input type="checkbox" name="published" checked value="1">
-                                    <span></span>
-                                </label>
-                            </div>
-                        </div> --}}
-
-                        @if (addon_is_activated('pos_system'))
-                        <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Barcode')}}</label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control" name="barcode" value="{{ old('barcode') }}" placeholder="{{ translate('Barcode') }}">
-                            </div>
-                        </div>
-                        @endif
-
-                        @if (addon_is_activated('refund_request'))
-                        <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Refundable')}}</label>
-                            <div class="col-md-8">
-                                <label class="aiz-switch aiz-switch-success mb-0">
-                                    <input type="checkbox" name="refundable" checked value="1">
-                                    <span></span>
-                                </label>
-                            </div>
-                        </div>
-                        @endif
                     </div>
                 </div>
                 {{-- Bloc Product images --}}
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0 h6">{{translate('Product Images')}}</h5>
+                        <h5 class="mb-0 h6">{{translate('Product Media')}}</h5>
                     </div>
                     <div class="card-body">
+                        <div class="form-group row">
+                            <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <small>(400x400)</small></label>
+                            <div class="col-md-8" id="bloc_thumbnails">
+                                <input type="file" class="dropify" name="photosThumbnail[]" id="photoUploadThumbnail" accept=".jpeg, .jpg, .png" multiple />
+                                <div id="dropifyUploadedFilesThumbnail"></div>
+                            </div>
+                        </div>
                         <div class="form-group row">
                             <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Gallery Images')}} <small>(1280x1280)</small></label>
                             <div class="col-md-8" id="bloc_photos">
@@ -182,11 +215,27 @@
                                 <div id="dropifyUploadedFiles"></div>
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <small>(400x400)</small></label>
-                            <div class="col-md-8" id="bloc_thumbnails">
-                                <input type="file" class="dropify" name="photosThumbnail[]" id="photoUploadThumbnail" accept=".jpeg, .jpg, .png" multiple />
-                                <div id="dropifyUploadedFilesThumbnail"></div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-from-label" style="padding-top: 12px;">{{translate('Video Provider')}}</label>
+                                    <div class="col-md-9">
+                                        <select class="form-control aiz-selectpicker" name="video_provider" id="video_provider">
+                                            <option value="youtube" @selected(old('video_provider') == 'youtube')>{{translate('Youtube')}}</option>
+                                            <option value="vimeo" @selected(old('video_provider') == 'vimeo')>{{translate('Vimeo')}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group row">
+                                    <label class="col-md-2 col-from-label" style="padding-top: 12px;">{{translate('Video Link')}}</label>
+                                    <div class="col-md-10">
+                                        <input type="text" class="form-control" name="video_link" value="{{ old('video_link') }}" placeholder="{{ translate('Video Link') }}">
+                                        <small class="text-muted">{{translate("Use proper link without extra parameter. Don't use short share link/embeded iframe code.")}}</small>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -210,40 +259,103 @@
                         </div>
                         <hr> --}}
                         <div>
-                            <table class="table" id="table_pricing_configuration" class="bloc_pricing_configuration_variant">
-                                <thead>
-                                    <tr>
-                                        <th>{{translate('From Quantity')}}</th>
-                                        <th>{{translate('To Quantity')}}</th>
-                                        <th>{{translate('Unit Price (VAT Exclusive)')}}</th>
-                                        <th>{{translate('Discount(Start/End)')}}</th>
-                                        <th>{{translate('Discount Type')}}</th>
-                                        <th>{{translate('Discount Amount')}}</th>
-                                        <th>{{translate('Discount Percentage')}}</th>
-                                        <th>{{translate('Action')}}</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="bloc_pricing_configuration">
-                                    <tr>
-                                        <td><input type="number" name="from[]" class="form-control min-qty" id=""></td>
-                                        <td><input type="number" name="to[]" class="form-control max-qty" id=""></td>
-                                        <td><input type="number" name="unit_price[]" class="form-control unit-price-variant" id=""></td>
-                                        <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
-                                        <td>
-                                            <select class="form-control discount_type" name="discount_type[]">
-                                                <option value="" selected>{{translate('Choose type')}}</option>
-                                                <option value="amount" @selected(old('discount_type') == 'amount')>{{translate('Flat')}}</option>
-                                                <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
-                                            </select>
-                                        </td>
-                                        <td><input type="number" class="form-control discount_amount" name="discount_amount[]"></td>
-                                        <td><input type="number" class="form-control discount_percentage" name="discount_percentage[]"></td>
-                                        <td>
-                                            <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                              </table>
+                            <div class="bloc-default-shipping-style">
+                                <h5>{{ translate('Default Pricing Configuration') }}</h5>
+                                <hr>
+                                <table class="table" id="table_pricing_configuration" class="bloc_pricing_configuration_variant">
+                                    <thead>
+                                        <tr>
+                                            <th>{{translate('From QTY')}}</th>
+                                            <th>{{translate('To QTY')}}</th>
+                                            <th>{{translate('Unit Price (VAT)')}}</th>
+                                            <th>{{translate('Discount(Start/End)')}}</th>
+                                            <th>{{translate('Discount Type')}}</th>
+                                            <th>{{translate('Discount Amount')}}</th>
+                                            <th>{{translate('Discount Percentage')}}</th>
+                                            <th>{{translate('Action')}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bloc_pricing_configuration">
+                                        <tr>
+                                            <td><input type="number" name="from[]" class="form-control min-qty" id=""></td>
+                                            <td><input type="number" name="to[]" class="form-control max-qty" id=""></td>
+                                            <td><input type="number" name="unit_price[]" class="form-control unit-price-variant" id=""></td>
+                                            <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
+                                            <td>
+                                                <select class="form-control discount_type" name="discount_type[]">
+                                                    <option value="" selected>{{translate('Choose type')}}</option>
+                                                    <option value="amount" @selected(old('discount_type') == 'amount')>{{translate('Flat')}}</option>
+                                                    <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
+                                                </select>
+                                            </td>
+                                            <td><input type="number" class="form-control discount_amount" name="discount_amount[]"></td>
+                                            <td><input type="number" class="form-control discount_percentage" name="discount_percentage[]"></td>
+                                            <td>
+                                                <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="bloc-default-shipping-style" style="margin-top: 22px;">
+                                <h5>{{ translate('Default Sample Pricing Configuration') }}</h5>
+                                <hr>
+                                <div class="row mb-3">
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" value="{{translate('Sample description')}}" disabled>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <textarea class="form-control" name="sample_description"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" value="{{translate('Sample price')}}" disabled>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" name="sample_price">
+                                    </div>
+                                </div>
+                                <table class="table" id="table_sample_configuration" class="bloc_sample_configuration_variant">
+                                    <thead>
+                                        <tr>
+                                            <th>{{translate('Shipping-by')}}</th>
+                                            <th>{{translate('Estimated Sample Preparation Days')}}</th>
+                                            <th>{{translate('Estimated Shipping Days')}}</th>
+                                            <th>{{translate('Paid by')}}</th>
+                                            {{-- <th>{{translate('VAT')}}</th> --}}
+                                            <th>{{translate('Shipping amount')}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bloc_sample_configuration">
+                                        <tr>
+                                            <td>
+                                                <select class="form-control shipper_sample" name="shipper_sample">
+                                                    <option value="" selected>{{translate('Choose shipper')}}</option>
+                                                    <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                                    <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
+                                                </select>
+                                            </td>
+                                            <td><input type="number" class="form-control estimated_sample" name="estimated_sample"></td>
+                                            <td><input type="number" class="form-control estimated_shipping_sample" name="estimated_shipping_sample"></td>
+                                            <td>
+                                                <select class="form-control paid_sample" name="paid_sample">
+                                                    <option value="" selected>{{translate('Choose paid by')}}</option>
+                                                    <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                                    <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
+                                                </select>
+                                            </td>
+                                            {{-- <td>
+                                                <label class="aiz-switch aiz-switch-success mb-0">
+                                                    <input value="1" type="checkbox" class="vat_sample" name="vat_sample" @if($vat_user->vat_registered == 1) checked @endif>
+                                                    <span></span>
+                                                </label>
+                                            </td> --}}
+                                            <td><input type="number" class="form-control shipping_amount" name="shipping_amount" step="0.1" readonly></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -272,9 +384,9 @@
                                 <table class="table" id="table_third_party_configuration" class="bloc_third_configuration_variant">
                                     <thead>
                                         <tr>
-                                            <th>{{translate('Length Package (Cm)')}}</th>
-                                            <th>{{translate('Width Package (Cm)')}}</th>
-                                            <th>{{translate('Height Package (Cm)')}}</th>
+                                            <th>{{translate('Length (Cm)')}}</th>
+                                            <th>{{translate('Width (Cm)')}}</th>
+                                            <th>{{translate('Height (Cm)')}}</th>
                                             <th>{{translate('Weight Package')}}</th>
                                             <th>{{translate('Weight unit')}}</th>
                                             <th>{{translate('Breakable')}}</th>
@@ -321,16 +433,17 @@
                         </div>
                         <div class="bloc-default-shipping-style" style="margin-top: 22px;">
                             <h5>{{ translate('Shipping configuration') }}</h5>
+                            <hr>
                             <div>
                                 <table class="table" id="table_shipping_configuration" class="bloc_shipping_configuration_variant">
                                     <thead>
                                         <tr>
-                                            <th>{{translate('From Quantity')}}</th>
-                                            <th>{{translate('To Quantity')}}</th>
+                                            <th>{{translate('From QTY')}}</th>
+                                            <th>{{translate('To QTY')}}</th>
                                             <th>{{translate('Shipper')}}</th>
-                                            <th>{{translate('Estimated Order Preparation Days')}}</th>
-                                            <th>{{translate('Estimated Shipping Days')}}</th>
-                                            <th>{{translate('Paid by')}}</th>
+                                            <th>{{translate('Est. Order Pre. Days')}}</th>
+                                            <th>{{translate('Est. Shipping Days')}}</th>
+                                            <th style="width: 164px;">{{translate('Paid by')}}</th>
                                             {{-- <th>{{translate('VAT')}}</th> --}}
                                             <th>{{translate('Shipping Charge')}}</th>
                                             <th>{{translate('Flat-rate Amount')}}</th>
@@ -386,13 +499,13 @@
                     </div>
                 </div>
                 {{-- Bloc Sample pricing configuration --}}
-                <div class="card">
+                {{-- <div class="card">
                     <div class="card-header">
                         <h5 class="mb-0 h6">{{translate('Default Sample Pricing Configuration')}}</h5>
                     </div>
                     <div class="card-body">
                         <div class="row mb-3">
-                            {{-- <div class="col-md-3">
+                            <div class="col-md-3">
                                 <input type="text" class="form-control" value="{{translate('VAT')}}" disabled>
                             </div>
                             <div class="col-md-8">
@@ -400,89 +513,19 @@
                                     <input value="1" type="checkbox" name="vat_sample" @if($vat_user->vat_registered == 1) checked @endif>
                                     <span></span>
                                 </label>
-                            </div> --}}
+                            </div> 
                         </div>
-                        <div class="row mb-3">
-                            <div class="col-md-3">
-                                <input type="text" class="form-control" value="{{translate('Sample description')}}" disabled>
-                            </div>
-                            <div class="col-md-8">
-                                <textarea class="form-control" name="sample_description"></textarea>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-md-3">
-                                <input type="text" class="form-control" value="{{translate('Sample price')}}" disabled>
-                            </div>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control" name="sample_price">
-                            </div>
-                        </div>
-                        <table class="table" id="table_sample_configuration" class="bloc_sample_configuration_variant">
-                            <thead>
-                                <tr>
-                                    <th>{{translate('Shipping-by')}}</th>
-                                    <th>{{translate('Estimated Sample Preparation Days')}}</th>
-                                    <th>{{translate('Estimated Shipping Days')}}</th>
-                                    <th>{{translate('Paid by')}}</th>
-                                    {{-- <th>{{translate('VAT')}}</th> --}}
-                                    <th>{{translate('Shipping amount')}}</th>
-                                </tr>
-                            </thead>
-                            <tbody id="bloc_sample_configuration">
-                                <tr>
-                                    <td>
-                                        <select class="form-control shipper_sample" name="shipper_sample">
-                                            <option value="" selected>{{translate('Choose shipper')}}</option>
-                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
-                                            <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="number" class="form-control estimated_sample" name="estimated_sample"></td>
-                                    <td><input type="number" class="form-control estimated_shipping_sample" name="estimated_shipping_sample"></td>
-                                    <td>
-                                        <select class="form-control paid_sample" name="paid_sample">
-                                            <option value="" selected>{{translate('Choose paid by')}}</option>
-                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
-                                            <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
-                                        </select>
-                                    </td>
-                                    {{-- <td>
-                                        <label class="aiz-switch aiz-switch-success mb-0">
-                                            <input value="1" type="checkbox" class="vat_sample" name="vat_sample" @if($vat_user->vat_registered == 1) checked @endif>
-                                            <span></span>
-                                        </label>
-                                    </td> --}}
-                                    <td><input type="number" class="form-control shipping_amount" name="shipping_amount" step="0.1" readonly></td>
-                                </tr>
-                            </tbody>
-                        </table>
                     </div>
-                </div>
+                </div> --}}
                 {{-- Bloc Product videos --}}
-                <div class="card">
+                {{-- <div class="card">
                     <div class="card-header">
                         <h5 class="mb-0 h6">{{translate('Product Videos')}}</h5>
                     </div>
                     <div class="card-body">
-                        <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Video Provider')}}</label>
-                            <div class="col-md-8">
-                                <select class="form-control aiz-selectpicker" name="video_provider" id="video_provider">
-                                    <option value="youtube" @selected(old('video_provider') == 'youtube')>{{translate('Youtube')}}</option>
-                                    <option value="vimeo" @selected(old('video_provider') == 'vimeo')>{{translate('Vimeo')}}</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Video Link')}}</label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control" name="video_link" value="{{ old('video_link') }}" placeholder="{{ translate('Video Link') }}">
-                                <small class="text-muted">{{translate("Use proper link without extra parameter. Don't use short share link/embeded iframe code.")}}</small>
-                            </div>
-                        </div>
+                        
                     </div>
-                </div>
+                </div> --}}
                 {{-- Bloc Product Category --}}
                 <div class="card">
                     <div class="card-header">
@@ -710,11 +753,20 @@
                     </div>
                 </div>
                 {{-- Bloc Product Description --}}
-                <div class="card">
+                {{-- <div class="card">
                     <div class="card-header">
                         <h5 class="mb-0 h6">{{translate('Product Description')}}</h5>
                     </div>
                     <div class="card-body">
+                        
+                    </div>
+                </div> --}}
+                {{-- Bloc Product Documents --}}
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0 h6">{{translate('Product Description and Specifications')}}<i class="las la-info-circle ml-2" data-toggle="tooltip" data-html="true" title="The maximum size permitted in a single document: <span style='red'>15 MB</span><br>Max size allowed for all documents: <span style='red'>25 MB</span>"></i>
+                    </div>
+                    <div class="card-body" id="documents_bloc">
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Description')}}</label>
                             <div class="col-md-8">
@@ -722,14 +774,7 @@
                                 <input type="hidden" id="hidden_value" value="">
                             </div>
                         </div>
-                    </div>
-                </div>
-                {{-- Bloc Product Documents --}}
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0 h6">{{translate('PDF Specification')}}<i class="las la-info-circle ml-2" data-toggle="tooltip" data-html="true" title="The maximum size permitted in a single document: <span style='red'>15 MB</span><br>Max size allowed for all documents: <span style='red'>25 MB</span>"></i>
-                    </div>
-                    <div class="card-body" id="documents_bloc">
+                        <hr>
                         <div class="row">
                             <div class="col-5">
                                 <div class="form-group">
