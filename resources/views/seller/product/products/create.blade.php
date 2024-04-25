@@ -14,9 +14,9 @@
     }
     .button-container {
         position: fixed;
-        top: 12%;
-        right: 2%;
-        z-index: 5;
+        top: 1%;
+        right: 19%;
+        z-index: 97;
     }
     .preview-button {
         background-color: #cb774b !important; /* Green background */
@@ -315,7 +315,7 @@
                                     </tbody>
                                 </table>
                                 <div id="result_calculate_third_party">
-    
+
                                 </div>
                             </div>
                         </div>
@@ -348,9 +348,9 @@
                                                     <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                                 </select>
                                             </td>
-    
+
                                             <div id="results"></div>
-    
+
                                             <td><input type="number" class="form-control estimated_order" name="estimated_order[]"></td>
                                             <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]"></td>
                                             <td>
@@ -1585,7 +1585,7 @@
 
         $('body').on('click', '.btn-add-pricing', function() {
             var newvariant = $(this).data('newvariant-id');
-            
+
             if(newvariant != undefined){
                 var html_to_add = `<tr>
                                     <td><input type="number" name="variant_pricing-from`+ newvariant +`[from][]" class="form-control min-qty" id=""></td>
@@ -1652,11 +1652,11 @@
                                     </td>
                                 </tr>
                             `;
-                } 
+                }
             }
             // add another bloc in pricing configuration
             $(this).parent().parent().parent().append(html_to_add);
-            
+
 
             //Initialize last date range picker
             $(this).parent().parent().parent().find('.aiz-date-range:last').daterangepicker({
@@ -2396,7 +2396,7 @@
                     })
                 });
 
-                
+
                 clonedDiv.find('.min-qty-shipping').attr('name', `variant_shipping-` + id + `[from][]`)
                 clonedDiv.find('.max-qty-shipping').attr('name', `variant_shipping-` + id + `[to][]`)
                 clonedDiv.find('.estimated_order').attr('name', `variant_shipping-` + id + `[estimated_order][]`)
@@ -2702,7 +2702,7 @@
                         // Update the hidden input field with the value of the clicked button
                         var clickedButtonValue = event.submitter.value;
                         document.getElementById('submit_button').value = clickedButtonValue;
-                        
+
                         document.getElementById('choice_form').submit();
                     });
                 }

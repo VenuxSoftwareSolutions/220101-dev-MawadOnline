@@ -68,26 +68,70 @@ use Carbon\Carbon;
                         // $proposedPayoutChange = App\Models\ProposedPayoutChange::where('user_id', $user->id)
                         //     ->latest()
                         //     ->first();
-                            $trade_name_english = $proposedPayoutChange && $proposedPayoutChange->getNewValue('trade_name_english')
+                        $trade_name_english = ($proposedPayoutChange && $proposedPayoutChange->getNewValue('trade_name_english'))
                             ? $proposedPayoutChange->getNewValue('trade_name_english')
-                            : $user->business_information->getTranslation('trade_name', 'en', false) ?? '';
-                            $trade_name_arabic = $proposedPayoutChange && $proposedPayoutChange->getNewValue('trade_name_arabic')
+                            : (
+                                ($user->business_information)
+                                    ? $user->business_information->getTranslation('trade_name', 'en', false) ?? ''
+                                    : ''
+                            );
+
+                            $trade_name_arabic = ($proposedPayoutChange && $proposedPayoutChange->getNewValue('trade_name_arabic'))
                             ? $proposedPayoutChange->getNewValue('trade_name_arabic')
-                            : $user->business_information->getTranslation('trade_name', 'ar', false) ?? '';
+                            : (
+                                ($user->business_information)
+                                    ? $user->business_information->getTranslation('trade_name', 'ar', false) ?? ''
+                                    : ''
+                            );
+                            // $trade_name_arabic = $proposedPayoutChange && $proposedPayoutChange->getNewValue('trade_name_arabic')
+                            // ? $proposedPayoutChange->getNewValue('trade_name_arabic')
+                            // : $user->business_information->getTranslation('trade_name', 'ar', false) ?? '';
 
                              $trade_license_doc = $proposedPayoutChange && $proposedPayoutChange->getNewValue('trade_license_doc') ? $proposedPayoutChange->getNewValue('trade_license_doc') : $user->business_information->trade_license_doc ?? '';
-                             $eshop_name_english = $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_name_english')
+
+                             $eshop_name_english = ($proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_name_english'))
                             ? $proposedPayoutChange->getNewValue('eshop_name_english')
-                            : $user->business_information->getTranslation('eshop_name', 'en', false) ?? '';
-                            $eshop_name_arabic = $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_name_arabic')
+                            : (
+                                ($user->business_information)
+                                    ? $user->business_information->getTranslation('eshop_name', 'en', false) ?? ''
+                                    : ''
+                            );
+                            $eshop_name_arabic = ($proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_name_arabic'))
                             ? $proposedPayoutChange->getNewValue('eshop_name_arabic')
-                            : $user->business_information->getTranslation('eshop_name', 'ar', false) ?? '';
-                            $eshop_desc_english = $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_desc_english')
+                            : (
+                                ($user->business_information)
+                                    ? $user->business_information->getTranslation('eshop_name', 'ar', false) ?? ''
+                                    : ''
+                            );
+                            //  $eshop_name_english = $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_name_english')
+                            // ? $proposedPayoutChange->getNewValue('eshop_name_english')
+                            // : $user->business_information->getTranslation('eshop_name', 'en', false) ?? '';
+
+                            // $eshop_name_arabic = $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_name_arabic')
+                            // ? $proposedPayoutChange->getNewValue('eshop_name_arabic')
+                            // : $user->business_information->getTranslation('eshop_name', 'ar', false) ?? '';
+
+                            // $eshop_desc_english = $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_desc_english')
+                            // ? $proposedPayoutChange->getNewValue('eshop_desc_english')
+                            // : $user->business_information->getTranslation('eshop_desc', 'en', false) ?? '';
+
+                            // $eshop_desc_arabic = $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_desc_arabic')
+                            // ? $proposedPayoutChange->getNewValue('eshop_desc_arabic')
+                            // : $user->business_information->getTranslation('eshop_desc', 'ar', false) ?? '';
+                            $eshop_desc_english = ($proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_desc_english'))
                             ? $proposedPayoutChange->getNewValue('eshop_desc_english')
-                            : $user->business_information->getTranslation('eshop_desc', 'en', false) ?? '';
-                            $eshop_desc_arabic = $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_desc_arabic')
+                            : (
+                                ($user->business_information)
+                                    ? $user->business_information->getTranslation('eshop_desc', 'en', false) ?? ''
+                                    : ''
+                            );
+                            $eshop_desc_arabic = ($proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_desc_arabic'))
                             ? $proposedPayoutChange->getNewValue('eshop_desc_arabic')
-                            : $user->business_information->getTranslation('eshop_desc', 'ar', false) ?? '';
+                            : (
+                                ($user->business_information)
+                                    ? $user->business_information->getTranslation('eshop_desc', 'ar', false) ?? ''
+                                    : ''
+                            );
                             $license_issue_date = $proposedPayoutChange && $proposedPayoutChange->getNewValue('license_issue_date') ? $proposedPayoutChange->getNewValue('license_issue_date') : $user->business_information->license_issue_date ?? '';
                             if (!empty($license_issue_date))
                                 $license_issue_date = Carbon::createFromFormat('Y-m-d', $license_issue_date)->format('d M Y');
@@ -118,10 +162,16 @@ use Carbon\Carbon;
                                 <div class="form-group">
                                     <label>{{ translate('English Trade Name') }} <span
                                             class="text-primary">*</span></label>
+                                    @if (isset($user->business_information))
                                     <input title="{{$user->business_information->getTranslation('trade_name', 'en', false) ?? ''}}"  type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('trade_name_english') ? 'color-modified' : '' }}"
-                                        placeholder="{{ translate('English Trade Name') }}"
-                                        value="{{$trade_name_english }}"
-                                        name="trade_name_english" required>
+                                    placeholder="{{ translate('English Trade Name') }}"
+                                    value="{{$trade_name_english }}"
+                                    name="trade_name_english" required>
+                                    @else
+                                    <input  type="text" class="form-control rounded-0 "
+                                         name="trade_name_english" required>
+                                    @endif
+
 
                                 </div>
                             </div>
@@ -129,11 +179,15 @@ use Carbon\Carbon;
                                 <div class="form-group">
                                     <label>{{ translate('Arabic Trade Name') }} <span
                                             class="text-primary">*</span></label>
+                                            @if (isset($user->business_information))
                                     <input title="{{$user->business_information->getTranslation('trade_name', 'ar', false) ?? ''}}" type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('trade_name_arabic') ? 'color-modified' : '' }}"
                                         placeholder="{{ translate('Arabic Trade Name') }}"
                                         value="{{$trade_name_arabic }}"
                                         name="trade_name_arabic" required>
-
+                                        @else
+                                        <input  type="text" class="form-control rounded-0 "
+                                             name="trade_name_arabic" required>
+                                        @endif
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -183,10 +237,15 @@ use Carbon\Carbon;
                                 <div class="form-group">
                                     <label>{{ translate('English E-shop Name') }} <span
                                             class="text-primary">*</span></label>
-                                    <input title="{{$user->business_information->eshop_name ? $user->business_information->getTranslation('eshop_name', 'en', false) : ''}}" type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_name_english') ? 'color-modified' : '' }}"
-                                        placeholder="{{ translate('English E-shop Name') }}"
-                                        value="{{ $eshop_name_english }}"
-                                        name="eshop_name_english" required>
+                                            @if (isset($user->business_information))
+                                            <input title="{{$user->business_information->eshop_name ? $user->business_information->getTranslation('eshop_name', 'en', false) : ''}}" type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_name_english') ? 'color-modified' : '' }}"
+                                                placeholder="{{ translate('English E-shop Name') }}"
+                                                value="{{ $eshop_name_english }}"
+                                                name="eshop_name_english" required>
+                                            @else
+                                            <input  type="text" class="form-control rounded-0 "
+                                            name="eshop_name_english" required>
+                                            @endif
 
                                 </div>
                             </div>
@@ -194,29 +253,44 @@ use Carbon\Carbon;
                                 <div class="form-group">
                                     <label>{{ translate('Arabic E-shop Name') }} <span
                                             class="text-primary">*</span></label>
+                                            @if (isset($user->business_information))
+
                                     <input title="{{$user->business_information->eshop_name ? $user->business_information->getTranslation('eshop_name', 'ar', false) : ''}}" type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_name_arabic') ? 'color-modified' : '' }}"
                                         placeholder="{{ translate('Arabic E-shop Name') }}"
                                         value="{{$eshop_name_arabic }}"
                                         name="eshop_name_arabic" required>
-
+                                        @else
+                                        <input  type="text" class="form-control rounded-0 "
+                                        name="eshop_name_arabic" required>
+                                        @endif
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>{{ translate('English e-Shop description') }} <span
                                             class="text-primary"></span></label>
+                                            @if (isset($user->business_information))
 
                                     <textarea title="{{$user->business_information->eshop_desc ? $user->business_information->getTranslation('eshop_desc', 'en', false) : ''}}" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_desc_english') ? 'color-modified' : '' }}" placeholder="{{ translate('English e-Shop description') }}"
                                         name="eshop_desc_english">{{ $eshop_desc_english }}</textarea>
+                                        @else
+                                        <textarea class="form-control" >
+                                           </textarea>
+                                        @endif
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>{{ translate('Arabic e-Shop description') }} <span
                                             class="text-primary"></span></label>
+                                            @if (isset($user->business_information))
 
                                     <textarea title="{{$user->business_information->eshop_desc ? $user->business_information->getTranslation('eshop_desc', 'ar', false) : ''}}" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_desc_arabic') ? 'color-modified' : '' }}" placeholder="{{ translate('Arabic e-Shop description') }}"
                                         name="eshop_desc_arabic">{{ $eshop_desc_arabic  }}</textarea>
+                                        @else
+                                        <textarea  class="form-control">
+                                           </textarea>
+                                        @endif
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -225,7 +299,7 @@ use Carbon\Carbon;
                                             class="text-primary">*</span>
                                     </label>
 
-                                    <input title="{{$user->business_information->license_issue_date ? $user->business_information->license_issue_date :""}}" dir="auto" required type="{{-- date --}}text"
+                                    <input title="{{$user->business_information ? $user->business_information->license_issue_date :""}}" dir="auto" required type="{{-- date --}}text"
                                         class="datepicker form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('license_issue_date') ? 'color-modified' : '' }}"
                                         placeholder="{{ translate('License Issue Date') }}"
                                         id="license_issue_date"
@@ -238,7 +312,7 @@ use Carbon\Carbon;
                                     <label>{{ translate('License Expiry Date') }} <span
                                             class="text-primary">*</span></label>
 
-                                    <input title="{{$user->business_information->license_expiry_date ? $user->business_information->license_expiry_date :""}}" dir="auto" required type="text"
+                                    <input title="{{$user->business_information ? $user->business_information->license_expiry_date :""}}" dir="auto" required type="text"
                                         class="datepicker form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('license_expiry_date') ? 'color-modified' : '' }}" {{-- value="{{ $user->business_information->license_expiry_date ?? '' }}" --}}
                                         value="{{ $license_expiry_date }}"
                                         placeholder="{{ translate('License Expiry Date') }}"
@@ -250,7 +324,7 @@ use Carbon\Carbon;
                                     <div class="form-group">
                                         <label>{{ translate('State/Emirate') }} <span
                                                 class="text-primary">*</span></label>
-                                        <select title="{{$user->business_information->state && App\Models\Emirate::find($user->business_information->state)  ? App\Models\Emirate::find($user->business_information->state)->name :""}}" required name="state" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('state') ? 'color-modified' : '' }}"
+                                        <select title="{{$user->business_information && App\Models\Emirate::find($user->business_information->state)  ? App\Models\Emirate::find($user->business_information->state)->name :""}}" required name="state" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('state') ? 'color-modified' : '' }}"
                                             id="emirateempire">
                                             <option value="">{{ translate('please_choose') }}</option>
                                             @foreach ($emirates as $emirate)
@@ -267,7 +341,7 @@ use Carbon\Carbon;
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>{{ translate('Area') }} <span class="text-primary">*</span></label>
-                                        <select title="{{$user->business_information->area_id && App\Models\Area::find($user->business_information->area_id) ? App\Models\Area::find($user->business_information->area_id)->name :""}}" required name="area_id" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('area_id') ? 'color-modified' : '' }}"
+                                        <select title="{{$user->business_information && App\Models\Area::find($user->business_information->area_id) ? App\Models\Area::find($user->business_information->area_id)->name :""}}" required name="area_id" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('area_id') ? 'color-modified' : '' }}"
                                             id="areaempire">
                                             @php
                                                 $areas = App\Models\Area::where(
@@ -321,7 +395,7 @@ use Carbon\Carbon;
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>{{ translate('Street') }} <span class="text-primary">*</span></label>
-                                    <input title="{{$user->business_information->street ? $user->business_information->street : '' }}" type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('street') ? 'color-modified' : '' }}"
+                                    <input title="{{$user->business_information ? $user->business_information->street : '' }}" type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('street') ? 'color-modified' : '' }}"
                                         value="{{ $street }}"
                                         placeholder="{{ translate('Street') }}" name="street" required>
 
@@ -330,7 +404,7 @@ use Carbon\Carbon;
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>{{ translate('Building') }} <span class="text-primary">*</span></label>
-                                    <input title="{{$user->business_information->building ? $user->business_information->building : '' }}" type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('building') ? 'color-modified' : '' }}"
+                                    <input title="{{$user->business_information ? $user->business_information->building : '' }}" type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('building') ? 'color-modified' : '' }}"
                                         value="{{$building }}"
                                         placeholder="{{ translate('Building') }}" name="building" required>
 
@@ -340,7 +414,7 @@ use Carbon\Carbon;
                                 <div class="form-group">
                                     <label>{{ translate('Unit/Office No.') }} <span
                                             class="text-primary"></span></label>
-                                    <input title="{{$user->business_information->unit ? $user->business_information->unit : '' }}" type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('unit') ? 'color-modified' : '' }}"
+                                    <input title="{{$user->business_information ? $user->business_information->unit : '' }}" type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('unit') ? 'color-modified' : '' }}"
                                         value="{{$unit }}"
                                         placeholder="{{ translate('Unit/Office No.') }}" name="unit">
 
@@ -349,7 +423,7 @@ use Carbon\Carbon;
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>{{ translate('PO Box') }} <span class="text-primary "></span></label>
-                                    <input title="{{$user->business_information->po_box ? $user->business_information->po_box : '' }}" type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('po_box') ? 'color-modified' : '' }}"
+                                    <input title="{{$user->business_information ? $user->business_information->po_box : '' }}" type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('po_box') ? 'color-modified' : '' }}"
                                         value="{{ $po_box }}"
                                         placeholder="{{ translate('PO Box') }}" name="po_box">
 
@@ -359,7 +433,7 @@ use Carbon\Carbon;
                                 <div class="form-group">
                                     <label>{{ translate('Landline Phone No.') }} <span
                                             class="text-primary"></span></label>
-                                    <input title="{{$user->business_information->landline ? $user->business_information->landline : '' }}" value="{{$landline }}"
+                                    <input title="{{$user->business_information ? $user->business_information->landline : '' }}" value="{{$landline }}"
                                         type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('landline') ? 'color-modified' : '' }}"
                                         placeholder="{{ translate('Landline Phone No.') }}" name="landline">
 
@@ -428,7 +502,7 @@ use Carbon\Carbon;
                             <div class="col-md-6" id="trnGroup">
                                 <div class="form-group">
                                     <label>{{ translate('TRN') }} <span class="text-primary">*</span></label>
-                                    <input title="{{$user->business_information->trn}}" value="{{ $trn }}" type="text"
+                                    <input title="{{$user->business_information}}" value="{{ $trn }}" type="text"
                                         class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('trn') ? 'color-modified' : '' }}" placeholder="{{ translate('TRN') }}"
                                         name="trn">
                                 </div>

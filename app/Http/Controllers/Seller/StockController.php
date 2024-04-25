@@ -346,9 +346,9 @@ class StockController extends Controller
         $records = $query->get();
 
         // $warehouses=Warehouse::where("user_id",$seller->id)->get() ;
-
+        $tour_steps=Tour::orderBy('step_number')->get();
         // Return the view with the data required for the stock operation report.
-        return view('seller.stock.stock_operation_report', compact('records',/* 'warehouses', */ 'productVariants', 'warehouses'));
+        return view('seller.stock.stock_operation_report', compact('records',/* 'warehouses', */ 'productVariants', 'warehouses','tour_steps'));
     }
 
     public function warehouses()
