@@ -30,12 +30,7 @@
                         <span class="aiz-side-nav-text">{{ translate('Dashboard') }}</span>
                     </a>
                 </li>
-                <li id="profile" class="aiz-side-nav-item">
-                    <a href="{{ route('seller.profile.index') }}" class="aiz-side-nav-link">
-                        <i class="las la-user aiz-side-nav-icon"></i>
-                        <span class="aiz-side-nav-text">{{ translate('e-Shop Profile') }}</span>
-                    </a>
-                </li>
+
                 @canany(['seller_show_product','seller_view_product_reviews'])
                     <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link">
@@ -48,11 +43,17 @@
                             @can('seller_show_product')
                             <li id="products" class="aiz-side-nav-item">
                                 <a href="{{ route('seller.products') }}"
-                                    class="aiz-side-nav-link {{ areActiveRoutes(['seller.products', 'seller.products.create', 'seller.products.edit']) }}">
+                                    class="aiz-side-nav-link {{ areActiveRoutes(['catalog.search_page']) }}">
                                     <span class="aiz-side-nav-text">{{ translate('Products') }}</span>
                                 </a>
                             </li>
                             @endcan
+                            <li id="products" class="aiz-side-nav-item">
+                                <a href="{{ route('catalog.search_page') }}"
+                                    class="aiz-side-nav-link {{ areActiveRoutes(['seller.products', 'seller.products.create', 'seller.products.edit']) }}">
+                                    <span class="aiz-side-nav-text">{{ translate('Mawad catalogue') }}</span>
+                                </a>
+                            </li>
                             {{-- @can('seller_product_bulk_import')
                             <li class="aiz-side-nav-item">
                                 <a href="{{ route('seller.product_bulk_upload.index') }}"
@@ -80,13 +81,13 @@
                         </ul>
                     </li>
                 @endcanany
-                <li id="catalog" class="aiz-side-nav-item">
+                {{-- <li id="catalog" class="aiz-side-nav-item">
                     <a href="{{ route('catalog.search_page') }}"
                         class="aiz-side-nav-link {{ areActiveRoutes(['catalog.search_page']) }}">
                         <i class="las la-folder-open aiz-side-nav-icon"></i>
                         <span class="aiz-side-nav-text">{{ translate('MawadCatalog search page') }}</span>
                     </a>
-                </li>
+                </li> --}}
                 @canany(['seller_add_inventory', 'seller_inventory_history'])
                     <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link">
@@ -104,7 +105,7 @@
                             </li>
                             @endcan
                             <li class="aiz-side-nav-item">
-                                <a href="{{ route('seller.warehouses.index') }}" class="aiz-side-nav-link">
+                                <a id="warehouses" href="{{ route('seller.warehouses.index') }}" class="aiz-side-nav-link">
                                     <span class="aiz-side-nav-text">{{__('stock.Warehouses')}}</span>
                                 </a>
                             </li>
@@ -205,7 +206,7 @@
                     <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link">
                             <i class="las la-shopping-cart aiz-side-nav-icon"></i>
-                            <span class="aiz-side-nav-text">{{ translate('Belling') }}</span>
+                            <span class="aiz-side-nav-text">{{ translate('Billing') }}</span>
                             <span class="aiz-side-nav-arrow"></span>
                         </a>
                         <!--Submenu-->
@@ -249,7 +250,13 @@
                     </li>
                 @endcan
 
-                @can('seller_shop_settings')
+                <li id="setting" id="profile" class="aiz-side-nav-item">
+                    <a href="{{ route('seller.profile.index') }}" class="aiz-side-nav-link">
+                        <i class="las la-user aiz-side-nav-icon"></i>
+                        <span class="aiz-side-nav-text">{{ translate('e-Shop Profile') }}</span>
+                    </a>
+                </li>
+                {{-- @can('seller_shop_settings')
                     <li id="setting" class="aiz-side-nav-item">
                         <a href="{{ route('seller.shop.index') }}"
                             class="aiz-side-nav-link {{ areActiveRoutes(['seller.shop.index']) }}">
@@ -257,7 +264,7 @@
                             <span class="aiz-side-nav-text">{{ translate('Shop Setting') }}</span>
                         </a>
                     </li>
-                @endcan
+                @endcan --}}
 
                 {{-- @can('seller_shop_payment_history')
                     <li class="aiz-side-nav-item">

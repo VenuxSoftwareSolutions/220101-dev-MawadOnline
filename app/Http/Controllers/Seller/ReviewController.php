@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Seller;
 
-use Illuminate\Http\Request;
-use Auth;
 use DB;
+use Auth;
+use App\Models\Tour;
+use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
@@ -19,7 +20,8 @@ class ReviewController extends Controller
     {
         seller_lease_creation($user=Auth::user());
         $step=3;
-        return view('seller.coming_soon',compact('step'));
+        $tour_steps=Tour::orderBy('step_number')->get();
+        return view('seller.coming_soon',compact('step','tour_steps'));
 
         // $reviews = DB::table('reviews')
         //             ->orderBy('id', 'desc')

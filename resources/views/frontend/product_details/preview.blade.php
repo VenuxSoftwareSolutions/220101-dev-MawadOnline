@@ -54,6 +54,15 @@
         content="{{ get_system_default_currency()->code }}" />
     <meta property="fb:app_id" content="{{ env('FACEBOOK_PIXEL_ID') }}">
 @endsection --}}
+@section('style')
+<style>
+    .btn-secondary-base:hover {
+        background-color: #CB774B !important;
+        border-color: #CB774B !important;
+        cursor: default !important; /* Inherit cursor style from the parent element on hover */
+    }
+</style>
+@endsection
 
 @section('content')
     <section class="mb-4 pt-3">
@@ -1279,6 +1288,8 @@
             });
         }
     </script>
+    <!-- Toastr JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.all.min.js"></script>
     <script>
         $(document).ready(function() {
               // Set the CSRF token for all AJAX requests
@@ -1315,9 +1326,22 @@
                         // Handle successful response
                         console.log(response.unit_price)
                         if (response.unit_price != null) {
-                            $("#qty-interval").text(response.unit_price+" AED")
+                            if (response.discountPrice > 0) {
+                                $("#qty-interval").text(response.discountPrice+" AED")
+                                $("#chosen_price").text(response.totalDiscount+" AED")
+                                $("#previous-price").text(response.unit_price+" AED")
+
+                            }
+                            else {
+                                $("#previous-price").text('') ;
+
+                                $("#qty-interval").text(response.unit_price+" AED")
+                                $("#chosen_price").text(response.total+" AED")
+                            }
+
                             $("#quantity").val(response.qty)
-                            $("#chosen_price").text(response.total+" AED")
+
+
                             $('#quantity').attr('min', response.minimum); // Minimum value
                             $('#quantity').attr('max', response.maximum); // Maximum value
                             // $('.quantity-control[data-type="minus"]').prop('disabled', response.qty <= response.minimum);
@@ -1384,12 +1408,27 @@
                     }
                     else {
                         if (response.price > 0) {
+
                             $('#variationId').val(response.variationId) ;
                             $("#qty-interval").text(response.price+" AED")
                             $("#quantity").val(response.quantity)
                             $("#chosen_price").text(response.total+" AED")
                             $('#quantity').attr('min', response.minimum); // Minimum value
                             $('#quantity').attr('max', response.maximum); // Maximum value
+
+                            if (response.discountedPrice > 0) {
+
+                                $("#qty-interval").text(response.discountedPrice+" AED")
+                                $("#chosen_price").text(response.totalDiscount+" AED")
+                                $("#previous-price").text(response.price+" AED")
+
+                            }
+                            else {
+                                $("#previous-price").text('') ;
+                                $("#qty-interval").text(response.price+" AED")
+                                $("#chosen_price").text(response.total+" AED")
+                            }
+
                             $('.aiz-plus-minus input').each(function() {
                                     var $this = $(this);
                                     var min = parseInt($(this).attr("min"));
@@ -1610,6 +1649,70 @@
             // });
             sendCheckedAttributes($(this));
         });
+
+        $('.add_product').on('click', function(){
+            var product_id = $(this).data('product_id');
+            var editUrlBase  = "{{ route('seller.products.edit', ['id' => 'PLACEHOLDER']) }}";
+            if(product_id != undefined){
+                $.ajax({
+                    url: "{{route('catalog.add_product')}}",
+                    type: "POST",
+                    data: {
+                        id: product_id
+                    },
+                    cache: false,
+                    dataType: 'JSON',
+                    success: function(dataResult) {
+                        // Replace 'PLACEHOLDER' with the actual slug from the response
+                        var editUrl = editUrlBase.replace('PLACEHOLDER', dataResult.data);
+
+                        // Open the URL
+                        window.location.href = editUrl;
+                    }
+                })
+            }
+        })
+
+        $('.add_product_to_catalog').on('click', function(){
+            var product_id = $(this).data('product_id');
+            var previewUrlBase  = "{{ route('seller.products.edit', ['id' => 'PLACEHOLDER']) }}";
+            var current = $(this);
+            if(product_id != undefined){
+                $.ajax({
+                    url: "{{route('catalog.add_product_to_catalog')}}",
+                    type: "POST",
+                    data: {
+                        id: product_id
+                    },
+                    cache: false,
+                    dataType: 'JSON',
+                    success: function(dataResult) {
+                        
+                        // toastr.options =    {
+                        //                         positionClass: 'toast-top-right',
+                        //                         closeButton: true,
+                        //                         timeOut: 3000, // Set the duration for which the toast will be displayed (in milliseconds)
+                        //                     };
+                                            
+                        // toastr.success('Product added successfully');
+
+                        current.remove();
+                        swal(
+                            'Added',
+                            'Product added successfully',
+                            'success'
+                        )
+                        
+                        // Replace 'PLACEHOLDER' with the actual slug from the response
+                        // var previewUrl = previewUrlBase.replace('PLACEHOLDER', data.data.slug);
+
+                        // // Open the URL in a new tab
+                        // window.open(previewUrl, '_blank');
+                    }
+                })
+            }
+        })
+
 
 
         });

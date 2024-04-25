@@ -5,10 +5,17 @@
     }
     .button-container {
         position: fixed;
-        top: 12%;
-        right: 2%;
-        z-index: 5;
+        top: 1%;
+        right: 19%;
+        z-index: 97;
     }
+
+    .swal2-icon .swal2-icon-content {
+        display: flex;
+        align-items: center;
+        font-size: 0.75em !important;
+    }
+
     .preview-button {
         background-color: #cb774b !important; /* Green background */
         border: none;
@@ -57,6 +64,7 @@
                 @endif
                 @csrf
                 <input type="hidden" name="product_id" value="{{ $product->id }}">
+                <input type="hidden" name="last_version" id="last_version" value="0">
                 {{-- Bloc Product Information --}}
                 <div class="card">
                     <div class="card-header">
@@ -804,7 +812,7 @@
                                             </div>
                                             <div class="col-md-8">
                                                 <div class="custom-file mb-3">
-                                                    <input type="file" class="custom-file-input photos_variant" name="variant[photo][{{ $children->id }}][]" id="photos_variant{{ $key }}" accept=".jpeg, .jpg, .png" multiple>
+                                                    <input type="file" class="custom-file-input photos_variant" data-count = "{{ count($children->getImagesProduct()) }}" name="variant[photo][{{ $children->id }}][]" id="photos_variant{{ $key }}" accept=".jpeg, .jpg, .png" multiple>
                                                     <label class="custom-file-label" for="photos_variant{{ $key }}">Choose files</label>
                                                 </div>
                                                 @if(count($children->getImagesProduct()) > 0)
@@ -1020,7 +1028,7 @@
                                             </div>
                                             <div class="col-md-8">
                                                 <label class="aiz-switch aiz-switch-success mb-0">
-                                                    <input value="1" type="checkbox" class="variant-sample-shipping" name="variant[sample_shipping][{{ $children->id }}]" @if($children->shipper_sample != null) checked @endif @if($children->sample_available != 1) disabled @endif>
+                                                    <input value="1" type="checkbox" data-id_old_variant= "{{ $children->id }}" class="variant-sample-shipping" name="variant[sample_shipping][{{ $children->id }}]" @if($children->shipper_sample == null) checked @endif @if($children->sample_available != 1) disabled @endif>
                                                     <span></span>
                                                 </label>
                                             </div>
@@ -1104,6 +1112,26 @@
                         <h5 class="mb-0 h6">{{translate('General Attributes')}}</h5>
                     </div>
                     <div class="card-body">
+                        @if(count($product->getChildrenProductsDesc()) == 0)
+                            <div id="sku_product_product" style="margin-left: -15px;">
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <input type="text" class="form-control" value="{{ translate('SKU') }}" disabled>
+                                    </div>
+                                    <div class="col-md-8 mb-3">
+                                        <input type="text" name="product_sk" class="form-control" value="{{ $product->sku }}">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <input type="number" class="form-control" value="{{ translate('Low-Stock Warning') }}" disabled>
+                                    </div>
+                                    <div class="col-md-8 mb-3">
+                                        <input type="text" name="quantite_stock_warning" class="form-control" value="{{ $product->low_stock_quantity }}">
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                         <div class="row">
                             <div id="general_attributes">
                                 @if (count($general_attributes_ids_attributes) > 0)
@@ -1210,7 +1238,7 @@
                                 <textarea name="meta_description" rows="8" class="form-control">{{ $product->meta_description }}</textarea>
                             </div>
                         </div>
-                        <div class="form-group row">
+                        {{-- <div class="form-group row">
                             <label class="col-md-3 col-form-label" for="signinSrEmail">{{ translate('Meta Image') }}</label>
                             <div class="col-md-8">
                                 <div class="input-group" data-toggle="aizuploader" data-type="image">
@@ -1223,7 +1251,7 @@
                                 <div class="file-preview box sm">
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>
@@ -1349,6 +1377,7 @@
                 $('body #attributes').prop('disabled', true);
                 $('#variant_informations').hide();
                 $('#btn-create-variant').hide();
+                $('body #sku_product_product').show();
                 $('body #bloc_variants_created').hide();
                 AIZ.plugins.bootstrapSelect('refresh');
             } else {
@@ -1357,6 +1386,9 @@
                     if ($('#attributes option').length > 0) {
                         $('body #attributes').prop('disabled', false);
                         $('#variant_informations').show();
+                        $('body #sku_product_product').hide();
+                        $('body #product_sk').val(null);
+                        $('body #stock_qty_warning').val(null);
                         $('#btn-create-variant').show();
                         $('.div-btn').show();
                         AIZ.plugins.bootstrapSelect('refresh');
@@ -1558,14 +1590,36 @@
         $('body').on('change', '.photos_variant', function() {
             // Get the number of selected files
             var numFiles = $(this)[0].files.length;
+            var files = this.files;
+            var uploaded_files = $(this).data('count');
+            var all_files_length = files.length + uploaded_files
 
-            // Update the label text accordingly
-            var labelText = numFiles === 1 ? '1 file selected' : numFiles + ' files selected';
-            $(this).next('.custom-file-label').html(labelText);
+            // Maximum number of allowed files
+            var maxFiles = 10;
+            if (all_files_length > maxFiles) {
+                swal(
+                    'Cancelled',
+                    '{{ translate("You can only upload a maximum of 10 files.")}}',
+                    'error'
+                )
+                this.value = ''; // Clear the file input
+            }else if(all_files_length == 0){
+                swal(
+                    'Cancelled',
+                    '{{ translate("You need to select at least one picture.")}}',
+                    'error'
+                )
+                var labelText = '0 file selected';
+                $(this).next('.custom-file-label').html(labelText);
+            }else if( (all_files_length <= maxFiles) && (all_files_length > 0)){
+                // Update the label text accordingly
+                var labelText = numFiles === 1 ? '1 file selected' : numFiles + ' files selected';
+                $(this).next('.custom-file-label').html(labelText);
+            }
         });
 
         //Create variant when click on button create variant
-        $('#btn-create-variant').on('click', function() {
+        $('body').on('click', '#btn-create-variant', function() {
             // Clone the original div
             var clonedDiv = $('#variant_informations').clone();
 
@@ -1578,7 +1632,7 @@
             // Append the cloned div to the container
             var count = numbers_variant + 1;
             //add attribute name for each input cloned
-            var html_to_add = '<div style="float: right; margin-top: -35px"><i class="fa-regular fa-circle-check fa-xl square-variant" title="End edit"></i><i class="fa-regular fa-pen-to-square fa-xl square-variant" title="Edit variant"></i><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
+            var html_to_add = '<div style="float: right; margin-top: -35px"><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
             clonedDiv.find('h3').after(html_to_add);
             //clonedDiv.find('.fa-circle-xmark').hide();
             clonedDiv.find('.fa-circle-check').hide();
@@ -1591,6 +1645,7 @@
                 }
             });
             clonedDiv.find('.sku').attr('name', 'sku-' + numbers_variant);
+            clonedDiv.find('.sku').prop('readonly', true);
             clonedDiv.find('.vat_sample').attr('name', 'vat_sample-' + numbers_variant);
             clonedDiv.find('.sample_description').attr('name', 'sample_description-' + numbers_variant);
             clonedDiv.find('.sample_price').attr('name', 'sample_price-' + numbers_variant);
@@ -1686,6 +1741,7 @@
             clonedDiv.find('.variant-sample-pricing').attr('name', 'variant-sample-pricing' + numbers_variant);
             clonedDiv.find('.variant-sample-pricing').attr('data-id_newvariant', numbers_variant);
             clonedDiv.find('.variant-sample-shipping').attr('name', 'variant-sample-shipping' + numbers_variant);
+            clonedDiv.find('.variant-sample-shipping').attr('data-id_new_variant', numbers_variant);
 
             clonedDiv.find('.min-qty-shipping').each(function(index, element) {
                 $(element).attr('name', 'variant_shipping-' + numbers_variant + '[from][]');
@@ -1804,27 +1860,6 @@
             $(this).parent().find('#btn-add-pricing-variant').hide();
             $(this).parent().find('.fa-pen-to-square').show();
             $(this).parent().find('.fa-circle-check').hide();
-        })
-
-        //show or hide bloc sample variant under specific variant
-        $('body').on('change', '.variant-sample-pricing', function(){
-            if ($(this).is(':not(:checked)')) {
-                var clonedDiv = $('#sample_parent').clone();
-                id_variant = $(this).data('variant');
-                id_new_variant = $(this).data('id_newvariant');
-                if(id_variant != undefined){
-                    clonedDiv.find('.sample_description_parent').attr('name', 'variant[sample_description][' + id_variant + "]");
-                    clonedDiv.find('.sample_price_parent').attr('name', 'variant[sample_price][' + id_variant + "]");
-                }else if(id_new_variant != undefined){
-                    clonedDiv.find('.sample_description_parent').attr('name', 'sample_description-' + id_new_variant);
-                    clonedDiv.find('.sample_price_parent').attr('name', 'sample_price-' + id_new_variant);
-                    clonedDiv.find('.sample_price_parent').attr('readonly', false);
-                }
-                $(this).parent().parent().parent().find('.bloc_sample_pricing_configuration_variant').show();
-                $(this).parent().parent().parent().find('.bloc_sample_pricing_configuration_variant').html(clonedDiv);
-            }else{
-                $(this).parent().parent().parent().find('.bloc_sample_pricing_configuration_variant').empty();
-            }
         })
 
         $('body').on('change', '.variant-pricing', function(){
@@ -2045,7 +2080,6 @@
             // add another ligne in pricing configuration when not any overlaps are found
         });
 
-
         $('#btn-add-pricing-variant').click(() => {
             var html_to_add = `
                             <div>
@@ -2132,6 +2166,7 @@
                 AIZ.plugins.bootstrapSelect('refresh');
 
         });
+
         $('body').on('click', '.btn-add-pricing', function() {
             var id_variant = $(this).data('id_variant');
             var newvariant = $(this).data('newvariant-id');
@@ -2612,7 +2647,6 @@
                 }
             }
         });
-
 
         let fileInputCounter = 1;
 
@@ -3531,6 +3565,27 @@
             }
         });
 
+        //show or hide bloc sample variant under specific variant
+        $('body').on('change', '.variant-sample-pricing', function(){
+            if ($(this).is(':not(:checked)')) {
+                var clonedDiv = $('#sample_parent').clone();
+                id_variant = $(this).data('variant');
+                id_new_variant = $(this).data('id_newvariant');
+                if(id_variant != undefined){
+                    clonedDiv.find('.sample_description_parent').attr('name', 'variant[sample_description][' + id_variant + "]");
+                    clonedDiv.find('.sample_price_parent').attr('name', 'variant[sample_price][' + id_variant + "]");
+                }else if(id_new_variant != undefined){
+                    clonedDiv.find('.sample_description_parent').attr('name', 'sample_description-' + id_new_variant);
+                    clonedDiv.find('.sample_price_parent').attr('name', 'sample_price-' + id_new_variant);
+                    clonedDiv.find('.sample_price_parent').attr('readonly', false);
+                }
+                $(this).parent().parent().parent().find('.bloc_sample_pricing_configuration_variant').show();
+                $(this).parent().parent().parent().find('.bloc_sample_pricing_configuration_variant').html(clonedDiv);
+            }else{
+                $(this).parent().parent().parent().find('.bloc_sample_pricing_configuration_variant').empty();
+            }
+        })
+
         $('body').on('change', '.variant-sample-shipping', function(){
             if ($(this).is(':not(:checked)')) {
                 var clonedDiv = $('#table_sample_configuration').clone();
@@ -3538,6 +3593,23 @@
                 var shipper_sample = $('#table_sample_configuration').find('.shipper_sample').val();
                 clonedDiv.find('.paid_sample').find('option[value="' + paid_sample + '"]').prop('selected', true);
                 clonedDiv.find('.shipper_sample').find('option[value="' + shipper_sample + '"]').prop('selected', true);
+                if($(this).data('id_old_variant') != undefined){
+                    var id_variant = $(this).data('id_old_variant');
+
+                    clonedDiv.find('.shipper_sample').attr('name', 'variant[shipper_sample][' + id_variant + ']');
+                    clonedDiv.find('.estimated_sample').attr('name', 'variant[estimated_sample][' + id_variant + ']');
+                    clonedDiv.find('.estimated_shipping_sample').attr('name', 'variant[estimated_shipping_sample][' + id_variant + ']');
+                    clonedDiv.find('.paid_sample').attr('name', 'variant[paid_sample][' + id_variant + ']');
+                    clonedDiv.find('.shipping_amount').attr('name', 'variant[shipping_amount][' + id_variant + ']');
+                }else if($(this).data('id_new_variant') != undefined){
+                    var id_variant = $(this).data('id_new_variant');
+
+                    clonedDiv.find('.shipper_sample').attr('name', 'variant_shipper_sample-' + numbers_variant);
+                    clonedDiv.find('.paid_sample').attr('name', 'paid_sample-' + numbers_variant);
+                    clonedDiv.find('.estimated_sample').attr('name', 'estimated_sample-' + numbers_variant);
+                    clonedDiv.find('.estimated_shipping_sample').attr('name', 'estimated_shipping_sample-' + numbers_variant);
+                    clonedDiv.find('.shipping_amount').attr('name', 'shipping_amount-' + numbers_variant);
+                }
                 $(this).parent().parent().parent().find('#bloc-sample-shipping').append(clonedDiv);
             }else{
                 $(this).parent().parent().parent().find('#bloc-sample-shipping').empty();
@@ -3549,8 +3621,12 @@
                 $(this).parent().parent().parent().parent().find('.variant-sample-pricing').prop('disabled', false);
                 $(this).parent().parent().parent().parent().find('.variant-sample-shipping').prop('disabled', false);
             }else{
+                $(this).parent().parent().parent().parent().find('.variant-sample-pricing').prop('checked', true);
+                $(this).parent().parent().parent().parent().find('.variant-sample-shipping').prop('checked', true);
                 $(this).parent().parent().parent().parent().find('.variant-sample-pricing').prop('disabled', true);
                 $(this).parent().parent().parent().parent().find('.variant-sample-shipping').prop('disabled', true);
+                $(this).parent().parent().parent().parent().find('.bloc_sample_pricing_configuration_variant').empty();
+                $(this).parent().parent().parent().parent().find('#bloc-sample-shipping').empty();
             }
         })
     });
@@ -3691,5 +3767,31 @@
             }
         });
     };
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script> <!-- Include SweetAlert2 JS -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('choice_form').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            Swal.fire({
+                title: "Do wants to keep the last approved product published on the marketplace or it shall be turned to unpublished ?",
+                text: "Do wants to keep the last approved product published on the marketplace or it shall be turned to unpublished ?",
+                icon: "info",
+                showCancelButton: false,
+                confirmButtonText: "Next",
+                html: '<input type="checkbox" id="publicationToggle" value="published" checked> keep the last version approved',
+                focusConfirm: false,
+                preConfirm: () => {
+                    const publicationStatus = document.getElementById('publicationToggle').checked ? 'use' : 'not use';
+                    if(publicationStatus == 'use'){
+                        $('#last_version').val(1)
+                    }
+                    document.getElementById('choice_form').submit();
+                }
+            });
+        });
+    });
 </script>
 @endsection

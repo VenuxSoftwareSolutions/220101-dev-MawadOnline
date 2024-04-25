@@ -142,29 +142,12 @@
                                             </div>
                                         </div>
 
-                                        <!-- Submit Button -->
-                                        <div class="mb-4 mt-4">
-                                            <button class="g-recaptcha btn btn-primary btn-block fw-700 fs-14 rounded-0" data-sitekey="{{ config('services.recaptcha_v3.siteKey') }}" data-callback="onSubmit" data-action="submitLoginForm">
-                                                {{ translate('Login') }}
-                                            </button>
-                                        </div>
-                                    </form>
-
-                                    <!-- DEMO MODE -->
-                                    @if (env("DEMO_MODE") == "On")
-                                    <div class="mb-4">
-                                        <table class="table table-bordered mb-0">
-                                            <tbody>
-                                                <tr>
-                                                    <td>{{ translate('Seller Account')}}</td>
-                                                    <td class="text-center">
-                                                        <button class="btn btn-info btn-sm" onclick="autoFillSeller()">{{ translate('Copy credentials') }}</button>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    @endif
+                                    <!-- Register Now -->
+                                    <p class="fs-12 text-gray mb-0">
+                                        {{ translate('Dont have an account?')}}
+                                        <a href="{{ route('shops.packages') }}"
+                                           class="ml-2 fs-14 fw-700 animate-underline-primary">{{ translate('Register Now')}}</a>
+                                    </p>
                                 </div>
 
                                 <!-- Register Now -->
@@ -191,10 +174,10 @@
 
 @section('script')
 
-<script type="text/javascript">
-    function autoFillSeller() {
-        $('#email').val('seller@example.com');
-        $('#password').val('123456');
-    }
-</script>
+    <script type="text/javascript">
+        function autoFillSeller() {
+            $('#email').val('seller@example.com');
+            $('#password').val('123456');
+        }
+    </script>
 @endsection

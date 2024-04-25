@@ -93,7 +93,7 @@ class ShopController extends Controller
                 return redirect()->route('dashboard');
             }
 
-            if (Auth::user()->user_type == 'seller'  && (Auth::user()->status == "Draft" || Auth::user()->status == "Rejected") /* && Auth::user()->steps == 0 */) {
+            if (Auth::user()->user_type == 'seller'  && (Auth::user()->status == "Draft" || Auth::user()->status == "Rejected" ) /* && Auth::user()->steps == 0 */) {
                 $user = Auth::user();
                 if (Auth::user()->status == "Draft") {
                     $step_number = Auth::user()->step_number;
@@ -121,6 +121,9 @@ class ShopController extends Controller
             if (Auth::user()->user_type == 'seller' && Auth::user()->steps && Auth::user()->status == "Closed") {
                 $status = strtolower(str_replace(' ', '-', Auth::user()->status));
                 return redirect()->route('seller.status', $status);
+            }
+            if (Auth::user()->user_type == 'seller' &&  Auth::user()->status == "Enabled"  && Auth::user()->id != Auth::user()->owner_id ) {
+                return view('frontend.seller_form',compact('emirates'));
             }
         } else {
             return view('frontend.seller_form', compact('emirates'));

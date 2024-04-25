@@ -41,6 +41,8 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Validator;
 use App\Mail\SecondEmailVerifyMailManager;
+use Illuminate\Support\Facades\DB;
+
 
 class HomeController extends Controller
 {
@@ -68,9 +70,20 @@ class HomeController extends Controller
 
     public function load_newest_product_section()
     {
+        
         $newest_products = Cache::remember('newest_products', 3600, function () {
-            //return filter_products(Product::latest())->limit(12)->get();
-            return Product::where('is_parent', 0)->where('approved', 1)->orderBy('id','desc')->limit(12)->get();
+            return Product::where(function($query) {
+                $query->where('published', 1)
+                    ->where('approved', 1)
+                    ->where('is_parent', 0);
+            })
+            ->orWhere(function($query) {
+                $query->where('published', 1)
+                    ->where('is_parent', 0)
+                    ->where('last_version', 1)
+                    ->whereIn('approved', [0, 2, 4]);
+            })
+            ->orderBy('id','desc')->limit(12)->get();
         });
 
         return view('frontend.'.get_setting('homepage_select').'.partials.newest_products_section', compact('newest_products'));
@@ -355,7 +368,7 @@ class HomeController extends Controller
         // }
         // abort(404);
 
-        $parent  = Product::with('reviews', 'brand', 'stocks', 'user', 'user.shop')->where('auction_product', 0)->where('slug', $slug)->where('approved', 1)->first();
+        $parent  = Product::where('slug', $slug)->where('approved', 1)->first();
 
         if ($parent != null) {         
 
@@ -364,8 +377,39 @@ class HomeController extends Controller
                     $parent = Product::find($parent->parent_id);
                 }
             }
-    
-            $brand = Brand::find($parent->brand_id);
+
+            $revision_parent_name = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'name')->latest()->first();
+            $name = '';
+            if($revision_parent_name != null && $parent->last_version == 1){
+                $name = $revision_parent_name->old_value;
+            }else{
+                $name = $parent->name;
+            }
+
+            $revision_parent_brand = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'brand_id')->latest()->first();
+            if($revision_parent_brand != null && $parent->last_version == 1){
+                $brand_id = $revision_parent_brand->old_value;
+            }else{
+                $brand_id = $parent->brand_id;
+            }  
+
+            $revision_parent_description = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'description')->latest()->first();
+            $description = '';
+            if($revision_parent_description != null && $parent->last_version == 1){
+                $description = $revision_parent_description->old_value;
+            }else{
+                $description = $parent->description;
+            }  
+
+            $revision_parent_unit = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'unit')->latest()->first();
+            $unit = '';
+            if($revision_parent_unit != null && $parent->last_version == 1){
+                $unit = $revision_parent_unit->old_value;
+            }else{
+                $unit = $parent->unit;
+            } 
+            
+            $brand = Brand::find($brand_id);
             $pricing = PricingConfiguration::where('id_products', $parent->id)->get();
             $pricing = [];
             $pricing['from'] = PricingConfiguration::where('id_products', $parent->id)->pluck('from')->toArray();
@@ -384,35 +428,106 @@ class HomeController extends Controller
                     $variations[$children_id]['variant_pricing-from']['unit_price'] = PricingConfiguration::where('id_products', $children_id)->pluck('unit_price')->toArray();
 
                     $attributes_variant = ProductAttributeValues::where('id_products', $children_id)->where('is_variant', 1)->get();
-    
                     foreach($attributes_variant as $attribute){
-                        if($attribute->id_units != null){
-                            $unit = Unity::find($attribute->id_units);
-                            if ($unit){
-                                $variations[$children_id][$attribute->id_attribute] = $attribute->value.' '.$unit->name;
+                        $revision_children_attribute = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\ProductAttributeValues')->where('revisionable_id', $attribute->id)->latest()->first();
+                        if($revision_children_attribute != null && $parent->last_version == 1){
+                            if($attribute->id_units != null){
+                                $unit = null;
+                                if($revision_children_attribute->key = 'id_units'){
+                                    $unit = Unity::find($revision_children_attribute->old_value);
+                                }else{
+                                    $unit = Unity::find($attribute->id_units);
+                                }
+                                
+                                if ($unit){
+                                    $variations[$children_id][$attribute->id_attribute] = $attribute->value.' '.$unit->name;
+                                }
+                            }else{
+                                if($revision_children_attribute->key != 'add_attribute'){
+                                    $variations[$children_id][$attribute->id_attribute] = $revision_children_attribute->old_value;
+                                }
                             }
                         }else{
-                            $variations[$children_id][$attribute->id_attribute] = $attribute->value;
+                            if($attribute->id_units != null){
+                                $unit = Unity::find($attribute->id_units);
+                                if ($unit){
+                                    $variations[$children_id][$attribute->id_attribute] = $attribute->value.' '.$unit->name;
+                                }
+                            }else{
+                                $variations[$children_id][$attribute->id_attribute] = $attribute->value;
+                            }
                         }
+                        
+                    }
+
+                    
+                    if($parent->last_version == 1){
+                        $images_children = UploadProducts::where('id_product', $children_id)->where('type', 'images')->get();
+                        if(count($images_children) > 0){
+                            $path = [];
+                            foreach($images_children as $image){
+                                $revision_children_image = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\UploadProducts')->where('revisionable_id', $image->id)->latest()->first();
+                                if($revision_children_image == null){
+                                    array_push($path, $image->path);
+                                }
+                            }
+                            $variations[$children_id]['storedFilePaths'] = $path;
+                        }
+                    }else{
+                        $variations[$children_id]['storedFilePaths'] = UploadProducts::where('id_product', $children_id)->where('type', 'images')->pluck('path')->toArray();
                     }
                     
-                    $variations[$children_id]['storedFilePaths'] = UploadProducts::where('id_product', $children_id)->where('type', 'images')->pluck('path')->toArray();
                 }
             }
     
-            $storedFilePaths = UploadProducts::where('id_product', $parent->id)->where('type', 'images')->pluck('path')->toArray();
+            if($parent->last_version == 1){
+                $images_parent = UploadProducts::where('id_product', $parent->id)->where('type', 'images')->get();
+                if(count($images_parent) > 0){
+                    $path = [];
+                    foreach($images_parent as $image){
+                        $revision_parent_image = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\UploadProducts')->where('revisionable_id', $image->id)->latest()->first();
+                        if($revision_parent_image == null){
+                            array_push($path, $image->path);
+                        }
+                    }
+                    $storedFilePaths = $path;
+                }
+            }else{
+                $storedFilePaths = UploadProducts::where('id_product', $parent->id)->where('type', 'images')->pluck('path')->toArray();
+            }
+
 
             $attributes_general = ProductAttributeValues::where('id_products', $parent->id)->where('is_general', 1)->get();
 
             $attributesGeneralArray = [];
             foreach($attributes_general as $attribute_general){
-                if($attribute_general->id_units != null){
-                    $unit = Unity::find($attribute_general->id_units);
-                    if ($unit){
-                        $attributesGeneralArray[$attribute_general->id_attribute] = $attribute_general->value.' '.$unit->name;
+                $revision_parent_attribute = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\ProductAttributeValues')->where('revisionable_id', $attribute_general->id)->latest()->first();
+                if($revision_parent_attribute != null && $parent->last_version == 1){
+                    if($attribute->id_units != null){
+                        $unit = null;
+                        if($revision_parent_attribute->key = 'id_units'){
+                            $unit = Unity::find($revision_parent_attribute->old_value);
+                        }else{
+                            $unit = Unity::find($attribute->id_units);
+                        }
+                        
+                        if ($unit){
+                            $attributesGeneralArray[$attribute_general->id_attribute] = $attribute_general->value.' '.$unit->name;
+                        }
+                    }else{
+                        if($revision_parent_attribute->key != 'add_attribute'){
+                            $attributesGeneralArray[$attribute_general->id_attribute] = $revision_parent_attribute->old_value;
+                        }
                     }
                 }else{
-                    $attributesGeneralArray[$attribute_general->id_attribute] = $attribute_general->value;
+                    if($attribute_general->id_units != null){
+                        $unit = Unity::find($attribute_general->id_units);
+                        if ($unit){
+                            $attributesGeneralArray[$attribute_general->id_attribute] = $attribute_general->value.' '.$unit->name;
+                        }
+                    }else{
+                        $attributesGeneralArray[$attribute_general->id_attribute] = $attribute_general->value;
+                    }
                 }
             }
     
@@ -458,20 +573,39 @@ class HomeController extends Controller
                     $max = max($pricing['to']) ;
             } 
     
-            if ($parent->video_provider === "youtube") {
-                $getYoutubeVideoId=$this->getYoutubeVideoId($parent->video_link) ;
+            $revision_parent_video_provider = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'video_provider')->latest()->first();
+            $video_provider = '';
+            if($revision_parent_video_provider != null && $parent->last_version == 1){
+                $old_link = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'video_link')->latest()->first();
+                $video_provider = $revision_parent_video_provider->old_value;
+                if ($revision_parent_video_provider->old_value === "youtube") {
+                    $getYoutubeVideoId = null;
+                    if($old_link != null){
+                        $getYoutubeVideoId=$this->getYoutubeVideoId($old_link->old_value);
+                    }
+                }
+                else {
+                    $getVimeoVideoId = null;
+                    if($old_link != null){
+                        $getVimeoVideoId=$this->getVimeoVideoId($old_link->old_value);
+                    }
+                } 
+            }else{
+                $video_provider = $parent->video_provider;
+                if ($parent->video_provider === "youtube") {
+                    $getYoutubeVideoId=$this->getYoutubeVideoId($parent->video_link) ;
+                }else{
+                    $getVimeoVideoId=$this->getVimeoVideoId($parent->video_link) ;
+                } 
             }
-            else {
-                $getVimeoVideoId=$this->getVimeoVideoId($parent->video_link) ;
-            } 
     
             $total = isset($pricing['from'][0]) && isset($pricing['unit_price'][0]) ? $pricing['from'][0] * $pricing['unit_price'][0] : "";
         
             $detailedProduct = [
-                    'name' => $parent->name,
+                    'name' => $name,
                     'brand' => $brand ? $brand->name : "",
-                    'unit' => $parent->unit,
-                    'description' => $parent->description,
+                    'unit' => $unit,
+                    'description' => $description,
                     'main_photos' => $lastItem['storedFilePaths'] ?? $storedFilePaths, // Add stored file paths to the detailed product data
                     'quantity' => $lastItem['variant_pricing-from']['from'][0] ?? $pricing['from'][0] ?? '',
                     'price' => $lastItem['variant_pricing-from']['unit_price'][0] ?? $pricing['unit_price'][0] ?? '',
@@ -485,17 +619,15 @@ class HomeController extends Controller
                     'variations' =>$variations,
                     'variationId' => $variationId ?? null,
                     'lastItem' => $lastItem ?? [],
-                    'catalog' => true,
                     'product_id' => $parent->id,
                     'max' =>$max ?? 1 ,
                     'min' =>$min ?? 1 ,
-                    'video_provider'  => $parent->video_provider,
+                    'video_provider'  => $video_provider,
                     'getYoutubeVideoId' =>$getYoutubeVideoId ?? null ,
                     'getVimeoVideoId' => $getVimeoVideoId ?? null,
                 ];
     
             $previewData['detailedProduct'] = $detailedProduct;
-    
             session(['productPreviewData' => $previewData]);
     
             return view('frontend.product_details', compact('previewData'));

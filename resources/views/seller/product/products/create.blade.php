@@ -14,9 +14,9 @@
     }
     .button-container {
         position: fixed;
-        top: 12%;
-        right: 2%;
-        z-index: 5;
+        top: 1%;
+        right: 19%;
+        z-index: 97;
     }
     .preview-button {
         background-color: #cb774b !important; /* Green background */
@@ -110,7 +110,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Manufacturer')}} <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" name="manufacturer" value="{{ old('manufacturer') }}" placeholder="Manufacturer" >
+                                <input type="text" required class="form-control" name="manufacturer" value="{{ old('manufacturer') }}" placeholder="Manufacturer" >
                             </div>
                         </div>
                         <div class="form-group row">
@@ -315,7 +315,7 @@
                                     </tbody>
                                 </table>
                                 <div id="result_calculate_third_party">
-    
+
                                 </div>
                             </div>
                         </div>
@@ -348,9 +348,9 @@
                                                     <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                                 </select>
                                             </td>
-    
+
                                             <div id="results"></div>
-    
+
                                             <td><input type="number" class="form-control estimated_order" name="estimated_order[]"></td>
                                             <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]"></td>
                                             <td>
@@ -686,6 +686,24 @@
                         <h5 class="mb-0 h6">{{translate('General Attributes')}}</h5>
                     </div>
                     <div class="card-body">
+                        <div id="sku_product_product" style="margin-left: -15px;">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <input type="text" class="form-control" value="{{ translate('SKU') }}" disabled>
+                                </div>
+                                <div class="col-md-8 mb-3">
+                                    <input type="text" name="product_sk" class="form-control">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <input type="text" class="form-control" value="{{ translate('Low-Stock Warning') }}" disabled>
+                                </div>
+                                <div class="col-md-8 mb-3">
+                                    <input type="text" name="quantite_stock_warning" class="form-control">
+                                </div>
+                            </div>
+                        </div>
                         <div class="row">
                             <div id="general_attributes"></div>
                         </div>
@@ -755,7 +773,7 @@
                                 <textarea name="meta_description" rows="8" class="form-control">{{ old('meta_description') }}</textarea>
                             </div>
                         </div>
-                        <div class="form-group row">
+                        {{-- <div class="form-group row">
                             <label class="col-md-3 col-form-label" for="signinSrEmail">{{ translate('Meta Image') }}</label>
                             <div class="col-md-8">
                                 <div class="input-group" data-toggle="aizuploader" data-type="image">
@@ -768,7 +786,7 @@
                                 <div class="file-preview box sm">
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>
@@ -850,6 +868,7 @@
                 $('#variant_informations').hide();
                 $('#btn-create-variant').hide();
                 $('body #bloc_variants_created').hide();
+                $('body #sku_product_product').show();
                 AIZ.plugins.bootstrapSelect('refresh');
             } else {
                 var category_choosen = $("#selected_parent_id").val();
@@ -858,6 +877,7 @@
                         $('body #attributes').prop('disabled', false);
                         $('#variant_informations').show();
                         $('#btn-create-variant').show();
+                        $('body #sku_product_product').hide();
                         $('.div-btn').show();
                         AIZ.plugins.bootstrapSelect('refresh');
                     } else {
@@ -1015,10 +1035,29 @@
         $('body').on('change', '.photos_variant', function() {
             // Get the number of selected files
             var numFiles = $(this)[0].files.length;
+            var files = this.files;
 
-            // Update the label text accordingly
-            var labelText = numFiles === 1 ? '1 file selected' : numFiles + ' files selected';
-            $(this).next('.custom-file-label').html(labelText);
+            // Maximum number of allowed files
+            var maxFiles = 10;
+            if (files.length > maxFiles) {
+                swal(
+                    'Cancelled',
+                    '{{ translate("You can only upload a maximum of 10 files.")}}',
+                    'error'
+                )
+                this.value = ''; // Clear the file input
+            }else if(files.length == 0){
+                swal(
+                    'Cancelled',
+                    '{{ translate("You need to select at least one picture.")}}',
+                    'error'
+                )
+                var labelText = '0 file selected';
+                $(this).next('.custom-file-label').html(labelText);
+            }else if( (files.length <= maxFiles) && (files.length > 0)){
+                var labelText = numFiles === 1 ? '1 file selected' : numFiles + ' files selected';
+                $(this).next('.custom-file-label').html(labelText);
+            }
         });
 
         $('body').on('click', '#btn-create-variant', function() {
@@ -1036,12 +1075,13 @@
 
             var count = numbers_variant + 1;
             //add attribute name for each input cloned
-            var html_to_add = '<div style="float: right; margin-top: -35px"><i class="fa-regular fa-circle-check fa-xl square-variant" title="End edit"></i><i class="fa-regular fa-pen-to-square fa-xl square-variant" title="Edit variant"></i><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
+            var html_to_add = '<div style="float: right; margin-top: -35px"><i class="fa-regular fa-pen-to-square fa-xl square-variant" title="Edit variant"></i><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
             clonedDiv.find('h3').after(html_to_add);
             //clonedDiv.find('.fa-circle-xmark').hide();
             clonedDiv.find('.fa-circle-check').hide();
             clonedDiv.find('#btn-add-pricing-variant').hide();
             clonedDiv.find('.sku').attr('name', 'sku-' + numbers_variant);
+            clonedDiv.find('.sku').prop('readonly', true);
             clonedDiv.find('div.row').each(function() {
                 // Check if the div has display:none set
                 if ($(this).css('display') === 'none') {
@@ -1545,7 +1585,7 @@
 
         $('body').on('click', '.btn-add-pricing', function() {
             var newvariant = $(this).data('newvariant-id');
-            
+
             if(newvariant != undefined){
                 var html_to_add = `<tr>
                                     <td><input type="number" name="variant_pricing-from`+ newvariant +`[from][]" class="form-control min-qty" id=""></td>
@@ -1612,11 +1652,11 @@
                                     </td>
                                 </tr>
                             `;
-                } 
+                }
             }
             // add another bloc in pricing configuration
             $(this).parent().parent().parent().append(html_to_add);
-            
+
 
             //Initialize last date range picker
             $(this).parent().parent().parent().find('.aiz-date-range:last').daterangepicker({
@@ -2356,7 +2396,7 @@
                     })
                 });
 
-                
+
                 clonedDiv.find('.min-qty-shipping').attr('name', `variant_shipping-` + id + `[from][]`)
                 clonedDiv.find('.max-qty-shipping').attr('name', `variant_shipping-` + id + `[to][]`)
                 clonedDiv.find('.estimated_order').attr('name', `variant_shipping-` + id + `[estimated_order][]`)
@@ -2484,8 +2524,12 @@
                 $(this).parent().parent().parent().parent().find('.variant-sample-pricing').prop('disabled', false);
                 $(this).parent().parent().parent().parent().find('.variant-sample-shipping').prop('disabled', false);
             }else{
+                $(this).parent().parent().parent().parent().find('.variant-sample-pricing').prop('checked', true);
+                $(this).parent().parent().parent().parent().find('.variant-sample-shipping').prop('checked', true);
                 $(this).parent().parent().parent().parent().find('.variant-sample-pricing').prop('disabled', true);
                 $(this).parent().parent().parent().parent().find('.variant-sample-shipping').prop('disabled', true);
+                $(this).parent().parent().parent().parent().find('#bloc-sample-shipping').empty();
+                $(this).parent().parent().parent().parent().find('.bloc_sample_pricing_configuration_variant').hide();
             }
         })
     });
@@ -2658,7 +2702,7 @@
                         // Update the hidden input field with the value of the clicked button
                         var clickedButtonValue = event.submitter.value;
                         document.getElementById('submit_button').value = clickedButtonValue;
-                        
+
                         document.getElementById('choice_form').submit();
                     });
                 }

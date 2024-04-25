@@ -332,8 +332,11 @@ class SellerController extends Controller
             $this->logStatusChange($seller, 'Pending Approval');
 
     // Send an email notification to the seller with old and new status
-    $seller->notify(new VendorStatusChangedNotification($oldStatus, $seller->status));
-    Notification::send($seller, new CustomStatusNotification($oldStatus, $seller->status));
+    if ($seller->id == $seller->owner_id) {
+        $seller->notify(new VendorStatusChangedNotification($oldStatus, $seller->status));
+        Notification::send($seller, new CustomStatusNotification($oldStatus, $seller->status));
+    }
+
 
         // Check if it's an AJAX request
         return response()->json([
@@ -432,6 +435,10 @@ class SellerController extends Controller
 
     public function resubmitRegistration($id,Request $request,$proposedId = null)
     {
+          // Validate the incoming request data
+          $request->validate([
+            'reject_reason' => 'required|string|max:5000', // Validate reject_reason field
+        ]);
         // Get the reject reason and image URL from the request
         $rejectReason = $request->input('reject_reason');
         $seller = User::findOrFail($id);

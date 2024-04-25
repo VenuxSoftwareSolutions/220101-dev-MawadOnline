@@ -157,7 +157,7 @@
                                         name="building_warehouse[]" required></td>
                                 <td><input type="text" class="form-control"
                                         value="{{ $warehouse->address_unit }}"
-                                        name="unit_warehouse[]" required></td>
+                                        name="unit_warehouse[]" ></td>
                                 <td>
                                     @if (!$warehouse->checkWhHasProducts())
                                     <button type="button"
@@ -226,8 +226,12 @@
                             areaSelect.append(option);
                         }
                     }
+
                 },
                 error: function(error) {
+                    areaSelect.empty();
+                    areaSelect.append(
+                        '<option value="" selected>{{ translate('please_choose') }}</option>');
                     console.error('Error fetching areas:', error);
                 }
             });
@@ -297,53 +301,139 @@
 
         });
         $('#addRow').on('click', function() {
-                var warehouseName = $('input[name="warehouse_name_add"]').val();
-                var state = $('select[name="state_warehouse_add"]').val();
-                var stateText = $('select[name="state_warehouse_add"] option:selected').text();
-                var area = $('select[name="area_warehouse_add"]').val();
-                var areaText = $('select[name="area_warehouse_add"] option:selected').text();
-                var street = $('input[name="street_warehouse_add"]').val();
-                var building = $('input[name="building_warehouse_add"]').val();
-                var unit = $('input[name="unit_add"]').val();
-                // Check if any input is empty
-                if (!warehouseName || !state || !area || !street || !building || !unit) {
-                    // Show toast with translated message
-                    toastr.error('{{ translate('Please fill in all fields.') }}');
-                    return; // Stop execution if any input is empty
-                }
-                const newRow = $('<tr>');
+    var warehouseName = $('input[name="warehouse_name_add"]').val();
+    var street = $('input[name="street_warehouse_add"]').val();
+    var building = $('input[name="building_warehouse_add"]').val();
+    var unit = $('input[name="unit_add"]').val();
 
-                // Create cells
-                newRow.append(
-                    '<td><input type="text" class="form-control" name="warehouse_name[]" value="' +
-                    warehouseName + '" required></td>');
-                newRow.append(
-                    '<td><select required name="state_warehouse[]" class="form-control rounded-0 emirateSelect"><option value="' +
-                    state + '" selected>' + stateText + '</option></select></td>');
-                newRow.append(
-                    '<td><select class="form-control areaSelect" name="area_warehouse[]" required><option value="' +
-                    area + '" selected>' + areaText + '</option></select></td>');
-                newRow.append(
-                    '<td><input type="text" class="form-control" name="street_warehouse[]" value="' +
-                    street + '" required></td>');
-                newRow.append(
-                    '<td><input type="text" class="form-control" name="building_warehouse[]" value="' +
-                    building + '" required></td>');
-                newRow.append(
-                    '<td><input type="text" class="form-control" name="unit_warehouse[]" value="' +
-                    unit + '" required></td>');
-                newRow.append(
-                    '<td><button type="button" class="btn btn-danger removeRow">Remove</button></td>');
+    var stateSelect = $('select[name="state_warehouse_add"]');
+    var stateValue = stateSelect.val(); // Get selected state value
+    var stateSelectClone = stateSelect.clone(); // Clone the select element
+    stateSelectClone.attr('name', 'state_warehouse[]'); // Set the cloned select element's name attribute
+    stateSelectClone.val(stateValue); // Set the cloned select element's value
+    stateSelectClone.prop('required', true); // Add required attribute to state select
 
-                $('#warehouseTable tbody').append(newRow);
+    var areaSelect = $('select[name="area_warehouse_add"]');
+    var areaValue = areaSelect.val(); // Get selected area value
+    var areaSelectClone = areaSelect.clone(); // Clone the select element
+    areaSelectClone.attr('name', 'area_warehouse[]'); // Set the cloned select element's name attribute
+    areaSelectClone.addClass('form-control areaSelect'); // Add the 'form-control' and 'areaSelect' classes to the cloned area select
+    areaSelectClone.val(areaValue)
+    areaSelectClone.prop('required', true); // Add required attribute to area select
 
-                // Clear input fields
-                $('input[name="warehouse_name_add"]').val('');
-                $('select[name="state_warehouse_add"]').val('');
-                $('select[name="area_warehouse_add"]').val('');
-                $('input[name="street_warehouse_add"]').val('');
-                $('input[name="building_warehouse_add"]').val('');
-                $('input[name="unit_add"]').val('');
-            });
+  // Check if any input is empty
+  if (!warehouseName || !stateValue || !areaValue || !street || !building) {
+        var errorMsg = 'Please fill in all required fields:';
+        if (!warehouseName) {
+            errorMsg += '\n- Warehouse Name';
+        }
+        if (!stateValue) {
+            errorMsg += '\n- State';
+        }
+        if (!areaValue) {
+            errorMsg += '\n- Area';
+        }
+        if (!street) {
+            errorMsg += '\n- Street';
+        }
+        if (!building) {
+            errorMsg += '\n- Building';
+        }
+        toastr.error(errorMsg);
+        return; // Stop execution if any input is empty
+    }
+
+
+    const newRow = $('<tr class="warehouseRow">');
+
+    // Create cells for the new row
+    newRow.append('<td><input type="text" class="form-control" name="warehouse_name[]" value="' + warehouseName + '" required></td>');
+    newRow.append('<td></td>'); // Placeholder for state select element
+    newRow.append('<td></td>'); // Placeholder for area select element
+    newRow.append('<td><input type="text" class="form-control" name="street_warehouse[]" value="' + street + '" required></td>');
+    newRow.append('<td><input type="text" class="form-control" name="building_warehouse[]" value="' + building + '" required></td>');
+    newRow.append('<td><input type="text" class="form-control" name="unit_warehouse[]" value="' + unit + '"></td>');
+    newRow.append('<td><button type="button" class="btn btn-danger removeRow">Remove</button></td>');
+
+    // Append the new row to the table body
+    $('#warehouseTable tbody').append(newRow);
+
+    // Append cloned state and area select elements to the new row
+    newRow.find('td:nth-child(2)').append(stateSelectClone); // Append state select
+    newRow.find('td:nth-child(3)').append(areaSelectClone); // Append area select
+
+    // Clear input fields after adding the new row
+    $('input[name="warehouse_name_add"]').val('');
+    $('select[name="state_warehouse_add"]').val('');
+    $('select[name="area_warehouse_add"]').val('');
+    $('input[name="street_warehouse_add"]').val('');
+    $('input[name="building_warehouse_add"]').val('');
+    $('input[name="unit_add"]').val('');
+});
+
     </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        if ({{Auth::user()->tour}} == true | {{Auth::user()->id}} != {{Auth::user()->owner_id}}) {
+            return;
+        }
+        var tour_steps = [
+            @foreach($tour_steps as $key => $step)
+            {
+                element: document.querySelector('#{{$step->element_id}}'),
+                title: '{{$step->title}}',
+                intro: "{{$step->description}}",
+                position: 'right'
+            },
+            @endforeach
+        ];
+
+        let tour = introJs();
+        let step_number = 0 ;
+        tour.setOptions({
+            steps: tour_steps ,
+            doneLabel: 'Next', // Replace the "Done" button with "Next"
+            exitOnEsc : false ,
+            exitOnOverlayClick : false ,
+            disableInteraction : true ,
+            overlayOpacity : 0.4 ,
+            showStepNumbers : true ,
+            hidePrev : true ,
+            showProgress :true ,
+        });
+
+        tour.onexit(function() {
+            $.ajax({
+                url: "{{ route('seller.tour') }}",
+                type: 'POST',
+                data: { _token: '{{ csrf_token() }}' }, // Include CSRF token for Laravel
+                success: function(response) {
+                    // Handle success
+                    console.log('User tour status updated successfully');
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    console.error('Error updating user tour status:', error);
+                }
+            });
+            setTimeout(function() {
+                window.location.href = '{{ route("seller.dashboard") }}';
+            }, 500);
+        });
+
+        tour.onbeforechange(function(targetElement) {
+            step_number += 1 ;
+            if (step_number == 3) {
+            window.location.href = '{{ route("seller.stock.operation.report") }}';
+            sleep(60000);
+            }
+
+            //tour.exit();
+        });
+
+    tour.start();
+    tour.goToStepNumber(6);
+    });
+</script>
 @endsection

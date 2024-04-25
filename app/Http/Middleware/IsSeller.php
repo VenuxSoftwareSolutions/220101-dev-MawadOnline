@@ -19,11 +19,10 @@ class IsSeller
         if (Auth::check() && Auth::user()->user_type == 'seller'  && !Auth::user()->banned  ) {
             $user = Auth::user();
 
-            if (Auth::user()->status != "Enabled") {
+            if (Auth::user()->status != "Enabled" || (Auth::user()->status == "Enabled"  && Auth::user()->id != Auth::user()->owner_id )) {
                 // Redirect to shops.create with the step number
                 return redirect()->route('shops.create', ['step' => $user->step_number]);
             }
-
             return $next($request);
         }
         else{

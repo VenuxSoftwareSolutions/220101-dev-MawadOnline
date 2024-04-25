@@ -131,9 +131,9 @@ class ProductService
         $is_draft = 0;
 
         if(isset($collection['submit_button'])){
-            $published = 0;
             if ($collection['submit_button'] == 'draft') {
-              $is_draft = 1;  
+              $is_draft = 1; 
+              $published = 0; 
             }
             unset($collection['submit_button']);
         }
@@ -212,7 +212,7 @@ class ProductService
         $shipping_sample_parent['estimated_shipping_sample'] = $collection['estimated_shipping_sample'];
         $shipping_sample_parent['paid_sample'] = $collection['paid_sample'];
         $shipping_sample_parent['shipping_amount'] = $collection['shipping_amount'];
-
+        
         unset($collection['from_shipping']);
         unset($collection['to_shipping']);
         unset($collection['shipper']);
@@ -228,15 +228,7 @@ class ProductService
         
         $vat = $vat_user->vat_registered;
 
-        $data = $collection->merge(compact(
-            'user_id',
-            'shipping_cost',
-            'slug',
-            'colors',
-            'published',
-            'is_draft',
-            'vat'
-        ))->toArray();
+        
 
         $variants_data = [];
         $general_attributes_data = [];
@@ -431,12 +423,28 @@ class ProductService
             }
         }
 
+        $collection['sku'] = $collection['product_sk'];
+        $collection['low_stock_quantity'] = $collection['quantite_stock_warning'];
+        
+        unset($collection['product_sk']);
+        unset($collection['quantite_stock_warning']);
+
+        $data = $collection->merge(compact(
+            'user_id',
+            'shipping_cost',
+            'slug',
+            'colors',
+            'published',
+            'is_draft',
+            'vat'
+        ))->toArray();
+
         //dd($variants_data);
 
         $ids_attributes_color = Attribute::where('type_value', 'color')->pluck('id')->toArray();
         $ids_attributes_list = Attribute::where('type_value', 'list')->pluck('id')->toArray();
         $ids_attributes_numeric = Attribute::where('type_value', 'numeric')->pluck('id')->toArray();
-        $data['sku'] = $data['name'];
+        
         $prefixToRemove = 'attribute_generale';
         $prefixToRemoveUnit = 'unit_attribute_generale';
 
@@ -448,6 +456,8 @@ class ProductService
               unset($data[$key]);
             }
         }
+
+        
 
         //dd($data);
         if(!isset($data['activate_attributes'])){
@@ -519,7 +529,7 @@ class ProductService
                         }elseif(in_array($attr, $ids_attributes_color)){
                             $value = Color::where('code', $value)->first();
                             $attribute_product->id_colors = $value->id;
-                            $attribute_product->value = $value;
+                            $attribute_product->value = $value->code;
                         }elseif(in_array($attr, $ids_attributes_numeric)){
                             $attribute_product->id_units = $unit_general_attributes_data[$attr];
                             $attribute_product->value = $value;
@@ -696,6 +706,8 @@ class ProductService
                     }
 
                     $data['sku'] =  $variant['sku'];
+                    $randomString = Str::random(5);
+                    $data['slug'] =  $data['slug'] . '-' . $randomString;
 
                     $product = Product::create($data);
 
@@ -956,7 +968,6 @@ class ProductService
             }
             return $product_parent;
         }
-
     }
 
     public function update(array $data, Product $product_update)
@@ -1314,8 +1325,6 @@ class ProductService
 
             unset($collection['variant']);
         }
-
-        //dd($variants_data);
         
         //Check if porduct has new variants
         foreach ($data as $key => $value) {
@@ -1521,7 +1530,23 @@ class ProductService
         $shipping_sample_parent['paid_sample'] = $collection['paid_sample'];
         $shipping_sample_parent['shipping_amount'] = $collection['shipping_amount'];
 
+        if(isset($collection['product_sk'])){
+            $collection['sku'] = $collection['product_sk'];
+            unset($collection['product_sk']);
+        }else{
+            $collection['sku'] = null;
+        }
+
+        if(isset($collection['quantite_stock_warning'])){
+            $collection['low_stock_quantity'] = $collection['quantite_stock_warning'];
+            unset($collection['quantite_stock_warning']);
+        }else{
+            $collection['low_stock_quantity'] = null;
+        }     
+
         unset($collection['from_shipping']);
+        unset($collection['sk_product']);
+        unset($collection['quantite_stock_warning']);
         unset($collection['to_shipping']);
         unset($collection['shipper']);
         unset($collection['estimated_order']);
@@ -1533,7 +1558,7 @@ class ProductService
         unset($collection['charge_per_unit_shipping']);
         unset($collection['date_range_pricing']);
 
-        $collection['sku'] = $collection['name'];
+        
         $collection['vat'] = $vat_user->vat_registered;
 
         $ids_attributes_color = Attribute::where('type_value', 'color')->pluck('id')->toArray();
@@ -1625,7 +1650,7 @@ class ProductService
                         }elseif(in_array($attr, $ids_attributes_color)){
                             $value = Color::where('code', $value)->first();
                             $attribute_product->id_colors = $value->id;
-                            $attribute_product->value = $value;
+                            $attribute_product->value = $value->code;
                         }elseif(in_array($attr, $ids_attributes_numeric)){
                             $attribute_product->id_units = $unit_general_attributes_data[$attr];
                             $attribute_product->value = $value;
@@ -1643,7 +1668,7 @@ class ProductService
                                 "user_id" => Auth::user()->id,
                                 "key" => 'add_attribute',
                                 "old_value" => NULL,
-                                "new_value" => $attribute_product->id,
+                                "new_value" => $value,
                                 'created_at'            => new \DateTime(),
                                 'updated_at'            => new \DateTime(),
                             ]);
@@ -1870,7 +1895,7 @@ class ProductService
                                         "user_id" => Auth::user()->id,
                                         "key" => 'add_attribute',
                                         "old_value" => NULL,
-                                        "new_value" => $attribute_product->id,
+                                        "new_value" => $value_attribute,
                                         'created_at'            => new \DateTime(),
                                         'updated_at'            => new \DateTime(),
                                     ]);
@@ -2124,7 +2149,7 @@ class ProductService
                                 "user_id" => Auth::user()->id,
                                 "key" => 'add_attribute',
                                 "old_value" => NULL,
-                                "new_value" => $attribute_product->id,
+                                "new_value" => $value,
                                 'created_at'            => new \DateTime(),
                                 'updated_at'            => new \DateTime(),
                             ]);
@@ -2143,7 +2168,7 @@ class ProductService
                     }else{
                         $collection['shipping'] = $variant['shipping'];
                     }
-                    $collection['low_stock'] = $variant['stock'];
+                    $collection['low_stock_quantity'] = $variant['stock'];
                     if(array_key_exists('sku', $variant)){
                         $collection['sku'] = $variant['sku'];
                     }else{
@@ -2195,6 +2220,10 @@ class ProductService
                         $collection['sample_description'] = $variant['sample_description'];
                         $collection['sample_price'] = $variant['sample_price'];
                     }
+
+                    $randomString = Str::random(5);
+                    $collection['slug'] =  $collection['slug'] . '-' . $randomString;
+
                     $new_product = Product::create($collection);
 
                     //attributes of variant
@@ -2487,6 +2516,20 @@ class ProductService
             }
             unset($collection['button']);
         }
+
+        if(isset($collection['product_sk'])){
+            $collection['sku'] = $collection['product_sk'];
+            unset($collection['product_sk']);
+        }else{
+            $collection['sku'] = null;
+        }
+
+        if(isset($collection['quantite_stock_warning'])){
+            $collection['low_stock_quantity'] = $collection['quantite_stock_warning'];
+            unset($collection['quantite_stock_warning']);
+        }else{
+            $collection['low_stock_quantity'] = null;
+        }       
 
         $collection['is_draft'] = $is_draft;
 
@@ -2805,8 +2848,6 @@ class ProductService
 
             unset($collection['variant']);
         }
-
-        //dd($variants_data);
         
         //Check if porduct has new variants
         foreach ($data as $key => $value) {
@@ -3000,9 +3041,6 @@ class ProductService
             }
         }
 
-        // dump($variants_data);
-        // dump($collection);
-
         $shipping_sample_parent = [];
         $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
         $shipping_sample_parent['estimated_sample'] = $collection['estimated_sample'];
@@ -3022,7 +3060,6 @@ class ProductService
         unset($collection['charge_per_unit_shipping']);
         unset($collection['date_range_pricing']);
 
-        $collection['sku'] = $collection['name'];
         $collection['vat'] = $vat_user->vat_registered;
 
         $ids_attributes_color = Attribute::where('type_value', 'color')->pluck('id')->toArray();
@@ -3111,7 +3148,7 @@ class ProductService
                         }elseif(in_array($attr, $ids_attributes_color)){
                             $value = Color::where('code', $value)->first();
                             $attribute_product->id_colors = $value->id;
-                            $attribute_product->value = $value;
+                            $attribute_product->value = $value->code;
                         }elseif(in_array($attr, $ids_attributes_numeric)){
                             $attribute_product->id_units = $unit_general_attributes_data[$attr];
                             $attribute_product->value = $value;
@@ -3570,7 +3607,7 @@ class ProductService
                     }else{
                         $collection['shipping'] = $variant['shipping'];
                     }
-                    $collection['low_stock'] = $variant['stock'];
+                    $collection['low_stock_quantity'] = $variant['stock'];
                     if(array_key_exists('sku', $variant)){
                         $collection['sku'] = $variant['sku'];
                     }else{
@@ -3586,6 +3623,9 @@ class ProductService
                         $collection['sample_description'] = $variant['sample_description'];
                         $collection['sample_price'] = $variant['sample_price'];
                     }
+
+                    $randomString = Str::random(5);
+                    $collection['slug'] =  $collection['slug'] . '-' . $randomString;
 
                     $new_product = Product::create($collection);
 

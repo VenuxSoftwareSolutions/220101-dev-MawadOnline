@@ -155,6 +155,9 @@ ul.nav.nav-tabs.shop{
 .location{
     padding-right: 80px;
 }
+button {
+    font-size: 14px
+}
 </style>
 @endsection
 @section('content')
@@ -1296,7 +1299,7 @@ ul.nav.nav-tabs.shop{
 
                                         <div class="text-right">
                                             <!-- Previous Button -->
-                                            <button type="button" data-prv='contact-person'
+                                            <button  type="button" data-prv='contact-person'
                                                 class="btn btn-info fw-600 rounded-0 prv-tab">
                                                 {{ translate('Previous') }}
                                             </button>
@@ -1399,7 +1402,7 @@ ul.nav.nav-tabs.shop{
                                             </div>
                                         </div>
 
-                                        <div class="text-right">
+                                        {{-- <div class="text-right">
                                             <!-- Previous Button -->
                                             <button type="button" data-prv='warehouses'
                                                 class="btn btn-info fw-600 rounded-0 prv-tab">
@@ -1413,7 +1416,48 @@ ul.nav.nav-tabs.shop{
                                             <button id="registerShop"  type="submit"
                                                 class="btn btn-primary fw-600 rounded-0">{{ translate('Register Your Shop') }}</button>
 
+                                        </div> --}}
+                                        <div class="text-right">
+                                            <!-- Accept Terms & Conditions Checkbox -->
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="checkbox" id="acceptTermsCheckbox" onchange="enableRegisterButton()">
+                                                <label class="form-check-label" for="acceptTermsCheckbox">
+                                                    Accept <a href="#" target="_blank" onclick="openTermsPage()">Terms & Conditions</a>
+                                                </label>
+                                            </div>
+
+                                            <!-- Previous Button -->
+                                            <button type="button" data-prv='warehouses' class="btn btn-info fw-600 rounded-0 prv-tab" style="font-size: 14px;">
+                                                {{ translate('Previous') }}
+                                            </button>
+
+                                            <!-- Save as Draft Button -->
+                                            <button type="button" class="btn btn-secondary fw-600 rounded-0 save-as-draft" data-action="save-as-draft" style="font-size: 14px;">
+                                                {{ translate('Save as Draft') }}
+                                            </button>
+
+                                            <!-- Register Your e-Shop Button (Initially Disabled) -->
+                                            <button id="registerShop" type="submit" class="btn btn-primary fw-600 rounded-0" style="font-size: 14px;" disabled>
+                                                {{ translate('Register your e-Shop') }}
+                                            </button>
                                         </div>
+
+                                        <script>
+                                            // Function to enable/disable Register Your e-Shop button based on checkbox state
+                                            function enableRegisterButton() {
+                                                var checkbox = document.getElementById('acceptTermsCheckbox');
+                                                var registerButton = document.getElementById('registerShop');
+                                                registerButton.disabled = !checkbox.checked;
+                                            }
+
+                                            // Function to open terms and conditions page in new tab
+                                            function openTermsPage() {
+                                                // Replace 'YOUR_TERMS_URL_HERE' with the actual URL agreed upon with Amine
+                                                var termsURL = '{{route('terms')}}';
+                                                window.open(termsURL, '_blank');
+                                            }
+                                        </script>
+
                                     </form>
                                 </div>
                             </div>
@@ -1535,12 +1579,28 @@ ul.nav.nav-tabs.shop{
                 var street = $('input[name="street_warehouse_add"]').val();
                 var building = $('input[name="building_warehouse_add"]').val();
                 var unit = $('input[name="unit_add"]').val();
-                // Check if any input is empty
-                if (!warehouseName || !state || !area || !street || !building || !unit) {
-                    // Show toast with translated message
-                    toastr.error('{{ translate('Please fill in all fields.') }}');
-                    return; // Stop execution if any input is empty
+
+        // Check if any input is empty
+        if (!warehouseName || !state || !area || !street || !building) {
+                var errorMsg = 'Please fill in all required fields:';
+                if (!warehouseName) {
+                    errorMsg += '\n- Warehouse Name';
                 }
+                if (!state) {
+                    errorMsg += '\n- State';
+                }
+                if (!area) {
+                    errorMsg += '\n- Area';
+                }
+                if (!street) {
+                    errorMsg += '\n- Street';
+                }
+                if (!building) {
+                    errorMsg += '\n- Building';
+                }
+                toastr.error(errorMsg);
+                return; // Stop execution if any input is empty
+            }
                 const newRow = $('<tr>');
 
                 // Create cells
@@ -1561,7 +1621,7 @@ ul.nav.nav-tabs.shop{
                     building + '" required></td>');
                 newRow.append(
                     '<td><input type="text" class="form-control" name="unit_warehouse[]" value="' +
-                    unit + '" required></td>');
+                    unit + '" ></td>');
                 newRow.append(
                     '<td><button type="button" class="btn btn-danger removeRow">Remove</button></td>');
 
