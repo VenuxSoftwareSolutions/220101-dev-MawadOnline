@@ -29,15 +29,15 @@ class TourSeeder extends Seeder
         );
         Tour::updateOrCreate(
             ['step_number' => 3],
-            ['element_id' => 'reviews',
-            'title' => 'Step 2: Monitor Reviews',
-            'description' => 'Stay informed about what customers are saying. Manage and respond to reviews to maintain a positive reputation and improve your products.']
+            ['element_id' => 'catalog',
+            'title' => 'Step 2: Catalog Management',
+            'description' => 'Organize your products into categories and collections. Enhance discoverability and make it easier for customers to find what they\'re looking for.']
         );
         Tour::updateOrCreate(
             ['step_number' => 4],
-            ['element_id' => 'catalog',
-            'title' => 'Step 3: Catalog Management',
-            'description' => 'Organize your products into categories and collections. Enhance discoverability and make it easier for customers to find what they\'re looking for.']
+            ['element_id' => 'reviews',
+            'title' => 'Step 3: Monitor Reviews',
+            'description' => 'Stay informed about what customers are saying. Manage and respond to reviews to maintain a positive reputation and improve your products.']
         );
         Tour::updateOrCreate(
             ['step_number' => 5],
