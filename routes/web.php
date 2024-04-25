@@ -394,9 +394,6 @@ Route::post('/shops/register', [ShopController::class, 'storeShopRegister'])->na
 Route::get('dictionary-words', [ShopController::class, 'getWords'])->name('get.words');
 
 
-Route::post('generate-salt', [ShopController::class,"generateSalt"])->name('generateSalt');
-
-
 Route::get('/instamojo/payment/pay-success', [InstamojoController::class, 'success'])->name('instamojo.success');
 
 Route::post('rozer/payment/pay-success', [RazorpayController::class, 'payment'])->name('payment.rozer');
