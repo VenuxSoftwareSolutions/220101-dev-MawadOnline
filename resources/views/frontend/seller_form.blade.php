@@ -158,6 +158,9 @@ ul.nav.nav-tabs.shop{
 button {
     font-size: 14px
 }
+.invalid-feedback{
+    display: block
+}
 </style>
 @endsection
 @section('content')
@@ -380,7 +383,7 @@ button {
                                                             @endif
                                                             <div class="input-group">
                                                                 <div class="custom-file">
-                                                                    <input type="file" class="custom-file-input" id="trade_license_doc_input"
+                                                                    <input type="file" class="form-control custom-file-input" id="trade_license_doc_input"
                                                                         name="trade_license_doc" required>
                                                                     <label class="custom-file-label" for="trade_license_doc_input">{{ translate('Choose a file') }}</label>
                                                                 </div>
@@ -642,7 +645,7 @@ button {
                                                             @endif
                                                             <div class="input-group">
                                                                 <div class="custom-file">
-                                                                    <input type="file" class="custom-file-input" id="vat_certificate_input"
+                                                                    <input type="file" class="form-control custom-file-input" id="vat_certificate_input"
                                                                         name="vat_certificate">
                                                                     <label class="custom-file-label" for="vat_certificate_input">{{ translate('Choose a file') }}</label>
                                                                 </div>
@@ -691,7 +694,7 @@ button {
                                                             @endif
                                                             <div class="input-group">
                                                                 <div class="custom-file">
-                                                                    <input type="file" class="custom-file-input" id="civil_defense_approval_input"
+                                                                    <input type="file" class="form-control custom-file-input" id="civil_defense_approval_input"
                                                                         name="civil_defense_approval">
                                                                     <label class="custom-file-label" for="civil_defense_approval_input">{{ translate('Choisir un fichier') }}</label>
                                                                 </div>
@@ -1578,12 +1581,28 @@ button {
                 var street = $('input[name="street_warehouse_add"]').val();
                 var building = $('input[name="building_warehouse_add"]').val();
                 var unit = $('input[name="unit_add"]').val();
-                // Check if any input is empty
-                if (!warehouseName || !state || !area || !street || !building || !unit) {
-                    // Show toast with translated message
-                    toastr.error('{{ translate('Please fill in all fields.') }}');
-                    return; // Stop execution if any input is empty
+
+        // Check if any input is empty
+        if (!warehouseName || !state || !area || !street || !building) {
+                var errorMsg = 'Please fill in all required fields:';
+                if (!warehouseName) {
+                    errorMsg += '\n- Warehouse Name';
                 }
+                if (!state) {
+                    errorMsg += '\n- State';
+                }
+                if (!area) {
+                    errorMsg += '\n- Area';
+                }
+                if (!street) {
+                    errorMsg += '\n- Street';
+                }
+                if (!building) {
+                    errorMsg += '\n- Building';
+                }
+                toastr.error(errorMsg);
+                return; // Stop execution if any input is empty
+            }
                 const newRow = $('<tr>');
 
                 // Create cells
@@ -1604,7 +1623,7 @@ button {
                     building + '" required></td>');
                 newRow.append(
                     '<td><input type="text" class="form-control" name="unit_warehouse[]" value="' +
-                    unit + '" required></td>');
+                    unit + '" ></td>');
                 newRow.append(
                     '<td><button type="button" class="btn btn-danger removeRow">Remove</button></td>');
 
@@ -1630,7 +1649,7 @@ button {
             });
 
             $('#registerTabsContent').find(
-                    '.tab-pane button:not(#resendCodeBtn,#addRow,.removeRow,#registerShop,.prv-tab)')
+                    '.tab-pane button:not(#resendCodeBtn,#addRow,.removeRow,#registerShop,.prv-tab,.dropdown-toggle)')
                 .on('click', function(e) {
                     // // Iterate over each warehouse row
 
@@ -1872,6 +1891,7 @@ button {
                                         function() {
 
                                             tabError = displayValidationErrors(errors, $(this));
+
                                             if (tabError == false && tabErrorFirst == false) {
                                                 tabErrorFirst = true;
                                                 switchTab($(this).parent().attr('id'));
@@ -2055,6 +2075,11 @@ button {
                     }
 
                     inputField.after(errorContainer);
+                    // Check if input has class 'custom-file-input'
+                    if (inputField.hasClass('custom-file-input')) {
+                        // Append error message after the <small> element
+                        inputField.closest('.form-group').find('small').before(errorContainer);
+                    }
 
                     form.find('.form-control').each(function() {
                         var inputField = $(this);
