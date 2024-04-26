@@ -26,7 +26,7 @@
                     <th>To Date</th>
                     <th>Charge for</th>
                     <th>Amount (AED)</th>
-                    <th style="color: red;">Status</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
