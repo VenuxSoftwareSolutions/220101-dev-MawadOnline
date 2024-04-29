@@ -3,12 +3,8 @@
 
 <script>
     function onSubmit(token) {
-
         document.getElementById("reset_form").submit();
-
     }
-
- 
 </script>
 <!-- aiz-main-wrapper -->
 <div class="aiz-main-wrapper d-flex flex-column justify-content-md-center bg-white">
