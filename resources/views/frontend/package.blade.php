@@ -128,7 +128,8 @@
             </div>
             <div class="row mt-2 justify-content-center">
                 <div class="fs-15">
-                    <a href=""><u>Terms & Conditions<i class="las la-external-link-alt"></i></u> </a>
+                    <a href="{{route('terms-and-conditions')}}"><u>Terms & Conditions<i class="las la-external-link-alt"></i></u></a>
+
                 </div>
             </div>
         </div>

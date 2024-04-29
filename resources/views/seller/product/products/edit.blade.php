@@ -5,9 +5,9 @@
     }
     .button-container {
         position: fixed;
-        top: 12%;
-        right: 2%;
-        z-index: 5;
+        top: 1%;
+        right: 19%;
+        z-index: 97;
     }
 
     .swal2-icon .swal2-icon-content {

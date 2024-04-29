@@ -26,7 +26,7 @@
             @endif
         @endif
     </div>
-    
+
 
     <div class="row align-items-center mb-3">
         <!-- Review -->
@@ -168,10 +168,31 @@
         </div>
         <div class="col-sm-10">
             <div class="d-flex align-items-center">
+
                 <!-- Discount Price -->
                 <strong id="qty-interval" class="fs-16 fw-700 text-primary">
+                    @if (isset($previewData['detailedProduct']['discountedPrice']))
+                    {{ $previewData['detailedProduct']['discountedPrice'] }} AED
+                    @else
                     {{ $previewData['detailedProduct']['price'] }} AED
+                    @endif
+
                 </strong>
+
+                  <!-- Home Price -->
+                  <del id="previous-price" class="fs-14 opacity-60 ml-2">
+                    @if (isset($previewData['detailedProduct']['discountedPrice']))
+                  {{$previewData['detailedProduct']['price']}} AED
+                  @endif
+                </del>
+                <!-- Unit -->
+                {{-- <span class="opacity-70 ml-1">/pc</span>
+                 <!-- Discount percentage -->
+                <span class="bg-primary ml-2 fs-11 fw-700 text-white w-35px text-center p-1"
+                    style="padding-top:2px;padding-bottom:2px;">-2%</span> --}}
+
+                <!-- Club Point -->
+                </div>
                 <!-- Home Price -->
                 {{-- <del class="fs-14 opacity-60 ml-2">
                     $90.000
@@ -321,7 +342,7 @@
         </div>
     </form>
     <div class="mt-3">
-        <button type="button" class="btn btn-secondary-base mr-2 add-to-cart fw-600 min-w-150px rounded-0 text-white"
+        <button type="button" class="readonly-button btn btn-secondary-base mr-2 add-to-cart fw-600 min-w-150px rounded-0 text-white"
            {{--  onclick="showLoginModal()" --}}>
             <i class="las la-shopping-bag"></i> Add to cart
         </button>
