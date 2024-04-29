@@ -159,18 +159,7 @@
                                             <span></span>
                                         </label>
                                     </div>
-                                </div>
-        
-                                {{-- <div class="form-group row">
-                                    <label class="col-md-3 col-from-label">{{translate('Published')}}</label>
-                                    <div class="col-md-8">
-                                        <label class="aiz-switch aiz-switch-success mb-0">
-                                            <input type="checkbox" name="published" checked value="1">
-                                            <span></span>
-                                        </label>
-                                    </div>
-                                </div> --}}
-        
+                                </div>        
                                 @if (addon_is_activated('pos_system'))
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{translate('Barcode')}}</label>
@@ -259,7 +248,7 @@
                         </div>
                         <hr> --}}
                         <div>
-                            <div class="bloc-default-shipping-style">
+                            <div id="bloc-pricing-parent" class="bloc-default-shipping-style">
                                 <h5>{{ translate('Default Pricing Configuration') }}</h5>
                                 <hr>
                                 <table class="table" id="table_pricing_configuration" class="bloc_pricing_configuration_variant">
@@ -267,7 +256,7 @@
                                         <tr>
                                             <th>{{translate('From QTY')}}</th>
                                             <th>{{translate('To QTY')}}</th>
-                                            <th>{{translate('Unit Price (VAT)')}}</th>
+                                            <th>{{translate('Unit Price (VAT Exclusive)')}}</th>
                                             <th>{{translate('Discount(Start/End)')}}</th>
                                             <th>{{translate('Discount Type')}}</th>
                                             <th>{{translate('Discount Amount')}}</th>
@@ -277,9 +266,9 @@
                                     </thead>
                                     <tbody id="bloc_pricing_configuration">
                                         <tr>
-                                            <td><input type="number" name="from[]" class="form-control min-qty" id=""></td>
-                                            <td><input type="number" name="to[]" class="form-control max-qty" id=""></td>
-                                            <td><input type="number" name="unit_price[]" class="form-control unit-price-variant" id=""></td>
+                                            <td><input type="number" name="from[]" min="1" class="form-control min-qty" id="min-qty-parent"></td>
+                                            <td><input type="number" name="to[]" min="1" class="form-control max-qty" id="max-qty-parent"></td>
+                                            <td><input type="number" name="unit_price[]" step="0.01" min="1" class="form-control unit-price-variant" id="unit-price-parent"></td>
                                             <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                             <td>
                                                 <select class="form-control discount_type" name="discount_type[]">
@@ -313,7 +302,7 @@
                                         <input type="text" class="form-control" value="{{translate('Sample price')}}" disabled>
                                     </div>
                                     <div class="col-md-8">
-                                        <input type="text" class="form-control" name="sample_price">
+                                        <input type="number" step="0.01" min="1" class="form-control" name="sample_price">
                                     </div>
                                 </div>
                                 <table class="table" id="table_sample_configuration" class="bloc_sample_configuration_variant">
@@ -707,7 +696,7 @@
                                     <input type="text" class="form-control" value="{{translate('Low-Stock Warning')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
-                                    <input type="text" class="form-control stock-warning" id="low_stock_warning">
+                                    <input type="number" class="form-control stock-warning" id="low_stock_warning">
                                 </div>
                             </div>
                             <div id="bloc_attributes">
@@ -943,6 +932,17 @@
                 }
             }
         });
+
+        $('body').on('focusout', '.unit-price-variant, .sample_price_parent, .sample_price, input[name="sample_price"]', function(){
+            var value = parseFloat(this.value);
+            if (isNaN(value)) {
+                // Reset to 0.00 if the input is not a valid number
+                this.value = '0.00';
+            } else {
+                // Round the value to two decimal places
+                this.value = value.toFixed(2);
+            }
+        })
 
 
         $('#short_description').on('keyup', function(event) {
@@ -1633,9 +1633,9 @@
             
             if(newvariant != undefined){
                 var html_to_add = `<tr>
-                                    <td><input type="number" name="variant_pricing-from`+ newvariant +`[from][]" class="form-control min-qty" id=""></td>
-                                    <td><input type="number" name="variant_pricing-from`+ newvariant +`[to][]" class="form-control max-qty" id=""></td>
-                                    <td><input type="number" name="variant_pricing-from`+ newvariant +`[unit_price][]" class="form-control unit-price-variant" id=""></td>
+                                    <td><input type="number" min="1" required name="variant_pricing-from`+ newvariant +`[from][]" class="form-control min-qty" id=""></td>
+                                    <td><input type="number" min="1" required name="variant_pricing-from`+ newvariant +`[to][]" class="form-control max-qty" id=""></td>
+                                    <td><input type="number" step="0.01" min="11 required name="variant_pricing-from`+ newvariant +`[unit_price][]" class="form-control unit-price-variant" id=""></td>
                                     <td><input type="text" class="form-control aiz-date-range discount-range" name="variant_pricing-from'`+ newvariant +`[discount_range][]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                     <td>
                                         <select class="form-control discount_type" name="variant_pricing-from`+ newvariant +`[discount_type][]">
@@ -1656,9 +1656,9 @@
                 if ($(this).closest('#variant_informations').length) {
                     var html_to_add = `
                                 <tr>
-                                    <td><input type="number" class="form-control min-qty-variant" id=""></td>
-                                    <td><input type="number" class="form-control max-qty-variant" id=""></td>
-                                    <td><input type="number" class="form-control unit-price-variant" id=""></td>
+                                    <td><input type="number" min="1" class="form-control min-qty-variant" id=""></td>
+                                    <td><input type="number" min="1" class="form-control max-qty-variant" id=""></td>
+                                    <td><input type="number" step="0.01" min="1" class="form-control unit-price-variant" id=""></td>
                                     <td><input type="text" class="form-control aiz-date-range discount-range-variant" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                     <td>
                                         <select class="form-control discount_type-variant">
@@ -1678,9 +1678,9 @@
                 }else{
                     var html_to_add = `
                                 <tr>
-                                    <td><input type="number" name="from[]" class="form-control min-qty" id=""></td>
-                                    <td><input type="number" name="to[]" class="form-control max-qty" id=""></td>
-                                    <td><input type="number" name="unit_price[]" class="form-control unit-price-variant" id=""></td>
+                                    <td><input type="number" min="1" name="from[]" class="form-control min-qty" id=""></td>
+                                    <td><input type="number" min="1" name="to[]" class="form-control max-qty" id=""></td>
+                                    <td><input type="number" step="0.01" min="1" name="unit_price[]" class="form-control unit-price-variant" id=""></td>
                                     <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                     <td>
                                         <select class="form-control discount_type" name="discount_type[]">
@@ -2747,8 +2747,46 @@
                         // Update the hidden input field with the value of the clicked button
                         var clickedButtonValue = event.submitter.value;
                         document.getElementById('submit_button').value = clickedButtonValue;
-                        
-                        document.getElementById('choice_form').submit();
+                        if(clickedButtonValue === "publish"){
+                            var check = true;
+                            var min_qty = $('#min-qty-parent').val();
+                            var max_qty = $('#max-qty-parent').val();
+                            var unit_price = $('#unit-price-parent').val();
+
+                            if($('body input[name="activate_attributes"]').is(':checked')){
+                                $('body #bloc_variants_created .variant-pricing').each(function() {
+                                    if($(this).is(':checked')){
+                                        if((min_qty == "") || (max_qty == "") || (unit_price == "")){
+                                            check = false;
+                                        }
+                                    }else{
+                                        var min_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.min-qty-variant').val();
+                                        var max_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.max-qty-variant').val();
+                                        var unit_price_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.unit-price-variant').val();
+
+                                        if((min_qty_variant == "") || (max_qty_variant == "") || (unit_price_variant == "")){
+                                            check = false;
+                                        }
+                                    }
+                                });
+                            }else{
+                                if((min_qty == "") || (max_qty == "") || (unit_price == "")){
+                                    check = false;
+                                }
+                            }
+                            
+                            if(check == true){
+                                document.getElementById('choice_form').submit();
+                            }else{
+                                Swal.fire({
+                                    title: 'Pricing Configuration Check',
+                                    text: 'Please check your pricing configuration',
+                                    icon: 'error'
+                                });
+                            }
+                        }else{
+                            document.getElementById('choice_form').submit();
+                        }
                     });
                 }
             });
