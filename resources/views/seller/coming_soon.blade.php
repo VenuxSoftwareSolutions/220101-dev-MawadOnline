@@ -72,7 +72,7 @@
                 console.log(step_number);
                 if (step_number == 3) {
                     if (stepValue == 3) {
-                        window.location.href = '{{ route('catalog.search_page') }}';
+                        window.location.href = '{{ route('seller.stocks.index') }}';
                     } else if (stepValue == 12) {
                         window.location.href = '{{ route('seller.support_ticket.index') }}';
                     } else {
@@ -86,9 +86,9 @@
 
             tour.start();
             if (stepValue == 3) {
-                tour.goToStepNumber(3);
+                tour.goToStepNumber(4);
             } else if (stepValue == 12) {
-                tour.goToStepNumber(13);
+                tour.goToStepNumber(12);
             } else {
                 tour.goToStepNumber(8);
             }

@@ -199,7 +199,7 @@
         });
 
     tour.start();
-    tour.goToStepNumber(12);
+    tour.goToStepNumber(11);
     });
 </script>
 @endsection

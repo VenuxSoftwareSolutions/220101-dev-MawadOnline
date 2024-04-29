@@ -173,7 +173,7 @@
         });
 
     tour.start();
-    tour.goToStepNumber(11);
+    tour.goToStepNumber(10);
     });
 </script>
  @endsection

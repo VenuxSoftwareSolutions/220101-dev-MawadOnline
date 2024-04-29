@@ -175,7 +175,7 @@
         tour.onbeforechange(function(targetElement) {
             step_number += 1 ;
             if (step_number == 3) {
-            window.location.href = '{{ route("seller.shop.index") }}';
+            window.location.href = '{{ route("seller.profile.index") }}';
             sleep(60000);
             }
 
@@ -183,7 +183,7 @@
         });
 
     tour.start();
-    tour.goToStepNumber(14);
+    tour.goToStepNumber(13);
     });
 </script>
 @endsection

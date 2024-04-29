@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers\Seller;
 
-use App\Http\Requests\SellerProfileRequest;
-use App\Models\Emirate;
-use App\Models\ProposedPayoutChange;
+use Auth;
+use Hash;
+use Notification;
+use Carbon\Carbon;
+use App\Models\Tour;
 use App\Models\User;
+use App\Models\Emirate;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Http\UploadedFile;
+use App\Models\ProposedPayoutChange;
+use App\Http\Requests\SellerProfileRequest;
 use App\Notifications\VendorProfileChangesNotification;
 use App\Notifications\VendorProfileChangesWebNotification;
-use Auth;
-use Carbon\Carbon;
-use Hash;
-use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Validation\Rule;
-use Notification;
 
 class ProfileController extends Controller
 {
@@ -36,8 +37,9 @@ class ProfileController extends Controller
             $proposedPayoutChange = null ;
         }
 
+        $tour_steps=Tour::orderBy('step_number')->get();
         // dd($proposedPayoutChange->modified_fields->getNewValue('bank_name')) ;
-        return view('seller.profile.index', compact('user', 'emirates', 'proposedPayoutChange'));
+        return view('seller.profile.index', compact('user', 'emirates', 'proposedPayoutChange' , 'tour_steps'));
     }
 
     /**
