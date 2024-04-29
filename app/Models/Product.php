@@ -50,7 +50,8 @@ class Product extends Model
                                     'shipping_amount',
                                     'sample_available',
                                     'unit_weight',
-                                    'last_version'
+                                    'last_version',
+                                    'product_added_from_catalog'
                                 ];
 
     protected function getLastActionNumber()
@@ -355,6 +356,16 @@ class Product extends Model
         }else{
             return Product::where('parent_id', $this->id)->count();
         }
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Product::class, 'parent_id', 'id');
+    }
+
+    public function hasUnapprovedChildren()
+    {
+        return $this->children()->where('approved', 0)->exists();
     }
 
 }
