@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\UploadProducts;
+use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Intervention\Image\Facades\Image;
 use Auth;
@@ -13,6 +14,9 @@ class ProductUploadsService
     public function store_uploads(array $data, $update)
     {
         $collection = collect($data);
+        $parent = Product::find($collection['product']->id);
+        $historique = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_id', $collection['product']->id)->where('revisionable_type', 'App\Models\Product')->get();
+
 
         //check if upload_products folder is existe, if not existe create it
         $structure = public_path('upload_products');
@@ -33,7 +37,8 @@ class ProductUploadsService
         //insert paths of documents in DB and upload documents in folder under public/upload_products/Product{id_porduct}/document
         if(($data['document_names'] != null) && ($data['documents'] != null)){
             if(count($data['document_names']) == count($data['documents'])){
-                foreach($data['documents'] as $key => $document){
+                $check_added = false;
+                foreach($data['documents'] as $key => $document){ 
                     if($document != null){
                         $documen_name = time().rand(5, 15).'.'.$document->getClientOriginalExtension();
                         $document->move(public_path('/upload_products/Product-'.$collection['product']->id.'/documents') , $documen_name);
@@ -47,6 +52,7 @@ class ProductUploadsService
                         $uploaded_document->type = 'documents';
                         $uploaded_document->save();
                         if(($collection['product']->is_draft == 0) && ($update == true)){
+                            $check_added = true;
                             DB::table('revisions')->insert([
                                 "revisionable_type" => "App\Models\UploadProducts",
                                 "revisionable_id" => $uploaded_document->id,
@@ -60,11 +66,23 @@ class ProductUploadsService
                         }
                     } 
                 }
+
+                if(($parent->product_added_from_catalog == 1) && (count($historique) == 0) && ($check_added == false)){
+                    $parent->approved = 1;
+                    $parent->save();
+                }else{
+                    // Update the approved field in the parent product
+                    $parent->update(['approved' => 0]);
+
+                    // Update the approved field in the children related to the parent
+                    $parent->children()->update(['approved' => 0]);
+                }
             }
         }
 
         //Update old document
         if(array_key_exists('old_document_names', $data) || (array_key_exists('old_documents', $data))){
+            $ids_documents = [];
             if($data['old_document_names'] != null){
                 foreach($data['old_document_names'] as $key => $document){
                     $uploaded_document = UploadProducts::find($key);
@@ -97,9 +115,10 @@ class ProductUploadsService
                         $uploaded_document->document_name = $document;
                         $uploaded_document->save();
 
-                        
+                        array_push($ids_documents, $uploaded_document->id);                        
                         
                         if(count($historique['new']) > 0){
+                            $check_added = true;
                             DB::table('revisions')->insert([
                                 "revisionable_type" => "App\Models\UploadProducts",
                                 "revisionable_id" => $uploaded_document->id,
@@ -142,6 +161,9 @@ class ProductUploadsService
                             }
                             $uploaded_document->save();
 
+                            array_push($ids_documents, $uploaded_document->id);
+
+                            $check_added = true;
                             DB::table('revisions')->insert([
                                 "revisionable_type" => "App\Models\UploadProducts",
                                 "revisionable_id" => $uploaded_document->id,
@@ -155,6 +177,18 @@ class ProductUploadsService
                         }   
                     }
                 }
+            }
+
+            $historique_documents = DB::table('revisions')->whereNull('deleted_at')->whereIn('revisionable_id', $ids_documents)->where('revisionable_type', 'App\Models\UploadProducts')->get();
+            if(($parent->product_added_from_catalog == 1) && (count($historique_documents) == 0)){
+                $parent->approved = 1;
+                $parent->save();
+            }else{
+                // Update the approved field in the parent product
+                $parent->update(['approved' => 0]);
+
+                // Update the approved field in the children related to the parent
+                $parent->children()->update(['approved' => 0]);
             }
         }
         
@@ -171,9 +205,11 @@ class ProductUploadsService
         //insert paths of images in DB and upload images in folder under public/upload_products/Product{id_porduct}/images
         if($data['main_photos'] != null){
             if(count($data['main_photos']) > 0){
+                $check_added = false;
                 foreach($data['main_photos'] as $key => $image){
                     $imageName = time().rand(5, 15).'.jpg';
                     $extension = $image->getClientOriginalExtension();
+                    
 
                     if ($extension == 'jpg' || $extension == 'jpeg' || $extension == 'png') {
                     
@@ -196,6 +232,7 @@ class ProductUploadsService
                             $uploaded_document->save();
 
                             if(($collection['product']->is_draft == 0) && ($update == true)){
+                                $check_added = true;
                                 DB::table('revisions')->insert([
                                     "revisionable_type" => "App\Models\UploadProducts",
                                     "revisionable_id" => $uploaded_document->id,
@@ -219,6 +256,7 @@ class ProductUploadsService
                         $uploaded_document->save();
 
                         if(($collection['product']->is_draft == 0) && ($update == true)){
+                            $check_added = true;
                             DB::table('revisions')->insert([
                                 "revisionable_type" => "App\Models\UploadProducts",
                                 "revisionable_id" => $uploaded_document->id,
@@ -232,12 +270,24 @@ class ProductUploadsService
                         }
                     }
                 }
+
+                if(($parent->product_added_from_catalog == 1) && (count($historique) == 0) && ($check_added == false)){
+                    $parent->approved = 1;
+                    $parent->save();
+                }else{
+                    // Update the approved field in the parent product
+                    $parent->update(['approved' => 0]);
+
+                    // Update the approved field in the children related to the parent
+                    $parent->children()->update(['approved' => 0]);
+                }
             }
         }
         
 
         //insert paths of thumbnails in DB and upload thumbnails in folder under public/upload_products/Product{id_porduct}/thumbnails
         if($data['photosThumbnail'] != null){
+            $check_added = false;
             foreach($data['photosThumbnail'] as $key => $image){
                 $imageName = time().rand(5, 15).'.jpg';
                 // $image->move(public_path('/upload_products/Product-'.$collection['product']->id.'/thumbnails') , $imageName);
@@ -259,6 +309,7 @@ class ProductUploadsService
                     $uploaded_document->save();
 
                     if(($collection['product']->is_draft == 0) && ($update == true)){
+                        $check_added = true;
                         DB::table('revisions')->insert([
                             "revisionable_type" => "App\Models\UploadProducts",
                             "revisionable_id" => $uploaded_document->id,
@@ -271,6 +322,17 @@ class ProductUploadsService
                         ]);
                     }
                 }
+            }
+
+            if(($parent->product_added_from_catalog == 1) && (count($historique) == 0) && ($check_added == false)){
+                $parent->approved = 1;
+                $parent->save();
+            }else{
+                // Update the approved field in the parent product
+                $parent->update(['approved' => 0]);
+
+                // Update the approved field in the children related to the parent
+                $parent->children()->update(['approved' => 0]);
             }
         }
     }

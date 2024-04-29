@@ -23,7 +23,10 @@ class CatalogController extends Controller
 {
     public function search(){
         $tour_steps=Tour::orderBy('step_number')->get();
-        return view('seller.product.catalog.search',compact('tour_steps'));
+        $catalogs = ProductCatalog::orderBy('created_at', 'desc')->paginate(12);
+        //$paginationView = $catalogs->onEachSide(1)->render('seller.product.catalog.pagination', ['elements' => $catalogs->elements()]);
+
+        return view('seller.product.catalog.search',compact('tour_steps', 'catalogs'));
     }
 
     public function search_action(Request $request){
@@ -40,7 +43,6 @@ class CatalogController extends Controller
                                 })->take(3)->get();
 
             return view('seller.product.catalog.result')->with(['products' =>  $products, 'catalogs' => $catalogs, 'search' => $request->name]);
-        }elseif(Auth::user()->user_type == "admin"){
         }elseif((Auth::user()->user_type == "admin") || (Auth::user()->user_type == "staff")){
             $products = Product::where(function ($query) use ($searchTerm) {
                                     $query->where('name', 'like', "%{$searchTerm}%")
@@ -79,6 +81,23 @@ class CatalogController extends Controller
 
     }
 
+    public function new_search_action(Request $request){
+        $searchTerm = $request->name;
+
+        if($searchTerm == ""){
+            $catalogs = ProductCatalog::orderBy('created_at', 'desc')->paginate(12);
+        }else{
+            $catalogs = ProductCatalog::where(function ($query) use ($searchTerm) {
+                $query->where('name', 'like', "%{$searchTerm}%")
+                    ->orWhereHas('brand', function ($query) use ($searchTerm) {
+                        $query->where('name', 'like', "%{$searchTerm}%");
+                    });
+            })->orderBy('created_at', 'desc')->paginate(12);
+        }
+
+        return view('seller.product.catalog.result')->with(['catalogs' => $catalogs]);
+    }
+
     public function see_all($search){
         if (!is_null($search)) {
             $products = [];
@@ -95,7 +114,6 @@ class CatalogController extends Controller
                     'products' => $products,
                     'catalogs' => $catalogs,
                 ]);
-            }elseif(Auth::user()->user_type == "admin"){
             }elseif((Auth::user()->user_type == "admin") || (Auth::user()->user_type == "staff")){
                 $products = Product::where(function ($query) use ($search) {
                                         $query->where('name', 'like', "%{$search}%")
@@ -352,6 +370,7 @@ class CatalogController extends Controller
         unset($data['id']);
         unset($data['product_id']);
         $data['added_from_catalog'] = 1;
+        $data['product_added_from_catalog'] = 1;
         $data['user_id'] = Auth::user()->id;
         $newProduct = Product::insertGetId($data);
 
@@ -423,6 +442,7 @@ class CatalogController extends Controller
                 $data['user_id'] = Auth::user()->id;
                 unset($data['product_id']);
                 $data['added_from_catalog'] = 1;
+                $data['product_added_from_catalog'] = 1;
                 $newProductChildren = Product::insertGetId($data);
 
                 DB::table('product_categories')->insert([
