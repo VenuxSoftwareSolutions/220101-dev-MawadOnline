@@ -11,15 +11,16 @@ class ChangesApprovedNotification extends Notification
 {
     use Queueable;
     protected $proposedChange;
+    protected $name;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($name)
     {
-        //
+        $this->name = $name;
     }
 
     /**
@@ -42,8 +43,10 @@ class ChangesApprovedNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-        ->subject('Your Proposed Changes have been Approved')
-        ->view('emails.approved_changes');
+        ->subject('Your Profile Changes Have Been Approved')
+        ->view('emails.approved_changes',[
+            'name'=> $this->name
+        ]);
     }
 
     /**
@@ -55,7 +58,7 @@ class ChangesApprovedNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            'message' => 'Your proposed changes have been approved.'
+            'message' => 'Your profile changes have been approved.'
         ];
     }
 }

@@ -44,7 +44,7 @@
 <body>
     <div class="container">
         <img src="{{ asset('public/uploads/all/CxeI3PF3NMzjzHp6Ct3xf8dPS1q2pFYmwAwbHQii.png') }}" alt="Logo">
-        <h2>Vendor Profile Changes Pending Approval</h2>
+        {{-- <h2>Vendor Profile Changes Pending Approval</h2>
         <p>There are pending changes in the vendor profile that require your approval:</p>
         <ul>
             <li><strong>Vendor Name:</strong> {{ $vendor->name }}</li>
@@ -52,7 +52,20 @@
         </ul>
         <p>
             <a href="{{ $vendorProfileUrl }}">View Vendor Profile</a>
-        </p>
-    </div>
+        </p> --}}
+        <p>Dear Admin,</p>
+
+        <p>A vendor has submitted changes to their profile that require your approval. Here are the details for your review:</p>
+
+        <?php foreach ($modifiedFields as $fieldArray): ?>
+        <p>Field: <?= $fieldArray['field'] ?></p>
+        {{-- <p>Old Value: <?= $fieldArray['old_value'] ?></p>
+        <p>New Value: <?= $fieldArray['new_value'] ?></p> --}}
+        <?php endforeach; ?>
+
+        <p>Please review and approve the changes <a href="{{ $vendorProfileUrl }}">here</a>.</p>
+
+        <p>Thank you,<br>MawadOnline Team</p>
+        </div>
 </body>
 </html>

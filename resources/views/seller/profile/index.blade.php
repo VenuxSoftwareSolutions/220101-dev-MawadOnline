@@ -4,17 +4,39 @@
 @endphp
 <style>
     .color-modified {
-        border-color: #FF0017 !important;
+        border: 2px dashed #e8c068e8 !important; /* Yellow dashed border */
+        box-shadow: 0 0 5px rgba(255, 204, 0, 0.5) !important; /* Yellow shadow */
+        transition: border-color 0.3s ease, box-shadow 0.3s ease !important; /* Smooth transition */
         /* Your desired border color */
     }
 
     .color-modified-file {
-        color: #FF0017 !important;
+
+        color: #e8c068e8
         /* Your desired border color */
     }
        /* Custom CSS for highlighted tabs */
        .highlighted-tab {
         border-color: red !important;
+    }
+    .btn-info {
+        background-color: var(--primary) !important; /* Use the global variable */
+        border-color: var(--primary) !important;
+
+    }
+    .btn-primary {
+        background-color: #CB774B !important; /* Use the global variable */
+        border-color: #CB774B !important;
+
+    }
+    .swal2-confirm {
+        background-color: var(--success) !important; /* Use the global variable */
+        border-color: none !important;
+
+    }
+    .swal2-confirm:hover {
+        border-color: none !important;
+
     }
 </style>
 @section('panel_content')
@@ -696,7 +718,7 @@
                                             <div class="form-check form-check-inline">
                                                 <input class="form-check-input" type="radio" value="1"
                                                     id="vatRegisteredYes" name="vat_registered"
-                                                    @if (
+                                                    @if ( (old("vat_registered") == 1) ||
                                                         ($vat_registered == 1) ||
                                                         empty($vat_registered)) checked @endif>
                                                 <label class="form-check-label" for="vatRegisteredYes">
@@ -705,7 +727,7 @@
                                             </div>
                                             <div class="form-check form-check-inline">
                                                 <input class="form-check-input" type="radio" value="0"
-                                                    id="vatRegisteredNo" @if ( $vat_registered == 0) checked @endif
+                                                    id="vatRegisteredNo" @if (  $vat_registered == 0 &&  (old("vat_registered") == 0 || old("vat_registered") == null )) checked @endif
                                                     name="vat_registered">
                                                 <label class="form-check-label" for="vatRegisteredNo">
                                                     {{ translate('No') }}

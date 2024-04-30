@@ -16,19 +16,22 @@ class VendorStatusChangedNotification extends Notification implements ShouldQueu
     protected $reason ;
     protected $vendorEmail ;
     protected $reasonTitle ;
+    protected $name ;
+
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($oldStatus, $newStatus,$reason=null,$vendorEmail=null,$reasonTitle=null)
+    public function __construct($oldStatus, $newStatus,$reason=null,$vendorEmail=null,$reasonTitle=null, $name=null)
     {
         $this->oldStatus = $oldStatus;
         $this->newStatus = $newStatus;
         $this->reason=$reason ;
         $this->vendorEmail=$vendorEmail ;
         $this->reasonTitle=$reasonTitle ;
+        $this->name=$name ;
 
     }
 
@@ -73,19 +76,39 @@ class VendorStatusChangedNotification extends Notification implements ShouldQueu
         $logo = asset('public/uploads/all/CxeI3PF3NMzjzHp6Ct3xf8dPS1q2pFYmwAwbHQii.png'); // Path to your custom logo
         $admins = User::where('user_type', 'admin')->get(); // Fetch all admins
 
-        $reasonTitle = $this->reasonTitle;
-        if (is_null($reasonTitle)) {
-            $reasonTitle = "Vendor Status Changed";
+        $subject = $this->reasonTitle;
+        if (is_null($subject)) {
+            $subject = "Vendor Status Changed";
         }
+        if ( $this->newStatus == 'Pending Approval') {
+            $subject = "Registration Complete: You Account Is Now Pending Approval";
 
+        }
+        if ( $this->newStatus == 'Enabled') {
+            $subject = "Welcome to MawadOnline  - Your Vendor Account Has Been Approved";
+
+        }
+        if ( $this->newStatus == 'Rejected') {
+            $subject = "Vendor Registration Rejected";
+
+        }
+        if ( $this->newStatus == 'Pending Closure') {
+            $subject = "Your account is pending closure.";
+
+        }
+        if ( $this->newStatus == 'Closed') {
+            $subject = "Your Vendor Account Has Been Closed";
+
+        }
         $mailMessage = (new MailMessage)
-            ->subject($reasonTitle)
+            ->subject($subject)
             ->view('seller.notification.email', [
                 'oldStatus' => $this->oldStatus,
                 'newStatus' => $this->newStatus,
                 'logo' => $logo,
                 'reason' => $this->reason,
-                'vendorEmail' => $this->vendorEmail
+                'vendorEmail' => $this->vendorEmail,
+                'vendorName' => $this->name
             ]);
 
         // Loop through each admin and add them as a BCC recipient

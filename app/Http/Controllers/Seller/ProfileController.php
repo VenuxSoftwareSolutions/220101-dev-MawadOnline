@@ -122,11 +122,11 @@ class ProfileController extends Controller
         $user_id = $user->id ;
         // Validate the incoming request data
         $request->validate([
-            'bank_name' => 'nullable|string|max:128|regex:/\D/',
-            'account_name' => 'nullable|string|max:128|regex:/\D/',
-            'account_number' => 'nullable|string|max:30',
-            'iban' => 'nullable|string|max:34',
-            'swift_code' => 'nullable|string|max:16',
+            'bank_name' => 'required|string|max:128|regex:/\D/',
+            'account_name' => 'required|string|max:128|regex:/\D/',
+            'account_number' => 'required|string|max:30',
+            'iban' => 'required|string|max:34',
+            'swift_code' => 'required|string|max:16',
             'iban_certificate' => [
                 'nullable',
                 function ($attribute, $value, $fail) {
@@ -142,23 +142,23 @@ class ProfileController extends Controller
                     }
                 },
             ],
-            'first_name' => 'nullable|string|max:64|regex:/\D/',
-            'last_name' => 'nullable|string|max:64|regex:/\D/',
+            'first_name' => 'required|string|max:64|regex:/\D/',
+            'last_name' => 'required|string|max:64|regex:/\D/',
             'email' => [
-                'nullable',
+                'required',
                 'email',
                 Rule::unique('contact_people')->where(function ($query) use ($user_id) {
                     return $query->where('user_id', '<>', $user_id);
                 }),
             ],
-            'mobile_phone' => $request->input('mobile_phone') != '+971' ? ['nullable', 'string', 'max:16', new \App\Rules\UaeMobilePhone] :'',
-            'additional_mobile_phone' => $request->input('additional_mobile_phone') != '+971' ? ['nullable', 'string', 'max:16', new \App\Rules\UaeMobilePhone]:'',
-            'nationality' => 'nullable|string|max:255',
-            'date_of_birth' => 'nullable|date|before:-18 years',
-            'emirates_id_number' => ['nullable', 'string', 'max:15', 'regex:/^[0-9]{15}$/'],
-            'emirates_id_expiry_date' => 'nullable|date|after_or_equal:today',
+            'mobile_phone' =>  ['required', 'string', 'max:16', new \App\Rules\UaeMobilePhone],
+            'additional_mobile_phone' => ['nullable', 'string', 'max:16', new \App\Rules\UaeMobilePhone],
+            'nationality' => 'required|string|max:255',
+            'date_of_birth' => 'required|date|before:-18 years',
+            'emirates_id_number' => ['required', 'string', 'max:15', 'regex:/^[0-9]{15}$/'],
+            'emirates_id_expiry_date' => 'required|date|after_or_equal:today',
             'emirates_id_file_path' => [
-                'nullable',
+                'required',
                 function ($attribute, $value, $fail) {
                     if (!empty($value) && $value instanceof UploadedFile) {
                         // If the input value is a file (UploadedFile), validate file upload
@@ -172,24 +172,24 @@ class ProfileController extends Controller
                     }
                 },
             ],
-            'business_owner' => 'nullable|boolean',
-            'designation' => 'nullable|string|max:64|regex:/\D/',
-            'trade_name_english' => 'nullable|string|max:128|regex:/\D/',
-            'trade_name_arabic' => 'nullable|string|max:256|regex:/\D/',
-            'eshop_name_english' => 'nullable|string|max:128|regex:/\D/',
-            'eshop_name_arabic' => 'nullable|string|max:256|regex:/\D/',
+            'business_owner' => 'required|boolean',
+            'designation' => 'required|string|max:64|regex:/\D/',
+            'trade_name_english' => 'required|string|max:128|regex:/\D/',
+            'trade_name_arabic' => 'required|string|max:256|regex:/\D/',
+            'eshop_name_english' => 'required|string|max:128|regex:/\D/',
+            'eshop_name_arabic' => 'required|string|max:256|regex:/\D/',
             'eshop_desc_english' => 'nullable|string|regex:/\D/',
             'eshop_desc_arabic' => 'nullable|string|regex:/\D/',
-            'license_issue_date' => 'nullable|date',
-            'license_expiry_date' => 'nullable|date|after_or_equal:today|after_or_equal:license_issue_date',
-            'state' => 'nullable|exists:emirates,id',
-            'area_id' => 'nullable|exists:areas,id',
-            'street' => 'nullable|string|max:128|regex:/\D/',
-            'building' => 'nullable|string|max:64|regex:/\D/',
+            'license_issue_date' => 'required|date',
+            'license_expiry_date' => 'required|date|after_or_equal:today|after_or_equal:license_issue_date',
+            'state' => 'required|exists:emirates,id',
+            'area_id' => 'required|exists:areas,id',
+            'street' => 'required|string|max:128|regex:/\D/',
+            'building' => 'required|string|max:64|regex:/\D/',
             'unit' => 'nullable|string|max:64',
             'po_box' => 'nullable|string|max:32',
             'landline' => 'nullable|string|max:16',
-            'vat_registered' => 'nullable|boolean',
+            'vat_registered' => 'required|boolean',
 
             'trade_license_doc' => [
                 'nullable',
@@ -206,7 +206,7 @@ class ProfileController extends Controller
                     }
                 },
             ],
-            'trn' => $request->vat_registered == 1 ? 'nullable|string|max:20' : '',
+            'trn' => $request->vat_registered == 1 ? 'required|string|max:20' : '',
             'vat_certificate' => $request->vat_registered == 1 ? [
                 'required',
                 function ($attribute, $value, $fail) {
@@ -327,23 +327,36 @@ class ProfileController extends Controller
                         $existingTranslateKeyName = $existingBusinessInformation->getTranslation($translationKey, $language, false);
 
                         // Compare the value with the existing value if it exists
-                        if ($existingBusinessInformation && $existingTranslateKeyName != $value) {
-                            $modifiedFields[] = [
-                                'field' => $key,
-                                'old_value' => $existingTranslateKeyName,
-                                'new_value' => $value,
-                            ];
+                        if ($existingBusinessInformation && ($existingTranslateKeyName != $value || is_null($value) )) {
+                            if($value) {
+                                $modifiedFields[] = [
+                                    'field' => $key,
+                                    'old_value' => $existingTranslateKeyName,
+                                    'new_value' => $value,
+                                ];
+                            }
+                            else {
+                                $existingBusinessInformation->{$translationKey} = [$language=>null] ;
+                                $existingBusinessInformation->save() ;
+                            }
+
                         }
                     } else {
                         if(strpos($key, '_date'))
                             $value=Carbon::createFromFormat('d M Y',$value)->format('Y-m-d') ;
                         // Compare the value with the existing value if it exists
-                        if ($existingBusinessInformation && $existingBusinessInformation->{$key} != $value) {
-                            $modifiedFields[] = [
-                                'field' => $key,
-                                'old_value' => $existingBusinessInformation->{$key},
-                                'new_value' => $value,
-                            ];
+                        if ($existingBusinessInformation && ($existingBusinessInformation->{$key} != $value || is_null($value )) ) {
+                            if($value) {
+                                $modifiedFields[] = [
+                                    'field' => $key,
+                                    'old_value' => $existingBusinessInformation->{$key},
+                                    'new_value' => $value,
+                                ];
+                            }
+                            else {
+                                    $existingBusinessInformation->{$key} = null ;
+                                    $existingBusinessInformation->save();
+                            }
                         }
                     }
                 }
@@ -369,12 +382,20 @@ class ProfileController extends Controller
                             $value=Carbon::createFromFormat('d M Y',$value)->format('Y-m-d') ;
                         }
                         // Compare the value with the existing value if it exists
-                        if ($existingContactInformation && $existingContactInformation->{$key} != $value) {
-                            $modifiedFields[] = [
-                                'field' => $key,
-                                'old_value' => $existingContactInformation->{$key},
-                                'new_value' => $value,
-                            ];
+                        if ($existingContactInformation && ($existingContactInformation->{$key} != $value|| is_null($value))) {
+                            if($value) {
+                                $modifiedFields[] = [
+                                    'field' => $key,
+                                    'old_value' => $existingContactInformation->{$key},
+                                    'new_value' => $value,
+                                ];
+                            }
+                            else {
+                                $existingContactInformation->{$key} = null ;
+                                $existingContactInformation->save();
+                            }
+
+
                         }
                     }
                 }
@@ -393,7 +414,7 @@ class ProfileController extends Controller
         if ($admins->isNotEmpty()) {
             // Notify each admin user via Laravel notifications
             foreach ($admins as $admin) {
-                $admin->notify(new VendorProfileChangesNotification($user));
+                $admin->notify(new VendorProfileChangesNotification($user,$modifiedFields));
                 Notification::send($admin, new VendorProfileChangesWebNotification($user));
             }
          }

@@ -38,7 +38,9 @@ use App\Http\Requests\SellerRegistrationRequest;
 use App\Http\Requests\StoreContactPersonRequest;
 use App\Notifications\NewRegistrationNotification;
 use App\Http\Requests\SellerRegistrationShopRequest;
+use App\Notifications\CustomStatusNotification;
 use App\Notifications\EmailVerificationNotification;
+use App\Notifications\VendorStatusChangedNotification;
 
 class ShopController extends Controller
 {
@@ -826,6 +828,7 @@ class ShopController extends Controller
         $staff->save();
         // Trigger the notification
         $admins = User::where('user_type','admin')->get(); // Fetch the first admin
+        try {
         if ($admins->isNotEmpty()) {
             // Notify each admin user via Laravel notifications
             foreach ($admins as $admin) {
@@ -833,7 +836,11 @@ class ShopController extends Controller
                 Notification::send($admin, new NewRegistrationNotification($user));
             }
          }
+         $user->notify(new VendorStatusChangedNotification("draft", "Pending Approval",null,null,null,$user->name));
+         Notification::send($user, new CustomStatusNotification("draft", "Pending Approval"));
+        } catch (\Exception $e) {
 
+        }
         return response()->json(['finish' => true, 'success' => true, 'message' => 'Shop stored successfully']);
 
 

@@ -44,7 +44,7 @@ class ModificationRejectedNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject('Modifications Rejected')
+            ->subject('Profile Update Not Approved')
             ->view('emails.modification_rejected', [
                 'user' => $this->user,
                 'rejectionReasons' => $this->rejectionReasons,
@@ -60,7 +60,7 @@ class ModificationRejectedNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            'message' => 'Your modifications have been rejected. Please check your email for the rejection reasons.',
+            'message' => 'Profile update rejected. Please check email for reasons.',
 
         ];
     }

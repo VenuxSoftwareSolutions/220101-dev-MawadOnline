@@ -1559,7 +1559,7 @@ class ProductController extends Controller
             'date_range_pricing' =>  $data['date_range_pricing']  ?? null,
             'discount_type' => $data['discount_type'] ?? null ,
             'discount_percentage' => $data['discount_percentage'],
-            'discount_amount'=> $data['discount_amount']
+            'discount_amount'=> $data['discount_amount'],
         ];
 
 
