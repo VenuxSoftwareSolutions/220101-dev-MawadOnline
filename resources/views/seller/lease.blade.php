@@ -26,7 +26,7 @@
                     <th>To Date</th>
                     <th>Charge for</th>
                     <th>Amount (AED)</th>
-                    <th style="color: red;">Status</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -88,7 +88,7 @@
                     <th>To Date</th>
                     <th>Charge for</th>
                     <th>Amount (AED)</th>
-                    <th style="color: red;">Status</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -199,7 +199,7 @@
         });
 
     tour.start();
-    tour.goToStepNumber(12);
+    tour.goToStepNumber(11);
     });
 </script>
 @endsection

@@ -210,6 +210,73 @@
         }
 
     </style>
+    <style>
+
+.coming-soon-container {
+        text-align: center;
+        padding: 50px;
+        background-color: #f7f8fa; /* Adjust the background color if needed */
+    }
+
+
+
+    .coming-soon-container img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .coming-soon-container h1 {
+        font-weight: 700;
+        font-size: 2.5em; /* Adjusted size for visibility */
+        color: #333; /* Adjusted color for contrast */
+        margin-bottom: 0.5em; /* Spacing adjusted */
+    }
+
+    .coming-soon-container p {
+        color: #666; /* Adjusted color for contrast */
+        font-size: 1em; /* Adjusted size for readability */
+        margin-bottom: 2em; /* Spacing adjusted */
+    }
+    .email-input {
+        padding: 15px;
+        margin-right: 10px; /* Space between input and button */
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        width: 300px; /* Fixed width for the input */
+    }
+
+    .notify-btn {
+        padding: 15px 25px;
+        background-color: #A2B8C6; /* Button color reference */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        color: white;
+        font-size: 1em;
+        /* Adding hover effect for the button */
+        transition: background-color 0.3s ease;
+    }
+
+    .notify-btn:hover {
+        background-color: #8a9ba8; /* Slightly darker shade on hover */
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .coming-soon-container img {
+            max-width: 70%; /* Larger image on smaller screens */
+        }
+
+        .email-input {
+            width: auto; /* Full width on small screens */
+            margin: 0 0 1em 0; /* Stack input above button */
+        }
+
+        .notify-btn {
+            width: auto; /* Full width on small screens */
+        }
+    }
+    </style>
 	<script>
     	var AIZ = AIZ || {};
         AIZ.local = {
