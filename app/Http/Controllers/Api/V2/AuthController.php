@@ -24,6 +24,31 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
+
+    public function generateSalt($email)
+    {
+        if ($email == null) {
+            return response()->json(['errors' => [translate('Email is required')]], 422);
+        }
+
+
+        // Your secret key for HMAC-SHA256 algorithm
+        $secretKey = config('api.SALT_GENERATION_KEY'); // Make sure to set this in your .env file
+
+        $numHashingRounds = config('api.NUMBER_HASHING_ROUNDS');
+
+        // Generate the salt using HMAC-SHA256 algorithm
+        $salt = hash_hmac('sha256', $email, $secretKey);
+
+        // Trim the salt to 32 characters
+        $salt = substr($salt, 0, 32);
+
+        return response()->json([
+            'salt' => $salt,
+            'num_hashing_rounds' => $numHashingRounds
+        ]);
+    }
+
     public function signup(Request $request)
     {
         $messages = array(

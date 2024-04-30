@@ -418,7 +418,7 @@
             tour.onbeforechange(function(targetElement) {
                 step_number += 1 ;
                 if (step_number == 3) {
-                window.location.href = '{{ route("seller.packages_payment_list") }}';
+                window.location.href = '{{ route("seller.staffs.index") }}';
                 sleep(60000);
                 }
 

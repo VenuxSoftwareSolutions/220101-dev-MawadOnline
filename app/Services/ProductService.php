@@ -468,48 +468,70 @@ class ProductService
 
                 foreach($pricing['from'] as $key => $from){
                     $current_data = [];
+                    try {
+                        if(($from != null) && ($pricing['to'][$key] != null) && ($pricing['unit_price'][$key] != null)){
+                                if($pricing['date_range_pricing'][$key] != null){
+                                    if(($pricing['date_range_pricing'][$key]) && ($pricing['discount_type'][$key])){
+                                        $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
+                                        $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
+                                        $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
+                                        $start_to_parse = explode(" ", $date_var[0]);
+                                        $end_to_parse = explode(" ", $date_var[1]);
 
-                    if(($from != null) && ($pricing['to'][$key] != null) && ($pricing['unit_price'][$key] != null)){
-                            if($pricing['date_range_pricing'][$key] != null){
-                                if(($pricing['date_range_pricing'][$key]) && ($pricing['discount_type'][$key])){
-                                    $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
-                                    $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
-                                    $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
+                                        $explod_start_to_parse = explode("-", $start_to_parse[0]);
+                                        $explod_end_to_parse = explode("-", $end_to_parse[0]);
 
-                                    $current_data["discount_start_datetime"] = $discount_start_date;
-                                    $current_data["discount_end_datetime"] = $discount_end_date;
-                                    $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                        $check_start = checkdate(intval($explod_start_to_parse[1]), intval($explod_start_to_parse[0]), intval($explod_start_to_parse[2]));
+                                        $check_end = checkdate(intval($explod_end_to_parse[1]), intval($explod_end_to_parse[0]), intval($explod_end_to_parse[2]));
+
+                                        if(($check_start == true) && ($check_end == true)){
+                                            $current_data["discount_start_datetime"] = $discount_start_date;
+                                            $current_data["discount_end_datetime"] = $discount_end_date;
+                                            $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                        }else{
+                                            $current_data["discount_start_datetime"] = null;
+                                            $current_data["discount_end_datetime"] = null;
+                                            $current_data["discount_type"] = null;
+                                        }
+
+                                        
+                                    }else{
+                                        $current_data["discount_start_datetime"] = null;
+                                        $current_data["discount_end_datetime"] = null;
+                                        $current_data["discount_type"] = null;
+                                    }
+
                                 }else{
                                     $current_data["discount_start_datetime"] = null;
                                     $current_data["discount_end_datetime"] = null;
                                     $current_data["discount_type"] = null;
                                 }
+        
+                            $current_data["id_products"] = $product->id;
+                            $current_data["from"] = $from;
+                            $current_data["to"] = $pricing['to'][$key];
+                            $current_data["unit_price"] = $pricing['unit_price'][$key];
+        
+                            if(isset($pricing['discount_amount'])){
+                                $current_data["discount_amount"] = $pricing['discount_amount'][$key];
                             }else{
-                                $current_data["discount_start_datetime"] = null;
-                                $current_data["discount_end_datetime"] = null;
-                                $current_data["discount_type"] = null;
+                                $current_data["discount_amount"] = null;
                             }
-    
-                        $current_data["id_products"] = $product->id;
-                        $current_data["from"] = $from;
-                        $current_data["to"] = $pricing['to'][$key];
-                        $current_data["unit_price"] = $pricing['unit_price'][$key];
-    
-                        if(isset($pricing['discount_amount'])){
-                            $current_data["discount_amount"] = $pricing['discount_amount'][$key];
-                        }else{
-                            $current_data["discount_amount"] = null;
+                            if(isset($current_data["discount_percentage"])){
+                                $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
+                            }else{
+                                $current_data["discount_percentage"] = null;
+                            }
+        
+                            array_push($all_data_to_insert, $current_data);
                         }
-                        if(isset($current_data["discount_percentage"])){
-                            $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
-                        }else{
-                            $current_data["discount_percentage"] = null;
-                        }
-    
-                        array_push($all_data_to_insert, $current_data);
+
+                    } catch (Exception $e) {
+                        // Handle the parsing error
+                        dump('Error: ' . $e->getMessage());
                     }
-                    
                 }
+
                 if(count($all_data_to_insert) > 0){
                     PricingConfiguration::insert($all_data_to_insert);
                 }
@@ -571,9 +593,24 @@ class ProductService
                                 $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
                                 $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
 
-                                $current_data["discount_start_datetime"] = $discount_start_date;
-                                $current_data["discount_end_datetime"] = $discount_end_date;
-                                $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                $start_to_parse = explode(" ", $date_var[0]);
+                                $end_to_parse = explode(" ", $date_var[1]);
+
+                                $explod_start_to_parse = explode("-", $start_to_parse[0]);
+                                $explod_end_to_parse = explode("-", $end_to_parse[0]);
+
+                                $check_start = checkdate(intval($explod_start_to_parse[1]), intval($explod_start_to_parse[0]), intval($explod_start_to_parse[2]));
+                                $check_end = checkdate(intval($explod_end_to_parse[1]), intval($explod_end_to_parse[0]), intval($explod_end_to_parse[2]));
+
+                                if(($check_start == true) && ($check_end == true)){
+                                    $current_data["discount_start_datetime"] = $discount_start_date;
+                                    $current_data["discount_end_datetime"] = $discount_end_date;
+                                    $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                }else{
+                                    $current_data["discount_start_datetime"] = null;
+                                    $current_data["discount_end_datetime"] = null;
+                                    $current_data["discount_type"] = null;
+                                }
                             }else{
                                 $current_data["discount_start_datetime"] = null;
                                 $current_data["discount_end_datetime"] = null;
@@ -790,9 +827,26 @@ class ProductService
                                             $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
                                             $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
 
-                                            $current_data["discount_start_datetime"] = $discount_start_date;
-                                            $current_data["discount_end_datetime"] = $discount_end_date;
-                                            $current_data["discount_type"] = $variant['pricing']['discount_type'][$key];
+                                            $start_to_parse = explode(" ", $date_var[0]);
+                                            $end_to_parse = explode(" ", $date_var[1]);
+    
+                                            $explod_start_to_parse = explode("-", $start_to_parse[0]);
+                                            $explod_end_to_parse = explode("-", $end_to_parse[0]);
+    
+                                            $check_start = checkdate(intval($explod_start_to_parse[1]), intval($explod_start_to_parse[0]), intval($explod_start_to_parse[2]));
+                                            $check_end = checkdate(intval($explod_end_to_parse[1]), intval($explod_end_to_parse[0]), intval($explod_end_to_parse[2]));
+    
+                                            if(($check_start == true) && ($check_end == true)){
+                                                $current_data["discount_start_datetime"] = $discount_start_date;
+                                                $current_data["discount_end_datetime"] = $discount_end_date;
+                                                $current_data["discount_type"] = $variant['pricing']['discount_type'][$key];
+                                            }else{
+                                                $current_data["discount_start_datetime"] = null;
+                                                $current_data["discount_end_datetime"] = null;
+                                                $current_data["discount_type"] = null;
+                                            }
+
+                                            
                                         }else{
                                             $current_data["discount_start_datetime"] = null;
                                             $current_data["discount_end_datetime"] = null;
@@ -848,9 +902,24 @@ class ProductService
                                             $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
                                             $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
             
-                                            $current_data["discount_start_datetime"] = $discount_start_date;
-                                            $current_data["discount_end_datetime"] = $discount_end_date;
-                                            $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                            $start_to_parse = explode(" ", $date_var[0]);
+                                            $end_to_parse = explode(" ", $date_var[1]);
+    
+                                            $explod_start_to_parse = explode("-", $start_to_parse[0]);
+                                            $explod_end_to_parse = explode("-", $end_to_parse[0]);
+    
+                                            $check_start = checkdate(intval($explod_start_to_parse[1]), intval($explod_start_to_parse[0]), intval($explod_start_to_parse[2]));
+                                            $check_end = checkdate(intval($explod_end_to_parse[1]), intval($explod_end_to_parse[0]), intval($explod_end_to_parse[2]));
+    
+                                            if(($check_start == true) && ($check_end == true)){
+                                                $current_data["discount_start_datetime"] = $discount_start_date;
+                                                $current_data["discount_end_datetime"] = $discount_end_date;
+                                                $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                            }else{
+                                                $current_data["discount_start_datetime"] = null;
+                                                $current_data["discount_end_datetime"] = null;
+                                                $current_data["discount_type"] = null;
+                                            }
                                         }else{
                                             $current_data["discount_start_datetime"] = null;
                                             $current_data["discount_end_datetime"] = null;
@@ -975,7 +1044,7 @@ class ProductService
         $collection = collect($data);
         
         $collection['user_id'] = auth()->user()->id;
-        $collection['approved'] = 0;
+        
         $collection['rejection_reason'] = null;
         $vat_user = BusinessInformation::where('user_id', Auth::user()->id)->first();
 
@@ -1584,9 +1653,24 @@ class ProductService
                                     $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
                                     $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
         
-                                    $current_data["discount_start_datetime"] = $discount_start_date;
-                                    $current_data["discount_end_datetime"] = $discount_end_date;
-                                    $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                    $start_to_parse = explode(" ", $date_var[0]);
+                                    $end_to_parse = explode(" ", $date_var[1]);
+
+                                    $explod_start_to_parse = explode("-", $start_to_parse[0]);
+                                    $explod_end_to_parse = explode("-", $end_to_parse[0]);
+
+                                    $check_start = checkdate(intval($explod_start_to_parse[1]), intval($explod_start_to_parse[0]), intval($explod_start_to_parse[2]));
+                                    $check_end = checkdate(intval($explod_end_to_parse[1]), intval($explod_end_to_parse[0]), intval($explod_end_to_parse[2]));
+
+                                    if(($check_start == true) && ($check_end == true)){
+                                        $current_data["discount_start_datetime"] = $discount_start_date;
+                                        $current_data["discount_end_datetime"] = $discount_end_date;
+                                        $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                    }else{
+                                        $current_data["discount_start_datetime"] = null;
+                                        $current_data["discount_end_datetime"] = null;
+                                        $current_data["discount_type"] = null;
+                                    }
                                 }else{
                                     $current_data["discount_start_datetime"] = null;
                                 $current_data["discount_end_datetime"] = null;
@@ -1630,6 +1714,7 @@ class ProductService
 
             $ids = [];
             if(count($general_attributes_data) > 0){
+                $ids_product_attribute_values = [];
                 foreach ($general_attributes_data as $attr => $value) {
                     if($value != null){
                         $attribute_product = ProductAttributeValues::where('id_products', $product_update->id)->where('id_attribute', $attr)->first();
@@ -1660,6 +1745,8 @@ class ProductService
                         }
 
                         $attribute_product->save();
+
+                        array_push($ids_product_attribute_values, $attribute_product->id);
 
                         if($check_add == true){
                             DB::table('revisions')->insert([
@@ -1704,12 +1791,30 @@ class ProductService
                 $product_update->save();
             }
 
+            $historique = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_id', $product_update->id)->where('revisionable_type', 'App\Models\Product')->get();
+            $historique_attributes = DB::table('revisions')->whereNull('deleted_at')->whereIn('revisionable_id', $new_ids_attributes)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
+            if(($product->product_added_from_catalog == 1) && (count($historique) == 0) && (count($historique_attributes) == 0)){
+                $product->approved = 1;
+                $product->save();
+            }else{
+                // Update the approved field in the parent product
+                $product_update->update(['approved' => 0]);
+            }
+
             return $product_update;
         }else{
             // //Create Parent Product
             $collection['is_parent'] = 1;
             $collection = $collection->toArray();
             $product_update->update($collection);
+            $historique = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_id', $product_update->id)->where('revisionable_type', 'App\Models\Product')->get();
+            if(($product_update->product_added_from_catalog == 1) && (count($historique) == 0)){
+                $product_update->approved = 1;
+                $product_update->save();
+            }else{
+                $product_update->approved = 0;
+                $product_update->save();
+            }
             $old_shipping = Shipping::where('product_id', $product_update->id)->delete();
             if(count($shipping) > 0){
                 $id = $product_update->id;
@@ -1734,9 +1839,24 @@ class ProductService
                                     $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
                                     $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
         
-                                    $current_data["discount_start_datetime"] = $discount_start_date;
-                                    $current_data["discount_end_datetime"] = $discount_end_date;
-                                    $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                    $start_to_parse = explode(" ", $date_var[0]);
+                                    $end_to_parse = explode(" ", $date_var[1]);
+
+                                    $explod_start_to_parse = explode("-", $start_to_parse[0]);
+                                    $explod_end_to_parse = explode("-", $end_to_parse[0]);
+
+                                    $check_start = checkdate(intval($explod_start_to_parse[1]), intval($explod_start_to_parse[0]), intval($explod_start_to_parse[2]));
+                                    $check_end = checkdate(intval($explod_end_to_parse[1]), intval($explod_end_to_parse[0]), intval($explod_end_to_parse[2]));
+
+                                    if(($check_start == true) && ($check_end == true)){
+                                        $current_data["discount_start_datetime"] = $discount_start_date;
+                                        $current_data["discount_end_datetime"] = $discount_end_date;
+                                        $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                    }else{
+                                        $current_data["discount_start_datetime"] = null;
+                                        $current_data["discount_end_datetime"] = null;
+                                        $current_data["discount_type"] = null;
+                                    }
                                 }else{
                                     $current_data["discount_start_datetime"] = null;
                                 $current_data["discount_end_datetime"] = null;
@@ -1857,18 +1977,19 @@ class ProductService
 
                         //attributes of variant
                         //$sku = "";
+                        $ids_product_attribute_values = [];
                         foreach($variant['attributes'] as $key => $value_attribute){
                             if($value_attribute != null){
                                 $attribute_name = Attribute::find($key)->name;
                                 $sku .= "_".$attribute_name;
                                 $attribute_product = ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->first();
-                                $check_add = false;
+                                $check_add_attribute = false;
                                 if($attribute_product == null){
                                     $attribute_product = new ProductAttributeValues();
                                     $attribute_product->id_products = $product->id;
                                     $attribute_product->id_attribute = $key;
                                     $attribute_product->is_variant = 1;
-                                    $check_add = true;
+                                    $check_add_attribute = true;
                                 }
                                 if(in_array($key, $ids_attributes_list)){
                                     $value = AttributeValue::find($value_attribute);
@@ -1888,7 +2009,9 @@ class ProductService
 
                                 $attribute_product->save();
 
-                                if($check_add == true){
+                                array_push($ids_product_attribute_values, $attribute_product->id);
+
+                                if($check_add_attribute == true){
                                     DB::table('revisions')->insert([
                                         "revisionable_type" => "App\Models\ProductAttributeValues",
                                         "revisionable_id" => $attribute_product->id,
@@ -1910,6 +2033,7 @@ class ProductService
                         $deleted_attributes = ProductAttributeValues::where('id_products', $id)->where('is_variant', 1)->whereNotIn('id_attribute', $new_ids_attributes)->delete();
 
                         //Images of variant
+                        $ids_images = [];
                         if (array_key_exists('photo', $variant)) {
                             $structure = public_path('upload_products');
                             if (!file_exists($structure)) {
@@ -1936,6 +2060,8 @@ class ProductService
                                 $uploaded_document->extension = $image->getClientOriginalExtension();
                                 $uploaded_document->type = 'images';
                                 $uploaded_document->save();
+
+                                array_push($ids_images, $uploaded_document->id);
                                 
                                 DB::table('revisions')->insert([
                                     "revisionable_type" => "App\Models\UploadProducts",
@@ -1964,9 +2090,24 @@ class ProductService
                                                 $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
                                                 $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
 
-                                                $current_data["discount_start_datetime"] = $discount_start_date;
-                                                $current_data["discount_end_datetime"] = $discount_end_date;
-                                                $current_data["discount_type"] = $variant['pricing']['discount_type'][$key];
+                                                $start_to_parse = explode(" ", $date_var[0]);
+                                                $end_to_parse = explode(" ", $date_var[1]);
+        
+                                                $explod_start_to_parse = explode("-", $start_to_parse[0]);
+                                                $explod_end_to_parse = explode("-", $end_to_parse[0]);
+        
+                                                $check_start = checkdate(intval($explod_start_to_parse[1]), intval($explod_start_to_parse[0]), intval($explod_start_to_parse[2]));
+                                                $check_end = checkdate(intval($explod_end_to_parse[1]), intval($explod_end_to_parse[0]), intval($explod_end_to_parse[2]));
+        
+                                                if(($check_start == true) && ($check_end == true)){
+                                                    $current_data["discount_start_datetime"] = $discount_start_date;
+                                                    $current_data["discount_end_datetime"] = $discount_end_date;
+                                                    $current_data["discount_type"] = $variant['pricing']['discount_type'][$key];
+                                                }else{
+                                                    $current_data["discount_start_datetime"] = null;
+                                                    $current_data["discount_end_datetime"] = null;
+                                                    $current_data["discount_type"] = null;
+                                                }
                                             }else{
                                                 $current_data["discount_start_datetime"] = null;
                                                 $current_data["discount_end_datetime"] = null;
@@ -2018,9 +2159,24 @@ class ProductService
                                                 $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
                                                 $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
 
-                                                $current_data["discount_start_datetime"] = $discount_start_date;
-                                                $current_data["discount_end_datetime"] = $discount_end_date;
-                                                $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                                $start_to_parse = explode(" ", $date_var[0]);
+                                                $end_to_parse = explode(" ", $date_var[1]);
+        
+                                                $explod_start_to_parse = explode("-", $start_to_parse[0]);
+                                                $explod_end_to_parse = explode("-", $end_to_parse[0]);
+        
+                                                $check_start = checkdate(intval($explod_start_to_parse[1]), intval($explod_start_to_parse[0]), intval($explod_start_to_parse[2]));
+                                                $check_end = checkdate(intval($explod_end_to_parse[1]), intval($explod_end_to_parse[0]), intval($explod_end_to_parse[2]));
+        
+                                                if(($check_start == true) && ($check_end == true)){
+                                                    $current_data["discount_start_datetime"] = $discount_start_date;
+                                                    $current_data["discount_end_datetime"] = $discount_end_date;
+                                                    $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                                }else{
+                                                    $current_data["discount_start_datetime"] = null;
+                                                    $current_data["discount_end_datetime"] = null;
+                                                    $current_data["discount_type"] = null;
+                                                }                                                
                                             }
                                         }else{
                                             $current_data["discount_start_datetime"] = null;
@@ -2105,12 +2261,33 @@ class ProductService
                                 Shipping::insert($shipping);
                             }
                         }
+
+                        $historique_children = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_id', $product->id)->where('revisionable_type', 'App\Models\Product')->get();
+                        $historique_image = DB::table('revisions')->whereNull('deleted_at')->whereIn('revisionable_id', $ids_images)->where('revisionable_type', 'App\Models\UploadProducts')->get();
+                        $historique_attributes = DB::table('revisions')->whereNull('deleted_at')->whereIn('revisionable_id', $new_ids_attributes)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
+                        if(($product->product_added_from_catalog == 1) && (count($historique) == 0) && (count($historique_children) == 0) && (count($historique_attributes) == 0) && (count($historique_image) == 0)){
+                            if ($product_update->hasUnapprovedChildren()) {
+                                // Update the approved field in the parent product
+                                $product_update->update(['approved' => 0]);
+                                $product_update->children()->update(['approved' => 0]);
+                            } else {
+                                $product->approved = 1;
+                                $product->save();
+                            }
+                        }else{
+                            // Update the approved field in the parent product
+                            $product_update->update(['approved' => 0]);
+
+                            // Update the approved field in the children related to the parent
+                            $product_update->children()->update(['approved' => 0]);
+                        }
                     }
                     
                 }
             }
 
             if(count($general_attributes_data) > 0){
+                $ids_general = [];
                 foreach ($general_attributes_data as $attr => $value) {
                     if($value != null){
                         $attribute_product = ProductAttributeValues::where('id_products', $product_update->id)->where('id_attribute', $attr)->first();
@@ -2142,6 +2319,8 @@ class ProductService
 
                         $attribute_product->save();
 
+                        array_push($ids_general, $attribute_product->id);
+
                         if($check_add == true){
                             DB::table('revisions')->insert([
                                 "revisionable_type" => "App\Models\ProductAttributeValues",
@@ -2156,12 +2335,29 @@ class ProductService
                         }
                     }
                 }
+
+                $historique_attributes = DB::table('revisions')->whereNull('deleted_at')->whereIn('revisionable_id', $ids_general)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
+                if(($product_update->product_added_from_catalog == 1) && (count($historique) == 0) && (count($historique_attributes) == 0)){
+                    if ($product_update->hasUnapprovedChildren()) {
+                        // Update the approved field in the parent product
+                        $product_update->update(['approved' => 0]);
+                    } else {
+                        // Update the approved field in the parent product
+                        $product_update->update(['approved' => 1]);
+                    }
+                }else{
+                    // Update the approved field in the parent product
+                    $product_update->update(['approved' => 0]);
+
+                    // Update the approved field in the children related to the parent
+                    $product_update->children()->update(['approved' => 0]);
+                }
             }
 
             $new_ids_attributes_general = array_keys($general_attributes_data);
             $deleted_attributes_general = ProductAttributeValues::where('id_products', $product_update->id)->where('is_general', 1)->whereNotIn('id_attribute', $new_ids_attributes_general)->delete();
 
-            if(count($variants_new_data)){
+            if(count($variants_new_data)){ 
                 foreach ($variants_new_data as $id => $variant){
                     if (!array_key_exists('shipping', $variant)) {
                         $collection['shipping'] = 0;
@@ -2280,6 +2476,19 @@ class ProductService
                             $uploaded_document->extension = $image->getClientOriginalExtension();
                             $uploaded_document->type = 'images';
                             $uploaded_document->save();
+
+                            if($check_add == true){
+                                DB::table('revisions')->insert([
+                                    "revisionable_type" => "App\Models\UploadProducts",
+                                    "revisionable_id" => $uploaded_document->id,
+                                    "user_id" => Auth::user()->id,
+                                    "key" => 'add_image',
+                                    "old_value" => NULL,
+                                    "new_value" => $uploaded_document->id,
+                                    'created_at'            => new \DateTime(),
+                                    'updated_at'            => new \DateTime(),
+                                ]);
+                            }
                         }
                     }
                     
@@ -2297,9 +2506,24 @@ class ProductService
                                             $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
                                             $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
 
-                                            $current_data["discount_start_datetime"] = $discount_start_date;
-                                            $current_data["discount_end_datetime"] = $discount_end_date;
-                                            $current_data["discount_type"] = $variant['pricing']['discount_type'][$key];
+                                            $start_to_parse = explode(" ", $date_var[0]);
+                                            $end_to_parse = explode(" ", $date_var[1]);
+    
+                                            $explod_start_to_parse = explode("-", $start_to_parse[0]);
+                                            $explod_end_to_parse = explode("-", $end_to_parse[0]);
+    
+                                            $check_start = checkdate(intval($explod_start_to_parse[1]), intval($explod_start_to_parse[0]), intval($explod_start_to_parse[2]));
+                                            $check_end = checkdate(intval($explod_end_to_parse[1]), intval($explod_end_to_parse[0]), intval($explod_end_to_parse[2]));
+    
+                                            if(($check_start == true) && ($check_end == true)){
+                                                $current_data["discount_start_datetime"] = $discount_start_date;
+                                                $current_data["discount_end_datetime"] = $discount_end_date;
+                                                $current_data["discount_type"] = $variant['pricing']['discount_type'][$key];
+                                            }else{
+                                                $current_data["discount_start_datetime"] = null;
+                                                $current_data["discount_end_datetime"] = null;
+                                                $current_data["discount_type"] = null;
+                                            }
                                         }else{
                                             $current_data["discount_start_datetime"] = null;
                                             $current_data["discount_end_datetime"] = null;
@@ -2349,10 +2573,25 @@ class ProductService
                                             $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
                                             $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
                                             $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
-            
-                                            $current_data["discount_start_datetime"] = $discount_start_date;
-                                            $current_data["discount_end_datetime"] = $discount_end_date;
-                                            $current_data["discount_type"] = $pricing['discount_type'][$key];
+
+                                            $start_to_parse = explode(" ", $date_var[0]);
+                                            $end_to_parse = explode(" ", $date_var[1]);
+    
+                                            $explod_start_to_parse = explode("-", $start_to_parse[0]);
+                                            $explod_end_to_parse = explode("-", $end_to_parse[0]);
+    
+                                            $check_start = checkdate(intval($explod_start_to_parse[1]), intval($explod_start_to_parse[0]), intval($explod_start_to_parse[2]));
+                                            $check_end = checkdate(intval($explod_end_to_parse[1]), intval($explod_end_to_parse[0]), intval($explod_end_to_parse[2]));
+    
+                                            if(($check_start == true) && ($check_end == true)){
+                                                $current_data["discount_start_datetime"] = $discount_start_date;
+                                                $current_data["discount_end_datetime"] = $discount_end_date;
+                                                $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                            }else{
+                                                $current_data["discount_start_datetime"] = null;
+                                                $current_data["discount_end_datetime"] = null;
+                                                $current_data["discount_type"] = null;
+                                            }
                                         }else{
                                             $current_data["discount_start_datetime"] = null;
                                             $current_data["discount_end_datetime"] = null;
@@ -2436,8 +2675,16 @@ class ProductService
                     }
                 }
 
+                // Update the approved field in the parent product
+                $product_update->update(['approved' => 0]);
+
+                // Update the approved field in the children related to the parent
+                $product_update->children()->update(['approved' => 0]);
+
             }
             return $product_update;
+
+            dd('ok');
         }
     }
 
@@ -3084,10 +3331,25 @@ class ProductService
                                     $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
                                     $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
                                     $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
-        
-                                    $current_data["discount_start_datetime"] = $discount_start_date;
-                                    $current_data["discount_end_datetime"] = $discount_end_date;
-                                    $current_data["discount_type"] = $pricing['discount_type'][$key];
+
+                                    $start_to_parse = explode(" ", $date_var[0]);
+                                    $end_to_parse = explode(" ", $date_var[1]);
+
+                                    $explod_start_to_parse = explode("-", $start_to_parse[0]);
+                                    $explod_end_to_parse = explode("-", $end_to_parse[0]);
+
+                                    $check_start = checkdate(intval($explod_start_to_parse[1]), intval($explod_start_to_parse[0]), intval($explod_start_to_parse[2]));
+                                    $check_end = checkdate(intval($explod_end_to_parse[1]), intval($explod_end_to_parse[0]), intval($explod_end_to_parse[2]));
+
+                                    if(($check_start == true) && ($check_end == true)){
+                                        $current_data["discount_start_datetime"] = $discount_start_date;
+                                        $current_data["discount_end_datetime"] = $discount_end_date;
+                                        $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                    }else{
+                                        $current_data["discount_start_datetime"] = null;
+                                        $current_data["discount_end_datetime"] = null;
+                                        $current_data["discount_type"] = null;
+                                    }
                                 }else{
                                     $current_data["discount_start_datetime"] = null;
                                 $current_data["discount_end_datetime"] = null;
@@ -3214,10 +3476,25 @@ class ProductService
                                     $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
                                     $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
                                     $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
-        
-                                    $current_data["discount_start_datetime"] = $discount_start_date;
-                                    $current_data["discount_end_datetime"] = $discount_end_date;
-                                    $current_data["discount_type"] = $pricing['discount_type'][$key];
+
+                                    $start_to_parse = explode(" ", $date_var[0]);
+                                    $end_to_parse = explode(" ", $date_var[1]);
+
+                                    $explod_start_to_parse = explode("-", $start_to_parse[0]);
+                                    $explod_end_to_parse = explode("-", $end_to_parse[0]);
+
+                                    $check_start = checkdate(intval($explod_start_to_parse[1]), intval($explod_start_to_parse[0]), intval($explod_start_to_parse[2]));
+                                    $check_end = checkdate(intval($explod_end_to_parse[1]), intval($explod_end_to_parse[0]), intval($explod_end_to_parse[2]));
+
+                                    if(($check_start == true) && ($check_end == true)){
+                                        $current_data["discount_start_datetime"] = $discount_start_date;
+                                        $current_data["discount_end_datetime"] = $discount_end_date;
+                                        $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                    }else{
+                                        $current_data["discount_start_datetime"] = null;
+                                        $current_data["discount_end_datetime"] = null;
+                                        $current_data["discount_type"] = null;
+                                    }
                                 }else{
                                     $current_data["discount_start_datetime"] = null;
                                 $current_data["discount_end_datetime"] = null;
@@ -3421,9 +3698,24 @@ class ProductService
                                                 $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
                                                 $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
 
-                                                $current_data["discount_start_datetime"] = $discount_start_date;
-                                                $current_data["discount_end_datetime"] = $discount_end_date;
-                                                $current_data["discount_type"] = $variant['pricing']['discount_type'][$key];
+                                                $start_to_parse = explode(" ", $date_var[0]);
+                                                $end_to_parse = explode(" ", $date_var[1]);
+        
+                                                $explod_start_to_parse = explode("-", $start_to_parse[0]);
+                                                $explod_end_to_parse = explode("-", $end_to_parse[0]);
+        
+                                                $check_start = checkdate(intval($explod_start_to_parse[1]), intval($explod_start_to_parse[0]), intval($explod_start_to_parse[2]));
+                                                $check_end = checkdate(intval($explod_end_to_parse[1]), intval($explod_end_to_parse[0]), intval($explod_end_to_parse[2]));
+        
+                                                if(($check_start == true) && ($check_end == true)){
+                                                    $current_data["discount_start_datetime"] = $discount_start_date;
+                                                    $current_data["discount_end_datetime"] = $discount_end_date;
+                                                    $current_data["discount_type"] = $variant['pricing']['discount_type'][$key];
+                                                }else{
+                                                    $current_data["discount_start_datetime"] = null;
+                                                    $current_data["discount_end_datetime"] = null;
+                                                    $current_data["discount_type"] = null;
+                                                }
                                             }else{
                                                 $current_data["discount_start_datetime"] = null;
                                                 $current_data["discount_end_datetime"] = null;
@@ -3475,9 +3767,24 @@ class ProductService
                                                 $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
                                                 $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
 
-                                                $current_data["discount_start_datetime"] = $discount_start_date;
-                                                $current_data["discount_end_datetime"] = $discount_end_date;
-                                                $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                                $start_to_parse = explode(" ", $date_var[0]);
+                                                $end_to_parse = explode(" ", $date_var[1]);
+        
+                                                $explod_start_to_parse = explode("-", $start_to_parse[0]);
+                                                $explod_end_to_parse = explode("-", $end_to_parse[0]);
+        
+                                                $check_start = checkdate(intval($explod_start_to_parse[1]), intval($explod_start_to_parse[0]), intval($explod_start_to_parse[2]));
+                                                $check_end = checkdate(intval($explod_end_to_parse[1]), intval($explod_end_to_parse[0]), intval($explod_end_to_parse[2]));
+        
+                                                if(($check_start == true) && ($check_end == true)){
+                                                    $current_data["discount_start_datetime"] = $discount_start_date;
+                                                    $current_data["discount_end_datetime"] = $discount_end_date;
+                                                    $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                                }else{
+                                                    $current_data["discount_start_datetime"] = null;
+                                                    $current_data["discount_end_datetime"] = null;
+                                                    $current_data["discount_type"] = null;
+                                                }
                                             }
                                         }else{
                                             $current_data["discount_start_datetime"] = null;
@@ -3700,9 +4007,24 @@ class ProductService
                                             $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
                                             $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
 
-                                            $current_data["discount_start_datetime"] = $discount_start_date;
-                                            $current_data["discount_end_datetime"] = $discount_end_date;
-                                            $current_data["discount_type"] = $variant['pricing']['discount_type'][$key];
+                                            $start_to_parse = explode(" ", $date_var[0]);
+                                            $end_to_parse = explode(" ", $date_var[1]);
+    
+                                            $explod_start_to_parse = explode("-", $start_to_parse[0]);
+                                            $explod_end_to_parse = explode("-", $end_to_parse[0]);
+    
+                                            $check_start = checkdate(intval($explod_start_to_parse[1]), intval($explod_start_to_parse[0]), intval($explod_start_to_parse[2]));
+                                            $check_end = checkdate(intval($explod_end_to_parse[1]), intval($explod_end_to_parse[0]), intval($explod_end_to_parse[2]));
+    
+                                            if(($check_start == true) && ($check_end == true)){
+                                                $current_data["discount_start_datetime"] = $discount_start_date;
+                                                $current_data["discount_end_datetime"] = $discount_end_date;
+                                                $current_data["discount_type"] = $variant['pricing']['discount_type'][$key];
+                                            }else{
+                                                $current_data["discount_start_datetime"] = null;
+                                                $current_data["discount_end_datetime"] = null;
+                                                $current_data["discount_type"] = null;
+                                            }                                            
                                         }else{
                                             $current_data["discount_start_datetime"] = null;
                                             $current_data["discount_end_datetime"] = null;
@@ -3752,10 +4074,25 @@ class ProductService
                                             $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
                                             $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
                                             $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
-            
-                                            $current_data["discount_start_datetime"] = $discount_start_date;
-                                            $current_data["discount_end_datetime"] = $discount_end_date;
-                                            $current_data["discount_type"] = $pricing['discount_type'][$key];
+
+                                            $start_to_parse = explode(" ", $date_var[0]);
+                                            $end_to_parse = explode(" ", $date_var[1]);
+    
+                                            $explod_start_to_parse = explode("-", $start_to_parse[0]);
+                                            $explod_end_to_parse = explode("-", $end_to_parse[0]);
+    
+                                            $check_start = checkdate(intval($explod_start_to_parse[1]), intval($explod_start_to_parse[0]), intval($explod_start_to_parse[2]));
+                                            $check_end = checkdate(intval($explod_end_to_parse[1]), intval($explod_end_to_parse[0]), intval($explod_end_to_parse[2]));
+    
+                                            if(($check_start == true) && ($check_end == true)){
+                                                $current_data["discount_start_datetime"] = $discount_start_date;
+                                                $current_data["discount_end_datetime"] = $discount_end_date;
+                                                $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                            }else{
+                                                $current_data["discount_start_datetime"] = null;
+                                                $current_data["discount_end_datetime"] = null;
+                                                $current_data["discount_type"] = null;
+                                            }   
                                         }else{
                                             $current_data["discount_start_datetime"] = null;
                                             $current_data["discount_end_datetime"] = null;

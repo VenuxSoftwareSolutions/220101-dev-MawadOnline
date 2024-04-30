@@ -17,8 +17,8 @@ class EnsureSystemKey
     public function handle(Request $request, Closure $next)
     {
         if (
-            !$request->header('System-Key') ||
-            $request->header('System-Key') !== config('app.system_key')
+            !$request->header('Platform-Key') ||
+            $request->header('Platform-Key') !== config('app.system_key') && !$request->header('mobile-version') || $request->header('mobile-version') !== "1.0.0"
         ) {
             return response()->json([
                 'result' => false,

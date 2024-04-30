@@ -255,7 +255,7 @@
                                         <tr>
                                             <th>{{translate('From QTY')}}</th>
                                             <th>{{translate('To QTY')}}</th>
-                                            <th>{{translate('Unit Price (VAT)')}}</th>
+                                            <th>{{translate('Unit Price (VAT Exclusive)')}}</th>
                                             <th>{{translate('Discount(Start/End)')}}</th>
                                             <th>{{translate('Discount Type')}}</th>
                                             <th>{{translate('Discount Amount')}}</th>
@@ -267,9 +267,9 @@
                                         @if(count($product->getPricingConfiguration()) > 0)
                                             @foreach ($product->getPricingConfiguration() as $key => $pricing)
                                                 <tr>
-                                                    <td><input type="number" name="from[]" class="form-control min-qty" id="" value="{{ $pricing->from }}"></td>
-                                                    <td><input type="number" name="to[]" class="form-control max-qty" id="" value="{{ $pricing->to }}"></td>
-                                                    <td><input type="number" name="unit_price[]" class="form-control unit-price-variant" id="" value="{{ $pricing->unit_price }}"></td>
+                                                    <td><input type="number" min="1" name="from[]" class="form-control min-qty" id="min-qty-parent" value="{{ $pricing->from }}"></td>
+                                                    <td><input type="number" min="1" name="to[]" class="form-control max-qty" id="max-qty-parent" value="{{ $pricing->to }}"></td>
+                                                    <td><input type="number" step="0.01" min="1" name="unit_price[]" class="form-control unit-price-variant" id="unit-price-parent" value="{{ $pricing->unit_price }}"></td>
                                                     @php
                                                         $date_range = '';
                                                         if($pricing->discount_start_datetime){
@@ -352,7 +352,7 @@
                                             <input type="text" class="form-control" value="{{translate('Sample price')}}" disabled>
                                         </div>
                                         <div class="col-md-8">
-                                            <input type="text" class="form-control sample_price_parent" name="sample_price" value="{{ $product->sample_price }}">
+                                            <input type="number" min="1" step="0.01" class="form-control sample_price_parent" name="sample_price" value="{{ $product->sample_price }}">
                                         </div>
                                     </div>
                                 </div>
@@ -792,7 +792,7 @@
                                     <input type="text" class="form-control" value="{{translate('Low-Stock Warning')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
-                                    <input type="text" class="form-control stock-warning" id="low_stock_warning">
+                                    <input type="number" class="form-control stock-warning" id="low_stock_warning">
                                 </div>
                             </div>
                             <div id="bloc_attributes">
@@ -1030,7 +1030,7 @@
                                                             <input type="text" class="form-control" value="{{translate('Sample price')}}" disabled>
                                                         </div>
                                                         <div class="col-md-8">
-                                                            <input type="text" class="form-control sample_price" name="variant[sample_price][{{ $children->id }}]" value="{{ $children->sample_price }}">
+                                                            <input type="number" min="1" step="0.01" class="form-control sample_price" name="variant[sample_price][{{ $children->id }}]" value="{{ $children->sample_price }}">
                                                         </div>
                                                     </div>
                                                 @endif
@@ -1106,7 +1106,7 @@
                                                 <input type="text" class="form-control" value="{{translate('Low-Stock Warning')}}" disabled>
                                             </div>
                                             <div class="col-md-8">
-                                                <input type="number" class="form-control stock-warning" id="low_stock_warning" name="variant[low_stock_quantity][{{ $children->id }}]" value="{{ $children->low_stock_quantity }}">
+                                                <input type="number" min="1" class="form-control stock-warning" id="low_stock_warning" name="variant[low_stock_quantity][{{ $children->id }}]" value="{{ $children->low_stock_quantity }}">
                                             </div>
                                         </div>
                                         <div id="bloc_attributes">
@@ -1169,7 +1169,7 @@
                 {{-- Bloc Product Documents --}}
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0 h6">{{translate('PDF Specification')}}</h5>
+                        <h5 class="mb-0 h6">{{translate('Product Description and Specifications')}}</h5>
                     </div>
                     <div class="card-body" id="documents_bloc">
                         <div class="form-group row">
@@ -2095,6 +2095,28 @@
             // add another ligne in pricing configuration when not any overlaps are found
         });
 
+        $('body').on('focusout', '.unit-price-variant', function(){
+            var value = parseFloat(this.value);
+            if (isNaN(value)) {
+                // Reset to 0.00 if the input is not a valid number
+                this.value = '0.00';
+            } else {
+                // Round the value to two decimal places
+                this.value = value.toFixed(2);
+            }
+        })
+
+        $('body').on('focusout', '.unit-price-variant, .sample_price_parent, .sample_price, input[name="sample_price"]', function(){
+            var value = parseFloat(this.value);
+            if (isNaN(value)) {
+                // Reset to 0.00 if the input is not a valid number
+                this.value = '0.00';
+            } else {
+                // Round the value to two decimal places
+                this.value = value.toFixed(2);
+            }
+        })
+
 
         $('body').on('click', '.btn-add-pricing', function() {
             var id_variant = $(this).data('id_variant');
@@ -2103,9 +2125,9 @@
             if(id_variant != undefined){
                 var html_to_add = `
                                 <tr>
-                                    <td><input type="number" name="variant[from][`+ id_variant +`][]" class="form-control min-qty" id=""></td>
-                                    <td><input type="number" name="variant[to][`+ id_variant +`][]" class="form-control max-qty" id=""></td>
-                                    <td><input type="number" name="variant[unit_price][`+ id_variant +`][]" class="form-control unit-price-variant" id=""></td>
+                                    <td><input type="number" min="1" name="variant[from][`+ id_variant +`][]" class="form-control min-qty" id=""></td>
+                                    <td><input type="number" min="1" name="variant[to][`+ id_variant +`][]" class="form-control max-qty" id=""></td>
+                                    <td><input type="number" step="0.01" min="1" name="variant[unit_price][`+ id_variant +`][]" class="form-control unit-price-variant" id=""></td>
                                     <td><input type="text" class="form-control aiz-date-range discount-range" name="variant[date_range_pricing][`+ id_variant +`][]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                     <td>
                                         <select class="form-control discount_type" name="variant[discount_type][`+ id_variant +`][]">
@@ -2124,9 +2146,9 @@
                             `;
             }else if(newvariant != undefined){
                 var html_to_add = `<tr>
-                                    <td><input type="number" name="variant_pricing-from`+ newvariant +`[from][]" class="form-control min-qty" id=""></td>
-                                    <td><input type="number" name="variant_pricing-from`+ newvariant +`[to][]" class="form-control max-qty" id=""></td>
-                                    <td><input type="number" name="variant_pricing-from`+ newvariant +`[unit_price][]" class="form-control unit-price-variant" id=""></td>
+                                    <td><input type="number" min="1" name="variant_pricing-from`+ newvariant +`[from][]" class="form-control min-qty" id=""></td>
+                                    <td><input type="number" min="1" name="variant_pricing-from`+ newvariant +`[to][]" class="form-control max-qty" id=""></td>
+                                    <td><input type="number" step="0.01" min="1" name="variant_pricing-from`+ newvariant +`[unit_price][]" class="form-control unit-price-variant" id=""></td>
                                     <td><input type="text" class="form-control aiz-date-range discount-range" name="variant_pricing-from`+ newvariant +`[discount_range][]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                     <td>
                                         <select class="form-control discount_type" name="variant_pricing-from`+ newvariant +`[discount_type][]">
@@ -2147,9 +2169,9 @@
                 if ($(this).closest('#variant_informations').length) {
                     var html_to_add = `
                                 <tr>
-                                    <td><input type="number" class="form-control min-qty-variant" id=""></td>
-                                    <td><input type="number" class="form-control max-qty-variant" id=""></td>
-                                    <td><input type="number" class="form-control unit-price-variant" id=""></td>
+                                    <td><input type="number" min="1" class="form-control min-qty-variant" id=""></td>
+                                    <td><input type="number" min="1" class="form-control max-qty-variant" id=""></td>
+                                    <td><input type="number" step="0.01" min="1" class="form-control unit-price-variant" id=""></td>
                                     <td><input type="text" class="form-control aiz-date-range discount-range-variant" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                     <td>
                                         <select class="form-control discount_type-variant">
@@ -2169,9 +2191,9 @@
                 }else{
                     var html_to_add = `
                                 <tr>
-                                    <td><input type="number" name="from[]" class="form-control min-qty" id=""></td>
-                                    <td><input type="number" name="to[]" class="form-control max-qty" id=""></td>
-                                    <td><input type="number" name="unit_price[]" class="form-control unit-price-variant" id=""></td>
+                                    <td><input type="number" min="1" name="from[]" class="form-control min-qty" id=""></td>
+                                    <td><input type="number" min="1" name="to[]" class="form-control max-qty" id=""></td>
+                                    <td><input type="number" step="0.01" min="1" name="unit_price[]" class="form-control unit-price-variant" id=""></td>
                                     <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                     <td>
                                         <select class="form-control discount_type" name="discount_type[]">

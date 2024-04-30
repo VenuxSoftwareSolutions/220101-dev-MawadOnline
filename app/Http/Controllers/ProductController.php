@@ -45,6 +45,10 @@ use DateTime;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
+use App\Models\ProductCatalog;
+use App\Models\UploadProductCatalog;
+use Illuminate\Support\Facades\File;
+use App\Models\ProductAttributeValueCatalog;
 
 class ProductController extends Controller
 {
@@ -863,6 +867,165 @@ class ProductController extends Controller
 
     }
 
+    public function copy_changes_product_in_catalog($id){
+        $existingProduct = Product::find($id);
+
+        $product_catalog_exist = ProductCatalog::where('product_id', $id)->first();
+        if($product_catalog_exist != null){
+            $childrens_catalog = ProductCatalog::where('parent_id', $product_catalog_exist->id)->pluck('id')->toArray();
+            if(count($childrens_catalog) > 0){
+                ProductAttributeValueCatalog::whereIn('catalog_id', $childrens_catalog)->delete();
+                UploadProductCatalog::whereIn('catalog_id', $childrens_catalog)->delete();
+                ProductCatalog::where('parent_id', $product_catalog_exist->id)->delete();
+                foreach($childrens_catalog as $children_catalog_id){
+                    $path_children = public_path('/upload_products/Product-'.$children_catalog_id);
+                    File::deleteDirectory($path_children);
+                }
+            }
+
+            $path_parent = public_path('/upload_products/Product-'.$product_catalog_exist->id);
+            File::deleteDirectory($path_parent);
+
+            ProductAttributeValueCatalog::where('catalog_id', $product_catalog_exist->id)->delete();
+            UploadProductCatalog::where('catalog_id', $product_catalog_exist->id)->delete();
+            ProductCatalog::where('id', $product_catalog_exist->id)->delete();
+
+
+        }
+
+
+        if (!$existingProduct) {
+            // Handle the case where the product with the specific ID doesn't exist
+            return redirect()->back()->with('error', 'Product not found');
+        }
+
+        $data = $existingProduct->attributesToArray();
+        // Make necessary updates to the attributes (if any)
+        unset($data['id']);
+        $data['product_id'] = $id;
+        $newProduct = ProductCatalog::insertGetId($data);
+
+        $path = public_path('/upload_products/Product-'.$id);
+        $destinationFolder = public_path('/upload_products_catalog/Product-'.$newProduct);
+        if (!File::isDirectory($destinationFolder)) {
+            File::makeDirectory($destinationFolder);
+        }
+
+        if (File::isDirectory($path)) {
+            File::copyDirectory($path, $destinationFolder);
+        }
+
+        $uploads = UploadProducts::where('id_product', $id)->get();
+        $new_records = [];
+        if(count($uploads) > 0){
+            foreach($uploads as $file){
+                $current_file = [];
+                $newPath = str_replace("/upload_products/Product-{$id}", "/upload_products_catalog/Product-{$newProduct}", $file->path);
+
+                $current_file['catalog_id'] = $newProduct;
+                $current_file['path'] = $newPath;
+                $current_file['extension'] = $file->extension;
+                $current_file['document_name'] = $file->document_name;
+                $current_file['type'] = $file->type;
+
+                array_push($new_records, $current_file);
+            }
+
+            if(count($new_records) > 0){
+                UploadProductCatalog::insert($new_records);
+            }
+        }
+
+        $attributes = ProductAttributeValues::where('id_products', $id)->get();
+
+        $new_records_attributes = [];
+
+        if(count($attributes) > 0){
+            foreach($attributes as $attribute){
+                $current_attribute = [];
+                $current_attribute['catalog_id'] = $newProduct;
+                $current_attribute['id_attribute'] = $attribute->id_attribute;
+                $current_attribute['id_units'] = $attribute->id_units;
+                $current_attribute['id_values'] = $attribute->id_values;
+                $current_attribute['id_colors'] = $attribute->id_colors;
+                $current_attribute['value'] = $attribute->value;
+                $current_attribute['is_variant'] = $attribute->is_variant;
+                $current_attribute['is_general'] = $attribute->is_general;
+
+                array_push($new_records_attributes, $current_attribute);
+            }
+
+            if(count($new_records_attributes) > 0){
+                ProductAttributeValueCatalog::insert($new_records_attributes);
+            }
+        }
+
+        if(count($existingProduct->getChildrenProducts()) > 0){
+            foreach($existingProduct->getChildrenProducts() as $children){
+                $data = $children->attributesToArray();
+                // Make necessary updates to the attributes (if any)
+                unset($data['id']);
+                $data['parent_id'] = $newProduct;
+                $data['product_id'] = $children->id;
+                $newProductChildren = ProductCatalog::insertGetId($data);
+
+                $path = public_path('/upload_products/Product-'.$children->id);
+                $destinationFolder = public_path('/upload_products_catalog/Product-'.$newProductChildren);
+                if (!File::isDirectory($destinationFolder)) {
+                    File::makeDirectory($destinationFolder);
+                }
+
+                if (File::isDirectory($path)) {
+                    File::copyDirectory($path, $destinationFolder);
+                }
+
+                $uploads = UploadProducts::where('id_product', $children->id)->get();
+                $new_records = [];
+                if(count($uploads) > 0){
+                    foreach($uploads as $file){
+                        $current_file = [];
+                        $newPath = str_replace("/upload_products/Product-{$children->id}", "/upload_products_catalog/Product-{$newProductChildren}", $file->path);
+
+                        $current_file['catalog_id'] = $newProductChildren;
+                        $current_file['path'] = $newPath;
+                        $current_file['extension'] = $file->extension;
+                        $current_file['document_name'] = $file->document_name;
+                        $current_file['type'] = $file->type;
+
+                        array_push($new_records, $current_file);
+                    }
+
+                    if(count($new_records) > 0){
+                        UploadProductCatalog::insert($new_records);
+                    }
+                }
+
+                $attributes = ProductAttributeValues::where('id_products', $children->id)->get();
+                $new_records_attributes = [];
+
+                if(count($attributes) > 0){
+                    foreach($attributes as $attribute){
+                        $current_attribute = [];
+                        $current_attribute['catalog_id'] = $newProductChildren;
+                        $current_attribute['id_attribute'] = $attribute->id_attribute;
+                        $current_attribute['id_units'] = $attribute->id_units;
+                        $current_attribute['id_values'] = $attribute->id_values;
+                        $current_attribute['id_colors'] = $attribute->id_colors;
+                        $current_attribute['value'] = $attribute->value;
+                        $current_attribute['is_variant'] = $attribute->is_variant;
+                        $current_attribute['is_general'] = $attribute->is_general;
+
+                        array_push($new_records_attributes, $current_attribute);
+                    }
+
+                    if(count($new_records_attributes) > 0){
+                        ProductAttributeValueCatalog::insert($new_records_attributes);
+                    }
+                }
+            }
+        }
+    }
+
     public function approve_action(Request $request){
 
         $product = Product::find($request->id_variant);
@@ -1065,6 +1228,10 @@ class ProductController extends Controller
                 $product->last_version = 0;
             }
             $product->save();
+
+            if($request->status == 1){
+                $this->copy_changes_product_in_catalog($product->id);
+            }
 
 
             return response()->json([

@@ -860,27 +860,4 @@ class ShopController extends Controller
     public function getWords() {
 
         $dictionaryPath = public_path('dictionary/dictionary.txt') ;
-        $words = File::lines($dictionaryPath);
-        return response()->json($words);
-    }
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    public function destroy($id)
-    {
-        //
-    }
-    public function seller_packages()
-    {
-        $seller_packages = SellerPackage::all();
-        return view('frontend.package', compact('seller_packages'));
-    }
-}
+naryPath = public_path('dictionary/dictionary.txt');

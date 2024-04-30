@@ -261,7 +261,7 @@ button {
                                                     <div class="form-group">
                                                         <label>{{!Auth::user() || (Auth::user() && (Auth::user()->owner_id == null || Auth::user()->owner_id == Auth::user()->id)) ? translate('Your Password')  : translate('Your New Password') }} <span
                                                                 class="text-primary">*</span></label>
-                                                        <input id="password" type="password" class="form-control rounded-0"
+                                                        <input id="password" type="password" autocomplete="off" class="form-control rounded-0"
                                                             value="{{ old('password') }}"
                                                             placeholder="{{ translate('Password') }}" name="password"
                                                             required>
@@ -278,7 +278,7 @@ button {
                                                 </div>
                                             </div>
                                             <div class="text-right">
-                                                <button type="button" class="btn btn-primary fw-600 rounded-0"
+                                                <button type="button" data-action="register" class="btn btn-primary fw-600 rounded-0"
                                                     {{-- onclick="switchTab('code-verification')" --}}>{{ translate('Next') }}</button>
                                             </div>
                                         </form>
@@ -1416,7 +1416,7 @@ button {
                                                 class="btn btn-secondary fw-600 rounded-0 save-as-draft"
                                                 data-action="save-as-draft">{{ translate('Save as Draft') }}</button>
 
-                                            <button id="registerShop" type="submit"
+                                            <button id="registerShop"  type="submit"
                                                 class="btn btn-primary fw-600 rounded-0">{{ translate('Register Your Shop') }}</button>
 
                                         </div> --}}
@@ -1477,6 +1477,7 @@ button {
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha3/0.9.3/sha3.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             // Your existing logic here
@@ -1654,6 +1655,7 @@ button {
                     // // Iterate over each warehouse row
 
 
+                    var csrfToken = $('meta[name="csrf-token"]').attr('content');
 
 
                     var shouldContinue = true; // Initialize the boolean variable
@@ -1687,6 +1689,148 @@ button {
                         var action = $(clickedButton).data('action');
                         formData.append('action', action);
                     }
+
+                    var email = $('#email').val();
+
+                    var salt_url = '{{ route("generateSalt", ["email" => ":email"]) }}';
+                    salt_url = salt_url.replace(':email', email);
+
+                    if ($(this).attr('data-action') == 'register') {
+                        $.ajax({
+                    url: salt_url, // Replace this with your Laravel backend route
+                    method: 'GET', // or 'GET', depending on your backend setup
+                    headers: {
+                        'Platform-key': '{{ Config('app.system_key') }}',
+                        'mobile-version': '{{ Config('api.mobile_version') }}',
+                    },
+                    success: function(response) {
+                        var hashedPassword = hashPass(email, $('#password').val(), response.salt, response.num_hashing_rounds);
+                        formData.append('password', hashedPassword);
+                        formData.append('password_confirmation', hashedPassword);
+
+                        $.ajax({
+                        url: form.attr('action'),
+                        type: 'POST',
+                        // data: form.serialize(),
+                        data: formData,
+                        contentType: false, // Required for sending FormData
+                        processData: false, // Required for sending FormData
+                        success: function(response) {
+                            if (form.attr('id') == 'shop') {
+                                var email = $('#email').val();
+                                $('#emailAccount').val(email);
+                                firstName = $('#first_name').val();
+                                lastName = $('#last_name').val();
+                                $('#first_name_bi').val(firstName);
+                                $('#last_name_bi').val(lastName);
+                                $('#email_bi').val(email);
+
+                            }
+                            // Handle success, e.g., show a message
+                            if (response.hasOwnProperty('finish') && response.finish === true) {
+                                location.reload();
+
+                            }
+                            if (response.hasOwnProperty('verif_staff_login') && response.verif_staff_login ===
+                                true && response.staff === true) {
+                                    window.location.href = "{{ url('/seller/dashboard') }}";
+                                    return ;
+                            }
+                            if (response.hasOwnProperty('verif_login') && response.verif_login ===
+                                true) {
+                                $('#personal-info-tab, #code-verification-tab').addClass(
+                                    'disabled');
+                                $('#personal-info, #code-verification').addClass('disabled');
+
+                                $('#registerTabs a[data-toggle="tab"]').on('click', function(e) {
+                                    e.preventDefault();
+                                });
+                            }
+
+
+                            // Switch to the next tab if the save operation is successful
+                            if (response.success) {
+
+                                if (response.infoMsg) {
+                                    toastr.info(response
+                                        .message); // Display success message using Toastr
+
+                                } else {
+                                    toastr.success(response
+                                        .message); // Display success message using Toastr
+                                }
+
+
+                                // switchTab('code-verification'); // Change the tab ID accordingly
+                                var nextTabId = form.data(
+                                    'next-tab'
+                                ); // Assuming you set a data attribute on the form with the next tab ID
+                                // if (form.attr('id') != 'warehousesForm') {
+                                displayValidation(form);
+                                // }
+                                if (!response.save_as_draft) {
+                                    switchTab(nextTabId);
+                                }
+
+                            }
+                        },
+                        error: function(xhr) {
+                            if (xhr.status === 429) {
+                                // Too Many Attempts
+                                toastr.error(
+                                    "{{ translate('Too many attempts. Please try again later.') }}"
+                                );
+                            } else {
+                                // if (xhr.responseJSON.hasOwnProperty('loginFailed')) {
+                                //     // Display login failure message using JavaScript
+                                //     toastr.error(xhr.responseJSON.loginFailed);
+                                //     shouldContinue = false;
+
+                                // }
+                                if (xhr.status === 403) {
+                                    // Authorization failed
+                                    toastr.error(xhr.responseJSON
+                                        .message); // Display the error message
+                                    shouldContinue = false;
+
+                                }
+                                // Handle errors, e.g., show validation errors
+                                var errors = xhr.responseJSON.errors;
+
+                                // Display validation errors in the form
+                                if ( /* form.attr('id') != 'warehousesForm' && */ shouldContinue !=
+                                    false) {
+                                    displayValidationErrors(errors, form);
+                                    $(form).find('.is-invalid').first().focus();
+                                    // Display a general toast message
+                                    toastr.error(
+                                        "{{ translate('Please review the form for errors.') }}"
+                                    );
+                                }
+
+                                // if ((form).attr('id') == 'warehousesForm' && shouldContinue !=
+                                //     false) {
+                                //             // toastr.error('Please fill up the rest of the table for warehousesForm. Ensure that no field exceeds 128 characters.');
+
+                                //             displayValidationWhErrors(errors);
+                                //         }
+
+                                // if (form.attr('id') == 'warehousesForm') {
+                                //     toastr.error('Please fill up the rest of the table for warehousesForm. Ensure that no field exceeds 128 characters.');
+
+                                // }
+                            }
+
+                        }
+                    });
+                    },
+                    error: function(xhr, status, error) {
+                        toastr.error(
+                                        "{{ translate('Something Wrong.') }}"
+                                    );
+                    }
+                });
+                } else {
                     $.ajax({
                         url: form.attr('action'),
                         type: 'POST',
@@ -1802,9 +1946,15 @@ button {
 
                         }
                     });
+                }
+
+                    
+                  
                 });
 
             $('#registerTabsContent').find('.tab-pane button#registerShop').on('click', function(e) {
+
+
                 // // Iterate over each warehouse row
                 e.preventDefault();
                 // Create a FormData object to store all form data
@@ -1820,6 +1970,8 @@ button {
                             formData.append(pair[0], pair[1]);
                         }
                     });
+
+
 
                 // Include the CSRF token in the headers
                 var csrfToken = $('meta[name="csrf-token"]').attr('content');
@@ -2491,8 +2643,18 @@ button {
                 changeYear: true,      // Enable year dropdown
                  yearRange: "-100:+10"  // Optional: specify the range of years available
             });
-
         });
+
+
+
+        function hashPass(username, password, salt, rounds) {
+            let hash = username;
+            for (var i=0; i < rounds; i++) {
+                hash = password + salt + hash;
+                hash = sha3_512(hash);
+            }
+            return hash;
+        }
     </script>
 
 @endsection
