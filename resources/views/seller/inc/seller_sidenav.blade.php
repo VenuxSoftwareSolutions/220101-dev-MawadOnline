@@ -17,6 +17,12 @@
             </div>
         </div>
         <div class="aiz-side-nav-wrap">
+            <div class="ripple d-flex justify-content-center py-1">
+            <img class="top-logo" style="width: 140px;height: 40px" src="{{ static_asset('assets/img/logo.png') }}" class="brand-icon" alt="{{ get_setting('site_name') }}">
+            </div>
+            <div class="ripple d-flex justify-content-center py-2 pt-1">
+                <span>{{ Auth::user()->email}}</span>
+            </div>
             <div class="px-20px mb-3">
                 <input class="form-control bg-soft-secondary border-0 form-control-sm" type="text" name=""
                     placeholder="{{ translate('Search in menu') }}" id="menu-search" onkeyup="menuSearch()">
@@ -91,7 +97,7 @@
                 @canany(['seller_add_inventory', 'seller_inventory_history'])
                     <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link">
-                            <i class="fas fa-warehouse fa-2xs aiz-side-nav-icon	"></i>
+                            <i class="las la-warehouse fa-2xs aiz-side-nav-icon	"></i>
                             <span class="aiz-side-nav-text">{{ __('stock.Inventory Management') }}</span>
                             <span class="aiz-side-nav-arrow"></span>
                         </a>
