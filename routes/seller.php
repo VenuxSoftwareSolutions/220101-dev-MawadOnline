@@ -226,6 +226,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
  //Catalog routes
  Route::controller(CatalogController::class)->group(function () {
     Route::get('/catalog/search_page', 'search')->name('catalog.search_page');
+    Route::get('/catalog/search/new_action', 'new_search_action')->name('catalog.search.new_action');
     Route::get('/catalog/search/action', 'search_action')->name('catalog.search.action');
     Route::get('/catalog/search/see_all/{keyword}', 'see_all')->name('catalog.search.see_all');
     Route::get('/catalog/preview_product/{id}/{is_catalog}', 'displayPreviewProductInCatalogProduct')->name('catalog.preview_product');

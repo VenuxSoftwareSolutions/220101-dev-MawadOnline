@@ -478,7 +478,7 @@
                 step_number += 1 ;
                 if (step_number == 3) {
 
-                window.location.href = '{{ route("seller.reviews") }}';
+                window.location.href = '{{ route("catalog.search_page") }}';
                 sleep(60000);
                 }
 
