@@ -1,6 +1,62 @@
 @extends('auth.layouts.authentication')
 
 @section('content')
+<script src="https://www.google.com/recaptcha/api.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha3/0.9.3/sha3.min.js"></script>
+
+<script>
+    function onSubmit(token) {
+
+        // Get email and password values
+        var email = $('#login_form input[name="email"]').val();
+        var password = $('#login_form input[name="password"]').val();
+
+        // Validate email and password
+         // Validate email and password
+        if (!email || !password) {
+            // If email or password is empty, display an error message
+            $('#error_message').text('Email and password are required.').show();
+            return; // Stop further execution
+        } else {
+            // If both fields are filled, hide the error message
+            $('#error_message').hide();
+        }
+        // Construct the URL dynamically
+        var url = '{{ route("generateSalt", ["email" => ":email"]) }}';
+        url = url.replace(':email', email);
+        // Perform AJAX request
+        $.ajax({
+            type: 'GET',
+            url: url,
+            headers: {
+                'Platform-key': '{{ Config('app.system_key') }}',
+                'mobile-version': '{{ Config('api.mobile_version') }}',
+            },
+            success: function(response) {
+                var hashedPassword = hashPass(email, $('#password').val(), response.salt, response.num_hashing_rounds);
+                $('#password').val(hashedPassword);
+                $('#password-confirm').val(hashedPassword);
+
+                document.getElementById("login_form").submit();
+
+            },
+            error: function(xhr, status, error) {
+                // Handle errors
+                console.error('Error submitting form:', error);
+                // Optionally, you can show an error message to the user
+            }
+        });
+    }
+
+    function hashPass(username, password, salt, rounds) {
+        let hash = username;
+        for (var i = 0; i < rounds; i++) {
+            hash = password + salt + hash;
+            hash = sha3_512(hash);
+        }
+        return hash;
+    }
+</script>
     <!-- aiz-main-wrapper -->
     <div class="aiz-main-wrapper d-flex flex-column justify-content-md-center bg-white">
         <section class="bg-white overflow-hidden">
@@ -30,7 +86,7 @@
                                 <!-- Reset password form -->
                                 <div class="pt-3">
                                     <div class="">
-                                        <form class="form-default" role="form" action="{{ route('password.update') }}" method="POST">
+                                        <form class="form-default" id="login_form" role="form" action="{{ route('password.update') }}" method="POST">
                                             @csrf
                                             
                                             <!-- Email -->
@@ -74,7 +130,7 @@
 
                                             <!-- Submit Button -->
                                             <div class="mb-4 mt-4">
-                                                <button type="submit" class="btn btn-primary btn-block fw-700 fs-14 rounded-0">{{ translate('Reset Password') }}</button>
+                                                <button data-sitekey="{{ config('services.recaptcha_v3.siteKey') }}" data-callback="onSubmit" data-action="submitLoginForm" class="g-recaptcha btn btn-primary btn-block fw-700 fs-14 rounded-0">{{ translate('Reset Password') }}</button>
                                             </div>
                                         </form>
                                     </div>

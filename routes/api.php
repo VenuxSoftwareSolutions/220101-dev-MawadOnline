@@ -6,6 +6,7 @@ use App\Http\Middleware\EnsureSystemKey;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'v2/auth', 'middleware' => ['app_language']], function () {
+    Route::get('generate-salt/{email}','App\Http\Controllers\Api\V2\AuthController@generateSalt')->name('generateSalt');
     Route::post('login', 'App\Http\Controllers\Api\V2\AuthController@login');
     Route::post('signup', 'App\Http\Controllers\Api\V2\AuthController@signup');
     Route::post('social-login', 'App\Http\Controllers\Api\V2\AuthController@socialLogin');

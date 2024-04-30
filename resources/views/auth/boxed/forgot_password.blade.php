@@ -1,3 +1,11 @@
+<script src="https://www.google.com/recaptcha/api.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha3/0.9.3/sha3.min.js"></script>
+
+<script>
+    function onSubmit(token) {
+        document.getElementById("reset_form").submit();
+    }
+</script>
 <!-- aiz-main-wrapper -->
 <div class="aiz-main-wrapper d-flex flex-column justify-content-md-center bg-white">
     <section class="bg-white overflow-hidden">
@@ -29,7 +37,7 @@
                             <!-- Send password reset link or code form -->
                             <div class="pt-3">
                                 <div class="">
-                                    <form class="form-default" role="form" action="{{ route('password.email') }}" method="POST">
+                                    <form class="form-default" id="reset_form" role="form" action="{{ route('password.email') }}" method="POST">
                                         @csrf
                                         
                                         <!-- Email or Phone -->
@@ -68,7 +76,7 @@
 
                                         <!-- Submit Button -->
                                         <div class="mb-4 mt-4">
-                                            <button type="submit" class="btn btn-primary btn-block fw-700 fs-14 rounded-0">{{ translate('Send Password Reset Link') }}</button>
+                                            <button data-sitekey="{{ config('services.recaptcha_v3.siteKey') }}" data-callback="onSubmit" data-action="submitLoginForm" class="g-recaptcha btn btn-primary btn-block fw-700 fs-14 rounded-0">{{ translate('Send Password Reset Link') }}</button>
                                         </div>
                                     </form>
                                 </div>
