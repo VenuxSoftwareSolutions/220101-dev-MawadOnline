@@ -124,6 +124,7 @@
     <!-- Include MultiSelect CSS -->
     <link rel="stylesheet" href="https://cdn.rawgit.com/nobleclem/jQuery-MultiSelect/master/jquery.multiselect.css">
     <link rel="stylesheet" href="{{ static_asset('assets/css/filter_multi_select.css') }}">
+    <link rel="stylesheet" href="{{ static_asset('assets/css/example-styles.css') }}">
     <style>
         body {
             font-size: 12px;
@@ -320,6 +321,6 @@
         }
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.all.min.js"></script>
-
+    <script src="{{ static_asset('assets/js/jquery.multi-select.js') }}" ></script>
 </body>
 </html>
