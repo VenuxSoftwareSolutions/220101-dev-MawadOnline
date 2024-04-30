@@ -18,7 +18,7 @@
         </div>
         <div class="aiz-side-nav-wrap">
             <div class="ripple d-flex justify-content-center py-1">
-            <img class="top-logo" style="width: 140px;height: 40px" src="{{ static_asset('assets/img/logo.png') }}" class="brand-icon" alt="{{ get_setting('site_name') }}">
+            <img class="top-logo" style="width: 140px;height: 40px" src="{{ uploaded_asset(get_setting('header_logo')) }} " class="brand-icon" alt="{{ get_setting('site_name') }}">
             </div>
             <div class="ripple d-flex justify-content-center py-2 pt-1">
                 <span>{{ Auth::user()->email}}</span>
