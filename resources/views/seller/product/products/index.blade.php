@@ -27,7 +27,7 @@
 
         <div class="col-md-4 mx-auto mb-3" >
             @can('seller_create_product')
-            <a id="step1" href="{{ route('catalog.search_page')}}">
+            <a id="step1" href="{{ route('seller.products.create')}}">
                 <div class="p-3 rounded mb-3 c-pointer text-center bg-white shadow-sm hov-shadow-lg has-transition">
                     <span class="size-60px rounded-circle mx-auto bg-secondary d-flex align-items-center justify-content-center mb-3">
                         <i class="las la-plus la-3x text-white"></i>
