@@ -44,14 +44,20 @@
             <img src="{{ $logo }}" alt="Logo">
         </div>
         <div class="message">
-            <p>Hello Admin,</p>
-            <p>A new vendor registration request has been submitted.</p>
-            <p>Vendor Name: {{ $vendorName }}</p>
-            <p>Vendor Email: {{ $vendorEmail }}</p>
+
+            <p>Dear Admin,</p>
+
+            <p>A new vendor registration has been submitted and requires your approval. Here are the details:</p>
+
+            <ul>
+                <li>Vendor Name: {{ $vendorName }}</li>
+                <li>Vendor Phone Number: {{$vendorPhone}}</li>
+                <li>Vendor Email: {{ $vendorEmail }}</li>
+            </ul>
         </div>
         <div class="signature">
-            <p>Regards,</p>
-            <p>Your Application Team</p>
+            <p>Thank you,<br>MawadOnline Team</p>
+
         </div>
     </div>
 </body>

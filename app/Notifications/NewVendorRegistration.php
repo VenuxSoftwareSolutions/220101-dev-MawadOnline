@@ -43,11 +43,13 @@ class NewVendorRegistration extends Notification implements ShouldQueue
         $logo = asset('public/uploads/all/CxeI3PF3NMzjzHp6Ct3xf8dPS1q2pFYmwAwbHQii.png'); // Path to your custom logo
 
         return (new MailMessage)
-        ->subject('New Vendor Registration Request')
+        ->subject('New Vendor Registration Submitted')
         ->view('emails.vendor_registration_notification', [
             'vendorName' => $this->vendor->name,
             'logo' => $logo,
             'vendorEmail' => $this->vendor->email,
+            'vendorPhone'=> $this->vendor->contact_people->mobile_phone ?? "",
+
         ]);
     }
 

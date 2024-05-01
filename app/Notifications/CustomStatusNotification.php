@@ -103,7 +103,7 @@ class CustomStatusNotification extends Notification implements ShouldQueue
                 $message = __('messages.registration_rejected');
                 break;
             case 'Pending Approval':
-                $message = __('messages.registration_completed');
+                $message = __('messages.registration_completed_notif');
                 break;
             default:
                 $message = 'Your vendor status has been changed from ' . $oldStatus . ' to ' . $newStatus . '.';

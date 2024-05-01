@@ -12,15 +12,18 @@ class VendorProfileChangesNotification extends Notification
 {
     use Queueable;
     protected $vendor;
+    protected $modifiedFields;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(User $vendor)
+    public function __construct(User $vendor,$modifiedFields)
     {
         $this->vendor = $vendor;
+        $this->modifiedFields = $modifiedFields;
+
     }
 
     /**
@@ -49,6 +52,8 @@ class VendorProfileChangesNotification extends Notification
             ->view('emails.vendor_profile_changes', [
                 'vendor' => $this->vendor,
                 'vendorProfileUrl' => $vendorProfileUrl,
+                'modifiedFields' => $this->modifiedFields,
+
             ]);
     }
 
