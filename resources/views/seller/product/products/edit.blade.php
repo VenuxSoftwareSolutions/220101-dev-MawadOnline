@@ -70,6 +70,11 @@
     .aiz-main-content .pr-lg-25px {
         background-color: rgb(247, 248, 250) !important;
     }
+
+    .disabled-select{
+        background-color: #f7f8fa !important;
+    }
+
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 
@@ -421,45 +426,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <table class="table" id="table_sample_configuration" class="bloc_sample_configuration_variant">
-                                    <thead>
-                                        <tr>
-                                            <th>{{translate('Shipping-by')}}</th>
-                                            <th>{{translate('Estimated Sample Preparation Days')}}</th>
-                                            <th>{{translate('Estimated Shipping Days')}}</th>
-                                            <th>{{translate('Paid by')}}</th>
-                                            {{-- <th>{{translate('VAT')}}</th> --}}
-                                            <th>{{translate('Shipping amount')}}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="bloc_sample_configuration">
-                                        <tr>
-                                            <td>
-                                                <select class="form-control shipper_sample" name="shipper_sample">
-                                                    <option value="" selected>{{translate('Choose shipper')}}</option>
-                                                    <option value="vendor" @if($product->shipper_sample == 'vendor') {{ 'selected' }} @endif>{{translate('vendor')}}</option>
-                                                    <option value="third_party" @if($product->shipper_sample == 'third_party') {{ 'selected' }} @endif>{{translate('MawadOnline 3rd Party Shippers')}}</option>
-                                                </select>
-                                            </td>
-                                            <td><input type="number" class="form-control estimated_sample" name="estimated_sample" @if($product->estimated_sample != null) value="{{ $product->estimated_sample }}" @endif></td>
-                                            <td><input type="number" class="form-control estimated_shipping_sample" name="estimated_shipping_sample" @if($product->estimated_shipping_sample != null) value="{{ $product->estimated_shipping_sample }}" @endif></td>
-                                            <td>
-                                                <select class="form-control paid_sample" name="paid_sample">
-                                                    <option value="" selected>{{translate('Choose paid by')}}</option>
-                                                    <option value="vendor"@if($product->paid_sample == 'vendor') {{ 'selected' }} @endif>{{translate('vendor')}}</option>
-                                                    <option value="buyer" @if($product->paid_sample == 'buyer') {{ 'selected' }} @endif>{{translate('Buyer')}}</option>
-                                                </select>
-                                            </td>
-                                            {{-- <td>
-                                                <label class="aiz-switch aiz-switch-success mb-0">
-                                                    <input value="1" type="checkbox" class="vat_sample" name="vat_sample" @if($vat_user->vat_registered == 1) checked @endif>
-                                                    <span></span>
-                                                </label>
-                                            </td> --}}
-                                            <td><input type="number" class="form-control shipping_amount" name="shipping_amount" @if($product->shipping_amount != null) value="{{ $product->shipping_amount }}" @else readonly @endif></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                
                             </div>
                         </div>
                     </div>
@@ -493,11 +460,11 @@
                                             <th>{{translate('Width (Cm)')}}</th>
                                             <th>{{translate('Height (Cm)')}}</th>
                                             <th>{{translate('Package Weight')}}</th>
-                                            <th>{{translate('Weight unit')}}</th>
+                                            <th>{{translate('Weight Unit')}}</th>
                                             <th>{{translate('Breakable')}}</th>
-                                            <th>{{translate('Unit')}}</th>
-                                            <th>{{translate('Min')}}</th>
-                                            <th>{{translate('Max')}}</th>
+                                            <th>{{translate('Temperature Unit')}}</th>
+                                            <th>{{translate('Temperature Min')}}</th>
+                                            <th>{{translate('Temperature Max')}}</th>
                                         </tr>
                                     </thead>
                                     <tbody id="bloc_third_party">
@@ -546,7 +513,7 @@
                             </div>
                         </div>
                         <div class="bloc-default-shipping-style" style="margin-top: 22px;">
-                            <h6>{{ translate('Shipping configuration') }}</h6>
+                            <h6>{{ translate('Shipping Product Configuration') }}</h6>
                             <hr>
                             <div>
                                 <table class="table" id="table_shipping_configuration" class="bloc_shipping_configuration_variant">
@@ -559,7 +526,7 @@
                                             <th>{{translate('Est. Shipping Days')}}</th>
                                             <th style="width: 164px;">{{translate('Paid by')}}</th>
                                             {{-- <th>{{translate('VAT')}}</th> --}}
-                                            <th>{{translate('Shipping Charge')}}</th>
+                                            <th>{{translate('Shipping Charge Type')}}</th>
                                             <th>{{translate('Flat-rate Amount')}}</th>
                                             <th>{{translate('Charge per Unit of Sale')}}</th>
                                             <th>{{translate('Action')}}</th>
@@ -650,6 +617,51 @@
                                             </tr>
                                         @endif
 
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="bloc-default-shipping-style" style="margin-top: 22px;">
+                            <h6>{{ translate('Shipping Sample Configuration') }}</h6>
+                            <hr>
+                            <div>
+                                <table class="table" id="table_sample_configuration" class="bloc_sample_configuration_variant">
+                                    <thead>
+                                        <tr>
+                                            <th>{{translate('Shipping-by')}}</th>
+                                            <th>{{translate('Estimated Sample Preparation Days')}}</th>
+                                            <th>{{translate('Estimated Shipping Days')}}</th>
+                                            <th>{{translate('Paid by')}}</th>
+                                            {{-- <th>{{translate('VAT')}}</th> --}}
+                                            <th>{{translate('Shipping amount')}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bloc_sample_configuration">
+                                        <tr>
+                                            <td>
+                                                <select class="form-control shipper_sample" name="shipper_sample">
+                                                    <option value="" selected>{{translate('Choose shipper')}}</option>
+                                                    <option value="vendor" @if($product->shipper_sample == 'vendor') {{ 'selected' }} @endif>{{translate('vendor')}}</option>
+                                                    <option value="third_party" @if($product->shipper_sample == 'third_party') {{ 'selected' }} @endif>{{translate('MawadOnline 3rd Party Shippers')}}</option>
+                                                </select>
+                                            </td>
+                                            <td><input type="number" class="form-control estimated_sample" name="estimated_sample" @if($product->estimated_sample != null) value="{{ $product->estimated_sample }}" @endif></td>
+                                            <td><input type="number" class="form-control estimated_shipping_sample" name="estimated_shipping_sample" @if($product->estimated_shipping_sample != null) value="{{ $product->estimated_shipping_sample }}" @endif></td>
+                                            <td>
+                                                <select class="form-control paid_sample" name="paid_sample">
+                                                    <option value="" selected>{{translate('Choose paid by')}}</option>
+                                                    <option value="vendor"@if($product->paid_sample == 'vendor') {{ 'selected' }} @endif>{{translate('vendor')}}</option>
+                                                    <option value="buyer" @if($product->paid_sample == 'buyer') {{ 'selected' }} @endif>{{translate('Buyer')}}</option>
+                                                </select>
+                                            </td>
+                                            {{-- <td>
+                                                <label class="aiz-switch aiz-switch-success mb-0">
+                                                    <input value="1" type="checkbox" class="vat_sample" name="vat_sample" @if($vat_user->vat_registered == 1) checked @endif>
+                                                    <span></span>
+                                                </label>
+                                            </td> --}}
+                                            <td><input type="number" class="form-control shipping_amount" name="shipping_amount" @if($product->shipping_amount != null) value="{{ $product->shipping_amount }}" @else readonly @endif></td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -757,6 +769,9 @@
                                     <div class="custom-file mb-3">
                                         <input type="file" class="custom-file-input photos_variant" id="photos_variant" accept=".jpeg, .jpg, .png" multiple>
                                         <label class="custom-file-label" for="photos_variant">Choose files</label>
+                                    </div>
+                                    <div class="row uploaded_images">
+
                                     </div>
                                 </div>
                             </div>
@@ -897,9 +912,9 @@
                                                     <label class="custom-file-label" for="photos_variant{{ $key }}">Choose files</label>
                                                 </div>
                                                 @if(count($children->getImagesProduct()) > 0)
-                                                    <div class="row mt-3">
+                                                    <div class="row mt-3 uploaded_images">
                                                         @foreach ($children->getImagesProduct() as $image)
-                                                            <div class="col-2 container-img">
+                                                            <div class="col-2 container-img old_image">
                                                                 <img src="{{ asset('/public/'.$image->path) }}" height="120" width="120" />
                                                                 <i class="fa-regular fa-circle-xmark fa-fw fa-lg icon-delete-image" title="delete this image" data-image_id="{{ $image->id }}"></i>
                                                             </div>
@@ -1215,7 +1230,7 @@
                                         <input type="number" class="form-control" value="{{ translate('Low-Stock Warning') }}" disabled>
                                     </div>
                                     <div class="col-md-8 mb-3">
-                                        <input type="text" name="quantite_stock_warning" class="form-control" value="{{ $product->low_stock_quantity }}">
+                                        <input type="number" min="0" name="quantite_stock_warning" class="form-control" value="{{ $product->low_stock_quantity }}">
                                     </div>
                                 </div>
                             </div>
@@ -1361,6 +1376,8 @@
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script> <!-- Include SweetAlert2 JS -->
+
 <script>
     var previewUrlBase  = "{{ route('seller.product.preview', ['slug' => 'PLACEHOLDER']) }}";
 </script>
@@ -4081,6 +4098,21 @@
                 // Update the label text accordingly
                 var labelText = numFiles === 1 ? '1 file selected' : numFiles + ' files selected';
                 $(this).next('.custom-file-label').html(labelText);
+
+                let uploadedFilesHTML = '';
+                for (let i = 0; i < files.length; i++) {
+                    let file = files[i];
+                    if (file.type.startsWith('image/')) {
+                        uploadedFilesHTML += `<div class="col-2"><img src="${URL.createObjectURL(file)}" alt="${file.name}" height="120" width="120" /></div>`; // Display image preview
+                    } else {
+                        // Display icon for document type
+                        uploadedFilesHTML += `<li><i class="fa fa-file-text-o"></i> ${file.name}</li>`;
+                    }
+                }
+
+                var parent_container = $(this).parent().parent().find('.uploaded_images');
+                parent_container.find('div:not(.old_image)').remove();
+                parent_container.append(uploadedFilesHTML);
             }
         });
 
@@ -5709,14 +5741,18 @@
                 count_shippers = parseInt(count_shippers);
             var selected = $(this).val();
 
-            
+
 
             if(selected.indexOf('third_party') !== -1){
                 if(count_shippers == 0){
-
+                    swal(
+                        'Cancelled',
+                        "You cannot choose a third-party option because our shippers are unable to reach the warehouse.",
+                        'error'
+                    )
                     Swal.fire({
                             title: 'Cancelled',
-                            text: "You cannot choose a third-party option because our shippers are unable to reach the warehouse.",
+                            text: "You don't have any warehouse supported by our shippers",
                             icon: 'error',
                             scrollbarPadding: false,
                             backdrop:false,
@@ -5740,6 +5776,10 @@
                                 scrollbarPadding: false,
                                 backdrop:false,
                             });
+                            var checkbox = $(this).parent().find('input[type="checkbox"][value="third_party"]');
+                            var checkbox = $(this).parent().find('.multi-select-button').text('vendor');;
+                            // Uncheck the checkbox
+                            checkbox.prop('checked', false);
                             $(this).find("option[value='third_party']").prop('disabled', false);
                             $(this).find("option[value='third_party']").prop('selected', false);
                     }else{
@@ -5770,10 +5810,11 @@
                         }else{
                             $(this).parent().parent().find('.estimated_shipping').prop('readonly', true);
                             $(this).parent().parent().find('.shipping_charge').find("option:first").prop("selected", true);
+                            $(this).parent().parent().find('.shipping_charge').addClass("disabled-select");
                             $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly', true);
                             $(this).parent().parent().find('.charge_per_unit_shipping').val(null);
-                            $(this).parent().parent().find('.paid').val(null);
                             $(this).parent().parent().find('.estimated_shipping').val(null);
+                            $(this).parent().parent().find('.paid').val(null);
                             $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', true);
                             $(this).parent().parent().find('.flat_rate_shipping').val(null);
                         }
@@ -5785,25 +5826,30 @@
             if(selected.indexOf('vendor') !== -1){
                 $(this).parent().parent().find('.estimated_shipping').prop('readonly', false);
                 $(this).parent().parent().find('.shipping_charge').find("option:first").prop("selected", true);
+                $(this).parent().parent().find('.shipping_charge').addClass("disabled-select");
                 $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly', true);
                 $(this).parent().parent().find('.charge_per_unit_shipping').val(null);
                 $(this).parent().parent().find('.paid').val(null);
-                $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', true);
                 $(this).parent().parent().find('.estimated_shipping').val(null);
+                $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', true);
                 $(this).parent().parent().find('.flat_rate_shipping').val(null);
             }
 
         })
+
 
         $('body').on('change', '.paid', function(){
             var shippers = $(this).parent().parent().find('.shipper').val();
             if(shippers.indexOf('vendor') !== -1){
                 if($(this).val() != "buyer"){
                     $(this).parent().parent().find('.shipping_charge').find("option:first").prop("selected", true);
+                    $(this).parent().parent().find('.shipping_charge').addClass("disabled-select");
                     $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly', true);
                     $(this).parent().parent().find('.charge_per_unit_shipping').val(null);
                     $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', true);
                     $(this).parent().parent().find('.flat_rate_shipping').val(null);
+                }else{
+                    $(this).parent().parent().find('.shipping_charge').removeClass("disabled-select");
                 }
             }else{
                 Swal.fire({
@@ -5827,7 +5873,7 @@
                 });
 
                 $(this).find('option').eq(0).prop('selected', true);
-            }else{
+            }else if($(this).parent().parent().find('.paid').val() == 'buyer'){
                 if($(this).val() == "flat"){
                     $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', false);
                     $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly', true);
@@ -5837,6 +5883,16 @@
                     $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', true);
                     $(this).parent().parent().find('.flat_rate_shipping').val(null);
                 }
+            }else{
+                Swal.fire({
+                    title: 'Cancelled',
+                    text: "Wrong choice.",
+                    icon: 'error',
+                    scrollbarPadding: false,
+                    backdrop:false,
+                });
+
+                $(this).find('option').eq(0).prop('selected', true);
             }
         })
 
@@ -5870,6 +5926,14 @@
                         }
                     })
                 });
+
+                clonedDiv.find('.shipper').multiSelect();
+
+                clonedDiv.find('.multi-select-container').each(function(index, element) {
+                    if (index % 2 != 0) {
+                        $(element).remove();
+                    }
+                })
 
                 clonedDiv.find('.paid').each(function(index, element) {
                     if(id_variant != null){
@@ -6258,8 +6322,8 @@
     };
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script> <!-- Include SweetAlert2 JS -->
-<script>
+
+{{-- <script>
     document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('choice_form').addEventListener('submit', function (event) {
             event.preventDefault(); // Prevent default form submission
@@ -6318,5 +6382,75 @@
             });
         });
     });
+</script> --}}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('choice_form').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        Swal.fire({
+            title: "Do you want to keep the last approved product published on the marketplace or should it be turned to unpublished?",
+            icon: "info",
+            showCancelButton: true,
+            cancelButtonText: "Cancel Update",
+            confirmButtonText: "Yes",
+            showDenyButton: true,
+            denyButtonText: "No",
+            focusConfirm: false,
+            preConfirm: () => {
+                return Swal.getConfirmButton().click();
+            }
+        }).then((result) => {
+            console.log("result.isConfirmed: ", result.isConfirmed)
+            if (result.isConfirmed) {
+                $('#last_version').val(1);
+            } else if (result.isDenied) {
+                $('#last_version').val(0);
+            } else {
+                return false; // Cancel action if "Cancel Update" is clicked
+            }
+            
+            var check = true;
+            var min_qty = $('#min-qty-parent').val();
+            var max_qty = $('#max-qty-parent').val();
+            var unit_price = $('#unit-price-parent').val();
+
+            if ($('body input[name="activate_attributes"]').is(':checked')) {
+                $('body #bloc_variants_created .variant-pricing').each(function () {
+                    if ($(this).is(':checked')) {
+                        if ((min_qty == "") || (max_qty == "") || (unit_price == "")) {
+                            check = false;
+                        }
+                    } else {
+                        var min_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.min-qty-variant').val();
+                        var max_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.max-qty-variant').val();
+                        var unit_price_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.unit-price-variant').val();
+
+                        if ((min_qty_variant == "") || (max_qty_variant == "") || (unit_price_variant == "")) {
+                            check = false;
+                        }
+                    }
+                });
+            } else {
+                if ((min_qty == "") || (max_qty == "") || (unit_price == "")) {
+                    check = false;
+                }
+            }
+
+            if (check == true) {
+                document.getElementById('choice_form').submit();
+            } else {
+                Swal.fire({
+                    title: 'Pricing Configuration Check',
+                    text: 'Please check your pricing configuration',
+                    icon: 'error'
+                });
+            }
+        });
+    });
+});
+
+
 </script>
 @endsection

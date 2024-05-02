@@ -353,12 +353,6 @@
                         }else{
                             current.prop('checked', false)
                         }
-
-                        swal(
-                            'Cancelled',
-                            'Published/Unpublished successfully reverted.',
-                            'warning'
-                        )
                     }
                 })
         });

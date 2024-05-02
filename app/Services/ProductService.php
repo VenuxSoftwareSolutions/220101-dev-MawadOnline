@@ -423,7 +423,12 @@ class ProductService
             }
         }
 
-        $collection['sku'] = $collection['product_sk'];
+        if(isset($collection['product_sk'])){
+            $collection['sku'] = $collection['product_sk'];
+            unset($collection['product_sk']);
+        }else{
+            $collection['sku'] = $collection['name'];
+        }
         $collection['low_stock_quantity'] = $collection['quantite_stock_warning'];
         
         unset($collection['product_sk']);
@@ -1603,7 +1608,7 @@ class ProductService
             $collection['sku'] = $collection['product_sk'];
             unset($collection['product_sk']);
         }else{
-            $collection['sku'] = null;
+            $collection['sku'] = $collection['name'];
         }
 
         if(isset($collection['quantite_stock_warning'])){
@@ -2768,7 +2773,7 @@ class ProductService
             $collection['sku'] = $collection['product_sk'];
             unset($collection['product_sk']);
         }else{
-            $collection['sku'] = null;
+            $collection['sku'] = $collection['name'];
         }
 
         if(isset($collection['quantite_stock_warning'])){
