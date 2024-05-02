@@ -112,6 +112,47 @@
         .icon-delete-image:hover{
             cursor: pointer;
         }
+        .custom-th {
+            background-color: rgb(242 242 242);
+        }
+        .dataTables_wrapper .dataTables_filter {
+            float: left  !important;
+
+        }
+        .dataTables_filter input[type="search"] {
+            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"%3E%3Cpath fill="%23757575" d="M505.1 442.7L392.4 330c-7.4-7.5-19.4-7.5-26.9 0s-7.4 19.7 0 27.3l112.7 112.7c7.5 7.5 19.7 7.5 27.2 0l27.2-27.2c7.5-7.5 7.5-19.7 0-27.3zM184 0C82.6 0 0 82.6 0 184c0 101.3 82.6 184 184 184 101.4 0 184-82.7 184-184C368 82.6 285.3 0 184 0zm0 328c-72.1 0-136-64.9-136-136 0-72.1 63.9-136 136-136s136 63.9 136 136c0 71.1-63.9 136-136 136z"%3E%3C/path%3E%3C/svg%3E');
+            background-position: right 10px center; /* Position icon to the left */
+            background-repeat: no-repeat;
+            border: 1px solid rgb(217, 216, 216) !important; /* Blue border */
+            border-radius: 5px !important; /* Rounded corners */
+            padding: 5px 10px !important; /* Padding */
+            background-size: 16px; /* Adjust the size of the background image */
+
+        }
+
+
+        .btn-excel {
+            background-color: white !important; /* White background */
+            color: #a2b8c6 !important; /* Blue text color */
+            border: 1px solid #a2b8c6 !important; /* Blue border */
+            border-radius: 5px !important; /* Rounded corners */
+            padding: 5px 10px !important; /* Padding */
+            margin-left: 10px !important; /* Adjust as needed */
+        }
+        div.dt-buttons {
+            float: right  !important;
+        }
+
+        div.dt-buttons>.dt-button, div.dt-buttons>div.dt-button-split .dt-button {
+            background:  none !important; /* White background */
+
+        }
+        .customer-btn-color {
+            border-radius: 5px !important; /* Rounded corners */
+            background-color: #a2b8c6 !important;
+            border : #a2b8c6 !important ;
+        }
+
     </style>
 
     <!-- Font Awesome CSS -->

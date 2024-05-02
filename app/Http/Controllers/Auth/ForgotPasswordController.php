@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Mail\SecondEmailVerifyMailManager;
 use App\Utility\SmsUtility;
 use Mail;
+use Session;
 
 class ForgotPasswordController extends Controller
 {
@@ -63,7 +64,8 @@ class ForgotPasswordController extends Controller
                 return view('auth.'.get_setting('authentication_layout_select').'.reset_password');
             }
             else {
-                flash(translate('No account exists with this email'))->error();
+                $message = translate('No account exists with this email');
+                Session::flash('error', $message);
                 return back();
             }
         }

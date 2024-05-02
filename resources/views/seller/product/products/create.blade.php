@@ -16,7 +16,7 @@
     .button-container {
         position: fixed;
         top: 1%;
-        right: 19%;
+        right: 25%;
         z-index: 97;
     }
     .preview-button {
@@ -50,6 +50,9 @@
 
     #table_sample_configuration input[type="number"]{
         width: auto !important;
+    }
+    .error {
+        border-color: red !important; /* Add red border */
     }
     .multi-select-button {
         height: 41px;
@@ -119,7 +122,7 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{translate('Product Name')}} <span class="text-danger">*</span></label>
                                     <div class="col-md-8">
-                                        <input type="text" class="form-control" required name="name" value="{{ old('name') }}" placeholder="{{ translate('Product Name') }}" >
+                                        <input id="nameProduct" type="text" class="form-control" required name="name" value="{{ old('name') }}" placeholder="{{ translate('Product Name') }}" >
                                     </div>
                                 </div>
                                 <div class="form-group row" id="brand">
@@ -887,6 +890,18 @@
 <!--- category parent tree -->
 <script type="text/javascript">
     function submitForm() {
+        var input = $('#nameProduct');
+        input.removeClass('error'); // Add error class
+        if (!input.val().trim()) {
+                input.addClass('error'); // Add error class
+                 // Show SweetAlert2 message
+                 Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please enter a product name!'
+                });
+                return ;
+            }
         const formData = new FormData(document.getElementById('choice_form'));
 
         fetch('{{route("seller.product.tempStore")}}', {
