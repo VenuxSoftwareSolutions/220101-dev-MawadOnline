@@ -1792,7 +1792,7 @@ class ProductService
             }
 
             $historique = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_id', $product_update->id)->where('revisionable_type', 'App\Models\Product')->get();
-            $historique_attributes = DB::table('revisions')->whereNull('deleted_at')->whereIn('revisionable_id', $new_ids_attributes)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
+            $historique_attributes = DB::table('revisions')->whereNull('deleted_at')->whereIn('revisionable_id', $ids_product_attribute_values)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
             if(($product->product_added_from_catalog == 1) && (count($historique) == 0) && (count($historique_attributes) == 0)){
                 $product->approved = 1;
                 $product->save();
