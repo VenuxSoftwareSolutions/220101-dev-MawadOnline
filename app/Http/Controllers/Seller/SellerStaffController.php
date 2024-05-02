@@ -401,8 +401,8 @@ class SellerStaffController extends Controller
         }
 
         if($amount>0){
-            return response()->json(['isUsed' => 1,'message' => 'You will be charged with '.
-            number_format($amount,2) .' for the '.$roles.' extra roles']);
+            return response()->json(['isUsed' => 1,'message' => 'Great choice! Adding this role now is on us until the end of this month. Starting next month,
+             an additional AED '. number_format($amount,2) .' will apply with your eShop lease. We\'re excited to see your team grow! ']);
 
         }
     }
