@@ -7,6 +7,9 @@
 <script>
     function onSubmit(token) {
 
+        $('.login_btn').hide();
+        $('.loading_btn').show();
+
         // Get email and password values
         var email = $('#login_form input[name="email"]').val();
         var password = $('#login_form input[name="password"]').val();
@@ -16,6 +19,8 @@
         if (!email || !password) {
             // If email or password is empty, display an error message
             $('#error_message').text('Email and password are required.').show();
+            $('.login_btn').show();
+            $('.loading_btn').hide();
             return; // Stop further execution
         } else {
             // If both fields are filled, hide the error message
@@ -145,7 +150,11 @@
                                         <!-- Submit Button -->
                                         <div class="mb-4 mt-4">
                                             <button class="g-recaptcha btn btn-primary btn-block fw-700 fs-14 rounded-0" data-sitekey="{{ config('services.recaptcha_v3.siteKey') }}" data-callback="onSubmit" data-action="submitLoginForm">
-                                                {{ translate('Login') }}
+                                                <span class="login_btn">{{ translate('Login') }}</span>
+                                                <div class="loading_btn" style="display: none;">
+                                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                <span class="visually-hidden">Loading...</span>
+                                                </div>
                                             </button>
                                         </div>
                                     </form>
