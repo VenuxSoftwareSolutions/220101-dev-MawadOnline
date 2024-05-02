@@ -257,7 +257,11 @@ button {
                                                         <input id="email" type="email" class="form-control rounded-0"
                                                             value="{{ auth()->check() ? auth()->user()->email : '' }}"
                                                             placeholder="{{ translate('Email') }}" name="email" required>
-                                                    </div>
+                                                            <div style="color: red;">
+                                                                Email cannot be changed after the account is created
+                                                            </div>
+
+                                                        </div>
                                                     <div class="form-group">
                                                         <label>{{!Auth::user() || (Auth::user() && (Auth::user()->owner_id == null || Auth::user()->owner_id == Auth::user()->id)) ? translate('Your Password')  : translate('Your New Password') }} <span
                                                                 class="text-primary">*</span></label>
@@ -1948,8 +1952,8 @@ button {
                     });
                 }
 
-                    
-                  
+
+
                 });
 
             $('#registerTabsContent').find('.tab-pane button#registerShop').on('click', function(e) {

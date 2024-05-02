@@ -6,7 +6,7 @@
     .button-container {
         position: fixed;
         top: 1%;
-        right: 19%;
+        right: 25%;
         z-index: 97;
     }
 
@@ -46,6 +46,9 @@
 
     #table_sample_configuration input[type="number"]{
         width: auto !important;
+    }
+    .error {
+        border-color: red !important; /* Add red border */
     }
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
@@ -95,7 +98,7 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{translate('Product Name')}} <span class="text-danger">*</span></label>
                                     <div class="col-md-8">
-                                        <input type="text" required class="form-control" name="name" value="{{ $product->name }}" placeholder="{{ translate('Product Name') }}" >
+                                        <input id="nameProduct" type="text" required class="form-control" name="name" value="{{ $product->name }}" placeholder="{{ translate('Product Name') }}" >
                                     </div>
                                 </div>
                                 <div class="form-group row" id="brand">
@@ -159,7 +162,7 @@
                                         </label>
                                     </div>
                                 </div>
-        
+
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{translate('Published')}}</label>
                                     <div class="col-md-8">
@@ -169,7 +172,7 @@
                                         </label>
                                     </div>
                                 </div>
-        
+
                                 @if (addon_is_activated('pos_system'))
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{translate('Barcode')}}</label>
@@ -178,7 +181,7 @@
                                     </div>
                                 </div>
                                 @endif
-        
+
                                 @if (addon_is_activated('refund_request'))
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{translate('Refundable')}}</label>
@@ -191,7 +194,7 @@
                                 </div>
                                 @endif
                             </div>
-                        </div>                        
+                        </div>
                     </div>
                 </div>
                 {{-- Bloc Product images --}}
@@ -623,7 +626,7 @@
                         <h5 class="mb-0 h6">{{translate('Default Sample Pricing Configuration')}}</h5>
                     </div>
                     <div class="card-body">
-                        
+
                     </div>
                 </div> --}}
                 {{-- Bloc Product videos --}}
@@ -632,7 +635,7 @@
                         <h5 class="mb-0 h6">{{translate('Product Videos')}}</h5>
                     </div>
                     <div class="card-body">
-                        
+
                     </div>
                 </div> --}}
                 {{-- Bloc Product Category --}}
@@ -1192,7 +1195,7 @@
                         <h5 class="mb-0 h6">{{translate('Product Description')}}</h5>
                     </div>
                     <div class="card-body">
-                        
+
                     </div>
                 </div> --}}
                 {{-- Bloc Product Documents --}}
@@ -1321,6 +1324,18 @@
 </script>
 <script type="text/javascript">
     function submitForm() {
+        var input = $('#nameProduct');
+        input.removeClass('error'); // Add error class
+        if (!input.val().trim()) {
+                input.addClass('error'); // Add error class
+                 // Show SweetAlert2 message
+                 Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please enter a product name!'
+                });
+                return ;
+            }
         const formData = new FormData(document.getElementById('choice_form'));
 
         fetch('{{route("seller.product.tempStore")}}', {
@@ -3844,7 +3859,7 @@
                     if(publicationStatus == 'use'){
                         $('#last_version').val(1)
                     }
-                    
+
                     var check = true;
                     var min_qty = $('#min-qty-parent').val();
                     var max_qty = $('#max-qty-parent').val();
@@ -3871,7 +3886,7 @@
                             check = false;
                         }
                     }
-                    
+
                     if(check == true){
                         document.getElementById('choice_form').submit();
                     }else{

@@ -364,7 +364,9 @@
                                 <input disabled  type="text" class="form-control rounded-0"
                                     value="{{ auth()->check() ? auth()->user()->email : '' }}"
                                     placeholder="{{ translate('Email') }}" name="email" >
-
+                                    <div style="color: #CB774B;">
+                                        Email cannot be changed
+                                    </div>
                             </div>
 
                         </div>

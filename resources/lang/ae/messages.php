@@ -49,5 +49,6 @@ return [
     'delete_warning' => 'لن تتمكن من استرداد هذا المستودع بعد الحذف!',
     'Warehouses' => 'المستودعات',
     'admin_review_message' => 'الحقول المميزة قيد المراجعة من قبل المشرف.',
+    'inventory_record' => 'سجل المخزون',
 
 ];
