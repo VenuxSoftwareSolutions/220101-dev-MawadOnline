@@ -1331,12 +1331,27 @@
                                 $("#chosen_price").text(response.totalDiscount+" AED")
                                 $("#previous-price").text(response.unit_price+" AED")
 
+                                if (response.percent !== null && response.percent > 0) {
+
+                                $("#percent").text('-'+response.percent+'%')
+                                $("#percent").addClass("bg-primary");
+
+                                }
+                                else {
+                                    $("#percent").text('')
+                                    $("#percent").removeClass("bg-primary");
+
+                                }
+
                             }
                             else {
                                 $("#previous-price").text('') ;
+                                $("#percent").removeClass("bg-primary");
 
                                 $("#qty-interval").text(response.unit_price+" AED")
                                 $("#chosen_price").text(response.total+" AED")
+                                $("#percent").text('')
+
                             }
 
                             $("#quantity").val(response.qty)
@@ -1421,12 +1436,27 @@
                                 $("#qty-interval").text(response.discountedPrice+" AED")
                                 $("#chosen_price").text(response.totalDiscount+" AED")
                                 $("#previous-price").text(response.price+" AED")
+                                if (response.percent !== null && response.percent > 0) {
+
+                                    $("#percent").text('-'+response.percent+'%')
+                                    $("#percent").addClass("bg-primary");
+
+                                 }
+                                 else {
+                                    $("#percent").text('')
+                                    $("#percent").removeClass("bg-primary");
+
+                                }
 
                             }
                             else {
                                 $("#previous-price").text('') ;
+                                $("#percent").removeClass("bg-primary");
+
                                 $("#qty-interval").text(response.price+" AED")
                                 $("#chosen_price").text(response.total+" AED")
+                                $("#percent").text('')
+
                             }
 
                             $('.aiz-plus-minus input').each(function() {
@@ -1687,13 +1717,13 @@
                     cache: false,
                     dataType: 'JSON',
                     success: function(dataResult) {
-                        
+
                         // toastr.options =    {
                         //                         positionClass: 'toast-top-right',
                         //                         closeButton: true,
                         //                         timeOut: 3000, // Set the duration for which the toast will be displayed (in milliseconds)
                         //                     };
-                                            
+
                         // toastr.success('Product added successfully');
 
                         current.remove();
@@ -1702,7 +1732,7 @@
                             'Product added successfully',
                             'success'
                         )
-                        
+
                         // Replace 'PLACEHOLDER' with the actual slug from the response
                         // var previewUrl = previewUrlBase.replace('PLACEHOLDER', data.data.slug);
 

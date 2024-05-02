@@ -88,7 +88,7 @@
                             @if ($notification->data['newStatus'] == 'Suspended')
                             {{ __('messages.suspended_notification', ['reason' =>$notification->data['suspendedTitle'] ?? ""]) }}
                             @elseif ($notification->data['newStatus'] == 'Pending Approval')
-                            {{ __('messages.registration_completed') }}
+                            {{ __('messages.registration_completed_notif') }}
                             @elseif ($notification->data['newStatus'] == 'Closed')
                             {{ __('messages.vendor_closed') }}
                             @elseif ($notification->data['newStatus'] == 'Pending Closure')
@@ -102,8 +102,8 @@
                         <!-- Access notification data -->
                         @if ($notification->data)
                         <p>{{ $notification->data['admin_message'] }}</p>
-                        <p>User Name: {{ $notification->data['user_name'] }}</p>
-                        <p>User Email: {{ $notification->data['user_email'] }}</p>
+                        {{-- <p>User Name: {{ $notification->data['user_name'] }}</p>
+                        <p>User Email: {{ $notification->data['user_email'] }}</p> --}}
 
                         @endif
 

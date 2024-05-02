@@ -59,7 +59,7 @@ class NewRegistrationNotification extends Notification implements ShouldQueue
         return [
             'user_name' => $this->user->name,
             'user_email' => $this->user->email,
-            'admin_message' => 'A new user has registered with the following details:'
+            'admin_message' => 'New vendor registration - \'' . $this->user->name . '\'. Please review.'
         ];
     }
 }

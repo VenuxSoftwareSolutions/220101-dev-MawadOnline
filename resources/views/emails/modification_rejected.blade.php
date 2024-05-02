@@ -31,6 +31,7 @@
         img {
             max-width: 200px;
             display: block;
+            margin: auto;
             margin-bottom: 20px;
         }
     </style>
@@ -38,14 +39,28 @@
 <body>
     <div class="container">
         <img src="{{ asset('public/uploads/all/CxeI3PF3NMzjzHp6Ct3xf8dPS1q2pFYmwAwbHQii.png') }}" alt="Logo">
-        <h2>Modifications Rejected</h2>
+        {{-- <h2>Modifications Rejected</h2>
         <p>Dear {{ $user->name }},</p>
         <p>We regret to inform you that the modifications you proposed have been rejected for the following reasons:</p>
         <p><strong>Rejection Reasons:</strong></p>
         <p>{!! $rejectionReasons !!}</p>
         <p>Please contact support for further assistance.</p>
         <p>Thank you,</p>
-        <p>Your Application Team</p>
+        <p>Your Application Team</p> --}}
+
+        <p>Dear {{ $user->name }},</p>
+
+        <p>We regret to inform you that the changes you proposed to your profile have been rejected. Please see the reasons below:</p>
+
+        <p>{!! $rejectionReasons !!}</p>
+
+
+        <p>Please update your profile <a href="{{ route('seller.profile.index') }}">here</a> and submit changes for review.</p>
+
+        <p>For more information or to discuss this further, please contact our support team: <a href="#">Support</a></p>
+
+        <p>Thank you,</p>
+        <p>MawadOnline Team</p>
     </div>
 </body>
 </html>

@@ -361,7 +361,7 @@ class SellerController extends Controller
 
 
     // Send an email notification to the seller with old and new status
-    $seller->notify(new VendorStatusChangedNotification($oldStatus, $seller->status));
+    $seller->notify(new VendorStatusChangedNotification($oldStatus, $seller->status,null,null,null,$seller->name));
     Notification::send($seller, new CustomStatusNotification($oldStatus, $seller->status));
 
     return redirect()->route('sellers.index')->with('success', 'Vendor approved successfully');
@@ -461,7 +461,7 @@ class SellerController extends Controller
 
 
             // Send an email notification to the seller with old and new status
-            $seller->notify(new VendorStatusChangedNotification($oldStatus, $seller->status,$rejectReason,$seller->email,'Your account is rejected'));
+            $seller->notify(new VendorStatusChangedNotification($oldStatus, $seller->status,$rejectReason,$seller->email,'Your account is rejected',$seller->name));
             Notification::send($seller, new CustomStatusNotification($oldStatus, $seller->status));
         }
 
@@ -508,7 +508,7 @@ class SellerController extends Controller
             $suspension->status = "Suspended";
             $suspension->save();
             // Send an email notification to the seller with old and new status
-            $vendor->notify(new VendorStatusChangedNotification($oldStatus, $vendor->status,$request->input('reason_details'),null,$request->input('reason_title')));
+            $vendor->notify(new VendorStatusChangedNotification($oldStatus, $vendor->status,$request->input('reason_details'),null,$request->input('reason_title'),$vendor->name));
             Notification::send($vendor, new CustomStatusNotification($oldStatus, $vendor->status,$suspension->suspension_reason));
 
             return redirect()->route('sellers.index')->with('success', 'Vendor has been suspended successfully.');
@@ -526,7 +526,7 @@ class SellerController extends Controller
             // Optionally, you can also log this status change in the status history table
             $this->logStatusChange($vendor, 'Pending Closure');
             // Send an email notification to the seller with old and new status
-            $vendor->notify(new VendorStatusChangedNotification($oldStatus, $vendor->status,null,null,'Your account is pending-closure'));
+            $vendor->notify(new VendorStatusChangedNotification($oldStatus, $vendor->status,null,null,'Your account is pending-closure',$vendor->name));
             Notification::send($vendor, new CustomStatusNotification($oldStatus, $vendor->status));
 
             // Return success response
@@ -542,7 +542,7 @@ class SellerController extends Controller
             $vendor->save();
             $this->logStatusChange($vendor, 'Closed');
             // Send an email notification to the seller with old and new status
-            $vendor->notify(new VendorStatusChangedNotification($oldStatus, $vendor->status,null,null,'Your account is closed'));
+            $vendor->notify(new VendorStatusChangedNotification($oldStatus, $vendor->status,null,null,'Your account is closed',$vendor->name));
             Notification::send($vendor, new CustomStatusNotification($oldStatus, $vendor->status));
 
             // Return success response
@@ -723,7 +723,7 @@ class SellerController extends Controller
         $proposedChange->update(['status' => 'approved']);
 
         // Notify the user that their changes have been approved
-        $proposedChange->vendorAdmin->notify(new ChangesApprovedNotification());
+        $proposedChange->vendorAdmin->notify(new ChangesApprovedNotification($user->name));
 
         // Implement notification logic here
 

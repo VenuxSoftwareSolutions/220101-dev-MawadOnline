@@ -186,10 +186,15 @@
                   @endif
                 </del>
                 <!-- Unit -->
-                {{-- <span class="opacity-70 ml-1">/pc</span>
+               <span class="opacity-70 ml-1">/pc</span>
                  <!-- Discount percentage -->
-                <span class="bg-primary ml-2 fs-11 fw-700 text-white w-35px text-center p-1"
-                    style="padding-top:2px;padding-bottom:2px;">-2%</span> --}}
+                <span id="percent" class="@if ($previewData['detailedProduct']['percent']> 0) bg-primary @endif ml-2 fs-11 fw-700 text-white w-35px text-center p-1"
+                    style="padding-top:2px;padding-bottom:2px;">
+                    @if ($previewData['detailedProduct']['percent']> 0)
+                        -{{$previewData['detailedProduct']['percent']}}%
+                    @endif
+
+                </span>
 
                 <!-- Club Point -->
                 </div>
