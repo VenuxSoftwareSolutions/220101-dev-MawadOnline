@@ -49,14 +49,14 @@
                             @can('seller_show_product')
                             <li id="products" class="aiz-side-nav-item">
                                 <a href="{{ route('seller.products') }}"
-                                    class="aiz-side-nav-link {{ areActiveRoutes(['seller.products']) }}">
+                                    class="aiz-side-nav-link {{ areActiveRoutes(['seller.products','seller.products.create','seller.products.edit']) }}">
                                     <span class="aiz-side-nav-text">{{ translate('Products') }}</span>
                                 </a>
                             </li>
                             @endcan
                             <li id="catalog" class="aiz-side-nav-item">
                                 <a href="{{ route('catalog.search_page') }}"
-                                    class="aiz-side-nav-link {{ areActiveRoutes([ 'catalog.search_page','seller.products.create','seller.products.edit']) }}">
+                                    class="aiz-side-nav-link {{ areActiveRoutes([ 'catalog.search_page']) }}">
                                     <span class="aiz-side-nav-text">{{ translate('Mawad catalogue') }}</span>
                                 </a>
                             </li>
