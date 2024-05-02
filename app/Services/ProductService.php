@@ -423,7 +423,12 @@ class ProductService
             }
         }
 
-        $collection['sku'] = $collection['product_sk'];
+        if(isset($collection['product_sk'])){
+            $collection['sku'] = $collection['product_sk'];
+            unset($collection['product_sk']);
+        }else{
+            $collection['sku'] = $collection['name'];
+        }
         $collection['low_stock_quantity'] = $collection['quantite_stock_warning'];
         
         unset($collection['product_sk']);
@@ -1603,7 +1608,7 @@ class ProductService
             $collection['sku'] = $collection['product_sk'];
             unset($collection['product_sk']);
         }else{
-            $collection['sku'] = null;
+            $collection['sku'] = $collection['name'];
         }
 
         if(isset($collection['quantite_stock_warning'])){
@@ -1792,7 +1797,7 @@ class ProductService
             }
 
             $historique = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_id', $product_update->id)->where('revisionable_type', 'App\Models\Product')->get();
-            $historique_attributes = DB::table('revisions')->whereNull('deleted_at')->whereIn('revisionable_id', $new_ids_attributes)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
+            $historique_attributes = DB::table('revisions')->whereNull('deleted_at')->whereIn('revisionable_id', $ids_product_attribute_values)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
             if(($product->product_added_from_catalog == 1) && (count($historique) == 0) && (count($historique_attributes) == 0)){
                 $product->approved = 1;
                 $product->save();
@@ -2768,7 +2773,7 @@ class ProductService
             $collection['sku'] = $collection['product_sk'];
             unset($collection['product_sk']);
         }else{
-            $collection['sku'] = null;
+            $collection['sku'] = $collection['name'];
         }
 
         if(isset($collection['quantite_stock_warning'])){
