@@ -212,7 +212,9 @@
 
     </style>
     <style>
-
+.introjs-prevbutton {
+     visibility: hidden !important;
+     display: none !important; }
 .coming-soon-container {
         text-align: center;
         padding: 50px;

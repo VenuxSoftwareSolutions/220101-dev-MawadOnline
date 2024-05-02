@@ -1,4 +1,5 @@
 @extends('seller.layouts.app')
+@push('styles')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
@@ -74,7 +75,7 @@
     }
 
 </style>
-
+@endpush
 @section('panel_content')
     <div class="aiz-titlebar mt-2 mb-4">
         <div class="row align-items-center">
@@ -181,7 +182,7 @@
                                             <span></span>
                                         </label>
                                     </div>
-                                </div>        
+                                </div>
                                 @if (addon_is_activated('pos_system'))
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{translate('Barcode')}}</label>
@@ -190,7 +191,7 @@
                                     </div>
                                 </div>
                                 @endif
-        
+
                                 @if (addon_is_activated('refund_request'))
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{translate('Refundable')}}</label>
@@ -535,7 +536,7 @@
                                     <input value="1" type="checkbox" name="vat_sample" @if($vat_user->vat_registered == 1) checked @endif>
                                     <span></span>
                                 </label>
-                            </div> 
+                            </div>
                         </div>
                     </div>
                 </div> --}}
@@ -545,7 +546,7 @@
                         <h5 class="mb-0 h6">{{translate('Product Videos')}}</h5>
                     </div>
                     <div class="card-body">
-                        
+
                     </div>
                 </div> --}}
                 {{-- Bloc Product Category --}}
@@ -779,7 +780,7 @@
                         <h5 class="mb-0 h6">{{translate('Product Description')}}</h5>
                     </div>
                     <div class="card-body">
-                        
+
                     </div>
                 </div> --}}
                 {{-- Bloc Product Documents --}}
@@ -2886,7 +2887,7 @@
                                     check = false;
                                 }
                             }
-                            
+
                             if(check == true){
                                 document.getElementById('choice_form').submit();
                             }else{
