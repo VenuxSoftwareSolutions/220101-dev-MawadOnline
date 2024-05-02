@@ -2,7 +2,38 @@
 @php
     use Carbon\Carbon;
 @endphp
+
 <style>
+    @media (max-width: 540px) {
+ ul.nav.nav-tabs.shop {
+        background: #f8f9fa;
+        margin: 0;
+        display: block !important;
+        justify-content: space-between;
+        align-items: center;
+}
+}
+
+@media (min-width:822px) and (max-width:1198px ) {
+    ul.nav.nav-tabs.shop {
+        background: #f8f9fa;
+        margin: 0;
+        display: block !important;
+        justify-content: space-between;
+        align-items: center;
+}
+}
+
+@media (min-width:579px) and (max-width:805px ) {
+    ul.nav.nav-tabs.shop {
+        background: #f8f9fa;
+        margin: 0;
+        display: block !important;
+        justify-content: space-between;
+        align-items: center;
+}
+}
+
     .color-modified {
         border: 2px dashed #e8c068e8 !important; /* Yellow dashed border */
         box-shadow: 0 0 5px rgba(255, 204, 0, 0.5) !important; /* Yellow shadow */
@@ -38,6 +69,21 @@
         border-color: none !important;
 
     }
+
+    .orange-text{
+    color: #CB774B;
+
+    }
+
+    .Grand-title{
+    padding-left: 0px !important;
+    }
+
+    .custom-file-input:lang(en)~.custom-file-label::after {
+    content: "Browse";
+    background-color: #CB774B;
+    color:#fff
+}
 </style>
 @section('panel_content')
     <div class="aiz-titlebar mt-2 mb-4">
@@ -284,7 +330,7 @@
         <div class="card-body">
 
 
-            <ul class="nav nav-tabs" id="registerTabs">
+            <ul class="nav nav-tabs shop" id="registerTabs">
                 <li class="nav-item">
                     <a class="nav-link active" id="personal-info-tab" data-toggle="tab"
                         href="#personal-info">{{ translate('Personal Info') }}</a>
@@ -314,9 +360,10 @@
                     @csrf
                     <!-- ... Personal Info form fields ... -->
                     <div class="bg-white border mb-4">
-                        <div class="fs-15 fw-600 p-3">
+                        <div class="fs-20 fw-600 p-3 orange-text">
                             {{ translate('Personal Info') }}
                         </div>
+
                         {{-- <div id="validation-errors" class="alert alert-danger" style="display: none;">
                         </div> --}}
                         @if ($proposedPayoutChange)
@@ -342,7 +389,7 @@
 
                         <div class="p-3">
                             <div class="form-group">
-                                <label>{{ translate('First Name') }} <span class="text-primary">*</span></label>
+                                <label><b>{{ translate('First Name') }} </b><span class="text-primary">*</span></label>
                                 <input type="text" class="form-control rounded-0"
                                     value="{{ auth()->check() ? auth()->user()->first_name : old('first_name_personal') }}"
                                     id="first_name" placeholder="{{ translate('First Name') }}" name="first_name_personal" required>
@@ -351,7 +398,7 @@
                                      @enderror
                             </div>
                             <div class="form-group">
-                                <label>{{ translate('Last name') }} <span class="text-primary">*</span></label>
+                                <label><b>{{ translate('Last name') }} </b><span class="text-primary">*</span></label>
                                 <input type="text" class="form-control rounded-0" id="last_name"
                                     value="{{ auth()->check() ? auth()->user()->last_name : old('last_name_personal') }}"
                                     placeholder="{{ translate('Last name') }}" name="last_name_personal" required>
@@ -360,7 +407,7 @@
                                      @enderror
                             </div>
                             <div class="form-group">
-                                <label>{{ translate('Email') }} <span class="text-primary">*</span></label>
+                                <label><b>{{ translate('Email') }}</b> <span class="text-primary">*</span></label>
                                 <input disabled  type="text" class="form-control rounded-0"
                                     value="{{ auth()->check() ? auth()->user()->email : '' }}"
                                     placeholder="{{ translate('Email') }}" name="email" >
@@ -383,9 +430,10 @@
                         <!-- ... Business Info form fields ... -->
 
                         <div class="bg-white border mb-4">
-                            <div class="fs-15 fw-600 p-3">
+                            <div class="fs-20 fw-600 p-3 orange-text">
                                 {{ translate('Business Information') }}
                             </div>
+
                             {{-- <div id="validation-errors" class="alert alert-danger"
                             style="display: none;"></div> --}}
                             <?php
@@ -441,7 +489,7 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>{{ translate('English Trade Name') }} <span
+                                            <label><b>{{ translate('English Trade Name') }} </b><span
                                                     class="text-primary">*</span></label>
                                             <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('trade_name_english') ? 'color-modified' : '' }}"
                                                 placeholder="{{ translate('English Trade Name') }}"
@@ -455,7 +503,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>{{ translate('Arabic Trade Name') }} <span
+                                            <label><b>{{ translate('Arabic Trade Name') }} </b><span
                                                     class="text-primary">*</span></label>
                                             <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('trade_name_arabic') ? 'color-modified' : '' }}"
                                                 placeholder="{{ translate('Arabic Trade Name') }}"
@@ -466,10 +514,11 @@
                                                  @enderror
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+
+                                    <div class="col-md-12">
                                         <div class="form-group">
-                                            <label>{{ translate('Trade License Doc') }} <span
-                                                    class="text-primary">*</span><small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small></label>
+                                            <label><b>{{ translate('Trade License Doc') }} </b><span
+                                                    class="text-primary">*</span></label>
 
 
                                             @if ($trade_license_doc)
@@ -479,12 +528,22 @@
                                                 <input type="hidden" name="trade_license_doc"
                                                     value="{{ $trade_license_doc }}">
                                             @endif
-                                            <input type="file" class="form-control rounded-0"
-                                                placeholder="{{ translate('Trade License Doc') }}" name="trade_license_doc"
-                                                required>
-                                                @error('trade_license_doc')
-                                                <div class="text-danger">{{ $message }}</div>
-                                                 @enderror
+
+                                            <div class="input-group">
+                                                <div class="custom-file">
+                                                    <input type="file" class="form-control custom-file-input" id="trade_license_doc_input"
+                                                        name="trade_license_doc" placeholder="{{ translate('Trade License Doc') }}" required>
+                                                        @error('trade_license_doc')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                         @enderror
+                                                        <label class="custom-file-label" for="trade_license_doc_input">{{ translate('Choose a file') }}</label>
+                                                </div>
+                                            </div>
+                                            <small>{{ translate('Max file size is 5MB and accepted file types are PDF and image formats.') }}</small>
+
+
+
+
 
                                             {{-- <div class="custom-file">
                                         <input name="trade_license_doc" type="file" class="custom-file-input" id="inputGroupFile01">
@@ -494,9 +553,13 @@
                                         </div>
 
                                     </div>
+                                    <div class="col-md-12" style="padding-left: 0px">
+                                        <div class="fs-20 fw-600 p-3 orange-text">
+                                            E-Shop Information
+                                        </div>   </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>{{ translate('English E-shop Name') }} <span
+                                            <label><b>{{ translate('English E-shop Name') }}</b> <span
                                                     class="text-primary">*</span></label>
                                             <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_name_english') ? 'color-modified' : '' }}"
                                                 placeholder="{{ translate('English E-shop Name') }}"
@@ -509,7 +572,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>{{ translate('Arabic E-shop Name') }} <span
+                                            <label><b>{{ translate('Arabic E-shop Name') }} </b><span
                                                     class="text-primary">*</span></label>
                                             <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_name_arabic') ? 'color-modified' : '' }}"
                                                 placeholder="{{ translate('Arabic E-shop Name') }}"
@@ -522,7 +585,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>{{ translate('English e-Shop description') }} <span
+                                            <label><b>{{ translate('English e-Shop description') }} </b><span
                                                     class="text-primary"></span></label>
 
                                             <textarea class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_desc_english') ? 'color-modified' : '' }}" placeholder="{{ translate('English e-Shop description') }}"
@@ -534,7 +597,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>{{ translate('Arabic e-Shop description') }} <span
+                                            <label><b>{{ translate('Arabic e-Shop description') }}</b> <span
                                                     class="text-primary"></span></label>
 
                                             <textarea class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_desc_arabic') ? 'color-modified' : '' }}" placeholder="{{ translate('Arabic e-Shop description') }}"
@@ -544,9 +607,15 @@
                                                  @enderror
                                         </div>
                                     </div>
+
+                                    <div class="col-md-12 Grand-title">
+                                        <div class="fs-20 fw-600 p-3 orange-text">
+                                               License Information
+                                        </div>
+                                    </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>{{ translate('License Issue Date') }} <span
+                                            <label><b>{{ translate('License Issue Date') }} </b><span
                                                     class="text-primary">*</span>
                                             </label>
 
@@ -563,7 +632,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>{{ translate('License Expiry Date') }} <span
+                                            <label><b>{{ translate('License Expiry Date') }} </b><span
                                                     class="text-primary">*</span></label>
 
                                             <input dir="auto" required type="text"
@@ -576,10 +645,16 @@
                                                  @enderror
                                         </div>
                                     </div>
+                                    <div class="col-md-12 Grand-title">
+                                        <div class="fs-20 fw-600 p-3 orange-text">
+                                            Location Information
+                                        </div>
+                                    </div>
+
                                     {{-- @if (isset($user->business_information) && !empty($user->business_information->state)) --}}
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>{{ translate('State/Emirate') }} <span
+                                                <label><b>{{ translate('State/Emirate') }}</b> <span
                                                         class="text-primary">*</span></label>
                                                 <select required name="state" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('state') ? 'color-modified' : '' }}"
                                                     id="emirateempire">
@@ -599,7 +674,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>{{ translate('Area') }} <span class="text-primary">*</span></label>
+                                                <label><b>{{ translate('Area') }} </b><span class="text-primary">*</span></label>
                                                 <select required name="area_id" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('area_id') ? 'color-modified' : '' }}"
                                                     id="areaempire">
                                                     @php
@@ -656,7 +731,7 @@
                                     @endif --}}
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>{{ translate('Street') }} <span class="text-primary">*</span></label>
+                                            <label><b>{{ translate('Street') }}</b> <span class="text-primary">*</span></label>
                                             <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('street') ? 'color-modified' : '' }}"
                                                 value="{{ $street }}"
                                                 placeholder="{{ translate('Street') }}" name="street" required>
@@ -667,7 +742,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>{{ translate('Building') }} <span class="text-primary">*</span></label>
+                                            <label><b>{{ translate('Building') }} </b><span class="text-primary">*</span></label>
                                             <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('building') ? 'color-modified' : '' }}"
                                                 value="{{$building }}"
                                                 placeholder="{{ translate('Building') }}" name="building" required>
@@ -678,7 +753,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>{{ translate('Unit/Office No.') }} <span
+                                            <label><b>{{ translate('Unit/Office No.') }} </b><span
                                                     class="text-primary"></span></label>
                                             <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('unit') ? 'color-modified' : '' }}"
                                                 value="{{$unit }}"
@@ -690,7 +765,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>{{ translate('PO Box') }} <span class="text-primary "></span></label>
+                                            <label><b>{{ translate('PO Box') }} </b><span class="text-primary "></span></label>
                                             <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('po_box') ? 'color-modified' : '' }}"
                                                 value="{{ $po_box }}"
                                                 placeholder="{{ translate('PO Box') }}" name="po_box">
@@ -699,9 +774,12 @@
                                                  @enderror
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="fs-20 fw-600 p-3 orange-text">
+                                        Contact Information
+                                     </div>
+                                    <div class="col-md-12">
                                         <div class="form-group">
-                                            <label>{{ translate('Landline Phone No.') }} <span
+                                            <label><b>{{ translate('Landline Phone No.') }} </b><span
                                                     class="text-primary"></span></label>
                                             <input value="{{$landline }}"
                                                 type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('landline') ? 'color-modified' : '' }}"
@@ -711,9 +789,13 @@
                                                  @enderror
                                         </div>
                                     </div>
+                                    <div class="col-md-12" style="padding-left: 0px">
+                                        <div class="fs-20 fw-600 p-3 orange-text">
+                                            Tax Information
+                                        </div>   </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="{{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('vat_registered') != null ? 'color-modified-file' : '' }}">{{ translate('Vat Registered') }} <span class="text-primary">*
+                                            <label class="{{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('vat_registered') != null ? 'color-modified-file' : '' }}"><b>{{ translate('Vat Registered') }} </b><span class="text-primary">*
                                                 </span></label> <br>
                                             <div class="form-check form-check-inline">
                                                 <input class="form-check-input" type="radio" value="1"
@@ -737,7 +819,7 @@
                                     </div>
                                     <div class="col-md-6" id="vatCertificateGroup">
                                         <div class="form-group">
-                                            <label>{{ translate('Vat Certificate') }} <span
+                                            <label><b>{{ translate('Vat Certificate') }} </b><span
                                                     class="text-primary">*</span><small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small></label>
                                             @if ($vat_certificate)
                                                 <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('vat_certificate') ? 'color-modified-file' : '' }}"
@@ -746,16 +828,24 @@
                                                 <input type="hidden" name="vat_certificate"
                                                     value="{{ $vat_certificate}}">
                                             @endif
-                                            <input type="file" class="form-control rounded-0"
-                                                placeholder="{{ translate('Vat Certificate') }}" name="vat_certificate">
-                                                @error('vat_certificate')
+                                            <div class="input-group">
+                                                <div class="custom-file">
+                                                    <input type="file" class="form-control custom-file-input" id="vat_certificate_input"
+                                                        name="vat_certificate"  placeholder="{{ translate('Vat Certificate') }}">
+                                                 @error('vat_certificate')
                                                 <div class="text-danger">{{ $message }}</div>
                                                  @enderror
+                                                    <label class="custom-file-label" for="vat_certificate_input">{{ translate('Choose a file') }}</label>
+                                                </div>
+                                            </div>
+                                            <small>{{ translate('Max file size is 5MB and accepted file types are PDF and image formats.') }}</small>
+
+
                                         </div>
                                     </div>
-                                    <div class="col-md-6" id="trnGroup">
+                                    <div class="col-md-12" id="trnGroup">
                                         <div class="form-group">
-                                            <label>{{ translate('TRN') }} <span class="text-primary">*</span></label>
+                                            <label><b>{{ translate('TRN') }} </b><span class="text-primary">*</span></label>
                                             <input value="{{ $trn }}" type="text"
                                                 class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('trn') ? 'color-modified' : '' }}" placeholder="{{ translate('TRN') }}"
                                                 name="trn">
@@ -764,9 +854,15 @@
                                                  @enderror
                                         </div>
                                     </div>
+
+                                    <div class="col-md-12 Grand-title">
+                                        <div class="fs-20 fw-600 p-3 orange-text">
+                                            Regulatory Information
+                                        </div>
+                                    </div>
                                     <div class="col-md-6" id="taxWaiverGroup" {{-- style="display: none;" --}}>
                                         <div class="form-group">
-                                            <label>{{ translate('Tax Waiver Certificate') }} <span
+                                            <label><b>{{ translate('Tax Waiver Certificate') }}</b> <span
                                                     class="text-primary">*</span><small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small></label>
                                             @if ($tax_waiver)
                                                 <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('tax_waiver') ? 'color-modified-file' : '' }}"
@@ -783,8 +879,8 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>{{ translate('Civil Defense Approval') }} <span
-                                                    class="text-primary"></span><small>{{ translate('Max file size is 5MB and accepted file types are PDF and image formats.') }}</small></label>
+                                            <label><b>{{ translate('Civil Defense Approval') }}</b> <span
+                                                    class="text-primary"></span></label>
                                             {{-- <input  type="file" class="form-control rounded-0"
                                             name="civil_defense_approval"> --}}
                                             @if ($civil_defense_approval )
@@ -794,11 +890,18 @@
                                                 <input type="hidden" name="civil_defense_approval"
                                                     value="{{ $civil_defense_approval  }}">
                                             @endif
-                                            <input type="file" class="form-control rounded-0"
-                                                name="civil_defense_approval">
-                                                @error('civil_defense_approval')
-                                                <div class="text-danger">{{ $message }}</div>
-                                                 @enderror
+
+                                            <div class="input-group">
+                                                <div class="custom-file">
+                                                    <input type="file" class="form-control custom-file-input" id="civil_defense_approval_input"
+                                                        name="civil_defense_approval">
+                                                        @error('civil_defense_approval')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                         @enderror
+                                                    <label class="custom-file-label" for="civil_defense_approval_input">{{ translate('Choisir un fichier') }}</label>
+                                                </div>
+                                            </div>
+                                            <small>{{ translate('Max file size is 5MB and accepted file types are PDF and image formats.') }}</small>
                                         </div>
 
                                     </div>
@@ -826,9 +929,11 @@
 
                     <!-- ... Contact Person form fields ... -->
                     <div class="bg-white border mb-4">
-                        <div class="fs-15 fw-600 p-3">
-                            {{ translate('Contact Person') }}
+                        <div class="fs-20 fw-600 p-3 orange-text">
+                            {{ translate('Personal Information') }}
                         </div>
+
+
                         {{-- <div id="validation-errors" class="alert alert-danger"
                                 style="display: none;"></div> --}}
                         <?php
@@ -857,7 +962,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>{{ translate('First Name') }} <span class="text-primary">*</span></label>
+                                        <label><b>{{ translate('First Name') }}</b><span class="text-primary">*</span></label>
                                         {{-- @php
                                                 $fistName = null;
                                                 if (isset($user->contact_people->first_name) && !empty($user->contact_people->first_name)) {
@@ -875,9 +980,10 @@
 
                                     </div>
                                 </div>
+
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>{{ translate('Last Name') }} <span class="text-primary">*</span></label>
+                                        <label><b>{{ translate('Last Name') }} </b><span class="text-primary">*</span></label>
                                         {{-- @php
                                                 $lastName = null;
                                                 if (isset($user->contact_people->last_name) && !empty($user->contact_people->last_name)) {
@@ -896,7 +1002,37 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>{{ translate('Email') }} <span class="text-primary">*</span></label>
+                                        <label><b>{{ translate('Date Of Birth') }} </b><span
+                                                class="text-primary">*</span></label>
+                                        <input dir="auto" type="text" class="datepicker form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('date_of_birth') ? 'color-modified' : '' }}"
+                                            placeholder="{{ translate('Date Of Birth') }}" {{-- value="{{ $user->contact_people->date_of_birth ?? '' }}" --}}
+                                            value="{{ $date_of_birth }}"
+                                            name="date_of_birth" required>
+                                            @error('date_of_birth')
+                                            <div class="text-danger">{{ $message }}</div>
+                                             @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><b>{{ translate('Nationality') }} </b><span class="text-primary">*</span></label>
+                                        <br>
+                                        <select id="nationality" title="{{ translate('Select Nationality') }}" name="nationality"
+                                            class="form-control selectpicker countrypicker {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('nationality') ? 'color-modified' : '' }}"
+                                            @if ($nationality) data-default="{{ $nationality }}" @else data-default="" @endif
+                                            data-flag="true"></select>
+                                            <input type="hidden" value="{{$nationality }}" id="nationalityHidden" name="nationality"> <!-- Hidden input for nationality -->
+                                            @error('nationality')
+                                            <div class="text-danger">{{ $message }}</div>
+                                             @enderror
+                                    </div>
+                                </div>
+                                <div class="fs-20 fw-600 p-3 orange-text">
+                                    Contact Information
+                                 </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label><b>{{ translate('Email') }}</b> <span class="text-primary">*</span></label>
                                         {{-- @php
                                                 $emailUser = null;
                                                 if (isset($user->contact_people->email) && !empty($user->contact_people->email)) {
@@ -915,7 +1051,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>{{ translate('Mobile Phone') }} <span
+                                        <label><b>{{ translate('Mobile Phone') }}</b> <span
                                                 class="text-primary">*</span></label>
                                         <small class="text-muted">{{ translate('Example') }}:
                                             +971123456789 {{ translate('or') }}
@@ -932,65 +1068,46 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>{{ translate('Additional Mobile Phone') }} <span
-                                                class="text-primary"></span><small
-                                                class="text-muted">{{ translate('Example') }}:
-                                                +971123456789 {{ translate('or') }}
-                                                00971123456789</small></label>
+                                        <label><b>{{ translate('Additional Mobile Phone') }} </b><span
+                                                class="text-primary"></span></label>
                                         <input type="text" dir="auto"
                                             class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('additional_mobile_phone') ? 'color-modified' : '' }}"
                                             placeholder="{{ translate('Additional Mobile Phone') }}"
                                             value="{{ $additional_mobile_phone }}" name="additional_mobile_phone">
+                                            <small
+                                                class="text-muted">{{ translate('Example') }}:
+                                                +971123456789 {{ translate('or') }}
+                                                00971123456789</small>
                                             @error('additional_mobile_phone')
                                             <div class="text-danger">{{ $message }}</div>
                                              @enderror
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>{{ translate('Nationality') }} <span class="text-primary">*</span></label>
-                                        <br>
-                                        <select id="nationality" title="{{ translate('Select Nationality') }}" name="nationality"
-                                            class="form-control selectpicker countrypicker {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('nationality') ? 'color-modified' : '' }}"
-                                            @if ($nationality) data-default="{{ $nationality }}" @else data-default="" @endif
-                                            data-flag="true"></select>
-                                            <input type="hidden" value="{{$nationality }}" id="nationalityHidden" name="nationality"> <!-- Hidden input for nationality -->
-                                            @error('nationality')
-                                            <div class="text-danger">{{ $message }}</div>
-                                             @enderror
-                                    </div>
+
+                                <div class="fs-20 fw-600 p-3 orange-text">
+                                    Emirates ID
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="form-group">
-                                        <label>{{ translate('Date Of Birth') }} <span
+                                        <label><b>{{ translate('Emirates ID - Number') }}</b><span
                                                 class="text-primary">*</span></label>
-                                        <input dir="auto" type="text" class="datepicker form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('date_of_birth') ? 'color-modified' : '' }}"
-                                            placeholder="{{ translate('Date Of Birth') }}" {{-- value="{{ $user->contact_people->date_of_birth ?? '' }}" --}}
-                                            value="{{ $date_of_birth }}"
-                                            name="date_of_birth" required>
-                                            @error('date_of_birth')
-                                            <div class="text-danger">{{ $message }}</div>
-                                             @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>{{ translate('Emirates ID - Number') }} <span
-                                                class="text-primary">*</span></label> <small
-                                            class="text-muted">{{ translate('Example') }}:123456789012345
-                                        </small>
                                         <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('emirates_id_number') ? 'color-modified' : '' }}"
                                             placeholder="{{ translate('Emirates ID - Number') }}"
                                             value="{{  $emirates_id_number }}" required
                                             name="emirates_id_number">
+                                            <small
+                                            class="text-muted">{{ translate('Example') }}:123456789012345
+                                            </small>
                                             @error('emirates_id_number')
                                             <div class="text-danger">{{ $message }}</div>
                                              @enderror
                                     </div>
+
+
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>{{ translate('Emirates ID - Expiry Date') }} <span
+                                        <label><b>{{ translate('Emirates ID - Expiry Date') }}</b> <span
                                                 class="text-primary">*</span></label>
                                         <input dir="auto" type="text" class="datepicker form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('emirates_id_expiry_date') ? 'color-modified' : '' }}"
                                             placeholder="{{ translate('Emirates ID - Expiry Date') }}"
@@ -1004,9 +1121,8 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>{{ translate('Emirates ID') }} <span
-                                                class="text-primary">*</span><small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}
-                                            </small></label>
+                                        <label><b>{{ translate('Emirates ID') }}</b><span
+                                                class="text-primary">*</span></label>
                                         @if ($emirates_id_file_path)
                                             <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('emirates_id_file_path') ? 'color-modified-file' : '' }}"
                                                 href="{{ static_asset($emirates_id_file_path) }}"
@@ -1014,17 +1130,43 @@
                                             <input type="hidden" name="emirates_id_file_path"
                                                 value="{{ $emirates_id_file_path }}">
                                         @endif
-                                        <input type="file" class="form-control rounded-0"
+                                        <div class="input-group">
+                                            <div class="custom-file">
+                                        <input type="file" class="form-control custom-file-input"
                                             placeholder="{{ translate('Emirates ID') }}" required
                                             name="emirates_id_file_path">
+                                            <label class="custom-file-label" for="emirates_id_file_input">{{ translate('Choose a file') }}</label>
+
                                             @error('emirates_id_file_path')
                                             <div class="text-danger">{{ $message }}</div>
                                              @enderror
+                                            </div>
+                                        </div>
+                                             <small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}
+                                            </small>
+                                    </div>
+
+                                    {{-- <div class="input-group">
+                                        <div class="custom-file">
+                                            <input type="file" class="form-control custom-file-input"
+                                        placeholder="{{ translate('Emirates ID') }}" required
+                                        name="emirates_id_file" id="emirates_id_file_input">
+                                        <label class="custom-file-label" for="emirates_id_file_input">{{ translate('Choose a file') }}</label> --}}
+                                        {{-- </div>
+                                    </div>
+
+                                    <small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}
+                                        </small> --}}
+                                </div>
+                                <div class="col-md-12" style="padding-left: 0px">
+                                    <div class="fs-20 fw-600 p-3 orange-text">
+                                        Employment Information
                                     </div>
                                 </div>
+
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="{{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('business_owner') != null ? 'color-modified-file' : '' }}">{{ translate('Business Owner') }} <span class="text-primary">*
+                                        <label class="{{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('business_owner') != null ? 'color-modified-file' : '' }}"><b>{{ translate('Business Owner') }}</b><span class="text-primary">*
                                             </span></label> <br>
                                         <div class="form-check form-check-inline">
 
@@ -1049,7 +1191,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>{{ translate('Designation') }} <span class="text-primary">*</span></label>
+                                        <label><b>{{ translate('Designation') }}</b> <span class="text-primary">*</span></label>
                                         <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('designation') ? 'color-modified' : '' }}" required
                                             placeholder="{{ translate('Designation') }}"
                                             value="{{ $designation }}" name="designation">
@@ -1079,8 +1221,9 @@
 
                     <!-- ... Payout Info form fields ... -->
                     <div class="bg-white border mb-4">
-                        <div class="fs-15 fw-600 p-3">
-                            {{ translate('Payout Information') }}
+
+                       <div class="fs-20 fw-600 p-3 orange-text">
+                                                {{ translate('Bank Information') }}
                         </div>
                         {{-- <div id="validation-errors" class="alert alert-danger"
                                 style="display: none;"></div> --}}
@@ -1099,7 +1242,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>{{ translate('Bank Name') }} <span class="text-primary">*</span></label>
+                                        <label><b>{{ translate('Bank Name') }}</b> <span class="text-primary">*</span></label>
                                         <input value="{{ $bankName }}" type="text"
                                             class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('bank_name') ? 'color-modified' : '' }}"
                                             placeholder="{{ translate('Bank Name') }}" name="bank_name" required>
@@ -1110,7 +1253,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>{{ translate('Account Name') }} <span
+                                        <label><b>{{ translate('Account Name') }}</b> <span
                                                 class="text-primary">*</span></label>
                                         <input value="{{ $accountName }}" type="text"
                                             class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('account_name') ? 'color-modified' : '' }}"
@@ -1122,7 +1265,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>{{ translate('Account Number') }} <span
+                                        <label><b>{{ translate('Account Number') }}</b> <span
                                                 class="text-primary">*</span></label>
                                         <input value="{{ $accountNumber }}" type="text"
                                             class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('account_number') ? 'color-modified' : '' }}"
@@ -1135,7 +1278,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>{{ translate('IBAN') }} <span class="text-primary">*</span></label>
+                                        <label><b>{{ translate('IBAN') }}</b> <span class="text-primary">*</span></label>
                                         <input value="{{ $iban }}" type="text"
                                             class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('iban') ? 'color-modified' : '' }}"
                                             placeholder="{{ translate('IBAN') }}" name="iban" required>
@@ -1146,7 +1289,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>{{ translate('Swift Code') }} <span class="text-primary">*</span></label>
+                                        <label><b>{{ translate('Swift Code') }} </b><span class="text-primary">*</span></label>
                                         <input value="{{ $swiftCode }}" type="text"
                                             class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('swift_code') ? 'color-modified' : '' }}"
                                             placeholder="{{ translate('Swift Code') }}" name="swift_code" required>
@@ -1157,8 +1300,8 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>{{ translate('IBAN Certificate') }}<span
-                                                class="text-primary">*</span><small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small></label>
+                                        <label><b>{{ translate('IBAN Certificate') }}</b><span
+                                                class="text-primary">*</span></label>
                                         @if ($ibanCertificate)
                                             <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('iban_certificate') ? 'color-modified-file' : '' }}"
                                                 href="{{ static_asset($ibanCertificate) }}"
@@ -1166,12 +1309,25 @@
                                             <input type="hidden" name="iban_certificate"
                                                 value="{{ $ibanCertificate }}">
                                         @endif
-                                        <input required type="file" class="form-control rounded-0"
-                                            name="iban_certificate">
-                                            @error('iban_certificate')
-                                            <div class="text-danger">{{ $message }}</div>
-                                             @enderror
+                                        <div class="input-group">
+                                            <div class="custom-file">
+                                                <input type="file" class="form-control custom-file-input" id="iban_certificate_input"
+                                                name="iban_certificate">
+
+                                                <label class="custom-file-label" for="iban_certificate_input">{{ translate('Choose a file') }}</label>
+                                                @error('iban_certificate')
+                                                <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small>
+
+
                                     </div>
+
+
+
+
                                 </div>
                             </div>
 
