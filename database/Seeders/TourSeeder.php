@@ -84,7 +84,7 @@ class TourSeeder extends Seeder
         Tour::updateOrCreate(
             ['step_number' => 11],
             ['element_id' => 'lease',
-            'title' => 'Step 12: Lease Management',
+            'title' => 'Step 10: Lease Management',
             'description' => 'Manage lease agreements for your shop premises or equipment. Stay organized and ensure compliance with lease terms and conditions.']
         );
         Tour::updateOrCreate(
@@ -105,5 +105,7 @@ class TourSeeder extends Seeder
             'title' => 'Step 13: Account Settings',
             'description' => 'Adjust your account settings and preferences. Customize your dashboard experience to suit your needs and optimize your workflow.']
         );
+        Tour::where('step_number', 15)->delete();
+
     }
 }
