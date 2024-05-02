@@ -49,7 +49,7 @@ class SellerRegistrationRequest extends FormRequest
                     $query->whereNotNull('email_verified_at');
                 }),
             ],
-            'password' => ['required', 'confirmed', new CustomPasswordRule($this->input('first_name'), $this->input('last_name'), $this->input('email'))],
+           // 'password' => ['required', 'confirmed', new CustomPasswordRule($this->input('first_name'), $this->input('last_name'), $this->input('email'))],
         ];
     }
 
