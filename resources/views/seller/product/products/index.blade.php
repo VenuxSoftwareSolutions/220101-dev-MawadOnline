@@ -2,17 +2,41 @@
 
 @section('panel_content')
 
-    <div class="aiz-titlebar mt-2 mb-4">
-      <div class="row align-items-center">
-        <div class="col-md-6">
-            <h1 class="h3">{{ translate('Products') }}</h1>
+<style>
+.pagination .active .page-link
+{
+    background-color: #8f97ab !important;
+}
+
+.pagination .page-link:hover{
+    background-color: #8f97ab !important;
+}
+</style>
+
+<div class="aiz-titlebar mt-2 mb-4">
+    <div class="row align-items-center">
+        <div class="col-md-12">
+            <h2 class="h3">{{ translate('All Products') }}</h2>
+            <div class="row">
+                <div class="col-md-8">
+                    <p style="font-size: 16px;">Quickly access and organize your inventory with intuitive tools and features. Simplify your
+                        inventory management process and stay in control of your products effortlessly.</p>
+                </div>
+                @can('seller_create_product')
+                <div class="col-md-4">
+                    <div class="text-md-right"> <!-- Added this div -->
+                        <a href="{{ route('seller.products.create')}}" class="btn btn-secondary btn-lg">
+                        <i class="las la-plus la-1x text-white"></i> {{ translate('Add New Product') }}</a>
+                    </div>
+                </div>
+                @endcan
+            </div>
         </div>
-      </div>
     </div>
 
     <div class="row gutters-10 justify-content-center">
         @if (addon_is_activated('seller_subscription'))
-            <div class="col-md-4 mx-auto mb-3" >
+            <!-- <div class="col-md-4 mx-auto mb-3" >
                 <div class="bg-grad-1 text-white rounded-lg overflow-hidden">
                   <span class="size-30px rounded-circle mx-auto bg-soft-primary d-flex align-items-center justify-content-center mt-3">
                       <i class="las la-upload la-2x text-white"></i>
@@ -22,21 +46,21 @@
                       <div class="opacity-50 text-center">{{  translate('Remaining Uploads') }}</div>
                   </div>
                 </div>
-            </div>
+            </div> -->
         @endif
 
-        <div class="col-md-4 mx-auto mb-3" >
+        <!-- <div class="col-md-4 mx-auto mb-3" > -->
             @can('seller_create_product')
-            <a id="step1" href="{{ route('catalog.search_page')}}">
+            <!-- <a id="step1" href="{{ route('seller.products.create')}}">
                 <div class="p-3 rounded mb-3 c-pointer text-center bg-white shadow-sm hov-shadow-lg has-transition">
                     <span class="size-60px rounded-circle mx-auto bg-secondary d-flex align-items-center justify-content-center mb-3">
                         <i class="las la-plus la-3x text-white"></i>
                     </span>
                     <div class="fs-18 text-primary">{{ translate('Add New Product') }}</div>
                 </div>
-              </a>
+              </a> -->
             @endcan
-        </div>
+        <!-- </div> -->
 
         {{-- @if (addon_is_activated('seller_subscription'))
         @php
@@ -62,8 +86,16 @@
     <div class="card">
         <form class="" id="sort_products" action="" method="GET">
             <div class="card-header row gutters-5">
-                <div class="col">
-                    <h5 class="mb-md-0 h6">{{ translate('All Products') }}</h5>
+                <div class="col-md-4">
+                <div id="step3" class="input-group input-group-sm">
+                <input type="text" class="form-control" id="search" name="search" @isset($search) value="{{ $search }}" @endisset placeholder="{{ translate('Search product') }}">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">
+                        <i class="fas fa-search"></i> <!-- Assuming you're using Font Awesome for icons -->
+                    </button>
+                </div>
+            </div>
+
                 </div>
 
                 <div class="dropdown mb-2 mb-md-0">
@@ -74,16 +106,12 @@
                         <a class="dropdown-item confirm-alert" href="javascript:void(0)"  data-target="#bulk-delete-modal"> {{translate('Delete selection')}}</a>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div id="step3" class="input-group input-group-sm">
-                        <input type="text" class="form-control" id="search" name="search" @isset($search) value="{{ $search }}" @endisset placeholder="{{ translate('Search product') }}">
-                    </div>
-                </div>
+                
             </div>
             <div class="card-body">
                 <table id="step2" class="table aiz-table mb-0">
                     <thead>
-                        <tr>
+                        <tr style="background-color: #f8f8f8;">
                             <th>
                                 <div class="form-group">
                                     <div class="aiz-checkbox-inline">
@@ -270,8 +298,8 @@
                         @endforeach
                     </tbody>
                 </table>
-                <div class="aiz-pagination">
-                    {{ $products->links() }}
+                <div class="pagination-container text-right"  style="float: right;"> <!-- Add text-right class to align to the right -->
+                {{ $products->links('custom-pagination') }}
                 </div>
             </div>
         </form>

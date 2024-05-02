@@ -44,6 +44,34 @@
     .error {
         border-color: red !important; /* Add red border */
     }
+    .swal2-icon .swal2-icon-content {
+        display: flex;
+        align-items: center;
+        font-size: 0.75em !important;
+    }
+
+    .multi-select-button {
+        height: 41px;
+        border: 1px solid #e2e5ec !important;
+    }
+
+    h6{
+        font-size: 0.9rem !important;
+    }
+
+    .form-control{
+        color: #222224 !important;
+    }
+
+    body {
+        background-color: rgb(247, 248, 250) !important;
+    }
+    .aiz-content-wrapper{
+        background-color: rgb(247, 248, 250) !important;
+    }
+    .aiz-main-content .pr-lg-25px {
+        background-color: rgb(247, 248, 250) !important;
+    }
 </style>
 
 @section('panel_content')
@@ -271,7 +299,7 @@
                         <hr> --}}
                         <div>
                             <div class="bloc-default-shipping-style">
-                                <h5>{{ translate('Default Pricing Configuration') }}</h5>
+                                <h6>{{ translate('Default Product Pricing Configuration') }}</h6>
                                 <hr>
                                 <table class="table" id="table_pricing_configuration" class="bloc_pricing_configuration_variant">
                                     <thead>
@@ -314,7 +342,14 @@
                                                         </select>
                                                     </td>
                                                     <td><input type="number" class="form-control discount_amount" value="{{ $pricing->discount_amount }}" @if($pricing->discount_type != 'amount') readonly @endif name="discount_amount[]"></td>
-                                                    <td><input type="number" class="form-control discount_percentage" value="{{ $pricing->discount_percentage }}" @if($pricing->discount_type != 'percent') readonly @endif name="discount_percentage[]"></td>
+                                                    <td style="width: 19% !important;">
+                                                        <div class="col-md-9 input-group">
+                                                            <input type="number" class="form-control discount_percentage" value="{{ $pricing->discount_percentage }}" @if($pricing->discount_type != 'percent') readonly @endif name="discount_percentage[]">
+                                                            <div class="input-group-append">
+                                                                <span class="input-group-text">%</span>
+                                                            </div>
+                                                        </div>
+                                                    </td>
                                                     <td>
                                                         <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                                         @if($key != 0)
@@ -336,7 +371,14 @@
                                                         <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                                     </select>
                                                 </td>
-                                                <td><input type="number" class="form-control discount_amount" name="discount_amount[]"></td>
+                                                <td style="width: 19% !important;">
+                                                    <div class="col-md-9 input-group">
+                                                        <input type="number" class="form-control discount_amount" name="discount_amount[]">
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text">%</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
                                                 <td><input type="number" class="form-control discount_percentage" name="discount_percentage[]"></td>
                                                 <td>
                                                     <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
@@ -348,7 +390,7 @@
                                 </table>
                             </div>
                             <div class="bloc-default-shipping-style" style="margin-top: 22px;">
-                                <h5>{{ translate('Default Sample Pricing Configuration') }}</h5>
+                                <h6>{{ translate('Default Sample Pricing Configuration') }}</h6>
                                 <hr>
                                 <div id="sample_parent">
                                     {{-- <div class="row mb-3">
@@ -429,12 +471,12 @@
                     </div>
                     <div class="card-body">
                         <div class="bloc-default-shipping-style">
-                            <h5>{{ translate('Mawadonline 3rd party configuration') }}</h5>
+                            <h6>{{ translate('MawadOnline 3rd Party Configuration') }}</h6>
                             <hr>
                             <div class="row mb-3">
                                 <div class="col-md-4">
-                                    <input type="text" class="form-control" value="{{translate('Do you want to activate MawadOnline 3rd Party ?')}}" disabled>
-                                    <small style="color:red">Fill all required fields for shippers to confirm delivery ability.</small>
+                                    <input type="text" class="form-control" value="{{translate('Activate MawadOnline 3rd Party Shipping')}}" disabled>
+
                                 </div>
                                 <div class="col-md-8">
                                     <label class="aiz-switch aiz-switch-success mb-0">
@@ -450,12 +492,12 @@
                                             <th>{{translate('Length (Cm)')}}</th>
                                             <th>{{translate('Width (Cm)')}}</th>
                                             <th>{{translate('Height (Cm)')}}</th>
-                                            <th>{{translate('Weight Package')}}</th>
+                                            <th>{{translate('Package Weight')}}</th>
                                             <th>{{translate('Weight unit')}}</th>
                                             <th>{{translate('Breakable')}}</th>
-                                            <th>{{translate('Unit')}}</th>
-                                            <th>{{translate('Min')}}</th>
-                                            <th>{{translate('Max')}}</th>
+                                            <th>{{translate('Unit Temperature')}}</th>
+                                            <th>{{translate('Min Temperature')}}</th>
+                                            <th>{{translate('Max Temperature')}}</th>
                                         </tr>
                                     </thead>
                                     <tbody id="bloc_third_party">
@@ -489,6 +531,9 @@
                                         </tr>
                                     </tbody>
                                 </table>
+                                <div class="col-12" style="padding: 0">
+                                    <small style="display: block !important">Fill all required fields for shippers to confirm delivery ability.</small>
+                                </div>
                                 <div id="result_calculate_third_party">
                                     @if($product->activate_third_party == 1)
                                         @if ($chargeable_weight > 30)
@@ -501,7 +546,7 @@
                             </div>
                         </div>
                         <div class="bloc-default-shipping-style" style="margin-top: 22px;">
-                            <h5>{{ translate('Shipping configuration') }}</h5>
+                            <h6>{{ translate('Shipping configuration') }}</h6>
                             <hr>
                             <div>
                                 <table class="table" id="table_shipping_configuration" class="bloc_shipping_configuration_variant">
@@ -528,7 +573,7 @@
                                                     <td><input type="number" name="to_shipping[]" value="{{ $shipping->to_shipping }}" class="form-control max-qty-shipping" id=""></td>
                                                     <td>
                                                         @php $shippers = explode(",", $shipping->shipper); @endphp
-                                                        <select multiple class="form-control shipper" name="shipper[{{ $key }}][]">
+                                                        <select multiple class="shipper" name="shipper[{{ $key }}][]">
                                                             <option value="vendor" @if(in_array("vendor", $shippers)) {{ 'selected' }} @endif>{{translate('vendor')}}</option>
                                                             <option value="third_party" @if(in_array("third_party", $shippers)) {{ 'selected' }} @endif>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                                         </select>
@@ -570,7 +615,7 @@
                                                 <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id=""></td>
                                                 <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id=""></td>
                                                 <td>
-                                                    <select multiple class="form-control shipper" name="shipper[0][]">
+                                                    <select multiple class="shipper" name="shipper[0][]">
                                                         <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                                         <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                                     </select>
@@ -667,7 +712,6 @@
                         <div class="form-group row gutters-5">
                             <div class="col-md-4">
                                 <input type="text" class="form-control mb-2" value="{{translate('Activate variant option')}}" disabled>
-                                <small style="color: red">Activate this option to select attribute</small>
                             </div>
                             <div class="col-md-8">
                                 <label class="aiz-switch aiz-switch-success mb-0">
@@ -695,7 +739,7 @@
                             <br>
                         </div>
                         <div id="variant_informations">
-                            <h3 class="mb-3">Variant informations</h3>
+                            <h3 class="mb-3">Variant Information</h3>
                             <hr>
                             <div class="row mb-3">
                                 <div class="col-md-4">
@@ -832,7 +876,7 @@
                             @if(count($product->getChildrenProductsDesc()) > 0)
                                 @foreach ($product->getChildrenProductsDesc() as $key => $children)
                                     <div data-id="{{ $children->id }}">
-                                        <h3 class="mb-3">Variant informations {{ $key + 1}}</h3>
+                                        <h3 class="mb-3">Variant Information {{ $key + 1}}</h3>
                                         <i class="fa-regular fa-circle-xmark fa-lx delete-variant" data-id={{ $children->id }} style="font-size: 16px; float: right; margin-top: -35px;" title="delete this variant"></i>
                                         <hr>
                                         <div class="row mb-3">
@@ -916,7 +960,14 @@
                                                                         </select>
                                                                     </td>
                                                                     <td><input type="number" class="form-control discount_amount-variant" value="{{ $pricing->discount_amount }}" @if($pricing->discount_type != 'amount') readonly @endif name="variant[discount_amount][{{ $children->id }}][]"></td>
-                                                                    <td><input type="number" class="form-control discount_percentage-variant" value="{{ $pricing->discount_percentage }}" @if($pricing->discount_type != 'percent') readonly @endif name="variant[discount_percentage][{{ $children->id }}][]"></td>
+                                                                    <td style="width: 19% !important;">
+                                                                        <div class="col-md-9 input-group">
+                                                                            <input type="number" class="form-control discount_percentage-variant" value="{{ $pricing->discount_percentage }}" @if($pricing->discount_type != 'percent') readonly @endif name="variant[discount_percentage][{{ $children->id }}][]">
+                                                                            <div class="input-group-append">
+                                                                                <span class="input-group-text">%</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
                                                                     <td>
                                                                         <i class="las la-plus btn-add-pricing" data-id_variant="{{ $children->id }}" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                                                         <i class="las la-trash delete_pricing_canfiguration" data-pricing_id="{{ $pricing->id }}" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
@@ -1366,6 +1417,7 @@ function submitForm() {
 
         $('body #bloc_pricing_configuration_variant').hide();
         $('body #bloc_sample_pricing_configuration_variant').hide();
+        $('.shipper').multiSelect();
         $('body .btn-variant-pricing').hide();
         var numbers_variant = "{{ count($product->getChildrenProducts()) }}";
         numbers_variant = parseInt(numbers_variant);
@@ -1448,19 +1500,23 @@ function submitForm() {
                         AIZ.plugins.bootstrapSelect('refresh');
                     } else {
                         $('body input[name="activate_attributes"]').prop('checked', false);
-                        swal(
-                            'Cancelled',
-                            "You are unable to enable the variant option because the selected category lacks any attributes.",
-                            'error'
-                        )
+                        Swal.fire({
+                            title: 'Cancelled',
+                            text: 'You are unable to enable the variant option because the selected category lacks any attributes.',
+                            icon: 'error',
+                            scrollbarPadding: false,
+                            backdrop:false,
+                        })
                     }
                 } else {
                     $('body input[name="activate_attributes"]').prop('checked', false);
-                    swal(
-                            'Cancelled',
-                            'Select a category before activating the variant option.',
-                            'error'
-                        )
+                    Swal.fire({
+                        title: 'Cancelled',
+                        text: 'Select a category before activating the variant option.',
+                        icon: 'error',
+                        scrollbarPadding: false,
+                        backdrop:false,
+                    });
                 }
             }
         });
@@ -1651,18 +1707,22 @@ function submitForm() {
             // Maximum number of allowed files
             var maxFiles = 10;
             if (all_files_length > maxFiles) {
-                swal(
-                    'Cancelled',
-                    '{{ translate("You can only upload a maximum of 10 files.")}}',
-                    'error'
-                )
+                Swal.fire({
+                    title: 'Cancelled',
+                    text: '{{ translate("You can only upload a maximum of 10 files.")}}',
+                    icon: 'error',
+                    scrollbarPadding: false,
+                    backdrop:false,
+                });
                 this.value = ''; // Clear the file input
             }else if(all_files_length == 0){
-                swal(
-                    'Cancelled',
-                    '{{ translate("You need to select at least one picture.")}}',
-                    'error'
-                )
+                Swal.fire({
+                    title: 'Cancelled',
+                    text: '{{ translate("You need to select at least one picture.")}}',
+                    icon: 'error',
+                    scrollbarPadding: false,
+                    backdrop:false,
+                });
                 var labelText = '0 file selected';
                 $(this).next('.custom-file-label').html(labelText);
             }else if( (all_files_length <= maxFiles) && (all_files_length > 0)){
@@ -1893,7 +1953,7 @@ function submitForm() {
             // Loop through each h3 tag and display its order
             $(divId + " h3").each(function(index) {
                 var order = h3Count - index; // Number in descending order
-                $(this).text("Variant informations  " + order);
+                $(this).text("Variant Information  " + order);
             });
             numbers_variant++;
         });
@@ -2123,31 +2183,37 @@ function submitForm() {
                         if(difference > 1){
                             $('body .min-qty').eq(j).css('border-color', 'red');
                             $('body .max-qty').eq(j - 1).css('border-color', 'red');
-                            swal(
-                                'Cancelled',
-                                'Ensure that the difference between the minimum and maximum quantities of the preceding interval must be equal to one',
-                                'error'
-                            )
+                            Swal.fire({
+                                title: 'Cancelled',
+                                text: '{{ translate("Ensure that the difference between the minimum and maximum quantities of the preceding interval must be equal to one.")}}',
+                                icon: 'error',
+                                scrollbarPadding: false,
+                                backdrop:false,
+                            });
                             overlapFound = true;
                         }
 
                         if (minVal >= otherMinVal && minVal <= otherMaxVal) { //check if min value exist in another interval
                             $('body .min-qty').eq(i).css('border-color', 'red');
-                            swal(
-                                'Cancelled',
-                                'Overlap found',
-                                'error'
-                            )
+                            Swal.fire({
+                                title: 'Cancelled',
+                                text: '{{ translate("Overlap found.")}}',
+                                icon: 'error',
+                                scrollbarPadding: false,
+                                backdrop:false,
+                            });
                             overlapFound = true;
                         }
 
                         if(maxVal >= otherMinVal && maxVal <= otherMaxVal){ //check if max value exist in another interval
                             $('body .max-qty').eq(i).css('border-color', 'red');
-                            swal(
-                                'Cancelled',
-                                'Overlap found',
-                                'error'
-                            )
+                            Swal.fire({
+                                title: 'Cancelled',
+                                text: '{{ translate("Overlap found.")}}',
+                                icon: 'error',
+                                scrollbarPadding: false,
+                                backdrop:false,
+                            });
                             overlapFound = true;
                         }
                     }
@@ -2198,7 +2264,14 @@ function submitForm() {
                                         </select>
                                     </td>
                                     <td><input type="number" class="form-control discount_amount" name="variant[discount_amount][`+ id_variant +`][]"></td>
-                                    <td><input type="number" class="form-control discount_percentage" name="variant[discount_percentage][`+ id_variant +`][]"></td>
+                                    <td style="width: 19% !important;">
+                                        <div class="col-md-9 input-group">
+                                            <input type="number" class="form-control discount_percentage" name="variant[discount_percentage][`+ id_variant +`][]">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                        </div>
+                                    </td>
                                     <td>
                                         <i class="las la-plus btn-add-pricing" data-id_variant="` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                         <i class="las la-trash delete_pricing_canfiguration" data-pricing_id="` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
@@ -2219,7 +2292,14 @@ function submitForm() {
                                         </select>
                                     </td>
                                     <td><input type="number" class="form-control discount_amount" name="variant_pricing-from`+ newvariant +`[discount_amount][]"></td>
-                                    <td><input type="number" class="form-control discount_percentage" name="variant_pricing-from'`+ newvariant +`[discount_percentage][]"></td>
+                                    <td style="width: 19% !important;">
+                                        <div class="col-md-9 input-group">
+                                            <input type="number" class="form-control discount_percentage" name="variant_pricing-from`+ newvariant +`[discount_percentage][]">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                        </div>
+                                    </td>
                                     <td>
                                         <i class="las la-plus btn-add-pricing" data-id_variant="` + newvariant + `" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                         <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
@@ -2242,7 +2322,14 @@ function submitForm() {
                                         </select>
                                     </td>
                                     <td><input type="number" class="form-control discount_amount-variant"></td>
-                                    <td><input type="number" class="form-control discount_percentage-variant"></td>
+                                    <td style="width: 19% !important;">
+                                        <div class="col-md-9 input-group">
+                                            <input type="number" class="form-control discount_percentage-variant">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                        </div>
+                                    </td>
                                     <td>
                                         <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                         <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
@@ -2264,7 +2351,14 @@ function submitForm() {
                                         </select>
                                     </td>
                                     <td><input type="number" class="form-control discount_amount" name="discount_amount[]"></td>
-                                    <td><input type="number" class="form-control discount_percentage" name="discount_percentage[]"></td>
+                                    <td style="width: 19% !important;">
+                                        <div class="col-md-9 input-group">
+                                            <input type="number" class="form-control discount_percentage" name="discount_percentage[]">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                        </div>
+                                    </td>
                                     <td>
                                         <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                         <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
@@ -2322,7 +2416,14 @@ function submitForm() {
                                         </select>
                                     </td>
                                     <td><input type="number" class="form-control discount_amount" name="discount_amount[]"></td>
-                                    <td><input type="number" class="form-control discount_percentage" name="discount_percentage[]"></td>
+                                    <td style="width: 19% !important;">
+                                        <div class="col-md-9 input-group">
+                                            <input type="number" class="form-control discount_percentage" name="discount_percentage[]">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                        </div>
+                                    </td>
                                     <td>
                                         <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                         <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
@@ -2364,20 +2465,24 @@ function submitForm() {
                                     }
 
                                 }else{
-                                    swal(
-                                        'Cancelled',
-                                        'Something went wrong.',
-                                        'warning'
-                                    )
+                                    Swal.fire({
+                                        title: 'Cancelled',
+                                        text: '{{ translate("Something went wrong.")}}',
+                                        icon: 'warning',
+                                        scrollbarPadding: false,
+                                        backdrop:false,
+                                    });
                                 }
                             }
                         })
                     } else if (result.dismiss === 'cancel') {
-                        swal(
-                            'Cancelled',
-                            'Deletion successfully reverted.',
-                            'warning'
-                        )
+                        Swal.fire({
+                            title: 'Cancelled',
+                            text: '{{ translate("Deletion successfully reverted.")}}',
+                            icon: 'warning',
+                            scrollbarPadding: false,
+                            backdrop:false,
+                        });
                     }
                 })
             }
@@ -2464,11 +2569,13 @@ function submitForm() {
 
             //$('#dropifyUploadedFiles').empty();
             if (new_size > 10) {
-                swal(
-                            'Cancelled',
-                            'Maximum 10 photos allowed.',
-                            'error'
-                        )
+                Swal.fire({
+                        title: 'Cancelled',
+                        text: '{{ translate("Maximum 10 photos allowed.")}}',
+                        icon: 'error',
+                        scrollbarPadding: false,
+                        backdrop:false,
+                    });
                 $(this).val('');
                 removeDropify();
                 dropifyInput.replaceWith(originalInput.clone(true));
@@ -2485,11 +2592,13 @@ function submitForm() {
                 }
 
                 if (exceedingFiles.length > 0) {
-                    swal(
-                            'Cancelled',
-                            'Following files exceed 2MB limit: ' + exceedingFiles.join(', '),
-                            'error'
-                        )
+                    Swal.fire({
+                        title: 'Cancelled',
+                        text: 'Following files exceed 2MB limit: ' + exceedingFiles.join(', '),
+                        icon: 'error',
+                        scrollbarPadding: false,
+                        backdrop:false,
+                    });
                     $(this).val('');
                     removeDropify();
                     dropifyInput.replaceWith(originalInput.clone(true));
@@ -2523,11 +2632,13 @@ function submitForm() {
                     }
                     setTimeout(function() {
                         if (exceedingFilesDimension.length > 0) {
-                            swal(
-                                'Cancelled',
-                                'Following files exceeded 1200px width or height limit: ' + exceedingFilesDimension.join(', '),
-                                'error'
-                            )
+                            Swal.fire({
+                                title: 'Cancelled',
+                                text: 'Following files exceeded 1200px width or height limit: ' + exceedingFilesDimension.join(', '),
+                                icon: 'error',
+                                scrollbarPadding: false,
+                                backdrop:false,
+                            });
                             $(this).val('');
                             removeDropify();
                             dropifyInput.replaceWith(originalInput.clone(true));
@@ -2565,11 +2676,13 @@ function submitForm() {
 
             //$('#dropifyUploadedFilesThumbnail').empty();
             if (new_size > 10) {
-                swal(
-                            'Cancelled',
-                            'Maximum 10 photos allowed.',
-                            'error'
-                        )
+                Swal.fire({
+                    title: 'Cancelled',
+                    text: 'Maximum 10 photos allowed.',
+                    icon: 'error',
+                    scrollbarPadding: false,
+                    backdrop:false,
+                });
                 $(this).val('');
                 removeDropifyThumbnail();
                 dropifyInputThumbnail.replaceWith(dropifyInputThumbnail.clone(true));
@@ -2585,11 +2698,13 @@ function submitForm() {
                 }
 
                 if (exceedingFiles.length > 0) {
-                    swal(
-                            'Cancelled',
-                            'Following files exceed 512Ko limit: ' + exceedingFiles.join(', '),
-                            'error'
-                        )
+                    Swal.fire({
+                        title: 'Cancelled',
+                        text: 'Following files exceed 512Ko limit: ' + exceedingFiles.join(', '),
+                        icon: 'error',
+                        scrollbarPadding: false,
+                        backdrop:false,
+                    });
                     $(this).val('');
                     removeDropifyThumbnail();
                     dropifyInputThumbnail.replaceWith(originalInputThumbnail.clone(true));
@@ -2624,11 +2739,13 @@ function submitForm() {
 
                     setTimeout(function() {
                         if (exceedingFilesDimension.length > 0) {
-                            swal(
-                                'Cancelled',
-                                'Please upload images with dimensions between 300px and 400px for both width and height: ' + exceedingFilesDimension.join(', '),
-                                'error'
-                            )
+                            Swal.fire({
+                                title: 'Cancelled',
+                                text: 'Please upload images with dimensions between 300px and 400px for both width and height: ' + exceedingFilesDimension.join(', '),
+                                icon: 'error',
+                                scrollbarPadding: false,
+                                backdrop:false,
+                            });
                             $(this).val('');
                             removeDropifyThumbnail();
                             dropifyInputThumbnail.replaceWith(originalInputThumbnail.clone(true));
@@ -2680,11 +2797,13 @@ function submitForm() {
                 var totalSize = 0;
 
                 if (fileSize > maxSize) {
-                    swal(
-                        'Cancelled',
-                        'File size exceeds 15MB.',
-                        'error'
-                        )
+                    Swal.fire({
+                        title: 'Cancelled',
+                        text: 'File size exceeds 15MB.',
+                        icon: 'error',
+                        scrollbarPadding: false,
+                        backdrop:false,
+                    });
                 } else {
                     $('.file_input').each(function() {
                         var files = $(this)[0].files;
@@ -2698,11 +2817,13 @@ function submitForm() {
 
                     if (totalSize > maxAllUploadedSize) {
                         // If combined file size exceeds the limit, show an error message or take necessary action
-                        swal(
-                            'Cancelled',
-                            'Total file size exceeds 25MB. Please select smaller files.',
-                            'error'
-                            )
+                        Swal.fire({
+                            title: 'Cancelled',
+                            text: 'Total file size exceeds 25MB. Please select smaller files.',
+                            icon: 'error',
+                            scrollbarPadding: false,
+                            backdrop:false,
+                        });
                         // Reset the file inputs to prevent exceeding the limit
                         $(this).val('');
                     } else {
@@ -2766,11 +2887,13 @@ function submitForm() {
                             dataType: 'JSON',
                             success: function(dataResult) {
                                 if(dataResult.status != 'failed'){
-                                    swal(
-                                        'Deleted',
-                                        'Deleted successfully',
-                                        'success'
-                                    )
+                                    Swal.fire({
+                                        title: 'Deleted',
+                                        text: 'Deleted successfully.',
+                                        icon: 'success',
+                                        scrollbarPadding: false,
+                                        backdrop:false,
+                                    });
                                     current.parent().parent().remove();
 
                                     var numberOfChildren = $('#documents_bloc > div').length;
@@ -2806,11 +2929,13 @@ function submitForm() {
                             }
                         })
                     } else if (result.dismiss === 'cancel') {
-                        swal(
-                            'Cancelled',
-                            'Deletion successfully reverted.',
-                            'warning'
-                        )
+                        Swal.fire({
+                            title: 'Cancelled',
+                            text: 'Deletion successfully reverted.',
+                            icon: 'warning',
+                            scrollbarPadding: false,
+                            backdrop:false,
+                        });
                     }
                 })
             }else{
@@ -2841,21 +2966,25 @@ function submitForm() {
                             dataType: 'JSON',
                             success: function(dataResult) {
                                 if(dataResult.status != 'failed'){
-                                    swal(
-                                        'Deleted',
-                                        'Deleted successfully',
-                                        'success'
-                                    )
+                                    Swal.fire({
+                                        title: 'Deleted',
+                                        text: 'Deleted successfully.',
+                                        icon: 'success',
+                                        scrollbarPadding: false,
+                                        backdrop:false,
+                                    });
                                     current.parent().remove();
                                 }
                             }
                         })
                     } else if (result.dismiss === 'cancel') {
-                        swal(
-                            'Cancelled',
-                            'Deletion successfully reverted.',
-                            'warning'
-                        )
+                        Swal.fire({
+                            title: 'Cancelled',
+                            text: 'Deletion successfully reverted.',
+                            icon: 'warning',
+                            scrollbarPadding: false,
+                            backdrop:false,
+                        });
                     }
                 })
             }
@@ -2885,12 +3014,6 @@ function submitForm() {
 
                             }
                         })
-                    } else if (result.dismiss === 'cancel') {
-                        swal(
-                            'Cancelled',
-                            'Deletion successfully reverted.',
-                            'warning'
-                        )
                     }
                 })
             }
@@ -2906,7 +3029,7 @@ function submitForm() {
             // // Loop through each h3 tag and display its order
             // $(divId + " h3").each(function(index) {
             //     var order = h3Count - index; // Number in descending order
-            //     $(this).text("Variant informations  " + order);
+            //     $(this).text("Variant Information  " + order);
             // });
         })
 
@@ -2917,11 +3040,13 @@ function submitForm() {
                 count_shippers = parseInt(count_shippers);
                 if(count_shippers == 0){
                     $('body input[name="activate_third_party"]').prop('checked', false);
-                    swal(
-                            'Cancelled',
-                            "You don't have any warehouse supported by our shippers",
-                            'error'
-                        )
+                    Swal.fire({
+                        title: 'Cancelled',
+                        text: "You don't have any warehouse supported by our shippers",
+                        icon: 'error',
+                        scrollbarPadding: false,
+                        backdrop:false,
+                    });
                 }else{
                     $('#bloc_third_party input[type="number"]').each(function() {
                         // Change readonly attribute from true to false
@@ -2959,11 +3084,13 @@ function submitForm() {
             var unit_third_party = $('#unit_third_party').val();
 
             if((weight == '') || (length == '') ||(width == '') ||(height == '') ||(min_third_party == '') ||(max_third_party == '')){
-                swal(
-                        'Cancelled',
-                        "Please ensure that all required fields are filled in.",
-                        'error'
-                    )
+                Swal.fire({
+                    title: 'Cancelled',
+                    text: "Please ensure that all required fields are filled in.",
+                    icon: 'error',
+                    scrollbarPadding: false,
+                    backdrop:false,
+                });
             }else{
                 length = parseInt(length);
                 height = parseInt(height);
@@ -3002,7 +3129,7 @@ function submitForm() {
                                     <td><input type="number"  class="form-control min-qty-shipping" id=""></td>
                                     <td><input type="number"  class="form-control max-qty-shipping" id=""></td>
                                     <td>
-                                        <select multiple class="form-control shipper" >
+                                        <select multiple class="shipper" >
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                         </select>
@@ -3037,7 +3164,7 @@ function submitForm() {
                                     <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id=""></td>
                                     <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id=""></td>
                                     <td>
-                                        <select multiple class="form-control shipper" name="shipper[${row}][]">
+                                        <select multiple class="shipper" name="shipper[${row}][]">
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                         </select>
@@ -3073,7 +3200,7 @@ function submitForm() {
                                     <td><input type="number" name="variant[from_shipping][` + id_variant + `][]" class="form-control min-qty-shipping" id=""></td>
                                     <td><input type="number" name="variant[to_shipping][` + id_variant + `][]" class="form-control max-qty-shipping" id=""></td>
                                     <td>
-                                        <select multiple class="form-control shipper" name="variant[shipper][` + id_variant + `][${row}][]">
+                                        <select multiple class="shipper" name="variant[shipper][` + id_variant + `][${row}][]">
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                         </select>
@@ -3108,7 +3235,7 @@ function submitForm() {
                                     <td><input type="number" name="variant_shipping-${id_new_variant}[from][]" class="form-control min-qty-shipping" id=""></td>
                                     <td><input type="number" name="variant_shipping-${id_new_variant}[to][]" class="form-control max-qty-shipping" id=""></td>
                                     <td>
-                                        <select multiple class="form-control shipper" name="variant_shipping-${id_new_variant}[shipper][${row}][]">
+                                        <select multiple class="shipper" name="variant_shipping-${id_new_variant}[shipper][${row}][]">
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                         </select>
@@ -3141,6 +3268,7 @@ function submitForm() {
 
             // add another row in shipping configuration
             $(this).parent().parent().parent().append(html_to_add);
+            $(this).parent().parent().parent().find('.shipper:last').multiSelect();
         });
 
         $('body').on('click', '.delete_shipping_canfiguration', function(){
@@ -3179,11 +3307,13 @@ function submitForm() {
                             success: function(dataResult) {
                                if(dataResult.status == 'success'){
                                 current.parent().parent().remove();
-                                swal(
-                                        'Deleted',
-                                        'Deleted successfully',
-                                        'success'
-                                    )
+                                Swal.fire({
+                                    title: 'Deleted',
+                                    text: "Deleted successfully",
+                                    icon: 'success',
+                                    scrollbarPadding: false,
+                                    backdrop:false,
+                                });
                                 var count =0;
                                 current_parent.find('.shipper').each(function(index) {
                                     if((new_variant_id == undefined) && (old_variant_id == undefined)){
@@ -3197,21 +3327,25 @@ function submitForm() {
 
                                     count++
                                 });
-                               }else{
-                                swal(
-                                        'Cancelled',
-                                        "Something went wrong.",
-                                        'error'
-                                    )
-                               }
+                                }else{
+                                    Swal.fire({
+                                        title: 'Cancelled',
+                                        text: "Something went wrong",
+                                        icon: 'error',
+                                        scrollbarPadding: false,
+                                        backdrop:false,
+                                    });
+                                }
                             }
                         })
                     } else if (result.dismiss === 'cancel') {
-                        swal(
-                            'Cancelled',
-                            'Deletion successfully reverted.',
-                            'warning'
-                        )
+                        Swal.fire({
+                            title: 'Cancelled',
+                            text: "Deletion successfully reverted.",
+                            icon: 'warning',
+                            scrollbarPadding: false,
+                            backdrop:false,
+                        });
                     }
                 })
             }
@@ -3227,11 +3361,14 @@ function submitForm() {
 
             if(selected.indexOf('third_party') !== -1){
                 if(count_shippers == 0){
-                    swal(
-                        'Cancelled',
-                        "You cannot choose a third-party option because our shippers are unable to reach the warehouse.",
-                        'error'
-                    )
+
+                    Swal.fire({
+                            title: 'Cancelled',
+                            text: "You cannot choose a third-party option because our shippers are unable to reach the warehouse.",
+                            icon: 'error',
+                            scrollbarPadding: false,
+                            backdrop:false,
+                        });
 
                     $(this).find("option[value='third_party']").prop('disabled', false);
                 }else{
@@ -3244,11 +3381,13 @@ function submitForm() {
                     var max_third_party = $('#max_third_party').val();
                     var unit_third_party = $('#unit_third_party').val();
                     if((weight == '') || (length == '') ||(width == '') ||(height == '') ||(min_third_party == '') ||(max_third_party == '')){
-                        swal(
-                                'Cancelled',
-                                "Please ensure that all required fields are filled to know all information about your package.",
-                                'error'
-                            )
+                            Swal.fire({
+                                title: 'Cancelled',
+                                text: "Please ensure that all required fields are filled to know all information about your package.",
+                                icon: 'error',
+                                scrollbarPadding: false,
+                                backdrop:false,
+                            });
                             $(this).find("option[value='third_party']").prop('disabled', false);
                             $(this).find("option[value='third_party']").prop('selected', false);
                     }else{
@@ -3266,11 +3405,13 @@ function submitForm() {
                         }
 
                         if(chargeable_weight > 30){
-                            swal(
-                                'Cancelled',
-                                "Chargeable Weight = " + Number(chargeable_weight.toFixed(2)) + ", then not accepted by our shipper",
-                                'error'
-                            )
+                            Swal.fire({
+                                title: 'Cancelled',
+                                text: "Chargeable Weight = " + Number(chargeable_weight.toFixed(2)) + ", then not accepted by our shipper",
+                                icon: 'error',
+                                scrollbarPadding: false,
+                                backdrop:false,
+                            });
 
                             $(this).find("option[value='third_party']").prop("disabled", true);
                             $(this).find("option[value='third_party']").prop('selected', false);
@@ -3313,23 +3454,27 @@ function submitForm() {
                     $(this).parent().parent().find('.flat_rate_shipping').val(null);
                 }
             }else{
-                swal(
-                        'Cancelled',
-                        "You cannot selected, if you don't selected vendor in shippers",
-                        'error'
-                    )
+                Swal.fire({
+                    title: 'Cancelled',
+                    text: "You cannot selected, if you don't selected vendor in shippers",
+                    icon: 'error',
+                    scrollbarPadding: false,
+                    backdrop:false,
+                });
             }
         })
 
         $('body').on('change', '.shipping_charge', function(){
             if($(this).parent().parent().find('.paid').val() == 'vendor'){
-                swal(
-                        'Cancelled',
-                        "You cannot choose shipping charge when it is paid by vendor.",
-                        'error'
-                    )
+                Swal.fire({
+                    title: 'Cancelled',
+                    text: "You cannot choose shipping charge when it is paid by vendor.",
+                    icon: 'error',
+                    scrollbarPadding: false,
+                    backdrop:false,
+                });
 
-                    $(this).find('option').eq(0).prop('selected', true);
+                $(this).find('option').eq(0).prop('selected', true);
             }else{
                 if($(this).val() == "flat"){
                     $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', false);

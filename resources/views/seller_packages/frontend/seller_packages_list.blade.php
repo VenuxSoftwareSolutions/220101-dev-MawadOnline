@@ -1,5 +1,28 @@
 @extends('seller.layouts.app')
+@push('styles')
+<style>
+.card {
+    border: 2px solid #ccc;
+    height: 100%; /* Ensures the card body takes up full card height */
+}
+.card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* This will push your button to the bottom */
+}
+.card .card-body {
+    padding: 20px 2px;
+}
+@media (max-width: 768px) {
+    .col {
+        margin-bottom: 3rem !important ;
+    }
+}
 
+
+</style>
+
+@endpush
 @section('panel_content')
     <section class="py-8 bg-soft-primary">
         <div class="container">

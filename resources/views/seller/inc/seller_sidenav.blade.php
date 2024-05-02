@@ -49,7 +49,7 @@
                             @can('seller_show_product')
                             <li id="products" class="aiz-side-nav-item">
                                 <a href="{{ route('seller.products') }}"
-                                    class="aiz-side-nav-link {{ areActiveRoutes(['seller.products']) }}">
+                                    class="aiz-side-nav-link {{ areActiveRoutes(['seller.products','seller.products.create','seller.products.edit']) }}">
                                     <span class="aiz-side-nav-text">{{ translate('Products') }}</span>
                                 </a>
                             </li>

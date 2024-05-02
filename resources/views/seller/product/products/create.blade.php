@@ -1,4 +1,5 @@
 @extends('seller.layouts.app')
+@push('styles')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
@@ -53,8 +54,31 @@
     .error {
         border-color: red !important; /* Add red border */
     }
-</style>
+    .multi-select-button {
+        height: 41px;
+        border: 1px solid #e2e5ec !important;
+    }
 
+    h6{
+        font-size: 0.9rem !important;
+    }
+
+    .form-control{
+        color: #222224 !important;
+    }
+
+    body {
+        background-color: rgb(247, 248, 250) !important;
+    }
+    .aiz-content-wrapper{
+        background-color: rgb(247, 248, 250) !important;
+    }
+    .aiz-main-content .pr-lg-25px {
+        background-color: rgb(247, 248, 250) !important;
+    }
+
+</style>
+@endpush
 @section('panel_content')
     <div class="aiz-titlebar mt-2 mb-4">
         <div class="row align-items-center">
@@ -251,7 +275,7 @@
                         <hr> --}}
                         <div>
                             <div id="bloc-pricing-parent" class="bloc-default-shipping-style">
-                                <h5>{{ translate('Default Pricing Configuration') }}</h5>
+                                <h6>{{ translate('Default Product Pricing Configuration') }}</h6>
                                 <hr>
                                 <table class="table" id="table_pricing_configuration" class="bloc_pricing_configuration_variant">
                                     <thead>
@@ -280,7 +304,14 @@
                                                 </select>
                                             </td>
                                             <td><input type="number" class="form-control discount_amount" name="discount_amount[]"></td>
-                                            <td><input type="number" class="form-control discount_percentage" name="discount_percentage[]"></td>
+                                            <td style="width: 19% !important;">
+                                                <div class="col-md-9 input-group">
+                                                    <input type="number" class="form-control discount_percentage" name="discount_percentage[]">
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text">%</span>
+                                                    </div>
+                                                </div>
+                                            </td>
                                             <td>
                                                 <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                             </td>
@@ -289,7 +320,7 @@
                                 </table>
                             </div>
                             <div class="bloc-default-shipping-style" style="margin-top: 22px;">
-                                <h5>{{ translate('Default Sample Pricing Configuration') }}</h5>
+                                <h6>{{ translate('Default Sample Pricing Configuration') }}</h6>
                                 <hr>
                                 <div class="row mb-3">
                                     <div class="col-md-3">
@@ -357,12 +388,11 @@
                     </div>
                     <div class="card-body">
                         <div class="bloc-default-shipping-style">
-                            <h5>{{ translate('Mawadonline 3rd party configuration') }}</h5>
+                            <h6>{{ ucfirst(translate('MawadOnline 3rd Party Configuration')) }}</h6>
                             <hr>
                             <div class="row mb-3">
                                 <div class="col-md-4">
-                                    <input type="text" class="form-control" value="{{translate('Do you want to activate MawadOnline 3rd Party ?')}}" disabled>
-                                    <small style="color:red">Fill all required fields for shippers to confirm delivery ability.</small>
+                                    <input type="text" class="form-control" value="{{translate('Activate MawadOnline 3rd Party Shipping')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
                                     <label class="aiz-switch aiz-switch-success mb-0">
@@ -378,7 +408,7 @@
                                             <th>{{translate('Length (Cm)')}}</th>
                                             <th>{{translate('Width (Cm)')}}</th>
                                             <th>{{translate('Height (Cm)')}}</th>
-                                            <th>{{translate('Weight Package')}}</th>
+                                            <th>{{translate('Package Weight')}}</th>
                                             <th>{{translate('Weight unit')}}</th>
                                             <th>{{translate('Breakable')}}</th>
                                             <th>{{translate('Unit')}}</th>
@@ -417,13 +447,14 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                                <div id="result_calculate_third_party">
+                            </div>
+                            <small>Fill all required fields for shippers to confirm delivery ability.</small>
+                            <div id="result_calculate_third_party">
 
-                                </div>
                             </div>
                         </div>
                         <div class="bloc-default-shipping-style" style="margin-top: 22px;">
-                            <h5>{{ translate('Shipping configuration') }}</h5>
+                            <h6>{{ translate('Shipping configuration') }}</h6>
                             <hr>
                             <div>
                                 <table class="table" id="table_shipping_configuration" class="bloc_shipping_configuration_variant">
@@ -447,7 +478,11 @@
                                             <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id=""></td>
                                             <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id=""></td>
                                             <td>
-                                                <select multiple class="form-control shipper" name="shipper[0][]">
+                                                {{-- <select multiple class="form-control shipper" name="shipper[0][]">
+                                                    <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                                    <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
+                                                </select> --}}
+                                                <select class="shipper" name="shipper[0][]"  multiple>
                                                     <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                                     <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                                 </select>
@@ -548,13 +583,12 @@
                 {{-- Bloc variant & attributes --}}
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0 h6">{{translate('Create variants')}}</h5>
+                        <h5 class="mb-0 h6">{{translate('Create Variants')}}</h5>
                     </div>
                     <div class="card-body">
                         <div class="form-group row gutters-5">
                             <div class="col-md-4">
                                 <input type="text" class="form-control mb-2" value="{{translate('Activate variant option')}}" disabled>
-                                <small style="color: red">Activate this option to select attribute</small>
                             </div>
                             <div class="col-md-8">
                                 <label class="aiz-switch aiz-switch-success mb-0">
@@ -578,7 +612,7 @@
                             <br>
                         </div>
                         <div id="variant_informations">
-                            <h3 class="mb-3">Variant informations</h3>
+                            <h3 class="mb-3">Variant Information</h3>
                             <hr>
                             <div class="row mb-3">
                                 <div class="col-md-4">
@@ -847,6 +881,7 @@
 <script src="{{ static_asset('assets/js/filter-multi-select-bundle.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script> <!-- Include SweetAlert2 JS -->
 
 <script>
     var previewUrlBase  = "{{ route('seller.product.preview', ['slug' => 'PLACEHOLDER']) }}";
@@ -889,6 +924,7 @@
     }
 
     $(document).ready(function() {
+        $('.shipper').multiSelect();
         $('#variant_informations').hide();
         $('#btn-create-variant').hide();
         $('body #bloc_pricing_configuration_variant').hide();
@@ -930,19 +966,23 @@
                         AIZ.plugins.bootstrapSelect('refresh');
                     } else {
                         $('body input[name="activate_attributes"]').prop('checked', false);
-                        swal(
-                            'Cancelled',
-                            "You are unable to enable the variant option because the selected category lacks any attributes.",
-                            'error'
-                        )
+                        Swal.fire({
+                            title: 'Cancelled',
+                            text: 'You are unable to enable the variant option because the selected category lacks any attributes.',
+                            icon: 'error',
+                            scrollbarPadding: false,
+                            backdrop:false,
+                        })
                     }
                 } else {
                     $('body input[name="activate_attributes"]').prop('checked', false);
-                    swal(
-                            'Cancelled',
-                            'Select a category before activating the variant option.',
-                            'error'
-                        )
+                    Swal.fire({
+                        title: 'Cancelled',
+                        text: 'Select a category before activating the variant option.',
+                        icon: 'error',
+                        scrollbarPadding: false,
+                        backdrop:false,
+                    });
                 }
             }
         });
@@ -1099,18 +1139,22 @@
             // Maximum number of allowed files
             var maxFiles = 10;
             if (files.length > maxFiles) {
-                swal(
-                    'Cancelled',
-                    '{{ translate("You can only upload a maximum of 10 files.")}}',
-                    'error'
-                )
+                Swal.fire({
+                        title: 'Cancelled',
+                        text: '{{ translate("You can only upload a maximum of 10 files.")}}',
+                        icon: 'error',
+                        scrollbarPadding: false,
+                        backdrop:false,
+                    });
                 this.value = ''; // Clear the file input
             }else if(files.length == 0){
-                swal(
-                    'Cancelled',
-                    '{{ translate("You need to select at least one picture.")}}',
-                    'error'
-                )
+                Swal.fire({
+                        title: 'Cancelled',
+                        text: '{{ translate("You need to select at least one picture.")}}',
+                        icon: 'error',
+                        scrollbarPadding: false,
+                        backdrop:false,
+                    });
                 var labelText = '0 file selected';
                 $(this).next('.custom-file-label').html(labelText);
             }else if( (files.length <= maxFiles) && (files.length > 0)){
@@ -1337,7 +1381,7 @@
             // Loop through each h3 tag and display its order
             $(divId + " h3").each(function(index) {
                 var order = h3Count - index; // Number in descending order
-                $(this).text("Variant informations  " + order);
+                $(this).text("Variant Information  " + order);
             });
             numbers_variant++;
         });
@@ -1439,6 +1483,11 @@
                         $(element).removeAttr("name");
                     }
                 });
+                clonedElement.find('.btn-add-pricing').each(function(index, element) {
+                    if(is_variant != undefined){
+                        $(element).attr('data-id_variant', is_variant);
+                    }
+                });
                 clonedElement.find('.discount_type').each(function(index, element) {
                     $(element).removeClass("discount_type").addClass("discount_type-variant");
                     $(element).removeClass("aiz-selectpicker")
@@ -1522,31 +1571,37 @@
                         if(difference > 1){
                             $('body .min-qty').eq(j).css('border-color', 'red');
                             $('body .max-qty').eq(j - 1).css('border-color', 'red');
-                            swal(
-                                'Cancelled',
-                                'Ensure that the difference between the minimum and maximum quantities of the preceding interval must be equal to one',
-                                'error'
-                            )
+                            Swal.fire({
+                                title: 'Cancelled',
+                                text: '{{ translate("Ensure that the difference between the minimum and maximum quantities of the preceding interval must be equal to one.")}}',
+                                icon: 'error',
+                                scrollbarPadding: false,
+                                backdrop:false,
+                            });
                             overlapFound = true;
                         }
 
                         if (minVal >= otherMinVal && minVal <= otherMaxVal) { //check if min value exist in another interval
                             $('body .min-qty').eq(i).css('border-color', 'red');
-                            swal(
-                                'Cancelled',
-                                'Overlap found',
-                                'error'
-                            )
+                            Swal.fire({
+                                title: 'Cancelled',
+                                text: '{{ translate("Overlap found.")}}',
+                                icon: 'error',
+                                scrollbarPadding: false,
+                                backdrop:false,
+                            });
                             overlapFound = true;
                         }
 
                         if(maxVal >= otherMinVal && maxVal <= otherMaxVal){ //check if max value exist in another interval
                             $('body .max-qty').eq(i).css('border-color', 'red');
-                            swal(
-                                'Cancelled',
-                                'Overlap found',
-                                'error'
-                            )
+                            Swal.fire({
+                                title: 'Cancelled',
+                                text: '{{ translate("Overlap found.")}}',
+                                icon: 'error',
+                                scrollbarPadding: false,
+                                backdrop:false,
+                            });
                             overlapFound = true;
                         }
                     }
@@ -1643,7 +1698,7 @@
         });
 
         $('body').on('click', '.btn-add-pricing', function() {
-            var newvariant = $(this).data('newvariant-id');
+            var newvariant = $(this).data('id_variant');
 
             if(newvariant != undefined){
                 var html_to_add = `<tr>
@@ -1659,7 +1714,14 @@
                                         </select>
                                     </td>
                                     <td><input type="number" class="form-control discount_amount" name="variant_pricing-from`+ newvariant +`[discount_amount][]"></td>
-                                    <td><input type="number" class="form-control discount_percentage" name="variant_pricing-from`+ newvariant +`[discount_percentage][]"></td>
+                                    <td style="width: 19% !important;">
+                                        <div class="col-md-9 input-group">
+                                            <input type="number" class="form-control discount_percentage" name="variant_pricing-from`+ newvariant +`[discount_percentage][]">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                        </div>
+                                    </td>
                                     <td>
                                         <i class="las la-plus btn-add-pricing" data-id_variant="` + newvariant + `" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                         <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
@@ -1682,7 +1744,14 @@
                                         </select>
                                     </td>
                                     <td><input type="number" class="form-control discount_amount-variant"></td>
-                                    <td><input type="number" class="form-control discount_percentage-variant"></td>
+                                    <td style="width: 19% !important;">
+                                        <div class="col-md-9 input-group">
+                                            <input type="number" class="form-control discount_percentage-variant">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                        </div>
+                                    </td>
                                     <td>
                                         <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                         <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
@@ -1704,7 +1773,14 @@
                                         </select>
                                     </td>
                                     <td><input type="number" class="form-control discount_amount" name="discount_amount[]"></td>
-                                    <td><input type="number" class="form-control discount_percentage" name="discount_percentage[]"></td>
+                                    <td style="width: 19% !important;">
+                                        <div class="col-md-9 input-group">
+                                            <input type="number" class="form-control discount_percentage" name="discount_percentage[]">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                        </div>
+                                    </td>
                                     <td>
                                         <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                         <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
@@ -1822,11 +1898,13 @@
             let files = $(this)[0].files;
             $('#dropifyUploadedFiles').empty();
             if (files.length > 10) {
-                swal(
-                            'Cancelled',
-                            'Maximum 10 photos allowed.',
-                            'error'
-                        )
+                Swal.fire({
+                        title: 'Cancelled',
+                        text: '{{ translate("Maximum 10 photos allowed.")}}',
+                        icon: 'error',
+                        scrollbarPadding: false,
+                        backdrop:false,
+                    });
                 $(this).val('');
                 removeDropify();
                 dropifyInput.replaceWith(originalInput.clone(true));
@@ -1843,11 +1921,13 @@
                 }
 
                 if (exceedingFiles.length > 0) {
-                    swal(
-                            'Cancelled',
-                            'Following files exceed 2MB limit: ' + exceedingFiles.join(', '),
-                            'error'
-                        )
+                    Swal.fire({
+                        title: 'Cancelled',
+                        text: 'Following files exceed 2MB limit: ' + exceedingFiles.join(', '),
+                        icon: 'error',
+                        scrollbarPadding: false,
+                        backdrop:false,
+                    });
                     $(this).val('');
                     removeDropify();
                     dropifyInput.replaceWith(originalInput.clone(true));
@@ -1881,11 +1961,13 @@
                     }
                     setTimeout(function() {
                         if (exceedingFilesDimension.length > 0) {
-                            swal(
-                                'Cancelled',
-                                'Following files exceeded 1200px width or height limit: ' + exceedingFilesDimension.join(', '),
-                                'error'
-                            )
+                            Swal.fire({
+                                title: 'Cancelled',
+                                text: 'Following files exceeded 1200px width or height limit: ' + exceedingFilesDimension.join(', '),
+                                icon: 'error',
+                                scrollbarPadding: false,
+                                backdrop:false,
+                            });
                             $(this).val('');
                             removeDropify();
                             dropifyInput.replaceWith(originalInput.clone(true));
@@ -1921,11 +2003,13 @@
             let files = $(this)[0].files;
             $('#dropifyUploadedFilesThumbnail').empty();
             if (files.length > 10) {
-                swal(
-                            'Cancelled',
-                            'Maximum 10 photos allowed.',
-                            'error'
-                        )
+                Swal.fire({
+                        title: 'Cancelled',
+                        text: '{{ translate("Maximum 10 photos allowed.")}}',
+                        icon: 'error',
+                        scrollbarPadding: false,
+                        backdrop:false,
+                    });
                 $(this).val('');
                 removeDropifyThumbnail();
                 dropifyInputThumbnail.replaceWith(dropifyInputThumbnail.clone(true));
@@ -1941,11 +2025,13 @@
                 }
 
                 if (exceedingFiles.length > 0) {
-                    swal(
-                            'Cancelled',
-                            'Following files exceed 512Ko limit: ' + exceedingFiles.join(', '),
-                            'error'
-                        )
+                    Swal.fire({
+                        title: 'Cancelled',
+                        text: 'Following files exceed 512Ko limit: ' + exceedingFiles.join(', '),
+                        icon: 'error',
+                        scrollbarPadding: false,
+                        backdrop:false,
+                    });
                     $(this).val('');
                     removeDropifyThumbnail();
                     dropifyInputThumbnail.replaceWith(originalInputThumbnail.clone(true));
@@ -1980,11 +2066,13 @@
 
                     setTimeout(function() {
                         if (exceedingFilesDimension.length > 0) {
-                            swal(
-                                'Cancelled',
-                                'Please upload images with dimensions between 300px and 400px for both width and height: ' + exceedingFilesDimension.join(', '),
-                                'error'
-                            )
+                            Swal.fire({
+                                title: 'Cancelled',
+                                text: 'Please upload images with dimensions between 300px and 400px for both width and height: ' + exceedingFilesDimension.join(', '),
+                                icon: 'error',
+                                scrollbarPadding: false,
+                                backdrop:false,
+                            });
                             $(this).val('');
                             removeDropifyThumbnail();
                             dropifyInputThumbnail.replaceWith(originalInputThumbnail.clone(true));
@@ -2037,11 +2125,13 @@
                 var fileSizeMb = fileSize / (1024 * 1024);
 
                 if (fileSize > maxSize) {
-                    swal(
-                        'Cancelled',
-                        'File size exceeds 15MB.',
-                        'error'
-                        )
+                    Swal.fire({
+                            title: 'Cancelled',
+                            text: 'File size exceeds 15MB.',
+                            icon: 'error',
+                            scrollbarPadding: false,
+                            backdrop:false,
+                        });
                 } else {
                     $('.file_input').each(function() {
                         var files = $(this)[0].files;
@@ -2053,11 +2143,13 @@
 
                     if (totalSize > maxAllUploadedSize) {
                         // If combined file size exceeds the limit, show an error message or take necessary action
-                        swal(
-                            'Cancelled',
-                            'Total file size exceeds 25MB. Please select smaller files.',
-                            'error'
-                            )
+                        Swal.fire({
+                            title: 'Cancelled',
+                            text: 'Total file size exceeds 25MB. Please select smaller files.',
+                            icon: 'error',
+                            scrollbarPadding: false,
+                            backdrop:false,
+                        });
                         // Reset the file inputs to prevent exceeding the limit
                         $(this).val('');
                     } else {
@@ -2116,7 +2208,7 @@
             // Loop through each h3 tag and display its order
             $(divId + " h3").each(function(index) {
                 var order = h3Count - index; // Number in descending order
-                $(this).text("Variant informations  " + order);
+                $(this).text("Variant Information  " + order);
             });
         })
 
@@ -2127,11 +2219,13 @@
                 count_shippers = parseInt(count_shippers);
                 if(count_shippers == 0){
                     $('body input[name="activate_third_party"]').prop('checked', false);
-                    swal(
-                            'Cancelled',
-                            "You don't have any warehouse supported by our shippers",
-                            'error'
-                        )
+                        Swal.fire({
+                            title: 'Cancelled',
+                            text: "You don't have any warehouse supported by our shippers",
+                            icon: 'error',
+                            scrollbarPadding: false,
+                            backdrop:false,
+                        });
                 }else{
                     $('#bloc_third_party input[type="number"]').each(function() {
                         // Change readonly attribute from true to false
@@ -2168,7 +2262,7 @@
                                     <td><input type="number" name="variant_shipping-${id_variant}[from][]" class="form-control min-qty-shipping" id=""></td>
                                     <td><input type="number" name="variant_shipping-${id_variant}[to][]" class="form-control max-qty-shipping" id=""></td>
                                     <td>
-                                        <select multiple class="form-control shipper" name="variant_shipping-${id_variant}[shipper][${row}][]">
+                                        <select multiple class="shipper" name="variant_shipping-${id_variant}[shipper][${row}][]">
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                         </select>
@@ -2204,7 +2298,7 @@
                                     <td><input type="number"  class="form-control min-qty-shipping" id=""></td>
                                     <td><input type="number"  class="form-control max-qty-shipping" id=""></td>
                                     <td>
-                                        <select multiple class="form-control shipper" >
+                                        <select multiple class="shipper" >
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                         </select>
@@ -2239,7 +2333,7 @@
                                     <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id=""></td>
                                     <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id=""></td>
                                     <td>
-                                        <select multiple class="form-control shipper" name="shipper[${row}][]">
+                                        <select multiple class="shipper" name="shipper[${row}][]">
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                         </select>
@@ -2273,6 +2367,7 @@
 
             // add another row in shipping configuration
             $(this).parent().parent().parent().append(html_to_add);
+            $(this).parent().parent().parent().find('.shipper:last').multiSelect();
         });
 
         $('body').on('click', '.delete_shipping_canfiguration', function(){
@@ -2308,6 +2403,13 @@
                         "You cannot choose a third-party option because our shippers are unable to reach the warehouse.",
                         'error'
                     )
+                    Swal.fire({
+                            title: 'Cancelled',
+                            text: "You don't have any warehouse supported by our shippers",
+                            icon: 'error',
+                            scrollbarPadding: false,
+                            backdrop:false,
+                        });
 
                     $(this).find("option[value='third_party']").prop('disabled', false);
                 }else{
@@ -2320,11 +2422,17 @@
                     var max_third_party = $('#max_third_party').val();
                     var unit_third_party = $('#unit_third_party').val();
                     if((weight == '') || (length == '') ||(width == '') ||(height == '') ||(min_third_party == '') ||(max_third_party == '')){
-                        swal(
-                                'Cancelled',
-                                "Please ensure that all required fields are filled to know all information about your package.",
-                                'error'
-                            )
+                            Swal.fire({
+                                title: 'Cancelled',
+                                text: "Please ensure that all required fields are filled to know all information about your package.",
+                                icon: 'error',
+                                scrollbarPadding: false,
+                                backdrop:false,
+                            });
+                            var checkbox = $(this).parent().find('input[type="checkbox"][value="third_party"]');
+                            var checkbox = $(this).parent().find('.multi-select-button').text('vendor');;
+                            // Uncheck the checkbox
+                            checkbox.prop('checked', false);
                             $(this).find("option[value='third_party']").prop('disabled', false);
                             $(this).find("option[value='third_party']").prop('selected', false);
                     }else{
@@ -2342,11 +2450,13 @@
                         }
 
                         if(chargeable_weight > 30){
-                            swal(
-                                'Cancelled',
-                                "Chargeable Weight = " + Number(chargeable_weight.toFixed(2)) + ", then not accepted by our shipper",
-                                'error'
-                            )
+                            Swal.fire({
+                                title: 'Cancelled',
+                                text: "Chargeable Weight = " + Number(chargeable_weight.toFixed(2)) + ", then not accepted by our shipper",
+                                icon: 'error',
+                                scrollbarPadding: false,
+                                backdrop:false,
+                            });
 
                             $(this).find("option[value='third_party']").prop("disabled", true);
                             $(this).find("option[value='third_party']").prop('selected', false);
@@ -2390,23 +2500,27 @@
                     $(this).parent().parent().find('.flat_rate_shipping').val(null);
                 }
             }else{
-                swal(
-                        'Cancelled',
-                        "You cannot selected, if you don't selected vendor in shippers",
-                        'error'
-                    )
+                Swal.fire({
+                    title: 'Cancelled',
+                    text: "You cannot selected, if you don't selected vendor in shippers",
+                    icon: 'error',
+                    scrollbarPadding: false,
+                    backdrop:false,
+                });
             }
         })
 
         $('body').on('change', '.shipping_charge', function(){
             if($(this).parent().parent().find('.paid').val() == 'vendor'){
-                swal(
-                        'Cancelled',
-                        "You cannot choose shipping charge when it is paid by vendor.",
-                        'error'
-                    )
+                Swal.fire({
+                    title: 'Cancelled',
+                    text: "You cannot choose shipping charge when it is paid by vendor.",
+                    icon: 'error',
+                    scrollbarPadding: false,
+                    backdrop:false,
+                });
 
-                    $(this).find('option').eq(0).prop('selected', true);
+                $(this).find('option').eq(0).prop('selected', true);
             }else{
                 if($(this).val() == "flat"){
                     $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', false);
@@ -2725,7 +2839,7 @@
         });
     };
 </script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script> <!-- Include SweetAlert2 JS -->
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('choice_form').addEventListener('submit', function (event) {

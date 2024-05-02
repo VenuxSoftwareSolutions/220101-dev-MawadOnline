@@ -32,6 +32,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/introjs.min.css" rel="stylesheet">
 
+    @stack('styles')
     <style>
         /* Override Dropify's default message font size */
         .dropify-wrapper .dropify-message p {
@@ -165,6 +166,7 @@
     <!-- Include MultiSelect CSS -->
     <link rel="stylesheet" href="https://cdn.rawgit.com/nobleclem/jQuery-MultiSelect/master/jquery.multiselect.css">
     <link rel="stylesheet" href="{{ static_asset('assets/css/filter_multi_select.css') }}">
+    <link rel="stylesheet" href="{{ static_asset('assets/css/example-styles.css') }}">
     <style>
         body {
             font-size: 12px;
@@ -251,7 +253,9 @@
 
     </style>
     <style>
-
+.introjs-prevbutton {
+     visibility: hidden !important;
+     display: none !important; }
 .coming-soon-container {
         text-align: center;
         padding: 50px;
@@ -428,6 +432,6 @@
         }
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.all.min.js"></script>
-
+    <script src="{{ static_asset('assets/js/jquery.multi-select.js') }}" ></script>
 </body>
 </html>

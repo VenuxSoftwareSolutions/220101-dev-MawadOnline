@@ -187,6 +187,7 @@ button {
                                     <li class="nav-item">
                                         <a class="nav-link active" id="personal-info-tab" data-toggle="tab" href="#personal-info">
                                             <span class="number-icon">1</span> {{ translate('Personal Info') }}
+
                                         </a>
                                     </li>
                                     <li class="nav-item">
@@ -227,15 +228,16 @@ button {
                                             @csrf
                                             <!-- ... Personal Info form fields ... -->
                                             <div class="bg-white border mb-4">
-                                                <div class="fs-15 fw-600 p-3">
+                                                <div class="fs-20 fw-600 p-3 orange-text">
                                                     {{ translate('Personal Info') }}
                                                 </div>
+
                                                 {{-- <div id="validation-errors" class="alert alert-danger" style="display: none;">
                                             </div> --}}
 
                                                 <div class="p-3">
                                                     <div class="form-group">
-                                                        <label>{{ translate('First Name') }} <span
+                                                        <label><b>{{ translate('First Name') }} </b><span
                                                                 class="text-primary">*</span></label>
                                                         <input type="text" class="form-control rounded-0"
                                                             value="{{ auth()->check() ? auth()->user()->first_name : old('first_name') }}" id="first_name"
@@ -244,7 +246,7 @@ button {
 
                                                     </div>
                                                     <div class="form-group">
-                                                        <label>{{ translate('Last name') }} <span
+                                                        <label><b>{{ translate('Last name') }}</b> <span
                                                                 class="text-primary">*</span></label>
                                                         <input type="text" class="form-control rounded-0" id="last_name"
                                                             value="{{ auth()->check() ? auth()->user()->last_name : old('last_name') }}"
@@ -252,7 +254,7 @@ button {
                                                             required>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label>{{ translate('Your Email') }} <span
+                                                        <label><b>{{ translate('Your Email') }} </b><span
                                                                 class="text-primary">*</span></label>
                                                         <input id="email" type="email" class="form-control rounded-0"
                                                             value="{{ auth()->check() ? auth()->user()->email : '' }}"
@@ -263,8 +265,8 @@ button {
 
                                                         </div>
                                                     <div class="form-group">
-                                                        <label>{{!Auth::user() || (Auth::user() && (Auth::user()->owner_id == null || Auth::user()->owner_id == Auth::user()->id)) ? translate('Your Password')  : translate('Your New Password') }} <span
-                                                                class="text-primary">*</span></label>
+                                                        <label><b>{{!Auth::user() || (Auth::user() && (Auth::user()->owner_id == null || Auth::user()->owner_id == Auth::user()->id)) ? translate('Your Password')  : translate('Your New Password') }} <span
+                                                                class="text-primary">*</b></span></label>
                                                         <input id="password" type="password" autocomplete="off" class="form-control rounded-0"
                                                             value="{{ old('password') }}"
                                                             placeholder="{{ translate('Password') }}" name="password"
@@ -272,7 +274,7 @@ button {
                                                         <div id="password-strength"></div>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label>{{ translate('Repeat Password') }} <span
+                                                        <label><b>{{ translate('Repeat Password') }}</b><span
                                                                 class="text-primary">*</span></label>
                                                         <input id="password_confirmation" type="password"
                                                             class="form-control rounded-0"
@@ -299,7 +301,7 @@ button {
 
                                                     <!-- ... Code Verification form fields ... -->
                                                     <div class="form-group">
-                                                        <label>{{ translate('Verification Code') }} <span
+                                                        <label><b>{{ translate('Verification Code') }}</b> <span
                                                                 class="text-primary">*</span></label>
                                                         <input type="hidden" value="{{ $user->email ?? '' }}"
                                                             name="email" id="emailAccount">
@@ -727,9 +729,11 @@ button {
                                         @csrf
                                         <!-- ... Contact Person form fields ... -->
                                         <div class="bg-white border mb-4">
-                                            <div class="fs-15 fw-600 p-3">
-                                                {{ translate('Contact Person') }}
-                                            </div>
+
+                                                <div class="fs-20 fw-600 p-3 orange-text">
+                                                    {{ translate('Personal Information') }}
+                                                </div>
+
                                             {{-- <div id="validation-errors" class="alert alert-danger"
                                                 style="display: none;"></div> --}}
 
@@ -737,7 +741,7 @@ button {
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('First Name') }} <span
+                                                            <label><b>{{ translate('First Name') }} </b><span
                                                                     class="text-primary">*</span></label>
                                                             @php
                                                                 $fistName = null;
@@ -758,7 +762,7 @@ button {
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('Last Name') }} <span
+                                                            <label><b>{{ translate('Last Name') }}</b> <span
                                                                     class="text-primary">*</span></label>
                                                             @php
                                                                 $lastName = null;
@@ -778,7 +782,35 @@ button {
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('Email') }} <span
+                                                            <label><b>{{ translate('Date Of Birth') }} </b><span
+                                                                    class="text-primary">*</span></label>
+                                                            <input  dir="auto" type="text" class="datepicker form-control rounded-0"
+                                                                placeholder="{{ translate('Date Of Birth') }}"
+                                                                {{-- value="{{ $user->contact_people->date_of_birth ?? '' }}" --}}
+                                                                value="{{ isset($user->contact_people->date_of_birth) ? Carbon::createFromFormat('Y-m-d', $user->contact_people->date_of_birth)->format('d M Y') : '' }}"
+
+                                                                name="date_of_birth" required>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label><b>{{ translate('Nationality') }} </b><span
+                                                                    class="text-primary">*</span></label>
+                                                            <br>
+                                                            <select  title="{{ translate('Select Nationality') }}"
+                                                                name="nationality" class="form-control selectpicker countrypicker"
+                                                                @if (isset($user->contact_people) && !empty($user->contact_people->nationality)) data-default="{{ $user->contact_people->nationality }}" @else data-default="" @endif
+                                                                data-flag="true"></select>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="fs-20 fw-600 p-3 orange-text">
+                                                        Contact Information
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label><b>{{ translate('Email') }}</b> <span
                                                                     class="text-primary">*</span></label>
                                                             @php
                                                                 $emailUser = null;
@@ -797,74 +829,57 @@ button {
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('Mobile Phone') }} <span
+                                                            <label><b>{{ translate('Mobile Phone') }} </b><span
                                                                     class="text-primary">*</span></label>
-                                                            <small class="text-muted">{{ translate('Example') }}:
-                                                                +971123456789 {{ translate('or') }}
-                                                                00971123456789</small>
+
 
                                                             <input type="text" dir="auto" class="form-control rounded-0"
                                                                 placeholder="{{ translate('Mobile Phone') }}"
                                                                 value="{{ $user->contact_people->mobile_phone ?? '+971' }}"
                                                                 name="mobile_phone" required>
+                                                                <small class="text-muted">{{ translate('Example') }}:
+                                                                    +971123456789 {{ translate('or') }}
+                                                                    00971123456789</small>
 
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('Additional Mobile Phone') }} <span
-                                                                    class="text-primary"></span><small
-                                                                    class="text-muted">{{ translate('Example') }}:
-                                                                    +971123456789 {{ translate('or') }}
-                                                                    00971123456789</small></label>
+                                                            <label><b>{{ translate('Additional Mobile Phone') }} </b><span
+                                                                    class="text-primary"></span></label>
                                                             <input type="text" dir="auto" class="form-control rounded-0"
                                                                 placeholder="{{ translate('Additional Mobile Phone') }}"
                                                                 value="{{ $user->contact_people->additional_mobile_phone ?? '+971' }}"
                                                                 name="additional_mobile_phone">
+                                                                <small
+                                                                    class="text-muted">{{ translate('Example') }}:
+                                                                    +971123456789 {{ translate('or') }}
+                                                                    00971123456789</small>
 
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6">
+
+
+                                                    <div class="fs-20 fw-600 p-3 orange-text">
+                                                        Emirates ID
+                                                    </div>
+                                                    <div class="col-md-12">
                                                         <div class="form-group">
-                                                            <label>{{ translate('Nationality') }} <span
+                                                            <label><b>{{ translate('Emirates ID - Number') }} </b><span
                                                                     class="text-primary">*</span></label>
-                                                            <br>
-                                                            <select  title="{{ translate('Select Nationality') }}"
-                                                                name="nationality" class="form-control selectpicker countrypicker"
-                                                                @if (isset($user->contact_people) && !empty($user->contact_people->nationality)) data-default="{{ $user->contact_people->nationality }}" @else data-default="" @endif
-                                                                data-flag="true"></select>
-
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>{{ translate('Date Of Birth') }} <span
-                                                                    class="text-primary">*</span></label>
-                                                            <input  dir="auto" type="text" class="datepicker form-control rounded-0"
-                                                                placeholder="{{ translate('Date Of Birth') }}"
-                                                                {{-- value="{{ $user->contact_people->date_of_birth ?? '' }}" --}}
-                                                                value="{{ isset($user->contact_people->date_of_birth) ? Carbon::createFromFormat('Y-m-d', $user->contact_people->date_of_birth)->format('d M Y') : '' }}"
-
-                                                                name="date_of_birth" required>
-
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>{{ translate('Emirates ID - Number') }} <span
-                                                                    class="text-primary">*</span></label> <small
-                                                                class="text-muted">{{ translate('Example') }}:123456789012345
-                                                            </small>
                                                             <input type="text" class="form-control rounded-0"
                                                                 placeholder="{{ translate('Emirates ID - Number') }}"
                                                                 value="{{ $user->contact_people->emirates_id_number ?? '' }}"
                                                                 required name="emirates_id_number">
+                                                                <small
+                                                                class="text-muted">{{ translate('Example') }}:123456789012345
+                                                            </small>
 
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('Emirates ID - Expiry Date') }} <span
+                                                            <label><b>{{ translate('Emirates ID - Expiry Date') }} </b><span
                                                                     class="text-primary">*</span></label>
                                                             <input dir="auto" type="text" class="datepicker form-control rounded-0"
                                                                 placeholder="{{ translate('Emirates ID - Expiry Date') }}"
@@ -877,25 +892,42 @@ button {
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('Emirates ID') }} <span
-                                                                    class="text-primary">*</span><small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}
-                                                                                 </small></label>
+                                                            <label><b>{{ translate('Emirates ID') }} </b><span
+                                                                    class="text-primary">*</span></label>
                                                             @if (isset($user) && isset($user->contact_people) && $user->contact_people->emirates_id_file_path)
                                                                 <a class="old_file"
                                                                     href="{{ static_asset($user->contact_people->emirates_id_file_path) }}"
                                                                     target="_blank">{{ translate('View Emirates ID') }}</a>
                                                                 <input type="hidden" name="emirates_id_file_old"
                                                                     value="{{ $user->contact_people->emirates_id_file_path }}">
+
                                                             @endif
-                                                            <input type="file" class="form-control rounded-0"
+                                                            <div class="input-group">
+                                                                <div class="custom-file">
+                                                                    <input type="file" class="form-control custom-file-input"
                                                                 placeholder="{{ translate('Emirates ID') }}" required
-                                                                name="emirates_id_file">
+                                                                name="emirates_id_file" id="emirates_id_file_input">
+                                                                <label class="custom-file-label" for="emirates_id_file_input">{{ translate('Choose a file') }}</label> --}}
+                                                                </div>
+                                                            </div>
+
+                                                            <small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}
+                                                                </small>
 
                                                         </div>
                                                     </div>
+
+                                                    <div class="col-md-12" style="padding-left: 0px">
+                                                        <div class="fs-20 fw-600 p-3 orange-text">
+                                                            Employment Information
+                                                        </div>
+                                                    </div>
+
                                                     <div class="col-md-6">
+
                                                         <div class="form-group">
-                                                            <label>{{ translate('Business Owner') }} <span
+
+                                                            <label><b>{{ translate('Business Owner') }} </b><span
                                                                     class="text-primary">*
                                                                 </span></label> <br>
                                                             <div class="form-check form-check-inline">
@@ -909,6 +941,7 @@ button {
                                                                     {{ translate('Yes') }}
                                                                 </label>
                                                             </div>
+
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="radio"
                                                                     @if (isset($user->contact_people->business_owner) && $user->contact_people->business_owner == 0) checked @endif
@@ -922,7 +955,7 @@ button {
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('Designation') }} <span
+                                                            <label><b>{{ translate('Designation') }} </b><span
                                                                     class="text-primary">*</span></label>
                                                             <input type="text" class="form-control rounded-0" required
                                                                 placeholder="{{ translate('Designation') }}"
@@ -958,8 +991,9 @@ button {
                                         @csrf
                                         <!-- ... Warehouses form fields ... -->
                                         <div class="bg-white border mb-4">
-                                            <div class="fs-15 fw-600 p-3">
-                                                {{ translate('Warehouses') }}
+
+                                            <div class="fs-20 fw-600 p-3 orange-text">
+                                                {{ translate('Location Information') }}
                                             </div>
                                             {{-- <div id="validation-errors" class="alert alert-danger"
                                                 style="display: none;"></div> --}}
@@ -970,9 +1004,10 @@ button {
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label
-                                                                for="warehouse_name">{{ translate('Warehouse Name') }}<span
+                                                                for="warehouse_name"><b>{{ translate('Warehouse Name') }}</b><span
                                                                     class="text-primary">*</span></label>
                                                             <input type="text" class="form-control"
+                                                            placeholder="{{ translate('Warehouse Name') }}"
                                                                 name="warehouse_name_add">
 
                                                         </div>
@@ -980,7 +1015,7 @@ button {
 
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label for="state">{{ translate('State/Emirate') }}<span
+                                                            <label for="state"><b>{{ translate('State/Emirate') }}</b><span
                                                                     class="text-primary">*</span></label>
                                                                     <select name="state_warehouse_add" class="form-control rounded-0 emirateSelect" id="emirateempire">
                                                                         <option value="" selected>{{ translate('please_choose') }}</option>
@@ -992,7 +1027,7 @@ button {
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label for="area">{{ translate('Area') }}<span
+                                                            <label for="area"><b>{{ translate('Area') }}</b><span
                                                                     class="text-primary">*</span></label>
                                                             <select name="area_warehouse_add"
                                                                 class="form-control areaSelect">
@@ -1006,25 +1041,27 @@ button {
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label for="street">{{ translate('Street') }}<span
+                                                            <label for="street"><b>{{ translate('Street') }}</b><span
                                                                     class="text-primary">*</span></label>
                                                             <input type="text" class="form-control"
+                                                            placeholder="{{ translate('Street') }}"
                                                                 name="street_warehouse_add">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label for="building">{{ translate('Building') }}<span
+                                                            <label for="building"><b>{{ translate('Building') }}</b><span
                                                                     class="text-primary">*</span></label>
                                                             <input type="text" class="form-control"
+                                                            placeholder="{{ translate('Building') }}"
                                                                 name="building_warehouse_add">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label for="unit">{{ translate('Unit/Office No.') }}<span
+                                                            <label for="unit"><b>{{ translate('Unit/Office No.') }}</b><span
                                                                     class="text-primary"></span></label>
-                                                            <input type="text" class="form-control" name="unit_add">
+                                                            <input type="text" class="form-control"  placeholder="{{ translate('Unit/Office No.') }}" name="unit_add" >
                                                         </div>
                                                     </div>
 
@@ -1327,8 +1364,8 @@ button {
                                         @csrf
                                         <!-- ... Payout Info form fields ... -->
                                         <div class="bg-white border mb-4">
-                                            <div class="fs-15 fw-600 p-3">
-                                                {{ translate('Payout Information') }}
+                                            <div class="fs-20 fw-600 p-3 orange-text">
+                                                {{ translate('Bank Information') }}
                                             </div>
                                             {{-- <div id="validation-errors" class="alert alert-danger"
                                                 style="display: none;"></div> --}}
@@ -1337,7 +1374,7 @@ button {
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('Bank Name') }} <span
+                                                            <label><b>{{ translate('Bank Name') }}</b> <span
                                                                     class="text-primary">*</span></label>
                                                             <input
                                                                 value="{{ $user->payout_information->bank_name ?? '' }}"
@@ -1348,7 +1385,7 @@ button {
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('Account Name') }} <span
+                                                            <label><b>{{ translate('Account Name') }} </b><span
                                                                     class="text-primary">*</span></label>
                                                             <input
                                                                 value="{{ $user->payout_information->account_name ?? '' }}"
@@ -1359,7 +1396,7 @@ button {
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('Account Number') }} <span
+                                                            <label><b>{{ translate('Account Number') }} </b><span
                                                                     class="text-primary">*</span></label>
                                                             <input
                                                                 value="{{ $user->payout_information->account_number ?? '' }}"
@@ -1370,7 +1407,7 @@ button {
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('IBAN') }} <span
+                                                            <label><b>{{ translate('IBAN') }} </b><span
                                                                     class="text-primary">*</span></label>
                                                             <input value="{{ $user->payout_information->iban ?? '' }}"
                                                                 type="text" class="form-control rounded-0"
@@ -1380,7 +1417,7 @@ button {
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('Swift Code') }} <span
+                                                            <label><b>{{ translate('Swift Code') }}</b><span
                                                                     class="text-primary">*</span></label>
                                                             <input
                                                                 value="{{ $user->payout_information->swift_code ?? '' }}"
@@ -1391,8 +1428,8 @@ button {
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>{{ translate('IBAN Certificate') }}<span
-                                                                    class="text-primary">*</span><small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small></label>
+                                                            <label><b>{{ translate('IBAN Certificate') }}</b><span
+                                                                    class="text-primary">*</span></label>
                                                             @if (isset($user) && isset($user->payout_information) && $user->payout_information->iban_certificate)
                                                                 <a class="old_file"
                                                                     href="{{ static_asset($user->payout_information->iban_certificate) }}"
@@ -1400,9 +1437,22 @@ button {
                                                                 <input type="hidden" name="iban_certificate_old"
                                                                     value="{{ $user->payout_information->iban_certificate }}">
                                                             @endif
-                                                            <input required type="file" class="form-control rounded-0"
-                                                                name="iban_certificate">
+                                                            <div class="input-group">
+                                                                <div class="custom-file">
+                                                                    <input type="file" class="form-control custom-file-input" id="iban_certificate_input"
+                                                                    name="iban_certificate">
+                                                                    <label class="custom-file-label" for="iban_certificate_input">{{ translate('Choose a file') }}</label>
+                                                                </div>
+                                                            </div>
+
+                                                            <small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small>
                                                         </div>
+
+
+
+
+
+
                                                     </div>
                                                 </div>
 
