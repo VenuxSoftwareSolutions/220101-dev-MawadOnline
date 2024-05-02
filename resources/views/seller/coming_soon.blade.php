@@ -68,8 +68,19 @@
             });
 
             tour.onbeforechange(function(targetElement) {
+
+                if (this._direction === 'backward') {
+                if (stepValue == 3) {
+                        window.location.href = '{{ route('catalog.search_page') }}';
+                    } else if (stepValue == 12) {
+                        window.location.href = '{{ route('seller.lease.index') }}';
+                    } else {
+                        window.location.href = '{{ route('seller.stock.operation.report') }}';
+                    }
+                    sleep(60000);
+                }
+
                 step_number += 1;
-                console.log(step_number);
                 if (step_number == 3) {
                     if (stepValue == 3) {
                         window.location.href = '{{ route('seller.stocks.index') }}';

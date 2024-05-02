@@ -106,7 +106,7 @@
                         <a class="dropdown-item confirm-alert" href="javascript:void(0)"  data-target="#bulk-delete-modal"> {{translate('Delete selection')}}</a>
                     </div>
                 </div>
-                
+
             </div>
             <div class="card-body">
                 <table id="step2" class="table aiz-table mb-0">
@@ -503,6 +503,12 @@
             });
 
             tour.onbeforechange(function(targetElement) {
+
+                if (this._direction === 'backward') {
+                window.location.href = '{{ route("seller.dashboard") }}'; // Redirect to another page
+                sleep(60000);
+                }
+
                 step_number += 1 ;
                 if (step_number == 3) {
 
