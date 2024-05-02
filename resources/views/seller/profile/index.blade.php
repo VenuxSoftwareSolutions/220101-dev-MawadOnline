@@ -1836,7 +1836,7 @@
 
 
     tour.start();
-    tour.goToStepNumber(15);
+    tour.goToStepNumber(14);
     });
 </script>
 @endsection
