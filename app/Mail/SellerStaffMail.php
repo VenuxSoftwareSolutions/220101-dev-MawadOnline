@@ -31,7 +31,7 @@ class SellerStaffMail extends Mailable
     public function build()
     {
         return $this
-            ->subject('New mawadonline vendor staff account')
+            ->subject('Welcome to Your MawadOnline Inventory Management Account')
             ->view('emails.seller_staff')
             ->with([
                 'vendor' => $this->vendor,

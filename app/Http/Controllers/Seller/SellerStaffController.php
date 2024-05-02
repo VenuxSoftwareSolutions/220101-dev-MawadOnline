@@ -144,7 +144,7 @@ class SellerStaffController extends Controller
 
                     if ($staff->save()) {
                         Mail::to($user->email)->send(new SellerStaffMail($user, $role, $password, $vendor , $url));
-                        flash(translate('Staff has been inserted successfully'))->success();
+                        flash(translate('Success! Your new team member is now part of your eShop crew. Ready to take on the world together!'))->success();
                         DB::commit(); // Commit the transaction
                         return redirect()->route('seller.staffs.index');
                     }
