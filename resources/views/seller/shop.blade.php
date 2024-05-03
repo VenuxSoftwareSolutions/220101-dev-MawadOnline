@@ -429,7 +429,7 @@
 
     @endif
 
-<script>
+{{-- <script>
     document.addEventListener("DOMContentLoaded", function() {
         if ({{Auth::user()->tour}} == true | {{Auth::user()->id}} != {{Auth::user()->owner_id}}) {
             return;
@@ -481,5 +481,5 @@
     tour.start();
     tour.goToStepNumber(15);
     });
-</script>
+</script> --}}
 @endsection

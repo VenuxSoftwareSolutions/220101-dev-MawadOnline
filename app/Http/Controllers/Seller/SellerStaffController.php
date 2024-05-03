@@ -144,7 +144,7 @@ class SellerStaffController extends Controller
 
                     if ($staff->save()) {
                         Mail::to($user->email)->send(new SellerStaffMail($user, $role, $password, $vendor , $url));
-                        flash(translate('Staff has been inserted successfully'))->success();
+                        flash(translate('Success! Your new team member is now part of your eShop crew. Ready to take on the world together!'))->success();
                         DB::commit(); // Commit the transaction
                         return redirect()->route('seller.staffs.index');
                     }
@@ -401,8 +401,8 @@ class SellerStaffController extends Controller
         }
 
         if($amount>0){
-            return response()->json(['isUsed' => 1,'message' => 'You will be charged with '.
-            number_format($amount,2) .' for the '.$roles.' extra roles']);
+            return response()->json(['isUsed' => 1,'message' => 'Great choice! Adding this role now is on us until the end of this month. Starting next month,
+             an additional AED '. number_format($amount,2) .' will apply with your eShop lease. We\'re excited to see your team grow! ']);
 
         }
     }
