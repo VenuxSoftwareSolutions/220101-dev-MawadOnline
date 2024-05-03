@@ -89,10 +89,10 @@
                         <i class="fas fa-search"></i>
                     </div>
                 </div>
-                <div class="col-6" style="display: flex; justify-content: flex-end;">
+                <!-- <div class="col-6" style="display: flex; justify-content: flex-end;">
                     <button class="btn btn-primary btn-filter"><i class="fa-solid fa-filter"></i> Filter</button>
                     <button class="btn btn-outline-primary"><i class="fa-solid fa-file-excel"></i> Export to excel</button>
-                </div>
+                </div> -->
             </div>
             <div class="card-body">
                 <div id="search-result">
