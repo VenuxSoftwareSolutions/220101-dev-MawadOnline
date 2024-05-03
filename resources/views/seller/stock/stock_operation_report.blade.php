@@ -8,6 +8,9 @@
             border-radius: 5px !important; /* Rounded corners */
             border: #a3b8c7 !important;
         }
+        .ms-options-wrap.ms-has-selections > button {
+            border-radius: 5px;
+        }
 </style>
 <div class="aiz-titlebar text-left mt-2 mb-3">
     <div class="row align-items-center">

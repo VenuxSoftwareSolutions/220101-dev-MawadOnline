@@ -330,7 +330,7 @@ class ProfileController extends Controller
 
                         // Compare the value with the existing value if it exists
                         if ($existingBusinessInformation && ($existingTranslateKeyName != $value || is_null($value) )) {
-                            if($value) {
+                            if($value != null && $value !== '') {
                                 $modifiedFields[] = [
                                     'field' => $key,
                                     'old_value' => $existingTranslateKeyName,
@@ -348,7 +348,7 @@ class ProfileController extends Controller
                             $value=Carbon::createFromFormat('d M Y',$value)->format('Y-m-d') ;
                         // Compare the value with the existing value if it exists
                         if ($existingBusinessInformation && ($existingBusinessInformation->{$key} != $value || is_null($value )) ) {
-                            if($value) {
+                            if($value != null && $value !== '') {
                                 $modifiedFields[] = [
                                     'field' => $key,
                                     'old_value' => $existingBusinessInformation->{$key},
@@ -385,7 +385,8 @@ class ProfileController extends Controller
                         }
                         // Compare the value with the existing value if it exists
                         if ($existingContactInformation && ($existingContactInformation->{$key} != $value|| is_null($value))) {
-                            if($value) {
+
+                            if($value != null && $value !== '') {
                                 $modifiedFields[] = [
                                     'field' => $key,
                                     'old_value' => $existingContactInformation->{$key},

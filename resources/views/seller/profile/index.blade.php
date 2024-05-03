@@ -535,12 +535,13 @@
                                                 <div class="custom-file">
                                                     <input type="file" class="form-control custom-file-input" id="trade_license_doc_input"
                                                         name="trade_license_doc" placeholder="{{ translate('Trade License Doc') }}" required>
-                                                        @error('trade_license_doc')
-                                                        <div class="text-danger">{{ $message }}</div>
-                                                         @enderror
+
                                                         <label class="custom-file-label" for="trade_license_doc_input">{{ translate('Choose a file') }}</label>
                                                 </div>
                                             </div>
+                                            @error('trade_license_doc')
+                                            <div class="text-danger">{{ $message }}</div>
+                                             @enderror
                                             <small>{{ translate('Max file size is 5MB and accepted file types are PDF and image formats.') }}</small>
 
 
@@ -799,6 +800,7 @@
                                         <div class="form-group">
                                             <label class="{{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('vat_registered') != null ? 'color-modified-file' : '' }}"><b>{{ translate('Vat Registered') }} </b><span class="text-primary">*
                                                 </span></label> <br>
+
                                             <div class="form-check form-check-inline">
                                                 <input class="form-check-input" type="radio" value="1"
                                                     id="vatRegisteredYes" name="vat_registered"
@@ -811,7 +813,7 @@
                                             </div>
                                             <div class="form-check form-check-inline">
                                                 <input class="form-check-input" type="radio" value="0"
-                                                    id="vatRegisteredNo" @if (  $vat_registered == 0 &&  (old("vat_registered") == 0 || old("vat_registered") == null )) checked @endif
+                                                    id="vatRegisteredNo" @if (  $vat_registered == 0  ||  (old("vat_registered") != null && old("vat_registered") == 0) ) checked @endif
                                                     name="vat_registered">
                                                 <label class="form-check-label" for="vatRegisteredNo">
                                                     {{ translate('No') }}
@@ -834,12 +836,14 @@
                                                 <div class="custom-file">
                                                     <input type="file" class="form-control custom-file-input" id="vat_certificate_input"
                                                         name="vat_certificate"  placeholder="{{ translate('Vat Certificate') }}">
-                                                 @error('vat_certificate')
-                                                <div class="text-danger">{{ $message }}</div>
-                                                 @enderror
+
                                                     <label class="custom-file-label" for="vat_certificate_input">{{ translate('Choose a file') }}</label>
                                                 </div>
+
                                             </div>
+                                            @error('vat_certificate')
+                                            <div class="text-danger">{{ $message }}</div>
+                                             @enderror
                                             <small>{{ translate('Max file size is 5MB and accepted file types are PDF and image formats.') }}</small>
 
 
@@ -903,6 +907,7 @@
                                                     <label class="custom-file-label" for="civil_defense_approval_input">{{ translate('Choose a file') }}</label>
                                                 </div>
                                             </div>
+                                            @error('civil_defense_approval') <div class="text-danger">{{ $message }}</div> @enderror
                                             <small>{{ translate('Max file size is 5MB and accepted file types are PDF and image formats.') }}</small>
                                         </div>
 
@@ -956,7 +961,7 @@
                         if (!empty($emirates_id_expiry_date))
                             $emirates_id_expiry_date = Carbon::createFromFormat('Y-m-d', $emirates_id_expiry_date)->format('d M Y')  ;
                         $emirates_id_file_path = $proposedPayoutChange && $proposedPayoutChange->getNewValue('emirates_id_file_path') ? $proposedPayoutChange->getNewValue('emirates_id_file_path') : $user->contact_people->emirates_id_file_path ?? '';
-                        $business_owner = $proposedPayoutChange && $proposedPayoutChange->getNewValue('business_owner') !=null ? $proposedPayoutChange->getNewValue('business_owner') : $user->contact_people->business_owner ?? 1;
+                        $business_owner = $proposedPayoutChange && $proposedPayoutChange->getNewValue('business_owner') !=null ? $proposedPayoutChange->getNewValue('business_owner') : $user->contact_people->business_owner ?? '';
                         $designation = $proposedPayoutChange && $proposedPayoutChange->getNewValue('designation') ? $proposedPayoutChange->getNewValue('designation') : $user->contact_people->designation ?? '';
 
                         ?>
@@ -1134,16 +1139,17 @@
                                         @endif
                                         <div class="input-group">
                                             <div class="custom-file">
-                                        <input type="file" class="form-control custom-file-input"
+                                        <input id="emirates_id_file_input" type="file" class="form-control custom-file-input"
                                             placeholder="{{ translate('Emirates ID') }}" required
                                             name="emirates_id_file_path">
                                             <label class="custom-file-label" for="emirates_id_file_input">{{ translate('Choose a file') }}</label>
 
-                                            @error('emirates_id_file_path')
-                                            <div class="text-danger">{{ $message }}</div>
-                                             @enderror
                                             </div>
                                         </div>
+
+                                            @error('emirates_id_file_path')
+                                            <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                              <small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}
                                             </small>
                                     </div>
@@ -1317,11 +1323,12 @@
                                                 name="iban_certificate">
 
                                                 <label class="custom-file-label" for="iban_certificate_input">{{ translate('Choose a file') }}</label>
-                                                @error('iban_certificate')
-                                                <div class="text-danger">{{ $message }}</div>
-                                                @enderror
+
                                             </div>
                                         </div>
+                                        @error('iban_certificate')
+                                        <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                         <small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small>
 
 
