@@ -1329,7 +1329,9 @@
                                     </div>
                                     <div class="col-2">
                                         <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Add another document"></i>
-                                        <i class="las la-trash trash_document font-size-icon" data-id_document="{{ $document->id }}" style="margin-left: 5px; margin-top: 34px;" title="Delete this document"></i>
+                                        @if($key != 0)
+                                            <i class="las la-trash trash_document font-size-icon" data-id_document="{{ $document->id }}" style="margin-left: 5px; margin-top: 34px;" title="Delete this document"></i>
+                                        @endif
                                         <a href="{{ asset('/public/'.$document->path) }}" download title="{{ translate('Click to download') }}">
                                             <i class="las la-download font-size-icon"></i>
                                         </a>
@@ -1752,11 +1754,17 @@ function submitForm() {
         //Change label of input value by name of file selected
         $('body').on('change', '.photos_variant', function() {
             // Get the number of selected files
+            
             var numFiles = $(this)[0].files.length;
             var files = this.files;
             var uploaded_files = $(this).data('count');
-            var all_files_length = files.length + uploaded_files
-
+            if(uploaded_files != undefined){
+                var all_files_length = files.length + uploaded_files
+            }else{
+                var all_files_length = files.length 
+            }
+            
+            alert(all_files_length);
             // Maximum number of allowed files
             var maxFiles = 10;
             if (all_files_length > maxFiles) {
