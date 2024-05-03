@@ -24,12 +24,18 @@
 
 @endpush
 @section('panel_content')
-    <section class="py-8 bg-soft-primary">
+    <section class="py-6 bg-soft-primary">
         <div class="container">
             <div class="row">
-                <div class="col-xl-8 mx-auto text-center">
-                    <h1 class="mb-0 fw-700">{{ translate('Premium Packages for Sellers') }}</h1>
+                <div class="col ">
+                    <div class="col-xl-8 mx-auto text-center mb-5">
+                        <h1 class="mb-0 fw-700">{{ translate('Premium Packages for Sellers') }}</h1>
+                    </div>
+                    <div class="text-center  mt-5">
+                        <h5 class="mb-1 h5 fw-600">Current Package: Pro</h5>
+                    </div>
                 </div>
+
             </div>
         </div>
     </section>
@@ -86,8 +92,8 @@
                                                 onclick="show_price_modal({{ $seller_packages->id }})">{{ translate('Purchase Package') }}</button>
                                         @endif
                                     @endif --}}
-                                    <button class="btn btn-primary fw-600 col-10"
-                                                onclick="select_package({{ $seller_packages[0]->id }})">{{ translate('Register your e-Shop') }}</button>
+                                    <button class="btn btn-primary fw-600 col-10" disabled
+                                                onclick="select_package({{ $seller_packages[0]->id }})">{{ translate('E-Shop Already Registered') }}</button>
                                 </div>
                             </div>
                         </div>
@@ -140,7 +146,7 @@
                                                 onclick="show_price_modal({{ $seller_packages->id }})">{{ translate('Purchase Package') }}</button>
                                         @endif
                                     @endif --}}
-                                    <button class="btn btn-primary fw-600 col-10" disabled>{{ translate('Coming soon') }}</button>
+                                    <button class="btn btn-primary fw-600 col-10" disabled>{{ translate('Coming Soon') }}</button>
                                 </div>
                             </div>
                         </div>
