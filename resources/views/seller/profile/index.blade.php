@@ -900,7 +900,7 @@
                                                         @error('civil_defense_approval')
                                                         <div class="text-danger">{{ $message }}</div>
                                                          @enderror
-                                                    <label class="custom-file-label" for="civil_defense_approval_input">{{ translate('Choisir un fichier') }}</label>
+                                                    <label class="custom-file-label" for="civil_defense_approval_input">{{ translate('Choose a file') }}</label>
                                                 </div>
                                             </div>
                                             <small>{{ translate('Max file size is 5MB and accepted file types are PDF and image formats.') }}</small>
