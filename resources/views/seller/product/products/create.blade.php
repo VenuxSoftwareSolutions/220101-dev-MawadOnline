@@ -16,7 +16,7 @@
     .button-container {
         position: fixed;
         top: 1%;
-        right: 19%;
+        right: 25%;
         z-index: 97;
     }
     .preview-button {
@@ -51,6 +51,9 @@
     #table_sample_configuration input[type="number"]{
         width: auto !important;
     }
+    .error {
+        border-color: red !important; /* Add red border */
+    }
     .multi-select-button {
         height: 41px;
         border: 1px solid #e2e5ec !important;
@@ -72,6 +75,10 @@
     }
     .aiz-main-content .pr-lg-25px {
         background-color: rgb(247, 248, 250) !important;
+    }
+
+    .disabled-select{
+        background-color: #f7f8fa !important;
     }
 
 </style>
@@ -119,11 +126,11 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{translate('Product Name')}} <span class="text-danger">*</span></label>
                                     <div class="col-md-8">
-                                        <input type="text" class="form-control" required name="name" value="{{ old('name') }}" placeholder="{{ translate('Product Name') }}" >
+                                        <input id="nameProduct" type="text" class="form-control" required name="name" value="{{ old('name') }}" placeholder="{{ translate('Product Name') }}" >
                                     </div>
                                 </div>
                                 <div class="form-group row" id="brand">
-                                    <label class="col-md-3 col-from-label">{{translate('Brand')}}</label>
+                                    <label class="col-md-3 col-from-label">{{translate('Brand')}} <span class="text-danger">*</span></label>
                                     <div class="col-md-8">
                                         <select class="form-control aiz-selectpicker" name="brand_id" required id="brand_id" data-live-search="true">
                                             <option value="">{{ translate('Select Brand') }}</option>
@@ -163,8 +170,9 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{translate('Tags')}} <span class="text-danger">*</span></label>
                                     <div class="col-md-8">
-                                        <input type="text" required class="form-control aiz-tag-input" name="tags[]" placeholder="{{ translate('Type and hit enter to add a tag') }}">
+                                        <input type="text" class="form-control aiz-tag-input" name="tags[]" placeholder="{{ translate('Type and hit enter to add a tag') }}">
                                         <small class="text-muted">{{translate('This is used for search. Input those words by which cutomer can find this product.')}}</small>
+                                        <div id="error-message" style="display:none; color: red">tags input cannot be empty!</div>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -335,45 +343,7 @@
                                         <input type="number" step="0.01" min="1" class="form-control" name="sample_price">
                                     </div>
                                 </div>
-                                <table class="table" id="table_sample_configuration" class="bloc_sample_configuration_variant">
-                                    <thead>
-                                        <tr>
-                                            <th>{{translate('Shipping-by')}}</th>
-                                            <th>{{translate('Estimated Sample Preparation Days')}}</th>
-                                            <th>{{translate('Estimated Shipping Days')}}</th>
-                                            <th>{{translate('Paid by')}}</th>
-                                            {{-- <th>{{translate('VAT')}}</th> --}}
-                                            <th>{{translate('Shipping amount')}}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="bloc_sample_configuration">
-                                        <tr>
-                                            <td>
-                                                <select class="form-control shipper_sample" name="shipper_sample">
-                                                    <option value="" selected>{{translate('Choose shipper')}}</option>
-                                                    <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
-                                                    <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
-                                                </select>
-                                            </td>
-                                            <td><input type="number" class="form-control estimated_sample" name="estimated_sample"></td>
-                                            <td><input type="number" class="form-control estimated_shipping_sample" name="estimated_shipping_sample"></td>
-                                            <td>
-                                                <select class="form-control paid_sample" name="paid_sample">
-                                                    <option value="" selected>{{translate('Choose paid by')}}</option>
-                                                    <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
-                                                    <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
-                                                </select>
-                                            </td>
-                                            {{-- <td>
-                                                <label class="aiz-switch aiz-switch-success mb-0">
-                                                    <input value="1" type="checkbox" class="vat_sample" name="vat_sample" @if($vat_user->vat_registered == 1) checked @endif>
-                                                    <span></span>
-                                                </label>
-                                            </td> --}}
-                                            <td><input type="number" class="form-control shipping_amount" name="shipping_amount" step="0.1" readonly></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                
                             </div>
                         </div>
                     </div>
@@ -406,11 +376,11 @@
                                             <th>{{translate('Width (Cm)')}}</th>
                                             <th>{{translate('Height (Cm)')}}</th>
                                             <th>{{translate('Package Weight')}}</th>
-                                            <th>{{translate('Weight unit')}}</th>
+                                            <th>{{translate('Weight Unit')}}</th>
                                             <th>{{translate('Breakable')}}</th>
-                                            <th>{{translate('Unit')}}</th>
-                                            <th>{{translate('Min')}}</th>
-                                            <th>{{translate('Max')}}</th>
+                                            <th>{{translate('Temperature Unit')}}</th>
+                                            <th>{{translate('Temperature Min')}}</th>
+                                            <th>{{translate('Temperature Max')}}</th>
                                         </tr>
                                     </thead>
                                     <tbody id="bloc_third_party">
@@ -451,7 +421,7 @@
                             </div>
                         </div>
                         <div class="bloc-default-shipping-style" style="margin-top: 22px;">
-                            <h6>{{ translate('Shipping configuration') }}</h6>
+                            <h6>{{ translate('Shipping Product Configuration') }}</h6>
                             <hr>
                             <div>
                                 <table class="table" id="table_shipping_configuration" class="bloc_shipping_configuration_variant">
@@ -464,7 +434,7 @@
                                             <th>{{translate('Est. Shipping Days')}}</th>
                                             <th style="width: 164px;">{{translate('Paid by')}}</th>
                                             {{-- <th>{{translate('VAT')}}</th> --}}
-                                            <th>{{translate('Shipping Charge')}}</th>
+                                            <th>{{translate('Shipping Charge Type')}}</th>
                                             <th>{{translate('Flat-rate Amount')}}</th>
                                             <th>{{translate('Charge per Unit of Sale')}}</th>
                                             <th>{{translate('Action')}}</th>
@@ -514,6 +484,52 @@
                                             <td>
                                                 <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                             </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="bloc-default-shipping-style" style="margin-top: 22px;">
+                            <h6>{{ translate('Shipping Sample Configuration') }}</h6>
+                            <hr>
+                            <div>
+                                <table class="table" id="table_sample_configuration" class="bloc_sample_configuration_variant">
+                                    <thead>
+                                        <tr>
+                                            <th>{{translate('Shipping-by')}}</th>
+                                            <th>{{translate('Estimated Sample Preparation Days')}}</th>
+                                            <th>{{translate('Estimated Shipping Days')}}</th>
+                                            <th>{{translate('Paid by')}}</th>
+                                            {{-- <th>{{translate('VAT')}}</th> --}}
+                                            <th>{{translate('Shipping amount')}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bloc_sample_configuration">
+                                        <tr>
+                                            <td>
+                                                <select class="form-control shipper_sample" name="shipper_sample">
+                                                    <option value="" selected>{{translate('Choose shipper')}}</option>
+                                                    <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                                    <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
+                                                </select>
+                                            </td>
+                                            <td><input type="number" class="form-control estimated_sample" name="estimated_sample"></td>
+                                            <td><input type="number" class="form-control estimated_shipping_sample" name="estimated_shipping_sample"></td>
+                                            <td>
+                                                <select class="form-control paid_sample" name="paid_sample">
+                                                    <option value="" selected>{{translate('Choose paid by')}}</option>
+                                                    <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                                    <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
+                                                </select>
+                                            </td>
+                                            {{-- <td>
+                                                <label class="aiz-switch aiz-switch-success mb-0">
+                                                    <input value="1" type="checkbox" class="vat_sample" name="vat_sample" @if($vat_user->vat_registered == 1) checked @endif>
+                                                    <span></span>
+                                                </label>
+                                            </td> --}}
+                                            <td><input type="number" class="form-control shipping_amount" name="shipping_amount" step="0.1" readonly></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -627,6 +643,10 @@
                                     <div class="custom-file mb-3">
                                         <input type="file" class="custom-file-input photos_variant" id="photos_variant" accept=".jpeg, .jpg, .png" multiple>
                                         <label class="custom-file-label" for="photos_variant">Choose files</label>
+                                    </div>
+
+                                    <div class="row uploaded_images">
+
                                     </div>
                                 </div>
                             </div>
@@ -765,7 +785,7 @@
                                     <input type="text" class="form-control" value="{{ translate('Low-Stock Warning') }}" disabled>
                                 </div>
                                 <div class="col-md-8 mb-3">
-                                    <input type="text" name="quantite_stock_warning" class="form-control">
+                                    <input type="number" min="0" name="quantite_stock_warning" class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -887,6 +907,18 @@
 <!--- category parent tree -->
 <script type="text/javascript">
     function submitForm() {
+        var input = $('#nameProduct');
+        input.removeClass('error'); // Add error class
+        if (!input.val().trim()) {
+                input.addClass('error'); // Add error class
+                 // Show SweetAlert2 message
+                 Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please enter a product name!'
+                });
+                return ;
+            }
         const formData = new FormData(document.getElementById('choice_form'));
 
         fetch('{{route("seller.product.tempStore")}}', {
@@ -1145,6 +1177,19 @@
             }else if( (files.length <= maxFiles) && (files.length > 0)){
                 var labelText = numFiles === 1 ? '1 file selected' : numFiles + ' files selected';
                 $(this).next('.custom-file-label').html(labelText);
+
+                let uploadedFilesHTML = '';
+                for (let i = 0; i < files.length; i++) {
+                    let file = files[i];
+                    if (file.type.startsWith('image/')) {
+                        uploadedFilesHTML += `<div class="col-2"><img src="${URL.createObjectURL(file)}" alt="${file.name}" height="80" width="80" /></div>`; // Display image preview
+                    } else {
+                        // Display icon for document type
+                        uploadedFilesHTML += `<li><i class="fa fa-file-text-o"></i> ${file.name}</li>`;
+                    }
+                }
+
+                $(this).parent().parent().find('.uploaded_images').html(uploadedFilesHTML);
             }
         });
 
@@ -1268,6 +1313,7 @@
             clonedDiv.find('.variant-sample-available').attr('name', 'variant-sample-available' + numbers_variant);
             clonedDiv.find('.variant-sample-pricing').attr('name', 'variant-sample-pricing' + numbers_variant);
             clonedDiv.find('.variant-sample-shipping').attr('name', 'variant-sample-shipping' + numbers_variant);
+            clonedDiv.find('.variant-sample-shipping').attr('data-id_new_variant', numbers_variant);
 
             clonedDiv.find('.min-qty-shipping').each(function(index, element) {
                 $(element).attr('name', 'variant_shipping-' + numbers_variant + '[from][]');
@@ -1970,7 +2016,6 @@
                                 }
                             }
                             uploadedFilesHTML += '</div>';
-                            console.log('name :', $(this).prop('name'));
 
                             if ($('body #dropifyUploadedFiles').length === 0) {
                                 $("#bloc_photos").append('<div id="dropifyUploadedFiles"></div>');
@@ -2448,6 +2493,7 @@
                         }else{
                             $(this).parent().parent().find('.estimated_shipping').prop('readonly', true);
                             $(this).parent().parent().find('.shipping_charge').find("option:first").prop("selected", true);
+                            $(this).parent().parent().find('.shipping_charge').addClass("disabled-select");
                             $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly', true);
                             $(this).parent().parent().find('.charge_per_unit_shipping').val(null);
                             $(this).parent().parent().find('.estimated_shipping').val(null);
@@ -2463,6 +2509,7 @@
             if(selected.indexOf('vendor') !== -1){
                 $(this).parent().parent().find('.estimated_shipping').prop('readonly', false);
                 $(this).parent().parent().find('.shipping_charge').find("option:first").prop("selected", true);
+                $(this).parent().parent().find('.shipping_charge').addClass("disabled-select");
                 $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly', true);
                 $(this).parent().parent().find('.charge_per_unit_shipping').val(null);
                 $(this).parent().parent().find('.paid').val(null);
@@ -2479,10 +2526,13 @@
             if(shippers.indexOf('vendor') !== -1){
                 if($(this).val() != "buyer"){
                     $(this).parent().parent().find('.shipping_charge').find("option:first").prop("selected", true);
+                    $(this).parent().parent().find('.shipping_charge').addClass("disabled-select");
                     $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly', true);
                     $(this).parent().parent().find('.charge_per_unit_shipping').val(null);
                     $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', true);
                     $(this).parent().parent().find('.flat_rate_shipping').val(null);
+                }else{
+                    $(this).parent().parent().find('.shipping_charge').removeClass("disabled-select");
                 }
             }else{
                 Swal.fire({
@@ -2506,7 +2556,7 @@
                 });
 
                 $(this).find('option').eq(0).prop('selected', true);
-            }else{
+            }else if($(this).parent().parent().find('.paid').val() == 'buyer'){
                 if($(this).val() == "flat"){
                     $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', false);
                     $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly', true);
@@ -2516,6 +2566,16 @@
                     $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', true);
                     $(this).parent().parent().find('.flat_rate_shipping').val(null);
                 }
+            }else{
+                Swal.fire({
+                    title: 'Cancelled',
+                    text: "Wrong choice.",
+                    icon: 'error',
+                    scrollbarPadding: false,
+                    backdrop:false,
+                });
+
+                $(this).find('option').eq(0).prop('selected', true);
             }
         })
 
@@ -2534,6 +2594,14 @@
                         }
                     })
                 });
+
+                clonedDiv.find('.shipper').multiSelect();
+
+                clonedDiv.find('.multi-select-container').each(function(index, element) {
+                    if (index % 2 != 0) {
+                        $(element).remove();
+                    }
+                })
 
                 clonedDiv.find('.paid').each(function(index, element) {
                     $(element).attr('name', `variant_shipping-` + id + `[paid][]`)
@@ -2669,8 +2737,15 @@
                 var clonedDiv = $('#table_sample_configuration').clone();
                 var paid_sample = $('#table_sample_configuration').find('.paid_sample').val();
                 var shipper_sample = $('#table_sample_configuration').find('.shipper_sample').val();
+                var id_variant = $(this).data('id_new_variant');
                 clonedDiv.find('.paid_sample').find('option[value="' + paid_sample + '"]').prop('selected', true);
                 clonedDiv.find('.shipper_sample').find('option[value="' + shipper_sample + '"]').prop('selected', true);
+                
+                clonedDiv.find('.shipper_sample').attr('name', 'variant_shipper_sample-' + id_variant);
+                clonedDiv.find('.paid_sample').attr('name', 'paid_sample-' + id_variant);
+                clonedDiv.find('.estimated_sample').attr('name', 'estimated_sample-' + id_variant);
+                clonedDiv.find('.estimated_shipping_sample').attr('name', 'estimated_shipping_sample-' + id_variant);
+                clonedDiv.find('.shipping_amount').attr('name', 'shipping_amount-' + id_variant);
                 $(this).parent().parent().parent().find('#bloc-sample-shipping').append(clonedDiv);
             }else{
                 $(this).parent().parent().parent().find('#bloc-sample-shipping').empty();
@@ -2829,62 +2904,90 @@
     document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('choice_form').addEventListener('submit', function (event) {
             event.preventDefault(); // Prevent default form submission
+            var clickedButtonValue = event.submitter.value;
+            document.getElementById('submit_button').value = clickedButtonValue;
+            var tagifyInputs = $(".aiz-tag-input").not(".tagify");
+            var isEmpty = false;
 
-            Swal.fire({
-                title: "Product Publication",
-                text: "Do you want to publish or unpublish this product?",
-                icon: "info",
-                showCancelButton: false,
-                confirmButtonText: "Next",
-                html: '<input type="checkbox" id="publicationToggle" value="published" checked> Publish upon approval',
-                focusConfirm: false,
-                preConfirm: () => {
-                    const publicationStatus = document.getElementById('publicationToggle').checked ? 'published' : 'unpublished';
-                    if(publicationStatus == 'published'){
-                        $('#published_after_approve').val(1)
-                    }
+            tagifyInputs.each(function() {
+                var tagify = $(this).data('tagify');
+
+                if (tagify.value.length === 0) {
+                    isEmpty = true;
+                    return false; // Exit the loop early if an empty Tagify input is found
+                }
+            });
+            if (!isEmpty) {
+                $('#error-message').hide();
+                if(clickedButtonValue === "publish"){
                     Swal.fire({
-                        title: "Create Stock Items",
-                        text: "Do you want to create stock items for this product?",
+                        title: "Product Publication",
+                        text: "Do you want to publish or unpublish this product?",
                         icon: "info",
                         showCancelButton: false,
-                        confirmButtonText: "Create",
-                        html: '<input type="checkbox" id="stockToggle" value="published" checked> Create stock',
+                        confirmButtonText: "Next",
+                        html: '<input type="checkbox" id="publicationToggle" value="published" checked> Publish upon approval',
                         focusConfirm: false,
-                    }).then((result) => {
-                        var stockToggleStatus = document.getElementById('stockToggle').checked ? 'create' : 'not create';
-                        if(stockToggleStatus == 'create'){
-                            $('#create_stock').val(1)
-                        }
+                        preConfirm: () => {
+                            const publicationStatus = document.getElementById('publicationToggle').checked ? 'published' : 'unpublished';
+                            if(publicationStatus == 'published'){
+                                $('#published_after_approve').val(1)
+                            }
+                            Swal.fire({
+                                title: "Create Stock Items",
+                                text: "Do you want to create stock items for this product?",
+                                icon: "info",
+                                showCancelButton: false,
+                                confirmButtonText: "Create",
+                                html: '<input type="checkbox" id="stockToggle" value="published" checked> Create stock',
+                                focusConfirm: false,
+                            }).then((result) => {
+                                var stockToggleStatus = document.getElementById('stockToggle').checked ? 'create' : 'not create';
+                                if(stockToggleStatus == 'create'){
+                                    $('#create_stock').val(1)
+                                }
 
-                        // Update the hidden input field with the value of the clicked button
-                        var clickedButtonValue = event.submitter.value;
-                        document.getElementById('submit_button').value = clickedButtonValue;
-                        if(clickedButtonValue === "publish"){
-                            var check = true;
-                            var min_qty = $('#min-qty-parent').val();
-                            var max_qty = $('#max-qty-parent').val();
-                            var unit_price = $('#unit-price-parent').val();
+                                // Update the hidden input field with the value of the clicked button
+                                
+                                if(clickedButtonValue === "publish"){
+                                    var check = true;
+                                    var min_qty = $('#min-qty-parent').val();
+                                    var max_qty = $('#max-qty-parent').val();
+                                    var unit_price = $('#unit-price-parent').val();
 
-                            if($('body input[name="activate_attributes"]').is(':checked')){
-                                $('body #bloc_variants_created .variant-pricing').each(function() {
-                                    if($(this).is(':checked')){
+                                    if($('body input[name="activate_attributes"]').is(':checked')){
+                                        $('body #bloc_variants_created .variant-pricing').each(function() {
+                                            if($(this).is(':checked')){
+                                                if((min_qty == "") || (max_qty == "") || (unit_price == "")){
+                                                    check = false;
+                                                }
+                                            }else{
+                                                var min_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.min-qty-variant').val();
+                                                var max_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.max-qty-variant').val();
+                                                var unit_price_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.unit-price-variant').val();
+
+                                                if((min_qty_variant == "") || (max_qty_variant == "") || (unit_price_variant == "")){
+                                                    check = false;
+                                                }
+                                            }
+                                        });
+                                    }else{
                                         if((min_qty == "") || (max_qty == "") || (unit_price == "")){
                                             check = false;
                                         }
-                                    }else{
-                                        var min_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.min-qty-variant').val();
-                                        var max_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.max-qty-variant').val();
-                                        var unit_price_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.unit-price-variant').val();
-
-                                        if((min_qty_variant == "") || (max_qty_variant == "") || (unit_price_variant == "")){
-                                            check = false;
-                                        }
                                     }
-                                });
-                            }else{
-                                if((min_qty == "") || (max_qty == "") || (unit_price == "")){
-                                    check = false;
+                                    
+                                    if(check == true){
+                                        document.getElementById('choice_form').submit();
+                                    }else{
+                                        Swal.fire({
+                                            title: 'Pricing Configuration Check',
+                                            text: 'Please check your pricing configuration',
+                                            icon: 'error'
+                                        });
+                                    }
+                                }else{
+                                    document.getElementById('choice_form').submit();
                                 }
                             }
 
@@ -2901,8 +3004,13 @@
                             document.getElementById('choice_form').submit();
                         }
                     });
+                }else{
+                    document.getElementById('choice_form').submit();
                 }
-            });
+            }else{
+                $('#error-message').show();
+            }
+            
         });
     });
 </script>

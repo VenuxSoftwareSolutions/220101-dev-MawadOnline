@@ -87,7 +87,7 @@
         @elseif ($newStatus == 'Pending Closure')
         <p>Dear {{$vendorName}},</p>
 
-        <p>Your account is pending closure and will be deleted in [number] days. Please contact our support team as soon as possible for more details: <a href="#">Support</a></p>
+        <p>Your account is pending closure and will be deleted in 5 days. Please contact our support team as soon as possible for more details: <a href="#">Support</a></p>
 
         <p>Thank you for using MawadOnline.</p>
 

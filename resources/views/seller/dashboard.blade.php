@@ -264,16 +264,23 @@
                     </div>
                     <hr>
                     <ul class="list-group">
-                        @foreach (\App\Models\Category::all() as $key => $category)
-                            @if (count($category->products->where('user_id', Auth::user()->owner_id)) > 0)
-                                <li class="d-flex justify-content-between align-items-center my-2 text-primary fs-13">
-                                    {{ $category->getTranslation('name') }}
-                                    <span class="">
-                                        {{ count($category->products->where('user_id', Auth::user()->owner_id)) }}
-                                    </span>
-                                </li>
-                            @endif
-                        @endforeach
+                    @php
+                        $categories = \App\Models\Category::without('category_translations')->with(['products' => function ($query) {
+                            $query->where('user_id', auth()->user()->owner_id);
+                        }])->get();
+                    @endphp
+
+                    @foreach ($categories as $category)
+                        @if ($category->products->isNotEmpty())
+                            <li class="d-flex justify-content-between align-items-center my-2 text-primary fs-13">
+                                {{ $category->getTranslation('name') }}
+                                <span class="">
+                                    {{ $category->products->count() }}
+                                </span>
+                            </li>
+                        @endif
+                    @endforeach
+
                     </ul>
                 </div>
             </div>

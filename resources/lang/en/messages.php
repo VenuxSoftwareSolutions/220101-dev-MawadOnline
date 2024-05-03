@@ -51,5 +51,6 @@ return [
     'Status' => 'Status',
     'Warehouses' => 'Warehouses',
     'admin_review_message' => 'Highlighted fields are pending for admin\'s review.',
+    'inventory_record' => 'Add Inventory Record',
 
 ];

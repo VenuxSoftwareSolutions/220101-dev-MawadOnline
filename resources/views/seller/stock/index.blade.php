@@ -1,7 +1,14 @@
 @extends('seller.layouts.app')
 
 @section('panel_content')
-
+<style>
+     .dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+            background: #a3b8c7 !important;
+            color: #fff !important;
+            border-radius: 5px !important; /* Rounded corners */
+            border: #a3b8c7 !important;
+        }
+</style>
 <div class="aiz-titlebar text-left mt-2 mb-3">
     <div class="row align-items-center">
         <div class="col-md-6">
@@ -82,8 +89,8 @@
         </div>
 
         <div class="card-footer">
-            <button type="submit" class="btn btn-primary" data-toggle="confirmation" id="save_record_btn">
-                {{ __('stock.Save') }}
+            <button type="submit" class="btn btn-primary customer-btn-color" data-toggle="confirmation" id="save_record_btn">
+                + {{ __('stock.Add Inventory Record') }}
             </button>
         </div>
     </form>
@@ -209,12 +216,12 @@
             <table id="step3" class="table {{-- aiz-table --}} mb-0">
                 <thead>
                     <tr>
-                        <th>{{ __('stock.Product/Variant') }}</th>
-                        <th>{{ __('stock.SKU') }}</th>
-                        <th>{{ __('stock.Warehouse') }}</th>
-                        <th>{{ __('stock.Quantity') }}</th>
-                        <th>{{ __('stock.Last Update Date/Time') }}</th>
-                        <th>{{ __('stock.Action') }}</th>
+                        <th class="custom-th">{{ __('stock.Product/Variant') }}</th>
+                        <th class="custom-th">{{ __('stock.SKU') }}</th>
+                        <th class="custom-th">{{ __('stock.Warehouse') }}</th>
+                        <th class="custom-th">{{ __('stock.Quantity') }}</th>
+                        <th class="custom-th">{{ __('stock.Last Update Date/Time') }}</th>
+                        <th class="custom-th">{{ __('stock.Action') }}</th>
 
                 </thead>
                 <tbody>
@@ -223,11 +230,11 @@
 
                             <td>{{$item->productVariant ? $item->productVariant->name :""}}</td>
                             <td>{{$item->productVariant ? $item->productVariant->sku : ""}}</td>
-                            <td>{{ $item->warehouse->warehouse_name }}</td>
+                            <td>{{ $item->warehouse->warehouse_name ?? "" }}</td>
                             <td>{{ $item->current_total_quantity }}</td>
                             <td>{{ $item->updated_at }}</td>
                             <td>
-                                <button type="button" onclick="openUpdateDialog('{{ $item->variant_id  }}', '{{ $item->current_total_quantity }}',{{$item->warehouse->id}})" class="btn btn-primary">{{ __('stock.Add/Remove Stock') }}</button>
+                                <button type="button" onclick="openUpdateDialog('{{ $item->variant_id  }}', '{{ $item->current_total_quantity }}',{{$item->warehouse->id ?? ''}})" class="btn btn-primary customer-btn-color">{{ __('stock.Add/Remove Stock') }}</button>
                             </td>
 
                             <!-- Add other fields accordingly -->
@@ -586,9 +593,14 @@
         $('.table').DataTable({
             "order": [[0, "asc"]], // Sort by first column in descending order
             "dom": 'Bfrtip', // Add buttons to the layout
+            "language": {
+                "search": "", // Remove the label text for search input
+                "searchPlaceholder": "Search Records" // Custom search placeholder text
+            },
             "buttons":   [{
                 extend: 'excelHtml5',
-                text: '{{__("stock.Export to Excel")}}',
+                text: '<i class="fas fa-file-excel"></i> {{__("stock.Export to Excel")}}', // Adding Font Awesome icon
+                className: 'btn-excel', // Custom class for styling
                 exportOptions: {
                     columns: ':not(:last-child)' // Export all columns except the last one
                 }
@@ -655,6 +667,11 @@
                 });
 
                 tour.onbeforechange(function(targetElement) {
+                    if (this._direction === 'backward') {
+                    window.location.href = '{{ route("seller.reviews") }}'; // Redirect to another page
+                    sleep(60000);
+                    }
+
                     step_number += 1 ;
                     if (step_number == 3) {
                     window.location.href = '{{ route("seller.warehouses.index") }}';

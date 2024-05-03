@@ -218,7 +218,11 @@ use Carbon\Carbon;
                                         <div class="col-6">
                                             <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('trade_license_doc') ? 'color-modified-file' : '' }}"
                                                 href="{{ static_asset($user->business_information->trade_license_doc) }}"
-                                                target="_blank">{{ translate('View Approved Trade License Doc') }}
+                                                target="_blank">@if ($user->status== "Enabled")
+                                                    {{ translate('View Approved Trade License Doc') }}
+                                                @else
+                                                    {{ translate('View Trade License Doc') }}
+                                                @endif
                                             </a>
                                         </div>
                                         @endif
@@ -479,7 +483,7 @@ use Carbon\Carbon;
                                         <div class="col-6">
                                             <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('vat_certificate') ? 'color-modified-file' : '' }}"
                                                 href="{{ static_asset($proposedPayoutChange->getNewValue('vat_certificate')) }}"
-                                                target="_blank">{{ translate('View Trade License Doc') }}
+                                                target="_blank">{{ translate('View Vat Certificate') }}
                                             </a>
                                         </div>
                                         @endif
@@ -488,7 +492,11 @@ use Carbon\Carbon;
                                         <div class="col-6">
                                             <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('vat_certificate') ? 'color-modified-file' : '' }}"
                                                 href="{{ static_asset($user->business_information->vat_certificate) }}"
-                                                target="_blank">{{ translate('View Approved IBAN Certificate') }}
+                                                target="_blank">@if ($user->status== "Enabled")
+                                                     {{ translate('View Approved Vat Certificate') }}
+                                                @else
+                                                    {{ translate('View Vat Certificate') }}
+                                                @endif
                                             </a>
                                         </div>
                                         @endif
@@ -532,7 +540,11 @@ use Carbon\Carbon;
                                         <div class="col-6">
                                             <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('tax_waiver') ? 'color-modified-file' : '' }}"
                                                 href="{{ static_asset($user->business_information->tax_waiver) }}"
-                                                target="_blank">{{ translate('View Approved Tax Waiver Certificate') }}
+                                                target="_blank">@if ($user->status =="Enabled")
+                                                     {{ translate('View Approved Tax Waiver Certificate') }}
+                                                @else
+                                                     {{ translate('View Tax Waiver Certificate') }}
+                                                @endif
                                             </a>
                                         </div>
                                         @endif
@@ -570,7 +582,11 @@ use Carbon\Carbon;
                                             <div class="col-6">
                                                 <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('civil_defense_approval') ? 'color-modified-file' : '' }}"
                                                     href="{{ static_asset($user->business_information->civil_defense_approval) }}"
-                                                    target="_blank">{{ translate('View Approved Civil Defense Approval') }}
+                                                    target="_blank">@if ($user->status =="Enabled")
+                                                        {{ translate('View Approved Civil Defense Approval') }}
+                                                    @else
+                                                        {{ translate('View Civil Defense Approval') }}
+                                                    @endif
                                                 </a>
                                             </div>
                                             @endif
@@ -782,7 +798,11 @@ use Carbon\Carbon;
                                                 <div class="col-6">
                                                     <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('emirates_id_file_path') ? 'color-modified-file' : '' }}"
                                                         href="{{ static_asset($user->contact_people->emirates_id_file_path) }}"
-                                                        target="_blank">{{ translate('View Approved Emirates ID') }}
+                                                        target="_blank">@if ($user->status =="Enabled")
+                                                          {{ translate('View Approved Emirates ID') }}
+                                                        @else
+                                                          {{ translate('View Emirates ID') }}
+                                                        @endif
                                                     </a>
                                                 </div>
                                                 @endif
@@ -1225,7 +1245,11 @@ use Carbon\Carbon;
                                             <div class="col-6">
                                                 <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('iban_certificate') ? 'color-modified-file' : '' }}"
                                                     href="{{ static_asset($user->payout_information->iban_certificate) }}"
-                                                    target="_blank">{{ translate('View Approved IBAN Certificate') }}
+                                                    target="_blank">@if ($user->status =="Enabled")
+                                                         {{ translate('View Approved IBAN Certificate') }}
+                                                    @else
+                                                        {{ translate('View IBAN Certificate') }}
+                                                    @endif
                                                 </a>
                                             </div>
                                             @endif

@@ -414,7 +414,9 @@
                                 <input disabled  type="text" class="form-control rounded-0"
                                     value="{{ auth()->check() ? auth()->user()->email : '' }}"
                                     placeholder="{{ translate('Email') }}" name="email" >
-
+                                    <div style="color: #CB774B;">
+                                        Email cannot be changed
+                                    </div>
                             </div>
 
                         </div>
@@ -1837,7 +1839,13 @@
                 window.location.href = '{{ route("seller.dashboard") }}';
             }, 500);
         });
-
+        tour.onbeforechange(function(targetElement) {
+                    if (this._direction === 'backward') {
+                    window.location.href = '{{ route("seller.support_ticket.index") }}'; // Redirect to another page
+                    sleep(60000);
+                    }
+                    //tour.exit();
+                });
 
     tour.start();
     tour.goToStepNumber(14);

@@ -1,7 +1,14 @@
 @extends('seller.layouts.app')
 
 @section('panel_content')
-
+<style>
+     .dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+            background: #a3b8c7 !important;
+            color: #fff !important;
+            border-radius: 5px !important; /* Rounded corners */
+            border: #a3b8c7 !important;
+        }
+</style>
 <div class="aiz-titlebar text-left mt-2 mb-3">
     <div class="row align-items-center">
         <div class="col-md-6">
@@ -77,7 +84,7 @@
                             @foreach ($productVariants as $productVariant)
                                 <option @if (is_array(request('product_variants')) && (in_array($productVariant->id,request('product_variants')))|| !(request('product_variants')))
                                     selected
-                                @endif value="{{$productVariant->id}}">{{$productVariant->name.' '.$productVariant->sku .$productVariant->productVariantDetails()}}</option>
+                                @endif value="{{$productVariant->id}}">{{$productVariant->name.' '.$productVariant->sku /* .$productVariant->productVariantDetails() */}}</option>
                                 @endforeach
                             </select>
                             <small class="form-text text-muted">{{ trans('stock.products_on_selected_date') }}</small>
@@ -117,7 +124,7 @@
                 <div class="col-md-auto">
                     <div class="form-group mt-4">
 
-                        <button id="step2" type="submit" class="btn btn-primary">{{ __('stock.Search') }}</button>
+                        <button id="step2" type="submit" class="btn btn-primary customer-btn-color">{{ __('stock.Search') }}</button>
                     </div>
 
             </div>
@@ -137,16 +144,16 @@
             <table class="table {{-- aiz-table --}} mb-0">
                 <thead>
                     <tr>
-                        <th>{{__('stock.Date/Time')}}</th>
-                        <th>{{__('stock.Type of Operation')}}</th>
-                        <th>{{__('stock.Product/Variant + SKU')}}</th>
-                        <th>{{__('stock.Warehouse Name')}}</th>
-                        <th>{{__('stock.Quantity Before Operation')}}</th>
-                        <th>{{__('stock.Operation Quantity')}}</th>
-                        <th>{{__('stock.Quantity After Operation')}}</th>
-                        <th>{{__('stock.User')}}</th>
-                        <th>{{__('stock.User Comments')}}</th>
-                        <th>{{__('stock.Sales Order')}}</th>
+                        <th class="custom-th">{{__('stock.Date/Time')}}</th>
+                        <th class="custom-th">{{__('stock.Type of Operation')}}</th>
+                        <th class="custom-th">{{__('stock.Product/Variant + SKU')}}</th>
+                        <th class="custom-th">{{__('stock.Warehouse Name')}}</th>
+                        <th class="custom-th">{{__('stock.Quantity Before Operation')}}</th>
+                        <th class="custom-th">{{__('stock.Operation Quantity')}}</th>
+                        <th class="custom-th">{{__('stock.Quantity After Operation')}}</th>
+                        <th class="custom-th">{{__('stock.User')}}</th>
+                        <th class="custom-th">{{__('stock.User Comments')}}</th>
+                        <th class="custom-th">{{__('stock.Sales Order')}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -196,10 +203,14 @@
         $('.table').DataTable({
             "order": [[0, "desc"]], // Sort by first column in descending order
             "dom": 'Bfrtip', // Add buttons to the layout
-
+            "language": {
+                "search": "", // Remove the label text for search input
+                "searchPlaceholder": "Search Records" // Custom search placeholder text
+            },
             "buttons":   [{
                 extend: 'excelHtml5',
-                text: '{{__("stock.Export to Excel")}}',
+                text: '<i class="fas fa-file-excel"></i> {{__("stock.Export to Excel")}}', // Adding Font Awesome icon
+                className: 'btn-excel', // Custom class for styling
 
             }]
         });
@@ -285,6 +296,10 @@
         });
 
         tour.onbeforechange(function(targetElement) {
+            if (this._direction === 'backward') {
+            window.location.href = '{{ route("seller.warehouses.index") }}'; // Redirect to another page
+            sleep(60000);
+            }
             step_number += 1 ;
             if (step_number == 3) {
             window.location.href = '{{ route("seller.orders.index") }}';

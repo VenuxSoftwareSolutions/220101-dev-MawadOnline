@@ -6,7 +6,7 @@
     .button-container {
         position: fixed;
         top: 1%;
-        right: 19%;
+        right: 25%;
         z-index: 97;
     }
 
@@ -47,7 +47,9 @@
     #table_sample_configuration input[type="number"]{
         width: auto !important;
     }
-
+    .error {
+        border-color: red !important; /* Add red border */
+    }
     .multi-select-button {
         height: 41px;
         border: 1px solid #e2e5ec !important;
@@ -70,6 +72,11 @@
     .aiz-main-content .pr-lg-25px {
         background-color: rgb(247, 248, 250) !important;
     }
+
+    .disabled-select{
+        background-color: #f7f8fa !important;
+    }
+
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 
@@ -118,7 +125,7 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{translate('Product Name')}} <span class="text-danger">*</span></label>
                                     <div class="col-md-8">
-                                        <input type="text" required class="form-control" name="name" value="{{ $product->name }}" placeholder="{{ translate('Product Name') }}" >
+                                        <input id="nameProduct" type="text" required class="form-control" name="name" value="{{ $product->name }}" placeholder="{{ translate('Product Name') }}" >
                                     </div>
                                 </div>
                                 <div class="form-group row" id="brand">
@@ -182,7 +189,7 @@
                                         </label>
                                     </div>
                                 </div>
-        
+
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{translate('Published')}}</label>
                                     <div class="col-md-8">
@@ -192,7 +199,7 @@
                                         </label>
                                     </div>
                                 </div>
-        
+
                                 @if (addon_is_activated('pos_system'))
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{translate('Barcode')}}</label>
@@ -201,7 +208,7 @@
                                     </div>
                                 </div>
                                 @endif
-        
+
                                 @if (addon_is_activated('refund_request'))
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{translate('Refundable')}}</label>
@@ -214,7 +221,7 @@
                                 </div>
                                 @endif
                             </div>
-                        </div>                        
+                        </div>
                     </div>
                 </div>
                 {{-- Bloc Product images --}}
@@ -421,45 +428,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <table class="table" id="table_sample_configuration" class="bloc_sample_configuration_variant">
-                                    <thead>
-                                        <tr>
-                                            <th>{{translate('Shipping-by')}}</th>
-                                            <th>{{translate('Estimated Sample Preparation Days')}}</th>
-                                            <th>{{translate('Estimated Shipping Days')}}</th>
-                                            <th>{{translate('Paid by')}}</th>
-                                            {{-- <th>{{translate('VAT')}}</th> --}}
-                                            <th>{{translate('Shipping amount')}}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="bloc_sample_configuration">
-                                        <tr>
-                                            <td>
-                                                <select class="form-control shipper_sample" name="shipper_sample">
-                                                    <option value="" selected>{{translate('Choose shipper')}}</option>
-                                                    <option value="vendor" @if($product->shipper_sample == 'vendor') {{ 'selected' }} @endif>{{translate('vendor')}}</option>
-                                                    <option value="third_party" @if($product->shipper_sample == 'third_party') {{ 'selected' }} @endif>{{translate('MawadOnline 3rd Party Shippers')}}</option>
-                                                </select>
-                                            </td>
-                                            <td><input type="number" class="form-control estimated_sample" name="estimated_sample" @if($product->estimated_sample != null) value="{{ $product->estimated_sample }}" @endif></td>
-                                            <td><input type="number" class="form-control estimated_shipping_sample" name="estimated_shipping_sample" @if($product->estimated_shipping_sample != null) value="{{ $product->estimated_shipping_sample }}" @endif></td>
-                                            <td>
-                                                <select class="form-control paid_sample" name="paid_sample">
-                                                    <option value="" selected>{{translate('Choose paid by')}}</option>
-                                                    <option value="vendor"@if($product->paid_sample == 'vendor') {{ 'selected' }} @endif>{{translate('vendor')}}</option>
-                                                    <option value="buyer" @if($product->paid_sample == 'buyer') {{ 'selected' }} @endif>{{translate('Buyer')}}</option>
-                                                </select>
-                                            </td>
-                                            {{-- <td>
-                                                <label class="aiz-switch aiz-switch-success mb-0">
-                                                    <input value="1" type="checkbox" class="vat_sample" name="vat_sample" @if($vat_user->vat_registered == 1) checked @endif>
-                                                    <span></span>
-                                                </label>
-                                            </td> --}}
-                                            <td><input type="number" class="form-control shipping_amount" name="shipping_amount" @if($product->shipping_amount != null) value="{{ $product->shipping_amount }}" @else readonly @endif></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                
                             </div>
                         </div>
                     </div>
@@ -476,7 +445,7 @@
                             <div class="row mb-3">
                                 <div class="col-md-4">
                                     <input type="text" class="form-control" value="{{translate('Activate MawadOnline 3rd Party Shipping')}}" disabled>
-                                    
+
                                 </div>
                                 <div class="col-md-8">
                                     <label class="aiz-switch aiz-switch-success mb-0">
@@ -493,11 +462,11 @@
                                             <th>{{translate('Width (Cm)')}}</th>
                                             <th>{{translate('Height (Cm)')}}</th>
                                             <th>{{translate('Package Weight')}}</th>
-                                            <th>{{translate('Weight unit')}}</th>
+                                            <th>{{translate('Weight Unit')}}</th>
                                             <th>{{translate('Breakable')}}</th>
-                                            <th>{{translate('Unit')}}</th>
-                                            <th>{{translate('Min')}}</th>
-                                            <th>{{translate('Max')}}</th>
+                                            <th>{{translate('Temperature Unit')}}</th>
+                                            <th>{{translate('Temperature Min')}}</th>
+                                            <th>{{translate('Temperature Max')}}</th>
                                         </tr>
                                     </thead>
                                     <tbody id="bloc_third_party">
@@ -546,7 +515,7 @@
                             </div>
                         </div>
                         <div class="bloc-default-shipping-style" style="margin-top: 22px;">
-                            <h6>{{ translate('Shipping configuration') }}</h6>
+                            <h6>{{ translate('Shipping Product Configuration') }}</h6>
                             <hr>
                             <div>
                                 <table class="table" id="table_shipping_configuration" class="bloc_shipping_configuration_variant">
@@ -559,7 +528,7 @@
                                             <th>{{translate('Est. Shipping Days')}}</th>
                                             <th style="width: 164px;">{{translate('Paid by')}}</th>
                                             {{-- <th>{{translate('VAT')}}</th> --}}
-                                            <th>{{translate('Shipping Charge')}}</th>
+                                            <th>{{translate('Shipping Charge Type')}}</th>
                                             <th>{{translate('Flat-rate Amount')}}</th>
                                             <th>{{translate('Charge per Unit of Sale')}}</th>
                                             <th>{{translate('Action')}}</th>
@@ -654,6 +623,51 @@
                                 </table>
                             </div>
                         </div>
+                        <div class="bloc-default-shipping-style" style="margin-top: 22px;">
+                            <h6>{{ translate('Shipping Sample Configuration') }}</h6>
+                            <hr>
+                            <div>
+                                <table class="table" id="table_sample_configuration" class="bloc_sample_configuration_variant">
+                                    <thead>
+                                        <tr>
+                                            <th>{{translate('Shipping-by')}}</th>
+                                            <th>{{translate('Estimated Sample Preparation Days')}}</th>
+                                            <th>{{translate('Estimated Shipping Days')}}</th>
+                                            <th>{{translate('Paid by')}}</th>
+                                            {{-- <th>{{translate('VAT')}}</th> --}}
+                                            <th>{{translate('Shipping amount')}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bloc_sample_configuration">
+                                        <tr>
+                                            <td>
+                                                <select class="form-control shipper_sample" name="shipper_sample">
+                                                    <option value="" selected>{{translate('Choose shipper')}}</option>
+                                                    <option value="vendor" @if($product->shipper_sample == 'vendor') {{ 'selected' }} @endif>{{translate('vendor')}}</option>
+                                                    <option value="third_party" @if($product->shipper_sample == 'third_party') {{ 'selected' }} @endif>{{translate('MawadOnline 3rd Party Shippers')}}</option>
+                                                </select>
+                                            </td>
+                                            <td><input type="number" class="form-control estimated_sample" name="estimated_sample" @if($product->estimated_sample != null) value="{{ $product->estimated_sample }}" @endif></td>
+                                            <td><input type="number" class="form-control estimated_shipping_sample" name="estimated_shipping_sample" @if($product->estimated_shipping_sample != null) value="{{ $product->estimated_shipping_sample }}" @endif></td>
+                                            <td>
+                                                <select class="form-control paid_sample" name="paid_sample">
+                                                    <option value="" selected>{{translate('Choose paid by')}}</option>
+                                                    <option value="vendor"@if($product->paid_sample == 'vendor') {{ 'selected' }} @endif>{{translate('vendor')}}</option>
+                                                    <option value="buyer" @if($product->paid_sample == 'buyer') {{ 'selected' }} @endif>{{translate('Buyer')}}</option>
+                                                </select>
+                                            </td>
+                                            {{-- <td>
+                                                <label class="aiz-switch aiz-switch-success mb-0">
+                                                    <input value="1" type="checkbox" class="vat_sample" name="vat_sample" @if($vat_user->vat_registered == 1) checked @endif>
+                                                    <span></span>
+                                                </label>
+                                            </td> --}}
+                                            <td><input type="number" class="form-control shipping_amount" name="shipping_amount" @if($product->shipping_amount != null) value="{{ $product->shipping_amount }}" @else readonly @endif></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 {{-- Bloc Sample pricing configuration --}}
@@ -662,7 +676,7 @@
                         <h5 class="mb-0 h6">{{translate('Default Sample Pricing Configuration')}}</h5>
                     </div>
                     <div class="card-body">
-                        
+
                     </div>
                 </div> --}}
                 {{-- Bloc Product videos --}}
@@ -671,7 +685,7 @@
                         <h5 class="mb-0 h6">{{translate('Product Videos')}}</h5>
                     </div>
                     <div class="card-body">
-                        
+
                     </div>
                 </div> --}}
                 {{-- Bloc Product Category --}}
@@ -757,6 +771,9 @@
                                     <div class="custom-file mb-3">
                                         <input type="file" class="custom-file-input photos_variant" id="photos_variant" accept=".jpeg, .jpg, .png" multiple>
                                         <label class="custom-file-label" for="photos_variant">Choose files</label>
+                                    </div>
+                                    <div class="row uploaded_images">
+
                                     </div>
                                 </div>
                             </div>
@@ -897,9 +914,9 @@
                                                     <label class="custom-file-label" for="photos_variant{{ $key }}">Choose files</label>
                                                 </div>
                                                 @if(count($children->getImagesProduct()) > 0)
-                                                    <div class="row mt-3">
+                                                    <div class="row mt-3 uploaded_images">
                                                         @foreach ($children->getImagesProduct() as $image)
-                                                            <div class="col-2 container-img">
+                                                            <div class="col-2 container-img old_image">
                                                                 <img src="{{ asset('/public/'.$image->path) }}" height="120" width="120" />
                                                                 <i class="fa-regular fa-circle-xmark fa-fw fa-lg icon-delete-image" title="delete this image" data-image_id="{{ $image->id }}"></i>
                                                             </div>
@@ -1215,7 +1232,7 @@
                                         <input type="number" class="form-control" value="{{ translate('Low-Stock Warning') }}" disabled>
                                     </div>
                                     <div class="col-md-8 mb-3">
-                                        <input type="text" name="quantite_stock_warning" class="form-control" value="{{ $product->low_stock_quantity }}">
+                                        <input type="number" min="0" name="quantite_stock_warning" class="form-control" value="{{ $product->low_stock_quantity }}">
                                     </div>
                                 </div>
                             </div>
@@ -1237,7 +1254,7 @@
                         <h5 class="mb-0 h6">{{translate('Product Description')}}</h5>
                     </div>
                     <div class="card-body">
-                        
+
                     </div>
                 </div> --}}
                 {{-- Bloc Product Documents --}}
@@ -1361,11 +1378,25 @@
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script> <!-- Include SweetAlert2 JS -->
+
 <script>
     var previewUrlBase  = "{{ route('seller.product.preview', ['slug' => 'PLACEHOLDER']) }}";
 </script>
 {{-- <script type="text/javascript">
     function submitForm() {
+        var input = $('#nameProduct');
+        input.removeClass('error'); // Add error class
+        if (!input.val().trim()) {
+                input.addClass('error'); // Add error class
+                 // Show SweetAlert2 message
+                 Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please enter a product name!'
+                });
+                return ;
+            }
         const formData = new FormData(document.getElementById('choice_form'));
 
         fetch('{{route("seller.product.tempStore")}}', {
@@ -3767,7 +3798,7 @@
         @else
             $('#btn-create-variant').hide();
         @endif
-        
+
         $('body #bloc_pricing_configuration_variant').hide();
         $('body #bloc_sample_pricing_configuration_variant').hide();
         $('body .btn-variant-pricing').hide();
@@ -3873,7 +3904,7 @@
             }
         });
 
-        //Check length short description 
+        //Check length short description
         $('#short_description').on('keyup', function(event) {
             var currentLength = $(this).val().length;
             var maxCharacters = 512;
@@ -3926,7 +3957,7 @@
         //Get value of attribute checked
         $('body').on('change', '#attributes', function() {
             var ids_attributes = $(this).val();
-            
+
             var clicked = ids_attributes.diff( initial_attributes );
             if(clicked.length == 0){
                 clicked = initial_attributes.diff( ids_attributes );
@@ -3957,7 +3988,7 @@
                 success: function(data) {
                     var attribute_variant_exist = $('#bloc_attributes > .attribute-variant-' + clicked[0]).length
                     var numberOfChildren = $('#general_attributes > div').length;
-                    
+
                     if (numberOfChildren == 0) {
                         $('#general_attributes').append(data.html_attributes_generale);
                     }else{
@@ -3966,7 +3997,7 @@
                             $('#general_attributes').append(data.html_attributes_generale);
                         }else{
                             $('#general_attributes .attribute-variant-' + clicked[0]).remove();
-                        }  
+                        }
                     }
 
                     if(attribute_variant_exist > 0){
@@ -3992,7 +4023,7 @@
                             }
                         });
                     });
-                    
+
                     $("#bloc_variants_created div").each(function(index, element) {
                         console.log('not done yet')
                         if($(element).data('id') != undefined){
@@ -4006,7 +4037,7 @@
                                     var name = 'variant[attributes]['+ id_variant +']['+ id_attribute +']'
                                     $(element).attr('name', name);
                                 }
-                                
+
                             });
 
                             $(element).find('.attributes-units').each(function(index, element) {
@@ -4017,7 +4048,7 @@
                                     $(element).attr('name', name);
                                 }
                             });
-                        } 
+                        }
                     });
 
                     $("#general_attributes div").each(function(index, element) {
@@ -4028,7 +4059,7 @@
                                 var name = 'attribute_generale-'+ id_attribute
                                 $(child_element).attr('name', name);
                             }
-                            
+
                         });
 
                         $(element).find('.attributes-units').each(function(index, child_element_units) {
@@ -4038,14 +4069,14 @@
                                 $(child_element_units).attr('name', name);
                             }
                         });
-                        
+
                     });
 
                     AIZ.plugins.bootstrapSelect('refresh');
                 }
             });
-            
-            
+
+
         })
 
         //Change label of input value by name of file selected
@@ -4081,6 +4112,21 @@
                 // Update the label text accordingly
                 var labelText = numFiles === 1 ? '1 file selected' : numFiles + ' files selected';
                 $(this).next('.custom-file-label').html(labelText);
+
+                let uploadedFilesHTML = '';
+                for (let i = 0; i < files.length; i++) {
+                    let file = files[i];
+                    if (file.type.startsWith('image/')) {
+                        uploadedFilesHTML += `<div class="col-2"><img src="${URL.createObjectURL(file)}" alt="${file.name}" height="120" width="120" /></div>`; // Display image preview
+                    } else {
+                        // Display icon for document type
+                        uploadedFilesHTML += `<li><i class="fa fa-file-text-o"></i> ${file.name}</li>`;
+                    }
+                }
+
+                var parent_container = $(this).parent().parent().find('.uploaded_images');
+                parent_container.find('div:not(.old_image)').remove();
+                parent_container.append(uploadedFilesHTML);
             }
         });
 
@@ -4215,7 +4261,7 @@
 
             clonedDiv.find('.max-qty-shipping').each(function(index, element) {
                 $(element).attr('name', 'variant_shipping-' + numbers_variant + '[to][]');
-            }); 
+            });
 
             var id_shipper = 0;
             clonedDiv.find('.shipper').each(function(index, element) {
@@ -4224,7 +4270,7 @@
                     if(index == key){
                         $(element_original).val().forEach(value => {
                             $(element).find('option[value="' + value + '"]').prop('selected', true);
-                        });  
+                        });
                     }
                 })
 
@@ -4233,11 +4279,11 @@
 
             clonedDiv.find('.estimated_order').each(function(index, element) {
                 $(element).attr('name', 'variant_shipping-' + numbers_variant + '[estimated_order][]');
-            }); 
+            });
 
             clonedDiv.find('.estimated_shipping').each(function(index, element) {
                 $(element).attr('name', 'variant_shipping-' + numbers_variant + '[estimated_shipping][]');
-            }); 
+            });
 
             clonedDiv.find('.paid').each(function(index, element) {
                 $(element).attr('name', 'variant_shipping-' + numbers_variant + '[paid][]');
@@ -4416,7 +4462,7 @@
                     });
 
                     $(element).removeClass("discount-range").addClass("discount-range-variant");
-                    
+
                     if(is_variant != undefined){
                         $(element).attr('name', 'variant_pricing-from' + is_variant + '[discount_range][]');
                     }else if(old_variant != undefined){
@@ -4459,8 +4505,8 @@
                     clonedElement.find('.delete_pricing_canfiguration').attr('data-pricing_id', old_variant);
                 }
 
-                
-                
+
+
                 $(this).parent().parent().parent().find('.bloc_pricing_configuration_variant').show();
                 $(this).parent().parent().parent().find('.bloc_pricing_configuration_variant').append(clonedElement);
             }else{
@@ -4600,7 +4646,7 @@
         $('body').on('click', '.btn-add-pricing', function() {
             var id_variant = $(this).data('id_variant');
             var newvariant = $(this).data('newvariant-id');
-            
+
             if(id_variant != undefined){
                 var html_to_add = `
                                 <tr>
@@ -4717,7 +4763,7 @@
                                     </td>
                                 </tr>
                             `;
-                } 
+                }
             }
 
                 // add another bloc in pricing configuration
@@ -4752,7 +4798,7 @@
             //remove bloc pricing configuration
             var current = $(this);
             var parent = $(this).parent().parent().parent();
-            
+
             var id_pricing = $(this).data('pricing_id')
 
             var html_added = `<tr>
@@ -4815,7 +4861,7 @@
                                     if(parent.find('tr').length == 0){
                                         parent.append(html_added);
                                     }
-                                    
+
                                 }else{
                                     Swal.fire({
                                         title: 'Cancelled',
@@ -4838,8 +4884,8 @@
                     }
                 })
             }
-                                
-            
+
+
         })
 
         $('body').on('change', '.discount_type', function(){
@@ -4918,7 +4964,7 @@
             var old_files =  "{{ count($product->getImagesProduct()) }}";
             old_files = parseInt(old_files);
             var new_size = old_files + files.length;
-            
+
             //$('#dropifyUploadedFiles').empty();
             if (new_size > 10) {
                 Swal.fire({
@@ -5363,7 +5409,7 @@
                             cache: false,
                             dataType: 'JSON',
                             success: function(dataResult) {
-                               
+
                             }
                         })
                     }
@@ -5463,8 +5509,8 @@
                     html = '<span style="color: green"> Chargeable Weight = ' + Number(chargeable_weight.toFixed(2)) + ", then accepted by our shipper </span>"
                 }
 
-                
-                
+
+
                 $('#result_calculate_third_party').html(html);
             }
         });
@@ -5617,7 +5663,7 @@
                                 </tr>
                             `;
             }
-            
+
             // add another row in shipping configuration
             $(this).parent().parent().parent().append(html_to_add);
             $(this).parent().parent().parent().find('.shipper:last').multiSelect();
@@ -5630,16 +5676,16 @@
             var current = $(this);
             var new_variant_id = $(this).data('variant-id');
             var old_variant_id = $(this).data('id_variant');
-            
+
             if((id_shipping == undefined) && (new_variant_id == undefined) && (old_variant_id == undefined)){
                 $(this).parent().parent().remove();
                 var count = 0;
                 current.find('.shipper').each(function(index) {
-                    $(this).attr('name', 'shipper[' + count + '][]') 
+                    $(this).attr('name', 'shipper[' + count + '][]')
                     count++
                 });
             }else{
-                
+
                 swal({
                     title: 'Are you sure you want to delete this shipping ?',
                     type: "warning",
@@ -5669,14 +5715,14 @@
                                 var count =0;
                                 current_parent.find('.shipper').each(function(index) {
                                     if((new_variant_id == undefined) && (old_variant_id == undefined)){
-                                        $(this).attr('name', 'shipper[' + count + '][]') 
+                                        $(this).attr('name', 'shipper[' + count + '][]')
                                     }else if(new_variant_id != undefined){
                                         $(this).attr('name', 'variant_shipping-' + new_variant_id + '[shipper]['+ count +'][]')
-                                        
+
                                     }else if(old_variant_id != undefined){
                                         $(this).attr('name', 'variant[shipper][' + old_variant_id + ']['+ count +'][]')
                                     }
-                                    
+
                                     count++
                                 });
                                 }else{
@@ -5701,7 +5747,7 @@
                     }
                 })
             }
-           
+
         })
 
         $('body').on('change', '.shipper', function(){
@@ -5709,14 +5755,18 @@
                 count_shippers = parseInt(count_shippers);
             var selected = $(this).val();
 
-            
+
 
             if(selected.indexOf('third_party') !== -1){
                 if(count_shippers == 0){
-
+                    swal(
+                        'Cancelled',
+                        "You cannot choose a third-party option because our shippers are unable to reach the warehouse.",
+                        'error'
+                    )
                     Swal.fire({
                             title: 'Cancelled',
-                            text: "You cannot choose a third-party option because our shippers are unable to reach the warehouse.",
+                            text: "You don't have any warehouse supported by our shippers",
                             icon: 'error',
                             scrollbarPadding: false,
                             backdrop:false,
@@ -5740,6 +5790,10 @@
                                 scrollbarPadding: false,
                                 backdrop:false,
                             });
+                            var checkbox = $(this).parent().find('input[type="checkbox"][value="third_party"]');
+                            var checkbox = $(this).parent().find('.multi-select-button').text('vendor');;
+                            // Uncheck the checkbox
+                            checkbox.prop('checked', false);
                             $(this).find("option[value='third_party']").prop('disabled', false);
                             $(this).find("option[value='third_party']").prop('selected', false);
                     }else{
@@ -5770,10 +5824,11 @@
                         }else{
                             $(this).parent().parent().find('.estimated_shipping').prop('readonly', true);
                             $(this).parent().parent().find('.shipping_charge').find("option:first").prop("selected", true);
+                            $(this).parent().parent().find('.shipping_charge').addClass("disabled-select");
                             $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly', true);
                             $(this).parent().parent().find('.charge_per_unit_shipping').val(null);
-                            $(this).parent().parent().find('.paid').val(null);
                             $(this).parent().parent().find('.estimated_shipping').val(null);
+                            $(this).parent().parent().find('.paid').val(null);
                             $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', true);
                             $(this).parent().parent().find('.flat_rate_shipping').val(null);
                         }
@@ -5785,25 +5840,30 @@
             if(selected.indexOf('vendor') !== -1){
                 $(this).parent().parent().find('.estimated_shipping').prop('readonly', false);
                 $(this).parent().parent().find('.shipping_charge').find("option:first").prop("selected", true);
+                $(this).parent().parent().find('.shipping_charge').addClass("disabled-select");
                 $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly', true);
                 $(this).parent().parent().find('.charge_per_unit_shipping').val(null);
                 $(this).parent().parent().find('.paid').val(null);
-                $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', true);
                 $(this).parent().parent().find('.estimated_shipping').val(null);
+                $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', true);
                 $(this).parent().parent().find('.flat_rate_shipping').val(null);
             }
 
         })
+
 
         $('body').on('change', '.paid', function(){
             var shippers = $(this).parent().parent().find('.shipper').val();
             if(shippers.indexOf('vendor') !== -1){
                 if($(this).val() != "buyer"){
                     $(this).parent().parent().find('.shipping_charge').find("option:first").prop("selected", true);
+                    $(this).parent().parent().find('.shipping_charge').addClass("disabled-select");
                     $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly', true);
                     $(this).parent().parent().find('.charge_per_unit_shipping').val(null);
                     $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', true);
                     $(this).parent().parent().find('.flat_rate_shipping').val(null);
+                }else{
+                    $(this).parent().parent().find('.shipping_charge').removeClass("disabled-select");
                 }
             }else{
                 Swal.fire({
@@ -5827,7 +5887,7 @@
                 });
 
                 $(this).find('option').eq(0).prop('selected', true);
-            }else{
+            }else if($(this).parent().parent().find('.paid').val() == 'buyer'){
                 if($(this).val() == "flat"){
                     $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', false);
                     $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly', true);
@@ -5837,6 +5897,16 @@
                     $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', true);
                     $(this).parent().parent().find('.flat_rate_shipping').val(null);
                 }
+            }else{
+                Swal.fire({
+                    title: 'Cancelled',
+                    text: "Wrong choice.",
+                    icon: 'error',
+                    scrollbarPadding: false,
+                    backdrop:false,
+                });
+
+                $(this).find('option').eq(0).prop('selected', true);
             }
         })
 
@@ -5850,7 +5920,7 @@
                     if(id_variant != null){
                         $(element).attr('name', `variant[shipper][` + id_variant + `][]`)
                     }else if(id != null){
-                        
+
                         $(element).attr('name', `variant_shipping-` + id + `[shipper][]`)
                     }else{
                         $(element).removeAttr('name');
@@ -5859,10 +5929,10 @@
                     $('#shipping_configuration_box #table_shipping_configuration').find('.shipper').each(function(key, element_original) {
                         if(index == key){
                             var values = $(element_original).val(); // Array containing values to check
-        
+
                             $(element).find('option').each(function() {
                                 var optionValue = $(this).val(); // Get value of the option
-                                
+
                                 if ($.inArray(optionValue, values) !== -1) {
                                     $(this).prop('selected', true); // Select the option if value exists in array
                                 }
@@ -5871,16 +5941,24 @@
                     })
                 });
 
+                clonedDiv.find('.shipper').multiSelect();
+
+                clonedDiv.find('.multi-select-container').each(function(index, element) {
+                    if (index % 2 != 0) {
+                        $(element).remove();
+                    }
+                })
+
                 clonedDiv.find('.paid').each(function(index, element) {
                     if(id_variant != null){
                         $(element).attr('name', `variant[paid][` + id_variant + `][]`)
                     }else if(id != null){
-                        
+
                         $(element).attr('name', `variant_shipping-` + id + `[paid][]`)
                     }else{
                         $(element).removeAttr('name');
                     }
-                    
+
                     $('#shipping_configuration_box #table_shipping_configuration').find('.paid').each(function(key, element_original) {
                         if(index == key){
                             $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
@@ -5892,7 +5970,7 @@
                     if(id_variant != null){
                         $(element).attr('name', `variant[shipping_charge][` + id_variant + `][]`)
                     }else if(id != null){
-                        
+
                         $(element).attr('name', `variant_shipping-` + id + `[shipping_charge][]`)
                     }else{
                         $(element).removeAttr('name');
@@ -5908,7 +5986,7 @@
                 if(id_variant != null){
                     clonedDiv.find('.min-qty-shipping').attr('name', `variant[from_shipping][` + id_variant + `][]`)
                 }else if(id != null){
-                    
+
                     clonedDiv.find('.min-qty-shipping').attr('name', `variant_shipping-` + id + `[from][]`)
                 }else{
                     clonedDiv.find('.min-qty-shipping').removeAttr('name');
@@ -5917,7 +5995,7 @@
                 if(id_variant != null){
                     clonedDiv.find('.max-qty-shipping').attr('name', `variant[to_shipping][` + id_variant + `][]`)
                 }else if(id != null){
-                    
+
                     clonedDiv.find('.max-qty-shipping').attr('name', `variant_shipping-` + id + `[to][]`)
                 }else{
                     clonedDiv.find('.max-qty-shipping').removeAttr('name');
@@ -5926,7 +6004,7 @@
                 if(id_variant != null){
                     clonedDiv.find('.estimated_order').attr('name', `variant[estimated_order][` + id_variant + `][]`)
                 }else if(id != null){
-                    
+
                     clonedDiv.find('.estimated_order').attr('name', `variant_shipping-` + id + `[estimated_order][]`)
                 }else{
                     clonedDiv.find('.estimated_order').removeAttr('name');
@@ -5935,7 +6013,7 @@
                 if(id_variant != null){
                     clonedDiv.find('.estimated_shipping').attr('name', `variant[estimated_shipping][` + id_variant + `][]`)
                 }else if(id != null){
-                    
+
                     clonedDiv.find('.estimated_shipping').attr('name', `variant_shipping-` + id + `[estimated_shipping][]`)
                 }else{
                     clonedDiv.find('.estimated_shipping').removeAttr('name');
@@ -5944,7 +6022,7 @@
                 if(id_variant != null){
                     clonedDiv.find('.shipping_charge').attr('name', `variant[shipping_charge][` + id_variant + `][]`)
                 }else if(id != null){
-                    
+
                     clonedDiv.find('.shipping_charge').attr('name', `variant_shipping-` + id + `[shipping_charge][]`)
                 }else{
                     clonedDiv.find('.shipping_charge').removeAttr('name');
@@ -5953,7 +6031,7 @@
                 if(id_variant != null){
                     clonedDiv.find('.flat_rate_shipping').attr('name', `variant[flat_rate_shipping][` + id_variant + `][]`)
                 }else if(id != null){
-                    
+
                     clonedDiv.find('.flat_rate_shipping').attr('name', `variant_shipping-` + id + `[flat_rate_shipping][]`)
                 }else{
                     clonedDiv.find('.flat_rate_shipping').removeAttr('name');
@@ -5962,7 +6040,7 @@
                 if(id_variant != null){
                     clonedDiv.find('.charge_per_unit_shipping').attr('name', `variant[charge_per_unit_shipping][` + id_variant + `][]`)
                 }else if(id != null){
-                    
+
                     clonedDiv.find('.charge_per_unit_shipping').attr('name', `variant_shipping-` + id + `[charge_per_unit_shipping][]`)
                 }else{
                     clonedDiv.find('.charge_per_unit_shipping').removeAttr('name');
@@ -6024,8 +6102,8 @@
                     html = '<span style="color: green">Chargeable Weight = ' + Number(chargeable_weight.toFixed(2)) + ", then accepted by Aramex </span>"
                 }
 
-                
-                
+
+
                 $('#result_calculate_third_party').html(html);
             }
         });
@@ -6114,7 +6192,7 @@
                 $(this).parent().parent().parent().parent().find('.variant-sample-pricing').prop('checked', true);
                 $(this).parent().parent().parent().parent().find('.variant-sample-shipping').prop('checked', true);
                 $(this).parent().parent().parent().parent().find('.variant-sample-pricing').prop('disabled', true);
-                $(this).parent().parent().parent().parent().find('.variant-sample-shipping').prop('disabled', true);  
+                $(this).parent().parent().parent().parent().find('.variant-sample-shipping').prop('disabled', true);
                 $(this).parent().parent().parent().parent().find('.bloc_sample_pricing_configuration_variant').empty();
                 $(this).parent().parent().parent().parent().find('#bloc-sample-shipping').empty();
             }
@@ -6258,8 +6336,8 @@
     };
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script> <!-- Include SweetAlert2 JS -->
-<script>
+
+{{-- <script>
     document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('choice_form').addEventListener('submit', function (event) {
             event.preventDefault(); // Prevent default form submission
@@ -6277,7 +6355,7 @@
                     if(publicationStatus == 'use'){
                         $('#last_version').val(1)
                     }
-                    
+
                     var check = true;
                     var min_qty = $('#min-qty-parent').val();
                     var max_qty = $('#max-qty-parent').val();
@@ -6304,7 +6382,7 @@
                             check = false;
                         }
                     }
-                    
+
                     if(check == true){
                         document.getElementById('choice_form').submit();
                     }else{
@@ -6318,5 +6396,75 @@
             });
         });
     });
+</script> --}}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('choice_form').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        Swal.fire({
+            title: "Do you want to keep the last approved product published on the marketplace or should it be turned to unpublished?",
+            icon: "info",
+            showCancelButton: true,
+            cancelButtonText: "Cancel Update",
+            confirmButtonText: "Yes",
+            showDenyButton: true,
+            denyButtonText: "No",
+            focusConfirm: false,
+            preConfirm: () => {
+                return Swal.getConfirmButton().click();
+            }
+        }).then((result) => {
+            console.log("result.isConfirmed: ", result.isConfirmed)
+            if (result.isConfirmed) {
+                $('#last_version').val(1);
+            } else if (result.isDenied) {
+                $('#last_version').val(0);
+            } else {
+                return false; // Cancel action if "Cancel Update" is clicked
+            }
+            
+            var check = true;
+            var min_qty = $('#min-qty-parent').val();
+            var max_qty = $('#max-qty-parent').val();
+            var unit_price = $('#unit-price-parent').val();
+
+            if ($('body input[name="activate_attributes"]').is(':checked')) {
+                $('body #bloc_variants_created .variant-pricing').each(function () {
+                    if ($(this).is(':checked')) {
+                        if ((min_qty == "") || (max_qty == "") || (unit_price == "")) {
+                            check = false;
+                        }
+                    } else {
+                        var min_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.min-qty-variant').val();
+                        var max_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.max-qty-variant').val();
+                        var unit_price_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.unit-price-variant').val();
+
+                        if ((min_qty_variant == "") || (max_qty_variant == "") || (unit_price_variant == "")) {
+                            check = false;
+                        }
+                    }
+                });
+            } else {
+                if ((min_qty == "") || (max_qty == "") || (unit_price == "")) {
+                    check = false;
+                }
+            }
+
+            if (check == true) {
+                document.getElementById('choice_form').submit();
+            } else {
+                Swal.fire({
+                    title: 'Pricing Configuration Check',
+                    text: 'Please check your pricing configuration',
+                    icon: 'error'
+                });
+            }
+        });
+    });
+});
+
+
 </script>
 @endsection
