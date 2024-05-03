@@ -130,12 +130,12 @@ class ProductService
         $published = 1;
         $is_draft = 0;
 
-        if(isset($collection['submit_button'])){
-            if ($collection['submit_button'] == 'draft') {
+        if(isset($collection['button'])){
+            if ($collection['button'] == 'draft') {
               $is_draft = 1; 
               $published = 0; 
             }
-            unset($collection['submit_button']);
+            unset($collection['button']);
         }
 
         $file = base_path("/public/assets/myText.txt");

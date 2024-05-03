@@ -238,6 +238,9 @@ class SellerStaffController extends Controller
         foreach ($staffs as $key => $st) {
             $staff_role=SellerLeaseDetail::where('lease_id',$current_lease->id)->where('role_id',$st->role_id)->where('is_used',true)->where('amount','!=',0)->first();
             if($staff_role) {
+                $current_lease->total-=$staff_role->amount;
+                $current_lease->discount-=$staff_role->amount;
+                $current_lease->save();
                 $staff_role->delete();
 
             }else{
@@ -245,7 +248,6 @@ class SellerStaffController extends Controller
                 $staff_role->is_used = 0;
                 $staff_role->save();
             }
-
             $st->delete();
         }
         //dd($staffs);
