@@ -1835,7 +1835,13 @@
                 window.location.href = '{{ route("seller.dashboard") }}';
             }, 500);
         });
-
+        tour.onbeforechange(function(targetElement) {
+                    if (this._direction === 'backward') {
+                    window.location.href = '{{ route("seller.support_ticket.index") }}'; // Redirect to another page
+                    sleep(60000);
+                    }
+                    //tour.exit();
+                });
 
     tour.start();
     tour.goToStepNumber(14);

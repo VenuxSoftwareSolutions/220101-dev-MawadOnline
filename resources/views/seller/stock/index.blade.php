@@ -667,6 +667,11 @@
                 });
 
                 tour.onbeforechange(function(targetElement) {
+                    if (this._direction === 'backward') {
+                    window.location.href = '{{ route("seller.reviews") }}'; // Redirect to another page
+                    sleep(60000);
+                    }
+
                     step_number += 1 ;
                     if (step_number == 3) {
                     window.location.href = '{{ route("seller.warehouses.index") }}';
