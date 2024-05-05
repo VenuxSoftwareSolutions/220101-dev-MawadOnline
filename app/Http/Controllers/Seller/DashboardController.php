@@ -17,13 +17,14 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        if (Auth::user()->first_login == false && Auth::user()->id == Auth::user()->owner_id) {
-            $user=Auth::user();
-            $user->first_login=true;
+        $user = Auth::user();
+
+        if ($user->first_login == false && $user->id == $user->owner_id) {
+            $user->first_login = true;
             $user->save();
             return view('seller.welcome');
-        }
-        else {
+        } else {
+
         seller_lease_creation($user=Auth::user());
 
 
