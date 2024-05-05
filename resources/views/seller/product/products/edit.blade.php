@@ -16,6 +16,10 @@
         font-size: 0.75em !important;
     }
 
+    .swal2-confirm{
+        margin-left: 88px;
+    }
+
     .preview-button {
         background-color: #cb774b !important; /* Green background */
         border: none;
@@ -28,6 +32,7 @@
         cursor: pointer;
         border-radius: 8px;
     }
+    
     #short_description{
         height: 83px;
     }
@@ -3767,6 +3772,19 @@
 </script> --}}
 <script type="text/javascript">
     $(document).ready(function() {
+        $('body').on('click', '.swal2-cancel', function(){
+            $('body .swal2-container').hide();
+            $("body").css({
+                "overflow-y": "scroll",
+                "z-index": "1" // Set a higher z-index for the body element
+            });
+            $(".aiz-topbar").css({
+                "width": "calc(100% - 266px)",
+                "left": "265px"
+            });
+
+            $("html, body").animate({ scrollTop: $(document).height() }, 300);
+        })
         function submitForm() {
             const formData = new FormData(document.getElementById('choice_form'));
 
@@ -6406,7 +6424,8 @@
         event.preventDefault(); // Prevent default form submission
 
         Swal.fire({
-            title: "Do you want to keep the last approved product published on the marketplace or should it be turned to unpublished?",
+            title: "Product Update?",
+            text: "As this product update requires approval, you can keep the last approved product published in the marketplace until the update is approved. If you unpublish the last approved product, then you have to publish the updated product after approval, manually. Do you want to keep the last approved product published?",
             icon: "info",
             showCancelButton: true,
             cancelButtonText: "Cancel Update",
@@ -6414,8 +6433,14 @@
             showDenyButton: true,
             denyButtonText: "No",
             focusConfirm: false,
+            backdrop:false,
             preConfirm: () => {
                 return Swal.getConfirmButton().click();
+            },
+            onOpen: () => {
+                var html = '<button type="button" class="swal2-cancel swal2-styled" aria-label="" style="display: inline-block; margin-right: 83px !important">Cancel Update</button>';
+                $('body').find('.swal2-actions').find('.swal2-cancel').remove();
+                $('body').find('.swal2-actions').prepend(html);
             }
         }).then((result) => {
             console.log("result.isConfirmed: ", result.isConfirmed)
