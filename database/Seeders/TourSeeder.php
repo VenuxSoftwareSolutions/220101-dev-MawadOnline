@@ -17,8 +17,8 @@ class TourSeeder extends Seeder
     {
         Tour::updateOrCreate(
             ['step_number' => 1],
-            ['element_id' => 'Dashboard Overview ',
-            'title' => 'Dashboard',
+            ['element_id' => 'dashboard ',
+            'title' => 'Dashboard Overview',
             'description' => 'Welcome to your e-Shop dashboard! This is the command center for your business on MawadOnline. Here, you’ll oversee your shop\'s performance, monitor sales, and fine-tune settings to ensure your e-shop runs like a dream.']
         );
         Tour::updateOrCreate(

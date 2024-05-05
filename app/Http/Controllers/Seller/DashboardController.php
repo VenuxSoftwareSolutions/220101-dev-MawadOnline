@@ -6,10 +6,12 @@ use DB;
 use Auth;
 use Carbon\Carbon;
 use App\Models\Tour;
+use App\Models\User;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\SellerLease;
 use App\Models\SellerPackage;
+use App\Models\SellerLeaseDetail;
 
 class DashboardController extends Controller
 {
@@ -23,6 +25,7 @@ class DashboardController extends Controller
         }
         else {
         seller_lease_creation($user=Auth::user());
+
 
         $tour_steps=Tour::orderBy('step_number')->get();
         $data['products'] = Product::where('user_id', Auth::user()->owner_id)->orderBy('num_of_sale', 'desc')->limit(12)->get();

@@ -235,7 +235,7 @@
         .ms-options-wrap > .ms-options {
             position: absolute;
             left: 0;
-            width: 247%;
+            width: 100%;
             margin-top: 1px;
             margin-bottom: 20px;
             background: white;

@@ -84,6 +84,9 @@
     background-color: #CB774B;
     color:#fff
 }
+
+
+
 </style>
 @section('panel_content')
     <div class="aiz-titlebar mt-2 mb-4">
@@ -865,7 +868,8 @@
                                     <div class="col-md-6" id="taxWaiverGroup" {{-- style="display: none;" --}}>
                                         <div class="form-group">
                                             <label><b>{{ translate('Tax Waiver Certificate') }}</b> <span
-                                                    class="text-primary">*</span><small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small></label>
+                                                    class="text-primary">*</span>
+                                                    <small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small></label>
                                             @if ($tax_waiver)
                                                 <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('tax_waiver') ? 'color-modified-file' : '' }}"
                                                     href="{{ static_asset($tax_waiver) }}"
@@ -900,7 +904,7 @@
                                                         @error('civil_defense_approval')
                                                         <div class="text-danger">{{ $message }}</div>
                                                          @enderror
-                                                    <label class="custom-file-label" for="civil_defense_approval_input">{{ translate('Choisir un fichier') }}</label>
+                                                    <label class="custom-file-label" for="civil_defense_approval_input">{{ translate('Choose a file') }}</label>
                                                 </div>
                                             </div>
                                             <small>{{ translate('Max file size is 5MB and accepted file types are PDF and image formats.') }}</small>
