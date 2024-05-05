@@ -1718,8 +1718,9 @@ class ProductService
             }
 
             $ids = [];
+            $ids_product_attribute_values = [];
             if(count($general_attributes_data) > 0){
-                $ids_product_attribute_values = [];
+                
                 foreach ($general_attributes_data as $attr => $value) {
                     if($value != null){
                         $attribute_product = ProductAttributeValues::where('id_products', $product_update->id)->where('id_attribute', $attr)->first();
