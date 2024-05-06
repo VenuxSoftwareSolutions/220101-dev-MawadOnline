@@ -7,6 +7,9 @@
 <script>
     function onSubmit(token) {
 
+        $('.login_btn').hide();
+        $('.loading_btn').show();
+
         // Get email and password values
         var email = $('#login_form input[name="email"]').val();
         var password = $('#login_form input[name="password"]').val();
@@ -16,6 +19,8 @@
         if (!email || !password) {
             // If email or password is empty, display an error message
             $('#error_message').text('Email and password are required.').show();
+            $('.login_btn').show();
+            $('.loading_btn').hide();
             return; // Stop further execution
         } else {
             // If both fields are filled, hide the error message
@@ -88,49 +93,56 @@
                                     <div class="">
                                         <form class="form-default" id="login_form" role="form" action="{{ route('password.update') }}" method="POST">
                                             @csrf
-                                            
+
                                             <!-- Email -->
                                             <div class="form-group">
                                                 <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ $email ?? old('email') }}" placeholder="{{ translate('Email') }}" required autofocus>
-                    
+
                                                 @if ($errors->has('email'))
                                                     <span class="invalid-feedback" role="alert">
                                                         <strong>{{ $errors->first('email') }}</strong>
                                                     </span>
                                                 @endif
                                             </div>
-                                            
+
                                             <!-- Code -->
                                             <div class="form-group">
                                                 <input id="code" type="text" class="form-control{{ $errors->has('code') ? ' is-invalid' : '' }}" name="code" value="{{ $email ?? old('code') }}" placeholder="{{translate('Code')}}" required autofocus>
-                    
+
                                                 @if ($errors->has('code'))
                                                     <span class="invalid-feedback" role="alert">
                                                         <strong>{{ $errors->first('code') }}</strong>
                                                     </span>
                                                 @endif
                                             </div>
-                    
+
                                             <!-- Password -->
                                             <div class="form-group">
                                                 <input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" placeholder="{{ translate('New Password') }}" required>
-                    
+
                                                 @if ($errors->has('password'))
                                                     <span class="invalid-feedback" role="alert">
                                                         <strong>{{ $errors->first('password') }}</strong>
                                                     </span>
                                                 @endif
                                             </div>
-                    
+
                                             <!-- Password Confirmation-->
-                
+
                                             <div class="form-group">
                                                 <input id="password-confirm" type="password" class="form-control" name="password_confirmation" placeholder="{{ translate('Reset Password') }}" required>
                                             </div>
 
                                             <!-- Submit Button -->
                                             <div class="mb-4 mt-4">
-                                                <button data-sitekey="{{ config('services.recaptcha_v3.siteKey') }}" data-callback="onSubmit" data-action="submitLoginForm" class="g-recaptcha btn btn-primary btn-block fw-700 fs-14 rounded-0">{{ translate('Reset Password') }}</button>
+
+                                                <button data-sitekey="{{ config('services.recaptcha_v3.siteKey') }}" data-callback="onSubmit" data-action="submitLoginForm" class="g-recaptcha btn btn-primary btn-block fw-700 fs-14 rounded-0">
+                                                    <span class="login_btn">{{ translate('Reset Password') }}</span>
+                                                    <div class="loading_btn" style="display: none;">
+                                                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                        <span class="visually-hidden">Loading...</span>
+                                                    </div>
+                                                </button>
                                             </div>
                                         </form>
                                     </div>
