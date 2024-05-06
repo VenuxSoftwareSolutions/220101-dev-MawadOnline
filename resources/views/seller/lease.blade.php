@@ -100,7 +100,7 @@
                     <td style="color: red;">Unpaid</td>
                 </tr>
                 @php
-                    $details=App\Models\SellerLeaseDetail::where('lease_id',$lease->id)->get();
+                    $details=App\Models\SellerLeaseDetail::where('lease_id',$lease->id)->where('amount','>',0.00)->get();
                 @endphp
                 @foreach($details as $key => $detail)
                     <tr>
