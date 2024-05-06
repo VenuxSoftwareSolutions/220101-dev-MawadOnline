@@ -3,11 +3,9 @@
 @section('panel_content')
     <div class="coming-soon-container">
         <img src="../public/assets/img/Coming_Soon_Illustration1.svg" alt="Coming Soon Illustration">
-        <h1>Coming Soon...</h1>
-        <p>Exciting updates are on the horizon! We're gearing up to unveil powerful new features designed to supercharge
+        <h1 style="font-weight: 600;font-size: 32px;line-height: 40px;" class="mt-5">Coming Soon...</h1>
+        <p style="font-weight: 400;font-size: 16px;line-height: 24px;">Exciting updates are on the horizon! We're gearing up to unveil powerful new features designed to supercharge
             your selling experience. Stay tuned for a smoother, more intuitive dashboard.</p>
-        <input type="email" class="email-input" placeholder="Enter your email">
-        <button class="notify-btn">Notify Me</button>
     </div>
 @endsection
 
