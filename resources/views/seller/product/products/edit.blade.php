@@ -428,7 +428,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                             </div>
                         </div>
                     </div>
@@ -3766,8 +3766,20 @@
     });
 </script> --}}
 <script type="text/javascript">
-    $(document).ready(function() {
-        function submitForm() {
+       function submitForm() {
+        var input = $('#nameProduct');
+        input.removeClass('error'); // Add error class
+        if (!input.val().trim()) {
+                input.addClass('error'); // Add error class
+                   // Show SweetAlert2 message
+                   Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please enter a product name!'
+                });
+
+                return ;
+            }
             const formData = new FormData(document.getElementById('choice_form'));
 
             fetch('{{route("seller.product.tempStore")}}', {
@@ -3788,6 +3800,8 @@
                 }
             });
         }
+    $(document).ready(function() {
+
         $('.shipper').multiSelect();
         @if(count($product->getChildrenProducts()) > 0)
             $('#variant_informations').show();
@@ -6426,7 +6440,7 @@
             } else {
                 return false; // Cancel action if "Cancel Update" is clicked
             }
-            
+
             var check = true;
             var min_qty = $('#min-qty-parent').val();
             var max_qty = $('#max-qty-parent').val();
