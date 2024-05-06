@@ -37,7 +37,7 @@
                         @endcan
                         @can('delete_seller_package')
                             <a href="#" data-href="{{route('seller_packages.destroy', $seller_package->id)}}" class="btn btn-sm btn-danger confirm-delete">{{translate('Delete')}}</a>
-                        @endcan                        
+                        @endcan
                     </div>
                 </div>
             </div>

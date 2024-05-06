@@ -32,7 +32,7 @@ class SellerLeaseController extends Controller
         // Retrieve the lease where the current date is between start_date and end_date
         $current_lease = SellerLease::where('vendor_id',Auth::user()->owner_id)->where('start_date', '<=', $currentDate)
             ->where('end_date', '>=', $currentDate)->first();
-        $current_details=SellerLeaseDetail::where('lease_id',$current_lease->id)->where('amount','>',0.00)->get();
+        $current_details=SellerLeaseDetail::where('lease_id',$current_lease->id)->get();
         $leases = SellerLease::where('vendor_id',Auth::user()->owner_id)
             ->latest() // Order by the latest leases
             ->take(4)  // Take the latest four leases

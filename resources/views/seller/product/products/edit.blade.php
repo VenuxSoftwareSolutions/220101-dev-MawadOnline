@@ -32,7 +32,7 @@
         cursor: pointer;
         border-radius: 8px;
     }
-    
+
     #short_description{
         height: 83px;
     }
@@ -439,7 +439,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                             </div>
                         </div>
                     </div>
@@ -3851,21 +3851,20 @@
     });
 </script> --}}
 <script type="text/javascript">
-    $(document).ready(function() {
-        $('body').on('click', '.swal2-cancel', function(){
-            $('body .swal2-container').hide();
-            $("body").css({
-                "overflow-y": "scroll",
-                "z-index": "1" // Set a higher z-index for the body element
-            });
-            $(".aiz-topbar").css({
-                "width": "calc(100% - 266px)",
-                "left": "265px"
-            });
+       function submitForm() {
+        var input = $('#nameProduct');
+        input.removeClass('error'); // Add error class
+        if (!input.val().trim()) {
+                input.addClass('error'); // Add error class
+                   // Show SweetAlert2 message
+                   Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please enter a product name!'
+                });
 
-            $("html, body").animate({ scrollTop: $(document).height() }, 300);
-        })
-        function submitForm() {
+                return ;
+            }
             const formData = new FormData(document.getElementById('choice_form'));
 
             fetch('{{route("seller.product.tempStore")}}', {
@@ -3886,6 +3885,20 @@
                 }
             });
         }
+    $(document).ready(function() {
+        $('body').on('click', '.swal2-cancel', function(){
+            $('body .swal2-container').hide();
+            $("body").css({
+                "overflow-y": "scroll",
+                "z-index": "1" // Set a higher z-index for the body element
+            });
+            $(".aiz-topbar").css({
+                "width": "calc(100% - 266px)",
+                "left": "265px"
+            });
+
+            $("html, body").animate({ scrollTop: $(document).height() }, 300);
+        })
         $('.shipper').multiSelect();
         $('.shipper_sample').multiSelect();
         @if(count($product->getChildrenProducts()) > 0)
@@ -6772,7 +6785,7 @@
             } else {
                 return false; // Cancel action if "Cancel Update" is clicked
             }
-            
+
             var check = true;
             var min_qty = $('#min-qty-parent').val();
             var max_qty = $('#max-qty-parent').val();
