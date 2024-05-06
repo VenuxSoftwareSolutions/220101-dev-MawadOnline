@@ -19,42 +19,88 @@
     }
 }
 
+.custom-card{
+    border-radius: 30px !important;
+    width: 352px;
+}
 
+.card-title{
+    font-width: 600;
+    font-size: 20px;
+    line-height: 32px;
+    color:#A3B8C7;
+    font-family: Poppins,Calibri;
+}
+.sub-title{
+    font-width: 600;
+    font-size: 24px;
+    line-height: 32px;
+    color: #000000;
+    font-family: Poppins,Calibri;
+}
+
+.btn-light{
+    border: 1px solid #A3B8C7;
+    border-radius: 8px;
+    color:#A3B8C7;
+    padding: 12px, 24px, 12px, 24px;
+    background-color: #FFFFFF;
+}
+
+
+.btn-primary{
+    border: 1px solid #A3B8C7 !important;
+    border-radius: 8px;
+    color:#FFFFFF !important;
+    padding: 12px, 24px, 12px, 24px;
+    background-color: #A3B8C7 !important;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 24px;
+}
 </style>
+<style>
+    .list-group-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px; /* Adjust margin as needed */
+    }
 
+    .list-group-item img {
+        margin-right: 10px; /* Adjust margin as needed */
+    }
+
+    .list-group-item p {
+        font-family: Poppins;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 24px;
+        margin: 0; /* Reset margin */
+    }
+</style>
 @endpush
 @section('panel_content')
-    <section class="py-6 bg-soft-primary">
-        <div class="container">
-            <div class="row">
-                <div class="col ">
-                    <div class="col-xl-8 mx-auto text-center mb-5">
-                        <h1 class="mb-0 fw-700">{{ translate('Premium Packages for Sellers') }}</h1>
-                    </div>
-                    <div class="text-center  mt-5">
-                        <h5 class="mb-1 h5 fw-600">Current Package: Pro</h5>
-                    </div>
-                </div>
-
-            </div>
+    <section class="py-4">
+        <div class="justify-content-start">
+            <h5 style="font-weight: 500;font-size: 24px;line-height: 32px">Subscription Packages</h5>
         </div>
     </section>
 
-    <section class="py-4 py-lg-5">
-        <div class="container">
-            <div class="row row-cols-xxl-3 row-cols-lg-3 row-cols-md-2 row-cols-1 gutters-10 justify-content-center">
-                    <div class="col">
-                        <div class="card overflow-hidden">
+    <section class="mt-0">
+        <div class="col-md-12">
+
+        <div class="row justify-content-start">
+                    <div class="col-md-3">
+                        <div class="card overflow-hidden custom-card">
                             <div class="card-body">
                                 <div class="text-center mb-4 mt-3">
-                                    <h5 class="mb-1 h5 fw-600">{{ $seller_packages[0]->getTranslation('name') }}</h5>
+                                    <h5 class="mb-1 h5 fw-600 card-title">{{ $seller_packages[0]->getTranslation('name') }}</h5>
                                 </div>
                                 <div class="mb-3 d-flex align-items-center justify-content-center">
                                     @if ($seller_packages[0]->amount == 0)
-                                        <span class="fs-30 fw-600 lh-1 mb-0">-</span>
+                                        <span class="sub-title">-</span>
                                     @else
-                                        <span
-                                            class="fs-30 fw-700 lh-1 mb-0">AED {{ $seller_packages[0]->amount }} / month</span>
+                                        <span class="sub-title">AED {{ $seller_packages[0]->amount }}<span style="color:#BDBDBD;">/ month</span></span>
                                     @endif
                                     {{-- <span
                                         class="text-secondary border-left ml-2 pl-2">{{ $seller_packages->duration }}<br>{{ translate('Days') }}</span> --}}
@@ -62,22 +108,23 @@
 
                                 <ul class="list-group list-group-raw fs-13 mb-5">
                                     <li class="list-group-item py-2 fw-700">
-                                        <i class="las la-check text-success mr-2"></i>
-                                        {{ translate('Full access to all e-Shop essentials') }}
+                                        <img src="{{ asset('public/images/tick-circle.png') }}" alt="Tick">
+                                        <p>{{ translate('Full access to all e-Shop essentials') }}</p>
                                     </li>
                                     <li class="list-group-item py-2 fw-700">
-                                        <i class="las la-check text-success mr-2"></i>
-                                         {{ translate('Unlimited products') }}
+                                        <img src="{{ asset('public/images/tick-circle.png') }}" alt="Tick">
+                                        <p>{{ translate('Unlimited products') }}</p>
                                     </li>
                                     <li class="list-group-item py-2 fw-700">
-                                        <i class="las la-check text-success mr-2"></i>
-                                         {{ translate('Free e-Shop adminstrator + 4 positions') }}
+                                        <img src="{{ asset('public/images/tick-circle.png') }}" alt="Tick">
+                                        <p>{{ translate('Free e-Shop administrator + 4 positions') }}</p>
                                     </li>
                                     <li class="list-group-item py-2 fw-700">
-                                        <i class="las la-check text-success mr-2"></i>
-                                         {{ translate('Additional staff position just for AED 10/month') }}
+                                        <img src="{{ asset('public/images/tick-circle.png') }}" alt="Tick">
+                                        <p>{{ translate('Additional staff position just for AED 10/month') }}</p>
                                     </li>
                                 </ul>
+
 
                                 <div class="text-center">
                                     {{-- @if ($seller_packages->amount == 0)
@@ -92,17 +139,17 @@
                                                 onclick="show_price_modal({{ $seller_packages->id }})">{{ translate('Purchase Package') }}</button>
                                         @endif
                                     @endif --}}
-                                    <button class="btn btn-primary fw-600 col-10" disabled
+                                    <button class="btn btn-light fw-600 col-10"
                                                 onclick="select_package({{ $seller_packages[0]->id }})">{{ translate('E-Shop Already Registered') }}</button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col">
-                        <div class="card overflow-hidden">
+                    <div class="col-md-3">
+                        <div class="card overflow-hidden custom-card">
                             <div class="card-body">
                                 <div class="text-center mb-4 mt-3">
-                                    <h5 class="mb-1 h5 fw-600">{{ $seller_packages[1]->getTranslation('name') }}</h5>
+                                    <h5 class="mb-1 h5 fw-600 card-title">{{ $seller_packages[1]->getTranslation('name') }}</h5>
                                 </div>
                                 <div class="mb-3 d-flex align-items-center justify-content-center">
                                     @if ($seller_packages[1]->amount == 0)
@@ -116,20 +163,20 @@
                                 </div>
                                 <ul class="list-group list-group-raw fs-13 mb-5">
                                     <li class="list-group-item py-2 fw-700">
-                                        <i class="las la-check text-success mr-2"></i>
-                                        {{ translate('Everything in the Pro Plan') }}
+                                       <img src="{{ asset('public/images/tick-circle.png') }}">
+                                        <p> {{ translate('Everything in the Pro Plan') }}</p>
                                     </li>
                                     <li class="list-group-item py-2 fw-700">
-                                        <i class="las la-check text-success mr-2"></i>
-                                         {{ translate('Customized e-Shop roles') }}
+                                       <img src="{{ asset('public/images/tick-circle.png') }}">
+                                        <p> {{ translate('Customized e-Shop roles') }}</p>
                                     </li>
                                     <li class="list-group-item py-2 fw-700">
-                                        <i class="las la-check text-success mr-2"></i>
-                                         {{ translate('Marketing analytics') }}
+                                        <img src="{{ asset('public/images/tick-circle.png') }}">
+                                        <p>{{ translate('Marketing analytics') }}</p>
                                     </li>
                                     <li class="list-group-item py-2 fw-700">
-                                        <i class="las la-check text-success mr-2"></i>
-                                         {{ translate('And much more...') }}
+                                         <img src="{{ asset('public/images/tick-circle.png') }}">
+                                        <p>   {{ translate('And much more...') }}</p>
                                     </li>
                                 </ul>
 
@@ -151,7 +198,7 @@
                             </div>
                         </div>
                     </div>
-            </div>
+        </div>
         </div>
     </section>
     {{-- <section class="py-4 py-lg-5">
