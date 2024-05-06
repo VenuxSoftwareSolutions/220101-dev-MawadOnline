@@ -82,6 +82,10 @@
         background-color: #f7f8fa !important;
     }
 
+    .clonedDiv{
+        margin-top: 60px;
+    }
+
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 
@@ -236,22 +240,6 @@
                     </div>
                     <div class="card-body">
                         <div class="form-group row">
-                            <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <small>(400x400)</small></label>
-                            <div class="col-md-8" id="bloc_thumbnails">
-                                <input type="file" class="dropify" name="photosThumbnail[]" id="photoUploadThumbnail" accept=".jpeg, .jpg, .png" multiple />
-                                <div class="row mt-3" id="dropifyUploadedFilesThumbnail">
-                                    @if(count($product->getThumbnailsProduct()) > 0)
-                                        @foreach ($product->getThumbnailsProduct() as $image)
-                                            <div class="col-2 container-img">
-                                                <img src="{{ asset('/public/'.$image->path) }}" height="120" width="120" />
-                                                <i class="fa-regular fa-circle-xmark fa-fw fa-lg icon-delete-image" title="delete this image" data-image_id="{{ $image->id }}"></i>
-                                            </div>
-                                        @endforeach
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group row">
                             <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Gallery Images')}} <small>(1280x1280)</small></label>
                             <div class="col-md-8" id="bloc_photos">
                                 <input type="file" class="dropify" name="main_photos[]" id="photoUpload" accept=".jpeg, .jpg, .png" multiple />
@@ -267,12 +255,29 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <small>(400x400)</small></label>
+                            <div class="col-md-8" id="bloc_thumbnails">
+                                <input type="file" class="dropify" name="photosThumbnail[]" id="photoUploadThumbnail" accept=".jpeg, .jpg, .png" multiple />
+                                <small>{{ translate('Thumbnail images will be generated automatically from gallery images if not specified') }}</small>
+                                <div class="row mt-3" id="dropifyUploadedFilesThumbnail">
+                                    @if(count($product->getThumbnailsProduct()) > 0)
+                                        @foreach ($product->getThumbnailsProduct() as $image)
+                                            <div class="col-2 container-img">
+                                                <img src="{{ asset('/public/'.$image->path) }}" height="120" width="120" />
+                                                <i class="fa-regular fa-circle-xmark fa-fw fa-lg icon-delete-image" title="delete this image" data-image_id="{{ $image->id }}"></i>
+                                            </div>
+                                        @endforeach
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
                         <hr>
-                        <div class="row">
-                            <div class="col-6">
+                        <div class="row" style="margin-left: -3px;">
+                            <div class="col-4">
                                 <div class="form-group row">
-                                    <label class="col-md-3 col-from-label" style="padding-top: 12px;">{{translate('Video Provider')}}</label>
-                                    <div class="col-md-9">
+                                    <label class="col-md-2 col-from-label" style="padding-top: 12px; padding-right: 0px;padding-left: 0px;">{{translate('Video Provider')}}</label>
+                                    <div class="col-md-7">
                                         <select class="form-control aiz-selectpicker" name="video_provider" id="video_provider">
                                             <option value="youtube" @selected($product->video_provider == 'youtube')>{{translate('Youtube')}}</option>
                                             <option value="vimeo" @selected($product->video_provider == 'vimeo')>{{translate('Vimeo')}}</option>
@@ -280,10 +285,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-6">
+                            <div class="col-8">
                                 <div class="form-group row">
-                                    <label class="col-md-2 col-from-label" style="padding-top: 12px;">{{translate('Video Link')}}</label>
-                                    <div class="col-md-10">
+                                    <label class="col-md-1 col-from-label" style="padding-top: 12px; padding-right: 0px;">{{translate('Video Link')}}</label>
+                                    <div class="col-md-11">
                                         <input type="text" class="form-control" name="video_link" value="{{ $product->video_link }}" placeholder="{{ translate('Video Link') }}">
                                         <small class="text-muted">{{translate("Use proper link without extra parameter. Don't use short share link/embeded iframe code.")}}</small>
                                     </div>
@@ -355,7 +360,7 @@
                                                         </select>
                                                     </td>
                                                     <td><input type="number" class="form-control discount_amount" value="{{ $pricing->discount_amount }}" @if($pricing->discount_type != 'amount') readonly @endif name="discount_amount[]"></td>
-                                                    <td style="width: 19% !important;">
+                                                    <td style="width: 22% !important;">
                                                         <div class="col-md-9 input-group">
                                                             <input type="number" min="0" step="0.01" class="form-control discount_percentage" value="{{ $pricing->discount_percentage }}" @if($pricing->discount_type != 'percent') readonly @endif name="discount_percentage[]">
                                                             <div class="input-group-append">
@@ -385,13 +390,14 @@
                                                     </select>
                                                 </td>
                                                 <td><input type="number" class="form-control discount_amount" name="discount_amount[]"></td>
-                                                <td style="width: 19% !important;">
+                                                <td style="width: 22% !important;">
                                                     <div class="col-md-9 input-group">
-                                                        <input type="number" class="form-control discount_percentage" name="discount_percentage[]"></td>
+                                                        <input type="number" class="form-control discount_percentage" name="discount_percentage[]">
                                                         <div class="input-group-append">
                                                             <span class="input-group-text">%</span>
                                                         </div>
                                                     </div>
+                                                </td>
                                                 <td>
                                                     <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                                 </td>
@@ -417,7 +423,7 @@
                                         </div>
                                     </div> --}}
                                     <div class="row mb-3">
-                                        <div class="col-md-3">
+                                        <div class="col-md-4">
                                             <input type="text" class="form-control" value="{{translate('Sample description')}}" disabled>
                                         </div>
                                         <div class="col-md-8">
@@ -425,7 +431,7 @@
                                         </div>
                                     </div>
                                     <div class="row mb-3">
-                                        <div class="col-md-3">
+                                        <div class="col-md-4">
                                             <input type="text" class="form-control" value="{{translate('Sample price')}}" disabled>
                                         </div>
                                         <div class="col-md-8">
@@ -445,120 +451,165 @@
                     </div>
                     <div class="card-body">
                         <div class="bloc-default-shipping-style">
-                            <h6>{{ translate('MawadOnline 3rd Party Configuration') }}</h6>
+                            <h6>{{ ucfirst(translate('Default Product Shipping')) }}</h6>
                             <hr>
-                            <div class="row mb-3">
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" value="{{translate('Activate MawadOnline 3rd Party Shipping')}}" disabled>
+                            <div class="bloc-default-shipping-style">
+                                <h6>{{ translate('MawadOnline 3rd Party Shipping') }}</h6>
+                                <hr>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" value="{{translate('Activate MawadOnline 3rd Party Shipping')}}" disabled>
 
+                                    </div>
+                                    <div class="col-md-8">
+                                        <label class="aiz-switch aiz-switch-success mb-0">
+                                            <input value="1" type="checkbox" id="third_party_activate" name="activate_third_party" @if($product->activate_third_party == 1) checked @endif>
+                                            <span></span>
+                                        </label>
+                                    </div>
                                 </div>
-                                <div class="col-md-8">
-                                    <label class="aiz-switch aiz-switch-success mb-0">
-                                        <input value="1" type="checkbox" id="third_party_activate" name="activate_third_party" @if($product->activate_third_party == 1) checked @endif>
-                                        <span></span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <table class="table" id="table_third_party_configuration" class="bloc_third_configuration_variant">
-                                    <thead>
-                                        <tr>
-                                            <th>{{translate('Length (Cm)')}}</th>
-                                            <th>{{translate('Width (Cm)')}}</th>
-                                            <th>{{translate('Height (Cm)')}}</th>
-                                            <th>{{translate('Package Weight')}}</th>
-                                            <th>{{translate('Weight Unit')}}</th>
-                                            <th>{{translate('Breakable')}}</th>
-                                            <th>{{translate('Temperature Unit')}}</th>
-                                            <th>{{translate('Temperature Min')}}</th>
-                                            <th>{{translate('Temperature Max')}}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="bloc_third_party">
-                                        <tr>
-                                            <td><input type="number" name="length" class="form-control" id="length" step="0.1" @if($product->activate_third_party == 1) value="{{ $product->length }}" @else readonly @endif></td>
-                                            <td><input type="number" name="width" class="form-control" id="width" step="0.1" @if($product->activate_third_party == 1) value="{{ $product->width }}" @else readonly @endif></td>
-                                            <td><input type="number" name="height" class="form-control" id="height" step="0.1" @if($product->activate_third_party == 1) value="{{ $product->height }}" @else readonly @endif></td>
-                                            <td><input type="number" name="weight" class="form-control" id="weight" step="0.1" @if($product->activate_third_party == 1) value="{{ $product->weight }}" @else readonly @endif></td>
-                                            <td>
-                                                <select class="form-control calculate" id="weight_unit" name="unit_weight" @if($product->activate_third_party != 1) disabled @endif>
-                                                    <option value="kilograms" @if($product->unit_weight == "kilograms") {{ 'selected' }} @endif>{{translate('Kilograms')}}</option>
-                                                    <option value="pounds" @if($product->unit_weight == "pounds") {{ 'selected' }} @endif>{{translate('Pounds')}}</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <select class="form-control calculate" id="breakable" name="breakable" @if($product->activate_third_party != 1) disabled @endif>
-                                                    <option value="" @if($product->breakable == null) {{ 'selected' }} @endif>{{translate('Choose option')}}</option>
-                                                    <option value="yes" @if($product->breakable == "yes") {{ 'selected' }} @endif>{{translate('Yes')}}</option>
-                                                    <option value="no" @if($product->breakable == "no") {{ 'selected' }} @endif>{{translate('No')}}</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <select class="form-control calculate" id="unit_third_party" name="unit_third_party" @if($product->activate_third_party != 1) disabled @endif>
-                                                    <option value="celsius" @if($product->unit_third_party == "celsius") {{ 'selected' }} @endif>{{translate('Celsius')}}</option>
-                                                    <option value="kelvin" @if($product->unit_third_party == "kelvin") {{ 'selected' }} @endif>{{translate('Kelvin')}}</option>
-                                                    <option value="fahrenheit" @if($product->unit_third_party == "fahrenheit") {{ 'selected' }} @endif>{{translate('Fahrenheit')}}</option>
-                                                </select>
-                                            </td>
-                                            <td><input type="number" class="form-control" name="min_third_party" id="min_third_party" step="0.1" @if($product->activate_third_party == 1) value="{{ $product->min_third_party }}" @else readonly @endif></td>
-                                            <td><input type="number" class="form-control" name="max_third_party" id="max_third_party" step="0.1" @if($product->activate_third_party == 1) value="{{ $product->max_third_party }}" @else readonly @endif></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <div class="col-12" style="padding: 0">
-                                    <small style="display: block !important">Fill all required fields for shippers to confirm delivery ability.</small>
-                                </div>
-                                <div id="result_calculate_third_party">
-                                    @if($product->activate_third_party == 1)
-                                        @if ($chargeable_weight > 30)
-                                            <span style="color: red"> Chargeable Weight = {{ number_format($chargeable_weight, 2) }}, then not accepted by our shipper </span>
-                                        @else
-                                            <span style="color: green"> Chargeable Weight = {{ number_format($chargeable_weight, 2) }}, then accepted by our shipper </span>
+                                <div class="row">
+                                    <table class="table" id="table_third_party_configuration" class="bloc_third_configuration_variant">
+                                        <thead>
+                                            <tr>
+                                                <th>{{translate('Length (Cm)')}}</th>
+                                                <th>{{translate('Width (Cm)')}}</th>
+                                                <th>{{translate('Height (Cm)')}}</th>
+                                                <th>{{translate('Package Weight')}}</th>
+                                                <th>{{translate('Weight Unit')}}</th>
+                                                <th>{{translate('Breakable')}}</th>
+                                                <th>{{translate('Temperature Unit')}}</th>
+                                                <th>{{translate('Temperature Min')}}</th>
+                                                <th>{{translate('Temperature Max')}}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="bloc_third_party">
+                                            <tr>
+                                                <td><input type="number" name="length" class="form-control" id="length" step="0.1" @if($product->activate_third_party == 1) value="{{ $product->length }}" @else readonly @endif></td>
+                                                <td><input type="number" name="width" class="form-control" id="width" step="0.1" @if($product->activate_third_party == 1) value="{{ $product->width }}" @else readonly @endif></td>
+                                                <td><input type="number" name="height" class="form-control" id="height" step="0.1" @if($product->activate_third_party == 1) value="{{ $product->height }}" @else readonly @endif></td>
+                                                <td><input type="number" name="weight" class="form-control" id="weight" step="0.1" @if($product->activate_third_party == 1) value="{{ $product->weight }}" @else readonly @endif></td>
+                                                <td>
+                                                    <select class="form-control calculate" id="weight_unit" name="unit_weight" @if($product->activate_third_party != 1) disabled @endif>
+                                                        <option value="kilograms" @if($product->unit_weight == "kilograms") {{ 'selected' }} @endif>{{translate('Kilograms')}}</option>
+                                                        <option value="pounds" @if($product->unit_weight == "pounds") {{ 'selected' }} @endif>{{translate('Pounds')}}</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="form-control calculate" id="breakable" name="breakable" @if($product->activate_third_party != 1) disabled @endif>
+                                                        <option value="" @if($product->breakable == null) {{ 'selected' }} @endif>{{translate('Choose option')}}</option>
+                                                        <option value="yes" @if($product->breakable == "yes") {{ 'selected' }} @endif>{{translate('Yes')}}</option>
+                                                        <option value="no" @if($product->breakable == "no") {{ 'selected' }} @endif>{{translate('No')}}</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="form-control calculate" id="unit_third_party" name="unit_third_party" @if($product->activate_third_party != 1) disabled @endif>
+                                                        <option value="celsius" @if($product->unit_third_party == "celsius") {{ 'selected' }} @endif>{{translate('Celsius')}}</option>
+                                                        <option value="kelvin" @if($product->unit_third_party == "kelvin") {{ 'selected' }} @endif>{{translate('Kelvin')}}</option>
+                                                        <option value="fahrenheit" @if($product->unit_third_party == "fahrenheit") {{ 'selected' }} @endif>{{translate('Fahrenheit')}}</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="number" class="form-control" name="min_third_party" id="min_third_party" step="0.1" @if($product->activate_third_party == 1) value="{{ $product->min_third_party }}" @else readonly @endif></td>
+                                                <td><input type="number" class="form-control" name="max_third_party" id="max_third_party" step="0.1" @if($product->activate_third_party == 1) value="{{ $product->max_third_party }}" @else readonly @endif></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class="col-12" style="padding: 0">
+                                        <small style="display: block !important">Fill all required fields for shippers to confirm delivery ability.</small>
+                                    </div>
+                                    <div id="result_calculate_third_party">
+                                        @if($product->activate_third_party == 1)
+                                            @if ($chargeable_weight > 30)
+                                                <span style="color: red"> Chargeable Weight = {{ number_format($chargeable_weight, 2) }}, then not accepted by our shipper </span>
+                                            @else
+                                                <span style="color: green"> Chargeable Weight = {{ number_format($chargeable_weight, 2) }}, then accepted by our shipper </span>
+                                            @endif
                                         @endif
-                                    @endif
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="bloc-default-shipping-style" style="margin-top: 22px;">
-                            <h6>{{ translate('Shipping Product Configuration') }}</h6>
-                            <hr>
-                            <div>
-                                <table class="table" id="table_shipping_configuration" class="bloc_shipping_configuration_variant">
-                                    <thead>
-                                        <tr>
-                                            <th>{{translate('From QTY')}}</th>
-                                            <th>{{translate('To QTY')}}</th>
-                                            <th>{{translate('Shipper')}}</th>
-                                            <th>{{translate('Est. Order Prep. Days')}}</th>
-                                            <th>{{translate('Est. Shipping Days')}}</th>
-                                            <th style="width: 164px;">{{translate('Paid by')}}</th>
-                                            {{-- <th>{{translate('VAT')}}</th> --}}
-                                            <th>{{translate('Shipping Charge Type')}}</th>
-                                            <th>{{translate('Flat-rate Amount')}}</th>
-                                            <th>{{translate('Charge per Unit of Sale')}}</th>
-                                            <th>{{translate('Action')}}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="bloc_shipping_configuration">
-                                        @if (count($product->getShipping()) > 0)
-                                            @foreach ($product->getShipping() as $key => $shipping)
+                            <div class="bloc-default-shipping-style" style="margin-top: 22px;">
+                                <h6>{{ translate('Shipping Duration & Charge') }}</h6>
+                                <hr>
+                                <div>
+                                    <table class="table" id="table_shipping_configuration" class="bloc_shipping_configuration_variant">
+                                        <thead>
+                                            <tr>
+                                                <th>{{translate('From QTY')}}</th>
+                                                <th>{{translate('To QTY')}}</th>
+                                                <th>{{translate('Shipper')}}</th>
+                                                <th>{{translate('Est. Order Prep. Days')}}</th>
+                                                <th>{{translate('Est. Shipping Days')}}</th>
+                                                <th style="width: 164px;">{{translate('Paid by')}}</th>
+                                                {{-- <th>{{translate('VAT')}}</th> --}}
+                                                <th>{{translate('Shipping Charge Type')}}</th>
+                                                <th>{{translate('Flat-rate Amount')}}</th>
+                                                <th>{{translate('Charge per Unit of Sale')}}</th>
+                                                <th>{{translate('Action')}}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="bloc_shipping_configuration">
+                                            @if (count($product->getShipping()) > 0)
+                                                @foreach ($product->getShipping() as $key => $shipping)
+                                                    <tr>
+                                                        <td><input type="number" name="from_shipping[]" value="{{ $shipping->from_shipping }}" class="form-control min-qty-shipping" id=""></td>
+                                                        <td><input type="number" name="to_shipping[]" value="{{ $shipping->to_shipping }}" class="form-control max-qty-shipping" id=""></td>
+                                                        <td>
+                                                            @php $shippers = explode(",", $shipping->shipper); @endphp
+                                                            <select multiple class="shipper" name="shipper[{{ $key }}][]">
+                                                                <option value="vendor" @if(in_array("vendor", $shippers)) {{ 'selected' }} @endif>{{translate('vendor')}}</option>
+                                                                <option value="third_party" @if(in_array("third_party", $shippers)) {{ 'selected' }} @endif>{{translate('MawadOnline 3rd Party Shippers')}}</option>
+                                                            </select>
+                                                        </td>
+                                                        <td><input type="number" class="form-control estimated_order" value="{{ $shipping->estimated_order }}" name="estimated_order[]"></td>
+                                                        <td><input type="number" class="form-control estimated_shipping"  value="{{ $shipping->estimated_shipping }}" name="estimated_shipping[]"></td>
+                                                        <td>
+                                                            <select class="form-control paid" name="paid[]">
+                                                                <option value="" selected>{{translate('Choose shipper')}}</option>
+                                                                <option value="vendor" @if($shipping->paid == "vendor") {{ 'selected' }} @endif>{{translate('vendor')}}</option>
+                                                                <option value="buyer" @if($shipping->paid == "buyer") {{ 'selected' }} @endif>{{translate('Buyer')}}</option>
+                                                            </select>
+                                                        </td>
+                                                        {{-- <td>
+                                                            <label class="aiz-switch aiz-switch-success mb-0">
+                                                                <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping[]" @if($vat_user->vat_registered == 1) checked @endif>
+                                                                <span></span>
+                                                            </label>
+                                                        </td> --}}
+                                                        <td>
+                                                            <select class="form-control shipping_charge" name="shipping_charge[]">
+                                                                <option value="" selected>{{translate('Choose shipping charge')}}</option>
+                                                                <option value="flat" @if($shipping->shipping_charge == "flat") {{ 'selected' }} @endif>{{translate('Flat-rate regardless of quantity')}}</option>
+                                                                <option value="charging" @if($shipping->shipping_charge == "charging") {{ 'selected' }} @endif>{{translate('Charging per Unit of Sale')}}</option>
+                                                            </select>
+                                                        </td>
+                                                        <td><input type="number" class="form-control flat_rate_shipping" value="{{ $shipping->flat_rate_shipping }}" name="flat_rate_shipping[]" readonly></td>
+                                                        <td><input type="number" class="form-control charge_per_unit_shipping" value="{{ $shipping->charge_per_unit_shipping }}" name="charge_per_unit_shipping[]" readonly></td>
+                                                        <td>
+                                                            <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
+                                                            @if($key != 0)
+                                                                <i class="las la-trash delete_shipping_canfiguration" data-id="{{ $shipping->id }}" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @else
                                                 <tr>
-                                                    <td><input type="number" name="from_shipping[]" value="{{ $shipping->from_shipping }}" class="form-control min-qty-shipping" id=""></td>
-                                                    <td><input type="number" name="to_shipping[]" value="{{ $shipping->to_shipping }}" class="form-control max-qty-shipping" id=""></td>
+                                                    <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id=""></td>
+                                                    <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id=""></td>
                                                     <td>
-                                                        @php $shippers = explode(",", $shipping->shipper); @endphp
-                                                        <select multiple class="shipper" name="shipper[{{ $key }}][]">
-                                                            <option value="vendor" @if(in_array("vendor", $shippers)) {{ 'selected' }} @endif>{{translate('vendor')}}</option>
-                                                            <option value="third_party" @if(in_array("third_party", $shippers)) {{ 'selected' }} @endif>{{translate('MawadOnline 3rd Party Shippers')}}</option>
+                                                        <select multiple class="shipper" name="shipper[0][]">
+                                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                                            <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                                         </select>
                                                     </td>
-                                                    <td><input type="number" class="form-control estimated_order" value="{{ $shipping->estimated_order }}" name="estimated_order[]"></td>
-                                                    <td><input type="number" class="form-control estimated_shipping"  value="{{ $shipping->estimated_shipping }}" name="estimated_shipping[]"></td>
+                                                    <td><input type="number" class="form-control estimated_order" name="estimated_order[]"></td>
+                                                    <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]"></td>
                                                     <td>
                                                         <select class="form-control paid" name="paid[]">
-                                                            <option value="" selected>{{translate('Choose shipper')}}</option>
-                                                            <option value="vendor" @if($shipping->paid == "vendor") {{ 'selected' }} @endif>{{translate('vendor')}}</option>
-                                                            <option value="buyer" @if($shipping->paid == "buyer") {{ 'selected' }} @endif>{{translate('Buyer')}}</option>
+                                                            <option value="" >{{translate('Choose paid by')}}</option>
+                                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                                            <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
                                                         </select>
                                                     </td>
                                                     {{-- <td>
@@ -570,107 +621,136 @@
                                                     <td>
                                                         <select class="form-control shipping_charge" name="shipping_charge[]">
                                                             <option value="" selected>{{translate('Choose shipping charge')}}</option>
-                                                            <option value="flat" @if($shipping->shipping_charge == "flat") {{ 'selected' }} @endif>{{translate('Flat-rate regardless of quantity')}}</option>
-                                                            <option value="charging" @if($shipping->shipping_charge == "charging") {{ 'selected' }} @endif>{{translate('Charging per Unit of Sale')}}</option>
+                                                            <option value="flat" @selected(old('shipping_charge') == 'flat')>{{translate('Flat-rate regardless of quantity')}}</option>
+                                                            <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
                                                         </select>
                                                     </td>
-                                                    <td><input type="number" class="form-control flat_rate_shipping" value="{{ $shipping->flat_rate_shipping }}" name="flat_rate_shipping[]" readonly></td>
-                                                    <td><input type="number" class="form-control charge_per_unit_shipping" value="{{ $shipping->charge_per_unit_shipping }}" name="charge_per_unit_shipping[]" readonly></td>
+                                                    <td><input type="number" class="form-control flat_rate_shipping" name="flat_rate_shipping[]" readonly></td>
+                                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="charge_per_unit_shipping[]" readonly></td>
                                                     <td>
                                                         <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                                        @if($key != 0)
-                                                            <i class="las la-trash delete_shipping_canfiguration" data-id="{{ $shipping->id }}" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
-                                                        @endif
                                                     </td>
                                                 </tr>
-                                            @endforeach
-                                        @else
+                                            @endif
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bloc-default-shipping-style" style="margin-top: 22px;">
+                            <h6>{{ ucfirst(translate('Default Sample Shipping')) }}</h6>
+                            <hr>
+                            <div class="bloc-default-shipping-style">
+                                <h6>{{ ucfirst(translate('MawadOnline 3rd Party Shipping')) }}</h6>
+                                <hr>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" value="{{translate('Activate MawadOnline 3rd Party Shipping')}}" disabled>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <label class="aiz-switch aiz-switch-success mb-0">
+                                            <input value="1" type="checkbox" id="third_party_activate_sample" name="activate_third_party_sample">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <table class="table" id="table_third_party_configuration_sample" class="bloc_third_configuration_variant_sample">
+                                        <thead>
                                             <tr>
-                                                <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id=""></td>
-                                                <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id=""></td>
+                                                <th>{{translate('Length (Cm)')}}</th>
+                                                <th>{{translate('Width (Cm)')}}</th>
+                                                <th>{{translate('Height (Cm)')}}</th>
+                                                <th>{{translate('Package Weight')}}</th>
+                                                <th>{{translate('Weight Unit')}}</th>
+                                                <th>{{translate('Breakable')}}</th>
+                                                <th>{{translate('Temperature Unit')}}</th>
+                                                <th>{{translate('Temperature Min')}}</th>
+                                                <th>{{translate('Temperature Max')}}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="bloc_third_party_sample">
+                                            <tr>
+                                                <td><input type="number" name="length_sample" class="form-control" id="length_sample" step="0.1" readonly></td>
+                                                <td><input type="number" name="width_sample" class="form-control" id="width_sample" step="0.1" readonly></td>
+                                                <td><input type="number" name="height_sample" class="form-control" id="height_sample" step="0.1" readonly></td>
+                                                <td><input type="number" name="package_weight_sample" class="form-control" id="package_weight_sample" step="0.1" readonly></td>
                                                 <td>
-                                                    <select multiple class="shipper" name="shipper[0][]">
-                                                        <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
-                                                        <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
+                                                    <select class="form-control calculate" id="weight_unit_sample" name="weight_unit_sample" disabled>
+                                                        <option value="kilograms">{{translate('Kilograms')}}</option>
+                                                        <option value="pounds">{{translate('Pounds')}}</option>
                                                     </select>
                                                 </td>
-                                                <td><input type="number" class="form-control estimated_order" name="estimated_order[]"></td>
-                                                <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]"></td>
                                                 <td>
-                                                    <select class="form-control paid" name="paid[]">
-                                                        <option value="" >{{translate('Choose paid by')}}</option>
-                                                        <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
-                                                        <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
+                                                    <select class="form-control calculate" id="breakable_sample" name="breakable_sample" disabled>
+                                                        <option value=""></option>
+                                                        <option value="yes">{{translate('Yes')}}</option>
+                                                        <option value="no">{{translate('No')}}</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="form-control calculate" id="unit_third_party_sample" name="unit_third_party_sample" disabled>
+                                                        <option value="celsius">{{translate('Celsius')}}</option>
+                                                        <option value="kelvin">{{translate('Kelvin')}}</option>
+                                                        <option value="fahrenheit">{{translate('Fahrenheit')}}</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="number" class="form-control" name="min_third_party_sample" id="min_third_party_sample" step="0.1" readonly></td>
+                                                <td><input type="number" class="form-control" name="max_third_party_sample" id="max_third_party_sample" step="0.1" readonly></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <small>Fill all required fields for shippers to confirm delivery ability.</small>
+                                <div id="result_calculate_third_party_sample">
+
+                                </div>
+                            </div>
+                            <div class="bloc-default-shipping-style" style="margin-top: 22px;">
+                                <h6>{{ translate('Shipping Duration & Charge') }}</h6>
+                                <hr>
+                                <div>
+                                    <table class="table" id="table_sample_configuration" class="bloc_sample_configuration_variant">
+                                        <thead>
+                                            <tr>
+                                                <th>{{translate('Shipping-by')}}</th>
+                                                <th>{{translate('Estimated Sample Preparation Days')}}</th>
+                                                <th>{{translate('Estimated Shipping Days')}}</th>
+                                                <th>{{translate('Paid by')}}</th>
+                                                {{-- <th>{{translate('VAT')}}</th> --}}
+                                                <th>{{translate('Shipping amount')}}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="bloc_sample_configuration">
+                                            <tr>
+                                                <td>
+                                                    @php $shippers_sample = explode(",", $product->shipper_sample); @endphp
+                                                    <select class="form-control shipper_sample" name="shipper_sample[]" multiple>
+                                                        <option value="vendor" @if(in_array("vendor", $shippers_sample)) {{ 'selected' }} @endif>{{translate('vendor')}}</option>
+                                                        <option value="third_party" @if(in_array("third_party", $shippers_sample)) {{ 'selected' }} @endif>{{translate('MawadOnline 3rd Party Shippers')}}</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="number" @if(!in_array("vendor", $shippers_sample)) {{ 'disabled' }} @endif class="form-control estimated_sample" name="estimated_sample" @if($product->estimated_sample != null) value="{{ $product->estimated_sample }}" @endif></td>
+                                                <td><input type="number" @if(!in_array("vendor", $shippers_sample)) {{ 'disabled' }} @endif class="form-control estimated_shipping_sample" name="estimated_shipping_sample" @if($product->estimated_shipping_sample != null) value="{{ $product->estimated_shipping_sample }}" @endif></td>
+                                                <td>
+                                                    <select class="form-control paid_sample" name="paid_sample" @if(!in_array("vendor", $shippers_sample)) {{ 'disabled' }} @endif>
+                                                        <option value="" selected>{{translate('Choose paid by')}}</option>
+                                                        <option value="vendor"@if($product->paid_sample == 'vendor') {{ 'selected' }} @endif>{{translate('vendor')}}</option>
+                                                        <option value="buyer" @if($product->paid_sample == 'buyer') {{ 'selected' }} @endif>{{translate('Buyer')}}</option>
                                                     </select>
                                                 </td>
                                                 {{-- <td>
                                                     <label class="aiz-switch aiz-switch-success mb-0">
-                                                        <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping[]" @if($vat_user->vat_registered == 1) checked @endif>
+                                                        <input value="1" type="checkbox" class="vat_sample" name="vat_sample" @if($vat_user->vat_registered == 1) checked @endif>
                                                         <span></span>
                                                     </label>
                                                 </td> --}}
-                                                <td>
-                                                    <select class="form-control shipping_charge" name="shipping_charge[]">
-                                                        <option value="" selected>{{translate('Choose shipping charge')}}</option>
-                                                        <option value="flat" @selected(old('shipping_charge') == 'flat')>{{translate('Flat-rate regardless of quantity')}}</option>
-                                                        <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
-                                                    </select>
-                                                </td>
-                                                <td><input type="number" class="form-control flat_rate_shipping" name="flat_rate_shipping[]" readonly></td>
-                                                <td><input type="number" class="form-control charge_per_unit_shipping" name="charge_per_unit_shipping[]" readonly></td>
-                                                <td>
-                                                    <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                                </td>
+                                                <td><input type="number" @if(!in_array("vendor", $shippers_sample)) {{ 'disabled' }} @endif class="form-control shipping_amount" name="shipping_amount" @if($product->shipping_amount != null) value="{{ $product->shipping_amount }}" @else readonly @endif></td>
                                             </tr>
-                                        @endif
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="bloc-default-shipping-style" style="margin-top: 22px;">
-                            <h6>{{ translate('Shipping Sample Configuration') }}</h6>
-                            <hr>
-                            <div>
-                                <table class="table" id="table_sample_configuration" class="bloc_sample_configuration_variant">
-                                    <thead>
-                                        <tr>
-                                            <th>{{translate('Shipping-by')}}</th>
-                                            <th>{{translate('Estimated Sample Preparation Days')}}</th>
-                                            <th>{{translate('Estimated Shipping Days')}}</th>
-                                            <th>{{translate('Paid by')}}</th>
-                                            {{-- <th>{{translate('VAT')}}</th> --}}
-                                            <th>{{translate('Shipping amount')}}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="bloc_sample_configuration">
-                                        <tr>
-                                            <td>
-                                                <select class="form-control shipper_sample" name="shipper_sample">
-                                                    <option value="" selected>{{translate('Choose shipper')}}</option>
-                                                    <option value="vendor" @if($product->shipper_sample == 'vendor') {{ 'selected' }} @endif>{{translate('vendor')}}</option>
-                                                    <option value="third_party" @if($product->shipper_sample == 'third_party') {{ 'selected' }} @endif>{{translate('MawadOnline 3rd Party Shippers')}}</option>
-                                                </select>
-                                            </td>
-                                            <td><input type="number" class="form-control estimated_sample" name="estimated_sample" @if($product->estimated_sample != null) value="{{ $product->estimated_sample }}" @endif></td>
-                                            <td><input type="number" class="form-control estimated_shipping_sample" name="estimated_shipping_sample" @if($product->estimated_shipping_sample != null) value="{{ $product->estimated_shipping_sample }}" @endif></td>
-                                            <td>
-                                                <select class="form-control paid_sample" name="paid_sample">
-                                                    <option value="" selected>{{translate('Choose paid by')}}</option>
-                                                    <option value="vendor"@if($product->paid_sample == 'vendor') {{ 'selected' }} @endif>{{translate('vendor')}}</option>
-                                                    <option value="buyer" @if($product->paid_sample == 'buyer') {{ 'selected' }} @endif>{{translate('Buyer')}}</option>
-                                                </select>
-                                            </td>
-                                            {{-- <td>
-                                                <label class="aiz-switch aiz-switch-success mb-0">
-                                                    <input value="1" type="checkbox" class="vat_sample" name="vat_sample" @if($vat_user->vat_registered == 1) checked @endif>
-                                                    <span></span>
-                                                </label>
-                                            </td> --}}
-                                            <td><input type="number" class="form-control shipping_amount" name="shipping_amount" @if($product->shipping_amount != null) value="{{ $product->shipping_amount }}" @else readonly @endif></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1114,7 +1194,7 @@
                                                         </div>
                                                     </div> --}}
                                                     <div class="row mb-3">
-                                                        <div class="col-md-3">
+                                                        <div class="col-md-4">
                                                             <input type="text" class="form-control" value="{{translate('Sample description')}}" disabled>
                                                         </div>
                                                         <div class="col-md-8">
@@ -1122,7 +1202,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="row mb-3">
-                                                        <div class="col-md-3">
+                                                        <div class="col-md-4">
                                                             <input type="text" class="form-control" value="{{translate('Sample price')}}" disabled>
                                                         </div>
                                                         <div class="col-md-8">
@@ -1158,16 +1238,16 @@
                                                         <tbody id="bloc_sample_configuration">
                                                             <tr>
                                                                 <td>
-                                                                    <select class="form-control shipper_sample" name="variant[shipper_sample][{{ $children->id }}]">
-                                                                        <option value="" selected>{{translate('Choose shipper')}}</option>
-                                                                        <option value="vendor" @if($children->shipper_sample == 'vendor') {{ 'selected' }} @endif>{{translate('vendor')}}</option>
-                                                                        <option value="third_party" @if($children->shipper_sample == 'third_party') {{ 'selected' }} @endif>{{translate('MawadOnline 3rd Party Shippers')}}</option>
+                                                                    @php $children_shippers = explode(",", $children->shipper_sample); @endphp
+                                                                    <select class="form-control shipper_sample" name="variant[shipper_sample][{{ $children->id }}][]" multiple>
+                                                                        <option value="vendor" @if(in_array("vendor", $children_shippers)) {{ 'selected' }} @endif>{{translate('vendor')}}</option>
+                                                                        <option value="third_party" @if(in_array("third_party", $children_shippers)) {{ 'selected' }} @endif>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                                                     </select>
                                                                 </td>
-                                                                <td><input type="number" class="form-control estimated_sample" name="variant[estimated_sample][{{ $children->id }}]" @if($children->estimated_sample != null) value="{{ $children->estimated_sample }}" @endif></td>
-                                                                <td><input type="number" class="form-control estimated_shipping_sample" name="variant[estimated_shipping_sample][{{ $children->id }}]" @if($children->estimated_shipping_sample != null) value="{{ $children->estimated_shipping_sample }}" @endif></td>
+                                                                <td><input type="number" @if(!in_array("vendor", $children_shippers)) {{ 'disabled' }} @endif class="form-control estimated_sample" name="variant[estimated_sample][{{ $children->id }}]" @if($children->estimated_sample != null) value="{{ $children->estimated_sample }}" @endif></td>
+                                                                <td><input type="number" @if(!in_array("vendor", $children_shippers)) {{ 'disabled' }} @endif class="form-control estimated_shipping_sample" name="variant[estimated_shipping_sample][{{ $children->id }}]" @if($children->estimated_shipping_sample != null) value="{{ $children->estimated_shipping_sample }}" @endif></td>
                                                                 <td>
-                                                                    <select class="form-control paid_sample" name="variant[paid_sample][{{ $children->id }}]">
+                                                                    <select class="form-control paid_sample" name="variant[paid_sample][{{ $children->id }}]" @if(!in_array("vendor", $children_shippers)) {{ 'disabled' }} @endif>
                                                                         <option value="" selected>{{translate('Choose paid by')}}</option>
                                                                         <option value="vendor"@if($children->paid_sample == 'vendor') {{ 'selected' }} @endif>{{translate('vendor')}}</option>
                                                                         <option value="buyer" @if($children->paid_sample == 'buyer') {{ 'selected' }} @endif>{{translate('Buyer')}}</option>
@@ -1179,7 +1259,7 @@
                                                                         <span></span>
                                                                     </label>
                                                                 </td> --}}
-                                                                <td><input type="number" class="form-control shipping_amount" name="variant[shipping_amount][{{ $children->id }}]" @if($children->shipping_amount != null) value="{{ $children->shipping_amount }}" @else readonly @endif></td>
+                                                                <td><input type="number" @if(!in_array("vendor", $children_shippers)) {{ 'disabled' }} @endif class="form-control shipping_amount" name="variant[shipping_amount][{{ $children->id }}]" @if($children->shipping_amount != null) value="{{ $children->shipping_amount }}" @else readonly @endif></td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -3807,6 +3887,7 @@
             });
         }
         $('.shipper').multiSelect();
+        $('.shipper_sample').multiSelect();
         @if(count($product->getChildrenProducts()) > 0)
             $('#variant_informations').show();
         @else
@@ -4336,7 +4417,7 @@
             });
 
             clonedDiv.find('.shipper_sample').each(function(index, element) {
-                $(element).attr('name', 'variant_shipper_sample-' + numbers_variant);
+                $(element).attr('name', 'variant_shippers_sample-' + numbers_variant);
                 $('#variant_informations #table_sample_configuration').find('.shipper_sample').each(function(key, element_original) {
                     if(index == key){
                         $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
@@ -5460,7 +5541,7 @@
                     $('body input[name="activate_third_party"]').prop('checked', false);
                     Swal.fire({
                         title: 'Cancelled',
-                        text: "You don't have any warehouse supported by our shippers",
+                        text: "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product",
                         icon: 'error',
                         scrollbarPadding: false,
                         backdrop:false,
@@ -5779,20 +5860,29 @@
 
             if(selected.indexOf('third_party') !== -1){
                 if(count_shippers == 0){
-                    swal(
-                        'Cancelled',
-                        "You cannot choose a third-party option because our shippers are unable to reach the warehouse.",
-                        'error'
-                    )
+                    // swal(
+                    //     'Cancelled',
+                    //     "You cannot choose a third-party option because our shippers are unable to reach the warehouse.",
+                    //     'error'
+                    // )
                     Swal.fire({
                             title: 'Cancelled',
-                            text: "You don't have any warehouse supported by our shippers",
+                            text: "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product",
                             icon: 'error',
                             scrollbarPadding: false,
                             backdrop:false,
                         });
 
-                    $(this).find("option[value='third_party']").prop('disabled', false);
+                        var checkbox = $(this).parent().find('input[type="checkbox"][value="third_party"]');
+                        if(selected.length == 1){
+                            $(this).parent().find('.multi-select-button').text('-- Select --');
+                        }else{
+                            $(this).parent().find('.multi-select-button').text('vendor');
+                        }
+                        // Uncheck the checkbox
+                        checkbox.prop('checked', false);
+                        $(this).find("option[value='third_party']").prop('disabled', false);
+                        $(this).find("option[value='third_party']").prop('selected', false);
                 }else{
                     var weight = $('#weight').val();
                     var length = $('#length').val();
@@ -5811,7 +5901,11 @@
                                 backdrop:false,
                             });
                             var checkbox = $(this).parent().find('input[type="checkbox"][value="third_party"]');
-                            var checkbox = $(this).parent().find('.multi-select-button').text('vendor');;
+                            if(selected.length == 1){
+                                $(this).parent().find('.multi-select-button').text('-- Select --');
+                            }else{
+                                $(this).parent().find('.multi-select-button').text('vendor');
+                            }
                             // Uncheck the checkbox
                             checkbox.prop('checked', false);
                             $(this).find("option[value='third_party']").prop('disabled', false);
@@ -6180,11 +6274,26 @@
                 var paid_sample = $('#table_sample_configuration').find('.paid_sample').val();
                 var shipper_sample = $('#table_sample_configuration').find('.shipper_sample').val();
                 clonedDiv.find('.paid_sample').find('option[value="' + paid_sample + '"]').prop('selected', true);
-                clonedDiv.find('.shipper_sample').find('option[value="' + shipper_sample + '"]').prop('selected', true);
+                clonedDiv.find('.shipper_sample').each(function(index, element) {
+                    $('#table_sample_configuration').find('.shipper_sample').each(function(key, element_original) {
+                        if(index == key){
+                            $(element_original).val().forEach(value => {
+                                $(element).find('option[value="' + value + '"]').prop('selected', true);
+                            });
+                        }
+                    })
+                });
+                clonedDiv.find('.shipper_sample').multiSelect();
+                clonedDiv.find('.multi-select-container').each(function(index, element) {
+                    if (index % 2 != 0) {
+                        $(element).remove();
+                    }
+                })
+
                 if($(this).data('id_old_variant') != undefined){
                     var id_variant = $(this).data('id_old_variant');
 
-                    clonedDiv.find('.shipper_sample').attr('name', 'variant[shipper_sample][' + id_variant + ']');
+                    clonedDiv.find('.shipper_sample').attr('name', 'variant[shipper_sample][' + id_variant + '][]');
                     clonedDiv.find('.estimated_sample').attr('name', 'variant[estimated_sample][' + id_variant + ']');
                     clonedDiv.find('.estimated_shipping_sample').attr('name', 'variant[estimated_shipping_sample][' + id_variant + ']');
                     clonedDiv.find('.paid_sample').attr('name', 'variant[paid_sample][' + id_variant + ']');
@@ -6192,7 +6301,7 @@
                 }else if($(this).data('id_new_variant') != undefined){
                     var id_variant = $(this).data('id_new_variant');
 
-                    clonedDiv.find('.shipper_sample').attr('name', 'variant_shipper_sample-' + numbers_variant);
+                    clonedDiv.find('.shipper_sample').attr('name', 'variant_shippers_sample-' + numbers_variant + '[]');
                     clonedDiv.find('.paid_sample').attr('name', 'paid_sample-' + numbers_variant);
                     clonedDiv.find('.estimated_sample').attr('name', 'estimated_sample-' + numbers_variant);
                     clonedDiv.find('.estimated_shipping_sample').attr('name', 'estimated_shipping_sample-' + numbers_variant);
@@ -6217,6 +6326,218 @@
                 $(this).parent().parent().parent().parent().find('#bloc-sample-shipping').empty();
             }
         })
+
+        $('#bloc_third_party_sample input[type="number"], select.calculate').on('input change', function() {
+            var weight = $(this).parent().parent().find('#package_weight_sample').val();
+            var length = $(this).parent().parent().find('#length_sample').val();
+            var width = $(this).parent().parent().find('#width_sample').val();
+            var height = $(this).parent().parent().find('#height_sample').val();
+            var breakable = $(this).parent().parent().find('#breakable_sample').val();
+            var min_third_party = $(this).parent().parent().find('#min_third_party_sample').val();
+            var max_third_party = $(this).parent().parent().find('#max_third_party_sample').val();
+            var unit_third_party = $(this).parent().parent().find('#unit_third_party_sample').val();
+
+            if((weight == '') || (length == '') ||(width == '') ||(height == '') ||(min_third_party == '') ||(max_third_party == '')){
+                html = '<span style="color: green"> Chargeable Weight = 0, then accepted by our shipper </span>';
+                $('#result_calculate_third_party_sample').html(html);
+            }else{
+                length = parseInt(length);
+                height = parseInt(height);
+                width = parseInt(width);
+                weight = parseInt(weight);
+                var volumetric_weight = (length * height * width) / 5000;
+                var chargeable_weight = 0;
+                var unit = $(this).parent().parent().find('#weight_unit_sample').val();
+                var max = 30;
+                if(unit == "pounds"){
+                    max *= 2.2;
+                }
+                var html = '';
+                if(volumetric_weight > weight){
+                    chargeable_weight = volumetric_weight;
+                }else{
+                    chargeable_weight = weight;
+                }
+
+                if(unit == "pounds"){
+                    chargeable_weight *= 2.2;
+                }
+
+                if(chargeable_weight > max ){
+                    html = '<span style="color: red">Chargeable Weight = ' + Number(chargeable_weight.toFixed(2)) + ", then not accepted by Aramex </span>"
+                }else{
+                    html = '<span style="color: green">Chargeable Weight = ' + Number(chargeable_weight.toFixed(2)) + ", then accepted by Aramex </span>"
+                }
+
+                $('#result_calculate_third_party_sample').html(html);
+            }
+        });
+
+        $('body').on('change', '.shipper_sample', function(){
+            var count_shippers = "{{ count($supported_shippers) }}";
+                count_shippers = parseInt(count_shippers);
+            var selected = $(this).val();
+            if(selected.length == 0){
+                $(this).parent().parent().find('.shipping_amount').val('');
+                $(this).parent().parent().find('.shipping_amount').prop('disabled', true);
+                $(this).parent().parent().find('.estimated_sample').val('');
+                $(this).parent().parent().find('.estimated_sample').prop('disabled', true);
+                $(this).parent().parent().find('.estimated_shipping_sample').val('');
+                $(this).parent().parent().find('.estimated_shipping_sample').prop('disabled', true);
+                $(this).parent().parent().find('.paid_sample').val('');
+                $(this).parent().parent().find('.paid_sample').prop('disabled', true);
+            }
+            if(selected.indexOf('third_party') !== -1){
+                $(this).parent().parent().find('.shipping_amount').val('');
+                $(this).parent().parent().find('.shipping_amount').prop('disabled', true);
+                $(this).parent().parent().find('.estimated_sample').val('');
+                $(this).parent().parent().find('.estimated_sample').prop('disabled', true);
+                $(this).parent().parent().find('.estimated_shipping_sample').val('');
+                $(this).parent().parent().find('.estimated_shipping_sample').prop('disabled', true);
+                $(this).parent().parent().find('.paid_sample').val('');
+                $(this).parent().parent().find('.paid_sample').prop('disabled', true);
+                if(count_shippers == 0){
+                    Swal.fire({
+                            title: 'Cancelled',
+                            text: "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product",
+                            icon: 'error',
+                            scrollbarPadding: false,
+                            backdrop:false,
+                        });
+
+                        var checkbox = $(this).parent().find('input[type="checkbox"][value="third_party"]');
+                        if(selected.length == 1){
+                            $(this).parent().find('.multi-select-button').text('-- Select --');
+                        }else{
+                            $(this).parent().find('.multi-select-button').text('vendor');
+                        }
+                        // Uncheck the checkbox
+                        checkbox.prop('checked', false);
+                        $(this).find("option[value='third_party']").prop('disabled', false);
+                        $(this).find("option[value='third_party']").prop('selected', false);
+                }else{
+                    var weight = $('#package_weight_sample').val();
+                    var length = $('#length_sample').val();
+                    var width = $('#width_sample').val();
+                    var height = $('#height_sample').val();
+                    var breakable = $('#breakable_sample').val();
+                    var min_third_party = $('#min_third_party_sample').val();
+                    var max_third_party = $('#max_third_party_sample').val();
+                    var unit_third_party = $('#unit_third_party_sample').val();
+
+                    if((weight == '') || (length == '') ||(width == '') ||(height == '') ||(min_third_party == '') ||(max_third_party == '')){
+                        Swal.fire({
+                                title: 'Cancelled',
+                                text: "Please ensure that all required fields are filled to know all information about your package.",
+                                icon: 'error',
+                                scrollbarPadding: false,
+                                backdrop:false,
+                            });
+                            var checkbox = $(this).parent().find('input[type="checkbox"][value="third_party"]');
+                            if(selected.length == 1){
+                                $(this).parent().find('.multi-select-button').text('-- Select --');
+                            }else{
+                                $(this).parent().find('.multi-select-button').text('vendor');
+                            }
+                            
+                            // Uncheck the checkbox
+                            checkbox.prop('checked', false);
+                            $(this).find("option[value='third_party']").prop('disabled', false);
+                            $(this).find("option[value='third_party']").prop('selected', false);
+                    }else{
+                        length = parseInt(length);
+                        height = parseInt(height);
+                        width = parseInt(width);
+                        weight = parseInt(weight);
+                        var volumetric_weight = (length * height * width) / 5000;
+                        var chargeable_weight = 0;
+                        var unit = $('#weight_unit_sample').val();
+                        var max = 30;
+                        if(unit == "pounds"){
+                            max *= 2.2;
+                        }
+                        var html = '';
+                        if(volumetric_weight > weight){
+                            chargeable_weight = volumetric_weight;
+                        }else{
+                            chargeable_weight = weight;
+                        }
+
+                        if(unit == "pounds"){
+                            chargeable_weight *= 2.2;
+                        }
+                        
+                        if(chargeable_weight > max ){
+                            Swal.fire({
+                                title: 'Cancelled',
+                                text: "Chargeable Weight = " + Number(chargeable_weight.toFixed(2)) + ", then not accepted by our shipper",
+                                icon: 'error',
+                                scrollbarPadding: false,
+                                backdrop:false,
+                            });
+
+                            var checkbox = $(this).parent().find('input[type="checkbox"][value="third_party"]');
+                            if(selected.length == 1){
+                                $(this).parent().find('.multi-select-button').text('-- Select --');
+                            }else{
+                                $(this).parent().find('.multi-select-button').text('vendor');
+                            }
+                            
+                            // Uncheck the checkbox
+                            checkbox.prop('checked', false);
+                            $(this).find("option[value='third_party']").prop('disabled', false);
+                            $(this).find("option[value='third_party']").prop('selected', false);
+                        }
+                    }
+                }
+            }
+            
+            if(selected.indexOf('vendor') !== -1){
+                $(this).parent().parent().find('.shipping_amount').prop('disabled', false);
+                $(this).parent().parent().find('.estimated_sample').prop('disabled', false);
+                $(this).parent().parent().find('.estimated_shipping_sample').prop('disabled', false);
+                $(this).parent().parent().find('.paid_sample').prop('disabled', false);
+            }
+        });
+
+        $('body').on('click', '#third_party_activate_sample', function() {
+            if ($(this).is(':checked')) {
+                var count_shippers = "{{ count($supported_shippers) }}";
+                count_shippers = parseInt(count_shippers);
+                if(count_shippers == 0){
+                    $('body input[name="activate_third_party"]').prop('checked', false);
+                        Swal.fire({
+                            title: 'Cancelled',
+                            text: "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product",
+                            icon: 'error',
+                            scrollbarPadding: false,
+                            backdrop:false,
+                        });
+                }else{
+                    $('#bloc_third_party_sample input[type="number"]').each(function() {
+                        // Change readonly attribute from true to false
+                        $(this).prop('readonly', false);
+                    });
+
+                    $('#bloc_third_party_sample select').each(function() {
+                        // Change readonly attribute from true to false
+                        $(this).prop('disabled', false);
+                    });
+                }
+            }else{
+                $('#bloc_third_party_sample input[type="number"]').each(function() {
+                    // Change readonly attribute from true to false
+                    $(this).prop('readonly', true);
+                });
+
+                $('#bloc_third_party_sample select').each(function() {
+                    // Change readonly attribute from true to false
+                    $(this).prop('disabled', true);
+                });
+
+                $('#bloc_third_party_sample input[type="number"]').val('').prop('readonly', true);
+            }
+        });
     });
 </script>
 <script>

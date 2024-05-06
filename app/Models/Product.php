@@ -51,7 +51,17 @@ class Product extends Model
                                     'sample_available',
                                     'unit_weight',
                                     'last_version',
-                                    'product_added_from_catalog'
+                                    'product_added_from_catalog',
+                                    'activate_third_party_sample',
+                                    'length_sample',
+                                    'width_sample',
+                                    'height_sample',
+                                    'package_weight_sample',
+                                    'weight_unit_sample',
+                                    'breakable_sample',
+                                    'unit_third_party_sample',
+                                    'min_third_party_sample',
+                                    'max_third_party_sample',
                                 ];
 
     protected function getLastActionNumber()

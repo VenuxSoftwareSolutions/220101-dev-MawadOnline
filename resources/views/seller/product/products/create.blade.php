@@ -80,6 +80,25 @@
     .disabled-select{
         background-color: #f7f8fa !important;
     }
+    /* @media (min-width: 992px) {
+        .col-lg-9 {
+            -ms-flex: 0 0 55%;
+            flex: 0 0 55%;
+            max-width: 55% !important;
+        }
+        .col-md-9 {
+            max-width: 55% !important;
+        }
+        .input-group-append {
+            display: flex;
+            align-items: center;
+            padding-left: 0px !important;
+        }
+    } */
+
+    .clonedDiv{
+        margin-top: 60px;
+    }
 
 </style>
 @endpush
@@ -222,25 +241,26 @@
                     </div>
                     <div class="card-body">
                         <div class="form-group row">
-                            <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <small>(400x400)</small></label>
-                            <div class="col-md-8" id="bloc_thumbnails">
-                                <input type="file" class="dropify" name="photosThumbnail[]" id="photoUploadThumbnail" accept=".jpeg, .jpg, .png" multiple />
-                                <div id="dropifyUploadedFilesThumbnail"></div>
-                            </div>
-                        </div>
-                        <div class="form-group row">
                             <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Gallery Images')}} <small>(1280x1280)</small></label>
                             <div class="col-md-8" id="bloc_photos">
                                 <input type="file" class="dropify" name="main_photos[]" id="photoUpload" accept=".jpeg, .jpg, .png" multiple />
                                 <div id="dropifyUploadedFiles"></div>
                             </div>
                         </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <small>(400x400)</small></label>
+                            <div class="col-md-8" id="bloc_thumbnails">
+                                <input type="file" class="dropify" name="photosThumbnail[]" id="photoUploadThumbnail" accept=".jpeg, .jpg, .png" multiple />
+                                <small>{{ translate('Thumbnail images will be generated automatically from gallery images if not specified') }}</small>
+                                <div id="dropifyUploadedFilesThumbnail"></div>
+                            </div>
+                        </div>
                         <hr>
-                        <div class="row">
-                            <div class="col-6">
+                        <div class="row" style="margin-left: -3px;">
+                            <div class="col-4">
                                 <div class="form-group row">
-                                    <label class="col-md-3 col-from-label" style="padding-top: 12px;">{{translate('Video Provider')}}</label>
-                                    <div class="col-md-9">
+                                    <label class="col-md-2 col-from-label" style="padding-top: 12px; padding-right: 0px;padding-left: 0px;">{{translate('Video Provider')}}</label>
+                                    <div class="col-md-7">
                                         <select class="form-control aiz-selectpicker" name="video_provider" id="video_provider">
                                             <option value="youtube" @selected(old('video_provider') == 'youtube')>{{translate('Youtube')}}</option>
                                             <option value="vimeo" @selected(old('video_provider') == 'vimeo')>{{translate('Vimeo')}}</option>
@@ -248,10 +268,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-6">
+                            <div class="col-8">
                                 <div class="form-group row">
-                                    <label class="col-md-2 col-from-label" style="padding-top: 12px;">{{translate('Video Link')}}</label>
-                                    <div class="col-md-10">
+                                    <label class="col-md-1 col-from-label" style="padding-top: 12px; padding-right: 0px;">{{translate('Video Link')}}</label>
+                                    <div class="col-md-11">
                                         <input type="text" class="form-control" name="video_link" value="{{ old('video_link') }}" placeholder="{{ translate('Video Link') }}">
                                         <small class="text-muted">{{translate("Use proper link without extra parameter. Don't use short share link/embeded iframe code.")}}</small>
                                     </div>
@@ -309,7 +329,7 @@
                                                 </select>
                                             </td>
                                             <td><input type="number" class="form-control discount_amount" name="discount_amount[]"></td>
-                                            <td style="width: 19% !important;">
+                                            <td style="width: 22% !important;">
                                                 <div class="col-md-9 input-group">
                                                     <input type="number" class="form-control discount_percentage" name="discount_percentage[]">
                                                     <div class="input-group-append">
@@ -355,184 +375,260 @@
                     </div>
                     <div class="card-body">
                         <div class="bloc-default-shipping-style">
-                            <h6>{{ ucfirst(translate('MawadOnline 3rd Party Configuration')) }}</h6>
+                            <h6>{{ ucfirst(translate('Default Product Shipping')) }}</h6>
                             <hr>
-                            <div class="row mb-3">
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" value="{{translate('Activate MawadOnline 3rd Party Shipping')}}" disabled>
+                            <div class="bloc-default-shipping-style">
+                                <h6>{{ ucfirst(translate('MawadOnline 3rd Party Shipping')) }}</h6>
+                                <hr>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" value="{{translate('Activate MawadOnline 3rd Party Shipping')}}" disabled>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <label class="aiz-switch aiz-switch-success mb-0">
+                                            <input value="1" type="checkbox" id="third_party_activate" name="activate_third_party">
+                                            <span></span>
+                                        </label>
+                                    </div>
                                 </div>
-                                <div class="col-md-8">
-                                    <label class="aiz-switch aiz-switch-success mb-0">
-                                        <input value="1" type="checkbox" id="third_party_activate" name="activate_third_party">
-                                        <span></span>
-                                    </label>
+                                <div class="row">
+                                    <table class="table" id="table_third_party_configuration" class="bloc_third_configuration_variant">
+                                        <thead>
+                                            <tr>
+                                                <th>{{translate('Length (Cm)')}}</th>
+                                                <th>{{translate('Width (Cm)')}}</th>
+                                                <th>{{translate('Height (Cm)')}}</th>
+                                                <th>{{translate('Package Weight')}}</th>
+                                                <th>{{translate('Weight Unit')}}</th>
+                                                <th>{{translate('Breakable')}}</th>
+                                                <th>{{translate('Temperature Unit')}}</th>
+                                                <th>{{translate('Temperature Min')}}</th>
+                                                <th>{{translate('Temperature Max')}}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="bloc_third_party">
+                                            <tr>
+                                                <td><input type="number" name="length" class="form-control" id="length" step="0.1" readonly></td>
+                                                <td><input type="number" name="width" class="form-control" id="width" step="0.1" readonly></td>
+                                                <td><input type="number" name="height" class="form-control" id="height" step="0.1" readonly></td>
+                                                <td><input type="number" name="weight" class="form-control" id="weight" step="0.1" readonly></td>
+                                                <td>
+                                                    <select class="form-control calculate" id="weight_unit" name="unit_weight" disabled>
+                                                        <option value="kilograms">{{translate('Kilograms')}}</option>
+                                                        <option value="pounds">{{translate('Pounds')}}</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="form-control calculate" id="breakable" name="breakable" disabled>
+                                                        <option value=""></option>
+                                                        <option value="yes">{{translate('Yes')}}</option>
+                                                        <option value="no">{{translate('No')}}</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="form-control calculate" id="unit_third_party" name="unit_third_party" disabled>
+                                                        <option value="celsius">{{translate('Celsius')}}</option>
+                                                        <option value="kelvin">{{translate('Kelvin')}}</option>
+                                                        <option value="fahrenheit">{{translate('Fahrenheit')}}</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="number" class="form-control" name="min_third_party" id="min_third_party" step="0.1" readonly></td>
+                                                <td><input type="number" class="form-control" name="max_third_party" id="max_third_party" step="0.1" readonly></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <table class="table" id="table_third_party_configuration" class="bloc_third_configuration_variant">
-                                    <thead>
-                                        <tr>
-                                            <th>{{translate('Length (Cm)')}}</th>
-                                            <th>{{translate('Width (Cm)')}}</th>
-                                            <th>{{translate('Height (Cm)')}}</th>
-                                            <th>{{translate('Package Weight')}}</th>
-                                            <th>{{translate('Weight Unit')}}</th>
-                                            <th>{{translate('Breakable')}}</th>
-                                            <th>{{translate('Temperature Unit')}}</th>
-                                            <th>{{translate('Temperature Min')}}</th>
-                                            <th>{{translate('Temperature Max')}}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="bloc_third_party">
-                                        <tr>
-                                            <td><input type="number" name="length" class="form-control" id="length" step="0.1" readonly></td>
-                                            <td><input type="number" name="width" class="form-control" id="width" step="0.1" readonly></td>
-                                            <td><input type="number" name="height" class="form-control" id="height" step="0.1" readonly></td>
-                                            <td><input type="number" name="weight" class="form-control" id="weight" step="0.1" readonly></td>
-                                            <td>
-                                                <select class="form-control calculate" id="weight_unit" name="unit_weight" disabled>
-                                                    <option value="kilograms">{{translate('Kilograms')}}</option>
-                                                    <option value="pounds">{{translate('Pounds')}}</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <select class="form-control calculate" id="breakable" name="breakable" disabled>
-                                                    <option value=""></option>
-                                                    <option value="yes">{{translate('Yes')}}</option>
-                                                    <option value="no">{{translate('No')}}</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <select class="form-control calculate" id="unit_third_party" name="unit_third_party" disabled>
-                                                    <option value="celsius">{{translate('Celsius')}}</option>
-                                                    <option value="kelvin">{{translate('Kelvin')}}</option>
-                                                    <option value="fahrenheit">{{translate('Fahrenheit')}}</option>
-                                                </select>
-                                            </td>
-                                            <td><input type="number" class="form-control" name="min_third_party" id="min_third_party" step="0.1" readonly></td>
-                                            <td><input type="number" class="form-control" name="max_third_party" id="max_third_party" step="0.1" readonly></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <small>Fill all required fields for shippers to confirm delivery ability.</small>
-                            <div id="result_calculate_third_party">
+                                <small>Fill all required fields for shippers to confirm delivery ability.</small>
+                                <div id="result_calculate_third_party">
 
+                                </div>
+                            </div>
+                            <div class="bloc-default-shipping-style" style="margin-top: 22px;">
+                                <h6>{{ translate('Shipping Duration & Charge') }}</h6>
+                                <hr>
+                                <div>
+                                    <table class="table" id="table_shipping_configuration" class="bloc_shipping_configuration_variant">
+                                        <thead>
+                                            <tr>
+                                                <th>{{translate('From QTY')}}</th>
+                                                <th>{{translate('To QTY')}}</th>
+                                                <th>{{translate('Shipper')}}</th>
+                                                <th>{{translate('Est. Order Pre. Days')}}</th>
+                                                <th>{{translate('Est. Shipping Days')}}</th>
+                                                <th style="width: 164px;">{{translate('Paid by')}}</th>
+                                                {{-- <th>{{translate('VAT')}}</th> --}}
+                                                <th>{{translate('Shipping Charge Type')}}</th>
+                                                <th>{{translate('Flat-rate Amount')}}</th>
+                                                <th>{{translate('Charge per Unit of Sale')}}</th>
+                                                <th>{{translate('Action')}}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="bloc_shipping_configuration">
+                                            <tr>
+                                                <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id=""></td>
+                                                <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id=""></td>
+                                                <td>
+                                                    {{-- <select multiple class="form-control shipper" name="shipper[0][]">
+                                                        <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                                        <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
+                                                    </select> --}}
+                                                    <select class="shipper" name="shipper[0][]"  multiple>
+                                                        <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                                        <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
+                                                    </select>
+                                                </td>
+
+                                                <div id="results"></div>
+
+                                                <td><input type="number" class="form-control estimated_order" name="estimated_order[]"></td>
+                                                <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]"></td>
+                                                <td>
+                                                    <select class="form-control paid" name="paid[]">
+                                                        <option value="" selected>{{translate('Choose option')}}</option>
+                                                        <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                                        <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
+                                                    </select>
+                                                </td>
+                                                {{-- <td>
+                                                    <label class="aiz-switch aiz-switch-success mb-0">
+                                                        <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping[]" @if($vat_user->vat_registered == 1) checked @endif>
+                                                        <span></span>
+                                                    </label>
+                                                </td> --}}
+                                                <td>
+                                                    <select class="form-control shipping_charge" name="shipping_charge[]">
+                                                        <option value="" selected>{{translate('Choose shipping charge')}}</option>
+                                                        <option value="flat" @selected(old('shipping_charge') == 'flat')>{{translate('Flat-rate regardless of quantity')}}</option>
+                                                        <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="number" class="form-control flat_rate_shipping" name="flat_rate_shipping[]" readonly></td>
+                                                <td><input type="number" class="form-control charge_per_unit_shipping" name="charge_per_unit_shipping[]" readonly></td>
+                                                <td>
+                                                    <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                         <div class="bloc-default-shipping-style" style="margin-top: 22px;">
-                            <h6>{{ translate('Shipping Product Configuration') }}</h6>
+                            <h6>{{ ucfirst(translate('Default Sample Shipping')) }}</h6>
                             <hr>
-                            <div>
-                                <table class="table" id="table_shipping_configuration" class="bloc_shipping_configuration_variant">
-                                    <thead>
-                                        <tr>
-                                            <th>{{translate('From QTY')}}</th>
-                                            <th>{{translate('To QTY')}}</th>
-                                            <th>{{translate('Shipper')}}</th>
-                                            <th>{{translate('Est. Order Pre. Days')}}</th>
-                                            <th>{{translate('Est. Shipping Days')}}</th>
-                                            <th style="width: 164px;">{{translate('Paid by')}}</th>
-                                            {{-- <th>{{translate('VAT')}}</th> --}}
-                                            <th>{{translate('Shipping Charge Type')}}</th>
-                                            <th>{{translate('Flat-rate Amount')}}</th>
-                                            <th>{{translate('Charge per Unit of Sale')}}</th>
-                                            <th>{{translate('Action')}}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="bloc_shipping_configuration">
-                                        <tr>
-                                            <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id=""></td>
-                                            <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id=""></td>
-                                            <td>
-                                                {{-- <select multiple class="form-control shipper" name="shipper[0][]">
-                                                    <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
-                                                    <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
-                                                </select> --}}
-                                                <select class="shipper" name="shipper[0][]"  multiple>
-                                                    <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
-                                                    <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
-                                                </select>
-                                            </td>
+                            <div class="bloc-default-shipping-style">
+                                <h6>{{ ucfirst(translate('Default Sample Shipping')) }}</h6>
+                                <hr>
+                                <div class="bloc-default-shipping-style">
+                                    <h6>{{ ucfirst(translate('MawadOnline 3rd Party Shipping')) }}</h6>
+                                    <hr>
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <input type="text" class="form-control" value="{{translate('Activate MawadOnline 3rd Party Shipping')}}" disabled>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <label class="aiz-switch aiz-switch-success mb-0">
+                                                <input value="1" type="checkbox" id="third_party_activate_sample" name="activate_third_party_sample">
+                                                <span></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <table class="table" id="table_third_party_configuration_sample" class="bloc_third_configuration_variant_sample">
+                                            <thead>
+                                                <tr>
+                                                    <th>{{translate('Length (Cm)')}}</th>
+                                                    <th>{{translate('Width (Cm)')}}</th>
+                                                    <th>{{translate('Height (Cm)')}}</th>
+                                                    <th>{{translate('Package Weight')}}</th>
+                                                    <th>{{translate('Weight Unit')}}</th>
+                                                    <th>{{translate('Breakable')}}</th>
+                                                    <th>{{translate('Temperature Unit')}}</th>
+                                                    <th>{{translate('Temperature Min')}}</th>
+                                                    <th>{{translate('Temperature Max')}}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="bloc_third_party_sample">
+                                                <tr>
+                                                    <td><input type="number" name="length_sample" class="form-control" id="length_sample" step="0.1" readonly></td>
+                                                    <td><input type="number" name="width_sample" class="form-control" id="width_sample" step="0.1" readonly></td>
+                                                    <td><input type="number" name="height_sample" class="form-control" id="height_sample" step="0.1" readonly></td>
+                                                    <td><input type="number" name="package_weight_sample" class="form-control" id="package_weight_sample" step="0.1" readonly></td>
+                                                    <td>
+                                                        <select class="form-control calculate" id="weight_unit_sample" name="weight_unit_sample" disabled>
+                                                            <option value="kilograms">{{translate('Kilograms')}}</option>
+                                                            <option value="pounds">{{translate('Pounds')}}</option>
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-control calculate" id="breakable_sample" name="breakable_sample" disabled>
+                                                            <option value=""></option>
+                                                            <option value="yes">{{translate('Yes')}}</option>
+                                                            <option value="no">{{translate('No')}}</option>
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-control calculate" id="unit_third_party_sample" name="unit_third_party_sample" disabled>
+                                                            <option value="celsius">{{translate('Celsius')}}</option>
+                                                            <option value="kelvin">{{translate('Kelvin')}}</option>
+                                                            <option value="fahrenheit">{{translate('Fahrenheit')}}</option>
+                                                        </select>
+                                                    </td>
+                                                    <td><input type="number" class="form-control" name="min_third_party_sample" id="min_third_party_sample" step="0.1" readonly></td>
+                                                    <td><input type="number" class="form-control" name="max_third_party_sample" id="max_third_party_sample" step="0.1" readonly></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <small>Fill all required fields for shippers to confirm delivery ability.</small>
+                                    <div id="result_calculate_third_party_sample">
 
-                                            <div id="results"></div>
-
-                                            <td><input type="number" class="form-control estimated_order" name="estimated_order[]"></td>
-                                            <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]"></td>
-                                            <td>
-                                                <select class="form-control paid" name="paid[]">
-                                                    <option value="" selected>{{translate('Choose option')}}</option>
-                                                    <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
-                                                    <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
-                                                </select>
-                                            </td>
-                                            {{-- <td>
-                                                <label class="aiz-switch aiz-switch-success mb-0">
-                                                    <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping[]" @if($vat_user->vat_registered == 1) checked @endif>
-                                                    <span></span>
-                                                </label>
-                                            </td> --}}
-                                            <td>
-                                                <select class="form-control shipping_charge" name="shipping_charge[]">
-                                                    <option value="" selected>{{translate('Choose shipping charge')}}</option>
-                                                    <option value="flat" @selected(old('shipping_charge') == 'flat')>{{translate('Flat-rate regardless of quantity')}}</option>
-                                                    <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
-                                                </select>
-                                            </td>
-                                            <td><input type="number" class="form-control flat_rate_shipping" name="flat_rate_shipping[]" readonly></td>
-                                            <td><input type="number" class="form-control charge_per_unit_shipping" name="charge_per_unit_shipping[]" readonly></td>
-                                            <td>
-                                                <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="bloc-default-shipping-style" style="margin-top: 22px;">
-                            <h6>{{ translate('Shipping Sample Configuration') }}</h6>
-                            <hr>
-                            <div>
-                                <table class="table" id="table_sample_configuration" class="bloc_sample_configuration_variant">
-                                    <thead>
-                                        <tr>
-                                            <th>{{translate('Shipping-by')}}</th>
-                                            <th>{{translate('Estimated Sample Preparation Days')}}</th>
-                                            <th>{{translate('Estimated Shipping Days')}}</th>
-                                            <th>{{translate('Paid by')}}</th>
-                                            {{-- <th>{{translate('VAT')}}</th> --}}
-                                            <th>{{translate('Shipping amount')}}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="bloc_sample_configuration">
-                                        <tr>
-                                            <td>
-                                                <select class="form-control shipper_sample" name="shipper_sample">
-                                                    <option value="" selected>{{translate('Choose shipper')}}</option>
-                                                    <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
-                                                    <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
-                                                </select>
-                                            </td>
-                                            <td><input type="number" class="form-control estimated_sample" name="estimated_sample"></td>
-                                            <td><input type="number" class="form-control estimated_shipping_sample" name="estimated_shipping_sample"></td>
-                                            <td>
-                                                <select class="form-control paid_sample" name="paid_sample">
-                                                    <option value="" selected>{{translate('Choose paid by')}}</option>
-                                                    <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
-                                                    <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
-                                                </select>
-                                            </td>
-                                            {{-- <td>
-                                                <label class="aiz-switch aiz-switch-success mb-0">
-                                                    <input value="1" type="checkbox" class="vat_sample" name="vat_sample" @if($vat_user->vat_registered == 1) checked @endif>
-                                                    <span></span>
-                                                </label>
-                                            </td> --}}
-                                            <td><input type="number" class="form-control shipping_amount" name="shipping_amount" step="0.1" readonly></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                    </div>
+                                </div>
+                                <div class="bloc-default-shipping-style" style="margin-top: 22px;">
+                                    <h6>{{ translate('Shipping Duration & Charge') }}</h6>
+                                    <hr>
+                                    <div>
+                                        <table class="table" id="table_sample_configuration" class="bloc_sample_configuration_variant">
+                                            <thead>
+                                                <tr>
+                                                    <th>{{translate('Shipping-by')}}</th>
+                                                    <th>{{translate('Estimated Sample Preparation Days')}}</th>
+                                                    <th>{{translate('Estimated Shipping Days')}}</th>
+                                                    <th>{{translate('Paid by')}}</th>
+                                                    {{-- <th>{{translate('VAT')}}</th> --}}
+                                                    <th>{{translate('Shipping amount')}}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="bloc_sample_configuration">
+                                                <tr>
+                                                    <td>
+                                                        <select class="form-control shipper_sample" name="shipper_sample[]" multiple>
+                                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                                            <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
+                                                        </select>
+                                                    </td>
+                                                    <td><input type="number" disabled class="form-control estimated_sample" name="estimated_sample"></td>
+                                                    <td><input type="number" disabled class="form-control estimated_shipping_sample" name="estimated_shipping_sample"></td>
+                                                    <td>
+                                                        <select class="form-control paid_sample" name="paid_sample" disabled>
+                                                            <option value="" selected>{{translate('Choose paid by')}}</option>
+                                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
+                                                            <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
+                                                        </select>
+                                                    </td>
+                                                    {{-- <td>
+                                                        <label class="aiz-switch aiz-switch-success mb-0">
+                                                            <input value="1" type="checkbox" class="vat_sample" name="vat_sample" @if($vat_user->vat_registered == 1) checked @endif>
+                                                            <span></span>
+                                                        </label>
+                                                    </td> --}}
+                                                    <td><input type="number" disabled class="form-control shipping_amount" name="shipping_amount" step="0.1" readonly></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -713,7 +809,7 @@
                                         </div>
                                     </div> --}}
                                     <div class="row mb-3">
-                                        <div class="col-md-3">
+                                        <div class="col-md-4">
                                             <input type="text" class="form-control" value="{{translate('Sample description')}}" disabled>
                                         </div>
                                         <div class="col-md-8">
@@ -721,7 +817,7 @@
                                         </div>
                                     </div>
                                     <div class="row mb-3">
-                                        <div class="col-md-3">
+                                        <div class="col-md-4">
                                             <input type="text" class="form-control" value="{{translate('Sample price')}}" disabled>
                                         </div>
                                         <div class="col-md-8">
@@ -902,7 +998,7 @@
 
 <script>
     var previewUrlBase  = "{{ route('seller.product.preview', ['slug' => 'PLACEHOLDER']) }}";
-    </script>
+</script>
 
 <!--- category parent tree -->
 <script type="text/javascript">
@@ -942,6 +1038,7 @@
 
     $(document).ready(function() {
         $('.shipper').multiSelect();
+        $('.shipper_sample').multiSelect();
         $('#variant_informations').hide();
         $('#btn-create-variant').hide();
         $('body #bloc_pricing_configuration_variant').hide();
@@ -1376,7 +1473,7 @@
             });
 
             clonedDiv.find('.shipper_sample').each(function(index, element) {
-                $(element).attr('name', 'variant_shipper_sample-' + numbers_variant);
+                $(element).attr('name', 'variant_shipper_sample-' + numbers_variant + '[]');
                 $('#variant_informations #table_sample_configuration').find('.shipper_sample').each(function(key, element_original) {
                     if(index == key){
                         $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
@@ -2251,7 +2348,7 @@
                     $('body input[name="activate_third_party"]').prop('checked', false);
                         Swal.fire({
                             title: 'Cancelled',
-                            text: "You don't have any warehouse supported by our shippers",
+                            text: "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product",
                             icon: 'error',
                             scrollbarPadding: false,
                             backdrop:false,
@@ -2279,6 +2376,45 @@
                 });
 
                 $('#bloc_third_party input[type="number"]').val('').prop('readonly', true);
+            }
+        });
+        
+        $('body').on('click', '#third_party_activate_sample', function() {
+            if ($(this).is(':checked')) {
+                var count_shippers = "{{ count($supported_shippers) }}";
+                count_shippers = parseInt(count_shippers);
+                if(count_shippers == 0){
+                    $('body input[name="activate_third_party"]').prop('checked', false);
+                        Swal.fire({
+                            title: 'Cancelled',
+                            text: "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product",
+                            icon: 'error',
+                            scrollbarPadding: false,
+                            backdrop:false,
+                        });
+                }else{
+                    $('#bloc_third_party_sample input[type="number"]').each(function() {
+                        // Change readonly attribute from true to false
+                        $(this).prop('readonly', false);
+                    });
+
+                    $('#bloc_third_party_sample select').each(function() {
+                        // Change readonly attribute from true to false
+                        $(this).prop('disabled', false);
+                    });
+                }
+            }else{
+                $('#bloc_third_party_sample input[type="number"]').each(function() {
+                    // Change readonly attribute from true to false
+                    $(this).prop('readonly', true);
+                });
+
+                $('#bloc_third_party_sample select').each(function() {
+                    // Change readonly attribute from true to false
+                    $(this).prop('disabled', true);
+                });
+
+                $('#bloc_third_party_sample input[type="number"]').val('').prop('readonly', true);
             }
         });
 
@@ -2423,25 +2559,26 @@
             var count_shippers = "{{ count($supported_shippers) }}";
                 count_shippers = parseInt(count_shippers);
             var selected = $(this).val();
-
-
-
             if(selected.indexOf('third_party') !== -1){
                 if(count_shippers == 0){
-                    swal(
-                        'Cancelled',
-                        "You cannot choose a third-party option because our shippers are unable to reach the warehouse.",
-                        'error'
-                    )
                     Swal.fire({
                             title: 'Cancelled',
-                            text: "You don't have any warehouse supported by our shippers",
+                            text: "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product",
                             icon: 'error',
                             scrollbarPadding: false,
                             backdrop:false,
                         });
 
-                    $(this).find("option[value='third_party']").prop('disabled', false);
+                        var checkbox = $(this).parent().find('input[type="checkbox"][value="third_party"]');
+                        if(selected.length == 1){
+                            $(this).parent().find('.multi-select-button').text('-- Select --');
+                        }else{
+                            $(this).parent().find('.multi-select-button').text('vendor');
+                        }
+                        // Uncheck the checkbox
+                        checkbox.prop('checked', false);
+                        $(this).find("option[value='third_party']").prop('disabled', false);
+                        $(this).find("option[value='third_party']").prop('selected', false);
                 }else{
                     var weight = $('#weight').val();
                     var length = $('#length').val();
@@ -2460,7 +2597,12 @@
                                 backdrop:false,
                             });
                             var checkbox = $(this).parent().find('input[type="checkbox"][value="third_party"]');
-                            var checkbox = $(this).parent().find('.multi-select-button').text('vendor');;
+                            if(selected.length == 1){
+                                $(this).parent().find('.multi-select-button').text('-- Select --');
+                            }else{
+                                $(this).parent().find('.multi-select-button').text('vendor');
+                            }
+                            
                             // Uncheck the checkbox
                             checkbox.prop('checked', false);
                             $(this).find("option[value='third_party']").prop('disabled', false);
@@ -2687,6 +2829,52 @@
             }
         });
 
+        $('#bloc_third_party_sample input[type="number"], select.calculate').on('input change', function() {
+            var weight = $(this).parent().parent().find('#package_weight_sample').val();
+            var length = $(this).parent().parent().find('#length_sample').val();
+            var width = $(this).parent().parent().find('#width_sample').val();
+            var height = $(this).parent().parent().find('#height_sample').val();
+            var breakable = $(this).parent().parent().find('#breakable_sample').val();
+            var min_third_party = $(this).parent().parent().find('#min_third_party_sample').val();
+            var max_third_party = $(this).parent().parent().find('#max_third_party_sample').val();
+            var unit_third_party = $(this).parent().parent().find('#unit_third_party_sample').val();
+
+            if((weight == '') || (length == '') ||(width == '') ||(height == '') ||(min_third_party == '') ||(max_third_party == '')){
+                html = '<span style="color: green"> Chargeable Weight = 0, then accepted by our shipper </span>';
+                $('#result_calculate_third_party_sample').html(html);
+            }else{
+                length = parseInt(length);
+                height = parseInt(height);
+                width = parseInt(width);
+                weight = parseInt(weight);
+                var volumetric_weight = (length * height * width) / 5000;
+                var chargeable_weight = 0;
+                var unit = $(this).parent().parent().find('#weight_unit_sample').val();
+                var max = 30;
+                if(unit == "pounds"){
+                    max *= 2.2;
+                }
+                var html = '';
+                if(volumetric_weight > weight){
+                    chargeable_weight = volumetric_weight;
+                }else{
+                    chargeable_weight = weight;
+                }
+
+                if(unit == "pounds"){
+                    chargeable_weight *= 2.2;
+                }
+
+                if(chargeable_weight > max ){
+                    html = '<span style="color: red">Chargeable Weight = ' + Number(chargeable_weight.toFixed(2)) + ", then not accepted by Aramex </span>"
+                }else{
+                    html = '<span style="color: green">Chargeable Weight = ' + Number(chargeable_weight.toFixed(2)) + ", then accepted by Aramex </span>"
+                }
+
+                $('#result_calculate_third_party_sample').html(html);
+            }
+        });
+
         //sample script
         $('body').on('click', '.btn-add-sample', function() {
             var html_to_add = `
@@ -2739,9 +2927,23 @@
                 var shipper_sample = $('#table_sample_configuration').find('.shipper_sample').val();
                 var id_variant = $(this).data('id_new_variant');
                 clonedDiv.find('.paid_sample').find('option[value="' + paid_sample + '"]').prop('selected', true);
-                clonedDiv.find('.shipper_sample').find('option[value="' + shipper_sample + '"]').prop('selected', true);
+                clonedDiv.find('.shipper_sample').each(function(index, element) {
+                    $('#table_sample_configuration').find('.shipper_sample').each(function(key, element_original) {
+                        if(index == key){
+                            $(element_original).val().forEach(value => {
+                                $(element).find('option[value="' + value + '"]').prop('selected', true);
+                            });
+                        }
+                    })
+                });
                 
-                clonedDiv.find('.shipper_sample').attr('name', 'variant_shipper_sample-' + id_variant);
+                clonedDiv.find('.shipper_sample').attr('name', 'variant_shipper_sample-' + id_variant + '[]');
+                clonedDiv.find('.shipper_sample').multiSelect();
+                clonedDiv.find('.multi-select-container').each(function(index, element) {
+                    if (index % 2 != 0) {
+                        $(element).remove();
+                    }
+                })
                 clonedDiv.find('.paid_sample').attr('name', 'paid_sample-' + id_variant);
                 clonedDiv.find('.estimated_sample').attr('name', 'estimated_sample-' + id_variant);
                 clonedDiv.find('.estimated_shipping_sample').attr('name', 'estimated_shipping_sample-' + id_variant);
@@ -2765,6 +2967,133 @@
                 $(this).parent().parent().parent().parent().find('.bloc_sample_pricing_configuration_variant').hide();
             }
         })
+
+        $('body').on('change', '.shipper_sample', function(){
+            var count_shippers = "{{ count($supported_shippers) }}";
+                count_shippers = parseInt(count_shippers);
+            var selected = $(this).val();
+            if(selected.length == 0){
+                $(this).parent().parent().find('.shipping_amount').val('');
+                $(this).parent().parent().find('.shipping_amount').prop('disabled', true);
+                $(this).parent().parent().find('.estimated_sample').val('');
+                $(this).parent().parent().find('.estimated_sample').prop('disabled', true);
+                $(this).parent().parent().find('.estimated_shipping_sample').val('');
+                $(this).parent().parent().find('.estimated_shipping_sample').prop('disabled', true);
+                $(this).parent().parent().find('.paid_sample').val('');
+                $(this).parent().parent().find('.paid_sample').prop('disabled', true);
+            }
+            if(selected.indexOf('third_party') !== -1){
+                $(this).parent().parent().find('.shipping_amount').val('');
+                $(this).parent().parent().find('.shipping_amount').prop('disabled', true);
+                $(this).parent().parent().find('.estimated_sample').val('');
+                $(this).parent().parent().find('.estimated_sample').prop('disabled', true);
+                $(this).parent().parent().find('.estimated_shipping_sample').val('');
+                $(this).parent().parent().find('.estimated_shipping_sample').prop('disabled', true);
+                $(this).parent().parent().find('.paid_sample').val('');
+                $(this).parent().parent().find('.paid_sample').prop('disabled', true);
+                if(count_shippers == 0){
+                    Swal.fire({
+                            title: 'Cancelled',
+                            text: "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product",
+                            icon: 'error',
+                            scrollbarPadding: false,
+                            backdrop:false,
+                        });
+
+                        var checkbox = $(this).parent().find('input[type="checkbox"][value="third_party"]');
+                        if(selected.length == 1){
+                            $(this).parent().find('.multi-select-button').text('-- Select --');
+                        }else{
+                            $(this).parent().find('.multi-select-button').text('vendor');
+                        }
+                        // Uncheck the checkbox
+                        checkbox.prop('checked', false);
+                        $(this).find("option[value='third_party']").prop('disabled', false);
+                        $(this).find("option[value='third_party']").prop('selected', false);
+                }else{
+                    var weight = $('#package_weight_sample').val();
+                    var length = $('#length_sample').val();
+                    var width = $('#width_sample').val();
+                    var height = $('#height_sample').val();
+                    var breakable = $('#breakable_sample').val();
+                    var min_third_party = $('#min_third_party_sample').val();
+                    var max_third_party = $('#max_third_party_sample').val();
+                    var unit_third_party = $('#unit_third_party_sample').val();
+
+                    if((weight == '') || (length == '') ||(width == '') ||(height == '') ||(min_third_party == '') ||(max_third_party == '')){
+                        Swal.fire({
+                                title: 'Cancelled',
+                                text: "Please ensure that all required fields are filled to know all information about your package.",
+                                icon: 'error',
+                                scrollbarPadding: false,
+                                backdrop:false,
+                            });
+                            var checkbox = $(this).parent().find('input[type="checkbox"][value="third_party"]');
+                            if(selected.length == 1){
+                                $(this).parent().find('.multi-select-button').text('-- Select --');
+                            }else{
+                                $(this).parent().find('.multi-select-button').text('vendor');
+                            }
+                            
+                            // Uncheck the checkbox
+                            checkbox.prop('checked', false);
+                            $(this).find("option[value='third_party']").prop('disabled', false);
+                            $(this).find("option[value='third_party']").prop('selected', false);
+                    }else{
+                        length = parseInt(length);
+                        height = parseInt(height);
+                        width = parseInt(width);
+                        weight = parseInt(weight);
+                        var volumetric_weight = (length * height * width) / 5000;
+                        var chargeable_weight = 0;
+                        var unit = $('#weight_unit_sample').val();
+                        var max = 30;
+                        if(unit == "pounds"){
+                            max *= 2.2;
+                        }
+                        var html = '';
+                        if(volumetric_weight > weight){
+                            chargeable_weight = volumetric_weight;
+                        }else{
+                            chargeable_weight = weight;
+                        }
+
+                        if(unit == "pounds"){
+                            chargeable_weight *= 2.2;
+                        }
+                        
+                        if(chargeable_weight > max ){
+                            Swal.fire({
+                                title: 'Cancelled',
+                                text: "Chargeable Weight = " + Number(chargeable_weight.toFixed(2)) + ", then not accepted by our shipper",
+                                icon: 'error',
+                                scrollbarPadding: false,
+                                backdrop:false,
+                            });
+
+                            var checkbox = $(this).parent().find('input[type="checkbox"][value="third_party"]');
+                            if(selected.length == 1){
+                                $(this).parent().find('.multi-select-button').text('-- Select --');
+                            }else{
+                                $(this).parent().find('.multi-select-button').text('vendor');
+                            }
+                            
+                            // Uncheck the checkbox
+                            checkbox.prop('checked', false);
+                            $(this).find("option[value='third_party']").prop('disabled', false);
+                            $(this).find("option[value='third_party']").prop('selected', false);
+                        }
+                    }
+                }
+            }
+            
+            if(selected.indexOf('vendor') !== -1){
+                $(this).parent().parent().find('.shipping_amount').prop('disabled', false);
+                $(this).parent().parent().find('.estimated_sample').prop('disabled', false);
+                $(this).parent().parent().find('.estimated_shipping_sample').prop('disabled', false);
+                $(this).parent().parent().find('.paid_sample').prop('disabled', false);
+            }
+        });
     });
 
 </script>
@@ -2989,19 +3318,7 @@
                                 }else{
                                     document.getElementById('choice_form').submit();
                                 }
-                            }
-
-                            if(check == true){
-                                document.getElementById('choice_form').submit();
-                            }else{
-                                Swal.fire({
-                                    title: 'Pricing Configuration Check',
-                                    text: 'Please check your pricing configuration',
-                                    icon: 'error'
-                                });
-                            }
-                        }else{
-                            document.getElementById('choice_form').submit();
+                            });
                         }
                     });
                 }else{

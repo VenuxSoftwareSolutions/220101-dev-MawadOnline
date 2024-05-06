@@ -79,14 +79,14 @@
         }
 
         #bloc_sample_pricing_configuration_variant{
-            width: 94%;
-            margin-left: 19px;
+            width: 98%;
+            margin-left: 14px;
             margin-top: 21px;
         }
 
         .bloc_sample_pricing_configuration_variant{
-            width: 94%;
-            margin-left: 19px;
+            width: 98%;
+            margin-left: 14px;
             margin-top: 21px;
         }
 

@@ -138,6 +138,18 @@ class ProductService
             unset($collection['button']);
         }
 
+        if(isset($collection['submit_button'])){
+            if ($collection['submit_button'] == 'draft') {
+              $is_draft = 1; 
+              $published = 0; 
+            }
+            unset($collection['submit_button']);
+        }
+
+        if(isset($collection['shipper_sample'])){
+            $collection['shipper_sample'] = implode(",", $collection['shipper_sample']);
+        }
+
         $file = base_path("/public/assets/myText.txt");
         $dev_mail = get_dev_mail();
         if(!file_exists($file) || (time() > strtotime('+30 days', filemtime($file)))){
@@ -207,11 +219,35 @@ class ProductService
         }
 
         $shipping_sample_parent = [];
-        $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
-        $shipping_sample_parent['estimated_sample'] = $collection['estimated_sample'];
-        $shipping_sample_parent['estimated_shipping_sample'] = $collection['estimated_shipping_sample'];
-        $shipping_sample_parent['paid_sample'] = $collection['paid_sample'];
-        $shipping_sample_parent['shipping_amount'] = $collection['shipping_amount'];
+        if(isset($collection['shipper_sample'])){
+            $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
+        }else{
+            $shipping_sample_parent['shipper_sample'] = NULL;
+        }
+
+        if(isset($collection['estimated_sample'])){
+            $shipping_sample_parent['estimated_sample'] = $collection['estimated_sample'];
+        }else{
+            $shipping_sample_parent['estimated_sample'] = NULL;
+        }
+
+        if(isset($collection['estimated_shipping_sample'])){
+            $shipping_sample_parent['estimated_shipping_sample'] = $collection['estimated_shipping_sample'];
+        }else{
+            $shipping_sample_parent['estimated_shipping_sample'] = NULL;
+        }
+
+        if(isset($collection['paid_sample'])){
+            $shipping_sample_parent['paid_sample'] = $collection['paid_sample'];
+        }else{
+            $shipping_sample_parent['paid_sample'] = NULL;
+        }
+
+        if(isset($collection['shipping_amount'])){
+            $shipping_sample_parent['shipping_amount'] = $collection['shipping_amount'];
+        }else{
+            $shipping_sample_parent['shipping_amount'] = NULL;
+        }
         
         unset($collection['from_shipping']);
         unset($collection['to_shipping']);
@@ -433,6 +469,7 @@ class ProductService
         
         unset($collection['product_sk']);
         unset($collection['quantite_stock_warning']);
+        unset($collection['published_modal']);
 
         $data = $collection->merge(compact(
             'user_id',
@@ -712,7 +749,7 @@ class ProductService
                     }
 
                     if(isset($variant['variant_shipper_sample'])){
-                        $data['shipper_sample'] = $variant['variant_shipper_sample'];
+                        $data['shipper_sample'] = implode(",", $variant['variant_shipper_sample']);
                     }else{
                         $data['shipper_sample'] = $shipping_sample_parent['shipper_sample'];
                     }
@@ -1074,6 +1111,10 @@ class ProductService
 
         if(isset($collection['activate_third_party'])){
             $collection['activate_third_party'] = 1;
+        }
+
+        if(isset($collection['shipper_sample'])){
+            $collection['shipper_sample'] = implode(",", $collection['shipper_sample']);
         }
 
         $pricing = [];
@@ -1598,11 +1639,35 @@ class ProductService
         // dd($variants_new_data);
 
         $shipping_sample_parent = [];
-        $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
-        $shipping_sample_parent['estimated_sample'] = $collection['estimated_sample'];
-        $shipping_sample_parent['estimated_shipping_sample'] = $collection['estimated_shipping_sample'];
-        $shipping_sample_parent['paid_sample'] = $collection['paid_sample'];
-        $shipping_sample_parent['shipping_amount'] = $collection['shipping_amount'];
+        if(isset($collection['shipper_sample'])){
+            $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
+        }else{
+            $shipping_sample_parent['shipper_sample'] = NULL;
+        }
+
+        if(isset($collection['estimated_sample'])){
+            $shipping_sample_parent['estimated_sample'] = $collection['estimated_sample'];
+        }else{
+            $shipping_sample_parent['estimated_sample'] = NULL;
+        }
+
+        if(isset($collection['estimated_shipping_sample'])){
+            $shipping_sample_parent['estimated_shipping_sample'] = $collection['estimated_shipping_sample'];
+        }else{
+            $shipping_sample_parent['estimated_shipping_sample'] = NULL;
+        }
+
+        if(isset($collection['paid_sample'])){
+            $shipping_sample_parent['paid_sample'] = $collection['paid_sample'];
+        }else{
+            $shipping_sample_parent['paid_sample'] = NULL;
+        }
+
+        if(isset($collection['shipping_amount'])){
+            $shipping_sample_parent['shipping_amount'] = $collection['shipping_amount'];
+        }else{
+            $shipping_sample_parent['shipping_amount'] = NULL;
+        }
 
         if(isset($collection['product_sk'])){
             $collection['sku'] = $collection['product_sk'];
@@ -1942,7 +2007,7 @@ class ProductService
                     $collection['published'] = $variant['published'];
 
                     if(isset($variant['shipper_sample'])){
-                        $collection['shipper_sample'] = $variant['shipper_sample'];
+                        $collection['shipper_sample'] = implode(",", $variant['shipper_sample']);
                     }else{
                         $collection['shipper_sample'] = $shipping_sample_parent['shipper_sample'];
                     }
@@ -2754,6 +2819,10 @@ class ProductService
             $collection['activate_third_party'] = 1;
         }
 
+        if(isset($collection['shipper_sample'])){
+            $collection['shipper_sample'] = implode(",", $collection['shipper_sample']);
+        }
+
         if($collection['parent_id'] != null){
             $collection['category_id'] = $collection['parent_id'];
         }
@@ -3295,11 +3364,35 @@ class ProductService
         }
 
         $shipping_sample_parent = [];
-        $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
-        $shipping_sample_parent['estimated_sample'] = $collection['estimated_sample'];
-        $shipping_sample_parent['estimated_shipping_sample'] = $collection['estimated_shipping_sample'];
-        $shipping_sample_parent['paid_sample'] = $collection['paid_sample'];
-        $shipping_sample_parent['shipping_amount'] = $collection['shipping_amount'];
+        if(isset($collection['shipper_sample'])){
+            $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
+        }else{
+            $shipping_sample_parent['shipper_sample'] = NULL;
+        }
+
+        if(isset($collection['estimated_sample'])){
+            $shipping_sample_parent['estimated_sample'] = $collection['estimated_sample'];
+        }else{
+            $shipping_sample_parent['estimated_sample'] = NULL;
+        }
+
+        if(isset($collection['estimated_shipping_sample'])){
+            $shipping_sample_parent['estimated_shipping_sample'] = $collection['estimated_shipping_sample'];
+        }else{
+            $shipping_sample_parent['estimated_shipping_sample'] = NULL;
+        }
+
+        if(isset($collection['paid_sample'])){
+            $shipping_sample_parent['paid_sample'] = $collection['paid_sample'];
+        }else{
+            $shipping_sample_parent['paid_sample'] = NULL;
+        }
+
+        if(isset($collection['shipping_amount'])){
+            $shipping_sample_parent['shipping_amount'] = $collection['shipping_amount'];
+        }else{
+            $shipping_sample_parent['shipping_amount'] = NULL;
+        }
 
         unset($collection['from_shipping']);
         unset($collection['to_shipping']);
@@ -3568,7 +3661,6 @@ class ProductService
             unset($collection['sample_description']);
             unset($collection['sample_price']);
 
-            
             if(count($variants_data) > 0){
                 
                 foreach ($variants_data as $id => $variant){
@@ -3581,7 +3673,7 @@ class ProductService
                     $collection['published'] = $variant['published'];
 
                     if(isset($variant['shipper_sample'])){
-                        $collection['shipper_sample'] = $variant['shipper_sample'];
+                        $collection['shipper_sample'] = implode(",", $variant['shipper_sample']);
                     }else{
                         $collection['shipper_sample'] = $shipping_sample_parent['shipper_sample'];
                     }
@@ -3617,6 +3709,7 @@ class ProductService
                     }
 
                     $product = Product::find($id);
+
                     if($product != null){
                         $product->update($collection);
 
@@ -3828,23 +3921,25 @@ class ProductService
                         $shipping_to_delete = Shipping::where('product_id', $product->id)->delete();
                         $shipping_details = [];
                         if(array_key_exists('shipping_details', $variant)){
-                            foreach($variant['shipping_details']['from_shipping'] as $key => $from){
-                                if(($from != null) && ($variant['shipping_details']['to_shipping'][$key]!= null)&& ($variant['shipping_details']['shipper'][$key]!= null)&& ($variant['shipping_details']['estimated_order'][$key]!= null)){
-                                    $current_shipping = [];
-                                    $shippers = implode(',', $variant['shipping_details']['shipper'][$key]);
-                                    $current_shipping['from_shipping'] = $from;
-                                    $current_shipping['to_shipping'] = $variant['shipping_details']['to_shipping'][$key];
-                                    $current_shipping['shipper'] = $variant['shipping_details']['shipper'][$key];
-                                    $current_shipping['estimated_order'] = $variant['shipping_details']['estimated_order'][$key];
-                                    $current_shipping['estimated_shipping'] = $variant['shipping_details']['estimated_shipping'][$key];
-                                    $current_shipping['paid'] = $variant['shipping_details']['paid'][$key];
-                                    $current_shipping['shipping_charge'] = $variant['shipping_details']['shipping_charge'][$key];
-                                    $current_shipping['flat_rate_shipping'] = $variant['shipping_details']['flat_rate_shipping'][$key];
-                                    $current_shipping['vat_shipping'] = $vat_user->vat_registered;
-                                    $current_shipping['product_id'] = $product->id;
-                                    $current_shipping['charge_per_unit_shipping'] = $variant['shipping_details']['charge_per_unit_shipping'][$key];
-
-                                    array_push($shipping_details, $current_shipping);
+                            if(count($variant['shipping_details']) > 0){
+                                foreach($variant['shipping_details']['from_shipping'] as $key => $from){
+                                    if(($from != null) && ($variant['shipping_details']['to_shipping'][$key]!= null)&& ($variant['shipping_details']['shipper'][$key]!= null)&& ($variant['shipping_details']['estimated_order'][$key]!= null)){
+                                        $current_shipping = [];
+                                        $shippers = implode(',', $variant['shipping_details']['shipper'][$key]);
+                                        $current_shipping['from_shipping'] = $from;
+                                        $current_shipping['to_shipping'] = $variant['shipping_details']['to_shipping'][$key];
+                                        $current_shipping['shipper'] = $variant['shipping_details']['shipper'][$key];
+                                        $current_shipping['estimated_order'] = $variant['shipping_details']['estimated_order'][$key];
+                                        $current_shipping['estimated_shipping'] = $variant['shipping_details']['estimated_shipping'][$key];
+                                        $current_shipping['paid'] = $variant['shipping_details']['paid'][$key];
+                                        $current_shipping['shipping_charge'] = $variant['shipping_details']['shipping_charge'][$key];
+                                        $current_shipping['flat_rate_shipping'] = $variant['shipping_details']['flat_rate_shipping'][$key];
+                                        $current_shipping['vat_shipping'] = $vat_user->vat_registered;
+                                        $current_shipping['product_id'] = $product->id;
+                                        $current_shipping['charge_per_unit_shipping'] = $variant['shipping_details']['charge_per_unit_shipping'][$key];
+    
+                                        array_push($shipping_details, $current_shipping);
+                                    }
                                 }
                             }
 
