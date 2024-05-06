@@ -21,7 +21,7 @@
 
 .custom-card{
     border-radius: 30px !important;
-    width: 352px;
+    width: 370px !important;
 }
 
 .card-title{
@@ -32,7 +32,7 @@
     font-family: Poppins,Calibri;
 }
 .sub-title{
-    font-width: 600;
+    font-width: bold;
     font-size: 24px;
     line-height: 32px;
     color: #000000;
