@@ -1261,9 +1261,11 @@ class ProductController extends Controller
             // sort($lastItem['variant_pricing-from']['from']) ;
             // sort($lastItem['variant_pricing-from']['unit_price']) ;
             // sort($lastItem['variant_pricing-from']['to']) ;
-
-            $max =max($lastItem['variant_pricing-from']['to']) ;
-            $min =min($lastItem['variant_pricing-from']['from']) ;
+            if (isset($lastItem['variant_pricing-from']['to'], $lastItem['variant_pricing-from']['from']) &&
+            !empty($lastItem['variant_pricing-from']['to']) && !empty($lastItem['variant_pricing-from']['from'])) {
+                $max =max($lastItem['variant_pricing-from']['to'])  ;
+                $min =min($lastItem['variant_pricing-from']['from']) ;
+            }
         }
 
 
