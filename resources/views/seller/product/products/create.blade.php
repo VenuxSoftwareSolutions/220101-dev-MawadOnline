@@ -55,8 +55,9 @@
         border-color: red !important; /* Add red border */
     }
     .multi-select-button {
-        height: 41px;
+        height: 44px;
         border: 1px solid #e2e5ec !important;
+        box-shadow: none !important;
     }
 
     h6{
@@ -98,6 +99,44 @@
 
     .clonedDiv{
         margin-top: 60px;
+    }
+
+    .col-from-label{
+        weight: 400 !important;
+        font-size: 14px !important;
+        line-height: 24px !important;
+    }
+
+    .form-group.row {
+        display: flex;
+        align-items: center;
+    }
+
+    .form-group.row .col-md-3 {
+        text-align: left;
+    }
+
+    input.form-control {
+        border-radius: 0;
+    }
+
+    @media screen and (min-width: 1800px) {
+        .icon-delete-image {
+            position: absolute;
+            color: red;
+            top: 0;
+            right: 31px !important;
+        }
+    }
+
+    @media screen and (max-width: 1799px) {
+        /* Add your CSS rules here */
+        .icon-delete-image {
+            position: absolute;
+            color: red;
+            top: 0;
+            right: -11px !important;
+        }
     }
 
 </style>
@@ -317,9 +356,9 @@
                                     </thead>
                                     <tbody id="bloc_pricing_configuration">
                                         <tr>
-                                            <td><input type="number" name="from[]" min="1" class="form-control min-qty" id="min-qty-parent"></td>
-                                            <td><input type="number" name="to[]" min="1" class="form-control max-qty" id="max-qty-parent"></td>
-                                            <td><input type="number" name="unit_price[]" step="0.01" min="1" class="form-control unit-price-variant" id="unit-price-parent"></td>
+                                            <td><input type="number" name="from[]" min="1" class="form-control min-qty" id="min-qty-parent" placeholder="From QTY"></td>
+                                            <td><input type="number" name="to[]" min="1" class="form-control max-qty" id="max-qty-parent" placeholder="To QTY"></td>
+                                            <td><input type="number" name="unit_price[]" step="0.01" min="1" placeholder="Unit Price" class="form-control unit-price-variant" id="unit-price-parent"></td>
                                             <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                             <td>
                                                 <select class="form-control discount_type" name="discount_type[]">
@@ -328,10 +367,10 @@
                                                     <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                                 </select>
                                             </td>
-                                            <td><input type="number" class="form-control discount_amount" name="discount_amount[]"></td>
+                                            <td><input type="number" class="form-control discount_amount" name="discount_amount[]" placeholder="Amount"></td>
                                             <td style="width: 22% !important;">
                                                 <div class="col-md-9 input-group">
-                                                    <input type="number" class="form-control discount_percentage" name="discount_percentage[]">
+                                                    <input type="number" class="form-control discount_percentage" name="discount_percentage[]" placeholder="Percentage">
                                                     <div class="input-group-append">
                                                         <span class="input-group-text">%</span>
                                                     </div>
@@ -348,18 +387,14 @@
                                 <h6>{{ translate('Default Sample Pricing Configuration') }}</h6>
                                 <hr>
                                 <div class="row mb-3">
-                                    <div class="col-md-3">
-                                        <input type="text" class="form-control" value="{{translate('Sample description')}}" disabled>
-                                    </div>
-                                    <div class="col-md-8">
+                                    <label class="col-md-2 col-from-label">{{translate('Sample description')}}</label>
+                                    <div class="col-md-10">
                                         <textarea class="form-control" name="sample_description"></textarea>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
-                                    <div class="col-md-3">
-                                        <input type="text" class="form-control" value="{{translate('Sample price')}}" disabled>
-                                    </div>
-                                    <div class="col-md-8">
+                                    <label class="col-md-2 col-from-label">{{translate('Sample price')}}</label>
+                                    <div class="col-md-10">
                                         <input type="number" step="0.01" min="1" class="form-control" name="sample_price">
                                     </div>
                                 </div>
@@ -381,9 +416,7 @@
                                 <h6>{{ ucfirst(translate('MawadOnline 3rd Party Shipping')) }}</h6>
                                 <hr>
                                 <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <input type="text" class="form-control" value="{{translate('Activate MawadOnline 3rd Party Shipping')}}" disabled>
-                                    </div>
+                                    <label class="col-md-4 col-from-label">{{translate('Activate MawadOnline 3rd Party Shipping')}}</label>
                                     <div class="col-md-8">
                                         <label class="aiz-switch aiz-switch-success mb-0">
                                             <input value="1" type="checkbox" id="third_party_activate" name="activate_third_party">
@@ -465,8 +498,8 @@
                                         </thead>
                                         <tbody id="bloc_shipping_configuration">
                                             <tr>
-                                                <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id=""></td>
-                                                <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id=""></td>
+                                                <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id="" placeholder="From QTY"></td>
+                                                <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id="" placeholder="To QTY"></td>
                                                 <td>
                                                     {{-- <select multiple class="form-control shipper" name="shipper[0][]">
                                                         <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
@@ -478,10 +511,10 @@
                                                     </select>
                                                 </td>
 
-                                                <div id="results"></div>
+                                                {{-- <div id="results"></div> --}}
 
-                                                <td><input type="number" class="form-control estimated_order" name="estimated_order[]"></td>
-                                                <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]"></td>
+                                                <td><input type="number" class="form-control estimated_order" name="estimated_order[]" placeholder="Days"></td>
+                                                <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]" placeholder="Days"></td>
                                                 <td>
                                                     <select class="form-control paid" name="paid[]">
                                                         <option value="" selected>{{translate('Choose option')}}</option>
@@ -502,8 +535,8 @@
                                                         <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
                                                     </select>
                                                 </td>
-                                                <td><input type="number" class="form-control flat_rate_shipping" name="flat_rate_shipping[]" readonly></td>
-                                                <td><input type="number" class="form-control charge_per_unit_shipping" name="charge_per_unit_shipping[]" readonly></td>
+                                                <td><input type="number" class="form-control flat_rate_shipping" name="flat_rate_shipping[]" placeholder="Flat rate amount" readonly></td>
+                                                <td><input type="number" class="form-control charge_per_unit_shipping" name="charge_per_unit_shipping[]" placeholder="Charge unit" readonly></td>
                                                 <td>
                                                     <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                                 </td>
@@ -523,9 +556,7 @@
                                     <h6>{{ ucfirst(translate('MawadOnline 3rd Party Shipping')) }}</h6>
                                     <hr>
                                     <div class="row mb-3">
-                                        <div class="col-md-4">
-                                            <input type="text" class="form-control" value="{{translate('Activate MawadOnline 3rd Party Shipping')}}" disabled>
-                                        </div>
+                                        <label class="col-md-4 col-from-label">{{translate('Activate MawadOnline 3rd Party Shipping')}}</label>
                                         <div class="col-md-8">
                                             <label class="aiz-switch aiz-switch-success mb-0">
                                                 <input value="1" type="checkbox" id="third_party_activate_sample" name="activate_third_party_sample">
@@ -696,10 +727,8 @@
                     </div>
                     <div class="card-body">
                         <div class="form-group row gutters-5">
-                            <div class="col-md-4">
-                                <input type="text" class="form-control mb-2" value="{{translate('Activate variant option')}}" disabled>
-                            </div>
-                            <div class="col-md-8">
+                            <label class="col-md-2 col-from-label">{{translate('Activate variant option')}}</label>
+                            <div class="col-md-10">
                                 <label class="aiz-switch aiz-switch-success mb-0">
                                     <input value="1" type="checkbox" name="activate_attributes">
                                     <span></span>
@@ -707,10 +736,8 @@
                             </div>
                         </div>
                         <div class="form-group row gutters-5">
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" value="{{translate('Attributes')}}" disabled>
-                            </div>
-                            <div class="col-md-8" id="attributes_bloc">
+                            <label class="col-md-2 col-from-label">{{translate('Attributes')}}</label>
+                            <div class="col-md-10" id="attributes_bloc">
                                 <select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" id="attributes" multiple disabled data-placeholder="{{ translate('Choose Attributes') }}">
 
                                 </select>
@@ -724,18 +751,14 @@
                             <h3 class="mb-3">Variant Information</h3>
                             <hr>
                             <div class="row mb-3">
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" value="{{translate('Variant SKU')}}" disabled>
-                                </div>
-                                <div class="col-md-8">
+                                <label class="col-md-2 col-from-label">{{translate('Variant SKU')}}</label>
+                                <div class="col-md-10">
                                     <input type="text" class="form-control sku" id="sku">
                                 </div>
                             </div>
                             <div class="row mb-3" style="display: none">
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" value="{{translate('Variant Photos')}}" disabled>
-                                </div>
-                                <div class="col-md-8">
+                                <label class="col-md-2 col-from-label">{{translate('Variant Photos')}}</label>
+                                <div class="col-md-10">
                                     <div class="custom-file mb-3">
                                         <input type="file" class="custom-file-input photos_variant" id="photos_variant" accept=".jpeg, .jpg, .png" multiple>
                                         <label class="custom-file-label" for="photos_variant">Choose files</label>
@@ -747,10 +770,8 @@
                                 </div>
                             </div>
                             <div class="row mb-3" style="display: none">
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" value="{{translate('Use default pricing configuration')}}" disabled>
-                                </div>
-                                <div class="col-md-8">
+                                <label class="col-md-2 col-from-label">{{translate('Use default pricing configuration')}}</label>
+                                <div class="col-md-10">
                                     <label class="aiz-switch aiz-switch-success mb-0">
                                         <input value="1" type="checkbox" class="variant-pricing" checked>
                                         <span></span>
@@ -761,10 +782,8 @@
                                 </div>
                             </div>
                             <div class="row mb-3" style="display: none">
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" value="{{translate('Use default Shipping')}}" disabled>
-                                </div>
-                                <div class="col-md-8">
+                                <label class="col-md-2 col-from-label">{{translate('Use default Shipping')}}</label>
+                                <div class="col-md-10">
                                     <label class="aiz-switch aiz-switch-success mb-0">
                                         <input value="1" type="checkbox" class="variant-shipping" data-type="variant-information" checked>
                                         <span></span>
@@ -776,10 +795,8 @@
                                 </div>
                             </div>
                             <div class="row mb-3" style="display: none">
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" value="{{translate('Sample Available?')}}" disabled>
-                                </div>
-                                <div class="col-md-8">
+                                <label class="col-md-2 col-from-label">{{translate('Sample Available?')}}</label>
+                                <div class="col-md-10">
                                     <label class="aiz-switch aiz-switch-success mb-0">
                                         <input value="1" type="checkbox" class="variant-sample-available">
                                         <span></span>
@@ -787,10 +804,8 @@
                                 </div>
                             </div>
                             <div class="row mb-3" style="display: none">
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" value="{{translate('Use default sample pricing configuration')}}" disabled>
-                                </div>
-                                <div class="col-md-8">
+                                <label class="col-md-2 col-from-label">{{translate('Use default sample pricing configuration')}}</label>
+                                <div class="col-md-10">
                                     <label class="aiz-switch aiz-switch-success mb-0">
                                         <input value="1" type="checkbox" class="variant-sample-pricing" checked disabled>
                                         <span></span>
@@ -809,28 +824,22 @@
                                         </div>
                                     </div> --}}
                                     <div class="row mb-3">
-                                        <div class="col-md-4">
-                                            <input type="text" class="form-control" value="{{translate('Sample description')}}" disabled>
-                                        </div>
-                                        <div class="col-md-8">
+                                        <label class="col-md-2 col-from-label">{{translate('Sample description')}}</label>
+                                        <div class="col-md-10">
                                             <textarea class="form-control sample_description"></textarea>
                                         </div>
                                     </div>
                                     <div class="row mb-3">
-                                        <div class="col-md-4">
-                                            <input type="text" class="form-control" value="{{translate('Sample price')}}" disabled>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <input type="text" class="form-control sample_price">
+                                        <label class="col-md-2 col-from-label">{{translate('Sample price')}}</label>
+                                        <div class="col-md-10">
+                                            <input type="number" step="0.01" class="form-control sample_price">
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="row mb-3" style="display: none">
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" value="{{translate('Use default sample Shipping')}}" disabled>
-                                </div>
-                                <div class="col-md-8">
+                                <label class="col-md-2 col-from-label">{{translate('Use default sample Shipping')}}</label>
+                                <div class="col-md-10">
                                     <label class="aiz-switch aiz-switch-success mb-0">
                                         <input value="1" type="checkbox" class="variant-sample-shipping" checked disabled>
                                         <span></span>
@@ -841,10 +850,8 @@
                                 </div>
                             </div>
                             <div class="row mb-3" style="display: none">
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" value="{{translate('Low-Stock Warning')}}" disabled>
-                                </div>
-                                <div class="col-md-8">
+                                <label class="col-md-2 col-from-label">{{translate('Low-Stock Warning')}}</label>
+                                <div class="col-md-10">
                                     <input type="number" class="form-control stock-warning" id="low_stock_warning">
                                 </div>
                             </div>
@@ -867,20 +874,16 @@
                         <h5 class="mb-0 h6">{{translate('General Attributes')}}</h5>
                     </div>
                     <div class="card-body">
-                        <div id="sku_product_product" style="margin-left: -15px;">
+                        <div id="sku_product_product" style="margin-left: 4px;">
                             <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <input type="text" class="form-control" value="{{ translate('SKU') }}" disabled>
-                                </div>
-                                <div class="col-md-8 mb-3">
+                                <label class="col-md-2 col-from-label">{{translate('SKU')}}</label>
+                                <div class="col-md-10 mb-3">
                                     <input type="text" name="product_sk" class="form-control">
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <input type="text" class="form-control" value="{{ translate('Low-Stock Warning') }}" disabled>
-                                </div>
-                                <div class="col-md-8 mb-3">
+                                <label class="col-md-2 col-from-label">{{translate('Low-Stock Warning')}}</label>
+                                <div class="col-md-10 mb-3">
                                     <input type="number" min="0" name="quantite_stock_warning" class="form-control">
                                 </div>
                             </div>
@@ -1065,7 +1068,7 @@
                 $('body #attributes').prop('disabled', true);
                 $('#variant_informations').hide();
                 $('#btn-create-variant').hide();
-                $('body #bloc_variants_created').hide();
+                $('body #bloc_variants_created').empty();
                 $('body #sku_product_product').show();
                 AIZ.plugins.bootstrapSelect('refresh');
             } else {
@@ -1076,6 +1079,7 @@
                         $('#variant_informations').show();
                         $('#btn-create-variant').show();
                         $('body #sku_product_product').hide();
+                        $('body #bloc_variants_created').show();
                         $('.div-btn').show();
                         AIZ.plugins.bootstrapSelect('refresh');
                     } else {
@@ -1830,9 +1834,9 @@
 
             if(newvariant != undefined){
                 var html_to_add = `<tr>
-                                    <td><input type="number" min="1" required name="variant_pricing-from`+ newvariant +`[from][]" class="form-control min-qty" id=""></td>
-                                    <td><input type="number" min="1" required name="variant_pricing-from`+ newvariant +`[to][]" class="form-control max-qty" id=""></td>
-                                    <td><input type="number" step="0.01" min="11 required name="variant_pricing-from`+ newvariant +`[unit_price][]" class="form-control unit-price-variant" id=""></td>
+                                    <td><input type="number" min="1" placeholder="From QTY" required name="variant_pricing-from`+ newvariant +`[from][]" class="form-control min-qty" id=""></td>
+                                    <td><input type="number" min="1" placeholder="To QTY" required name="variant_pricing-from`+ newvariant +`[to][]" class="form-control max-qty" id=""></td>
+                                    <td><input type="number" step="0.01" placeholder="Unit Price" min="11 required name="variant_pricing-from`+ newvariant +`[unit_price][]" class="form-control unit-price-variant" id=""></td>
                                     <td><input type="text" class="form-control aiz-date-range discount-range" name="variant_pricing-from'`+ newvariant +`[discount_range][]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                     <td>
                                         <select class="form-control discount_type" name="variant_pricing-from`+ newvariant +`[discount_type][]">
@@ -1841,10 +1845,10 @@
                                             <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control discount_amount" name="variant_pricing-from`+ newvariant +`[discount_amount][]"></td>
+                                    <td><input type="number" class="form-control discount_amount" placeholder="Amount" name="variant_pricing-from`+ newvariant +`[discount_amount][]"></td>
                                     <td style="width: 19% !important;">
                                         <div class="col-md-9 input-group">
-                                            <input type="number" class="form-control discount_percentage" name="variant_pricing-from`+ newvariant +`[discount_percentage][]">
+                                            <input type="number" class="form-control discount_percentage" placeholder="Percentage" name="variant_pricing-from`+ newvariant +`[discount_percentage][]">
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
@@ -1860,9 +1864,9 @@
                 if ($(this).closest('#variant_informations').length) {
                     var html_to_add = `
                                 <tr>
-                                    <td><input type="number" min="1" class="form-control min-qty-variant" id=""></td>
-                                    <td><input type="number" min="1" class="form-control max-qty-variant" id=""></td>
-                                    <td><input type="number" step="0.01" min="1" class="form-control unit-price-variant" id=""></td>
+                                    <td><input type="number" min="1" placeholder="From QTY" class="form-control min-qty-variant" id=""></td>
+                                    <td><input type="number" min="1" placeholder="To QTY" class="form-control max-qty-variant" id=""></td>
+                                    <td><input type="number" placeholder="Unit Price" step="0.01" min="1" class="form-control unit-price-variant" id=""></td>
                                     <td><input type="text" class="form-control aiz-date-range discount-range-variant" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                     <td>
                                         <select class="form-control discount_type-variant">
@@ -1871,10 +1875,10 @@
                                             <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control discount_amount-variant"></td>
+                                    <td><input type="number" class="form-control discount_amount-variant" placeholder="Amount"></td>
                                     <td style="width: 19% !important;">
                                         <div class="col-md-9 input-group">
-                                            <input type="number" class="form-control discount_percentage-variant">
+                                            <input type="number" class="form-control discount_percentage-variant" placeholder="Percentage">
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
@@ -1889,9 +1893,9 @@
                 }else{
                     var html_to_add = `
                                 <tr>
-                                    <td><input type="number" min="1" name="from[]" class="form-control min-qty" id=""></td>
-                                    <td><input type="number" min="1" name="to[]" class="form-control max-qty" id=""></td>
-                                    <td><input type="number" step="0.01" min="1" name="unit_price[]" class="form-control unit-price-variant" id=""></td>
+                                    <td><input type="number" min="1" placeholder="From QTY" name="from[]" class="form-control min-qty" id=""></td>
+                                    <td><input type="number" min="1" placeholder="To QTY" name="to[]" class="form-control max-qty" id=""></td>
+                                    <td><input type="number" placeholder="Unit Price" step="0.01" min="1" name="unit_price[]" class="form-control unit-price-variant" id=""></td>
                                     <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                     <td>
                                         <select class="form-control discount_type" name="discount_type[]">
@@ -1900,10 +1904,10 @@
                                             <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control discount_amount" name="discount_amount[]"></td>
+                                    <td><input type="number" class="form-control discount_amount" placeholder="Amount" name="discount_amount[]"></td>
                                     <td style="width: 19% !important;">
                                         <div class="col-md-9 input-group">
-                                            <input type="number" class="form-control discount_percentage" name="discount_percentage[]">
+                                            <input type="number" class="form-control discount_percentage" name="discount_percentage[]" placeholder="Percentage">
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
@@ -2425,16 +2429,16 @@
             if(id_variant != undefined){
                 var html_to_add = `
                                 <tr>
-                                    <td><input type="number" name="variant_shipping-${id_variant}[from][]" class="form-control min-qty-shipping" id=""></td>
-                                    <td><input type="number" name="variant_shipping-${id_variant}[to][]" class="form-control max-qty-shipping" id=""></td>
+                                    <td><input type="number" name="variant_shipping-${id_variant}[from][]" class="form-control min-qty-shipping" id="" placeholder="From QTY"></td>
+                                    <td><input type="number" name="variant_shipping-${id_variant}[to][]" class="form-control max-qty-shipping" id="" placeholder="To QTY" placeholder="Days"></td>
                                     <td>
                                         <select multiple class="shipper" name="variant_shipping-${id_variant}[shipper][${row}][]">
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control estimated_order" name="variant_shipping-${id_variant}[estimated_order][]"></td>
-                                    <td><input type="number" class="form-control estimated_shipping" name="variant_shipping-${id_variant}[estimated_shipping][]"></td>
+                                    <td><input type="number" class="form-control estimated_order" name="variant_shipping-${id_variant}[estimated_order][]" placeholder="Days"></td>
+                                    <td><input type="number" class="form-control estimated_shipping" name="variant_shipping-${id_variant}[estimated_shipping][]" placeholder="Days"></td>
                                     <td>
                                         <select class="form-control paid" name="variant_shipping-${id_variant}[paid][]">
                                             <option value="" selected>{{translate('Choose shipper')}}</option>
@@ -2449,8 +2453,8 @@
                                             <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control flat_rate_shipping" name="variant_shipping-${id_variant}[flat_rate_shipping][]" readonly></td>
-                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="variant_shipping-${id_variant}[charge_per_unit_shipping][]" readonly></td>
+                                    <td><input type="number" class="form-control flat_rate_shipping" placeholder="Flat rate amount" name="variant_shipping-${id_variant}[flat_rate_shipping][]" readonly></td>
+                                    <td><input type="number" class="form-control charge_per_unit_shipping" placeholder="Charge unit" name="variant_shipping-${id_variant}[charge_per_unit_shipping][]" readonly></td>
                                     <td>
                                         <i class="las la-plus btn-add-shipping" data-variant-id="${id_variant}" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                         <i class="las la-trash delete_shipping_canfiguration" data-variant-id="${id_variant}" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
@@ -2461,16 +2465,16 @@
                 if ($(this).closest('#variant_informations').length) {
                     var html_to_add = `
                                 <tr>
-                                    <td><input type="number"  class="form-control min-qty-shipping" id=""></td>
-                                    <td><input type="number"  class="form-control max-qty-shipping" id=""></td>
+                                    <td><input type="number"  class="form-control min-qty-shipping" id="" placeholder="From QTY"></td>
+                                    <td><input type="number"  class="form-control max-qty-shipping" id="" placeholder="To QTY" placeholder="Days"></td>
                                     <td>
                                         <select multiple class="shipper" >
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control estimated_order" ></td>
-                                    <td><input type="number" class="form-control estimated_shipping" ></td>
+                                    <td><input type="number" class="form-control estimated_order"  placeholder="Days"></td>
+                                    <td><input type="number" class="form-control estimated_shipping"  placeholder="Days"></td>
                                     <td>
                                         <select class="form-control paid" >
                                             <option value="" selected>{{translate('Choose shipper')}}</option>
@@ -2485,8 +2489,8 @@
                                             <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control flat_rate_shipping" readonly></td>
-                                    <td><input type="number" class="form-control charge_per_unit_shipping" readonly></td>
+                                    <td><input type="number" class="form-control flat_rate_shipping" placeholder="Flat rate amount" readonly></td>
+                                    <td><input type="number" class="form-control charge_per_unit_shipping" placeholder="Charge unit" readonly></td>
                                     <td>
                                         <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                         <i class="las la-trash delete_shipping_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
@@ -2496,16 +2500,16 @@
                 }else{
                     var html_to_add = `
                                 <tr>
-                                    <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id=""></td>
-                                    <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id=""></td>
+                                    <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id="" placeholder="From QTY"></td>
+                                    <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id="" placeholder="To QTY" placeholder="Days"></td>
                                     <td>
                                         <select multiple class="shipper" name="shipper[${row}][]">
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control estimated_order" name="estimated_order[]"></td>
-                                    <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]"></td>
+                                    <td><input type="number" class="form-control estimated_order" name="estimated_order[]" placeholder="Days"></td>
+                                    <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]" placeholder="Days"></td>
                                     <td>
                                         <select class="form-control paid" name="paid[]">
                                             <option value="" selected>{{translate('Choose shipper')}}</option>
@@ -2520,8 +2524,8 @@
                                             <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control flat_rate_shipping" name="flat_rate_shipping[]" readonly></td>
-                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="charge_per_unit_shipping[]" readonly></td>
+                                    <td><input type="number" class="form-control flat_rate_shipping" placeholder="Flat rate amount" name="flat_rate_shipping[]" readonly></td>
+                                    <td><input type="number" class="form-control charge_per_unit_shipping" placeholder="Charge unit" name="charge_per_unit_shipping[]" readonly></td>
                                     <td>
                                         <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                         <i class="las la-trash delete_shipping_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>

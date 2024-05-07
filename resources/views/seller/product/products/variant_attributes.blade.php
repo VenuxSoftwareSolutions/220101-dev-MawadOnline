@@ -2,12 +2,10 @@
 
     @if (in_array($attribute->id, $variants_attributes_ids_attributes))
     <div class="row attribute-variant-{{ $attribute->id }}">
-        <div class="col-md-4 mb-3">
-            <input type="text" class="form-control" value="{{ translate($attribute->getTranslation('name')) }}" disabled>
-        </div>
+        <label class="col-md-2 col-from-label">{{ translate($attribute->getTranslation('name')) }}</label>
         @switch ($attribute->type_value)
             @case('text')
-                <div class="col-md-8 mb-3">
+                <div class="col-md-10 mb-3">
                     <input type="text" class="form-control attributes"  @if(request()->route()->getName() === 'products.approve') 
                                                                             @if(isset($variants_attributes[$attribute->id]->added)) 
                                                                                 data-toggle="tooltip" data-html="true" title="Attribute added" style="border-color: green !important;" 
@@ -23,7 +21,7 @@
                 @php
                     $values = $attribute->attribute_values_list(app()->getLocale());
                 @endphp
-                <div class="col-md-8 mb-3">
+                <div class="col-md-10 mb-3">
                     <select class="form-control" @if(request()->route()->getName() === 'products.approve') 
                                                     @if(isset($variants_attributes[$attribute->id]->added))
                                                         data-toggle="tooltip" data-html="true" title="Attribute added" style="border-color: green !important;" 
@@ -39,7 +37,7 @@
                 </div>
                 @break;
             @case ('color')
-                <div class="col-md-8 mb-3">
+                <div class="col-md-10 mb-3">
                     <select class="form-control attributes aiz-selectpicker" @if(request()->route()->getName() === 'products.approve') 
                                                                                 @if(isset($variants_attributes[$attribute->id]->added)) 
                                                                                     data-added="true" style="border-color: green !important;" 
@@ -64,7 +62,7 @@
                     $units = \App\Models\Unity::whereIn('id', $units_id)->get();
                 @endphp
 
-                <div class="col-md-8 mb-3">
+                <div class="col-md-10 mb-3">
                     <div class="row">
                         <div class="col-6">
                             <input type="number" step="0.1" class="form-control attributes" @if(request()->route()->getName() === 'products.approve') 
@@ -95,7 +93,7 @@
                 </div>
                 @break;
             @case ('boolean')
-                <div class="col-md-8 mb-3" style="padding-top: 10px">
+                <div class="col-md-10 mb-3" style="padding-top: 10px">
                     <label style="margin-right: 15px">
                         <input type="radio" data-id_attributes="{{ $attribute->id }}" name="variant[attributes][{{ $children->id }}][{{ $attribute->id }}]" class="attributes"  @if($variants_attributes[$attribute->id]->value == "yes") checked @endif @if(request()->route()->getName() === 'products.approve')
                                                                                                                                                                                                                                                             @if(isset($variants_attributes[$attribute->id]->old_value))  

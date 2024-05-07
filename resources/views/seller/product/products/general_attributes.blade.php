@@ -1,11 +1,12 @@
 @foreach ($attributes as $attribute)
     @if (in_array($attribute->id, $general_attributes_ids_attributes))
-        <div class="col-md-4 mb-3 attribute-variant-{{ $attribute->id }}">
+        {{-- <div class="col-md-4 mb-3 ">
             <input type="text" class="form-control" value="{{ translate($attribute->getTranslation('name')) }}" disabled>
-        </div>
+        </div> --}}
+        <label class="col-md-2 col-from-label attribute-variant-{{ $attribute->id }}">{{ translate($attribute->getTranslation('name')) }}</label>
         @switch ($attribute->type_value)
             @case('text')
-                <div class="col-md-8 mb-3 attribute-variant-{{ $attribute->id }}">
+                <div class="col-md-10 mb-3 attribute-variant-{{ $attribute->id }}">
                     <input type="text" class="form-control attributes" @if(request()->route()->getName() === 'products.approve') @if(isset($general_attributes[$attribute->id]->added)) data-toggle="tooltip" data-html="true" title="Attribute added" style="border-color: green !important;" @endif @if(isset($general_attributes[$attribute->id]->old_value)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old video provider is: {{ isset($general_attributes[$attribute->id]->old_value) }}" @endif @endif name="attribute_generale-{{ $attribute->id }}" value="{{ $general_attributes[$attribute->id]->value }}">
                 </div>
                 @break;
@@ -13,7 +14,7 @@
                 @php
                     $values = $attribute->attribute_values_list(app()->getLocale());
                 @endphp
-                <div class="col-md-8 mb-3 attribute-variant-{{ $attribute->id }}">
+                <div class="col-md-10 mb-3 attribute-variant-{{ $attribute->id }}">
                     <select class="form-control" @if(request()->route()->getName() === 'products.approve') @if(isset($general_attributes[$attribute->id]->added)) data-toggle="tooltip" data-html="true" title="Attribute added" style="border-color: green !important;" @endif @if(isset($general_attributes[$attribute->id]->old_value)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old video provider is: {{ isset($general_attributes[$attribute->id]->old_value) }}" @endif @endif name="attribute_generale-{{ $attribute->id }}">
                         @foreach ($values as $key => $value)
                             <option  value='{{ $value->id }}' @if($general_attributes[$attribute->id]->id_values == $value->id) selected @endif>{{ $value->value }}</option>
@@ -22,7 +23,7 @@
                 </div>
                 @break;
             @case ('color')
-                <div class="col-md-8 mb-3 attribute-variant-{{ $attribute->id }}">
+                <div class="col-md-10 mb-3 attribute-variant-{{ $attribute->id }}">
                     <select class="form-control attributes aiz-selectpicker" @if(request()->route()->getName() === 'products.approve') @if(isset($general_attributes[$attribute->id]->added)) data-added="true" style="border-color: green !important;" @endif @if(isset($general_attributes[$attribute->id]->old_value)) data-value="{{ $general_attributes[$attribute->id]->old_value }}" style="border-color: #FF3C50 !important;" @endif @endif name="attribute_generale-{{ $attribute->id }}" data-type="color" data-live-search="true" data-selected-text-format="count">
                         @foreach ($colors as $key => $color)
                             <option value="{{ $color->code }}" @if($general_attributes[$attribute->id]->id_colors == $color->id) selected @endif data-content="<span><span class='size-15px d-inline-block mr-2 rounded border' style='background:{{ $color->code }}'></span><span>{{ $color->name }}</span></span>"></option>'
@@ -36,7 +37,7 @@
                     $units = \App\Models\Unity::whereIn('id', $units_id)->get();
                 @endphp
 
-                <div class="col-md-8 mb-3 attribute-variant-{{ $attribute->id }}">
+                <div class="col-md-10 mb-3 attribute-variant-{{ $attribute->id }}">
                     <div class="row">
                         <div class="col-6"> 
                             <input type="number" step="0.1" class="form-control attributes" @if(request()->route()->getName() === 'products.approve') @if(isset($general_attributes[$attribute->id]->added)) data-toggle="tooltip" data-html="true" title="Attribute added" style="border-color: green !important;" @endif @if(isset($general_attributes[$attribute->id]->old_value) && ($general_attributes[$attribute->id]->key == "value"))  data-toggle="tooltip" data-html="true" title="Modified and old value is: {{ $general_attributes[$attribute->id]->old_value }}" style="border-color: #FF3C50 !important;" @endif @endif name="attribute_generale-{{ $attribute->id }}" value="{{ $general_attributes[$attribute->id]->value }}">
@@ -52,7 +53,7 @@
                 </div>
                 @break;
             @case ('boolean')
-                <div class="col-md-8 mb-3 attribute-variant-{{ $attribute->id }}" style="padding-top: 10px">
+                <div class="col-md-10 mb-3 attribute-variant-{{ $attribute->id }}" style="padding-top: 10px">
                     <label style="margin-right: 15px">
                         <input type="radio" class="attributes" name="attribute_generale-{{ $attribute->id }}"   @if(request()->route()->getName() === 'products.approve') 
                                                                                                                     @if(isset($general_attributes[$attribute->id]->old_value))  

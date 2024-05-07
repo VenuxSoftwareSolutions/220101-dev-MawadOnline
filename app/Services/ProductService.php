@@ -1191,6 +1191,37 @@ class ProductService
             }            
         }
 
+        $shipping_sample_parent = [];
+        if(isset($collection['shipper_sample'])){
+            $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
+        }else{
+            $shipping_sample_parent['shipper_sample'] = NULL;
+        }
+
+        if(isset($collection['estimated_sample'])){
+            $shipping_sample_parent['estimated_sample'] = $collection['estimated_sample'];
+        }else{
+            $shipping_sample_parent['estimated_sample'] = NULL;
+        }
+
+        if(isset($collection['estimated_shipping_sample'])){
+            $shipping_sample_parent['estimated_shipping_sample'] = $collection['estimated_shipping_sample'];
+        }else{
+            $shipping_sample_parent['estimated_shipping_sample'] = NULL;
+        }
+
+        if(isset($collection['paid_sample'])){
+            $shipping_sample_parent['paid_sample'] = $collection['paid_sample'];
+        }else{
+            $shipping_sample_parent['paid_sample'] = NULL;
+        }
+
+        if(isset($collection['shipping_amount'])){
+            $shipping_sample_parent['shipping_amount'] = $collection['shipping_amount'];
+        }else{
+            $shipping_sample_parent['shipping_amount'] = NULL;
+        }
+
         //dd($collection);
         $variants_data = [];
         $variants_new_data = [];
@@ -1309,20 +1340,20 @@ class ProductService
                     if(array_key_exists($key, $data['variant']['estimated_sample'])){
                         $variants_data[$key]['estimated_sample'] = $data['variant']['estimated_sample'][$key];
                     }else{
-                        $variants_data[$key]['estimated_sample'] = $data['estimated_sample'];
+                        $variants_data[$key]['estimated_sample'] = $shipping_sample_parent['estimated_sample'];
                     }
                 }else{
-                    $variants_data[$key]['estimated_sample'] = $data['estimated_sample'];
+                    $variants_data[$key]['estimated_sample'] = $shipping_sample_parent['estimated_sample'];
                 }
 
                 if(array_key_exists('estimated_shipping_sample', $data['variant'])){
                     if(array_key_exists($key, $data['variant']['estimated_shipping_sample'])){
                         $variants_data[$key]['estimated_shipping_sample'] = $data['variant']['estimated_shipping_sample'][$key];
                     }else{
-                        $variants_data[$key]['estimated_shipping_sample'] = $data['estimated_shipping_sample'];
+                        $variants_data[$key]['estimated_shipping_sample'] = $shipping_sample_parent['estimated_shipping_sample'];
                     }
                 }else{
-                    $variants_data[$key]['estimated_shipping_sample'] = $data['estimated_shipping_sample'];
+                    $variants_data[$key]['estimated_shipping_sample'] = $shipping_sample_parent['estimated_shipping_sample'];
                 }
 
                 if(array_key_exists('paid_sample', $data['variant'])){
@@ -1339,10 +1370,10 @@ class ProductService
                     if(array_key_exists($key, $data['variant']['shipping_amount'])){
                         $variants_data[$key]['shipping_amount'] = $data['variant']['shipping_amount'][$key];
                     }else{
-                        $variants_data[$key]['shipping_amount'] = $data['shipping_amount'];
+                        $variants_data[$key]['shipping_amount'] = $shipping_sample_parent['shipping_amount'];
                     }
                 }else{
-                    $variants_data[$key]['shipping_amount'] = $data['shipping_amount'];
+                    $variants_data[$key]['shipping_amount'] = $shipping_sample_parent['shipping_amount'];
                 }
                 
 
@@ -1637,37 +1668,6 @@ class ProductService
         // dump($variants_data);
         // dd($data);
         // dd($variants_new_data);
-
-        $shipping_sample_parent = [];
-        if(isset($collection['shipper_sample'])){
-            $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
-        }else{
-            $shipping_sample_parent['shipper_sample'] = NULL;
-        }
-
-        if(isset($collection['estimated_sample'])){
-            $shipping_sample_parent['estimated_sample'] = $collection['estimated_sample'];
-        }else{
-            $shipping_sample_parent['estimated_sample'] = NULL;
-        }
-
-        if(isset($collection['estimated_shipping_sample'])){
-            $shipping_sample_parent['estimated_shipping_sample'] = $collection['estimated_shipping_sample'];
-        }else{
-            $shipping_sample_parent['estimated_shipping_sample'] = NULL;
-        }
-
-        if(isset($collection['paid_sample'])){
-            $shipping_sample_parent['paid_sample'] = $collection['paid_sample'];
-        }else{
-            $shipping_sample_parent['paid_sample'] = NULL;
-        }
-
-        if(isset($collection['shipping_amount'])){
-            $shipping_sample_parent['shipping_amount'] = $collection['shipping_amount'];
-        }else{
-            $shipping_sample_parent['shipping_amount'] = NULL;
-        }
 
         if(isset($collection['product_sk'])){
             $collection['sku'] = $collection['product_sk'];
@@ -2921,6 +2921,37 @@ class ProductService
             }            
         }
 
+        $shipping_sample_parent = [];
+        if(isset($collection['shipper_sample'])){
+            $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
+        }else{
+            $shipping_sample_parent['shipper_sample'] = NULL;
+        }
+
+        if(isset($collection['estimated_sample'])){
+            $shipping_sample_parent['estimated_sample'] = $collection['estimated_sample'];
+        }else{
+            $shipping_sample_parent['estimated_sample'] = NULL;
+        }
+
+        if(isset($collection['estimated_shipping_sample'])){
+            $shipping_sample_parent['estimated_shipping_sample'] = $collection['estimated_shipping_sample'];
+        }else{
+            $shipping_sample_parent['estimated_shipping_sample'] = NULL;
+        }
+
+        if(isset($collection['paid_sample'])){
+            $shipping_sample_parent['paid_sample'] = $collection['paid_sample'];
+        }else{
+            $shipping_sample_parent['paid_sample'] = NULL;
+        }
+
+        if(isset($collection['shipping_amount'])){
+            $shipping_sample_parent['shipping_amount'] = $collection['shipping_amount'];
+        }else{
+            $shipping_sample_parent['shipping_amount'] = NULL;
+        }
+
         //dd($collection);
         $variants_data = [];
         $variants_new_data = [];
@@ -3039,20 +3070,20 @@ class ProductService
                     if(array_key_exists($key, $data['variant']['estimated_sample'])){
                         $variants_data[$key]['estimated_sample'] = $data['variant']['estimated_sample'][$key];
                     }else{
-                        $variants_data[$key]['estimated_sample'] = $data['variant']['estimated_sample'][$key];
+                        $variants_data[$key]['estimated_sample'] = $shipping_sample_parent['estimated_sample'];
                     }
                 }else{
-                    $variants_data[$key]['estimated_sample'] = $data['variant']['estimated_sample'][$key];
+                    $variants_data[$key]['estimated_sample'] = $shipping_sample_parent['estimated_sample'];
                 }
 
                 if(array_key_exists('estimated_shipping_sample', $data['variant'])){
                     if(array_key_exists($key, $data['variant']['estimated_shipping_sample'])){
                         $variants_data[$key]['estimated_shipping_sample'] = $data['variant']['estimated_shipping_sample'][$key];
                     }else{
-                        $variants_data[$key]['estimated_shipping_sample'] = $data['variant']['estimated_shipping_sample'][$key];
+                        $variants_data[$key]['estimated_shipping_sample'] = $shipping_sample_parent['estimated_shipping_sample'];
                     }
                 }else{
-                    $variants_data[$key]['estimated_shipping_sample'] = $data['variant']['estimated_shipping_sample'][$key];
+                    $variants_data[$key]['estimated_shipping_sample'] = $shipping_sample_parent['estimated_shipping_sample'];
                 }
 
                 if(array_key_exists('paid_sample', $data['variant'])){
@@ -3069,10 +3100,10 @@ class ProductService
                     if(array_key_exists($key, $data['variant']['shipping_amount'])){
                         $variants_data[$key]['shipping_amount'] = $data['variant']['shipping_amount'][$key];
                     }else{
-                        $variants_data[$key]['shipping_amount'] = $data['variant']['shipping_amount'][$key];
+                        $variants_data[$key]['shipping_amount'] = $shipping_sample_parent['shipping_amount'];
                     }
                 }else{
-                    $variants_data[$key]['shipping_amount'] = $data['variant']['shipping_amount'][$key];
+                    $variants_data[$key]['shipping_amount'] = $shipping_sample_parent['shipping_amount'];
                 }
                 
 
@@ -3361,37 +3392,6 @@ class ProductService
 
                 $variants_data[$ids[1]]['paid_sample'] = $value;
             }
-        }
-
-        $shipping_sample_parent = [];
-        if(isset($collection['shipper_sample'])){
-            $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
-        }else{
-            $shipping_sample_parent['shipper_sample'] = NULL;
-        }
-
-        if(isset($collection['estimated_sample'])){
-            $shipping_sample_parent['estimated_sample'] = $collection['estimated_sample'];
-        }else{
-            $shipping_sample_parent['estimated_sample'] = NULL;
-        }
-
-        if(isset($collection['estimated_shipping_sample'])){
-            $shipping_sample_parent['estimated_shipping_sample'] = $collection['estimated_shipping_sample'];
-        }else{
-            $shipping_sample_parent['estimated_shipping_sample'] = NULL;
-        }
-
-        if(isset($collection['paid_sample'])){
-            $shipping_sample_parent['paid_sample'] = $collection['paid_sample'];
-        }else{
-            $shipping_sample_parent['paid_sample'] = NULL;
-        }
-
-        if(isset($collection['shipping_amount'])){
-            $shipping_sample_parent['shipping_amount'] = $collection['shipping_amount'];
-        }else{
-            $shipping_sample_parent['shipping_amount'] = NULL;
         }
 
         unset($collection['from_shipping']);

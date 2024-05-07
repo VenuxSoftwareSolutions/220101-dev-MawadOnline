@@ -196,11 +196,23 @@ class CatalogController extends Controller
             $pricing['from'] = PricingConfiguration::where('id_products', $parent->id)->pluck('from')->toArray();
             $pricing['to'] = PricingConfiguration::where('id_products', $parent->id)->pluck('to')->toArray();
             $pricing['unit_price'] = PricingConfiguration::where('id_products', $parent->id)->pluck('unit_price')->toArray();
+            $pricing['discount'] =[
+                'type' => null,
+                'amount' => null,
+                'percentage' => null,
+                'date' => null,
+            ];
         }else{
             $pricing = [];
             $pricing['from'] = [0];
             $pricing['to'] = [0];
             $pricing['unit_price'] = [0];
+            $pricing['discount'] =[
+                'type' => null,
+                'amount' => null,
+                'percentage' => null,
+                'date' => null,
+            ];
         }
 
         $variations = [];
@@ -218,10 +230,22 @@ class CatalogController extends Controller
                     $variations[$children_id]['variant_pricing-from']['from'] = PricingConfiguration::where('id_products', $children_id)->pluck('from')->toArray();
                     $variations[$children_id]['variant_pricing-from']['to'] = PricingConfiguration::where('id_products', $children_id)->pluck('to')->toArray();
                     $variations[$children_id]['variant_pricing-from']['unit_price'] = PricingConfiguration::where('id_products', $children_id)->pluck('unit_price')->toArray();
+                    $variations[$children_id]['variant_pricing-from']['discount'] =[
+                        'type' => null,
+                        'amount' => null,
+                        'percentage' => null,
+                        'date' => null,
+                    ];
                 }else{
                     $variations[$children_id]['variant_pricing-from']['from'] = [0];
                     $variations[$children_id]['variant_pricing-from']['to'] = [0];
                     $variations[$children_id]['variant_pricing-from']['unit_price'] = [0];
+                    $variations[$children_id]['variant_pricing-from']['discount'] =[
+                        'type' => null,
+                        'amount' => null,
+                        'percentage' => null,
+                        'date' => null,
+                    ];
                 }
 
                 if($is_catalog == 2){
@@ -347,7 +371,14 @@ class CatalogController extends Controller
                 'getYoutubeVideoId' =>$getYoutubeVideoId ?? null ,
                 'getVimeoVideoId' => $getVimeoVideoId ?? null,
                 'is_catalog' => $is_catalog,
-                'is_added_to_catalog' => $is_added_to_catalog
+                'is_added_to_catalog' => $is_added_to_catalog,
+                'discountedPrice' => $discountedPrice ?? null,
+                'totalDiscount' => $totalDiscount ?? null,
+                'date_range_pricing' =>  $pricing['discount']['date']  ?? null,
+                'discount_type' => $pricing['discount']['type'] ?? null ,
+                'discount_percentage' => $pricing['discount']['percentage'],
+                'discount_amount'=> $pricing['discount']['amount'],
+                'percent'=> $percent ?? null,
             ];
 
         $previewData['detailedProduct'] = $detailedProduct;

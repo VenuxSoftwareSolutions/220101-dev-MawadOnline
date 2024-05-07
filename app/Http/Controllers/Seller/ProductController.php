@@ -291,19 +291,17 @@ class ProductController extends Controller
                     foreach ($attributes as $key=>$attribute){
                         $html .= "<option  value='".$attribute->id."'>". $attribute->getTranslation('name') ."</option>";
                         $html_attributes_generale .= '<div class="row attribute-variant-'. $attribute->id .' mb-3">
-                        <div class="col-md-4">
-                            <input type="text" class="form-control" value="'.translate($attribute->getTranslation('name')).'" disabled>
-                        </div>';
+                        <label class="col-md-2 col-from-label">'.translate($attribute->getTranslation('name')).'</label>';
 
                         switch ($attribute->type_value) {
                             case "text":
-                                $html_attributes_generale .= '<div class="col-md-8">
+                                $html_attributes_generale .= '<div class="col-md-10">
                                             <input type="text" class="form-control attributes" name="attribute_generale-'.$attribute->id.'">
                                         </div>';
                                 break;
                             case "list":
                                 $values = $attribute->attribute_values_list(app()->getLocale());
-                                $options = '<div class="col-md-8"><select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" name="attribute_generale-'.$attribute->id.'">';
+                                $options = '<div class="col-md-10"><select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" name="attribute_generale-'.$attribute->id.'">';
                                 foreach ($values as $key=>$value){
                                     $options .= "<option  value='".$value->id."'>". $value->value ."</option>";
                                 }
@@ -312,7 +310,7 @@ class ProductController extends Controller
                                 break;
                             case "color":
                                 $colors = Color::orderBy('name', 'asc')->get();
-                                $html_attributes_generale .= '<div class="col-md-8">
+                                $html_attributes_generale .= '<div class="col-md-10">
                                 <select class="form-control attributes aiz-selectpicker" name="attribute_generale-'.$attribute->id.'" data-type="color" data-live-search="true" data-selected-text-format="count">';
                                     foreach ($colors as $key => $color){
                                         $html_attributes_generale .= '<option value="' . $color->code . '" data-content="<span><span class=\'size-15px d-inline-block mr-2 rounded border\' style=\'background:' . $color->code . '\'></span><span>' . $color->name . '</span></span>"></option>';
@@ -327,12 +325,12 @@ class ProductController extends Controller
                                     $options .= "<option  value='".$unit->id."'>". $unit->name ."</option>";
                                 }
                                 $options .= "</select>";
-                                $html_attributes_generale .= '<div class="col-md-8"><div class="row"><div class="col-6">
+                                $html_attributes_generale .= '<div class="col-md-10"><div class="row"><div class="col-6">
                                             <input type="number" step="0.1" class="form-control attributes" name="attribute_generale-'.$attribute->id.'"></div><div class="col-6">'.$options.'
                                         </div></div></div>';
                                 break;
                             case "boolean":
-                                $html_attributes_generale .= '<div class="col-md-8" style="padding-top: 10px">
+                                $html_attributes_generale .= '<div class="col-md-10" style="padding-top: 10px">
                                             <label style="margin-right: 15px">
                                                 <input type="radio" class="attributes" name="attribute_generale-'.$attribute->id.'" name="boolean" value="yes">Yes
                                             </label>
@@ -377,19 +375,17 @@ class ProductController extends Controller
         if(count($attributes) > 0){
             foreach($attributes as $attribute){
                 $html .= '<div class="row mb-3 attribute-variant-'. $attribute->id .'">
-                        <div class="col-md-4">
-                            <input type="text" class="form-control" value="'.translate($attribute->getTranslation('name')).'" disabled>
-                        </div>';
+                <label class="col-md-2 col-from-label">'.translate($attribute->getTranslation('name')).'</label>';
 
                 switch ($attribute->type_value) {
                     case "text":
-                        $html .= '<div class="col-md-8">
+                        $html .= '<div class="col-md-10">
                                     <input type="text" class="form-control attributes" data-id_attributes="'.$attribute->id.'">
                                 </div>';
                         break;
                     case "list":
                         $values = $attribute->attribute_values_list(app()->getLocale());
-                        $options = '<div class="col-md-8"><select class="form-control attributes aiz-selectpicker" data-id_attributes="'.$attribute->id.'" data-live-search="true" data-selected-text-format="count" >';
+                        $options = '<div class="col-md-10"><select class="form-control attributes aiz-selectpicker" data-id_attributes="'.$attribute->id.'" data-live-search="true" data-selected-text-format="count" >';
                         foreach ($values as $key=>$value){
                             $options .= "<option  value='".$value->id."'>". $value->value ."</option>";
                         }
@@ -398,7 +394,7 @@ class ProductController extends Controller
                         break;
                     case "color":
                         $colors = Color::orderBy('name', 'asc')->get();
-                        $html .= '<div class="col-md-8">
+                        $html .= '<div class="col-md-10">
                         <select class="form-control attributes color aiz-selectpicker" data-id_attributes="'.$attribute->id.'" data-type="color" data-live-search="true" data-selected-text-format="count">';
                             foreach ($colors as $key => $color){
                                 $html .= '<option value="' . $color->code . '" data-content="<span><span class=\'size-15px d-inline-block mr-2 rounded border\' style=\'background:' . $color->code . '\'></span><span>' . $color->name . '</span></span>"></option>';
@@ -413,12 +409,12 @@ class ProductController extends Controller
                             $options .= "<option  value='".$unit->id."'>". $unit->name ."</option>";
                         }
                         $options .= "</select>";
-                        $html .= '<div class="col-md-8"><div class="row"><div class="col-6">
+                        $html .= '<div class="col-md-10"><div class="row"><div class="col-6">
                                     <input type="number" step="0.1" class="form-control attributes" data-id_attributes="'.$attribute->id.'"></div><div class="col-6">'.$options.'
                                 </div></div>';
                         break;
                     case "boolean":
-                        $html .= '<div class="col-md-8" style="padding-top: 10px">
+                        $html .= '<div class="col-md-10" style="padding-top: 10px">
                                     <label style="margin-right: 15px">
                                         <input type="radio" class="attributes" data-id_attributes="'.$attribute->id.'" value="yes">Yes
                                     </label>
@@ -520,6 +516,7 @@ class ProductController extends Controller
         $variants_attributes_ids_attributes = [];
         $general_attributes_ids_attributes = [];
         $chargeable_weight = 0;
+        $chargeable_weight_sample = 0;
 
         $shippers = Shipper::all();
         $supported_shippers = [];
@@ -554,6 +551,20 @@ class ProductController extends Controller
                     $chargeable_weight *= 2.2;
                 }
             }
+
+            if($product->activate_third_party_sample == 1){
+                $volumetric_weight_sample = ($product->length_sample * $product->height_sample * $product->width_sample) / 5000;
+                if($volumetric_weight_sample > $product->package_weight_sample){
+                    $chargeable_weight_sample = $volumetric_weight_sample;
+                }else{
+                    $chargeable_weight_sample = $product->package_weight_sample;
+                }
+
+                if($product->unit_weight == "pounds"){
+                    $chargeable_weight_sample *= 2.2;
+                }
+            }
+
             if($product->is_parent == 1){
                 $childrens = Product::where('parent_id', $id)->get();
                 $childrens_ids = Product::where('parent_id', $id)->pluck('id')->toArray();
@@ -618,7 +629,8 @@ class ProductController extends Controller
                     'general_attributes' => $data_general_attributes,
                     'colors' => $colors,
                     'supported_shippers' => $supported_shippers,
-                    'chargeable_weight' => $chargeable_weight
+                    'chargeable_weight' => $chargeable_weight,
+                    'chargeable_weight_sample' => $chargeable_weight_sample
                 ]);
             }else{
                 return view('seller.product.products.edit', [
@@ -635,7 +647,8 @@ class ProductController extends Controller
                     'general_attributes' => $data_general_attributes,
                     'colors' => $colors,
                     'supported_shippers' => $supported_shippers,
-                    'chargeable_weight' => $chargeable_weight
+                    'chargeable_weight' => $chargeable_weight,
+                    'chargeable_weight_sample' => $chargeable_weight_sample
                 ]);
             }
         }else{
@@ -1051,7 +1064,7 @@ class ProductController extends Controller
         // }
 
        // Now $numeric_keys array contains the unique numeric parts
-       $attributesArray = [];
+        $attributesArray = [];
         foreach ($numeric_keys as $numeric_key) {
             // Access corresponding values
             if (isset($data["attribute_generale-$numeric_key"])) {
@@ -1096,7 +1109,7 @@ class ProductController extends Controller
 
         // dd($data) ;
        // Extract unique attribute IDs and their values
-    //    $attributes = $this->extractAttributes($variants);
+        //    $attributes = $this->extractAttributes($variants);
        $variations = [];
 
        foreach ($data as $key => $value) {
@@ -1159,7 +1172,7 @@ class ProductController extends Controller
            }
        }
 
-    //    dd($data['variant']['attributes']) ;
+        //    dd($data['variant']['attributes']) ;
        if (isset($data['variant']['attributes']))
         foreach ($data['variant']['attributes'] as $variationId=>$variations_db) {
             foreach ($variations_db as $attributeId=>$attribute) {
@@ -1220,20 +1233,20 @@ class ProductController extends Controller
 
 
 
-    //    dd($variations) ;
-    //    $attributeAvailable= [] ;
-    //    $attributeId = 6; // Example attribute ID
-    //    $attributeValue = 5 ;
-    //    foreach ($variations as $key => $variation) {
-    //         foreach($variation as $key=>$attribute) {
-    //             if ($key ==$attributeId && $attribute==$attributeValue ) {
-    //                 $attributeAvailable[] = array_keys($variation) ;
-    //                 break ;
-    //             }
-    //         }
+        //    dd($variations) ;
+        //    $attributeAvailable= [] ;
+        //    $attributeId = 6; // Example attribute ID
+        //    $attributeValue = 5 ;
+        //    foreach ($variations as $key => $variation) {
+        //         foreach($variation as $key=>$attribute) {
+        //             if ($key ==$attributeId && $attribute==$attributeValue ) {
+        //                 $attributeAvailable[] = array_keys($variation) ;
+        //                 break ;
+        //             }
+        //         }
 
-    //    }
-    //    dd($attributeAvailable) ;
+        //    }
+        //    dd($attributeAvailable) ;
 
         if ($data["video_provider"] === "youtube") {
              $getYoutubeVideoId=$this->getYoutubeVideoId($data["video_link"]) ;

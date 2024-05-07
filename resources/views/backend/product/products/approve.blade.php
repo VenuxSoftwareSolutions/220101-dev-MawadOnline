@@ -12,12 +12,15 @@
     .table th{
         font-size: 12px !important;
     }
+
+    .multi-select-button {
+        height: 44px;
+        border: 1px solid #e2e5ec !important;
+        box-shadow: none !important;
+    }
 </style>
-
+<link rel="stylesheet" href="{{ static_asset('assets/css/example-styles.css') }}">
 @section('content')
-
-
-
 <div class="aiz-titlebar text-left mt-2 mb-3">
     <h5 class="mb-0 h6">{{translate('Approve Product')}}</h5>
 </div>
@@ -395,7 +398,7 @@
                                                 <td><input type="number" name="to_shipping[]" value="{{ $shipping->to_shipping }}" class="form-control max-qty-shipping" id=""></td>
                                                 <td>
                                                     @php $shippers = explode(",", $shipping->shipper); @endphp
-                                                    <select multiple class="form-control shipper" name="shipper[{{ $key }}][]">
+                                                    <select multiple class="shipper" name="shipper[{{ $key }}][]">
                                                         <option value="vendor" @if(in_array("vendor", $shippers)) {{ 'selected' }} @endif>{{translate('vendor')}}</option>
                                                         <option value="third_party" @if(in_array("third_party", $shippers)) {{ 'selected' }} @endif>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                                     </select>
@@ -437,7 +440,7 @@
                                             <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id=""></td>
                                             <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id=""></td>
                                             <td>
-                                                <select class="form-control shipper" name="shipper[]">
+                                                <select class="shipper" name="shipper[]">
                                                     <option value="" selected>{{translate('Choose shipper')}}</option>
                                                     <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                                     <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
@@ -527,10 +530,10 @@
                             <tbody id="bloc_sample_configuration">
                                 <tr>
                                     <td>
-                                        <select class="form-control shipper_sample" name="shipper_sample">
-                                            <option value="" selected>{{translate('Choose shipper')}}</option>
-                                            <option value="vendor" @if($product->shipper_sample == 'vendor') {{ 'selected' }} @endif>{{translate('vendor')}}</option>
-                                            <option value="third_party" @if($product->shipper_sample == 'third_party') {{ 'selected' }} @endif>{{translate('MawadOnline 3rd Party Shippers')}}</option>
+                                        @php $shippers_sample = explode(",", $product->shipper_sample); @endphp
+                                        <select class="form-control shipper_sample" name="shipper_sample[]" multiple>
+                                            <option value="vendor" @if(in_array("vendor", $shippers_sample)) {{ 'selected' }} @endif>{{translate('vendor')}}</option>
+                                            <option value="third_party" @if(in_array("third_party", $shippers_sample)) {{ 'selected' }} @endif>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                         </select>
                                     </td>
                                     <td><input type="number" class="form-control estimated_sample" name="estimated_sample" @if($product->estimated_sample != null) value="{{ $product->estimated_sample }}" @endif></td>
@@ -770,7 +773,7 @@
                                                                 <td><input type="number" name="variant[to_shipping][{{ $children->id }}][]" value="{{ $shipping->to_shipping }}" class="form-control max-qty-shipping" id=""></td>
                                                                 <td>
                                                                     @php $shippers = explode(",", $shipping->shipper); @endphp
-                                                                    <select multiple class="form-control shipper" name="variant[shipper][{{ $children->id }}][{{ $key }}][]">
+                                                                    <select multiple class="shipper" name="variant[shipper][{{ $children->id }}][{{ $key }}][]">
                                                                         <option value="vendor" @if(in_array("vendor", $shippers)) {{ 'selected' }} @endif>{{translate('vendor')}}</option>
                                                                         <option value="third_party" @if(in_array("third_party", $shippers)) {{ 'selected' }} @endif>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                                                     </select>
@@ -891,10 +894,10 @@
                                                         <tbody id="bloc_sample_configuration">
                                                             <tr>
                                                                 <td>
-                                                                    <select class="form-control shipper_sample" name="variant[shipper_sample][{{ $children->id }}]">
-                                                                        <option value="" selected>{{translate('Choose shipper')}}</option>
-                                                                        <option value="vendor" @if($children->shipper_sample == 'vendor') {{ 'selected' }} @endif>{{translate('vendor')}}</option>
-                                                                        <option value="third_party" @if($children->shipper_sample == 'third_party') {{ 'selected' }} @endif>{{translate('MawadOnline 3rd Party Shippers')}}</option>
+                                                                    @php $shippers_sample = explode(",", $children->shipper_sample); @endphp
+                                                                    <select class="form-control shipper_sample" name="shipper_sample[]" multiple>
+                                                                        <option value="vendor" @if(in_array("vendor", $shippers_sample)) {{ 'selected' }} @endif>{{translate('vendor')}}</option>
+                                                                        <option value="third_party" @if(in_array("third_party", $shippers_sample)) {{ 'selected' }} @endif>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                                                     </select>
                                                                 </td>
                                                                 <td><input type="number" class="form-control estimated_sample" name="variant[estimated_sample][{{ $children->id }}]" @if($children->estimated_sample != null) value="{{ $children->estimated_sample }}" @endif></td>
@@ -1124,6 +1127,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js" integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+<script src="{{ static_asset('assets/js/jquery.multi-select.js') }}" ></script>
 <script>
     $(document).ready(function () {
         $('[data-toggle="tooltip"]').tooltip();
@@ -1155,6 +1159,9 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+        $('.shipper').multiSelect();
+        $('.shipper_sample').multiSelect();
+
         @if(count($product->getChildrenProducts()) > 0)
             $('#variant_informations').show();
         @else
