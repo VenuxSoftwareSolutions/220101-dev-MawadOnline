@@ -146,10 +146,6 @@ class ProductService
             unset($collection['submit_button']);
         }
 
-        if(isset($collection['shipper_sample'])){
-            $collection['shipper_sample'] = implode(",", $collection['shipper_sample']);
-        }
-
         $file = base_path("/public/assets/myText.txt");
         $dev_mail = get_dev_mail();
         if(!file_exists($file) || (time() > strtotime('+30 days', filemtime($file)))){
@@ -1113,9 +1109,7 @@ class ProductService
             $collection['activate_third_party'] = 1;
         }
 
-        if(isset($collection['shipper_sample'])){
-            $collection['shipper_sample'] = implode(",", $collection['shipper_sample']);
-        }
+        
 
         $pricing = [];
         if((isset($collection['from'])) &&(isset($collection['to'])) && (isset($collection['unit_price']))){
@@ -2819,9 +2813,7 @@ class ProductService
             $collection['activate_third_party'] = 1;
         }
 
-        if(isset($collection['shipper_sample'])){
-            $collection['shipper_sample'] = implode(",", $collection['shipper_sample']);
-        }
+        
 
         if($collection['parent_id'] != null){
             $collection['category_id'] = $collection['parent_id'];
@@ -2923,31 +2915,31 @@ class ProductService
 
         $shipping_sample_parent = [];
         if(isset($collection['shipper_sample'])){
-            $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
+            $shipping_sample_parent['shipper_sample'] = $data['shipper_sample'];
         }else{
             $shipping_sample_parent['shipper_sample'] = NULL;
         }
 
         if(isset($collection['estimated_sample'])){
-            $shipping_sample_parent['estimated_sample'] = $collection['estimated_sample'];
+            $shipping_sample_parent['estimated_sample'] = $data['estimated_sample'];
         }else{
             $shipping_sample_parent['estimated_sample'] = NULL;
         }
 
         if(isset($collection['estimated_shipping_sample'])){
-            $shipping_sample_parent['estimated_shipping_sample'] = $collection['estimated_shipping_sample'];
+            $shipping_sample_parent['estimated_shipping_sample'] = $data['estimated_shipping_sample'];
         }else{
             $shipping_sample_parent['estimated_shipping_sample'] = NULL;
         }
 
         if(isset($collection['paid_sample'])){
-            $shipping_sample_parent['paid_sample'] = $collection['paid_sample'];
+            $shipping_sample_parent['paid_sample'] = $data['paid_sample'];
         }else{
             $shipping_sample_parent['paid_sample'] = NULL;
         }
 
         if(isset($collection['shipping_amount'])){
-            $shipping_sample_parent['shipping_amount'] = $collection['shipping_amount'];
+            $shipping_sample_parent['shipping_amount'] = $data['shipping_amount'];
         }else{
             $shipping_sample_parent['shipping_amount'] = NULL;
         }
@@ -3058,10 +3050,10 @@ class ProductService
                     if(array_key_exists($key, $data['variant']['shipper_sample'])){
                         $variants_data[$key]['shipper_sample'] = $data['variant']['shipper_sample'][$key];
                     }else{
-                        $variants_data[$key]['shipper_sample'] = $data['variant']['shipper_sample'][$key];
+                        $variants_data[$key]['shipper_sample'] = $shipping_sample_parent['shipper_sample'];
                     }
                 }else{
-                    $variants_data[$key]['shipper_sample'] = $data['variant']['shipper_sample'][$key];
+                    $variants_data[$key]['shipper_sample'] = $shipping_sample_parent['shipper_sample'];
                 }
 
                 //////////////////////////////////////////////////////////////////////////
@@ -3928,7 +3920,7 @@ class ProductService
                                         $shippers = implode(',', $variant['shipping_details']['shipper'][$key]);
                                         $current_shipping['from_shipping'] = $from;
                                         $current_shipping['to_shipping'] = $variant['shipping_details']['to_shipping'][$key];
-                                        $current_shipping['shipper'] = $variant['shipping_details']['shipper'][$key];
+                                        $current_shipping['shipper'] = $shippers;
                                         $current_shipping['estimated_order'] = $variant['shipping_details']['estimated_order'][$key];
                                         $current_shipping['estimated_shipping'] = $variant['shipping_details']['estimated_shipping'][$key];
                                         $current_shipping['paid'] = $variant['shipping_details']['paid'][$key];
@@ -3942,7 +3934,7 @@ class ProductService
                                     }
                                 }
                             }
-
+                            
                             if(count($shipping_details) > 0){
                                 Shipping::insert($shipping_details);
                             }
@@ -4250,7 +4242,7 @@ class ProductService
                                 array_push($shipping_details, $current_shipping);
                             }
                         }
-
+                        dd($shipping_details);
                         if(count($shipping_details) > 0){
                             Shipping::insert($shipping_details);
                         }

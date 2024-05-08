@@ -1223,7 +1223,7 @@
                                                             <tr>
                                                                 <td>
                                                                     @php $children_shippers = explode(",", $children->shipper_sample); @endphp
-                                                                    <select multiple class="form-control shipper_sample" name="variant[shipper_sample][{{ $children->id }}][]" >
+                                                                    <select class="shipper_sample" name="variant[shipper_sample][{{ $children->id }}][]" multiple>
                                                                         <option value="vendor" @if(in_array("vendor", $children_shippers)) {{ 'selected' }} @endif>{{translate('vendor')}}</option>
                                                                         <option value="third_party" @if(in_array("third_party", $children_shippers)) {{ 'selected' }} @endif>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                                                     </select>
@@ -1794,7 +1794,6 @@
                 var all_files_length = files.length 
             }
             
-            alert(all_files_length);
             // Maximum number of allowed files
             var maxFiles = 10;
             if (all_files_length > maxFiles) {
@@ -3269,19 +3268,19 @@
                 })
             }
 
-            // $(this).parent().parent().remove();
+            $(this).parent().parent().remove();
 
-            // var divId = "#bloc_variants_created";
+            var divId = "#bloc_variants_created";
 
-            // // Get the length of all h3 tags under the specific div
-            // var h3Count = $(divId + " h3").length;
+            // Get the length of all h3 tags under the specific div
+            var h3Count = $(divId + " h3").length;
 
 
-            // // Loop through each h3 tag and display its order
-            // $(divId + " h3").each(function(index) {
-            //     var order = h3Count - index; // Number in descending order
-            //     $(this).text("Variant Information  " + order);
-            // });
+            // Loop through each h3 tag and display its order
+            $(divId + " h3").each(function(index) {
+                var order = h3Count - index; // Number in descending order
+                $(this).text("Variant Information  " + order);
+            });
         })
 
         //Shipping script

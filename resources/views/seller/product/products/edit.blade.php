@@ -5513,19 +5513,19 @@
                 })
             }
 
-            // $(this).parent().parent().remove();
+            $(this).parent().parent().remove();
 
-            // var divId = "#bloc_variants_created";
+            var divId = "#bloc_variants_created";
 
-            // // Get the length of all h3 tags under the specific div
-            // var h3Count = $(divId + " h3").length;
+            // Get the length of all h3 tags under the specific div
+            var h3Count = $(divId + " h3").length;
 
 
-            // // Loop through each h3 tag and display its order
-            // $(divId + " h3").each(function(index) {
-            //     var order = h3Count - index; // Number in descending order
-            //     $(this).text("Variant Information  " + order);
-            // });
+            // Loop through each h3 tag and display its order
+            $(divId + " h3").each(function(index) {
+                var order = h3Count - index; // Number in descending order
+                $(this).text("Variant Information  " + order);
+            });
         })
 
         //Shipping script
