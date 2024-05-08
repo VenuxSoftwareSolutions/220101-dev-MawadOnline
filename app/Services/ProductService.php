@@ -622,7 +622,7 @@ class ProductService
             // //Create Parent Product
             $data['is_parent'] = 1;
             $data['sku'] = $data['name'];
-           
+            
             $product_parent = Product::create($data);
             $all_data_to_insert_parent = [];
             

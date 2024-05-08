@@ -1836,8 +1836,8 @@
                 var html_to_add = `<tr>
                                     <td><input type="number" min="1" placeholder="From QTY" required name="variant_pricing-from`+ newvariant +`[from][]" class="form-control min-qty" id=""></td>
                                     <td><input type="number" min="1" placeholder="To QTY" required name="variant_pricing-from`+ newvariant +`[to][]" class="form-control max-qty" id=""></td>
-                                    <td><input type="number" step="0.01" placeholder="Unit Price" min="11 required name="variant_pricing-from`+ newvariant +`[unit_price][]" class="form-control unit-price-variant" id=""></td>
-                                    <td><input type="text" class="form-control aiz-date-range discount-range" name="variant_pricing-from'`+ newvariant +`[discount_range][]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
+                                    <td><input type="number" step="0.01" placeholder="Unit Price" min="1" required name="variant_pricing-from`+ newvariant +`[unit_price][]" class="form-control unit-price-variant" id=""></td>
+                                    <td><input type="text" class="form-control aiz-date-range discount-range" name="variant_pricing-from`+ newvariant +`[discount_range][]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                     <td>
                                         <select class="form-control discount_type" name="variant_pricing-from`+ newvariant +`[discount_type][]">
                                             <option value="" selected>{{translate('Choose type')}}</option>
