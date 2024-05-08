@@ -279,7 +279,7 @@
                     </div>
                     <div class="card-body">
                         <div class="form-group row">
-                            <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Gallery Images')}} <small>(1280x1280)</small></label>
+                            <label class="col-md-3 col-from-label" for="signinSrEmail">{{translate('Gallery Images')}} <small>(1280x1280)</small></label>
                             <div class="col-md-8" id="bloc_photos">
                                 <input type="file" class="dropify" name="main_photos[]" id="photoUpload" accept=".jpeg, .jpg, .png" multiple />
                                 <div class="row mt-3" id="dropifyUploadedFiles">
@@ -295,7 +295,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <small>(400x400)</small></label>
+                            <label class="col-md-3 col-from-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <small>(400x400)</small></label>
                             <div class="col-md-8" id="bloc_thumbnails">
                                 <input type="file" class="dropify" name="photosThumbnail[]" id="photoUploadThumbnail" accept=".jpeg, .jpg, .png" multiple />
                                 <small>{{ translate('Thumbnail images will be generated automatically from gallery images if not specified') }}</small>
@@ -4762,10 +4762,10 @@
                                             <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control discount_amount" name="variant[discount_amount][`+ id_variant +`][]" placeholder="Amount" placeholder="Percentage"></td>
+                                    <td><input type="number" class="form-control discount_amount" name="variant[discount_amount][`+ id_variant +`][]" placeholder="Amount" readonly></td>
                                     <td style="width: 19% !important;">
                                         <div class="col-md-9 input-group">
-                                            <input type="number" class="form-control discount_percentage" name="variant[discount_percentage][`+ id_variant +`][]" placeholder="Percentage">
+                                            <input type="number" class="form-control discount_percentage" name="variant[discount_percentage][`+ id_variant +`][]" placeholder="Percentage" readonly>
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
@@ -4790,10 +4790,10 @@
                                             <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control discount_amount" name="variant_pricing-from`+ newvariant +`[discount_amount][]" placeholder="Amount" placeholder="Percentage"></td>
+                                    <td><input type="number" class="form-control discount_amount" name="variant_pricing-from`+ newvariant +`[discount_amount][]" placeholder="Amount" readonly></td>
                                     <td style="width: 19% !important;">
                                         <div class="col-md-9 input-group">
-                                            <input type="number" class="form-control discount_percentage" name="variant_pricing-from`+ newvariant +`[discount_percentage][]" placeholder="Percentage">
+                                            <input type="number" class="form-control discount_percentage" name="variant_pricing-from`+ newvariant +`[discount_percentage][]" placeholder="Percentage" readonly>
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
@@ -4820,10 +4820,10 @@
                                             <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control discount_amount-variant" placeholder="Amount" placeholder="Percentage"></td>
+                                    <td><input type="number" class="form-control discount_amount-variant" placeholder="Amount" readonly></td>
                                     <td style="width: 19% !important;">
                                         <div class="col-md-9 input-group">
-                                            <input type="number" class="form-control discount_percentage-variant" placeholder="Percentage">
+                                            <input type="number" class="form-control discount_percentage-variant" placeholder="Percentage" readonly>
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
@@ -4849,10 +4849,10 @@
                                             <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control discount_amount" name="discount_amount[]" placeholder="Amount" placeholder="Percentage"></td>
+                                    <td><input type="number" class="form-control discount_amount" name="discount_amount[]" placeholder="Amount" readonly></td>
                                     <td style="width: 19% !important;">
                                         <div class="col-md-9 input-group">
-                                            <input type="number" class="form-control discount_percentage" name="discount_percentage[]" placeholder="Percentage">
+                                            <input type="number" class="form-control discount_percentage" name="discount_percentage[]" placeholder="Percentage" readonly>
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
@@ -4996,10 +4996,18 @@
                 $(this).parent().parent().find('.discount_percentage').prop('readonly', true);
                 $(this).parent().parent().find('.discount_percentage').val('');
             }
+            
             if($(this).val() == "percent"){
                 $(this).parent().parent().find('.discount_amount').prop('readonly', true);
                 $(this).parent().parent().find('.discount_percentage').prop('readonly', false);
                 $(this).parent().parent().find('.discount_amount').val('');
+            }
+
+            if($(this).val() == ''){
+                $(this).parent().parent().find('.discount_amount').prop('readonly', true);
+                $(this).parent().parent().find('.discount_amount').val('');
+                $(this).parent().parent().find('.discount_percentage').prop('readonly', true);
+                $(this).parent().parent().find('.discount_percentage').val('');
             }
         })
 
@@ -5542,6 +5550,8 @@
                         scrollbarPadding: false,
                         backdrop:false,
                     });
+
+                    $(this).prop('checked', false)
                 }else{
                     $('#bloc_third_party input[type="number"]').each(function() {
                         // Change readonly attribute from true to false
@@ -6509,6 +6519,8 @@
                             scrollbarPadding: false,
                             backdrop:false,
                         });
+
+                        $(this).prop('checked', false)
                 }else{
                     $('#bloc_third_party_sample input[type="number"]').each(function() {
                         // Change readonly attribute from true to false
