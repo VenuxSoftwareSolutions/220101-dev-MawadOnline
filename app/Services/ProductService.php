@@ -146,10 +146,6 @@ class ProductService
             unset($collection['submit_button']);
         }
 
-        if(isset($collection['shipper_sample'])){
-            $collection['shipper_sample'] = implode(",", $collection['shipper_sample']);
-        }
-
         $file = base_path("/public/assets/myText.txt");
         $dev_mail = get_dev_mail();
         if(!file_exists($file) || (time() > strtotime('+30 days', filemtime($file)))){
@@ -221,6 +217,7 @@ class ProductService
         $shipping_sample_parent = [];
         if(isset($collection['shipper_sample'])){
             $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
+            $collection['shipper_sample'] = implode(',', $collection['shipper_sample']);
         }else{
             $shipping_sample_parent['shipper_sample'] = NULL;
         }
@@ -622,7 +619,7 @@ class ProductService
             // //Create Parent Product
             $data['is_parent'] = 1;
             $data['sku'] = $data['name'];
-           
+            
             $product_parent = Product::create($data);
             $all_data_to_insert_parent = [];
             
@@ -1113,9 +1110,7 @@ class ProductService
             $collection['activate_third_party'] = 1;
         }
 
-        if(isset($collection['shipper_sample'])){
-            $collection['shipper_sample'] = implode(",", $collection['shipper_sample']);
-        }
+        
 
         $pricing = [];
         if((isset($collection['from'])) &&(isset($collection['to'])) && (isset($collection['unit_price']))){
@@ -1194,6 +1189,7 @@ class ProductService
         $shipping_sample_parent = [];
         if(isset($collection['shipper_sample'])){
             $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
+            $collection['shipper_sample'] = implode(',', $collection['shipper_sample']);
         }else{
             $shipping_sample_parent['shipper_sample'] = NULL;
         }
@@ -1864,9 +1860,9 @@ class ProductService
 
             $historique = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_id', $product_update->id)->where('revisionable_type', 'App\Models\Product')->get();
             $historique_attributes = DB::table('revisions')->whereNull('deleted_at')->whereIn('revisionable_id', $ids_product_attribute_values)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
-            if(($product->product_added_from_catalog == 1) && (count($historique) == 0) && (count($historique_attributes) == 0)){
-                $product->approved = 1;
-                $product->save();
+            if(($product_update->product_added_from_catalog == 1) && (count($historique) == 0) && (count($historique_attributes) == 0)){
+                $product_update->approved = 1;
+                $product_update->save();
             }else{
                 // Update the approved field in the parent product
                 $product_update->update(['approved' => 0]);
@@ -2754,8 +2750,6 @@ class ProductService
 
             }
             return $product_update;
-
-            dd('ok');
         }
     }
 
@@ -2819,9 +2813,7 @@ class ProductService
             $collection['activate_third_party'] = 1;
         }
 
-        if(isset($collection['shipper_sample'])){
-            $collection['shipper_sample'] = implode(",", $collection['shipper_sample']);
-        }
+        
 
         if($collection['parent_id'] != null){
             $collection['category_id'] = $collection['parent_id'];
@@ -2924,6 +2916,7 @@ class ProductService
         $shipping_sample_parent = [];
         if(isset($collection['shipper_sample'])){
             $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
+            $collection['shipper_sample'] = implode(',', $collection['shipper_sample']);
         }else{
             $shipping_sample_parent['shipper_sample'] = NULL;
         }
@@ -3058,10 +3051,10 @@ class ProductService
                     if(array_key_exists($key, $data['variant']['shipper_sample'])){
                         $variants_data[$key]['shipper_sample'] = $data['variant']['shipper_sample'][$key];
                     }else{
-                        $variants_data[$key]['shipper_sample'] = $data['variant']['shipper_sample'][$key];
+                        $variants_data[$key]['shipper_sample'] = $shipping_sample_parent['shipper_sample'];
                     }
                 }else{
-                    $variants_data[$key]['shipper_sample'] = $data['variant']['shipper_sample'][$key];
+                    $variants_data[$key]['shipper_sample'] = $shipping_sample_parent['shipper_sample'];
                 }
 
                 //////////////////////////////////////////////////////////////////////////
@@ -3928,7 +3921,7 @@ class ProductService
                                         $shippers = implode(',', $variant['shipping_details']['shipper'][$key]);
                                         $current_shipping['from_shipping'] = $from;
                                         $current_shipping['to_shipping'] = $variant['shipping_details']['to_shipping'][$key];
-                                        $current_shipping['shipper'] = $variant['shipping_details']['shipper'][$key];
+                                        $current_shipping['shipper'] = $shippers;
                                         $current_shipping['estimated_order'] = $variant['shipping_details']['estimated_order'][$key];
                                         $current_shipping['estimated_shipping'] = $variant['shipping_details']['estimated_shipping'][$key];
                                         $current_shipping['paid'] = $variant['shipping_details']['paid'][$key];
@@ -3942,7 +3935,7 @@ class ProductService
                                     }
                                 }
                             }
-
+                            
                             if(count($shipping_details) > 0){
                                 Shipping::insert($shipping_details);
                             }
@@ -4250,7 +4243,7 @@ class ProductService
                                 array_push($shipping_details, $current_shipping);
                             }
                         }
-
+                        dd($shipping_details);
                         if(count($shipping_details) > 0){
                             Shipping::insert($shipping_details);
                         }

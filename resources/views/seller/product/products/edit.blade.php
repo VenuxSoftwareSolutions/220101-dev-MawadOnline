@@ -680,7 +680,7 @@
                                     <label class="col-md-4 col-from-label">{{translate('Activate MawadOnline 3rd Party Shipping')}}</label>
                                     <div class="col-md-8">
                                         <label class="aiz-switch aiz-switch-success mb-0">
-                                            <input value="1" type="checkbox" id="third_party_activate_sample" name="activate_third_party_sample">
+                                            <input value="1" type="checkbox" id="third_party_activate_sample" name="activate_third_party_sample" @if($product->activate_third_party_sample == 1) checked @endif>
                                             <span></span>
                                         </label>
                                     </div>
@@ -5513,19 +5513,19 @@
                 })
             }
 
-            // $(this).parent().parent().remove();
+            $(this).parent().parent().remove();
 
-            // var divId = "#bloc_variants_created";
+            var divId = "#bloc_variants_created";
 
-            // // Get the length of all h3 tags under the specific div
-            // var h3Count = $(divId + " h3").length;
+            // Get the length of all h3 tags under the specific div
+            var h3Count = $(divId + " h3").length;
 
 
-            // // Loop through each h3 tag and display its order
-            // $(divId + " h3").each(function(index) {
-            //     var order = h3Count - index; // Number in descending order
-            //     $(this).text("Variant Information  " + order);
-            // });
+            // Loop through each h3 tag and display its order
+            $(divId + " h3").each(function(index) {
+                var order = h3Count - index; // Number in descending order
+                $(this).text("Variant Information  " + order);
+            });
         })
 
         //Shipping script
