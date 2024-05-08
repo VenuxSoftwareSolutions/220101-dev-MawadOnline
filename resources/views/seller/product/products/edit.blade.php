@@ -680,7 +680,7 @@
                                     <label class="col-md-4 col-from-label">{{translate('Activate MawadOnline 3rd Party Shipping')}}</label>
                                     <div class="col-md-8">
                                         <label class="aiz-switch aiz-switch-success mb-0">
-                                            <input value="1" type="checkbox" id="third_party_activate_sample" name="activate_third_party_sample">
+                                            <input value="1" type="checkbox" id="third_party_activate_sample" name="activate_third_party_sample" @if($product->activate_third_party_sample == 1) checked @endif>
                                             <span></span>
                                         </label>
                                     </div>

@@ -217,6 +217,7 @@ class ProductService
         $shipping_sample_parent = [];
         if(isset($collection['shipper_sample'])){
             $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
+            $collection['shipper_sample'] = implode(',', $collection['shipper_sample']);
         }else{
             $shipping_sample_parent['shipper_sample'] = NULL;
         }
@@ -1188,6 +1189,7 @@ class ProductService
         $shipping_sample_parent = [];
         if(isset($collection['shipper_sample'])){
             $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
+            $collection['shipper_sample'] = implode(',', $collection['shipper_sample']);
         }else{
             $shipping_sample_parent['shipper_sample'] = NULL;
         }
@@ -2913,31 +2915,32 @@ class ProductService
 
         $shipping_sample_parent = [];
         if(isset($collection['shipper_sample'])){
-            $shipping_sample_parent['shipper_sample'] = $data['shipper_sample'];
+            $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
+            $collection['shipper_sample'] = implode(',', $collection['shipper_sample']);
         }else{
             $shipping_sample_parent['shipper_sample'] = NULL;
         }
 
         if(isset($collection['estimated_sample'])){
-            $shipping_sample_parent['estimated_sample'] = $data['estimated_sample'];
+            $shipping_sample_parent['estimated_sample'] = $collection['estimated_sample'];
         }else{
             $shipping_sample_parent['estimated_sample'] = NULL;
         }
 
         if(isset($collection['estimated_shipping_sample'])){
-            $shipping_sample_parent['estimated_shipping_sample'] = $data['estimated_shipping_sample'];
+            $shipping_sample_parent['estimated_shipping_sample'] = $collection['estimated_shipping_sample'];
         }else{
             $shipping_sample_parent['estimated_shipping_sample'] = NULL;
         }
 
         if(isset($collection['paid_sample'])){
-            $shipping_sample_parent['paid_sample'] = $data['paid_sample'];
+            $shipping_sample_parent['paid_sample'] = $collection['paid_sample'];
         }else{
             $shipping_sample_parent['paid_sample'] = NULL;
         }
 
         if(isset($collection['shipping_amount'])){
-            $shipping_sample_parent['shipping_amount'] = $data['shipping_amount'];
+            $shipping_sample_parent['shipping_amount'] = $collection['shipping_amount'];
         }else{
             $shipping_sample_parent['shipping_amount'] = NULL;
         }
