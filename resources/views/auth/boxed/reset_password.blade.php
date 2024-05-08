@@ -13,12 +13,14 @@
         // Get email and password values
         var email = $('#login_form input[name="email"]').val();
         var password = $('#login_form input[name="password"]').val();
+        var passwordConfirmation = $('#login_form input[name="password_confirmation"]').val();
+        var code = $('#login_form input[name="code"]').val();
 
         // Validate email and password
          // Validate email and password
-        if (!email || !password) {
+         if (!email || !code || !password || !passwordConfirmation) {
             // If email or password is empty, display an error message
-            $('#error_message').text('Email and password are required.').show();
+            $('#error_message').text('Email, code, password, and password confirmation are required.').show();
             $('.login_btn').show();
             $('.loading_btn').hide();
             return; // Stop further execution
@@ -87,6 +89,7 @@
                                         {{ translate('Enter your email address and new password and confirm password.') }}
                                     </h5>
                                 </div>
+                                <div id="error_message" class="text-danger mb-3" style="display: none;"></div>
 
                                 <!-- Reset password form -->
                                 <div class="pt-3">

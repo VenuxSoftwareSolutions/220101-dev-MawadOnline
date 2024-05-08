@@ -70,7 +70,7 @@ class HomeController extends Controller
 
     public function load_newest_product_section()
     {
-        
+
         $newest_products = Cache::remember('newest_products', 3600, function () {
             return Product::where(function($query) {
                 $query->where('published', 1)
@@ -370,7 +370,7 @@ class HomeController extends Controller
 
         $parent  = Product::where('slug', $slug)->where('approved', 1)->first();
 
-        if ($parent != null) {         
+        if ($parent != null) {
 
             if($parent->is_parent == 0){
                 if($parent->parent_id != 0){
@@ -391,7 +391,7 @@ class HomeController extends Controller
                 $brand_id = $revision_parent_brand->old_value;
             }else{
                 $brand_id = $parent->brand_id;
-            }  
+            }
 
             $revision_parent_description = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'description')->latest()->first();
             $description = '';
@@ -399,7 +399,7 @@ class HomeController extends Controller
                 $description = $revision_parent_description->old_value;
             }else{
                 $description = $parent->description;
-            }  
+            }
 
             $revision_parent_unit = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'unit')->latest()->first();
             $unit = '';
@@ -407,8 +407,8 @@ class HomeController extends Controller
                 $unit = $revision_parent_unit->old_value;
             }else{
                 $unit = $parent->unit;
-            } 
-            
+            }
+
             $brand = Brand::find($brand_id);
             $pricing = PricingConfiguration::where('id_products', $parent->id)->get();
             $pricing = [];
@@ -416,7 +416,7 @@ class HomeController extends Controller
             $pricing['to'] = PricingConfiguration::where('id_products', $parent->id)->pluck('to')->toArray();
             $pricing['unit_price'] = PricingConfiguration::where('id_products', $parent->id)->pluck('unit_price')->toArray();
 
-            
+
             $variations = [];
             $pricing_children = [];
             if($parent->is_parent == 1){
@@ -438,7 +438,7 @@ class HomeController extends Controller
                                 }else{
                                     $unit = Unity::find($attribute->id_units);
                                 }
-                                
+
                                 if ($unit){
                                     $variations[$children_id][$attribute->id_attribute] = $attribute->value.' '.$unit->name;
                                 }
@@ -457,10 +457,10 @@ class HomeController extends Controller
                                 $variations[$children_id][$attribute->id_attribute] = $attribute->value;
                             }
                         }
-                        
+
                     }
 
-                    
+
                     if($parent->last_version == 1){
                         $images_children = UploadProducts::where('id_product', $children_id)->where('type', 'images')->get();
                         if(count($images_children) > 0){
@@ -476,10 +476,10 @@ class HomeController extends Controller
                     }else{
                         $variations[$children_id]['storedFilePaths'] = UploadProducts::where('id_product', $children_id)->where('type', 'images')->pluck('path')->toArray();
                     }
-                    
+
                 }
             }
-    
+
             if($parent->last_version == 1){
                 $images_parent = UploadProducts::where('id_product', $parent->id)->where('type', 'images')->get();
                 if(count($images_parent) > 0){
@@ -510,7 +510,7 @@ class HomeController extends Controller
                         }else{
                             $unit = Unity::find($attribute->id_units);
                         }
-                        
+
                         if ($unit){
                             $attributesGeneralArray[$attribute_general->id_attribute] = $attribute_general->value.' '.$unit->name;
                         }
@@ -530,7 +530,7 @@ class HomeController extends Controller
                     }
                 }
             }
-    
+
             $attributes = [];
             if(count($variations) > 0){
                 foreach ($variations as $variation) {
@@ -544,13 +544,13 @@ class HomeController extends Controller
                              $attributes[$attributeId][] = $value;
                          }
                         }
-         
+
                     }
                  }
             }
-    
-            
-    
+
+
+
             if (is_array($variations) && !empty($variations)) {
                 $lastItem  = end($variations);
                 $variationId = key($variations);
@@ -560,19 +560,19 @@ class HomeController extends Controller
                 if(count($lastItem['variant_pricing-from']['from']) >0){
                     $min =min($lastItem['variant_pricing-from']['from']) ;
                 }
-                
+
             }
-    
+
             if (isset($pricing['from']) && is_array($pricing['from']) && count($pricing['from']) > 0) {
                 if(!isset($min))
-                    $min = min($pricing['from']) ; 
+                    $min = min($pricing['from']) ;
             }
-    
+
             if (isset($pricing['to']) && is_array($pricing['to']) && count($pricing['to']) > 0) {
                 if(!isset($max))
                     $max = max($pricing['to']) ;
-            } 
-    
+            }
+
             $revision_parent_video_provider = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'video_provider')->latest()->first();
             $video_provider = '';
             if($revision_parent_video_provider != null && $parent->last_version == 1){
@@ -589,18 +589,18 @@ class HomeController extends Controller
                     if($old_link != null){
                         $getVimeoVideoId=$this->getVimeoVideoId($old_link->old_value);
                     }
-                } 
+                }
             }else{
                 $video_provider = $parent->video_provider;
                 if ($parent->video_provider === "youtube") {
                     $getYoutubeVideoId=$this->getYoutubeVideoId($parent->video_link) ;
                 }else{
                     $getVimeoVideoId=$this->getVimeoVideoId($parent->video_link) ;
-                } 
+                }
             }
-    
+
             $total = isset($pricing['from'][0]) && isset($pricing['unit_price'][0]) ? $pricing['from'][0] * $pricing['unit_price'][0] : "";
-        
+
             $detailedProduct = [
                     'name' => $name,
                     'brand' => $brand ? $brand->name : "",
@@ -610,7 +610,7 @@ class HomeController extends Controller
                     'quantity' => $lastItem['variant_pricing-from']['from'][0] ?? $pricing['from'][0] ?? '',
                     'price' => $lastItem['variant_pricing-from']['unit_price'][0] ?? $pricing['unit_price'][0] ?? '',
                     'total' => isset($lastItem['variant_pricing-from']['from'][0]) && isset($lastItem['variant_pricing-from']['unit_price'][0]) ? $lastItem['variant_pricing-from']['from'][0] * $lastItem['variant_pricing-from']['unit_price'][0] : $total,
-        
+
                     'general_attributes' =>$attributesGeneralArray,
                     'attributes' =>$attributes ?? [] ,
                     'from' =>$pricing['from'] ?? [] ,
@@ -626,14 +626,14 @@ class HomeController extends Controller
                     'getYoutubeVideoId' =>$getYoutubeVideoId ?? null ,
                     'getVimeoVideoId' => $getVimeoVideoId ?? null,
                 ];
-    
+
             $previewData['detailedProduct'] = $detailedProduct;
             session(['productPreviewData' => $previewData]);
-    
+
             return view('frontend.product_details', compact('previewData'));
         }
         abort(404);
-        
+
     }
 
     public function shop($slug)
@@ -1009,6 +1009,16 @@ class HomeController extends Controller
 
     public function reset_password_with_code(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'code' => 'required',
+            'password' => 'required|min:8|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
         if (($user = User::where('email', $request->email)->where('verification_code', $request->code)->first()) != null) {
             if ($request->password == $request->password_confirmation) {
                 $user->password = Hash::make($request->password);
@@ -1092,13 +1102,13 @@ class HomeController extends Controller
             'location' => 'nullable|regex:/^[\pL\s]+$/u',
             'info' => 'nullable|string',
         ]);
-    
+
         if ($validator->fails()) {
             return redirect()->back()
                         ->withErrors($validator)
                         ->withInput();
         }
-    
+
         $name = $request->name;
         $email = $request->email;
         $phone = $request->phone;
@@ -1107,12 +1117,12 @@ class HomeController extends Controller
         $location = $request->location;
         $info = $request->info;
         $subscribeNewsletter = $request->has('subscribeNewsletter') ? "yes" : "no";
-    
+
         Mail::to('email@example.com')->send(new WaitlistApplication($name, $email, $phone, $work, $job, $location, $info, $subscribeNewsletter));
-    
+
         Mail::to($email)->send(new WaitlistUserApplication($name));
-    
+
         return Redirect::back()->with('success', 'Your request to join the waitlist has been submitted successfully!');
     }
-    
+
 }
