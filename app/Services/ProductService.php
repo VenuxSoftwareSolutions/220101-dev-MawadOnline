@@ -486,6 +486,9 @@ class ProductService
         
         $prefixToRemove = 'attribute_generale';
         $prefixToRemoveUnit = 'unit_attribute_generale';
+        $prefixToRemoveAttr = 'attributes-';
+        $prefixToRemoveStock = 'stock-warning-';
+        $prefixToRemoveAttrUnit = 'attributes_units';
 
         foreach ($data as $key => $value) {
             if(strpos($key, $prefixToRemove) === 0){
@@ -494,11 +497,20 @@ class ProductService
             if(strpos($key, $prefixToRemoveUnit) === 0){
               unset($data[$key]);
             }
+            if(strpos($key, $prefixToRemoveAttr) === 0){
+              unset($data[$key]);
+            }
+            if(strpos($key, $prefixToRemoveStock) === 0){
+              unset($data[$key]);
+            }
+            if(strpos($key, $prefixToRemoveAttrUnit) === 0){
+              unset($data[$key]);
+            }
         }
 
         
 
-        //dd($data);
+        
         if(!isset($data['activate_attributes'])){
             $product = Product::create($data);
             $ids_attributes_color = Attribute::where('type_value', 'color')->pluck('id')->toArray();
@@ -729,6 +741,7 @@ class ProductService
          
             if(count($variants_data) > 0){
                 foreach ($variants_data as $id => $variant){
+                    
                     if (!array_key_exists('shipping', $variant)) {
                         $data['shipping'] = 0;
                     }else{
@@ -781,10 +794,16 @@ class ProductService
                         $data['sample_available'] = $shipping_sample_parent['sample_available'];
                     }
 
+                    if(isset($data['shipper_sample'])){
+                        $data['shipper_sample'] = implode(',', $data['shipper_sample']);
+                    }
+                    
+
                     $data['sku'] =  $variant['sku'];
                     $randomString = Str::random(5);
                     $data['slug'] =  $data['slug'] . '-' . $randomString;
-
+                    
+                    //dd($data);
                     $product = Product::create($data);
 
                     //attributes of variant

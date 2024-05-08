@@ -1363,9 +1363,9 @@
                                         </div>
                                     </div>
                                     <div class="col-2">
-                                        <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Add another document"></i>
+                                        <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
                                         @if($key != 0)
-                                            <i class="las la-trash trash_document font-size-icon" data-id_document="{{ $document->id }}" style="margin-left: 5px; margin-top: 34px;" title="Delete this document"></i>
+                                            <i class="las la-trash trash_document font-size-icon" data-id_document="{{ $document->id }}" style="margin-left: 5px; margin-top: 34px;" ></i>
                                         @endif
                                         <a href="{{ asset('/public/'.$document->path) }}" download title="{{ translate('Click to download') }}">
                                             <i class="las la-download font-size-icon"></i>
@@ -1393,8 +1393,8 @@
                                     </div>
                                 </div>
                                 <div class="col-2">
-                                    <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Add another document"></i>
-                                    {{-- <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Delete this document"></i> --}}
+                                    <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
+                                    {{-- <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i> --}}
                                 </div>
                             </div>
                         @endif
@@ -2927,8 +2927,8 @@
                                     </div>
                                 </div>
                                 <div class="col-2">
-                                    <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Add another document"></i>
-                                    <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Delete this document"></i>
+                                    <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
+                                    <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
                                 </div>
                             </div>`;
             $('#documents_bloc').append(html_document);
@@ -2987,8 +2987,8 @@
                                                                 </div>
                                                             </div>
                                                             <div class="col-2">
-                                                                <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Add another document"></i>
-                                                                <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Delete this document"></i>
+                                                                <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
+                                                                <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
                                                             </div>
                                                         </div>`;
                                         $('#documents_bloc').append(html_document);
@@ -5355,8 +5355,8 @@
                                     </div>
                                 </div>
                                 <div class="col-2">
-                                    <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Add another document"></i>
-                                    <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Delete this document"></i>
+                                    <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
+                                    <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
                                 </div>
                             </div>`;
             $('#documents_bloc').append(html_document);
@@ -5419,8 +5419,8 @@
                                                                 </div>
                                                             </div>
                                                             <div class="col-2">
-                                                                <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Add another document"></i>
-                                                                <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Delete this document"></i>
+                                                                <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
+                                                                <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
                                                             </div>
                                                         </div>`;
                                         $('#documents_bloc').append(html_document);
@@ -5506,26 +5506,24 @@
                             cache: false,
                             dataType: 'JSON',
                             success: function(dataResult) {
+                                current.parent().parent().remove();
 
+                                var divId = "#bloc_variants_created";
+
+                                // Get the length of all h3 tags under the specific div
+                                var h3Count = $(divId + " h3").length;
+
+
+                                // Loop through each h3 tag and display its order
+                                $(divId + " h3").each(function(index) {
+                                    var order = h3Count - index; // Number in descending order
+                                    $(this).text("Variant Information  " + order);
+                                });
                             }
                         })
                     }
                 })
             }
-
-            $(this).parent().parent().remove();
-
-            var divId = "#bloc_variants_created";
-
-            // Get the length of all h3 tags under the specific div
-            var h3Count = $(divId + " h3").length;
-
-
-            // Loop through each h3 tag and display its order
-            $(divId + " h3").each(function(index) {
-                var order = h3Count - index; // Number in descending order
-                $(this).text("Variant Information  " + order);
-            });
         })
 
         //Shipping script
@@ -6563,7 +6561,7 @@
                     var node = $('#jstree').jstree(true).get_node(selectedId);
 
                     if ((!node.children || node.children.length === 0) && node.state.loaded ==  true) {
-                        $('#message-category').text("Correct choice.");
+                        $('#message-category').text("");
                         $('#message-category').css({'color': 'green', 'margin-right': '7px'});
                         // The node does not have children, proceed with your logic
                         $('#selected_parent_id').val(selectedId); // Update hidden input with selected ID

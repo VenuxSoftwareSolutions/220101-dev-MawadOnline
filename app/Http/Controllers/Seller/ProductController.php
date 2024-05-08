@@ -250,7 +250,6 @@ class ProductController extends Controller
             $update = false;
             $this->productUploadsService->store_uploads($data, $update);
 
-
             flash(translate('Product has been inserted successfully'))->success();
 
             Artisan::call('view:clear');
