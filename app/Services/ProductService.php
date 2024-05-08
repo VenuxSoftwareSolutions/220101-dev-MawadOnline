@@ -1346,10 +1346,10 @@ class ProductService
                     if(array_key_exists($key, $data['variant']['shipper_sample'])){
                         $variants_data[$key]['shipper_sample'] = $data['variant']['shipper_sample'][$key];
                     }else{
-                        $variants_data[$key]['shipper_sample'] = $data['shipper_sample'];
+                        $variants_data[$key]['shipper_sample'] = $shipping_sample_parent['shipper_sample'];
                     }
                 }else{
-                    $variants_data[$key]['shipper_sample'] = $data['shipper_sample'];
+                    $variants_data[$key]['shipper_sample'] = $shipping_sample_parent['shipper_sample'];
                 }
 
                 //////////////////////////////////////////////////////////////////////////
@@ -2936,7 +2936,7 @@ class ProductService
                 }            
             }
         }
-        
+
         $shipping_sample_parent = [];
         if(isset($collection['shipper_sample'])){
             $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
