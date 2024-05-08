@@ -1858,9 +1858,9 @@ class ProductService
 
             $historique = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_id', $product_update->id)->where('revisionable_type', 'App\Models\Product')->get();
             $historique_attributes = DB::table('revisions')->whereNull('deleted_at')->whereIn('revisionable_id', $ids_product_attribute_values)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
-            if(($product->product_added_from_catalog == 1) && (count($historique) == 0) && (count($historique_attributes) == 0)){
-                $product->approved = 1;
-                $product->save();
+            if(($product_update->product_added_from_catalog == 1) && (count($historique) == 0) && (count($historique_attributes) == 0)){
+                $product_update->approved = 1;
+                $product_update->save();
             }else{
                 // Update the approved field in the parent product
                 $product_update->update(['approved' => 0]);
@@ -2748,8 +2748,6 @@ class ProductService
 
             }
             return $product_update;
-
-            dd('ok');
         }
     }
 
