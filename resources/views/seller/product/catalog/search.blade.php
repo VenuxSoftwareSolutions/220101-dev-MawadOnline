@@ -103,7 +103,7 @@
                                     <div class="card" style="width: 18rem; height: 400px">
                                         <div class="card-header py-2">
                                             <div class="d-flex justify-content-center">
-                                                <div class="p-2" style="background: #A2B8C6;">
+                                                <div class="p-2" style="background: #dddddd;">
                                             <img class="card-img-top p-2" src="{{ asset('/public'.$catalog->getFirstImage()) }}" style="height: 200px;">
                                                 </div>
                                             </div>
