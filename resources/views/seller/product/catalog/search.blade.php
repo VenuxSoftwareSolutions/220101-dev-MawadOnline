@@ -147,7 +147,7 @@
 @section('script')
 <script>
     $('body').on('click', '.search-icon', function(){
-        var search = $(this).val();
+        var search = $('.search').val();
         $.get("{{ route('catalog.search.new_action') }}",{name:search}, function(data){
             $('#search-result').empty().html(data);
             handleImageErrors();
