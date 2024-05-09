@@ -24,8 +24,14 @@
             $('.login_btn').show();
             $('.loading_btn').hide();
             return; // Stop further execution
+        } else if (password !== passwordConfirmation) {
+            // If password and password confirmation do not match, display an error message
+            $('#error_message').text('Password and password confirmation do not match.').show();
+            $('.login_btn').show();
+            $('.loading_btn').hide();
+            return; // Stop further execution
         } else {
-            // If both fields are filled, hide the error message
+            // If all fields are filled and passwords match, hide the error message
             $('#error_message').hide();
         }
         // Construct the URL dynamically
@@ -90,6 +96,33 @@
                                     </h5>
                                 </div>
                                 <div id="error_message" class="text-danger mb-3" style="display: none;"></div>
+                                @if(session('success'))
+                                <div class="alert alert-success">
+                                        {{ session('success') }}
+                                    </div>
+                                @endif
+
+                                @if(session('warning'))
+                                    <div class="alert alert-warning">
+                                        {{ session('warning') }}
+                                    </div>
+                                @endif
+
+                                @if(session('error'))
+                                    <div class="alert alert-danger">
+                                        {{ session('error') }}
+                                    </div>
+                                @endif
+
+                                @if(session('errors'))
+                                    <div class="alert alert-danger">
+                                        <ul>
+                                            @foreach(session('errors') as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
 
                                 <!-- Reset password form -->
                                 <div class="pt-3">

@@ -1016,29 +1016,38 @@ class HomeController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            // return response()->json(['errors' => $validator->errors()], 422);
+            $errors = $validator->errors()->all();
+            session()->flash('errors', $errors);
+            return view('auth.'.get_setting('authentication_layout_select').'.reset_password');
         }
 
         if (($user = User::where('email', $request->email)->where('verification_code', $request->code)->first()) != null) {
             if ($request->password == $request->password_confirmation) {
+
                 $user->password = Hash::make($request->password);
                 $user->email_verified_at = date('Y-m-d h:m:s');
                 $user->save();
                 event(new PasswordReset($user));
                 auth()->login($user, true);
 
-                flash(translate('Password updated successfully'))->success();
+                // flash(translate('Password updated successfully'))->success();
+                session()->flash('success', translate('Password updated successfully'));
 
                 if (auth()->user()->user_type == 'admin' || auth()->user()->user_type == 'staff') {
                     return redirect()->route('admin.dashboard');
                 }
                 return redirect()->route('home');
             } else {
-                flash(translate("Password and confirm password didn't match"))->warning();
+                session()->flash('warning', translate("Password and confirm password didn't match"));
+
+                // flash(translate("Password and confirm password didn't match"))->warning();
                 return view('auth.'.get_setting('authentication_layout_select').'.reset_password');
             }
         } else {
-            flash(translate("Verification code mismatch"))->error();
+            // flash(translate("Verification code mismatch"))->error();
+            session()->flash('error', translate("Verification code mismatch"));
+
             return view('auth.'.get_setting('authentication_layout_select').'.reset_password');
         }
     }
