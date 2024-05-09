@@ -89,6 +89,11 @@
                         <i class="fas fa-search"></i>
                     </div>
                 </div>
+                <div id="result" class="col-12 search_bloc panel panel-default" style="display:none">
+                    <ul class="list-group" id="memList" style="width: 50%">
+
+                    </ul>
+                </div>
                 <!-- <div class="col-6" style="display: flex; justify-content: flex-end;">
                     <button class="btn btn-primary btn-filter"><i class="fa-solid fa-filter"></i> Filter</button>
                     <button class="btn btn-outline-primary"><i class="fa-solid fa-file-excel"></i> Export to excel</button>
@@ -148,10 +153,23 @@
 <script>
     $('body').on('click', '.search-icon', function(){
         var search = $('.search').val();
-        $.get("{{ route('catalog.search.new_action') }}",{name:search}, function(data){
-            $('#search-result').empty().html(data);
-            handleImageErrors();
+        $('#memList').empty();
+        if(search == ""){
+            alert('{{ translate("Please fill in the search input before browsing the catalog.") }}')
+        }else{
+            $.get("{{ route('catalog.search.new_action') }}",{name:search}, function(data){
+                $('#search-result').empty().html(data);
+                handleImageErrors();
+            })
+        }
+    });
 
+    $('body').on('keyup', '.search', function(){
+        var search = $('body .search').val();
+
+        $.get("{{ route('catalog.search.action') }}",{name:search}, function(data){
+            $('#memList').empty().html(data);
+            $('#result').show();
         })
     });
 
@@ -165,7 +183,7 @@
         // Fetch the paginated data using Ajax
         $.get(url, function(data){
             if(search == ""){
-                $('.aiz-main-wrapper').empty().html(data);
+                $('#search-result').empty().html(data);
             }else{
                 $('#search-result').empty().html(data);
                 handleImageErrors();
@@ -185,7 +203,6 @@
         });
     }
 </script>
-
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {

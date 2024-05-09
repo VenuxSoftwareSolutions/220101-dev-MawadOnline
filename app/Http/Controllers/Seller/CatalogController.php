@@ -35,14 +35,14 @@ class CatalogController extends Controller
         $searchTerm = $request->name;
 
         if(Auth::user()->user_type == "seller"){
+            
             $catalogs = ProductCatalog::where(function ($query) use ($searchTerm) {
                                     $query->where('name', 'like', "%{$searchTerm}%")
                                         ->orWhereHas('brand', function ($query) use ($searchTerm) {
                                             $query->where('name', 'like', "%{$searchTerm}%");
                                         });
                                 })->take(3)->get();
-
-            return view('seller.product.catalog.result')->with(['products' =>  $products, 'catalogs' => $catalogs, 'search' => $request->name]);
+            return view('seller.product.catalog.old_result')->with(['products' =>  $products, 'catalogs' => $catalogs, 'search' => $request->name]);
         }elseif((Auth::user()->user_type == "admin") || (Auth::user()->user_type == "staff")){
             $products = Product::where(function ($query) use ($searchTerm) {
                                     $query->where('name', 'like', "%{$searchTerm}%")
