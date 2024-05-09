@@ -168,6 +168,8 @@
                 $('.aiz-main-wrapper').empty().html(data);
             }else{
                 $('#search-result').empty().html(data);
+                handleImageErrors();
+
             }
 
         });
