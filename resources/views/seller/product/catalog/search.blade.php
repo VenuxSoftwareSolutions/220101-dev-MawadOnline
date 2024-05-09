@@ -143,7 +143,7 @@
 
 @section('script')
 <script>
-    $('body').on('keyup', '.search', function(){
+    $('body').on('click', '.search-icon', function(){
         var search = $(this).val();
         $.get("{{ route('catalog.search.new_action') }}",{name:search}, function(data){
             $('#search-result').empty().html(data);
