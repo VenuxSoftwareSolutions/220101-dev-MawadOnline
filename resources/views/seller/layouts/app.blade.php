@@ -435,7 +435,7 @@
     <script src="{{ static_asset('assets/js/jquery.multi-select.js') }}" ></script>
     <script>
         jQuery("img").one('error', function () {
-            jQuery(this).attr("src", "{{asset('public/images/vendor_logo.svg')}}"); //.unbind("error") is useless here
+            jQuery(this).attr("src", "https://placehold.co/600x400"); //.unbind("error") is useless here
         }).each(function () {
             if (this.complete && !this.naturalHeight && !this.naturalWidth) {
                 $(this).triggerHandler('error');
