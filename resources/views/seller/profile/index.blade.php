@@ -50,14 +50,10 @@
        .highlighted-tab {
         border-color: red !important;
     }
-    .btn-info {
-        background-color: var(--primary) !important; /* Use the global variable */
-        border-color: var(--primary) !important;
 
-    }
     .btn-primary {
-        background-color: #CB774B !important; /* Use the global variable */
-        border-color: #CB774B !important;
+        background-color: #a2b8c6 !important; /* Use the global variable */
+        border-color: #a2b8c6 !important;
 
     }
     .swal2-confirm {
@@ -71,7 +67,7 @@
     }
 
     .orange-text{
-    color: #CB774B;
+    color: #b9c9d4;
 
     }
 
@@ -81,18 +77,42 @@
 
     .custom-file-input:lang(en)~.custom-file-label::after {
     content: "Browse";
-    background-color: #CB774B;
+    background-color: #a2b8c6;
     color:#fff
 }
+.nav-link.active {
+
+    background-color: #a2b8c6 !important;
 
 
+}
 
+.nav-tabs .nav-link {
+    padding: 18px !important;
+    text-align: center !important;
+    border-radius: 4% !important;
+}
+.file-condition {
+    font-size: 12px ;
+    font-weight: 450;
+    margin-top : 3px ;
+    display:block
+}
+.optional {
+    color: #b9c9d4;
+    font-size: 14px; /* Or any other size you prefer */
+
+}
 </style>
 @section('panel_content')
-    <div class="aiz-titlebar mt-2 mb-4">
+    <div class="aiz-titlebar mt-4 mb-4">
         <div class="row align-items-center">
             <div class="col-md-6">
-                <h1 class="h3">{{ translate('Manage Profile') }}</h1>
+                <h1 class="h1">{{ translate('Profile Management') }}</h1>
+            </div>
+            <div class="col-md-12 mt-2">
+                <p class="text-muted">Easily update you profile details in one place. keep your personal info and contact details current with our Profile Management screen</p>
+
             </div>
         </div>
     </div>
@@ -391,33 +411,45 @@
                          @endif
 
                         <div class="p-3">
-                            <div class="form-group">
-                                <label><b>{{ translate('First Name') }} </b><span class="text-primary">*</span></label>
-                                <input type="text" class="form-control rounded-0"
-                                    value="{{ auth()->check() ? auth()->user()->first_name : old('first_name_personal') }}"
-                                    id="first_name" placeholder="{{ translate('First Name') }}" name="first_name_personal" required>
-                                    @error('first_name_personal')
-                                    <div class="text-danger">{{ $message }}</div>
-                                     @enderror
-                            </div>
-                            <div class="form-group">
-                                <label><b>{{ translate('Last name') }} </b><span class="text-primary">*</span></label>
-                                <input type="text" class="form-control rounded-0" id="last_name"
-                                    value="{{ auth()->check() ? auth()->user()->last_name : old('last_name_personal') }}"
-                                    placeholder="{{ translate('Last name') }}" name="last_name_personal" required>
-                                    @error('last_name_personal')
-                                    <div class="text-danger">{{ $message }}</div>
-                                     @enderror
-                            </div>
-                            <div class="form-group">
-                                <label><b>{{ translate('Email') }}</b> <span class="text-primary">*</span></label>
-                                <input disabled  type="text" class="form-control rounded-0"
-                                    value="{{ auth()->check() ? auth()->user()->email : '' }}"
-                                    placeholder="{{ translate('Email') }}" name="email" >
-                                    <div style="color: #CB774B;">
-                                        Email cannot be changed
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label><b>{{ translate('First Name') }} </b><span class="text-primary">*</span></label>
+                                        <input type="text" class="form-control rounded-0"
+                                            value="{{ auth()->check() ? auth()->user()->first_name : old('first_name_personal') }}"
+                                            id="first_name" placeholder="{{ translate('First Name') }}" name="first_name_personal" required>
+                                            @error('first_name_personal')
+                                            <div class="text-danger">{{ $message }}</div>
+                                             @enderror
                                     </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label><b>{{ translate('Last name') }} </b><span class="text-primary">*</span></label>
+                                        <input type="text" class="form-control rounded-0" id="last_name"
+                                            value="{{ auth()->check() ? auth()->user()->last_name : old('last_name_personal') }}"
+                                            placeholder="{{ translate('Last name') }}" name="last_name_personal" required>
+                                            @error('last_name_personal')
+                                            <div class="text-danger">{{ $message }}</div>
+                                             @enderror
+                                    </div>
+                                </div>
                             </div>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label><b>{{ translate('Email') }}</b> <span class="text-primary">*</span></label>
+                                        <input disabled  type="text" class="form-control rounded-0"
+                                            value="{{ auth()->check() ? auth()->user()->email : '' }}"
+                                            placeholder="{{ translate('Email') }}" name="email" >
+                                            <div style="color: red;">
+                                                Email cannot be changed
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+
 
                         </div>
                     </div>
@@ -545,7 +577,7 @@
                                             @error('trade_license_doc')
                                             <div class="text-danger">{{ $message }}</div>
                                              @enderror
-                                            <small>{{ translate('Max file size is 5MB and accepted file types are PDF and image formats.') }}</small>
+                                            <span class="file-condition">{{ translate('Max file size is 5MB and accepted file types are PDF and image formats.') }}</span>
 
 
 
@@ -592,7 +624,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label><b>{{ translate('English e-Shop description') }} </b><span
-                                                    class="text-primary"></span></label>
+                                                    class="optional"> (Optional)</span></label>
 
                                             <textarea class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_desc_english') ? 'color-modified' : '' }}" placeholder="{{ translate('English e-Shop description') }}"
                                                 name="eshop_desc_english">{{ $eshop_desc_english }}</textarea>
@@ -604,7 +636,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label><b>{{ translate('Arabic e-Shop description') }}</b> <span
-                                                    class="text-primary"></span></label>
+                                                class="optional"> (Optional)</span></label>
 
                                             <textarea class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_desc_arabic') ? 'color-modified' : '' }}" placeholder="{{ translate('Arabic e-Shop description') }}"
                                                 name="eshop_desc_arabic">{{ $eshop_desc_arabic  }}</textarea>
@@ -760,7 +792,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label><b>{{ translate('Unit/Office No.') }} </b><span
-                                                    class="text-primary"></span></label>
+                                                class="optional"> (Optional)</span></label>
                                             <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('unit') ? 'color-modified' : '' }}"
                                                 value="{{$unit }}"
                                                 placeholder="{{ translate('Unit/Office No.') }}" name="unit">
@@ -771,7 +803,8 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label><b>{{ translate('PO Box') }} </b><span class="text-primary "></span></label>
+                                            <label><b>{{ translate('PO Box') }} </b><span
+                                                class="optional"> (Optional)</span></label>
                                             <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('po_box') ? 'color-modified' : '' }}"
                                                 value="{{ $po_box }}"
                                                 placeholder="{{ translate('PO Box') }}" name="po_box">
@@ -784,16 +817,21 @@
                                         Contact Information
                                      </div>
                                     <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label><b>{{ translate('Landline Phone No.') }} </b><span
-                                                    class="text-primary"></span></label>
-                                            <input value="{{$landline }}"
-                                                type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('landline') ? 'color-modified' : '' }}"
-                                                placeholder="{{ translate('Landline Phone No.') }}" name="landline">
-                                                @error('landline')
-                                                <div class="text-danger">{{ $message }}</div>
-                                                 @enderror
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="form-group">
+                                                    <label><b>{{ translate('Landline Phone No.') }} </b><span
+                                                        class="optional"> (Optional)</span></label>
+                                                    <input value="{{$landline }}"
+                                                        type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('landline') ? 'color-modified' : '' }}"
+                                                        placeholder="{{ translate('Landline Phone No.') }}" name="landline">
+                                                        @error('landline')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                         @enderror
+                                                </div>
+                                            </div>
                                         </div>
+
                                     </div>
                                     <div class="col-md-12" style="padding-left: 0px">
                                         <div class="fs-20 fw-600 p-3 orange-text">
@@ -827,7 +865,7 @@
                                     <div class="col-md-6" id="vatCertificateGroup">
                                         <div class="form-group">
                                             <label><b>{{ translate('Vat Certificate') }} </b><span
-                                                    class="text-primary">*</span><small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small></label>
+                                                    class="text-primary">*</span></label>
                                             @if ($vat_certificate)
                                                 <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('vat_certificate') ? 'color-modified-file' : '' }}"
                                                     href="{{ static_asset($vat_certificate) }}"
@@ -847,7 +885,7 @@
                                             @error('vat_certificate')
                                             <div class="text-danger">{{ $message }}</div>
                                              @enderror
-                                            <small>{{ translate('Max file size is 5MB and accepted file types are PDF and image formats.') }}</small>
+                                             <span class="file-condition">{{ translate('Max file size is 5MB and accepted file types are PDF and image formats.') }}</span>
 
 
                                         </div>
@@ -890,7 +928,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label><b>{{ translate('Civil Defense Approval') }}</b> <span
-                                                    class="text-primary"></span></label>
+                                                class="optional"> (Optional)</span></label>
                                             {{-- <input  type="file" class="form-control rounded-0"
                                             name="civil_defense_approval"> --}}
                                             @if ($civil_defense_approval )
@@ -912,7 +950,7 @@
                                                 </div>
                                             </div>
                                             @error('civil_defense_approval') <div class="text-danger">{{ $message }}</div> @enderror
-                                            <small>{{ translate('Max file size is 5MB and accepted file types are PDF and image formats.') }}</small>
+                                            <span class="file-condition">{{ translate('Max file size is 5MB and accepted file types are PDF and image formats.') }}</span>
                                         </div>
 
                                     </div>
@@ -926,7 +964,7 @@
                         <div class="text-right">
                             <!-- Previous Button -->
                             <button type="button" data-prv='personal-info'
-                                class="btn btn-info fw-600 rounded-0 prv-tab">
+                                class="btn btn-light fw-600 rounded-0 prv-tab">
                                 {{ translate('Previous') }}
                             </button>
 
@@ -1080,7 +1118,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label><b>{{ translate('Additional Mobile Phone') }} </b><span
-                                                class="text-primary"></span></label>
+                                            class="optional"> (Optional)</span></label>
                                         <input type="text" dir="auto"
                                             class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('additional_mobile_phone') ? 'color-modified' : '' }}"
                                             placeholder="{{ translate('Additional Mobile Phone') }}"
@@ -1154,8 +1192,8 @@
                                             @error('emirates_id_file_path')
                                             <div class="text-danger">{{ $message }}</div>
                                             @enderror
-                                             <small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}
-                                            </small>
+                                             <span class="file-condition">{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}
+                                            </span>
                                     </div>
 
                                     {{-- <div class="input-group">
@@ -1219,7 +1257,7 @@
 
                     <div class="text-right">
                         <!-- Previous Button -->
-                        <button type="button" data-prv='business-info' class="btn btn-info fw-600 rounded-0 prv-tab">
+                        <button type="button" data-prv='business-info' class="btn btn-light fw-600 rounded-0 prv-tab">
                             {{ translate('Previous') }}
                         </button>
 
@@ -1235,7 +1273,7 @@
                     <div class="bg-white border mb-4">
 
                        <div class="fs-20 fw-600 p-3 orange-text">
-                                                {{ translate('Bank Information') }}
+                                                {{ translate('Trade Information') }}
                         </div>
                         {{-- <div id="validation-errors" class="alert alert-danger"
                                 style="display: none;"></div> --}}
@@ -1333,7 +1371,7 @@
                                         @error('iban_certificate')
                                         <div class="text-danger">{{ $message }}</div>
                                         @enderror
-                                        <small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small>
+                                        <span class="file-condition">{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</span>
 
 
                                     </div>
@@ -1349,7 +1387,7 @@
 
                     <div class="text-right">
                         <!-- Previous Button -->
-                        <button type="button" data-prv='contact-person' class="btn btn-info fw-600 rounded-0 prv-tab">
+                        <button type="button" data-prv='contact-person' class="btn btn-light fw-600 rounded-0 prv-tab">
                             {{ translate('Previous') }}
                         </button>
                         @if ($proposedPayoutChange && $proposedPayoutChange->admin_viewed == 0 || !$proposedPayoutChange)
