@@ -14,7 +14,7 @@
                         <h5 class="card-title">{{ $catalog->sku }}</h5>
                         <p class="card-text">Number of variants: {{ $catalog->checkIfParentToGetNumVariants() }}.</p>
 
-                        <a href="{{ route('catalog.preview_product', ['id' => $catalog->id, 'is_catalog' => 1]) }}" class="btn btn-primary" style="position: absolute; bottom: 20px !important; left: 50%; transform: translateX(-50%); width: 90%">{{ translate('View product') }}</a>
+                        <a href="{{ route('catalog.preview_product', ['id' => $catalog->id, 'is_catalog' => 1]) }}" class="btn btn-secondary" style="position: absolute; bottom: 20px !important; left: 50%; transform: translateX(-50%); width: 90%">{{ translate('View product') }}</a>
                     </div>
                 </div>
             </div>
