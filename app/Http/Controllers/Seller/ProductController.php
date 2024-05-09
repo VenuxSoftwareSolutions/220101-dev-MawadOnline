@@ -283,6 +283,8 @@ class ProductController extends Controller
         $html_attributes_generale = "";
         if(count($parents) > 0){
             $attributes_ids = DB::table('categories_has_attributes')->whereIn('category_id', $parents)->pluck('attribute_id')->toArray();
+            dd($attributes_ids);
+
             if(count($attributes_ids) > 0){
                 $attributes = Attribute::whereIn('id',$attributes_ids)->get();
                 if(count($attributes) > 0){
