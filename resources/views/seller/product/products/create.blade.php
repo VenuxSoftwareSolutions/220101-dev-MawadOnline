@@ -935,8 +935,8 @@
                                 </div>
                             </div>
                             <div class="col-2">
-                                <i class="las la-plus add_document" style="margin-left: 5px; margin-top: 40px;" title="Add another document"></i>
-                                <i class="las la-trash trash_document" style="margin-left: 5px; margin-top: 40px;" title="Delete this document"></i>
+                                <i class="las la-plus add_document" style="margin-left: 5px; margin-top: 40px;"></i>
+                                <i class="las la-trash trash_document" style="margin-left: 5px; margin-top: 40px;" ></i>
                             </div>
                         </div>
                     </div>
@@ -1309,7 +1309,7 @@
 
             var count = numbers_variant + 1;
             //add attribute name for each input cloned
-            var html_to_add = '<div style="float: right; margin-top: -35px"><i class="fa-regular fa-pen-to-square fa-xl square-variant" title="Edit variant"></i><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
+            var html_to_add = '<div style="float: right; margin-top: -35px"><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
             clonedDiv.find('h3').after(html_to_add);
             //clonedDiv.find('.fa-circle-xmark').hide();
             clonedDiv.find('.fa-circle-check').hide();
@@ -2315,8 +2315,8 @@
                                     </div>
                                 </div>
                                 <div class="col-2">
-                                    <i class="las la-plus add_document" style="margin-left: 5px; margin-top: 40px;" title="Add another document"></i>
-                                    <i class="las la-trash trash_document" style="margin-left: 5px; margin-top: 40px;" title="Delete this document"></i>
+                                    <i class="las la-plus add_document" style="margin-left: 5px; margin-top: 40px;"></i>
+                                    <i class="las la-trash trash_document" style="margin-left: 5px; margin-top: 40px;" ></i>
                                 </div>
                             </div>`;
             $('#documents_bloc').append(html_document);
@@ -3128,7 +3128,7 @@
                     var node = $('#jstree').jstree(true).get_node(selectedId);
 
                     if ((!node.children || node.children.length === 0) && node.state.loaded ==  true) {
-                        $('#message-category').text("Correct choice.");
+                        $('#message-category').text("");
                         $('#message-category').css({'color': 'green', 'margin-right': '7px'});
                         // The node does not have children, proceed with your logic
                         $('#selected_parent_id').val(selectedId); // Update hidden input with selected ID
