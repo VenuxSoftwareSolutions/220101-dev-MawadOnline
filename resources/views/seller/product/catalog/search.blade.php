@@ -89,6 +89,11 @@
                         <i class="fas fa-search"></i>
                     </div>
                 </div>
+                <div id="result" class="col-12 search_bloc panel panel-default" style="display:none">
+                    <ul class="list-group" id="memList" style="width: 50%">
+
+                    </ul>
+                </div>
                 <!-- <div class="col-6" style="display: flex; justify-content: flex-end;">
                     <button class="btn btn-primary btn-filter"><i class="fa-solid fa-filter"></i> Filter</button>
                     <button class="btn btn-outline-primary"><i class="fa-solid fa-file-excel"></i> Export to excel</button>
@@ -96,38 +101,47 @@
             </div>
             <div class="card-body">
                 <div id="search-result">
-                    @if(count($catalogs) > 0)
-                        <div class="row">
-                            @foreach($catalogs as $catalog)
-                                <div class="col-3">
-                                    <div class="card" style="width: 18rem; height: 400px">
-                                        <img class="card-img-top" src="{{ asset('/public'.$catalog->getFirstImage()) }}" style="height: 200px;">
-                                        <div class="card-body">
-                                            <h5 class="card-title">{{ $catalog->sku }}</h5>
-                                            <p class="card-text">Number of variants: {{ $catalog->checkIfParentToGetNumVariants() }}.</p>
+                    <div class="text-center">
+                        {{translate('Please search to get the list of product catalogue !') }}
+                    </div>
+{{--                    @if(count($catalogs) < 0)--}}
+{{--                        <div class="row">--}}
+{{--                            @foreach($catalogs as $catalog)--}}
+{{--                                <div class="col-3">--}}
+{{--                                    <div class="card" style="width: 18rem; height: 400px">--}}
+{{--                                        <div class="card-header py-2">--}}
+{{--                                            <div class="d-flex justify-content-center">--}}
+{{--                                                <div class="p-2" style="background: #dddddd;">--}}
+{{--                                            <img class="card-img-top p-2" src="{{ asset('/public'.$catalog->getFirstImage()) }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                        </div>--}}
+{{--                                        <div class="card-body">--}}
+{{--                                            <h5 class="card-title">{{ $catalog->sku }}</h5>--}}
+{{--                                            <p class="card-text">Number of variants: {{ $catalog->checkIfParentToGetNumVariants() }}.</p>--}}
 
-                                            <a href="{{ route('catalog.preview_product', ['id' => $catalog->id, 'is_catalog' => 1]) }}" class="btn btn-primary" style="position: absolute; bottom: 20px !important; left: 50%; transform: translateX(-50%); width: 90%">{{ translate('View product') }}</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
+{{--                                            <a href="{{ route('catalog.preview_product', ['id' => $catalog->id, 'is_catalog' => 1]) }}" class="btn btn-secondary" style="position: absolute; bottom: 20px !important; left: 50%; transform: translateX(-50%); width: 90%">{{ translate('View product') }}</a>--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                            @endforeach--}}
 
-                            {{-- {{ $catalogs->onEachSide(1)->links('seller.product.catalog.pagination') }} --}}
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-6" style="padding-top: 11px; !important">
-                                <p style="color: #bababa">Showing {{ $catalogs->firstItem() }} - {{ $catalogs->lastItem() }} of {{ $catalogs->total() }}</p>
-                            </div>
-                            <div class="col-6" style="display: flex; justify-content: flex-end;">
-                                {{ $catalogs->links() }}
-                            </div>
-                        </div>
-                    @else
-                        <div class="text-center">
-                            {{translate('No catalog found') }}
-                        </div>
-                    @endif
+{{--                            --}}{{-- {{ $catalogs->onEachSide(1)->links('seller.product.catalog.pagination') }} --}}
+{{--                        </div>--}}
+{{--                        <hr>--}}
+{{--                        <div class="row">--}}
+{{--                            <div class="col-6" style="padding-top: 11px; !important">--}}
+{{--                                <p style="color: #bababa">Showing {{ $catalogs->firstItem() }} - {{ $catalogs->lastItem() }} of {{ $catalogs->total() }}</p>--}}
+{{--                            </div>--}}
+{{--                            <div class="col-6" style="display: flex; justify-content: flex-end;">--}}
+{{--                                {{ $catalogs->links() }}--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    @else--}}
+{{--                        <div class="text-center">--}}
+{{--                            {{translate('No catalog found') }}--}}
+{{--                        </div>--}}
+{{--                    @endif--}}
                 </div>
             </div>
         </form>
@@ -137,10 +151,25 @@
 
 @section('script')
 <script>
+    $('body').on('click', '.search-icon', function(){
+        var search = $('.search').val();
+        $('#memList').empty();
+        if(search == ""){
+            alert('{{ translate("Please fill in the search input before browsing the catalog.") }}')
+        }else{
+            $.get("{{ route('catalog.search.new_action') }}",{name:search}, function(data){
+                $('#search-result').empty().html(data);
+                handleImageErrors();
+            })
+        }
+    });
+
     $('body').on('keyup', '.search', function(){
-        var search = $(this).val();
-        $.get("{{ route('catalog.search.new_action') }}",{name:search}, function(data){
-            $('#search-result').empty().html(data);
+        var search = $('body .search').val();
+
+        $.get("{{ route('catalog.search.action') }}",{name:search}, function(data){
+            $('#memList').empty().html(data);
+            $('#result').show();
         })
     });
 
@@ -154,15 +183,26 @@
         // Fetch the paginated data using Ajax
         $.get(url, function(data){
             if(search == ""){
-                $('.aiz-main-wrapper').empty().html(data);
+                $('#search-result').empty().html(data);
             }else{
                 $('#search-result').empty().html(data);
+                handleImageErrors();
+
             }
 
         });
     });
-</script>
 
+    function handleImageErrors() {
+        jQuery("img").one('error', function () {
+            jQuery(this).attr("src", "{{asset('public/images/placeholder.png')}}");
+        }).each(function () {
+            if (this.complete && !this.naturalHeight && !this.naturalWidth) {
+                $(this).triggerHandler('error');
+            }
+        });
+    }
+</script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {

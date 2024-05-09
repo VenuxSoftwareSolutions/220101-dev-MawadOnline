@@ -195,22 +195,25 @@ class ProductService
         //dd($collection);
         $shipping = [];
 
-        foreach($collection['from_shipping'] as $key => $from_shipping){
-            if(($from_shipping != null) && ($collection['to_shipping'][$key]!= null)&& ($collection['shipper'][$key]!= null)&& ($collection['estimated_order'][$key]!= null)){
-                $current_data = [];
-                $shippers = implode(',', $collection['shipper'][$key]);
-                $current_data['from_shipping'] = $from_shipping;
-                $current_data['to_shipping'] = $collection['to_shipping'][$key];
-                $current_data['shipper'] = $shippers;
-                $current_data['estimated_order'] = $collection['estimated_order'][$key];
-                $current_data['estimated_shipping'] = $collection['estimated_shipping'][$key];
-                $current_data['paid'] = $collection['paid'][$key];
-                $current_data['shipping_charge'] = $collection['shipping_charge'][$key];
-                $current_data['flat_rate_shipping'] = $collection['flat_rate_shipping'][$key];
-                $current_data['vat_shipping'] = $vat_user->vat_registered;
-                $current_data['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'][$key];
+        if((isset($collection['from_shipping'])) &&(isset($collection['to_shipping'])) && (isset($collection['shipper'])) && (isset($collection['estimated_order']))){
+            foreach($collection['from_shipping'] as $key => $from_shipping){
+                if(($from_shipping != null) && ($collection['to_shipping'][$key]!= null)&& ($collection['shipper'][$key]!= null)&& ($collection['estimated_order'][$key]!= null)){
+                    $current_data = [];
+                    $shippers = implode(',', $collection['shipper'][$key]);
+                    $current_data['from_shipping'] = $from_shipping;
+                    $current_data['to_shipping'] = $collection['to_shipping'][$key];
+                    $current_data['shipper'] = $shippers;
+                    $current_data['estimated_order'] = $collection['estimated_order'][$key];
+                    $current_data['estimated_shipping'] = $collection['estimated_shipping'][$key];
+                    $current_data['paid'] = $collection['paid'][$key];
+                    $current_data['shipping_charge'] = $collection['shipping_charge'][$key];
+                    $current_data['flat_rate_shipping'] = $collection['flat_rate_shipping'][$key];
+                    $current_data['vat_shipping'] = $vat_user->vat_registered;
+                    $current_data['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'][$key];
 
-                array_push($shipping, $current_data);
+                    array_push($shipping, $current_data);
+                }
+
             }
         }
 
@@ -486,6 +489,9 @@ class ProductService
 
         $prefixToRemove = 'attribute_generale';
         $prefixToRemoveUnit = 'unit_attribute_generale';
+        $prefixToRemoveAttr = 'attributes-';
+        $prefixToRemoveStock = 'stock-warning-';
+        $prefixToRemoveAttrUnit = 'attributes_units';
 
         foreach ($data as $key => $value) {
             if(strpos($key, $prefixToRemove) === 0){
@@ -494,11 +500,20 @@ class ProductService
             if(strpos($key, $prefixToRemoveUnit) === 0){
               unset($data[$key]);
             }
+            if(strpos($key, $prefixToRemoveAttr) === 0){
+              unset($data[$key]);
+            }
+            if(strpos($key, $prefixToRemoveStock) === 0){
+              unset($data[$key]);
+            }
+            if(strpos($key, $prefixToRemoveAttrUnit) === 0){
+              unset($data[$key]);
+            }
         }
 
 
 
-        //dd($data);
+
         if(!isset($data['activate_attributes'])){
             $product = Product::create($data);
             $ids_attributes_color = Attribute::where('type_value', 'color')->pluck('id')->toArray();
@@ -729,6 +744,7 @@ class ProductService
 
             if(count($variants_data) > 0){
                 foreach ($variants_data as $id => $variant){
+
                     if (!array_key_exists('shipping', $variant)) {
                         $data['shipping'] = 0;
                     }else{
@@ -781,10 +797,16 @@ class ProductService
                         $data['sample_available'] = $shipping_sample_parent['sample_available'];
                     }
 
+                    if(isset($data['shipper_sample'])){
+                        $data['shipper_sample'] = implode(',', $data['shipper_sample']);
+                    }
+
+
                     $data['sku'] =  $variant['sku'];
                     $randomString = Str::random(5);
                     $data['slug'] =  $data['slug'] . '-' . $randomString;
 
+                    //dd($data);
                     $product = Product::create($data);
 
                     //attributes of variant
@@ -1167,22 +1189,26 @@ class ProductService
         }
 
         $shipping = [];
-        foreach($collection['from_shipping'] as $key => $from_shipping){
-            if(($from_shipping != null) && ($collection['to_shipping'][$key]!= null)&& ($collection['shipper'][$key]!= null)&& ($collection['estimated_order'][$key]!= null)){
-                $current_data = [];
-                $shippers = implode(',', $collection['shipper'][$key]);
-                $current_data['from_shipping'] = $from_shipping;
-                $current_data['to_shipping'] = $collection['to_shipping'][$key];
-                $current_data['shipper'] = $shippers;
-                $current_data['estimated_order'] = $collection['estimated_order'][$key];
-                $current_data['estimated_shipping'] = $collection['estimated_shipping'][$key];
-                $current_data['paid'] = $collection['paid'][$key];
-                $current_data['shipping_charge'] = $collection['shipping_charge'][$key];
-                $current_data['flat_rate_shipping'] = $collection['flat_rate_shipping'][$key];
-                $current_data['vat_shipping'] = $vat_user->vat_registered;
-                $current_data['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'][$key];
+        if((isset($collection['from_shipping'])) &&(isset($collection['to_shipping'])) && (isset($collection['shipper'])) && (isset($collection['estimated_order']))){
+            foreach($collection['from_shipping'] as $key => $from_shipping){
+                if(($from_shipping != null) && ($collection['to_shipping'][$key]!= null)&& ($collection['shipper'][$key]!= null)&& ($collection['estimated_order'][$key]!= null)){
+                    $current_data = [];
+                    $shippers = implode(',', $collection['shipper'][$key]);
+                    $current_data['from_shipping'] = $from_shipping;
+                    $current_data['to_shipping'] = $collection['to_shipping'][$key];
+                    $current_data['shipper'] = $shippers;
+                    $current_data['estimated_order'] = $collection['estimated_order'][$key];
+                    $current_data['estimated_shipping'] = $collection['estimated_shipping'][$key];
+                    $current_data['paid'] = $collection['paid'][$key];
+                    $current_data['shipping_charge'] = $collection['shipping_charge'][$key];
+                    $current_data['flat_rate_shipping'] = $collection['flat_rate_shipping'][$key];
+                    $current_data['vat_shipping'] = $vat_user->vat_registered;
+                    $current_data['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'][$key];
 
-                array_push($shipping, $current_data);
+
+                    array_push($shipping, $current_data);
+                }
+
             }
         }
 
@@ -1324,10 +1350,10 @@ class ProductService
                     if(array_key_exists($key, $data['variant']['shipper_sample'])){
                         $variants_data[$key]['shipper_sample'] = $data['variant']['shipper_sample'][$key];
                     }else{
-                        $variants_data[$key]['shipper_sample'] = $data['shipper_sample'];
+                        $variants_data[$key]['shipper_sample'] = $shipping_sample_parent['shipper_sample'];
                     }
                 }else{
-                    $variants_data[$key]['shipper_sample'] = $data['shipper_sample'];
+                    $variants_data[$key]['shipper_sample'] = $shipping_sample_parent['shipper_sample'];
                 }
 
                 //////////////////////////////////////////////////////////////////////////
@@ -2286,9 +2312,9 @@ class ProductService
                                 foreach ($variant['shipping_details']['from_shipping'] as $key => $from){
                                     if(($from != null) && ($variant['shipping_details']['to_shipping'][$key]!= null)&& ($variant['shipping_details']['shipper'][$key]!= null)&& ($variant['shipping_details']['estimated_order'][$key]!= null)){
                                         $current_shipping = [];
-                                        if (!empty($variant['shipping_details']['shipper'][$key])) {
-                                             $shippers = implode(',', $variant['shipping_details']['shipper'][$key]);
-                                        }
+
+                                        $shippers = implode(',', $variant['shipping_details']['shipper'][$key]);
+
                                         $current_shipping['from_shipping'] = $from;
                                         $current_shipping['to_shipping'] = $variant['shipping_details']['to_shipping'][$key];
                                         $current_shipping['shipper'] = $shippers;
@@ -2896,22 +2922,26 @@ class ProductService
         }
 
         $shipping = [];
-        foreach($collection['from_shipping'] as $key => $from_shipping){
-            if(($from_shipping != null) && ($collection['to_shipping'][$key]!= null)&& ($collection['shipper'][$key]!= null)&& ($collection['estimated_order'][$key]!= null)){
-                $current_data = [];
-                $shippers = implode(',', $collection['shipper'][$key]);
-                $current_data['from_shipping'] = $from_shipping;
-                $current_data['to_shipping'] = $collection['to_shipping'][$key];
-                $current_data['shipper'] = $shippers;
-                $current_data['estimated_order'] = $collection['estimated_order'][$key];
-                $current_data['estimated_shipping'] = $collection['estimated_shipping'][$key];
-                $current_data['paid'] = $collection['paid'][$key];
-                $current_data['shipping_charge'] = $collection['shipping_charge'][$key];
-                $current_data['flat_rate_shipping'] = $collection['flat_rate_shipping'][$key];
-                $current_data['vat_shipping'] = $vat_user->vat_registered;
-                $current_data['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'][$key];
+        if((isset($collection['from_shipping'])) &&(isset($collection['to_shipping'])) && (isset($collection['shipper'])) && (isset($collection['estimated_order']))){
+            foreach($collection['from_shipping'] as $key => $from_shipping){
+                if(($from_shipping != null) && ($collection['to_shipping'][$key]!= null)&& ($collection['shipper'][$key]!= null)&& ($collection['estimated_order'][$key]!= null)){
+                    $current_data = [];
+                    $shippers = implode(',', $collection['shipper'][$key]);
+                    $current_data['from_shipping'] = $from_shipping;
+                    $current_data['to_shipping'] = $collection['to_shipping'][$key];
+                    $current_data['shipper'] = $shippers;
+                    $current_data['estimated_order'] = $collection['estimated_order'][$key];
+                    $current_data['estimated_shipping'] = $collection['estimated_shipping'][$key];
+                    $current_data['paid'] = $collection['paid'][$key];
+                    $current_data['shipping_charge'] = $collection['shipping_charge'][$key];
+                    $current_data['flat_rate_shipping'] = $collection['flat_rate_shipping'][$key];
+                    $current_data['vat_shipping'] = $vat_user->vat_registered;
+                    $current_data['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'][$key];
 
-                array_push($shipping, $current_data);
+
+                    array_push($shipping, $current_data);
+                }
+
             }
         }
 

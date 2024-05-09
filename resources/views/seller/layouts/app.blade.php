@@ -433,5 +433,14 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.all.min.js"></script>
     <script src="{{ static_asset('assets/js/jquery.multi-select.js') }}" ></script>
+    <script>
+        jQuery("img").one('error', function () {
+            jQuery(this).attr("src", "{{asset('public/images/placeholder.png')}}"); //.unbind("error") is useless here
+        }).each(function () {
+            if (this.complete && !this.naturalHeight && !this.naturalWidth) {
+                $(this).triggerHandler('error');
+            }
+        });
+    </script>
 </body>
 </html>

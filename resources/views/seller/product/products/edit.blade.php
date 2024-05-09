@@ -279,7 +279,7 @@
                     </div>
                     <div class="card-body">
                         <div class="form-group row">
-                            <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Gallery Images')}} <small>(1280x1280)</small></label>
+                            <label class="col-md-3 col-from-label" for="signinSrEmail">{{translate('Gallery Images')}} <small>(1280x1280)</small></label>
                             <div class="col-md-8" id="bloc_photos">
                                 <input type="file" class="dropify" name="main_photos[]" id="photoUpload" accept=".jpeg, .jpg, .png" multiple />
                                 <div class="row mt-3" id="dropifyUploadedFiles">
@@ -295,7 +295,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <small>(400x400)</small></label>
+                            <label class="col-md-3 col-from-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <small>(400x400)</small></label>
                             <div class="col-md-8" id="bloc_thumbnails">
                                 <input type="file" class="dropify" name="photosThumbnail[]" id="photoUploadThumbnail" accept=".jpeg, .jpg, .png" multiple />
                                 <small>{{ translate('Thumbnail images will be generated automatically from gallery images if not specified') }}</small>
@@ -1363,9 +1363,9 @@
                                         </div>
                                     </div>
                                     <div class="col-2">
-                                        <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Add another document"></i>
+                                        <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
                                         @if($key != 0)
-                                            <i class="las la-trash trash_document font-size-icon" data-id_document="{{ $document->id }}" style="margin-left: 5px; margin-top: 34px;" title="Delete this document"></i>
+                                            <i class="las la-trash trash_document font-size-icon" data-id_document="{{ $document->id }}" style="margin-left: 5px; margin-top: 34px;" ></i>
                                         @endif
                                         <a href="{{ asset('/public/'.$document->path) }}" download title="{{ translate('Click to download') }}">
                                             <i class="las la-download font-size-icon"></i>
@@ -1393,8 +1393,8 @@
                                     </div>
                                 </div>
                                 <div class="col-2">
-                                    <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Add another document"></i>
-                                    {{-- <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Delete this document"></i> --}}
+                                    <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
+                                    {{-- <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i> --}}
                                 </div>
                             </div>
                         @endif
@@ -2927,8 +2927,8 @@
                                     </div>
                                 </div>
                                 <div class="col-2">
-                                    <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Add another document"></i>
-                                    <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Delete this document"></i>
+                                    <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
+                                    <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
                                 </div>
                             </div>`;
             $('#documents_bloc').append(html_document);
@@ -2987,8 +2987,8 @@
                                                                 </div>
                                                             </div>
                                                             <div class="col-2">
-                                                                <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Add another document"></i>
-                                                                <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Delete this document"></i>
+                                                                <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
+                                                                <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
                                                             </div>
                                                         </div>`;
                                         $('#documents_bloc').append(html_document);
@@ -4762,10 +4762,10 @@
                                             <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control discount_amount" name="variant[discount_amount][`+ id_variant +`][]" placeholder="Amount" placeholder="Percentage"></td>
+                                    <td><input type="number" class="form-control discount_amount" name="variant[discount_amount][`+ id_variant +`][]" placeholder="Amount" readonly></td>
                                     <td style="width: 19% !important;">
                                         <div class="col-md-9 input-group">
-                                            <input type="number" class="form-control discount_percentage" name="variant[discount_percentage][`+ id_variant +`][]" placeholder="Percentage">
+                                            <input type="number" class="form-control discount_percentage" name="variant[discount_percentage][`+ id_variant +`][]" placeholder="Percentage" readonly>
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
@@ -4790,10 +4790,10 @@
                                             <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control discount_amount" name="variant_pricing-from`+ newvariant +`[discount_amount][]" placeholder="Amount" placeholder="Percentage"></td>
+                                    <td><input type="number" class="form-control discount_amount" name="variant_pricing-from`+ newvariant +`[discount_amount][]" placeholder="Amount" readonly></td>
                                     <td style="width: 19% !important;">
                                         <div class="col-md-9 input-group">
-                                            <input type="number" class="form-control discount_percentage" name="variant_pricing-from`+ newvariant +`[discount_percentage][]" placeholder="Percentage">
+                                            <input type="number" class="form-control discount_percentage" name="variant_pricing-from`+ newvariant +`[discount_percentage][]" placeholder="Percentage" readonly>
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
@@ -4820,10 +4820,10 @@
                                             <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control discount_amount-variant" placeholder="Amount" placeholder="Percentage"></td>
+                                    <td><input type="number" class="form-control discount_amount-variant" placeholder="Amount" readonly></td>
                                     <td style="width: 19% !important;">
                                         <div class="col-md-9 input-group">
-                                            <input type="number" class="form-control discount_percentage-variant" placeholder="Percentage">
+                                            <input type="number" class="form-control discount_percentage-variant" placeholder="Percentage" readonly>
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
@@ -4849,10 +4849,10 @@
                                             <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control discount_amount" name="discount_amount[]" placeholder="Amount" placeholder="Percentage"></td>
+                                    <td><input type="number" class="form-control discount_amount" name="discount_amount[]" placeholder="Amount" readonly></td>
                                     <td style="width: 19% !important;">
                                         <div class="col-md-9 input-group">
-                                            <input type="number" class="form-control discount_percentage" name="discount_percentage[]" placeholder="Percentage">
+                                            <input type="number" class="form-control discount_percentage" name="discount_percentage[]" placeholder="Percentage" readonly>
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
@@ -4996,10 +4996,18 @@
                 $(this).parent().parent().find('.discount_percentage').prop('readonly', true);
                 $(this).parent().parent().find('.discount_percentage').val('');
             }
+            
             if($(this).val() == "percent"){
                 $(this).parent().parent().find('.discount_amount').prop('readonly', true);
                 $(this).parent().parent().find('.discount_percentage').prop('readonly', false);
                 $(this).parent().parent().find('.discount_amount').val('');
+            }
+
+            if($(this).val() == ''){
+                $(this).parent().parent().find('.discount_amount').prop('readonly', true);
+                $(this).parent().parent().find('.discount_amount').val('');
+                $(this).parent().parent().find('.discount_percentage').prop('readonly', true);
+                $(this).parent().parent().find('.discount_percentage').val('');
             }
         })
 
@@ -5355,8 +5363,8 @@
                                     </div>
                                 </div>
                                 <div class="col-2">
-                                    <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Add another document"></i>
-                                    <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Delete this document"></i>
+                                    <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
+                                    <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
                                 </div>
                             </div>`;
             $('#documents_bloc').append(html_document);
@@ -5419,8 +5427,8 @@
                                                                 </div>
                                                             </div>
                                                             <div class="col-2">
-                                                                <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Add another document"></i>
-                                                                <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" title="Delete this document"></i>
+                                                                <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
+                                                                <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
                                                             </div>
                                                         </div>`;
                                         $('#documents_bloc').append(html_document);
@@ -5506,26 +5514,24 @@
                             cache: false,
                             dataType: 'JSON',
                             success: function(dataResult) {
+                                current.parent().parent().remove();
 
+                                var divId = "#bloc_variants_created";
+
+                                // Get the length of all h3 tags under the specific div
+                                var h3Count = $(divId + " h3").length;
+
+
+                                // Loop through each h3 tag and display its order
+                                $(divId + " h3").each(function(index) {
+                                    var order = h3Count - index; // Number in descending order
+                                    $(this).text("Variant Information  " + order);
+                                });
                             }
                         })
                     }
                 })
             }
-
-            $(this).parent().parent().remove();
-
-            var divId = "#bloc_variants_created";
-
-            // Get the length of all h3 tags under the specific div
-            var h3Count = $(divId + " h3").length;
-
-
-            // Loop through each h3 tag and display its order
-            $(divId + " h3").each(function(index) {
-                var order = h3Count - index; // Number in descending order
-                $(this).text("Variant Information  " + order);
-            });
         })
 
         //Shipping script
@@ -5542,6 +5548,8 @@
                         scrollbarPadding: false,
                         backdrop:false,
                     });
+
+                    $(this).prop('checked', false)
                 }else{
                     $('#bloc_third_party input[type="number"]').each(function() {
                         // Change readonly attribute from true to false
@@ -6509,6 +6517,8 @@
                             scrollbarPadding: false,
                             backdrop:false,
                         });
+
+                        $(this).prop('checked', false)
                 }else{
                     $('#bloc_third_party_sample input[type="number"]').each(function() {
                         // Change readonly attribute from true to false
@@ -6563,7 +6573,7 @@
                     var node = $('#jstree').jstree(true).get_node(selectedId);
 
                     if ((!node.children || node.children.length === 0) && node.state.loaded ==  true) {
-                        $('#message-category').text("Correct choice.");
+                        $('#message-category').text("");
                         $('#message-category').css({'color': 'green', 'margin-right': '7px'});
                         // The node does not have children, proceed with your logic
                         $('#selected_parent_id').val(selectedId); // Update hidden input with selected ID
