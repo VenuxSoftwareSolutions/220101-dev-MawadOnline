@@ -21,7 +21,7 @@
 
 .custom-card{
     border-radius: 30px !important;
-    width: 370px !important;
+    /*width: 370px !important;*/
 }
 
 .card-title{
