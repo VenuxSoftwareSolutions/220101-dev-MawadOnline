@@ -1,10 +1,30 @@
 @extends('auth.layouts.authentication')
 
+<style>
+    #password-strength {
+     margin-top: 10px;
+    /* padding: 10px; */
+    /* border: 1px solid #ddd; */
+     border-radius: 5px;
+    }
+
+#password-strength p {
+    margin: 5px 0;
+}
+
+#password-strength.valid {
+    border-color: #4caf50;
+    background-color: #dff0d8;
+}
+</style>
+
+
 @section('content')
 <script src="https://www.google.com/recaptcha/api.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha3/0.9.3/sha3.min.js"></script>
 
 <script>
+    var $passwordCheckedCondition=false ;
     function onSubmit(token) {
 
         $('.login_btn').hide();
@@ -30,7 +50,14 @@
             $('.login_btn').show();
             $('.loading_btn').hide();
             return; // Stop further execution
-        } else {
+        } else if (!passwordCheckedCondition) {
+        // If passwordCheckedCondition is false, display an error message
+        $('#error_message').text('Please check all conditions.').show();
+        $('.login_btn').show();
+        $('.loading_btn').hide();
+        return; // Stop further execution
+        }
+    else {
             // If all fields are filled and passwords match, hide the error message
             $('#error_message').hide();
         }
@@ -69,6 +96,8 @@
         }
         return hash;
     }
+
+
 </script>
     <!-- aiz-main-wrapper -->
     <div class="aiz-main-wrapper d-flex flex-column justify-content-md-center bg-white">
@@ -155,6 +184,7 @@
                                             <!-- Password -->
                                             <div class="form-group">
                                                 <input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" placeholder="{{ translate('New Password') }}" required>
+                                                <div id="password-strength"></div>
 
                                                 @if ($errors->has('password'))
                                                     <span class="invalid-feedback" role="alert">
@@ -197,4 +227,155 @@
             </div>
         </section>
     </div>
+@endsection
+@section('script')
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        $('#password').on('input', function() {
+
+            $('#password-strength').css('border', '1px solid #ddd');
+            $('#password-strength').css('padding', '10px');
+
+            var password = $(this).val();
+            var strengthMeter = $('#password-strength');
+
+            var patterns = [
+                'abc', 'bcd', 'cde', 'def', 'efg', 'fgh', 'ghi', 'hij', 'ijk', 'jkl',
+                'klm', 'lmn', 'mno', 'nop', 'opq', 'pqr', 'qrs', 'rst', 'stu', 'tuv',
+                'uvw', 'vwx', 'wxy', 'xyz'
+            ];
+
+            var patternRegex = new RegExp(patterns.join('|') + '|' + patterns.map(function(pattern) {
+                return pattern.split('').reverse().join('');
+            }).join('|'), 'i');
+
+            // Function to calculate the percentage of repeated characters in the password
+            function calculateRepeatedCharacterPercentage(password) {
+                var characterCount = {};
+                for (var i = 0; i < password.length; i++) {
+                    var char = password[i];
+                    characterCount[char] = (characterCount[char] || 0) + 1;
+                }
+
+                var repeatedCount = 0;
+                for (var char in characterCount) {
+                    if (characterCount[char] > 1) {
+                        repeatedCount += characterCount[char];
+                    }
+                }
+
+                return (repeatedCount / password.length) * 100;
+            }
+
+            var repeatedCharacterPercentage = calculateRepeatedCharacterPercentage(password);
+
+            // Password strength rules
+            var rules = {
+                "{{ translate('Minimum length of 9 characters') }}": password.length >= 9,
+                "{{ translate('At least one uppercase letter') }}": /[A-Z]/.test(password),
+                "{{ translate('At least one lowercase letter') }}": /[a-z]/.test(password),
+                // "At least one number": /\d/.test(password),
+                "{{ translate('At least one special character') }}": /[@#-+/=$!%*?&]/.test(password),
+                "{{ translate('At least one number and Max Four Numbers') }}": /^\D*(\d\D*){1,4}$/.test(
+                    password),
+                // maxConsecutiveChars: !/(.)\1\1/.test(password),
+                // maxPercentage: calculateMaxPercentage(password),
+                "{{ translate('No spaces allowed') }}": !/\s/.test(password),
+                "{{ translate('No three consecutive numbers, Example 678,543,789,987') }}": !
+                    /(012|123|234|345|456|567|678|789|987|876|765|654|543|432|321|210)/.test(password),
+                // "{{ translate('No three characters or more can be a substring of first name, last name, or email') }}":
+                //     !
+                //     checkSubstring(password),
+                "{{ translate('No three consecutive characters or their reverses in the same case are allowed, Example efg,ZYX,LMN,cba') }}":
+                    !patternRegex.test(password),
+                "{{ translate('No more than 40% of repeated characters') }}": repeatedCharacterPercentage <=
+                    40,
+                "{{ translate('No substring of the password can be a common English dictionary word') }}": !containsDictionaryWord(password, dictionaryWords),
+
+
+            };
+
+            // Display password strength rules
+            var strengthText = '';
+            for (var rule in rules) {
+                if (rules.hasOwnProperty(rule)) {
+                    strengthText += '<p>' + rule + ': ' + (rules[rule] ? '✔' : '✘') + '</p>';
+                }
+            }
+
+            // Update UI
+            strengthMeter.html(strengthText);
+
+            // Check if all rules are satisfied
+            var isPasswordValid = Object.values(rules).every(Boolean);
+
+            // Apply visual feedback
+            if (isPasswordValid) {
+                strengthMeter.addClass('valid');
+                passwordCheckedCondition = true ;
+            } else {
+                strengthMeter.removeClass('valid');
+                passwordCheckedCondition = false ;
+            }
+
+        });
+
+        // No substring of the password can be a common English dictionary word
+
+        let dictionaryWords=[] ;
+
+                $.ajax({
+            url: '{{route("get.words")}}', // Make sure this URL matches your Laravel route
+            method: 'GET',
+            success: function(data) {
+                dictionaryWords = data;
+            },
+            error: function(error) {
+                console.error("Error fetching dictionary words", error);
+            }
+        });
+
+        function containsDictionaryWord(password,dictionaryWords) {
+            for(let word of dictionaryWords) {
+                if(password.toLowerCase().includes(word.toLowerCase())){
+                        return true ;
+                }
+            }
+            return false ;
+        }
+
+        function calculateMaxPercentage(password) {
+            // Calculate the percentage of lowercase, uppercase, numbers, and special characters
+            var lowercasePercentage = (password.replace(/[^a-z]/g, '').length / password.length) * 100;
+            var uppercasePercentage = (password.replace(/[^A-Z]/g, '').length / password.length) * 100;
+            var numberPercentage = (password.replace(/[^0-9]/g, '').length / password.length) * 100;
+            var specialCharPercentage = (password.replace(/[^@$!%*?&]/g, '').length / password.length) * 100;
+
+            // Return the maximum percentage
+            return Math.max(lowercasePercentage, uppercasePercentage, numberPercentage, specialCharPercentage);
+        }
+
+        // function checkSubstring(password) {
+        //     // Check if the password contains a substring of the first name, last name, or email with a length of 3 or more characters
+        //     var firstName = $('#first_name').val().toLowerCase();
+        //     var lastName = $('#last_name').val().toLowerCase();
+        //     var email = $('#email').val().toLowerCase();
+
+        //     // Combine the first name, last name, and email into a single string
+        //     var combinedStrings = firstName + lastName + email;
+
+        //     // Check if any substring of length 3 or more exists in the password
+        //     for (var i = 0; i < combinedStrings.length - 2; i++) {
+        //         var substring = combinedStrings.substring(i, i + 3).toLowerCase();
+        //         if (password.toLowerCase().includes(substring)) {
+        //             return true;
+        //         }
+        //     }
+
+        //     return false;
+        // }
+
+    })
+</script>
 @endsection
