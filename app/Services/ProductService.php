@@ -197,21 +197,24 @@ class ProductService
 
         if((isset($collection['from_shipping'])) &&(isset($collection['to_shipping'])) && (isset($collection['shipper'])) && (isset($collection['estimated_order']))){
             foreach($collection['from_shipping'] as $key => $from_shipping){
-                if(($from_shipping != null) && ($collection['to_shipping'][$key]!= null)&& ($collection['shipper'][$key]!= null)&& ($collection['estimated_order'][$key]!= null)){
-                    $current_data = [];
-                    $shippers = implode(',', $collection['shipper'][$key]);
-                    $current_data['from_shipping'] = $from_shipping;
-                    $current_data['to_shipping'] = $collection['to_shipping'][$key];
-                    $current_data['shipper'] = $shippers;
-                    $current_data['estimated_order'] = $collection['estimated_order'][$key];
-                    $current_data['estimated_shipping'] = $collection['estimated_shipping'][$key];
-                    $current_data['paid'] = $collection['paid'][$key];
-                    $current_data['shipping_charge'] = $collection['shipping_charge'][$key];
-                    $current_data['flat_rate_shipping'] = $collection['flat_rate_shipping'][$key];
-                    $current_data['vat_shipping'] = $vat_user->vat_registered;
-                    $current_data['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'][$key];
 
-                    array_push($shipping, $current_data);
+                if((array_key_exists($key, $collection['from_shipping'])) && (array_key_exists($key, $collection['to_shipping'])) && (array_key_exists($key, $collection['shipper'])) && (array_key_exists($key, $collection['estimated_order']))){
+                    if(($from_shipping != null) && ($collection['to_shipping'][$key]!= null)&& ($collection['shipper'][$key]!= null)&& ($collection['estimated_order'][$key]!= null)){
+                        $current_data = [];
+                        $shippers = implode(',', $collection['shipper'][$key]);
+                        $current_data['from_shipping'] = $from_shipping;
+                        $current_data['to_shipping'] = $collection['to_shipping'][$key];
+                        $current_data['shipper'] = $shippers;
+                        $current_data['estimated_order'] = $collection['estimated_order'][$key];
+                        $current_data['estimated_shipping'] = $collection['estimated_shipping'][$key];
+                        $current_data['paid'] = $collection['paid'][$key];
+                        $current_data['shipping_charge'] = $collection['shipping_charge'][$key];
+                        $current_data['flat_rate_shipping'] = $collection['flat_rate_shipping'][$key];
+                        $current_data['vat_shipping'] = $vat_user->vat_registered;
+                        $current_data['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'][$key];
+
+                        array_push($shipping, $current_data);
+                    }
                 }
 
             }
@@ -1025,10 +1028,14 @@ class ProductService
                         foreach($variant['shipping_details']['from'] as $key => $from){
                             if(($from != null) && ($variant['shipping_details']['to'][$key]!= null)&& ($variant['shipping_details']['shipper'][$key]!= null)&& ($variant['shipping_details']['estimated_order'][$key]!= null)){
                                 $current_shipping = [];
-                                $shippers = implode(',', $variant['shipping_details']['shipper'][$key]);
+                                if (is_array($variant['shipping_details']['shipper'][$key])) {
+                                        $shippers = implode(',', $variant['shipping_details']['shipper'][$key]);
+                                        $current_shipping['shipper'] = $shippers;
+                                        }else{
+                                            $current_shipping['shipper'] = $variant['shipping_details']['shipper'][$key];
+                                        }
                                 $current_shipping['from_shipping'] = $from;
                                 $current_shipping['to_shipping'] = $variant['shipping_details']['to'][$key];
-                                $current_shipping['shipper'] = $shippers;
                                 $current_shipping['estimated_order'] = $variant['shipping_details']['estimated_order'][$key];
                                 $current_shipping['estimated_shipping'] = $variant['shipping_details']['estimated_shipping'][$key];
                                 $current_shipping['paid'] = $variant['shipping_details']['paid'][$key];
@@ -1191,23 +1198,26 @@ class ProductService
         $shipping = [];
         if((isset($collection['from_shipping'])) &&(isset($collection['to_shipping'])) && (isset($collection['shipper'])) && (isset($collection['estimated_order']))){
             foreach($collection['from_shipping'] as $key => $from_shipping){
-                if(($from_shipping != null) && ($collection['to_shipping'][$key]!= null)&& ($collection['shipper'][$key]!= null)&& ($collection['estimated_order'][$key]!= null)){
-                    $current_data = [];
-                    $shippers = implode(',', $collection['shipper'][$key]);
-                    $current_data['from_shipping'] = $from_shipping;
-                    $current_data['to_shipping'] = $collection['to_shipping'][$key];
-                    $current_data['shipper'] = $shippers;
-                    $current_data['estimated_order'] = $collection['estimated_order'][$key];
-                    $current_data['estimated_shipping'] = $collection['estimated_shipping'][$key];
-                    $current_data['paid'] = $collection['paid'][$key];
-                    $current_data['shipping_charge'] = $collection['shipping_charge'][$key];
-                    $current_data['flat_rate_shipping'] = $collection['flat_rate_shipping'][$key];
-                    $current_data['vat_shipping'] = $vat_user->vat_registered;
-                    $current_data['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'][$key];
 
+                if((array_key_exists($key, $collection['from_shipping'])) && (array_key_exists($key, $collection['to_shipping'])) && (array_key_exists($key, $collection['shipper'])) && (array_key_exists($key, $collection['estimated_order']))){
+                    if(($from_shipping != null) && ($collection['to_shipping'][$key]!= null)&& ($collection['shipper'][$key]!= null)&& ($collection['estimated_order'][$key]!= null)){
+                        $current_data = [];
+                        $shippers = implode(',', $collection['shipper'][$key]);
+                        $current_data['from_shipping'] = $from_shipping;
+                        $current_data['to_shipping'] = $collection['to_shipping'][$key];
+                        $current_data['shipper'] = $shippers;
+                        $current_data['estimated_order'] = $collection['estimated_order'][$key];
+                        $current_data['estimated_shipping'] = $collection['estimated_shipping'][$key];
+                        $current_data['paid'] = $collection['paid'][$key];
+                        $current_data['shipping_charge'] = $collection['shipping_charge'][$key];
+                        $current_data['flat_rate_shipping'] = $collection['flat_rate_shipping'][$key];
+                        $current_data['vat_shipping'] = $vat_user->vat_registered;
+                        $current_data['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'][$key];
 
-                    array_push($shipping, $current_data);
+                        array_push($shipping, $current_data);
+                    }
                 }
+
 
             }
         }
@@ -2313,11 +2323,15 @@ class ProductService
                                     if(($from != null) && ($variant['shipping_details']['to_shipping'][$key]!= null)&& ($variant['shipping_details']['shipper'][$key]!= null)&& ($variant['shipping_details']['estimated_order'][$key]!= null)){
                                         $current_shipping = [];
 
+                                        if (is_array($variant['shipping_details']['shipper'][$key])) {
                                         $shippers = implode(',', $variant['shipping_details']['shipper'][$key]);
+                                        $current_shipping['shipper'] = $shippers;
+                                        }else{
+                                            $current_shipping['shipper'] = $variant['shipping_details']['shipper'][$key];
+                                        }
 
                                         $current_shipping['from_shipping'] = $from;
                                         $current_shipping['to_shipping'] = $variant['shipping_details']['to_shipping'][$key];
-                                        $current_shipping['shipper'] = $shippers;
                                         $current_shipping['estimated_order'] = $variant['shipping_details']['estimated_order'][$key];
                                         $current_shipping['estimated_shipping'] = $variant['shipping_details']['estimated_shipping'][$key];
                                         $current_shipping['paid'] = $variant['shipping_details']['paid'][$key];
@@ -2727,10 +2741,14 @@ class ProductService
                         foreach($variant['shipping_details']['from'] as $key => $from){
                             if(($from != null) && ($variant['shipping_details']['to'][$key]!= null)&& ($variant['shipping_details']['shipper'][$key]!= null)&& ($variant['shipping_details']['estimated_order'][$key]!= null)){
                                 $current_shipping = [];
-                                $shippers = implode(',', $variant['shipping_details']['shipper'][$key]);
+                                if (is_array($variant['shipping_details']['shipper'][$key])) {
+                                        $shippers = implode(',', $variant['shipping_details']['shipper'][$key]);
+                                        $current_shipping['shipper'] = $shippers;
+                                        }else{
+                                            $current_shipping['shipper'] = $variant['shipping_details']['shipper'][$key];
+                                        }
                                 $current_shipping['from_shipping'] = $from;
                                 $current_shipping['to_shipping'] = $variant['shipping_details']['to'][$key];
-                                $current_shipping['shipper'] = $shippers;
                                 $current_shipping['estimated_order'] = $variant['shipping_details']['estimated_order'][$key];
                                 $current_shipping['estimated_shipping'] = $variant['shipping_details']['estimated_shipping'][$key];
                                 $current_shipping['paid'] = $variant['shipping_details']['paid'][$key];
@@ -2924,22 +2942,24 @@ class ProductService
         $shipping = [];
         if((isset($collection['from_shipping'])) &&(isset($collection['to_shipping'])) && (isset($collection['shipper'])) && (isset($collection['estimated_order']))){
             foreach($collection['from_shipping'] as $key => $from_shipping){
-                if(($from_shipping != null) && ($collection['to_shipping'][$key]!= null)&& ($collection['shipper'][$key]!= null)&& ($collection['estimated_order'][$key]!= null)){
-                    $current_data = [];
-                    $shippers = implode(',', $collection['shipper'][$key]);
-                    $current_data['from_shipping'] = $from_shipping;
-                    $current_data['to_shipping'] = $collection['to_shipping'][$key];
-                    $current_data['shipper'] = $shippers;
-                    $current_data['estimated_order'] = $collection['estimated_order'][$key];
-                    $current_data['estimated_shipping'] = $collection['estimated_shipping'][$key];
-                    $current_data['paid'] = $collection['paid'][$key];
-                    $current_data['shipping_charge'] = $collection['shipping_charge'][$key];
-                    $current_data['flat_rate_shipping'] = $collection['flat_rate_shipping'][$key];
-                    $current_data['vat_shipping'] = $vat_user->vat_registered;
-                    $current_data['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'][$key];
 
+                if((array_key_exists($key, $collection['from_shipping'])) && (array_key_exists($key, $collection['to_shipping'])) && (array_key_exists($key, $collection['shipper'])) && (array_key_exists($key, $collection['estimated_order']))){
+                    if(($from_shipping != null) && ($collection['to_shipping'][$key]!= null)&& ($collection['shipper'][$key]!= null)&& ($collection['estimated_order'][$key]!= null)){
+                        $current_data = [];
+                        $shippers = implode(',', $collection['shipper'][$key]);
+                        $current_data['from_shipping'] = $from_shipping;
+                        $current_data['to_shipping'] = $collection['to_shipping'][$key];
+                        $current_data['shipper'] = $shippers;
+                        $current_data['estimated_order'] = $collection['estimated_order'][$key];
+                        $current_data['estimated_shipping'] = $collection['estimated_shipping'][$key];
+                        $current_data['paid'] = $collection['paid'][$key];
+                        $current_data['shipping_charge'] = $collection['shipping_charge'][$key];
+                        $current_data['flat_rate_shipping'] = $collection['flat_rate_shipping'][$key];
+                        $current_data['vat_shipping'] = $vat_user->vat_registered;
+                        $current_data['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'][$key];
 
-                    array_push($shipping, $current_data);
+                        array_push($shipping, $current_data);
+                    }
                 }
 
             }
@@ -3950,10 +3970,14 @@ class ProductService
                                 foreach($variant['shipping_details']['from_shipping'] as $key => $from){
                                     if(($from != null) && ($variant['shipping_details']['to_shipping'][$key]!= null)&& ($variant['shipping_details']['shipper'][$key]!= null)&& ($variant['shipping_details']['estimated_order'][$key]!= null)){
                                         $current_shipping = [];
+                                        if (is_array($variant['shipping_details']['shipper'][$key])) {
                                         $shippers = implode(',', $variant['shipping_details']['shipper'][$key]);
+                                        $current_shipping['shipper'] = $shippers;
+                                        }else{
+                                            $current_shipping['shipper'] = $variant['shipping_details']['shipper'][$key];
+                                        }
                                         $current_shipping['from_shipping'] = $from;
                                         $current_shipping['to_shipping'] = $variant['shipping_details']['to_shipping'][$key];
-                                        $current_shipping['shipper'] = $shippers;
                                         $current_shipping['estimated_order'] = $variant['shipping_details']['estimated_order'][$key];
                                         $current_shipping['estimated_shipping'] = $variant['shipping_details']['estimated_shipping'][$key];
                                         $current_shipping['paid'] = $variant['shipping_details']['paid'][$key];
@@ -4259,10 +4283,14 @@ class ProductService
                         foreach($variant['shipping_details']['from'] as $key => $from){
                             if(($from != null) && ($variant['shipping_details']['to'][$key]!= null)&& ($variant['shipping_details']['shipper'][$key]!= null)&& ($variant['shipping_details']['estimated_order'][$key]!= null)){
                                 $current_shipping = [];
-                                $shippers = implode(',', $variant['shipping_details']['shipper'][$key]);
+                                if (is_array($variant['shipping_details']['shipper'][$key])) {
+                                        $shippers = implode(',', $variant['shipping_details']['shipper'][$key]);
+                                        $current_shipping['shipper'] = $shippers;
+                                        }else{
+                                            $current_shipping['shipper'] = $variant['shipping_details']['shipper'][$key];
+                                        }
                                 $current_shipping['from_shipping'] = $from;
                                 $current_shipping['to_shipping'] = $variant['shipping_details']['to'][$key];
-                                $current_shipping['shipper'] = $shippers;
                                 $current_shipping['estimated_order'] = $variant['shipping_details']['estimated_order'][$key];
                                 $current_shipping['estimated_shipping'] = $variant['shipping_details']['estimated_shipping'][$key];
                                 $current_shipping['paid'] = $variant['shipping_details']['paid'][$key];
