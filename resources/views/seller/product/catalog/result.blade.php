@@ -3,7 +3,13 @@
         @foreach($catalogs as $catalog)
             <div class="col-3">
                 <div class="card" style="width: 18rem; height: 400px">
-                    <img class="card-img-top p-2" src="{{ asset('/public'.$catalog->getFirstImage()) }}" style="height: 200px;">
+                    <div class="card-header py-2">
+                        <div class="d-flex justify-content-center">
+                            <div class="p-2" style="background: #dddddd;">
+                                <img class="card-img-top p-2" src="{{ asset('/public'.$catalog->getFirstImage()) }}" style="height: 200px;">
+                            </div>
+                        </div>
+                    </div>
                     <div class="card-body">
                         <h5 class="card-title">{{ $catalog->sku }}</h5>
                         <p class="card-text">Number of variants: {{ $catalog->checkIfParentToGetNumVariants() }}.</p>

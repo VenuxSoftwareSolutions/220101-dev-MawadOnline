@@ -147,6 +147,8 @@
         var search = $(this).val();
         $.get("{{ route('catalog.search.new_action') }}",{name:search}, function(data){
             $('#search-result').empty().html(data);
+            handleImageErrors();
+
         })
     });
 
@@ -167,6 +169,16 @@
 
         });
     });
+
+    function handleImageErrors() {
+        jQuery("img").one('error', function () {
+            jQuery(this).attr("src", "{{asset('public/images/placeholder.png')}}");
+        }).each(function () {
+            if (this.complete && !this.naturalHeight && !this.naturalWidth) {
+                $(this).triggerHandler('error');
+            }
+        });
+    }
 </script>
 
 
