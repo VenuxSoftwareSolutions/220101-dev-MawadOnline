@@ -4,12 +4,12 @@
         display: flex;
         justify-content: center;
         align-items: center;
-    } 
+    }
 
     .row_center {
         justify-content: center;
         align-items: center;
-    } 
+    }
 
     small{
         font-size: 110% !important;
@@ -52,7 +52,7 @@
                         @foreach($products as $product)
                             <div class="col-3">
                                 <div class="card" style="width: 18rem;">
-                                    <img class="card-img-top" src="{{ asset('/public'.$product->getFirstImage()) }}">
+                                    <img class="card-img-top p-2" src="{{ asset('/public'.$product->getFirstImage()) }}">
                                     <div class="card-body">
                                     <h5 class="card-title">{{ $product->sku }}</h5>
                                     <p class="card-text">Number of variants: {{ $product->checkIfParentToGetNumVariants() }}.</p>
@@ -66,7 +66,7 @@
                         @foreach($catalogs as $catalog)
                             <div class="col-3">
                                 <div class="card" style="width: 18rem;">
-                                    <img class="card-img-top" src="{{ asset('/public'.$catalog->getFirstImage()) }}">
+                                    <img class="card-img-top p-2" src="{{ asset('/public'.$catalog->getFirstImage()) }}">
                                     <div class="card-body">
                                     <h5 class="card-title">{{ $catalog->sku }}</h5>
                                     <p class="card-text">Number of variants: {{ $catalog->checkIfParentToGetNumVariants() }}.</p>
@@ -84,5 +84,5 @@
 @endsection
 
 @section('script')
-  
+
 @endsection
