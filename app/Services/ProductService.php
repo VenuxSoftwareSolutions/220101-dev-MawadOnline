@@ -28,7 +28,7 @@ class ProductService
     public function store(array $data)
     {
         $collection = collect($data);
-        //dd($collection);
+
         $vat_user = BusinessInformation::where('user_id', Auth::user()->id)->first();
 
         $approved = 1;
@@ -197,7 +197,7 @@ class ProductService
             unset($collection['discount_type']);
             unset($collection['discount_percentage']);
         }
-        //dd($collection);
+
         $shipping = [];
 
         if((isset($collection['from_shipping'])) &&(isset($collection['to_shipping'])) && (isset($collection['shipper'])) && (isset($collection['estimated_order']))){
@@ -489,7 +489,7 @@ class ProductService
             'vat'
         ))->toArray();
 
-        //dd($variants_data);
+
 
         $ids_attributes_color = Attribute::where('type_value', 'color')->pluck('id')->toArray();
         $ids_attributes_list = Attribute::where('type_value', 'list')->pluck('id')->toArray();
@@ -814,7 +814,7 @@ class ProductService
                     $randomString = Str::random(5);
                     $data['slug'] =  $data['slug'] . '-' . $randomString;
 
-                    //dd($data);
+
                     $product = Product::create($data);
 
                     //attributes of variant
@@ -1263,12 +1263,12 @@ class ProductService
             $shipping_sample_parent['shipping_amount'] = NULL;
         }
 
-        //dd($collection);
+
         $variants_data = [];
         $variants_new_data = [];
         $general_attributes_data = [];
         $unit_general_attributes_data = [];
-        //dd($data);
+
         //check if product has old variants
         if (array_key_exists('variant', $data)) {
             foreach($collection['variant']['sku'] as $key => $sku){
@@ -1708,10 +1708,7 @@ class ProductService
             }
         }
 
-        // dump($shipping);
-        // dump($variants_data);
-        // dd($data);
-        // dd($variants_new_data);
+
 
         if(isset($collection['product_sk'])){
             $collection['sku'] = $collection['product_sk'];
@@ -2039,7 +2036,7 @@ class ProductService
             unset($collection['sample_description']);
             unset($collection['sample_price']);
 
-            //dd($variants_data);
+
             if(count($variants_data) > 0){
                 foreach ($variants_data as $id => $variant){
 
@@ -3013,7 +3010,7 @@ class ProductService
             $shipping_sample_parent['shipping_amount'] = NULL;
         }
 
-        //dd($collection);
+
         $variants_data = [];
         $variants_new_data = [];
         $general_attributes_data = [];
@@ -4322,7 +4319,7 @@ class ProductService
                                 array_push($shipping_details, $current_shipping);
                             }
                         }
-                        dd($shipping_details);
+
                         if(count($shipping_details) > 0){
                             Shipping::insert($shipping_details);
                         }
