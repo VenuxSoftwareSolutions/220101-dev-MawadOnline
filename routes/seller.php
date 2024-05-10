@@ -202,7 +202,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
         Route::get('/staffs/destroy/{id}', [SellerStaffController::class, 'destroy'])->name('staffs.destroy');
         Route::get('/check-role', [SellerStaffController::class, 'checkRole'])->name('check.role');
     });
-    Route::post('vendors/{id}/approve', [SellerController::class,'approve'])->name('staff.approve');
+    Route::post('vendors/{id}/approve', [SellerController::class,'approveStaff'])->name('staff.approve');
 
 
 
