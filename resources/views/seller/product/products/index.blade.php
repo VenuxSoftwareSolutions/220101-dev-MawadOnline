@@ -11,6 +11,32 @@
 .pagination .page-link:hover{
     background-color: #8f97ab !important;
 }
+
+.pagination-showin{
+    Weight:400;
+    size: 16px;
+    line-height: 24px;
+    color: #808080;
+}
+
+thead tr{
+    height: 53px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+/* thead th{
+    padding: 0 !important;
+    margin: 0 !important; 
+} */
+
+.aiz-table th {
+    padding: 0 !important;
+    vertical-align: middle !important;
+}
+
+.remove-top-padding {
+    padding-top: 0 !important;
+}
 </style>
 
 <div class="aiz-titlebar mt-2 mb-4">
@@ -112,7 +138,7 @@
                 <table id="step2" class="table aiz-table mb-0">
                     <thead>
                         <tr style="background-color: #f8f8f8;">
-                            <th>
+                            <th style="padding-left: 12px !important;">
                                 <div class="form-group">
                                     <div class="aiz-checkbox-inline">
                                         <label class="aiz-checkbox">
@@ -122,14 +148,14 @@
                                     </div>
                                 </div>
                             </th>
-                            <th width="30%">{{ translate('Name')}}</th>
+                            <th width="30%" style="padding-left: 12px !important;">{{ translate('Name')}}</th>
                             {{-- <th data-breakpoints="md">{{ translate('Category')}}</th> --}}
-                            <th data-breakpoints="md">{{ translate('Qty')}}</th>
+                            <th data-breakpoints="md">{{ translate('QTY')}}</th>
                             <th>{{ translate('Base Price')}}</th>
                             <th data-breakpoints="md">{{ translate('Status')}}</th>
                             <th data-breakpoints="md">{{ translate('Draft')}}</th>
                             <th data-breakpoints="md">{{ translate('Published')}}</th>
-                            <th data-breakpoints="md" class="text-right">{{ translate('Actions')}}</th>
+                            <th data-breakpoints="md" style="text-align: center;">{{ translate('Actions')}}</th>
                         </tr>
                     </thead>
 
@@ -203,7 +229,7 @@
                                         </label>
                                     @endif
                                 </td>
-                                <td class="text-right">
+                                <td class="text-right remove-top-padding">
                                     @if(($product->approved != 4) && ($product->approved != 3))
                                         <a class="btn btn-sm" href="{{route('seller.products.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')])}}" title="{{ translate('Edit') }}">
                                             <img src="{{asset('public/Edit.svg')}}">
@@ -279,7 +305,7 @@
                                                 <span class=""></span>
                                             </label>
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-right remove-top-padding">
                                             {{-- <a class="btn btn-soft-info btn-icon btn-circle btn-sm" href="{{route('seller.products.edit', ['id'=>$children->id, 'lang'=>env('DEFAULT_LANGUAGE')])}}" title="{{ translate('Edit') }}">
                                                 <i class="las la-edit"></i>
                                             </a>
@@ -298,8 +324,15 @@
                         @endforeach
                     </tbody>
                 </table>
-                <div class="pagination-container text-right"  style="float: right;"> <!-- Add text-right class to align to the right -->
-                {{ $products->links('custom-pagination') }}
+                <div class="row">
+                    <div class="col-6" style="padding-top: 11px; !important">
+                        <p class="pagination-showin">Showing {{ $products->firstItem() }} - {{ $products->lastItem() }} of {{ $products->total() }}</p>
+                    </div>
+                    <div class="col-6">
+                        <div class="pagination-container text-right"  style="float: right;">
+                            {{ $products->links('custom-pagination') }}
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>
