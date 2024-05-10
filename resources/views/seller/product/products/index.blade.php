@@ -124,12 +124,12 @@
                             </th>
                             <th width="30%">{{ translate('Name')}}</th>
                             {{-- <th data-breakpoints="md">{{ translate('Category')}}</th> --}}
-                            <th data-breakpoints="md">{{ translate('Current Qty')}}</th>
+                            <th data-breakpoints="md">{{ translate('Qty')}}</th>
                             <th>{{ translate('Base Price')}}</th>
                             <th data-breakpoints="md">{{ translate('Status')}}</th>
                             <th data-breakpoints="md">{{ translate('Draft')}}</th>
                             <th data-breakpoints="md">{{ translate('Published')}}</th>
-                            <th data-breakpoints="md" class="text-right">{{ translate('Options')}}</th>
+                            <th data-breakpoints="md" class="text-right">{{ translate('Actions')}}</th>
                         </tr>
                     </thead>
 
@@ -173,7 +173,7 @@
                                                 @break
 
                                                 @case(1)
-                                                <span class="badge badge-success width-badge width-badge">{{ translate('Approved')}}</span>
+                                                <span class="badge badge-success width-badge width-badge" style="background-color: #35C658 !important;">{{ translate('Approved')}}</span>
                                                     @break
                                                 @case(4)
                                                     <span class="badge badge-info width-badge width-badge">{{ translate('Under Review')}}</span>
@@ -190,9 +190,9 @@
                                 </td>
                                 <td>
                                     @if ($product->is_draft == 1)
-                                        <span class="badge badge-inline badge-info">{{ translate('Yes')}}</span>
+                                        <span>{{ translate('Yes')}}</span>
                                     @else
-                                        <span class="badge badge-inline badge-success">{{ translate('No')}}</span>
+                                        <span>{{ translate('No')}}</span>
                                     @endif
                                 </td>
                                 <td>
