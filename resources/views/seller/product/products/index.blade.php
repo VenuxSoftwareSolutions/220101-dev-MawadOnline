@@ -205,15 +205,15 @@
                                 </td>
                                 <td class="text-right">
                                     @if(($product->approved != 4) && ($product->approved != 3))
-                                        <a class="btn btn-soft-info btn-icon btn-circle btn-sm" href="{{route('seller.products.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')])}}" title="{{ translate('Edit') }}">
-                                            <i class="las la-edit"></i>
+                                        <a class="btn btn-sm" href="{{route('seller.products.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')])}}" title="{{ translate('Edit') }}">
+                                            <img src="{{asset('public/Edit.svg')}}">
                                         </a>
                                         {{-- <a href="{{route('seller.products.duplicate', $product->id)}}" class="btn btn-soft-success btn-icon btn-circle btn-sm"  title="{{ translate('Duplicate') }}">
                                             <i class="las la-copy"></i>
                                         </a> --}}
 
-                                        <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('seller.products.destroy', $product->id)}}" title="{{ translate('Delete') }}">
-                                            <i class="las la-trash"></i>
+                                        <a href="#" class="btn btn-sm confirm-delete" data-href="{{route('seller.products.destroy', $product->id)}}" title="{{ translate('Delete') }}">
+                                            <img src="{{asset('public/trash.svg')}}">
                                         </a>
                                     @endif
                                 </td>
@@ -268,9 +268,9 @@
                                         </td>
                                         <td>
                                             @if ($children->is_draft == 1)
-                                                <span class="badge badge-inline badge-info">{{ translate('Yes')}}</span>
+                                                <span>{{ translate('Yes')}}</span>
                                             @else
-                                                <span class="badge badge-inline badge-success">{{ translate('No')}}</span>
+                                                <span>{{ translate('No')}}</span>
                                             @endif
                                         </td>
                                         <td>
@@ -287,8 +287,8 @@
                                                 <i class="las la-copy"></i>
                                             </a> --}}
                                             @if($product->approved != 4)
-                                                <a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('seller.products.destroy', $children->id)}}" title="{{ translate('Delete') }}">
-                                                    <i class="las la-trash"></i>
+                                                <a href="#" class="btn btn-sm confirm-delete" data-href="{{route('seller.products.destroy', $children->id)}}" title="{{ translate('Delete') }}">
+                                                    <img src="{{asset('public/trash.svg')}}">
                                                 </a>
                                             @endif
                                         </td>
