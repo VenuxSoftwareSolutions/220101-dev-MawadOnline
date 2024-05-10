@@ -290,7 +290,7 @@ class ProductController extends Controller
                     foreach ($attributes as $key=>$attribute){
                         $html .= "<option  value='".$attribute->id."'>". $attribute->getTranslation('name') ."</option>";
                         $html_attributes_generale .= '<div class="row attribute-variant-'. $attribute->id .' mb-3">
-                        <label class="col-md-2 col-from-label">'.translate($attribute->getTranslation('name')).'</label>';
+                        <label class="col-md-2 col-from-label">'.$attribute->getTranslation('name').'</label>';
 
                         switch ($attribute->type_value) {
                             case "text":
