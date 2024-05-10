@@ -1314,35 +1314,38 @@ class ProductService
                         $variants_data[$key]['shipping_details'] = $shipping_variant;
                     }else{
                         $shipping_parent = [];
-                        if($collection['from_shipping'][0] && ($collection['to_shipping'][0]!= null)&& ($collection['shipper'][0]!= null)&& ($collection['estimated_order'][0]!= null)){
-                            $shipping_parent['from_shipping'] = $collection['from_shipping'];
-                            $shipping_parent['to_shipping'] = $collection['to_shipping'];
-                            $shipping_parent['shipper'] = $collection['shipper'];
-                            $shipping_parent['estimated_order'] = $collection['estimated_order'];
-                            $shipping_parent['estimated_shipping'] = $collection['estimated_shipping'];
-                            $shipping_parent['paid'] = $collection['paid'];
-                            $shipping_parent['shipping_charge'] = $collection['shipping_charge'];
-                            $shipping_parent['flat_rate_shipping'] = $collection['flat_rate_shipping'];
-                            $shipping_parent['vat_shipping'] = $vat_user->vat_registered;
-                            $shipping_parent['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'];
+                        if((isset($collection['from_shipping'])) &&(isset($collection['to_shipping'])) && (isset($collection['shipper'])) && (isset($collection['estimated_order']))){
+                            if($collection['from_shipping'][0] && ($collection['to_shipping'][0]!= null)&& ($collection['shipper'][0]!= null)&& ($collection['estimated_order'][0]!= null)){
+                                $shipping_parent['from_shipping'] = $collection['from_shipping'];
+                                $shipping_parent['to_shipping'] = $collection['to_shipping'];
+                                $shipping_parent['shipper'] = $collection['shipper'];
+                                $shipping_parent['estimated_order'] = $collection['estimated_order'];
+                                $shipping_parent['estimated_shipping'] = $collection['estimated_shipping'];
+                                $shipping_parent['paid'] = $collection['paid'];
+                                $shipping_parent['shipping_charge'] = $collection['shipping_charge'];
+                                $shipping_parent['flat_rate_shipping'] = $collection['flat_rate_shipping'];
+                                $shipping_parent['vat_shipping'] = $vat_user->vat_registered;
+                                $shipping_parent['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'];
+                            }
                         }
                         $variants_data[$key]['shipping_details'] = $shipping_parent;
                     }
                 }else{
                     $shipping_parent = [];
-                        if($collection['from_shipping'][0] && ($collection['to_shipping'][0]!= null)&& ($collection['shipper'][0]!= null)&& ($collection['estimated_order'][0]!= null)){
-                            $shipping_parent['from_shipping'] = $collection['from_shipping'];
-                            $shipping_parent['to_shipping'] = $collection['to_shipping'];
-                            $shipping_parent['shipper'] = $collection['shipper'];
-                            $shipping_parent['estimated_order'] = $collection['estimated_order'];
-                            $shipping_parent['estimated_shipping'] = $collection['estimated_shipping'];
-                            $shipping_parent['paid'] = $collection['paid'];
-                            $shipping_parent['shipping_charge'] = $collection['shipping_charge'];
-                            $shipping_parent['flat_rate_shipping'] = $collection['flat_rate_shipping'];
-                            $shipping_parent['vat_shipping'] = $vat_user->vat_registered;
-                            $shipping_parent['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'];
-                        }
-
+                    if((isset($collection['from_shipping'])) &&(isset($collection['to_shipping'])) && (isset($collection['shipper'])) && (isset($collection['estimated_order']))){
+                            if($collection['from_shipping'][0] && ($collection['to_shipping'][0]!= null)&& ($collection['shipper'][0]!= null)&& ($collection['estimated_order'][0]!= null)){
+                                $shipping_parent['from_shipping'] = $collection['from_shipping'];
+                                $shipping_parent['to_shipping'] = $collection['to_shipping'];
+                                $shipping_parent['shipper'] = $collection['shipper'];
+                                $shipping_parent['estimated_order'] = $collection['estimated_order'];
+                                $shipping_parent['estimated_shipping'] = $collection['estimated_shipping'];
+                                $shipping_parent['paid'] = $collection['paid'];
+                                $shipping_parent['shipping_charge'] = $collection['shipping_charge'];
+                                $shipping_parent['flat_rate_shipping'] = $collection['flat_rate_shipping'];
+                                $shipping_parent['vat_shipping'] = $vat_user->vat_registered;
+                                $shipping_parent['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'];
+                            }
+                    }
                     $variants_data[$key]['shipping_details'] = $shipping_parent;
                 }
 
@@ -3057,35 +3060,38 @@ class ProductService
                         $variants_data[$key]['shipping_details'] = $shipping_variant;
                     }else{
                         $shipping_parent = [];
-                        if($collection['from_shipping'][0] && ($collection['to_shipping'][0]!= null)&& ($collection['shipper'][0]!= null)&& ($collection['estimated_order'][0]!= null)){
-                            $shipping_parent['from_shipping'] = $collection['from_shipping'];
-                            $shipping_parent['to_shipping'] = $collection['to_shipping'];
-                            $shipping_parent['shipper'] = $collection['shipper'];
-                            $shipping_parent['estimated_order'] = $collection['estimated_order'];
-                            $shipping_parent['estimated_shipping'] = $collection['estimated_shipping'];
-                            $shipping_parent['paid'] = $collection['paid'];
-                            $shipping_parent['shipping_charge'] = $collection['shipping_charge'];
-                            $shipping_parent['flat_rate_shipping'] = $collection['flat_rate_shipping'];
-                            $shipping_parent['vat_shipping'] = $vat_user->vat_registered;
-                            $shipping_parent['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'];
+                        if((isset($collection['from_shipping'])) &&(isset($collection['to_shipping'])) && (isset($collection['shipper'])) && (isset($collection['estimated_order']))){
+                            if($collection['from_shipping'][0] && ($collection['to_shipping'][0]!= null)&& ($collection['shipper'][0]!= null)&& ($collection['estimated_order'][0]!= null)){
+                                $shipping_parent['from_shipping'] = $collection['from_shipping'];
+                                $shipping_parent['to_shipping'] = $collection['to_shipping'];
+                                $shipping_parent['shipper'] = $collection['shipper'];
+                                $shipping_parent['estimated_order'] = $collection['estimated_order'];
+                                $shipping_parent['estimated_shipping'] = $collection['estimated_shipping'];
+                                $shipping_parent['paid'] = $collection['paid'];
+                                $shipping_parent['shipping_charge'] = $collection['shipping_charge'];
+                                $shipping_parent['flat_rate_shipping'] = $collection['flat_rate_shipping'];
+                                $shipping_parent['vat_shipping'] = $vat_user->vat_registered;
+                                $shipping_parent['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'];
+                            }
                         }
                         $variants_data[$key]['shipping_details'] = $shipping_parent;
                     }
                 }else{
                     $shipping_parent = [];
-                        if($collection['from_shipping'][0] && ($collection['to_shipping'][0]!= null)&& ($collection['shipper'][0]!= null)&& ($collection['estimated_order'][0]!= null)){
-                            $shipping_parent['from_shipping'] = $collection['from_shipping'];
-                            $shipping_parent['to_shipping'] = $collection['to_shipping'];
-                            $shipping_parent['shipper'] = $collection['shipper'];
-                            $shipping_parent['estimated_order'] = $collection['estimated_order'];
-                            $shipping_parent['estimated_shipping'] = $collection['estimated_shipping'];
-                            $shipping_parent['paid'] = $collection['paid'];
-                            $shipping_parent['shipping_charge'] = $collection['shipping_charge'];
-                            $shipping_parent['flat_rate_shipping'] = $collection['flat_rate_shipping'];
-                            $shipping_parent['vat_shipping'] = $vat_user->vat_registered;
-                            $shipping_parent['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'];
-                        }
-
+                    if((isset($collection['from_shipping'])) &&(isset($collection['to_shipping'])) && (isset($collection['shipper'])) && (isset($collection['estimated_order']))){
+                            if($collection['from_shipping'][0] && ($collection['to_shipping'][0]!= null)&& ($collection['shipper'][0]!= null)&& ($collection['estimated_order'][0]!= null)){
+                                $shipping_parent['from_shipping'] = $collection['from_shipping'];
+                                $shipping_parent['to_shipping'] = $collection['to_shipping'];
+                                $shipping_parent['shipper'] = $collection['shipper'];
+                                $shipping_parent['estimated_order'] = $collection['estimated_order'];
+                                $shipping_parent['estimated_shipping'] = $collection['estimated_shipping'];
+                                $shipping_parent['paid'] = $collection['paid'];
+                                $shipping_parent['shipping_charge'] = $collection['shipping_charge'];
+                                $shipping_parent['flat_rate_shipping'] = $collection['flat_rate_shipping'];
+                                $shipping_parent['vat_shipping'] = $vat_user->vat_registered;
+                                $shipping_parent['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'];
+                            }
+                    }
                     $variants_data[$key]['shipping_details'] = $shipping_parent;
                 }
 
