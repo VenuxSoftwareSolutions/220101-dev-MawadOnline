@@ -82,6 +82,11 @@ class ProductService
             $collection['activate_third_party'] = 1;
         }
 
+        if(!isset($collection['country_code'])){
+            $collection['country_code'] = '';
+        }
+
+
         if ($collection['meta_title'] == null) {
             $collection['meta_title'] = $collection['name'];
         }
@@ -1133,6 +1138,10 @@ class ProductService
             $collection['published'] = 1;
         }else{
             $collection['published'] = 0;
+        }
+
+        if(!isset($collection['country_code'])){
+            $collection['country_code'] = '';
         }
 
         if(isset($collection['activate_third_party'])){
@@ -2850,6 +2859,10 @@ class ProductService
             $collection['published'] = 1;
         }else{
             $collection['published'] = 0;
+        }
+
+        if(!isset($collection['country_code'])){
+            $collection['country_code'] = '';
         }
 
         if(isset($collection['create_stock'])){

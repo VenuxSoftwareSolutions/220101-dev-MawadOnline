@@ -211,7 +211,7 @@
                                             <label for="country_selector" style="display:none;">Select a country here...</label>
                                         </div>
                                         <div class="form-item" style="display:none;">
-                                            <input type="text" id="country_selector_code" name="country_code" data-countrycodeinput="1" readonly="readonly" placeholder="Selected country code will appear here" />
+                                            <input type="text" id="country_selector_code" name="country_code" data-countrycodeinput="1" readonly="readonly" placeholder="Selected country code will appear here" required />
                                             <label for="country_selector_code">...and the selected country code will be updated here</label>
                                         </div>
                                     </div>
@@ -397,7 +397,7 @@
                                         <input type="number" step="0.01" min="1" class="form-control" name="sample_price">
                                     </div>
                                 </div>
-                                
+
                             </div>
                         </div>
                     </div>
@@ -1957,7 +1957,7 @@
                 $(this).parent().parent().find('.discount_percentage').prop('readonly', true);
                 $(this).parent().parent().find('.discount_percentage').val('');
             }
-            
+
             if($(this).val() == "percent"){
                 $(this).parent().parent().find('.discount_amount').prop('readonly', true);
                 $(this).parent().parent().find('.discount_percentage').prop('readonly', false);
@@ -2387,7 +2387,7 @@
                 $('#bloc_third_party input[type="number"]').val('').prop('readonly', true);
             }
         });
-        
+
         $('body').on('click', '#third_party_activate_sample', function() {
             if ($(this).is(':checked')) {
                 var count_shippers = "{{ count($supported_shippers) }}";
@@ -2613,7 +2613,7 @@
                             }else{
                                 $(this).parent().find('.multi-select-button').text('vendor');
                             }
-                            
+
                             // Uncheck the checkbox
                             checkbox.prop('checked', false);
                             $(this).find("option[value='third_party']").prop('disabled', false);
@@ -2947,7 +2947,7 @@
                         }
                     })
                 });
-                
+
                 clonedDiv.find('.shipper_sample').attr('name', 'variant_shipper_sample-' + id_variant + '[]');
                 clonedDiv.find('.shipper_sample').multiSelect();
                 clonedDiv.find('.multi-select-container').each(function(index, element) {
@@ -3045,7 +3045,7 @@
                             }else{
                                 $(this).parent().find('.multi-select-button').text('vendor');
                             }
-                            
+
                             // Uncheck the checkbox
                             checkbox.prop('checked', false);
                             $(this).find("option[value='third_party']").prop('disabled', false);
@@ -3072,7 +3072,7 @@
                         if(unit == "pounds"){
                             chargeable_weight *= 2.2;
                         }
-                        
+
                         if(chargeable_weight > max ){
                             Swal.fire({
                                 title: 'Cancelled',
@@ -3088,7 +3088,7 @@
                             }else{
                                 $(this).parent().find('.multi-select-button').text('vendor');
                             }
-                            
+
                             // Uncheck the checkbox
                             checkbox.prop('checked', false);
                             $(this).find("option[value='third_party']").prop('disabled', false);
@@ -3097,7 +3097,7 @@
                     }
                 }
             }
-            
+
             if(selected.indexOf('vendor') !== -1){
                 $(this).parent().parent().find('.shipping_amount').prop('disabled', false);
                 $(this).parent().parent().find('.estimated_sample').prop('disabled', false);
@@ -3288,7 +3288,7 @@
                                 }
 
                                 // Update the hidden input field with the value of the clicked button
-                                
+
                                 if(clickedButtonValue === "publish"){
                                     var check = true;
                                     var min_qty = $('#min-qty-parent').val();
@@ -3316,7 +3316,7 @@
                                             check = false;
                                         }
                                     }
-                                    
+
                                     if(check == true){
                                         document.getElementById('choice_form').submit();
                                     }else{
@@ -3338,7 +3338,7 @@
             }else{
                 $('#error-message').show();
             }
-            
+
         });
     });
 </script>

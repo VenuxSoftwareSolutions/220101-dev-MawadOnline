@@ -92,6 +92,7 @@
 
         #general_attributes{
             width: 100%;
+            margin-left: 19px !important;
         }
 
         .font-size-icon{
