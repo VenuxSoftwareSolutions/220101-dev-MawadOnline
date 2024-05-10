@@ -93,7 +93,11 @@ class SellerStaffController extends Controller
                 $user->status ="Enabled";
                 $user->owner_id = $vendor->id;
                 $password = $this->generatePassword(12);
-                $user->password = Hash::make($password);
+
+                $salt_generation = $this->generateSalt($request->email);
+                $hashed_password =$this->hashPass($request->email ,$password , $salt_generation['salt'] ,$salt_generation['num_hashing_rounds']);
+
+                $user->password = Hash::make($hashed_password);
 
                 if ($user->save()) {
                     foreach ($request->role_id as $roleId) {
@@ -165,7 +169,8 @@ class SellerStaffController extends Controller
         return back();
     }
 
-    public function generatePassword($length = 12) {
+    public function generatePassword($length = 12)
+    {
         $uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $lowercase = 'abcdefghijklmnopqrstuvwxyz';
         $numbers = '0123456789';
@@ -190,6 +195,35 @@ class SellerStaffController extends Controller
         $password = str_shuffle($password);
 
         return $password;
+    }
+
+    function hashPass($username, $password, $salt, $rounds) {
+        $hash = $username;
+        for ($i=0; $i < $rounds; $i++) {
+        $hash = $password . $salt . $hash;
+        $hash = hash('sha3-512', $hash);
+        }
+        return $hash;
+    }
+
+    public function generateSalt($email)
+    {
+
+        // Your secret key for HMAC-SHA256 algorithm
+        $secretKey = config('api.SALT_GENERATION_KEY'); // Make sure to set this in your .env file
+
+        $numHashingRounds = config('api.NUMBER_HASHING_ROUNDS');
+
+        // Generate the salt using HMAC-SHA256 algorithm
+        $salt = hash_hmac('sha256', $email, $secretKey);
+
+        // Trim the salt to 32 characters
+        $salt = substr($salt, 0, 32);
+
+        return [
+            'salt' => $salt,
+            'num_hashing_rounds' => $numHashingRounds
+        ];
     }
 
     /**

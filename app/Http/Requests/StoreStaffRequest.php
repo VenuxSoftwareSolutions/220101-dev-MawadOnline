@@ -29,7 +29,7 @@ class StoreStaffRequest extends FormRequest
         return [
             'first_name' => 'required|regex:/^[a-zA-Z]+$/',
             'last_name' => 'required|regex:/^[a-zA-Z]+$/',
-            'email' => 'required|regex:/^[a-zA-Z0-9]+@[a-zA-Z]+\.[a-zA-Z]+$/',
+            'email' => 'required|email',
             'mobile' => 'required|numeric|digits_between:9,14',
         ];
     }
