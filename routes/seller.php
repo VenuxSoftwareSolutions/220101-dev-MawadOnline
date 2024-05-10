@@ -221,16 +221,20 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'seller'
         Route::get('/sales', 'allSales')->name('sales.index');
 
     });
+
+
 });
 
- //Catalog routes
- Route::controller(CatalogController::class)->group(function () {
-    Route::get('/catalog/search_page', 'search')->name('catalog.search_page');
-    Route::get('/catalog/search/new_action', 'new_search_action')->name('catalog.search.new_action');
-    Route::get('/catalog/search/action', 'search_action')->name('catalog.search.action');
-    Route::get('/catalog/search/see_all/{keyword}', 'see_all')->name('catalog.search.see_all');
-    Route::get('/catalog/preview_product/{id}/{is_catalog}', 'displayPreviewProductInCatalogProduct')->name('catalog.preview_product');
-    Route::post('/catalog/add_product', 'add_product')->name('catalog.add_product');
-    Route::post('/catalog/add_product_to_catalog', 'add_product_to_catalog')->name('catalog.add_product_to_catalog');
-});
 
+
+Route::middleware(['seller_or_admin'])->group(function () {
+    Route::controller(CatalogController::class)->group(function () {
+        Route::get('/catalog/search_page', 'search')->name('catalog.search_page');
+        Route::get('/catalog/search/new_action', 'new_search_action')->name('catalog.search.new_action');
+        Route::get('/catalog/search/action', 'search_action')->name('catalog.search.action');
+        Route::get('/catalog/search/see_all/{keyword}', 'see_all')->name('catalog.search.see_all');
+        Route::get('/catalog/preview_product/{id}/{is_catalog}', 'displayPreviewProductInCatalogProduct')->name('catalog.preview_product');
+        Route::post('/catalog/add_product', 'add_product')->name('catalog.add_product');
+        Route::post('/catalog/add_product_to_catalog', 'add_product_to_catalog')->name('catalog.add_product_to_catalog');
+    });
+});
