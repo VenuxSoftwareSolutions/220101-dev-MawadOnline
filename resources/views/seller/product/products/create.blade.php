@@ -1672,13 +1672,13 @@
 
             var valuesMinQtyArray = [];
             var valuesMaxQtyArray = [];
-            $('body .min-qty').each(function() {
+            $(this).parent().parent().parent().find('.min-qty').each(function() {
                 // Get the value of each input field and push it to the array
                 valuesMinQtyArray.push($(this).val());
                 $(this).css('border-color', '#e2e5ec');
             });
 
-            $('body .max-qty').each(function() {
+            $(this).parent().parent().parent().find('.max-qty').each(function() {
                 // Get the value of each input field and push it to the array
                 valuesMaxQtyArray.push($(this).val());
                 $(this).css('border-color', '#e2e5ec');
@@ -1697,8 +1697,8 @@
                         var difference = otherMinVal - parseFloat(valuesMaxQtyArray[j - 1]);
 
                         if(difference > 1){
-                            $('body .min-qty').eq(j).css('border-color', 'red');
-                            $('body .max-qty').eq(j - 1).css('border-color', 'red');
+                            $(this).parent().parent().parent().find('.min-qty').eq(j).css('border-color', 'red');
+                            $(this).parent().parent().parent().find('.max-qty').eq(j - 1).css('border-color', 'red');
                             Swal.fire({
                                 title: 'Cancelled',
                                 text: '{{ translate("Ensure that the difference between the minimum and maximum quantities of the preceding interval must be equal to one.")}}',
@@ -1710,7 +1710,7 @@
                         }
 
                         if (minVal >= otherMinVal && minVal <= otherMaxVal) { //check if min value exist in another interval
-                            $('body .min-qty').eq(i).css('border-color', 'red');
+                            $(this).parent().parent().parent().find('.min-qty').eq(i).css('border-color', 'red');
                             Swal.fire({
                                 title: 'Cancelled',
                                 text: '{{ translate("Overlap found.")}}',
@@ -1722,7 +1722,7 @@
                         }
 
                         if(maxVal >= otherMinVal && maxVal <= otherMaxVal){ //check if max value exist in another interval
-                            $('body .max-qty').eq(i).css('border-color', 'red');
+                            $(this).parent().parent().parent().find('.max-qty').eq(i).css('border-color', 'red');
                             Swal.fire({
                                 title: 'Cancelled',
                                 text: '{{ translate("Overlap found.")}}',

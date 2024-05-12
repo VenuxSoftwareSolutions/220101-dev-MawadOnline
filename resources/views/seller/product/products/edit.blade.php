@@ -1168,7 +1168,7 @@
                                             <label class="col-md-2 col-from-label">{{translate('Sample Available?')}}</label>
                                             <div class="col-md-10">
                                                 <label class="aiz-switch aiz-switch-success mb-0">
-                                                    <input value="1" type="checkbox" class="variant-sample-available" name="variant[sample_available][{{ $children->id }}]" @if($children->sample_available == 1) checked @endif>
+                                                    <input value="1" type="checkbox" class="variant-sample-available" name="variant[sample_available][{{ $children->id }}]" @if($children->sample_price != null) checked @endif>
                                                     <span></span>
                                                 </label>
                                             </div>
@@ -4187,7 +4187,12 @@
             var numFiles = $(this)[0].files.length;
             var files = this.files;
             var uploaded_files = $(this).data('count');
-            var all_files_length = files.length + uploaded_files
+
+            if(uploaded_files != undefined){
+                var all_files_length = files.length + uploaded_files
+            }else{
+                var all_files_length = files.length 
+            }
 
             // Maximum number of allowed files
             var maxFiles = 10;
