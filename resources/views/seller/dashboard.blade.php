@@ -205,7 +205,7 @@
                             fill="#2E294E" />
                     </svg>
                 </div>
-                <a href="{{ route('seller.shop.index') }}" class="btn btn-primary">
+                <a href="{{ route('seller.profile.index') }}" class="btn btn-primary">
                     {{ translate('Go to setting') }}
                 </a>
             </div>
