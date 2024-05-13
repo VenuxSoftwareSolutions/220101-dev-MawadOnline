@@ -3460,7 +3460,11 @@ function dataURLtoFile(dataUrl, filename) {
                     })
                 }
                 
-            }else{                                                                                                                                                                          ²   
+            }else{
+                var inputTopPosition = $("#tags").offset().top;
+
+                // Animate scrolling to the input element
+                $("html, body").animate({ scrollTop: inputTopPosition }, 1000);
                 $('#error-message').show();
             }
 
