@@ -244,7 +244,7 @@ thead tr{
                                     @endif
                                 </td>
                             </tr>
-                            @if((count($product->getChildrenProducts()) > 0) && ($product->is_draft == 0))
+                            @if(count($product->getChildrenProducts()) > 0)
                                 @foreach ($product->getChildrenProducts() as $children)
                                     <tr>
                                         <td>

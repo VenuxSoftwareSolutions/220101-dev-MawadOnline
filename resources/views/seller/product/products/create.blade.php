@@ -227,7 +227,7 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{translate('Tags')}} <span class="text-danger">*</span></label>
                                     <div class="col-md-8">
-                                        <input type="text" class="form-control aiz-tag-input" name="tags[]" placeholder="{{ translate('Type and hit enter to add a tag') }}">
+                                        <input type="text" class="form-control aiz-tag-input" id="tags" name="tags[]" placeholder="{{ translate('Type and hit enter to add a tag') }}">
                                         <small class="text-muted">{{translate('This is used for search. Input those words by which cutomer can find this product.')}}</small>
                                         <div id="error-message" style="display:none; color: red">tags input cannot be empty!</div>
                                     </div>
@@ -856,7 +856,7 @@
                             </div>
                         </div>
                         <div class="row div-btn">
-                            <button type="button" name="button" class="btn btn-primary" id="btn-create-variant">Create variant</button>
+                            <button type="button" class="btn btn-primary" id="btn-create-variant">Create variant</button>
                         </div>
                         <hr>
                         <div id="bloc_variants_created">
@@ -3278,6 +3278,7 @@
                                 if(publicationStatus == 'published'){
                                     $('#published_after_approve').val(1)
                                 }
+                                
                                 Swal.fire({
                                     title: "Create Stock Items",
                                     text: "Do you want to create stock items for this product?",
@@ -3351,6 +3352,10 @@
                 }
                 
             }else{
+                var inputTopPosition = $("#tags").offset().top;
+
+                // Animate scrolling to the input element
+                $("html, body").animate({ scrollTop: inputTopPosition }, 1000);
                 $('#error-message').show();
             }
 

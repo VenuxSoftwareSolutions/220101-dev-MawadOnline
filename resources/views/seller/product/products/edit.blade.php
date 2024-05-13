@@ -375,9 +375,9 @@
                                         @if(count($product->getPricingConfiguration()) > 0)
                                             @foreach ($product->getPricingConfiguration() as $key => $pricing)
                                                 <tr>
-                                                    <td><input type="number" min="1" name="from[]" class="form-control min-qty" id="min-qty-parent" value="{{ $pricing->from }}"></td>
-                                                    <td><input type="number" min="1" name="to[]" class="form-control max-qty" id="max-qty-parent" value="{{ $pricing->to }}"></td>
-                                                    <td><input type="number" step="0.01" min="1" name="unit_price[]" class="form-control unit-price-variant" id="unit-price-parent" value="{{ $pricing->unit_price }}"></td>
+                                                    <td><input type="number" min="1" name="from[]" class="form-control min-qty" @if($key == 0) id="min-qty-parent" @endif value="{{ $pricing->from }}"></td>
+                                                    <td><input type="number" min="1" name="to[]" class="form-control max-qty" @if($key == 0) id="max-qty-parent" @endif value="{{ $pricing->to }}"></td>
+                                                    <td><input type="number" step="0.01" min="1" name="unit_price[]" class="form-control unit-price-variant" @if($key == 0) id="unit-price-parent" @endif value="{{ $pricing->unit_price }}"></td>
                                                     @php
                                                         $date_range = '';
                                                         if($pricing->discount_start_datetime){
@@ -417,9 +417,9 @@
                                             @endforeach
                                         @else
                                             <tr>
-                                                <td><input type="number" name="from[]" class="form-control min-qty" id=""></td>
-                                                <td><input type="number" name="to[]" class="form-control max-qty" id=""></td>
-                                                <td><input type="number" name="unit_price[]" class="form-control unit-price-variant" id=""></td>
+                                                <td><input type="number" name="from[]" class="form-control min-qty" id="min-qty-parent" placeholder="From QTY"></td>
+                                                <td><input type="number" name="to[]" class="form-control max-qty" id="max-qty-parent" placeholder="To QTY"></td>
+                                                <td><input type="number" name="unit_price[]" placeholder="Unit Price" class="form-control unit-price-variant" id="unit-price-parent"></td>
                                                 <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                                 <td>
                                                     <select class="form-control discount_type" name="discount_type[]">
@@ -984,7 +984,7 @@
                             </div>
                         </div>
                         <div class="row div-btn">
-                            <button type="button" name="button" class="btn btn-primary" id="btn-create-variant">Create variant</button>
+                            <button type="button" class="btn btn-primary" id="btn-create-variant">Create variant</button>
                         </div>
                         <hr>
                         <div id="bloc_variants_created">
@@ -6757,35 +6757,86 @@
     document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('choice_form').addEventListener('submit', function (event) {
         event.preventDefault(); // Prevent default form submission
+        var approved = "{{ $product->approved }}";
+        if(approved == 1){
+            Swal.fire({
+                title: "Product Update?",
+                text: "As this product update requires approval, you can keep the last approved product published in the marketplace until the update is approved. If you unpublish the last approved product, then you have to publish the updated product after approval, manually. Do you want to keep the last approved product published?",
+                icon: "info",
+                showCancelButton: true,
+                cancelButtonText: "Cancel Update",
+                confirmButtonText: "Yes",
+                showDenyButton: true,
+                denyButtonText: "No",
+                focusConfirm: false,
+                backdrop:false,
+                preConfirm: () => {
+                    return Swal.getConfirmButton().click();
+                },
+                onOpen: () => {
+                    var html = '<button type="button" class="swal2-cancel swal2-styled" aria-label="" style="display: inline-block; margin-right: 83px !important">Cancel Update</button>';
+                    $('body').find('.swal2-actions').find('.swal2-cancel').remove();
+                    $('body').find('.swal2-actions').prepend(html);
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#last_version').val(1);
+                } else if (result.isDenied) {
+                    $('#last_version').val(0);
+                } else {
+                    return false; // Cancel action if "Cancel Update" is clicked
+                }
 
-        Swal.fire({
-            title: "Product Update?",
-            text: "As this product update requires approval, you can keep the last approved product published in the marketplace until the update is approved. If you unpublish the last approved product, then you have to publish the updated product after approval, manually. Do you want to keep the last approved product published?",
-            icon: "info",
-            showCancelButton: true,
-            cancelButtonText: "Cancel Update",
-            confirmButtonText: "Yes",
-            showDenyButton: true,
-            denyButtonText: "No",
-            focusConfirm: false,
-            backdrop:false,
-            preConfirm: () => {
-                return Swal.getConfirmButton().click();
-            },
-            onOpen: () => {
-                var html = '<button type="button" class="swal2-cancel swal2-styled" aria-label="" style="display: inline-block; margin-right: 83px !important">Cancel Update</button>';
-                $('body').find('.swal2-actions').find('.swal2-cancel').remove();
-                $('body').find('.swal2-actions').prepend(html);
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $('#last_version').val(1);
-            } else if (result.isDenied) {
-                $('#last_version').val(0);
-            } else {
-                return false; // Cancel action if "Cancel Update" is clicked
-            }
+                var valid_category = $('#check_selected_parent_id').val();
+                if(valid_category == 1){
+                    var check = true;
+                    var min_qty = $('#min-qty-parent').val();
+                    var max_qty = $('#max-qty-parent').val();
+                    var unit_price = $('#unit-price-parent').val();
 
+                    if ($('body input[name="activate_attributes"]').is(':checked')) {
+                        $('body #bloc_variants_created .variant-pricing').each(function () {
+                            if ($(this).is(':checked')) {
+                                if ((min_qty == "") || (max_qty == "") || (unit_price == "")) {
+                                    check = false;
+                                }
+                            } else {
+                                var min_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.min-qty-variant').val();
+                                var max_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.max-qty-variant').val();
+                                var unit_price_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.unit-price-variant').val();
+
+                                if ((min_qty_variant == "") || (max_qty_variant == "") || (unit_price_variant == "")) {
+                                    check = false;
+                                }
+                            }
+                        });
+                    } else {
+                        if ((min_qty == "") || (max_qty == "") || (unit_price == "")) {
+                            check = false;
+                        }
+                    }
+
+                    if (check == true) {
+                        document.getElementById('choice_form').submit();
+                    } else {
+                        Swal.fire({
+                            title: 'Pricing Configuration Check',
+                            text: 'Please check your pricing configuration',
+                            icon: 'error'
+                        });
+                    }
+                }else{
+                    Swal.fire({
+                        title: 'Cancelled',
+                        text: 'Please select a category without subcategories.',
+                        icon: 'error',
+                        scrollbarPadding: false,
+                        backdrop:false,
+                    })
+                }
+                
+            });
+        }else{
             var valid_category = $('#check_selected_parent_id').val();
             if(valid_category == 1){
                 var check = true;
@@ -6833,8 +6884,8 @@
                     backdrop:false,
                 })
             }
-            
-        });
+        }
+        
     });
 });
 </script>

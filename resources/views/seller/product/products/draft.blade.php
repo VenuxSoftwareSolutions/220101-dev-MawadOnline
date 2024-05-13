@@ -366,9 +366,9 @@
                                         @if(count($product->getPricingConfiguration()) > 0)
                                             @foreach ($product->getPricingConfiguration() as $key => $pricing)
                                                 <tr>
-                                                    <td><input type="number" min="1" name="from[]" class="form-control min-qty" id="min-qty-parent" value="{{ $pricing->from }}"></td>
-                                                    <td><input type="number" min="1" name="to[]" class="form-control max-qty" id="max-qty-parent" value="{{ $pricing->to }}"></td>
-                                                    <td><input type="number" step="0.01" min="1" name="unit_price[]" class="form-control unit-price-variant" id="unit-price-parent" value="{{ $pricing->unit_price }}"></td>
+                                                    <td><input type="number" min="1" name="from[]" class="form-control min-qty" @if($key == 0) id="min-qty-parent" @endif value="{{ $pricing->from }}"></td>
+                                                    <td><input type="number" min="1" name="to[]" class="form-control max-qty" @if($key == 0) id="max-qty-parent" @endif value="{{ $pricing->to }}"></td>
+                                                    <td><input type="number" step="0.01" min="1" name="unit_price[]" class="form-control unit-price-variant" @if($key == 0) id="unit-price-parent" @endif value="{{ $pricing->unit_price }}"></td>
                                                     @php
                                                         $date_range = '';
                                                         if($pricing->discount_start_datetime){
@@ -408,9 +408,9 @@
                                             @endforeach
                                         @else
                                             <tr>
-                                                <td><input type="number" name="from[]" class="form-control min-qty" id="" placeholder="From QTY"></td>
-                                                <td><input type="number" name="to[]" class="form-control max-qty" id="" placeholder="To QTY"></td>
-                                                <td><input type="number" name="unit_price[]" placeholder="Unit Price" class="form-control unit-price-variant" id=""></td>
+                                                <td><input type="number" name="from[]" class="form-control min-qty" id="min-qty-parent" placeholder="From QTY"></td>
+                                                <td><input type="number" name="to[]" class="form-control max-qty" id="max-qty-parent" placeholder="To QTY"></td>
+                                                <td><input type="number" name="unit_price[]" placeholder="Unit Price" class="form-control unit-price-variant" id="unit-price-parent"></td>
                                                 <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                                 <td>
                                                     <select class="form-control discount_type" name="discount_type[]">
@@ -974,7 +974,7 @@
                             </div>
                         </div>
                         <div class="row div-btn">
-                            <button type="button" name="button" class="btn btn-primary" id="btn-create-variant">Create variant</button>
+                            <button type="button" class="btn btn-primary" id="btn-create-variant">Create variant</button>
                         </div>
                         <hr>
                         <div id="bloc_variants_created">
@@ -1284,16 +1284,16 @@
                     </div>
                     <div class="card-body">
                         @if(count($product->getChildrenProductsDesc()) == 0)
-                            <div id="sku_product_product" style="margin-left: -15px;">
+                            <div id="sku_product_product" style="margin-left: 7px;">
                                 <div class="row">
                                     <label class="col-md-2 col-from-label">{{translate('SKU')}}</label>
-                                    <div class="col-md-10 mb-3">
+                                    <div class="col-md-10 mb-3" style="padding-right: 0">
                                         <input type="text" name="product_sk" class="form-control" value="{{ $product->sku }}" id="product_sk">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <label class="col-md-2 col-from-label">{{translate('Low stock warning')}}</label>
-                                    <div class="col-md-10 mb-3">
+                                    <div class="col-md-10 mb-3" style="padding-right: 0">
                                         <input type="number" min="0" name="quantite_stock_warning" class="form-control" value="{{ $product->low_stock_quantity }}" id="stock_qty_warning">
                                     </div>
                                 </div>
@@ -1430,6 +1430,7 @@
                 <div class="mar-all text-right mb-2">
                     <button type="submit" name="button" value="draft" class="btn btn-success">Save as draft</button>
                     <button type="submit" name="button" value="edit" class="btn btn-primary">Create Product</button>
+                    <input type="hidden" name="button" id="submit_button">
                 </div>
             </div>
         </div>
@@ -4604,42 +4605,48 @@
         event.preventDefault(); // Prevent default form submission
 
         var valid_category = $('#check_selected_parent_id').val();
+        var clickedButtonValue = event.submitter.value;
+        document.getElementById('submit_button').value = clickedButtonValue;
+
         if(valid_category == 1){
             var check = true;
             var min_qty = $('#min-qty-parent').val();
             var max_qty = $('#max-qty-parent').val();
             var unit_price = $('#unit-price-parent').val();
+            if(clickedButtonValue === "edit"){
+                if ($('body input[name="activate_attributes"]').is(':checked')) {
+                    $('body #bloc_variants_created .variant-pricing').each(function () {
+                        if ($(this).is(':checked')) {
+                            if ((min_qty == "") || (max_qty == "") || (unit_price == "")) {
+                                check = false;
+                            }
+                        } else {
+                            var min_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.min-qty-variant').val();
+                            var max_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.max-qty-variant').val();
+                            var unit_price_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.unit-price-variant').val();
 
-            if ($('body input[name="activate_attributes"]').is(':checked')) {
-                $('body #bloc_variants_created .variant-pricing').each(function () {
-                    if ($(this).is(':checked')) {
-                        if ((min_qty == "") || (max_qty == "") || (unit_price == "")) {
-                            check = false;
+                            if ((min_qty_variant == "") || (max_qty_variant == "") || (unit_price_variant == "")) {
+                                check = false;
+                            }
                         }
-                    } else {
-                        var min_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.min-qty-variant').val();
-                        var max_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.max-qty-variant').val();
-                        var unit_price_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.unit-price-variant').val();
-
-                        if ((min_qty_variant == "") || (max_qty_variant == "") || (unit_price_variant == "")) {
-                            check = false;
-                        }
+                    });
+                } else {
+                    if ((min_qty == "") || (max_qty == "") || (unit_price == "")) {
+                        check = false;
                     }
-                });
-            } else {
-                if ((min_qty == "") || (max_qty == "") || (unit_price == "")) {
-                    check = false;
                 }
-            }
 
-            if (check == true) {
-                document.getElementById('choice_form').submit();
-            } else {
-                Swal.fire({
-                    title: 'Pricing Configuration Check',
-                    text: 'Please check your pricing configuration',
-                    icon: 'error'
-                });
+                if (check == true) {
+                    document.getElementById('choice_form').submit();
+                } else {
+                    Swal.fire({
+                        title: 'Pricing Configuration Check',
+                        text: 'Please check your pricing configuration',
+                        icon: 'error'
+                    });
+                }
+            }else{
+                document.getElementById('choice_form').submit(); 
             }
         }else{
             Swal.fire({
