@@ -803,7 +803,7 @@ class ProductService
                     if(isset($variant['sample_available'])){
                         $data['sample_available'] = $variant['sample_available'];
                     }else{
-                        $data['sample_available'] = $shipping_sample_parent['sample_available'];
+                        $data['sample_available'] = 0;
                     }
 
                     if(isset($data['shipper_sample'])){
@@ -2081,7 +2081,7 @@ class ProductService
                     if(isset($variant['sample_available'])){
                         $collection['sample_available'] = $variant['sample_available'];
                     }else{
-                        $collection['sample_available'] = $shipping_sample_parent['sample_available'];
+                        $collection['sample_available'] = 0;
                     }
 
                     $product = Product::find($id);
@@ -2523,7 +2523,7 @@ class ProductService
                     if(isset($variant['sample_available'])){
                         $data['sample_available'] = $variant['sample_available'];
                     }else{
-                        $data['sample_available'] = $shipping_sample_parent['sample_available'];
+                        $data['sample_available'] = 0;
                     }
 
                     if(!isset($variant['sample_price'])){
@@ -3767,7 +3767,7 @@ class ProductService
                     if(isset($variant['sample_available'])){
                         $collection['sample_available'] = $variant['sample_available'];
                     }else{
-                        $collection['sample_available'] = $shipping_sample_parent['sample_available'];
+                        $collection['sample_available'] = 0;
                     }
 
                     $product = Product::find($id);

@@ -1034,91 +1034,152 @@
 </script>
 
 <script>
-function previewImages(event) {
-    var preview = document.getElementById('image-preview');
-    preview.innerHTML = '';
+    function previewImages(event) {
+        var preview = document.getElementById('image-preview');
+        preview.innerHTML = '';
 
-    var files = event.target.files;
+        var files = event.target.files;
+        if (files.length > 10) {
+            Swal.fire({
+                title: 'Cancelled',
+                text: '{{ translate("Maximum 10 photos allowed.")}}',
+                icon: 'error',
+                scrollbarPadding: false,
+                backdrop:false,
+            });
 
-    for (var i = 0; i < files.length; i++) {
-        var file = files[i];
-        var reader = new FileReader();
+            $('#photoUploadcustom').val('');
+            $('#image-preview').empty();
+        }else{
+            let exceedingFiles = [];
 
-        reader.onload = function (e) {
-            var imgContainer = document.createElement('div');
-            imgContainer.classList.add('preview-container');
+            for (let i = 0; i < files.length; i++) {
+                const fileSizeInMB = files[i].size / (1024 * 1024);
+                if (fileSizeInMB > 2) {
+                    exceedingFiles.push(files[i].name);
+                }
+            }
+
+            if (exceedingFiles.length > 0) {
+                Swal.fire({
+                    title: 'Cancelled',
+                    text: 'Following files exceed 2MB limit: ' + exceedingFiles.join(', '),
+                    icon: 'error',
+                    scrollbarPadding: false,
+                    backdrop:false,
+                });
+                $('#photoUploadcustom').val('');
+                $('#image-preview').empty();
+            } else {
+                let exceedingFilesDimension = [];
+
+                for (let i = 0; i < files.length; i++) {
+                    let file = files[i];
+                    if (file.type.startsWith('image/')) {
+                        // Create a FileReader object to read the uploaded file
+                        let reader = new FileReader();
+
+                        // Closure to capture the file information
+                        reader.onload = function(event) {
+                            let img = new Image();
+                            img.src = event.target.result;
+
+                            // Check image dimensions after it's loaded
+                            img.onload = function() {
+                                if (img.width > 1200 || img.height > 1200) {
+                                    exceedingFilesDimension.push(files[i].name);
+                                }
+                            };
+                        };
+
+                        // Read the file as a data URL
+                        reader.readAsDataURL(file);
+                    }
+                }
+
+                setTimeout(function() {
+                    if (exceedingFilesDimension.length ) {
+                        
+                    }else{
+                        for (var i = 0; i < files.length; i++) {
+                            var file = files[i];
+                            var reader = new FileReader();
+
+                            reader.onload = function (e) {
+                                var imgContainer = document.createElement('div');
+                                imgContainer.classList.add('preview-container');
+                                
+                                var img = document.createElement('img');
+                                img.src = e.target.result;
+                                img.style.maxWidth = '100px'; // Adjust the size of the preview image as needed
+                                img.style.maxHeight = '100px';
+                                imgContainer.appendChild(img);
+                                
+                                var deleteBtn = document.createElement('button');
+                                deleteBtn.innerText = 'Delete';
+                                deleteBtn.onclick = function() {
+                                    imgContainer.remove(); // Remove the preview container when delete button is clicked
+                                    updateFileInput(); // Update the file input after deleting
+                                };
+                                imgContainer.appendChild(deleteBtn);
+                                
+                                preview.appendChild(imgContainer);
+                            }
+
+                            reader.readAsDataURL(file);
+                        }
+                    }
+                }, 500);
+            }
+        }
+    }
+
+    function updateFileInput() {
+        var previewContainers = document.querySelectorAll('.preview-container');
+        var files = [];
+
+        previewContainers.forEach(function(container) {
+            var img = container.querySelector('img');
+            var file = dataURLtoFile(img.src, 'image_' + Date.now() + '.png');
+            files.push(file);
+        });
+
+        var newInput = document.createElement('input');
+        newInput.type = 'file';
+        newInput.id = 'photoUploadcustom';
+        newInput.name = 'main_photos[]';
+        newInput.multiple = true;
+        newInput.classList.add('form-control'); // Add the 'form-control' class
+
+        newInput.addEventListener('change', previewImages);
+
+        // Replace the old input with the new one
+        var oldInput = document.getElementById('photoUploadcustom');
+        oldInput.parentNode.replaceChild(newInput, oldInput);
+
+        // Set files to the new input
+        var dataTransfer = new DataTransfer();
+        files.forEach(function(file) {
+            dataTransfer.items.add(file);
+        });
+        newInput.files = dataTransfer.files;
+    }
+
+    // Convert data URL to File object
+    function dataURLtoFile(dataUrl, filename) {
+        var arr = dataUrl.split(','),
+            mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[1]),
+            n = bstr.length,
+            u8arr = new Uint8Array(n);
             
-            var img = document.createElement('img');
-            img.src = e.target.result;
-            img.style.maxWidth = '100px'; // Adjust the size of the preview image as needed
-            img.style.maxHeight = '100px';
-            imgContainer.appendChild(img);
-            
-            var deleteBtn = document.createElement('button');
-            deleteBtn.innerText = 'Delete';
-            deleteBtn.onclick = function() {
-                imgContainer.remove(); // Remove the preview container when delete button is clicked
-                updateFileInput(); // Update the file input after deleting
-            };
-            imgContainer.appendChild(deleteBtn);
-            
-            preview.appendChild(imgContainer);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
         }
 
-        reader.readAsDataURL(file);
+        return new File([u8arr], filename, { type: mime });
     }
-}
-
-function updateFileInput() {
-    var previewContainers = document.querySelectorAll('.preview-container');
-    var files = [];
-
-    previewContainers.forEach(function(container) {
-        var img = container.querySelector('img');
-        var file = dataURLtoFile(img.src, 'image_' + Date.now() + '.png');
-        files.push(file);
-    });
-
-    var newInput = document.createElement('input');
-    newInput.type = 'file';
-    newInput.id = 'photoUploadcustom';
-    newInput.name = 'main_photos[]';
-    newInput.multiple = true;
-    newInput.classList.add('form-control'); // Add the 'form-control' class
-
-    newInput.addEventListener('change', previewImages);
-
-    // Replace the old input with the new one
-    var oldInput = document.getElementById('photoUploadcustom');
-    oldInput.parentNode.replaceChild(newInput, oldInput);
-
-    // Set files to the new input
-    var dataTransfer = new DataTransfer();
-    files.forEach(function(file) {
-        dataTransfer.items.add(file);
-    });
-    newInput.files = dataTransfer.files;
-}
-
-// Convert data URL to File object
-function dataURLtoFile(dataUrl, filename) {
-    var arr = dataUrl.split(','),
-        mime = arr[0].match(/:(.*?);/)[1],
-        bstr = atob(arr[1]),
-        n = bstr.length,
-        u8arr = new Uint8Array(n);
-        
-    while (n--) {
-        u8arr[n] = bstr.charCodeAt(n);
-    }
-
-    return new File([u8arr], filename, { type: mime });
-}
 </script>
-
-
-
-
 <!--- category parent tree -->
 <script type="text/javascript">
     function submitForm() {
@@ -3411,21 +3472,34 @@ function dataURLtoFile(dataUrl, filename) {
                                         var unit_price = $('#unit-price-parent').val();
 
                                         if($('body input[name="activate_attributes"]').is(':checked')){
-                                            $('body #bloc_variants_created .variant-pricing').each(function() {
-                                                if($(this).is(':checked')){
-                                                    if((min_qty == "") || (max_qty == "") || (unit_price == "")){
-                                                        check = false;
-                                                    }
-                                                }else{
-                                                    var min_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.min-qty-variant').val();
-                                                    var max_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.max-qty-variant').val();
-                                                    var unit_price_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.unit-price-variant').val();
+                                            var attributes_selected = $('body #attributes').val();
+                                            if(attributes_selected.length != 0){
+                                                $('body #bloc_variants_created .variant-pricing').each(function() {
+                                                    if($(this).is(':checked')){
+                                                        if((min_qty == "") || (max_qty == "") || (unit_price == "")){
+                                                            check = false;
+                                                        }
+                                                    }else{
+                                                        var min_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.min-qty-variant').val();
+                                                        var max_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.max-qty-variant').val();
+                                                        var unit_price_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.unit-price-variant').val();
 
-                                                    if((min_qty_variant == "") || (max_qty_variant == "") || (unit_price_variant == "")){
-                                                        check = false;
+                                                        if((min_qty_variant == "") || (max_qty_variant == "") || (unit_price_variant == "")){
+                                                            check = false;
+                                                        }
                                                     }
-                                                }
-                                            });
+                                                });
+                                            }else{
+                                                Swal.fire({
+                                                    title: 'Attributes',
+                                                    text: 'You need to choose at least one attribute',
+                                                    icon: 'error'
+                                                });
+
+                                                check = false;
+                                                return false;
+                                            }
+                                            
                                         }else{
                                             if((min_qty == "") || (max_qty == "") || (unit_price == "")){
                                                 check = false;
