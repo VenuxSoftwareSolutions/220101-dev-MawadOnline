@@ -28,10 +28,12 @@ class SellerLeaseController extends Controller
         seller_lease_creation($user=Auth::user());
 
         $currentDate = Carbon::now();
+        $startDay = (clone $currentDate);
+        $endDay = (clone $currentDate)->subDay(1);
 
         // Retrieve the lease where the current date is between start_date and end_date
-        $current_lease = SellerLease::where('vendor_id',Auth::user()->owner_id)->where('start_date', '<=', $currentDate)
-            ->where('end_date', '>=', $currentDate)->first();
+        $current_lease = SellerLease::where('vendor_id',Auth::user()->owner_id)->where('start_date', '<=', $startDay)
+            ->where('end_date', '>=', $endDay)->first();
         $current_details=SellerLeaseDetail::where('lease_id',$current_lease->id)->get();
         $leases = SellerLease::where('vendor_id',Auth::user()->owner_id)
             ->latest() // Order by the latest leases
