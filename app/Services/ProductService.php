@@ -64,11 +64,7 @@ class ProductService
 
         unset($collection['parent_id']);
 
-        if($collection['published_modal'] == 1){
-            $collection['published'] = 1;
-        }else{
-            $collection['published'] = 0;
-        }
+        
 
         if($collection['create_stock'] == 1){
             $collection['stock_after_create'] = 1;
@@ -132,13 +128,13 @@ class ProductService
             $collection['stock_visibility_state'] ="hide";
         }
 
-        $published = 1;
+        //$published = 1;
         $is_draft = 0;
 
         if(isset($collection['button'])){
             if ($collection['button'] == 'draft') {
               $is_draft = 1;
-              $published = 0;
+              //$published = 0;
             }
             unset($collection['button']);
         }
@@ -146,7 +142,7 @@ class ProductService
         if(isset($collection['submit_button'])){
             if ($collection['submit_button'] == 'draft') {
               $is_draft = 1;
-              $published = 0;
+              //$published = 0;
             }
             unset($collection['submit_button']);
         }
@@ -477,6 +473,13 @@ class ProductService
 
         unset($collection['product_sk']);
         unset($collection['quantite_stock_warning']);
+
+        if($collection['published_modal'] == 1){
+            $collection['published'] = 1;
+        }else{
+            $collection['published'] = 0;
+        }
+        
         unset($collection['published_modal']);
 
         $data = $collection->merge(compact(
@@ -484,11 +487,9 @@ class ProductService
             'shipping_cost',
             'slug',
             'colors',
-            'published',
             'is_draft',
             'vat'
         ))->toArray();
-
 
 
         $ids_attributes_color = Attribute::where('type_value', 'color')->pluck('id')->toArray();
@@ -1910,7 +1911,7 @@ class ProductService
                 $product_update->save();
             }else{
                 // Update the approved field in the parent product
-                $product_update->update(['approved' => 0]);
+                $product_update->update(['approved' => 0, 'published' => $collection['last_version']]);
             }
 
             return $product_update;
@@ -2394,10 +2395,10 @@ class ProductService
                             }
                         }else{
                             // Update the approved field in the parent product
-                            $product_update->update(['approved' => 0]);
+                            $product_update->update(['approved' => 0, 'published' => $collection['last_version']]);
 
                             // Update the approved field in the children related to the parent
-                            $product_update->children()->update(['approved' => 0]);
+                            $product_update->children()->update(['approved' => 0, 'published' => $collection['last_version']]);
                         }
                     }
 

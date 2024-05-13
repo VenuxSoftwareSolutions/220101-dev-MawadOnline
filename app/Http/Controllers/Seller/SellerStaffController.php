@@ -71,7 +71,7 @@ class SellerStaffController extends Controller
                                         ->where('end_date', '>=', $currentDate)->first();
         $roles_id=SellerLeaseDetail::where('lease_id',$current_lease->id)->orderBy('is_used')->get();
         $cycleEnd = Carbon::parse($current_lease->end_date)->endOfDay();
-        $daysToCycleEnd = $cycleEnd->diffInDays($currentDate);
+        $daysToCycleEnd = $cycleEnd->diffInDays($currentDate)+1;
 
         // Calculate the lease cycle days
         $start_date = Carbon::parse($current_lease->start_date);
@@ -292,7 +292,7 @@ class SellerStaffController extends Controller
 
         $roles_id=SellerLeaseDetail::where('lease_id',$current_lease->id)->get();
         $cycleEnd = Carbon::parse($current_lease->end_date)->endOfDay();
-        $daysToCycleEnd = $cycleEnd->diffInDays($currentDate);
+        $daysToCycleEnd = $cycleEnd->diffInDays($currentDate)+1;
 
         // Calculate the lease cycle days
         $start_date = Carbon::parse($current_lease->start_date);
@@ -420,7 +420,7 @@ class SellerStaffController extends Controller
                     }
                     elseif ($role_detail->role_id == $role_id && $role_detail->is_used == true) {
                         $cycleEnd = Carbon::parse($current_lease->end_date)->endOfDay();
-                        $daysToCycleEnd = $cycleEnd->diffInDays($currentDate);
+                        $daysToCycleEnd = $cycleEnd->diffInDays($currentDate)+1;
 
                     // Calculate the lease cycle days
                         $start_date = Carbon::parse($current_lease->start_date);
