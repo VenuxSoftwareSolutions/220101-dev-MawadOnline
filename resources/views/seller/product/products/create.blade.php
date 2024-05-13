@@ -4,6 +4,40 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
 <style>
+#image-preview {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#image-preview img {
+    margin: 5px;
+}
+</style>
+<style>
+.preview-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 5px;
+}
+
+.preview-container img {
+    max-width: 100px;
+    max-height: 100px;
+}
+
+.preview-container button {
+    margin-top: 5px;
+    background-color: #ff0000;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+</style>
+
+<style>
     .table th{
         font-size: 12px !important;
     }
@@ -281,8 +315,8 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label" for="signinSrEmail">{{translate('Gallery Images')}} <small>(1280x1280)</small></label>
                             <div class="col-md-8" id="bloc_photos">
-                                <input type="file" class="dropify" name="main_photos[]" id="photoUpload" accept=".jpeg, .jpg, .png" multiple />
-                                <div id="dropifyUploadedFiles"></div>
+                                <input type="file" class="form-control" name="main_photos[]" id="photoUploadcustom" onchange="previewImages(event)" accept=".jpeg, .jpg, .png" multiple />
+                                <div id="image-preview"></div>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -998,6 +1032,92 @@
 <script>
     var previewUrlBase  = "{{ route('seller.product.preview', ['slug' => 'PLACEHOLDER']) }}";
 </script>
+
+<script>
+function previewImages(event) {
+    var preview = document.getElementById('image-preview');
+    preview.innerHTML = '';
+
+    var files = event.target.files;
+
+    for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            var imgContainer = document.createElement('div');
+            imgContainer.classList.add('preview-container');
+            
+            var img = document.createElement('img');
+            img.src = e.target.result;
+            img.style.maxWidth = '100px'; // Adjust the size of the preview image as needed
+            img.style.maxHeight = '100px';
+            imgContainer.appendChild(img);
+            
+            var deleteBtn = document.createElement('button');
+            deleteBtn.innerText = 'Delete';
+            deleteBtn.onclick = function() {
+                imgContainer.remove(); // Remove the preview container when delete button is clicked
+                updateFileInput(); // Update the file input after deleting
+            };
+            imgContainer.appendChild(deleteBtn);
+            
+            preview.appendChild(imgContainer);
+        }
+
+        reader.readAsDataURL(file);
+    }
+}
+
+function updateFileInput() {
+    var previewContainers = document.querySelectorAll('.preview-container');
+    var files = [];
+
+    previewContainers.forEach(function(container) {
+        var img = container.querySelector('img');
+        var file = dataURLtoFile(img.src, 'image_' + Date.now() + '.png');
+        files.push(file);
+    });
+
+    var newInput = document.createElement('input');
+    newInput.type = 'file';
+    newInput.id = 'photoUploadcustom';
+    newInput.name = 'main_photos[]';
+    newInput.multiple = true;
+    newInput.classList.add('form-control'); // Add the 'form-control' class
+
+    newInput.addEventListener('change', previewImages);
+
+    // Replace the old input with the new one
+    var oldInput = document.getElementById('photoUploadcustom');
+    oldInput.parentNode.replaceChild(newInput, oldInput);
+
+    // Set files to the new input
+    var dataTransfer = new DataTransfer();
+    files.forEach(function(file) {
+        dataTransfer.items.add(file);
+    });
+    newInput.files = dataTransfer.files;
+}
+
+// Convert data URL to File object
+function dataURLtoFile(dataUrl, filename) {
+    var arr = dataUrl.split(','),
+        mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]),
+        n = bstr.length,
+        u8arr = new Uint8Array(n);
+        
+    while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+    }
+
+    return new File([u8arr], filename, { type: mime });
+}
+</script>
+
+
+
 
 <!--- category parent tree -->
 <script type="text/javascript">
@@ -2027,7 +2147,7 @@
             });
         }
 
-        initializeDropify();
+    //    initializeDropify();
         initializeDropifyThumbnail();
 
         $('body').on('change', '#photoUpload', function() {
@@ -2096,19 +2216,8 @@
                         }
                     }
                     setTimeout(function() {
-                        if (exceedingFilesDimension.length > 0) {
-                            Swal.fire({
-                                title: 'Cancelled',
-                                text: 'Following files exceeded 1200px width or height limit: ' + exceedingFilesDimension.join(', '),
-                                icon: 'error',
-                                scrollbarPadding: false,
-                                backdrop:false,
-                            });
-                            $(this).val('');
-                            removeDropify();
-                            dropifyInput.replaceWith(originalInput.clone(true));
-                            dropifyInput = $('#photoUpload');
-                            initializeDropify();
+                        if (exceedingFilesDimension.length ) {
+                         
                         }else{
                             let uploadedFilesHTML = '<div class="row">';
                             for (let i = 0; i < files.length; i++) {
@@ -3350,7 +3459,7 @@
                     })
                 }
                 
-            }else{
+            }else{                                                                                                                                                                          ²   
                 $('#error-message').show();
             }
 
