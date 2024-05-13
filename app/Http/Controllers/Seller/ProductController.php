@@ -179,7 +179,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->all());
+
         $product = $this->productService->store($request->except([
             'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
         ]));
@@ -1661,7 +1661,8 @@ class ProductController extends Controller
                     $quantity = $variation['variant_pricing-from']['from'][0] ?? "" ;
                     $price = $variation['variant_pricing-from']['unit_price'][0] ?? "" ;
                     $total =  isset($variation['variant_pricing-from']['from'][0]) && isset($variation['variant_pricing-from']['unit_price'][0]) ? $variation['variant_pricing-from']['from'][0] * $variation['variant_pricing-from']['unit_price'][0] : "" ;
-                    if( isset($variation['variant_pricing-from']['discount']['date']) && is_array($variation['variant_pricing-from']['discount']['date'])){
+
+                    if( isset($variation['variant_pricing-from']['discount']['date']) && is_array($variation['variant_pricing-from']['discount']['date'])&& !empty($variation['variant_pricing-from']['discount']['date'][0])){
                         // Extract start and end dates from the first date interval
 
                         $dateRange = $variation['variant_pricing-from']['discount']['date'][0];
