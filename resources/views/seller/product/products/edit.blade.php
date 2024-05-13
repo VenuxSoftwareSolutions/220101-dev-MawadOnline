@@ -6845,21 +6845,33 @@
                 var unit_price = $('#unit-price-parent').val();
 
                 if ($('body input[name="activate_attributes"]').is(':checked')) {
-                    $('body #bloc_variants_created .variant-pricing').each(function () {
-                        if ($(this).is(':checked')) {
-                            if ((min_qty == "") || (max_qty == "") || (unit_price == "")) {
-                                check = false;
-                            }
-                        } else {
-                            var min_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.min-qty-variant').val();
-                            var max_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.max-qty-variant').val();
-                            var unit_price_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.unit-price-variant').val();
+                    var attributes_selected = $('body #attributes').val();
+                    if(attributes_selected.length != 0){
+                        $('body #bloc_variants_created .variant-pricing').each(function () {
+                            if ($(this).is(':checked')) {
+                                if ((min_qty == "") || (max_qty == "") || (unit_price == "")) {
+                                    check = false;
+                                }
+                            } else {
+                                var min_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.min-qty-variant').val();
+                                var max_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.max-qty-variant').val();
+                                var unit_price_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.unit-price-variant').val();
 
-                            if ((min_qty_variant == "") || (max_qty_variant == "") || (unit_price_variant == "")) {
-                                check = false;
+                                if ((min_qty_variant == "") || (max_qty_variant == "") || (unit_price_variant == "")) {
+                                    check = false;
+                                }
                             }
-                        }
-                    });
+                        });
+                    }else{
+                        Swal.fire({
+                            title: 'Attributes',
+                            text: 'You need to choose at least one attribute',
+                            icon: 'error'
+                        });
+
+                        check = false;
+                        return false;
+                    }
                 } else {
                     if ((min_qty == "") || (max_qty == "") || (unit_price == "")) {
                         check = false;
