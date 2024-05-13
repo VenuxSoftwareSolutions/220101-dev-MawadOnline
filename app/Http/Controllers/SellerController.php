@@ -19,6 +19,7 @@ use App\Notifications\EmailVerificationNotification;
 use App\Notifications\ModificationRejectedNotification;
 use App\Notifications\ShopVerificationNotification;
 use App\Notifications\VendorStatusChangedNotification;
+use Auth;
 use Cache;
 use Carbon\Carbon;
 use File;
@@ -344,6 +345,48 @@ class SellerController extends Controller
             'message' => __('messages.vendor_approved_successfully'),
             'status' => $seller->status
         ]);
+
+    }
+    public function approveStaff($id,Request $request)
+    {
+        $sellerParent = Auth::user() ;
+        $seller = User::findOrFail($id);
+        $oldStatus = $seller->status;
+        if($sellerParent->id == $seller->owner_id ){
+            if($request->value == "Enabled")
+            $seller->status = 'Enabled';
+        else
+             $seller->status = 'Pending Approval';
+
+        $seller->save();
+
+        // Log the status change
+        if($request->value == "Enabled")
+            $this->logStatusChange($seller, 'Enabled');
+        else
+            $this->logStatusChange($seller, 'Pending Approval');
+
+    // Send an email notification to the seller with old and new status
+    if ($seller->id == $seller->owner_id) {
+        $seller->notify(new VendorStatusChangedNotification($oldStatus, $seller->status));
+        Notification::send($seller, new CustomStatusNotification($oldStatus, $seller->status));
+    }
+
+
+        // Check if it's an AJAX request
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.vendor_approved_successfully'),
+            'status' => $seller->status
+        ]);
+        }else {
+            return response()->json([
+                'success' => false,
+            ]);
+        }
+
+
+
 
     }
 

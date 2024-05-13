@@ -824,6 +824,7 @@
                         </h6>
                     </div>
                     <input type="hidden" id="selected_parent_id" name="parent_id" @if($categorie != null) value="{{ $categorie->id }}" @else value="" @endif>
+                    <input type="hidden" id="check_selected_parent_id" @if($categorie != null) value="1" @else value="-1" @endif>
 
                     <div class="card-body">
 
@@ -1167,7 +1168,7 @@
                                             <label class="col-md-2 col-from-label">{{translate('Sample Available?')}}</label>
                                             <div class="col-md-10">
                                                 <label class="aiz-switch aiz-switch-success mb-0">
-                                                    <input value="1" type="checkbox" class="variant-sample-available" name="variant[sample_available][{{ $children->id }}]" @if($children->sample_available == 1) checked @endif>
+                                                    <input value="1" type="checkbox" class="variant-sample-available" name="variant[sample_available][{{ $children->id }}]" @if($children->sample_price != null) checked @endif>
                                                     <span></span>
                                                 </label>
                                             </div>
@@ -4186,7 +4187,12 @@
             var numFiles = $(this)[0].files.length;
             var files = this.files;
             var uploaded_files = $(this).data('count');
-            var all_files_length = files.length + uploaded_files
+
+            if(uploaded_files != undefined){
+                var all_files_length = files.length + uploaded_files
+            }else{
+                var all_files_length = files.length 
+            }
 
             // Maximum number of allowed files
             var maxFiles = 10;
@@ -6574,6 +6580,7 @@
 
                     if ((!node.children || node.children.length === 0) && node.state.loaded ==  true) {
                         $('#message-category').text("");
+                        $('#check_selected_parent_id').val(1);
                         $('#message-category').css({'color': 'green', 'margin-right': '7px'});
                         // The node does not have children, proceed with your logic
                         $('#selected_parent_id').val(selectedId); // Update hidden input with selected ID
@@ -6585,6 +6592,7 @@
                     } else {
                         // The node has children, maybe clear selection or handle differently
                         $('#message-category').text("Please select a category without subcategories.");
+                        $('#check_selected_parent_id').val(-1);
                         $('#message-category').css({'color': 'red', 'margin-right': '7px'});
                         // $('#attributes_bloc').html('<select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" id="attributes" multiple disabled data-placeholder="{{ translate("No attributes found") }}"></select>');
                         // $('body input[name="activate_attributes"]').prop("checked", false);
@@ -6770,7 +6778,6 @@
                 $('body').find('.swal2-actions').prepend(html);
             }
         }).then((result) => {
-            console.log("result.isConfirmed: ", result.isConfirmed)
             if (result.isConfirmed) {
                 $('#last_version').val(1);
             } else if (result.isDenied) {
@@ -6779,46 +6786,56 @@
                 return false; // Cancel action if "Cancel Update" is clicked
             }
 
-            var check = true;
-            var min_qty = $('#min-qty-parent').val();
-            var max_qty = $('#max-qty-parent').val();
-            var unit_price = $('#unit-price-parent').val();
+            var valid_category = $('#check_selected_parent_id').val();
+            if(valid_category == 1){
+                var check = true;
+                var min_qty = $('#min-qty-parent').val();
+                var max_qty = $('#max-qty-parent').val();
+                var unit_price = $('#unit-price-parent').val();
 
-            if ($('body input[name="activate_attributes"]').is(':checked')) {
-                $('body #bloc_variants_created .variant-pricing').each(function () {
-                    if ($(this).is(':checked')) {
-                        if ((min_qty == "") || (max_qty == "") || (unit_price == "")) {
-                            check = false;
-                        }
-                    } else {
-                        var min_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.min-qty-variant').val();
-                        var max_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.max-qty-variant').val();
-                        var unit_price_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.unit-price-variant').val();
+                if ($('body input[name="activate_attributes"]').is(':checked')) {
+                    $('body #bloc_variants_created .variant-pricing').each(function () {
+                        if ($(this).is(':checked')) {
+                            if ((min_qty == "") || (max_qty == "") || (unit_price == "")) {
+                                check = false;
+                            }
+                        } else {
+                            var min_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.min-qty-variant').val();
+                            var max_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.max-qty-variant').val();
+                            var unit_price_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.unit-price-variant').val();
 
-                        if ((min_qty_variant == "") || (max_qty_variant == "") || (unit_price_variant == "")) {
-                            check = false;
+                            if ((min_qty_variant == "") || (max_qty_variant == "") || (unit_price_variant == "")) {
+                                check = false;
+                            }
                         }
+                    });
+                } else {
+                    if ((min_qty == "") || (max_qty == "") || (unit_price == "")) {
+                        check = false;
                     }
-                });
-            } else {
-                if ((min_qty == "") || (max_qty == "") || (unit_price == "")) {
-                    check = false;
                 }
-            }
 
-            if (check == true) {
-                document.getElementById('choice_form').submit();
-            } else {
+                if (check == true) {
+                    document.getElementById('choice_form').submit();
+                } else {
+                    Swal.fire({
+                        title: 'Pricing Configuration Check',
+                        text: 'Please check your pricing configuration',
+                        icon: 'error'
+                    });
+                }
+            }else{
                 Swal.fire({
-                    title: 'Pricing Configuration Check',
-                    text: 'Please check your pricing configuration',
-                    icon: 'error'
-                });
+                    title: 'Cancelled',
+                    text: 'Please select a category without subcategories.',
+                    icon: 'error',
+                    scrollbarPadding: false,
+                    backdrop:false,
+                })
             }
+            
         });
     });
 });
-
-
 </script>
 @endsection

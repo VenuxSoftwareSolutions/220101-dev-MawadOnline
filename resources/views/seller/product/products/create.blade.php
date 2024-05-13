@@ -702,6 +702,7 @@
                         </h6>
                     </div>
                     <input type="hidden" id="selected_parent_id" name="parent_id" value="">
+                    <input type="hidden" id="check_selected_parent_id" value="-1">
 
                     <div class="card-body">
 
@@ -1671,13 +1672,13 @@
 
             var valuesMinQtyArray = [];
             var valuesMaxQtyArray = [];
-            $('body .min-qty').each(function() {
+            $(this).parent().parent().parent().find('.min-qty').each(function() {
                 // Get the value of each input field and push it to the array
                 valuesMinQtyArray.push($(this).val());
                 $(this).css('border-color', '#e2e5ec');
             });
 
-            $('body .max-qty').each(function() {
+            $(this).parent().parent().parent().find('.max-qty').each(function() {
                 // Get the value of each input field and push it to the array
                 valuesMaxQtyArray.push($(this).val());
                 $(this).css('border-color', '#e2e5ec');
@@ -1696,8 +1697,8 @@
                         var difference = otherMinVal - parseFloat(valuesMaxQtyArray[j - 1]);
 
                         if(difference > 1){
-                            $('body .min-qty').eq(j).css('border-color', 'red');
-                            $('body .max-qty').eq(j - 1).css('border-color', 'red');
+                            $(this).parent().parent().parent().find('.min-qty').eq(j).css('border-color', 'red');
+                            $(this).parent().parent().parent().find('.max-qty').eq(j - 1).css('border-color', 'red');
                             Swal.fire({
                                 title: 'Cancelled',
                                 text: '{{ translate("Ensure that the difference between the minimum and maximum quantities of the preceding interval must be equal to one.")}}',
@@ -1709,7 +1710,7 @@
                         }
 
                         if (minVal >= otherMinVal && minVal <= otherMaxVal) { //check if min value exist in another interval
-                            $('body .min-qty').eq(i).css('border-color', 'red');
+                            $(this).parent().parent().parent().find('.min-qty').eq(i).css('border-color', 'red');
                             Swal.fire({
                                 title: 'Cancelled',
                                 text: '{{ translate("Overlap found.")}}',
@@ -1721,7 +1722,7 @@
                         }
 
                         if(maxVal >= otherMinVal && maxVal <= otherMaxVal){ //check if max value exist in another interval
-                            $('body .max-qty').eq(i).css('border-color', 'red');
+                            $(this).parent().parent().parent().find('.max-qty').eq(i).css('border-color', 'red');
                             Swal.fire({
                                 title: 'Cancelled',
                                 text: '{{ translate("Overlap found.")}}',
@@ -3136,6 +3137,7 @@
 
                     if ((!node.children || node.children.length === 0) && node.state.loaded ==  true) {
                         $('#message-category').text("");
+                        $('#check_selected_parent_id').val(1);
                         $('#message-category').css({'color': 'green', 'margin-right': '7px'});
                         // The node does not have children, proceed with your logic
                         $('#selected_parent_id').val(selectedId); // Update hidden input with selected ID
@@ -3152,6 +3154,7 @@
                         // The node has children, maybe clear selection or handle differently
                         $('#message-category').text("Please select a category without subcategories.");
                         $('#message-category').css({'color': 'red', 'margin-right': '7px'});
+                        $('#check_selected_parent_id').val(-1);
                         $('#attributes_bloc').html('<select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" id="attributes" multiple disabled data-placeholder="{{ translate("No attributes found") }}"></select>');
                         $('body input[name="activate_attributes"]').prop("checked", false);
                         $('#variant_informations').hide();
@@ -3259,82 +3262,94 @@
             });
             if (!isEmpty) {
                 $('#error-message').hide();
-                if(clickedButtonValue === "publish"){
-                    Swal.fire({
-                        title: "Product Publication",
-                        text: "Do you want to publish or unpublish this product?",
-                        icon: "info",
-                        showCancelButton: false,
-                        confirmButtonText: "Next",
-                        html: '<input type="checkbox" id="publicationToggle" value="published" checked> Publish upon approval',
-                        focusConfirm: false,
-                        preConfirm: () => {
-                            const publicationStatus = document.getElementById('publicationToggle').checked ? 'published' : 'unpublished';
-                            if(publicationStatus == 'published'){
-                                $('#published_after_approve').val(1)
-                            }
-                            Swal.fire({
-                                title: "Create Stock Items",
-                                text: "Do you want to create stock items for this product?",
-                                icon: "info",
-                                showCancelButton: false,
-                                confirmButtonText: "Create",
-                                html: '<input type="checkbox" id="stockToggle" value="published" checked> Create stock',
-                                focusConfirm: false,
-                            }).then((result) => {
-                                var stockToggleStatus = document.getElementById('stockToggle').checked ? 'create' : 'not create';
-                                if(stockToggleStatus == 'create'){
-                                    $('#create_stock').val(1)
+                var valid_category = $('#check_selected_parent_id').val();
+                if(valid_category == 1){
+                    if(clickedButtonValue === "publish"){
+                        Swal.fire({
+                            title: "Product Publication",
+                            text: "Do you want to publish or unpublish this product?",
+                            icon: "info",
+                            showCancelButton: false,
+                            confirmButtonText: "Next",
+                            html: '<input type="checkbox" id="publicationToggle" value="published" checked> Publish upon approval',
+                            focusConfirm: false,
+                            preConfirm: () => {
+                                const publicationStatus = document.getElementById('publicationToggle').checked ? 'published' : 'unpublished';
+                                if(publicationStatus == 'published'){
+                                    $('#published_after_approve').val(1)
                                 }
+                                Swal.fire({
+                                    title: "Create Stock Items",
+                                    text: "Do you want to create stock items for this product?",
+                                    icon: "info",
+                                    showCancelButton: false,
+                                    confirmButtonText: "Create",
+                                    html: '<input type="checkbox" id="stockToggle" value="published" checked> Create stock',
+                                    focusConfirm: false,
+                                }).then((result) => {
+                                    var stockToggleStatus = document.getElementById('stockToggle').checked ? 'create' : 'not create';
+                                    if(stockToggleStatus == 'create'){
+                                        $('#create_stock').val(1)
+                                    }
 
-                                // Update the hidden input field with the value of the clicked button
+                                    // Update the hidden input field with the value of the clicked button
 
-                                if(clickedButtonValue === "publish"){
-                                    var check = true;
-                                    var min_qty = $('#min-qty-parent').val();
-                                    var max_qty = $('#max-qty-parent').val();
-                                    var unit_price = $('#unit-price-parent').val();
+                                    if(clickedButtonValue === "publish"){
+                                        var check = true;
+                                        var min_qty = $('#min-qty-parent').val();
+                                        var max_qty = $('#max-qty-parent').val();
+                                        var unit_price = $('#unit-price-parent').val();
 
-                                    if($('body input[name="activate_attributes"]').is(':checked')){
-                                        $('body #bloc_variants_created .variant-pricing').each(function() {
-                                            if($(this).is(':checked')){
-                                                if((min_qty == "") || (max_qty == "") || (unit_price == "")){
-                                                    check = false;
+                                        if($('body input[name="activate_attributes"]').is(':checked')){
+                                            $('body #bloc_variants_created .variant-pricing').each(function() {
+                                                if($(this).is(':checked')){
+                                                    if((min_qty == "") || (max_qty == "") || (unit_price == "")){
+                                                        check = false;
+                                                    }
+                                                }else{
+                                                    var min_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.min-qty-variant').val();
+                                                    var max_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.max-qty-variant').val();
+                                                    var unit_price_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.unit-price-variant').val();
+
+                                                    if((min_qty_variant == "") || (max_qty_variant == "") || (unit_price_variant == "")){
+                                                        check = false;
+                                                    }
                                                 }
-                                            }else{
-                                                var min_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.min-qty-variant').val();
-                                                var max_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.max-qty-variant').val();
-                                                var unit_price_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.unit-price-variant').val();
-
-                                                if((min_qty_variant == "") || (max_qty_variant == "") || (unit_price_variant == "")){
-                                                    check = false;
-                                                }
+                                            });
+                                        }else{
+                                            if((min_qty == "") || (max_qty == "") || (unit_price == "")){
+                                                check = false;
                                             }
-                                        });
-                                    }else{
-                                        if((min_qty == "") || (max_qty == "") || (unit_price == "")){
-                                            check = false;
                                         }
-                                    }
 
-                                    if(check == true){
-                                        document.getElementById('choice_form').submit();
+                                        if(check == true){
+                                            document.getElementById('choice_form').submit();
+                                        }else{
+                                            Swal.fire({
+                                                title: 'Pricing Configuration Check',
+                                                text: 'Please check your pricing configuration',
+                                                icon: 'error'
+                                            });
+                                        }
                                     }else{
-                                        Swal.fire({
-                                            title: 'Pricing Configuration Check',
-                                            text: 'Please check your pricing configuration',
-                                            icon: 'error'
-                                        });
+                                        document.getElementById('choice_form').submit();
                                     }
-                                }else{
-                                    document.getElementById('choice_form').submit();
-                                }
-                            });
-                        }
-                    });
+                                });
+                            }
+                        });
+                    }else{
+                        document.getElementById('choice_form').submit();
+                    }
                 }else{
-                    document.getElementById('choice_form').submit();
+                    Swal.fire({
+                        title: 'Cancelled',
+                        text: 'Please select a category without subcategories.',
+                        icon: 'error',
+                        scrollbarPadding: false,
+                        backdrop:false,
+                    })
                 }
+                
             }else{
                 $('#error-message').show();
             }
