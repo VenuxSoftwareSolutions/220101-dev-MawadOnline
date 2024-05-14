@@ -298,7 +298,7 @@
                             <label class="col-md-3 col-from-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <small>(400x400)</small></label>
                             <div class="col-md-8" id="bloc_thumbnails">
                                 <input type="file" name="photosThumbnail[]" id="photoUploadThumbnailSeconde" onchange="previewImagesThumbnail(event)" accept=".jpeg, .jpg, .png" multiple />
-                                <small>{{ translate('Thumbnail images will be generated automatically from gallery images if not specified') }}</small>
+                                <small style="display: block; margin-top: 12px;">{{ translate('Thumbnail images will be generated automatically from gallery images if not specified') }}</small>
                                 <div class="row mt-3" id="image-preview-Thumbnail">
                                     @if(count($product->getThumbnailsProduct()) > 0)
                                         @foreach ($product->getThumbnailsProduct() as $image)
@@ -1469,7 +1469,7 @@
             });
 
             $('#photoUploadcustom').val('');
-            $('#image-preview').empty();
+            $('body .preview-container').empty();
         }else{
             let exceedingFiles = [];
 
@@ -1489,7 +1489,7 @@
                     backdrop:false,
                 });
                 $('#photoUploadcustom').val('');
-                $('#image-preview').empty();
+                $('body .preview-container').empty();
             } else {
                 let exceedingFilesDimension = [];
 
@@ -1528,7 +1528,7 @@
                             backdrop:false,
                         });
                         $('#photoUploadcustom').val('');
-                        $('#image-preview').empty();
+                        $('body .preview-container').empty();
                     }else{
                         for (var i = 0; i < files.length; i++) {
                             var file = files[i];
@@ -1578,7 +1578,7 @@
             });
 
             $('#photoUploadThumbnailSeconde').val('');
-            $('#image-preview-Thumbnail').empty();
+            $('body .preview-container-thumbnail').empty();
         }else{
             let exceedingFiles = [];
 
@@ -1598,7 +1598,7 @@
                     backdrop:false,
                 });
                 $('#photoUploadThumbnailSeconde').val('');
-                $('#image-preview-Thumbnail').empty();
+                $('body .preview-container-thumbnail').empty();
             } else {
                 let exceedingFilesDimension = [];
 
@@ -1636,7 +1636,7 @@
                             backdrop:false,
                         });
                         $('#photoUploadThumbnailSeconde').val('');
-                        $('#image-preview-Thumbnail').empty();
+                        $('body .preview-container-thumbnail').empty();
                     }else{
                         for (var i = 0; i < files.length; i++) {
                             var file = files[i];
