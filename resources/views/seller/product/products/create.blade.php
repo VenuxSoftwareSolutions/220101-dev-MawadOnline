@@ -1167,7 +1167,7 @@
             let exceedingFiles = [];
 
             for (let i = 0; i < files.length; i++) {
-                const fileSizeInMB = files[i].size / (1024 * 1024);
+                const fileSizeInMB = files[i].size / (512 * 1024);
                 if (fileSizeInMB > 2) {
                     exceedingFiles.push(files[i].name);
                 }
@@ -1176,7 +1176,7 @@
             if (exceedingFiles.length > 0) {
                 Swal.fire({
                     title: 'Cancelled',
-                    text: 'Following files exceed 2MB limit: ' + exceedingFiles.join(', '),
+                    text: 'Following files exceed 512Ko limit: ' + exceedingFiles.join(', '),
                     icon: 'error',
                     scrollbarPadding: false,
                     backdrop:false,
@@ -1199,7 +1199,7 @@
 
                             // Check image dimensions after it's loaded
                             img.onload = function() {
-                                if (img.width > 1200 || img.height > 1200) {
+                                if (img.width > 400 || img.width < 300 || img.height > 400 || img.height < 300) {
                                     exceedingFilesDimension.push(files[i].name);
                                 }
                             };
@@ -1212,7 +1212,15 @@
 
                 setTimeout(function() {
                     if (exceedingFilesDimension.length ) {
-                        
+                        Swal.fire({
+                            title: 'Cancelled',
+                            text: 'Please upload images with dimensions between 300px and 400px for both width and height: ' + exceedingFilesDimension.join(', '),
+                            icon: 'error',
+                            scrollbarPadding: false,
+                            backdrop:false,
+                        });
+                        $('#photoUploadThumbnailSeconde').val('');
+                        $('#image-preview-Thumbnail').empty();
                     }else{
                         for (var i = 0; i < files.length; i++) {
                             var file = files[i];
