@@ -208,7 +208,7 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{translate('Tags')}} <span class="text-danger">*</span></label>
                                     <div class="col-md-8">
-                                        <input type="text" required class="form-control aiz-tag-input" value="{{ $product->tags }}" name="tags[]" placeholder="{{ translate('Type and hit enter to add a tag') }}">
+                                        <input type="text" required class="form-control aiz-tag-input" value="{{ $product->tags }}" id="tags" name="tags[]" placeholder="{{ translate('Type and hit enter to add a tag') }}">
                                         <small class="text-muted">{{translate('This is used for search. Input those words by which cutomer can find this product.')}}</small>
                                     </div>
                                 </div>
@@ -272,8 +272,8 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label" for="signinSrEmail">{{translate('Gallery Images')}} <small>(1280x1280)</small></label>
                             <div class="col-md-8" id="bloc_photos">
-                                <input type="file" class="dropify" name="main_photos[]" id="photoUpload" accept=".jpeg, .jpg, .png" multiple />
-                                <div class="row mt-3" id="dropifyUploadedFiles">
+                                <input type="file" name="main_photos[]" id="photoUploadcustom" onchange="previewImages(event)" accept=".jpeg, .jpg, .png" multiple />
+                                <div class="row mt-3" id="image-preview">
                                     @if(count($product->getImagesProduct()) > 0)
                                         @foreach ($product->getImagesProduct() as $image)
                                             <div class="col-2 container-img">
@@ -288,9 +288,9 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <small>(400x400)</small></label>
                             <div class="col-md-8" id="bloc_thumbnails">
-                                <input type="file" class="dropify" name="photosThumbnail[]" id="photoUploadThumbnail" accept=".jpeg, .jpg, .png" multiple />
+                                <input type="file" name="photosThumbnail[]" id="photoUploadThumbnailSeconde" onchange="previewImagesThumbnail(event)" accept=".jpeg, .jpg, .png" multiple />
                                 <small>{{ translate('Thumbnail images will be generated automatically from gallery images if not specified') }}</small>
-                                <div class="row mt-3" id="dropifyUploadedFilesThumbnail">
+                                <div class="row mt-3" id="image-preview-Thumbnail">
                                     @if(count($product->getThumbnailsProduct()) > 0)
                                         @foreach ($product->getThumbnailsProduct() as $image)
                                             <div class="col-2 container-img">
@@ -1444,6 +1444,301 @@
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script>
+    function previewImages(event) {
+        var preview = document.getElementById('image-preview');
+        //preview.innerHTML = '';
+
+        var files = event.target.files;
+        if (files.length > 10) {
+            Swal.fire({
+                title: 'Cancelled',
+                text: '{{ translate("Maximum 10 photos allowed.")}}',
+                icon: 'error',
+                scrollbarPadding: false,
+                backdrop:false,
+            });
+
+            $('#photoUploadcustom').val('');
+            $('#image-preview').empty();
+        }else{
+            let exceedingFiles = [];
+
+            for (let i = 0; i < files.length; i++) {
+                const fileSizeInMB = files[i].size / (1024 * 1024);
+                if (fileSizeInMB > 2) {
+                    exceedingFiles.push(files[i].name);
+                }
+            }
+
+            if (exceedingFiles.length > 0) {
+                Swal.fire({
+                    title: 'Cancelled',
+                    text: 'Following files exceed 2MB limit: ' + exceedingFiles.join(', '),
+                    icon: 'error',
+                    scrollbarPadding: false,
+                    backdrop:false,
+                });
+                $('#photoUploadcustom').val('');
+                $('#image-preview').empty();
+            } else {
+                let exceedingFilesDimension = [];
+
+                for (let i = 0; i < files.length; i++) {
+                    let file = files[i];
+                    if (file.type.startsWith('image/')) {
+                        // Create a FileReader object to read the uploaded file
+                        let reader = new FileReader();
+
+                        // Closure to capture the file information
+                        reader.onload = function(event) {
+                            let img = new Image();
+                            img.src = event.target.result;
+
+                            // Check image dimensions after it's loaded
+                            img.onload = function() {
+                                if (img.width > 1200 || img.height > 1200) {
+                                    exceedingFilesDimension.push(files[i].name);
+                                }
+                            };
+                        };
+
+                        // Read the file as a data URL
+                        reader.readAsDataURL(file);
+                    }
+                }
+
+                setTimeout(function() {
+                    if (exceedingFilesDimension.length ) {
+                        
+                        Swal.fire({
+                            title: 'Cancelled',
+                            text: 'The dimensions of the images have exceeded both a width and height of 1200 pixels: ' + exceedingFiles.join(', '),
+                            icon: 'error',
+                            scrollbarPadding: false,
+                            backdrop:false,
+                        });
+                        $('#photoUploadcustom').val('');
+                        $('#image-preview').empty();
+                    }else{
+                        for (var i = 0; i < files.length; i++) {
+                            var file = files[i];
+                            var reader = new FileReader();
+
+                            reader.onload = function (e) {
+                                var imgContainer = document.createElement('div');
+                                imgContainer.classList.add('preview-container');
+                                
+                                var img = document.createElement('img');
+                                img.src = e.target.result;
+                                img.style.maxWidth = '100px'; // Adjust the size of the preview image as needed
+                                img.style.maxHeight = '100px';
+                                imgContainer.appendChild(img);
+                                
+                                var deleteBtn = document.createElement('button');
+                                deleteBtn.innerText = 'Delete';
+                                deleteBtn.onclick = function() {
+                                    imgContainer.remove(); // Remove the preview container when delete button is clicked
+                                    updateFileInput(); // Update the file input after deleting
+                                };
+                                imgContainer.appendChild(deleteBtn);
+                                
+                                preview.appendChild(imgContainer);
+                            }
+
+                            reader.readAsDataURL(file);
+                        }
+                    }
+                }, 500);
+            }
+        }
+    }
+
+    function previewImagesThumbnail(event) {
+        var preview = document.getElementById('image-preview-Thumbnail');
+        //preview.innerHTML = '';
+
+        var files = event.target.files;
+        if (files.length > 10) {
+            Swal.fire({
+                title: 'Cancelled',
+                text: '{{ translate("Maximum 10 photos allowed.")}}',
+                icon: 'error',
+                scrollbarPadding: false,
+                backdrop:false,
+            });
+
+            $('#photoUploadThumbnailSeconde').val('');
+            $('#image-preview-Thumbnail').empty();
+        }else{
+            let exceedingFiles = [];
+
+            for (let i = 0; i < files.length; i++) {
+                const fileSizeInMB = files[i].size / (512 * 1024);
+                if (fileSizeInMB > 2) {
+                    exceedingFiles.push(files[i].name);
+                }
+            }
+
+            if (exceedingFiles.length > 0) {
+                Swal.fire({
+                    title: 'Cancelled',
+                    text: 'Following files exceed 512Ko limit: ' + exceedingFiles.join(', '),
+                    icon: 'error',
+                    scrollbarPadding: false,
+                    backdrop:false,
+                });
+                $('#photoUploadThumbnailSeconde').val('');
+                $('#image-preview-Thumbnail').empty();
+            } else {
+                let exceedingFilesDimension = [];
+
+                for (let i = 0; i < files.length; i++) {
+                    let file = files[i];
+                    if (file.type.startsWith('image/')) {
+                        // Create a FileReader object to read the uploaded file
+                        let reader = new FileReader();
+
+                        // Closure to capture the file information
+                        reader.onload = function(event) {
+                            let img = new Image();
+                            img.src = event.target.result;
+
+                            // Check image dimensions after it's loaded
+                            img.onload = function() {
+                                if (img.width > 400 || img.width < 300 || img.height > 400 || img.height < 300) {
+                                    exceedingFilesDimension.push(files[i].name);
+                                }
+                            };
+                        };
+
+                        // Read the file as a data URL
+                        reader.readAsDataURL(file);
+                    }
+                }
+
+                setTimeout(function() {
+                    if (exceedingFilesDimension.length ) {
+                        Swal.fire({
+                            title: 'Cancelled',
+                            text: 'Please upload images with dimensions between 300px and 400px for both width and height: ' + exceedingFilesDimension.join(', '),
+                            icon: 'error',
+                            scrollbarPadding: false,
+                            backdrop:false,
+                        });
+                        $('#photoUploadThumbnailSeconde').val('');
+                        $('#image-preview-Thumbnail').empty();
+                    }else{
+                        for (var i = 0; i < files.length; i++) {
+                            var file = files[i];
+                            var reader = new FileReader();
+
+                            reader.onload = function (e) {
+                                var imgContainer = document.createElement('div');
+                                imgContainer.classList.add('preview-container-thumbnail');
+                                
+                                var img = document.createElement('img');
+                                img.src = e.target.result;
+                                img.style.maxWidth = '100px'; // Adjust the size of the preview image as needed
+                                img.style.maxHeight = '100px';
+                                imgContainer.appendChild(img);
+                                
+                                var deleteBtn = document.createElement('button');
+                                deleteBtn.innerText = 'Delete';
+                                deleteBtn.onclick = function() {
+                                    imgContainer.remove(); // Remove the preview container when delete button is clicked
+                                    updateFileInputThumbnail(); // Update the file input after deleting
+                                };
+                                imgContainer.appendChild(deleteBtn);
+                                
+                                preview.appendChild(imgContainer);
+                            }
+
+                            reader.readAsDataURL(file);
+                        }
+                    }
+                }, 500);
+            }
+        }
+    }
+
+    function updateFileInput() {
+        var previewContainers = document.querySelectorAll('.preview-container');
+        var files = [];
+
+        previewContainers.forEach(function(container) {
+            var img = container.querySelector('img');
+            var file = dataURLtoFile(img.src, 'image_' + Date.now() + '.png');
+            files.push(file);
+        });
+
+        var newInput = document.createElement('input');
+        newInput.type = 'file';
+        newInput.id = 'photoUploadcustom';
+        newInput.name = 'main_photos[]';
+        newInput.multiple = true;
+        newInput.classList.add('form-control'); // Add the 'form-control' class
+
+        newInput.addEventListener('change', previewImages);
+
+        // Replace the old input with the new one
+        var oldInput = document.getElementById('photoUploadcustom');
+        oldInput.parentNode.replaceChild(newInput, oldInput);
+
+        // Set files to the new input
+        var dataTransfer = new DataTransfer();
+        files.forEach(function(file) {
+            dataTransfer.items.add(file);
+        });
+        newInput.files = dataTransfer.files;
+    }
+
+    function updateFileInputThumbnail() {
+        var previewContainers = document.querySelectorAll('.preview-container-thumbnail');
+        var files = [];
+
+        previewContainers.forEach(function(container) {
+            var img = container.querySelector('img');
+            var file = dataURLtoFile(img.src, 'image_' + Date.now() + '.png');
+            files.push(file);
+        });
+
+        var newInput = document.createElement('input');
+        newInput.type = 'file';
+        newInput.id = 'photoUploadThumbnailSeconde';
+        newInput.name = 'photosThumbnail[]';
+        newInput.multiple = true;
+        newInput.classList.add('form-control'); // Add the 'form-control' class
+
+        newInput.addEventListener('change', previewImages);
+
+        // Replace the old input with the new one
+        var oldInput = document.getElementById('photoUploadThumbnailSeconde');
+        oldInput.parentNode.replaceChild(newInput, oldInput);
+
+        // Set files to the new input
+        var dataTransfer = new DataTransfer();
+        files.forEach(function(file) {
+            dataTransfer.items.add(file);
+        });
+        newInput.files = dataTransfer.files;
+    }
+
+    // Convert data URL to File object
+    function dataURLtoFile(dataUrl, filename) {
+        var arr = dataUrl.split(','),
+            mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[1]),
+            n = bstr.length,
+            u8arr = new Uint8Array(n);
+            
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+
+        return new File([u8arr], filename, { type: mime });
+    }
+</script>
 <script>
     var previewUrlBase  = "{{ route('seller.product.preview', ['slug' => 'PLACEHOLDER']) }}";
 </script>
@@ -4601,63 +4896,81 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('choice_form').addEventListener('submit', function (event) {
-        event.preventDefault(); // Prevent default form submission
+        document.getElementById('choice_form').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent default form submission
 
-        var valid_category = $('#check_selected_parent_id').val();
-        var clickedButtonValue = event.submitter.value;
-        document.getElementById('submit_button').value = clickedButtonValue;
+            var valid_category = $('#check_selected_parent_id').val();
+            var clickedButtonValue = event.submitter.value;
+            document.getElementById('submit_button').value = clickedButtonValue;
+            var isEmpty = false;
 
-        if(valid_category == 1){
-            var check = true;
-            var min_qty = $('#min-qty-parent').val();
-            var max_qty = $('#max-qty-parent').val();
-            var unit_price = $('#unit-price-parent').val();
-            if(clickedButtonValue === "edit"){
-                if ($('body input[name="activate_attributes"]').is(':checked')) {
-                    $('body #bloc_variants_created .variant-pricing').each(function () {
-                        if ($(this).is(':checked')) {
+            tagifyInputs.each(function() {
+                var tagify = $(this).data('tagify');
+
+                if (tagify.value.length === 0) {
+                    isEmpty = true;
+                    return false; // Exit the loop early if an empty Tagify input is found
+                }
+            });
+            if (!isEmpty) {
+                $('#error-message').hide();
+                if(valid_category == 1){
+                    var check = true;
+                    var min_qty = $('#min-qty-parent').val();
+                    var max_qty = $('#max-qty-parent').val();
+                    var unit_price = $('#unit-price-parent').val();
+                    if(clickedButtonValue === "edit"){
+                        if ($('body input[name="activate_attributes"]').is(':checked')) {
+                            $('body #bloc_variants_created .variant-pricing').each(function () {
+                                if ($(this).is(':checked')) {
+                                    if ((min_qty == "") || (max_qty == "") || (unit_price == "")) {
+                                        check = false;
+                                    }
+                                } else {
+                                    var min_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.min-qty-variant').val();
+                                    var max_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.max-qty-variant').val();
+                                    var unit_price_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.unit-price-variant').val();
+
+                                    if ((min_qty_variant == "") || (max_qty_variant == "") || (unit_price_variant == "")) {
+                                        check = false;
+                                    }
+                                }
+                            });
+                        } else {
                             if ((min_qty == "") || (max_qty == "") || (unit_price == "")) {
                                 check = false;
                             }
-                        } else {
-                            var min_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.min-qty-variant').val();
-                            var max_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.max-qty-variant').val();
-                            var unit_price_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.unit-price-variant').val();
-
-                            if ((min_qty_variant == "") || (max_qty_variant == "") || (unit_price_variant == "")) {
-                                check = false;
-                            }
                         }
-                    });
-                } else {
-                    if ((min_qty == "") || (max_qty == "") || (unit_price == "")) {
-                        check = false;
-                    }
-                }
 
-                if (check == true) {
-                    document.getElementById('choice_form').submit();
-                } else {
+                        if (check == true) {
+                            document.getElementById('choice_form').submit();
+                        } else {
+                            Swal.fire({
+                                title: 'Pricing Configuration Check',
+                                text: 'Please check your pricing configuration',
+                                icon: 'error'
+                            });
+                        }
+                    }else{
+                        document.getElementById('choice_form').submit(); 
+                    }
+                }else{
                     Swal.fire({
-                        title: 'Pricing Configuration Check',
-                        text: 'Please check your pricing configuration',
-                        icon: 'error'
-                    });
+                        title: 'Cancelled',
+                        text: 'Please select a category without subcategories.',
+                        icon: 'error',
+                        scrollbarPadding: false,
+                        backdrop:false,
+                    })
                 }
             }else{
-                document.getElementById('choice_form').submit(); 
+                var inputTopPosition = $("#tags").offset().top;
+
+                // Animate scrolling to the input element
+                $("html, body").animate({ scrollTop: inputTopPosition }, 1000);
+                $('#error-message').show();
             }
-        }else{
-            Swal.fire({
-                title: 'Cancelled',
-                text: 'Please select a category without subcategories.',
-                icon: 'error',
-                scrollbarPadding: false,
-                backdrop:false,
-            })
-        }
+        });
     });
-});
 </script>
 @endsection

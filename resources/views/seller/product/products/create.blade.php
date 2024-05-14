@@ -322,9 +322,13 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <small>(400x400)</small></label>
                             <div class="col-md-8" id="bloc_thumbnails">
-                                <input type="file" class="dropify" name="photosThumbnail[]" id="photoUploadThumbnail" accept=".jpeg, .jpg, .png" multiple />
+                                <input type="file" class="form-control" name="photosThumbnail[]" id="photoUploadThumbnailSeconde" onchange="previewImagesThumbnail(event)" accept=".jpeg, .jpg, .png" multiple />
                                 <small>{{ translate('Thumbnail images will be generated automatically from gallery images if not specified') }}</small>
-                                <div id="dropifyUploadedFilesThumbnail"></div>
+                                <div id="image-preview-Thumbnail"></div>
+
+                                {{-- <input type="file" class="dropify" name="photosThumbnail[]" id="photoUploadThumbnail" accept=".jpeg, .jpg, .png" multiple />
+                               
+                                <div id="dropifyUploadedFilesThumbnail"></div> --}}
                             </div>
                         </div>
                         <hr>
@@ -1100,6 +1104,15 @@
                 setTimeout(function() {
                     if (exceedingFilesDimension.length ) {
                         
+                        Swal.fire({
+                            title: 'Cancelled',
+                            text: 'The dimensions of the images have exceeded both a width and height of 1200 pixels: ' + exceedingFiles.join(', '),
+                            icon: 'error',
+                            scrollbarPadding: false,
+                            backdrop:false,
+                        });
+                        $('#photoUploadcustom').val('');
+                        $('#image-preview').empty();
                     }else{
                         for (var i = 0; i < files.length; i++) {
                             var file = files[i];
@@ -1120,6 +1133,114 @@
                                 deleteBtn.onclick = function() {
                                     imgContainer.remove(); // Remove the preview container when delete button is clicked
                                     updateFileInput(); // Update the file input after deleting
+                                };
+                                imgContainer.appendChild(deleteBtn);
+                                
+                                preview.appendChild(imgContainer);
+                            }
+
+                            reader.readAsDataURL(file);
+                        }
+                    }
+                }, 500);
+            }
+        }
+    }
+
+    function previewImagesThumbnail(event) {
+        var preview = document.getElementById('image-preview-Thumbnail');
+        preview.innerHTML = '';
+
+        var files = event.target.files;
+        if (files.length > 10) {
+            Swal.fire({
+                title: 'Cancelled',
+                text: '{{ translate("Maximum 10 photos allowed.")}}',
+                icon: 'error',
+                scrollbarPadding: false,
+                backdrop:false,
+            });
+
+            $('#photoUploadThumbnailSeconde').val('');
+            $('#image-preview-Thumbnail').empty();
+        }else{
+            let exceedingFiles = [];
+
+            for (let i = 0; i < files.length; i++) {
+                const fileSizeInMB = files[i].size / (512 * 1024);
+                if (fileSizeInMB > 2) {
+                    exceedingFiles.push(files[i].name);
+                }
+            }
+
+            if (exceedingFiles.length > 0) {
+                Swal.fire({
+                    title: 'Cancelled',
+                    text: 'Following files exceed 512Ko limit: ' + exceedingFiles.join(', '),
+                    icon: 'error',
+                    scrollbarPadding: false,
+                    backdrop:false,
+                });
+                $('#photoUploadThumbnailSeconde').val('');
+                $('#image-preview-Thumbnail').empty();
+            } else {
+                let exceedingFilesDimension = [];
+
+                for (let i = 0; i < files.length; i++) {
+                    let file = files[i];
+                    if (file.type.startsWith('image/')) {
+                        // Create a FileReader object to read the uploaded file
+                        let reader = new FileReader();
+
+                        // Closure to capture the file information
+                        reader.onload = function(event) {
+                            let img = new Image();
+                            img.src = event.target.result;
+
+                            // Check image dimensions after it's loaded
+                            img.onload = function() {
+                                if (img.width > 400 || img.width < 300 || img.height > 400 || img.height < 300) {
+                                    exceedingFilesDimension.push(files[i].name);
+                                }
+                            };
+                        };
+
+                        // Read the file as a data URL
+                        reader.readAsDataURL(file);
+                    }
+                }
+
+                setTimeout(function() {
+                    if (exceedingFilesDimension.length ) {
+                        Swal.fire({
+                            title: 'Cancelled',
+                            text: 'Please upload images with dimensions between 300px and 400px for both width and height: ' + exceedingFilesDimension.join(', '),
+                            icon: 'error',
+                            scrollbarPadding: false,
+                            backdrop:false,
+                        });
+                        $('#photoUploadThumbnailSeconde').val('');
+                        $('#image-preview-Thumbnail').empty();
+                    }else{
+                        for (var i = 0; i < files.length; i++) {
+                            var file = files[i];
+                            var reader = new FileReader();
+
+                            reader.onload = function (e) {
+                                var imgContainer = document.createElement('div');
+                                imgContainer.classList.add('preview-container-thumbnail');
+                                
+                                var img = document.createElement('img');
+                                img.src = e.target.result;
+                                img.style.maxWidth = '100px'; // Adjust the size of the preview image as needed
+                                img.style.maxHeight = '100px';
+                                imgContainer.appendChild(img);
+                                
+                                var deleteBtn = document.createElement('button');
+                                deleteBtn.innerText = 'Delete';
+                                deleteBtn.onclick = function() {
+                                    imgContainer.remove(); // Remove the preview container when delete button is clicked
+                                    updateFileInputThumbnail(); // Update the file input after deleting
                                 };
                                 imgContainer.appendChild(deleteBtn);
                                 
@@ -1155,6 +1276,37 @@
 
         // Replace the old input with the new one
         var oldInput = document.getElementById('photoUploadcustom');
+        oldInput.parentNode.replaceChild(newInput, oldInput);
+
+        // Set files to the new input
+        var dataTransfer = new DataTransfer();
+        files.forEach(function(file) {
+            dataTransfer.items.add(file);
+        });
+        newInput.files = dataTransfer.files;
+    }
+
+    function updateFileInputThumbnail() {
+        var previewContainers = document.querySelectorAll('.preview-container-thumbnail');
+        var files = [];
+
+        previewContainers.forEach(function(container) {
+            var img = container.querySelector('img');
+            var file = dataURLtoFile(img.src, 'image_' + Date.now() + '.png');
+            files.push(file);
+        });
+
+        var newInput = document.createElement('input');
+        newInput.type = 'file';
+        newInput.id = 'photoUploadThumbnailSeconde';
+        newInput.name = 'photosThumbnail[]';
+        newInput.multiple = true;
+        newInput.classList.add('form-control'); // Add the 'form-control' class
+
+        newInput.addEventListener('change', previewImages);
+
+        // Replace the old input with the new one
+        var oldInput = document.getElementById('photoUploadThumbnailSeconde');
         oldInput.parentNode.replaceChild(newInput, oldInput);
 
         // Set files to the new input
