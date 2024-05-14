@@ -1013,7 +1013,7 @@
             <div class="col-12">
                 <div class="mar-all text-right mb-2">
                     <button type="submit" name="button" value="draft" class="btn btn-success">Save as draft</button>
-                    <button type="submit" name="button" value="publish" class="btn btn-primary">Upload Product</button>
+                    <button type="submit" name="button" value="publish" class="btn btn-primary">Create Product</button>
                     <input type="hidden" name="submit_button" id="submit_button">
                 </div>
             </div>
@@ -3588,30 +3588,30 @@
                 if(valid_category == 1){
                     if(clickedButtonValue === "publish"){
                         Swal.fire({
-                            title: "Product Publication",
-                            text: "Do you want to publish or unpublish this product?",
+                            title: "Product Publishing",
+                            text: " Your product has been created successfully, but it will be pending for admin approval. You can set the product published to appear in the marketplace once approved. Do you want to make it published?",
                             icon: "info",
-                            showCancelButton: false,
-                            confirmButtonText: "Next",
-                            html: '<input type="checkbox" id="publicationToggle" value="published" checked> Publish upon approval',
-                            focusConfirm: false,
-                            preConfirm: () => {
-                                const publicationStatus = document.getElementById('publicationToggle').checked ? 'published' : 'unpublished';
-                                if(publicationStatus == 'published'){
+                            showCancelButton: true,
+                            confirmButtonText: "Yes",
+                            cancelButtonText: "No",
+                            allowOutsideClick: false,
+                            focusConfirm: false
+                        }).then((result) => {
+                                if (result.isConfirmed) {
                                     $('#published_after_approve').val(1)
                                 }
                                 
                                 Swal.fire({
-                                    title: "Create Stock Items",
-                                    text: "Do you want to create stock items for this product?",
+                                    title: "Product Inventory",
+                                    text: "You can create the product's inventory and make it ready before admin approval. This is recommended if your product will be immediately published upon approval. Do you want to continue?",
                                     icon: "info",
-                                    showCancelButton: false,
-                                    confirmButtonText: "Create",
-                                    html: '<input type="checkbox" id="stockToggle" value="published" checked> Create stock',
-                                    focusConfirm: false,
+                                    showCancelButton: true,
+                                    confirmButtonText: "Yes",
+                                    cancelButtonText: "Cancel",
+                                    allowOutsideClick: false,
+                                    focusConfirm: false
                                 }).then((result) => {
-                                    var stockToggleStatus = document.getElementById('stockToggle').checked ? 'create' : 'not create';
-                                    if(stockToggleStatus == 'create'){
+                                    if (result.isConfirmed) {
                                         $('#create_stock').val(1)
                                     }
 
@@ -3671,7 +3671,6 @@
                                         document.getElementById('choice_form').submit();
                                     }
                                 });
-                            }
                         });
                     }else{
                         document.getElementById('choice_form').submit();
