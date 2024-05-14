@@ -1001,7 +1001,6 @@
                             </div>
                             <div class="col-2">
                                 <i class="las la-plus add_document" style="margin-left: 5px; margin-top: 40px;"></i>
-                                <i class="las la-trash trash_document" style="margin-left: 5px; margin-top: 40px;" ></i>
                             </div>
                         </div>
                     </div>
