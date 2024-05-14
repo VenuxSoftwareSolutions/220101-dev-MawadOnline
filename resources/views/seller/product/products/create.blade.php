@@ -3605,7 +3605,7 @@
             var tagifyInputs = $(".aiz-tag-input").not(".tagify");
             var isEmpty = false;
 
-            Tagify.each(function() {
+            tagifyInputs.each(function() {
                 var tagify = $(this).data('tagify');
 
                 if (tagify.value.length === 0) {

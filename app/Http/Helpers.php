@@ -754,7 +754,15 @@ if (!function_exists('home_discounted_base_price_by_stock_id')) {
 if (!function_exists('home_discounted_base_price')) {
     function home_discounted_base_price($product, $formatted = true)
     {
-        $price = $product->unit_price;
+        $product_price = $product->getPricingConfiguration();
+
+        if ($product_price !== null && $product_price->isNotEmpty()) {
+            $price = $product_price->first()->unit_price;
+        } else {
+            $price = 0; // Set $price to 0 if $product_price is null or empty
+        }
+
+        
         $tax = 0;
 
         $discount_applicable = false;
@@ -785,7 +793,8 @@ if (!function_exists('home_discounted_base_price')) {
         }
         $price += $tax;
 
-
+        $val = convert_price($price);
+        
         return $formatted ? format_price(convert_price($price)) : convert_price($price);
     }
 }
