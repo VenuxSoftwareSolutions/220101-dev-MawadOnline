@@ -54,7 +54,7 @@ class ProductController extends Controller
     {
         $products = Product::where('user_id', auth()->user()->id)->where('digital', 0)->where('auction_product', 0)->where('wholesale_product', 0)->orderBy('created_at', 'desc');
         $products = $products->paginate(10);
-       // return new ProductCollection($products);
+        return new ProductCollection($products);
     }
 
     public function getCategory()
