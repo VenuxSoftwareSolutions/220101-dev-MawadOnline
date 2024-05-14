@@ -1,6 +1,71 @@
 @extends('seller.layouts.app')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 <style>
+    #image-preview {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    
+    #image-preview img {
+        margin: 5px;
+    }
+    
+    #image-preview-thumbnail {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    
+    #image-preview-thumbnail img {
+        margin: 5px;
+    }
+    </style>
+    <style>
+    .preview-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 5px;
+    }
+    
+    .preview-container img {
+        max-width: 100px;
+        max-height: 100px;
+    }
+    
+    .preview-container button {
+        margin-top: 5px;
+        background-color: #ff0000;
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+    
+    .preview-container-thumbnail {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 5px;
+    }
+    
+    .preview-container-thumbnail img {
+        max-width: 100px;
+        max-height: 100px;
+    }
+    
+    .preview-container-thumbnail button {
+        margin-top: 5px;
+        background-color: #ff0000;
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+    </style>
+    
+<style>
     .table th{
         font-size: 12px !important;
     }
@@ -101,61 +166,6 @@
         border-radius: 0;
     }
 
- 
-
-    .preview-container-Thumbnail {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 5px;
-}
-
-.preview-container-Thumbnail img {
-    max-width: 100px;
-    max-height: 100px;
-}
-
-.preview-container-Thumbnail button {
-    margin-top: 5px;
-    background-color: #ff0000;
-    color: #fff;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    border-radius: 5px;
-}
-    
-</style>
-<style>
-#image-preview {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-#image-preview img {
-    margin: 5px;
-}
-.preview-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 5px;
-}
-
-.preview-container img {
-    max-width: 100px;
-    max-height: 100px;
-}
-
-.preview-container button {
-    margin-top: 5px;
-    background-color: #ff0000;
-    color: #fff;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    border-radius: 5px;
-}
 </style>
 @section('panel_content')
     <div class="aiz-titlebar mt-2 mb-4">
@@ -1721,6 +1731,7 @@
         newInput.name = 'main_photos[]';
         newInput.multiple = true;
         newInput.classList.add('form-control'); // Add the 'form-control' class
+        newInput.accept = 'image/*'; // Accept only image files
 
         newInput.addEventListener('change', previewImages);
 
@@ -1752,6 +1763,7 @@
         newInput.name = 'photosThumbnail[]';
         newInput.multiple = true;
         newInput.classList.add('form-control'); // Add the 'form-control' class
+        newInput.accept = 'image/*'; // Accept only image files
 
         newInput.addEventListener('change', previewImagesThumbnail);
 

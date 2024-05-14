@@ -1301,6 +1301,7 @@
         newInput.name = 'main_photos[]';
         newInput.multiple = true;
         newInput.classList.add('form-control'); // Add the 'form-control' class
+        newInput.accept = 'image/*'; // Accept only image files
 
         newInput.addEventListener('change', previewImages);
 
