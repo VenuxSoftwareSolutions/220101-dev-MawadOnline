@@ -1598,7 +1598,6 @@
     }
 
     function previewImagesThumbnail(event) {
-        alert('ok');
         var preview = document.getElementById('image-preview-Thumbnail');
         //preview.innerHTML = '';
 
@@ -1754,7 +1753,7 @@
         newInput.multiple = true;
         newInput.classList.add('form-control'); // Add the 'form-control' class
 
-        newInput.addEventListener('change', previewImages);
+        newInput.addEventListener('change', previewImagesThumbnail);
 
         // Replace the old input with the new one
         var oldInput = document.getElementById('photoUploadThumbnailSeconde');
