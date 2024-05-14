@@ -12,6 +12,15 @@
 #image-preview img {
     margin: 5px;
 }
+
+#image-preview-Thumbnail {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#image-preview-Thumbnail img {
+    margin: 5px;
+}
 </style>
 <style>
 .preview-container {
@@ -27,6 +36,28 @@
 }
 
 .preview-container button {
+    margin-top: 5px;
+    background-color: #ff0000;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.preview-container-Thumbnail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 5px;
+}
+
+.preview-container-Thumbnail img {
+    max-width: 100px;
+    max-height: 100px;
+}
+
+.preview-container-Thumbnail button {
     margin-top: 5px;
     background-color: #ff0000;
     color: #fff;
@@ -1228,7 +1259,7 @@
 
                             reader.onload = function (e) {
                                 var imgContainer = document.createElement('div');
-                                imgContainer.classList.add('preview-container-thumbnail');
+                                imgContainer.classList.add('preview-container-Thumbnail');
                                 
                                 var img = document.createElement('img');
                                 img.src = e.target.result;
@@ -1256,7 +1287,7 @@
     }
 
     function updateFileInput() {
-        var previewContainers = document.querySelectorAll('.preview-container');
+        var previewContainers = document.querySelectorAll('.preview-container-Thumbnail');
         var files = [];
 
         previewContainers.forEach(function(container) {
