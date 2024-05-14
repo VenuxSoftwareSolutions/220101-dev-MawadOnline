@@ -64,7 +64,7 @@ class ProductService
 
         unset($collection['parent_id']);
 
-        
+
 
         if($collection['create_stock'] == 1){
             $collection['stock_after_create'] = 1;
@@ -479,7 +479,7 @@ class ProductService
         }else{
             $collection['published'] = 0;
         }
-        
+
         unset($collection['published_modal']);
 
         $data = $collection->merge(compact(
