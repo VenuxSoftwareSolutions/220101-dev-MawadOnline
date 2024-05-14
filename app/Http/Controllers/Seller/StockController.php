@@ -90,7 +90,7 @@ class StockController extends Controller
         $warehouses = Warehouse::where('user_id', $seller->id)->get();
         $products = Product::where('is_parent', 0)   // Filter products where 'is_parent' column is 0
             ->where('is_draft', 0)                   // Filter products where 'is_draft' column is 0
-            ->where('approved', 1)                   // Filter products where 'approved' column is 1
+           /*  ->where('approved', 1)       */             // Filter products where 'approved' column is 1
             ->where('user_id', $seller->id)          // Filter products where 'user_id' column matches the seller's id
             ->get();
 

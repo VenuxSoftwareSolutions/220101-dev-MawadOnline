@@ -19,22 +19,22 @@ class Product extends Model
 {
 
     use EnhancedRevisionableTrait, SoftDeletes;
-    
+
 
     protected $dontKeepRevisionOf = [
-                                    'is_draft', 
-                                    'approved', 
-                                    'sku', 
-                                    'deleted_at', 
-                                    'rejection_reason', 
-                                    'slug', 
-                                    'low_stock_quantity', 
-                                    'published', 
-                                    'shipping', 
-                                    'vat_sample', 
-                                    'sample_description', 
-                                    'vat', 
-                                    'sample_price', 
+                                    'is_draft',
+                                    'approved',
+                                    'sku',
+                                    'deleted_at',
+                                    'rejection_reason',
+                                    'slug',
+                                    'low_stock_quantity',
+                                    'published',
+                                    'shipping',
+                                    'vat_sample',
+                                    'sample_description',
+                                    'vat',
+                                    'sample_price',
                                     'activate_third_party',
                                     'length',
                                     'width',
@@ -296,31 +296,35 @@ class Product extends Model
     }
 
     public function productVariantDetails() {
-         $productVariantName = "" ;
-        foreach ($this->productAttributeValues as $productAttributeValue  ) {
-            if($productAttributeValue->attribute->type_value == "numeric")
-            {
-                $productVariantName.= $productAttributeValue->attribute->name.' '.$productAttributeValue->value." ".$productAttributeValue->unity->name." " ;
-            }
-            elseif($productAttributeValue->attribute->type_value ="list") {
-                $productVariantName.=$productAttributeValue->attribute->name.' '.$productAttributeValue->attributeValues->value." " ;
+        try {
+            $productVariantName = " " ;
+            foreach ($this->productAttributeValues as $productAttributeValue  ) {
+                if($productAttributeValue->attribute->type_value == "numeric")
+                {
+                    $productVariantName.= $productAttributeValue->attribute->id.' '.$productAttributeValue->value." ".$productAttributeValue->unity->name." " ;
+                }
+                elseif($productAttributeValue->attribute->type_value =="list") {
+                    $productVariantName.=$productAttributeValue->attribute->id.' '.$productAttributeValue->attributeValues->value." " ;
+
+
+                }
+                elseif($productAttributeValue->attribute->type_value =="color") {
+                    $productVariantName.= $productAttributeValue->attribute->id.' '.$productAttributeValue->color->name." "  ;
+
+                }
+                else{
+                    $productVariantName.= $productAttributeValue->attribute->id.' '.$productAttributeValue->value." "  ;
+
+                }
 
 
             }
-            elseif($productAttributeValue->attribute->type_value ="color") {
-                $productVariantName.= $productAttributeValue->attribute->name.' '.$productAttributeValue->color->name." "  ;
 
-            }
-            else{
-                $productVariantName.= $productAttributeValue->attribute->name.' '.$productAttributeValue->value." "  ;
-
-            }
-
-
+            return $productVariantName ;
+        } catch (\Exception $e) {
+            // Handle any exceptions here
+            return " " ;
         }
-
-        return $productVariantName ;
-
     }
 
     public function getShipping(){
@@ -337,7 +341,7 @@ class Product extends Model
             ->orderBy('unit_price', 'asc')
             ->pluck('unit_price')
             ->first();
-        
+
         $lastPrice = PricingConfiguration::where('id_products', $this->id)
             ->orderBy('unit_price', 'desc')
             ->pluck('unit_price')
