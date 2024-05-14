@@ -13,12 +13,12 @@
     margin: 5px;
 }
 
-#image-preview-Thumbnail {
+#image-preview-thumbnail {
     display: flex;
     flex-wrap: wrap;
 }
 
-#image-preview-Thumbnail img {
+#image-preview-thumbnail img {
     margin: 5px;
 }
 </style>
@@ -45,19 +45,19 @@
     border-radius: 5px;
 }
 
-.preview-container-Thumbnail {
+.preview-container-thumbnail {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin: 5px;
 }
 
-.preview-container-Thumbnail img {
+.preview-container-thumbnail img {
     max-width: 100px;
     max-height: 100px;
 }
 
-.preview-container-Thumbnail button {
+.preview-container-thumbnail button {
     margin-top: 5px;
     background-color: #ff0000;
     color: #fff;
@@ -355,7 +355,7 @@
                             <div class="col-md-8" id="bloc_thumbnails">
                                 <input type="file" class="form-control" name="photosThumbnail[]" id="photoUploadThumbnailSeconde" onchange="previewImagesThumbnail(event)" accept=".jpeg, .jpg, .png" multiple />
                                 <small style="display: block; margin-top: 12px;">{{ translate('Thumbnail images will be generated automatically from gallery images if not specified') }}</small>
-                                <div id="image-preview-Thumbnail"></div>
+                                <div id="image-preview-thumbnail"></div>
 
                                 {{-- <input type="file" class="dropify" name="photosThumbnail[]" id="photoUploadThumbnail" accept=".jpeg, .jpg, .png" multiple />
                                
@@ -1179,7 +1179,7 @@
     }
 
     function previewImagesThumbnail(event) {
-        var preview = document.getElementById('image-preview-Thumbnail');
+        var preview = document.getElementById('image-preview-thumbnail');
         preview.innerHTML = '';
 
         var files = event.target.files;
@@ -1193,7 +1193,7 @@
             });
 
             $('#photoUploadThumbnailSeconde').val('');
-            $('#image-preview-Thumbnail').empty();
+            $('#image-preview-thumbnail').empty();
         }else{
             let exceedingFiles = [];
 
@@ -1213,7 +1213,7 @@
                     backdrop:false,
                 });
                 $('#photoUploadThumbnailSeconde').val('');
-                $('#image-preview-Thumbnail').empty();
+                $('#image-preview-thumbnail').empty();
             } else {
                 let exceedingFilesDimension = [];
 
@@ -1251,7 +1251,7 @@
                             backdrop:false,
                         });
                         $('#photoUploadThumbnailSeconde').val('');
-                        $('#image-preview-Thumbnail').empty();
+                        $('#image-preview-thumbnail').empty();
                     }else{
                         for (var i = 0; i < files.length; i++) {
                             var file = files[i];
@@ -1259,7 +1259,7 @@
 
                             reader.onload = function (e) {
                                 var imgContainer = document.createElement('div');
-                                imgContainer.classList.add('preview-container-Thumbnail');
+                                imgContainer.classList.add('preview-container-thumbnail');
                                 
                                 var img = document.createElement('img');
                                 img.src = e.target.result;
@@ -3605,7 +3605,7 @@
             var tagifyInputs = $(".aiz-tag-input").not(".tagify");
             var isEmpty = false;
 
-            tagifyInputs.each(function() {
+            Tagify.each(function() {
                 var tagify = $(this).data('tagify');
 
                 if (tagify.value.length === 0) {

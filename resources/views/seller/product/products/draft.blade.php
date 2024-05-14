@@ -101,26 +101,62 @@
         border-radius: 0;
     }
 
-    @media screen and (min-width: 1200px) {
-        .icon-delete-image {
-            position: absolute;
-            color: red;
-            top: 0;
-            right: 31px !important;
-        }
-    }
+ 
 
-    @media screen and (max-width: 1799px) {
-        /* Add your CSS rules here */
-        .icon-delete-image {
-            position: absolute;
-            color: red;
-            top: 0;
-            right: -11px !important;
-        }
-    }
+    .preview-container-Thumbnail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 5px;
+}
+
+.preview-container-Thumbnail img {
+    max-width: 100px;
+    max-height: 100px;
+}
+
+.preview-container-Thumbnail button {
+    margin-top: 5px;
+    background-color: #ff0000;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+    
 </style>
+<style>
+#image-preview {
+    display: flex;
+    flex-wrap: wrap;
+}
 
+#image-preview img {
+    margin: 5px;
+}
+.preview-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 5px;
+}
+
+.preview-container img {
+    max-width: 100px;
+    max-height: 100px;
+}
+
+.preview-container button {
+    margin-top: 5px;
+    background-color: #ff0000;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+</style>
 @section('panel_content')
     <div class="aiz-titlebar mt-2 mb-4">
         <div class="row align-items-center">
@@ -272,33 +308,40 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label" for="signinSrEmail">{{translate('Gallery Images')}} <small>(1280x1280)</small></label>
                             <div class="col-md-8" id="bloc_photos">
-                                <input type="file" name="main_photos[]" id="photoUploadcustom" onchange="previewImages(event)" accept=".jpeg, .jpg, .png" multiple />
-                                <div class="row mt-3" id="image-preview">
+                                <input type="file" name="main_photos[]" class="form-control" id="photoUploadcustom" onchange="previewImages(event)" accept=".jpeg, .jpg, .png" multiple />
+                                <div class="row mt-3">
+                                <div id="image-preview">
                                     @if(count($product->getImagesProduct()) > 0)
                                         @foreach ($product->getImagesProduct() as $image)
-                                            <div class="col-2 container-img">
-                                                <img src="{{ asset('/public/'.$image->path) }}" height="120" width="120" />
-                                                <i class="fa-regular fa-circle-xmark fa-fw fa-lg icon-delete-image" title="delete this image" data-image_id="{{ $image->id }}"></i>
+                                            <div class="preview-container">
+                                                <img src="{{ asset('/public/'.$image->path) }}" style="max-height:100px; width:100px" />
+                                                <button class="icon-delete-image-new" type="button"  data-image_id="{{ $image->id }}">Delete</button>
+                                                <!-- <i class="fa-regular fa-circle-xmark fa-fw fa-lg icon-delete-image-new" title="delete this image" data-image_id="{{ $image->id }}"></i> -->
                                             </div>
+
                                         @endforeach
                                     @endif
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <small>(400x400)</small></label>
                             <div class="col-md-8" id="bloc_thumbnails">
-                                <input type="file" name="photosThumbnail[]" id="photoUploadThumbnailSeconde" onchange="previewImagesThumbnail(event)" accept=".jpeg, .jpg, .png" multiple />
+                                <input type="file" name="photosThumbnail[]" class="form-control" id="photoUploadThumbnailSeconde" onchange="previewImagesThumbnail(event)" accept=".jpeg, .jpg, .png" multiple />
                                 <small style="display: block; margin-top: 12px;">{{ translate('Thumbnail images will be generated automatically from gallery images if not specified') }}</small>
-                                <div class="row mt-3" id="image-preview-Thumbnail">
+                                <div class="row mt-3">
+                                <div id="image-preview-Thumbnail">
+
                                     @if(count($product->getThumbnailsProduct()) > 0)
                                         @foreach ($product->getThumbnailsProduct() as $image)
-                                            <div class="col-2 container-img">
-                                                <img src="{{ asset('/public/'.$image->path) }}" height="120" width="120" />
-                                                <i class="fa-regular fa-circle-xmark fa-fw fa-lg icon-delete-image" title="delete this image" data-image_id="{{ $image->id }}"></i>
+                                        <div class="preview-container-Thumbnail">
+                                                <img src="{{ asset('/public/'.$image->path) }}" style="max-height:100px; width:100px" />
+                                                <button class="icon-delete-image-new" type="button"  data-image_id="{{ $image->id }}">Delete</button>
                                             </div>
                                         @endforeach
                                     @endif
+                                </div>
                                 </div>
                             </div>
                         </div>
@@ -1002,7 +1045,7 @@
                                                         @foreach ($children->getImagesProduct() as $image)
                                                             <div class="col-2 container-img old_image">
                                                                 <img src="{{ asset('/public/'.$image->path) }}" height="120" width="120" />
-                                                                <i class="fa-regular fa-circle-xmark fa-fw fa-lg icon-delete-image" title="delete this image" data-image_id="{{ $image->id }}"></i>
+                                                                <i class="fa-regular fa-circle-xmark fa-fw fa-lg icon-delete-image-new" title="delete this image" data-image_id="{{ $image->id }}"></i>
                                                             </div>
                                                         @endforeach
                                                     </div>
@@ -1555,6 +1598,7 @@
     }
 
     function previewImagesThumbnail(event) {
+        alert('ok');
         var preview = document.getElementById('image-preview-Thumbnail');
         //preview.innerHTML = '';
 
@@ -1635,7 +1679,7 @@
 
                             reader.onload = function (e) {
                                 var imgContainer = document.createElement('div');
-                                imgContainer.classList.add('preview-container-thumbnail');
+                                imgContainer.classList.add('preview-container-Thumbnail');
                                 
                                 var img = document.createElement('img');
                                 img.src = e.target.result;
@@ -1694,7 +1738,7 @@
     }
 
     function updateFileInputThumbnail() {
-        var previewContainers = document.querySelectorAll('.preview-container-thumbnail');
+        var previewContainers = document.querySelectorAll('.preview-container-Thumbnail');
         var files = [];
 
         previewContainers.forEach(function(container) {
@@ -3505,7 +3549,7 @@
             }
         })
 
-        $('body').on('click', '.icon-delete-image', function(){
+        $('body').on('click', '.icon-delete-image-new', function(){
             var id_image = $(this).data('image_id');
 
             if(id_image != undefined){
@@ -4902,7 +4946,9 @@
             var valid_category = $('#check_selected_parent_id').val();
             var clickedButtonValue = event.submitter.value;
             document.getElementById('submit_button').value = clickedButtonValue;
+
             var isEmpty = false;
+            var tagifyInputs = $(".aiz-tag-input").not(".tagify");
 
             tagifyInputs.each(function() {
                 var tagify = $(this).data('tagify');
