@@ -25,7 +25,7 @@ class ProductCollection extends ResourceCollection
                     'id' => $data->id,
                     'name' => $data->name,
                     'thumbnail_img' => uploaded_asset($data->thumbnail_img),
-                    'price' => 50,
+                    'price' => "50.5",
                     'current_stock' => $qty,
                     'status' => $data->published == 0 ? false : true,
                     'category' => $data->main_category ? $data->main_category->getTranslation('name') : "",
