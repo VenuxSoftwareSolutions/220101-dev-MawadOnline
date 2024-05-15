@@ -7121,6 +7121,8 @@
             var approved = "{{ $product->approved }}";
             var isEmpty = false;
 
+            var tagifyInputs = $(".aiz-tag-input").not(".tagify");
+
             tagifyInputs.each(function() {
                 var tagify = $(this).data('tagify');
 
