@@ -1143,6 +1143,7 @@ class ProductController extends Controller
                 $variations[$variationId]['storedFilePaths'] = $this->saveMainPhotos($data["photos_variant-$variationId"]);
 
                }
+
                else {
                 $variations[$variationId]['storedFilePaths']= [] ;
                }
@@ -1222,6 +1223,17 @@ class ProductController extends Controller
 
         }
 
+        if (isset($data['variant']['photo']) && is_array($data['variant']['photo'])) {
+            foreach ($data['variant']['photo'] as $variationId=>$photos) {
+                $upload_products_db =$this->saveMainPhotos($photos) ;
+                $productPhotoDb = $variations[$variationId]['storedFilePaths'] ;
+
+                $variations[$variationId]['storedFilePaths'] = array_merge($productPhotoDb, $upload_products_db);
+
+
+
+            }
+        }
 
        $attributes = [];
 
