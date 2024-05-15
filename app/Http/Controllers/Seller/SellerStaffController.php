@@ -66,9 +66,11 @@ class SellerStaffController extends Controller
         abort_if(!auth('web')->user()->can('seller_add_staff'), Response::HTTP_FORBIDDEN, 'ACCESS FORBIDDEN');
 
         $currentDate = Carbon::now();
+        $startDay = (clone $currentDate);
+        $endDay = (clone $currentDate)->subDay(1);
         $selectedRoles = $request->input('roles');
-        $current_lease = SellerLease::where('vendor_id',Auth::user()->owner_id)->where('start_date', '<=', $currentDate)
-                                        ->where('end_date', '>=', $currentDate)->first();
+        $current_lease = SellerLease::where('vendor_id',Auth::user()->owner_id)->where('start_date', '<=', $startDay)
+                                        ->where('end_date', '>=', $endDay)->first();
         $roles_id=SellerLeaseDetail::where('lease_id',$current_lease->id)->orderBy('is_used')->get();
         $cycleEnd = Carbon::parse($current_lease->end_date)->endOfDay();
         $daysToCycleEnd = $cycleEnd->diffInDays($currentDate)+1;
@@ -266,9 +268,11 @@ class SellerStaffController extends Controller
         $user = $staff->user;
         $staffs=Staff::where('user_id',$user->id)->get();
         $currentDate = Carbon::now();
+        $startDay = (clone $currentDate);
+        $endDay = (clone $currentDate)->subDay(1);
         $selectedRoles = $request->input('roles');
-        $current_lease = SellerLease::where('vendor_id',Auth::user()->owner_id)->where('start_date', '<=', $currentDate)
-                                        ->where('end_date', '>=', $currentDate)->first();
+        $current_lease = SellerLease::where('vendor_id',Auth::user()->owner_id)->where('start_date', '<=', $startDay)
+                                        ->where('end_date', '>=', $endDay)->first();
         foreach ($staffs as $key => $st) {
             $staff_role=SellerLeaseDetail::where('lease_id',$current_lease->id)->where('role_id',$st->role_id)->where('is_used',true)->where('amount','!=',0)->first();
             if($staff_role) {
@@ -364,8 +368,10 @@ class SellerStaffController extends Controller
     public function destroy($id)
     {
         $currentDate = Carbon::now();
-        $current_lease = SellerLease::where('vendor_id',Auth::user()->owner_id)->where('start_date', '<=', $currentDate)
-                                        ->where('end_date', '>=', $currentDate)->first();
+        $startDay = (clone $currentDate);
+        $endDay = (clone $currentDate)->subDay(1);
+        $current_lease = SellerLease::where('vendor_id',Auth::user()->owner_id)->where('start_date', '<=', $startDay)
+                                        ->where('end_date', '>=', $endDay)->first();
         $roles_id=SellerLeaseDetail::where('lease_id',$current_lease->id)->orderBy('is_used')->get();
         $staff=Staff::find($id);
         $staffs=Staff::where('user_id',$staff->user->id)->get();
@@ -399,9 +405,11 @@ class SellerStaffController extends Controller
         $amount=0;
         $roles=0;
         $currentDate = Carbon::now();
+        $startDay = (clone $currentDate);
+        $endDay = (clone $currentDate)->subDay(1);
         $selectedRoles = $request->input('roles');
-        $current_lease = SellerLease::where('vendor_id',Auth::user()->owner_id)->where('start_date', '<=', $currentDate)
-            ->where('end_date', '>=', $currentDate)->first();
+        $current_lease = SellerLease::where('vendor_id',Auth::user()->owner_id)->where('start_date', '<=', $startDay)
+            ->where('end_date', '>=', $endDay)->first();
         $roles_id=SellerLeaseDetail::where('lease_id',$current_lease->id)->orderBy('is_used')->get();
         if (isset($request->staff_id)) {
             $staff=Staff::where('id',$request->staff_id)->first();
