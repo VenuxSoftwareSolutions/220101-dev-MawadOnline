@@ -620,6 +620,7 @@ class HomeController extends Controller
                     'variationId' => $variationId ?? null,
                     'lastItem' => $lastItem ?? [],
                     'product_id' => $parent->id,
+                    'shop_name' => $parent->getShopName(),
                     'max' =>$max ?? 1 ,
                     'min' =>$min ?? 1 ,
                     'video_provider'  => $video_provider,

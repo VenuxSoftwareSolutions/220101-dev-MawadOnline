@@ -18,6 +18,7 @@ use App\Models\Shipper;
 use App\Models\Category;
 use App\Models\Shipping;
 use App\Models\Wishlist;
+use App\Models\Shop;
 use App\Models\Attribute;
 use App\Models\Warehouse;
 use App\Models\ProductTax;
@@ -1394,10 +1395,18 @@ class ProductController extends Controller
                 }
         }
 
+        $shop = Shop::where('user_id', Auth::user()->id)->first();
+        if($shop != null){
+            $shop_name = $shop->name;
+        }else{
+            $shop_name = null;
+        }
+
 
 
         // Prepare detailed product data
         $detailedProduct = [
+            'shop_name' => $shop_name,
             'name' => $data['name'],
             'brand' => $brand ? $brand->name : "",
             'unit' => $data['unit'],
