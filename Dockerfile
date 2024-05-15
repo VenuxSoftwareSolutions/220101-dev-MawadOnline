@@ -21,4 +21,4 @@ COPY . .
 RUN composer install --ignore-platform-reqs
 
 
-CMD php artisan key:generate && php artisan serve --host=0.0.0.0
+CMD php artisan key:generate && php artisan optimize && php artisan serve --host=127.0.0.1
