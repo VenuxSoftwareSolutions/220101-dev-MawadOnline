@@ -43,7 +43,7 @@
                                         @foreach ($photos as $key => $photo)
                                         <div class="carousel-box img-zoom rounded-0">
                                             <img class="img-fluid h-auto lazyload mx-auto"
-                                                src="{{ static_asset('assets/img/placeholder.jpg') }}"
+                                                src="{{ static_asset('/img/placeholder.jpg') }}"
                                                 data-src="{{ uploaded_asset($photo) }}"
                                                 onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
                                         </div>
