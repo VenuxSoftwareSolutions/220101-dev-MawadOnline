@@ -463,7 +463,7 @@
                                             <tr>
                                                 <td><input type="number" name="from[]" class="form-control min-qty" id="min-qty-parent" placeholder="From QTY"></td>
                                                 <td><input type="number" name="to[]" class="form-control max-qty" id="max-qty-parent" placeholder="To QTY"></td>
-                                                <td><input type="number" name="unit_price[]" placeholder="Unit Price" class="form-control unit-price-variant" id="unit-price-parent"></td>
+                                                <td><input type="number" name="unit_price[]" step="0.01" min="1" placeholder="Unit Price" class="form-control unit-price-variant" id="unit-price-parent"></td>
                                                 <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                                 <td>
                                                     <select class="form-control discount_type" name="discount_type[]">
