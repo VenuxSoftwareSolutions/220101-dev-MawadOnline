@@ -1031,14 +1031,22 @@ class ProductController extends Controller
 
             }
         }
+        $storedFilePaths = [];
+
         if(!$produitVariationImage) {
             if (isset($data['main_photos']) && is_array($data['main_photos'])) {
                 // Process and save main photos
                 $storedFilePaths = $this->saveMainPhotos($data['main_photos']);
-            } else {
-                // If no main photos are provided, set an empty array
-                $storedFilePaths = [];
             }
+            if (isset($data['product_id'])) {
+                $upload_products_db = UploadProducts::where('id_product',$data['product_id'])->pluck('path')->toArray() ;
+                $upload_products_db = array_filter($upload_products_db, function($path) {
+                    return !strpos($path, 'thumbnails');
+                });
+                $storedFilePaths = array_merge($storedFilePaths, $upload_products_db);
+
+            }
+
         }
         // if (isset($variationId)) {
         //     if (isset($data["variant_pricing-from$variationId"]) && is_array($data["variant_pricing-from$variationId"])) {
@@ -1135,6 +1143,7 @@ class ProductController extends Controller
                 $variations[$variationId]['storedFilePaths'] = $this->saveMainPhotos($data["photos_variant-$variationId"]);
 
                }
+
                else {
                 $variations[$variationId]['storedFilePaths']= [] ;
                }
@@ -1200,6 +1209,7 @@ class ProductController extends Controller
                 $variations[$variationId]['variant_pricing-from']['to'] = $data['variant']['to'][$variationId] ?? [];
                 $variations[$variationId]['variant_pricing-from']['unit_price'] = $data['variant']['unit_price'][$variationId] ?? [];
                 $upload_products_db = UploadProducts::where('id_product',$variationId)->pluck('path')->toArray() ;
+
                 $variations[$variationId]['storedFilePaths'] = $upload_products_db ;
                 // if (isset($variations[$variationId]['variant_pricing-from'])) {
                 //     // Sorting each array if it's not empty
@@ -1213,6 +1223,17 @@ class ProductController extends Controller
 
         }
 
+        if (isset($data['variant']['photo']) && is_array($data['variant']['photo'])) {
+            foreach ($data['variant']['photo'] as $variationId=>$photos) {
+                $upload_products_db =$this->saveMainPhotos($photos) ;
+                $productPhotoDb = $variations[$variationId]['storedFilePaths'] ;
+
+                $variations[$variationId]['storedFilePaths'] = array_merge($productPhotoDb, $upload_products_db);
+
+
+
+            }
+        }
 
        $attributes = [];
 

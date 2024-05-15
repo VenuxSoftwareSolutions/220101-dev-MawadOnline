@@ -18,14 +18,15 @@ class EnsureSystemKey
     {
         if (
             !$request->header('Platform-Key') ||
-            $request->header('Platform-Key') !== config('app.system_key') && !$request->header('mobile-version') || $request->header('mobile-version') !== "1.0.0"
+            $request->header('Platform-Key') !== config('app.system_key') ||
+            !in_array($request->header('mobile-version'), ["1.0.0", "1.0.1"])
         ) {
             return response()->json([
                 'result' => false,
                 'message' => 'Request not found!'
             ]);
         }
-
+        
         return $next($request);
     }
 }

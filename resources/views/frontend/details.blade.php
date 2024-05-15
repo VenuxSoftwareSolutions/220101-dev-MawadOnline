@@ -13,7 +13,7 @@
             <span class="text-secondary fs-14 fw-400 mr-4 w-50px">Sold by: </span> <a href="#" class="text-reset hov-text-primary fs-14 fw-700">{{ $previewData['detailedProduct']['shop_name'] }}</a>
         </div>
     </div>
-    
+
 
     <div class="row align-items-center mb-3">
         <!-- Review -->
@@ -333,7 +333,7 @@
                 class="text-blue hov-text-primary fs-14 ml-3" target="_blank">View Policy</a>
         </div>
     </div> --}}
-    {{-- <div class="row no-gutters mt-4">
+    <div class="row no-gutters mt-4">
         <div class="col-sm-2">
             <div class="text-secondary fs-14 fw-400 mt-2">Share</div>
         </div>
@@ -362,7 +362,7 @@
                 </div>
             </div>
         </div>
-    </div> --}}
+    </div>
     {{-- <!-- For auction product -->
     @if ($detailedProduct->auction_product)
         <div class="row no-gutters mb-3">
