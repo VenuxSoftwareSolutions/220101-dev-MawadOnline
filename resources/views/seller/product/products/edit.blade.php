@@ -346,7 +346,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label" for="signinSrEmail">{{translate('Gallery Images')}} <small>(1280x1280)</small></label>
                             <div class="col-md-8" id="bloc_photos">
-                                <input type="file" name="main_photos[]" id="photoUploadcustom" onchange="previewImages(event)" accept=".jpeg, .jpg, .png" multiple />
+                                <input type="file" name="main_photos[]" class="form-control" id="photoUploadcustom" onchange="previewImages(event)" accept=".jpeg, .jpg, .png" multiple />
                                 <div class="row mt-3" id="image-preview">
                                     @if(count($product->getImagesProduct()) > 0)
                                         @foreach ($product->getImagesProduct() as $image)
@@ -362,7 +362,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <small>(400x400)</small></label>
                             <div class="col-md-8" id="bloc_thumbnails">
-                                <input type="file" name="photosThumbnail[]" id="photoUploadThumbnailSeconde" onchange="previewImagesThumbnail(event)" accept=".jpeg, .jpg, .png" multiple />
+                                <input type="file" name="photosThumbnail[]" class="form-control" id="photoUploadThumbnailSeconde" onchange="previewImagesThumbnail(event)" accept=".jpeg, .jpg, .png" multiple />
                                 <small style="display: block; margin-top: 12px;">{{ translate('Thumbnail images will be generated automatically from gallery images if not specified') }}</small>
                                 <div class="row mt-3" id="image-preview-Thumbnail">
                                     @if(count($product->getThumbnailsProduct()) > 0)
