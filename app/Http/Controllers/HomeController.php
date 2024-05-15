@@ -297,7 +297,7 @@ class HomeController extends Controller
         if (!Auth::check()) {
             session(['link' => url()->current()]);
         }
-        $storedFilePaths = "";
+
         //$detailedProduct  = Product::with('reviews', 'brand', 'stocks', 'user', 'user.shop')->where('auction_product', 0)->where('slug', $slug)->where('approved', 1)->first();
 
         // if ($detailedProduct != null && $detailedProduct->published) {
