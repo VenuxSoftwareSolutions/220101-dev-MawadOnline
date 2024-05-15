@@ -32,7 +32,7 @@ class ProductCollection extends ResourceCollection
                     ->where('type', 'thumbnails')
                     ->value('path')) : null,
                     //'price' => format_price($data->unit_price),
-                    'price' => $data->getPricingConfiguration()->first()->value("unit_price"),
+                    'price' => format_price($data->getPricingConfiguration()->first()->value("unit_price")),
                     'current_stock' => $qty,
                     'status' => $data->published == 0 ? false : true,
                     'category' => $data->main_category ? $data->main_category->getTranslation('name') : "",
