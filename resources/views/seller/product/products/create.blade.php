@@ -1120,7 +1120,7 @@
 
                             // Check image dimensions after it's loaded
                             img.onload = function() {
-                                if (img.width > 1200 || img.height > 1200) {
+                                if (img.width > 1280 || img.height > 1280) {
                                     exceedingFilesDimension.push(files[i].name);
                                 }
                             };
@@ -1136,7 +1136,7 @@
                         
                         Swal.fire({
                             title: 'Cancelled',
-                            text: 'The dimensions of the images have exceeded both a width and height of 1200 pixels: ' + exceedingFiles.join(', '),
+                            text: 'The dimensions of the images have exceeded both a width and height of 1280 pixels: ' + exceedingFiles.join(', '),
                             icon: 'error',
                             scrollbarPadding: false,
                             backdrop:false,
@@ -2450,7 +2450,7 @@
 
                                 // Check image dimensions after it's loaded
                                 img.onload = function() {
-                                    if (img.width > 1200 || img.height > 1200) {
+                                    if (img.width > 1280 || img.height > 1280) {
                                         exceedingFilesDimension.push(files[i].name);
                                     }
                                 };
