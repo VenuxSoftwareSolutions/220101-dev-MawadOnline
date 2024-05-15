@@ -171,7 +171,7 @@
         border-radius: 0;
     }
 
-    @media screen and (min-width: 1200px) {
+    @media screen and (min-width: 1280px) {
         .icon-delete-image {
             position: absolute;
             color: red;
@@ -346,7 +346,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label" for="signinSrEmail">{{translate('Gallery Images')}} <small>(1280x1280)</small></label>
                             <div class="col-md-8" id="bloc_photos">
-                                <input type="file" name="main_photos[]" id="photoUploadcustom" onchange="previewImages(event)" accept=".jpeg, .jpg, .png" multiple />
+                                <input type="file" name="main_photos[]" class="form-control" id="photoUploadcustom" onchange="previewImages(event)" accept=".jpeg, .jpg, .png" multiple />
                                 <div class="row mt-3" id="image-preview">
                                     @if(count($product->getImagesProduct()) > 0)
                                         @foreach ($product->getImagesProduct() as $image)
@@ -362,7 +362,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <small>(400x400)</small></label>
                             <div class="col-md-8" id="bloc_thumbnails">
-                                <input type="file" name="photosThumbnail[]" id="photoUploadThumbnailSeconde" onchange="previewImagesThumbnail(event)" accept=".jpeg, .jpg, .png" multiple />
+                                <input type="file" name="photosThumbnail[]" class="form-control" id="photoUploadThumbnailSeconde" onchange="previewImagesThumbnail(event)" accept=".jpeg, .jpg, .png" multiple />
                                 <small style="display: block; margin-top: 12px;">{{ translate('Thumbnail images will be generated automatically from gallery images if not specified') }}</small>
                                 <div class="row mt-3" id="image-preview-Thumbnail">
                                     @if(count($product->getThumbnailsProduct()) > 0)
@@ -1571,7 +1571,7 @@
 
                             // Check image dimensions after it's loaded
                             img.onload = function() {
-                                if (img.width > 1200 || img.height > 1200) {
+                                if (img.width > 1280 || img.height > 1280) {
                                     exceedingFilesDimension.push(files[i].name);
                                 }
                             };
@@ -1587,7 +1587,7 @@
                         
                         Swal.fire({
                             title: 'Cancelled',
-                            text: 'The dimensions of the images have exceeded both a width and height of 1200 pixels: ' + exceedingFiles.join(', '),
+                            text: 'The dimensions of the images have exceeded both a width and height of 1280 pixels: ' + exceedingFiles.join(', '),
                             icon: 'error',
                             scrollbarPadding: false,
                             backdrop:false,
@@ -3066,7 +3066,7 @@
 
                                 // Check image dimensions after it's loaded
                                 img.onload = function() {
-                                    if (img.width > 1200 || img.height > 1200) {
+                                    if (img.width > 1280 || img.height > 1280) {
                                         exceedingFilesDimension.push(files[i].name);
                                     }
                                 };
@@ -3080,7 +3080,7 @@
                         if (exceedingFilesDimension.length > 0) {
                             swal(
                                 'Cancelled',
-                                'Following files exceeded 1200px width or height limit: ' + exceedingFilesDimension.join(', '),
+                                'Following files exceeded 1280px width or height limit: ' + exceedingFilesDimension.join(', '),
                                 'error'
                             )
                             $(this).val('');
@@ -5494,7 +5494,7 @@
 
                                 // Check image dimensions after it's loaded
                                 img.onload = function() {
-                                    if (img.width > 1200 || img.height > 1200) {
+                                    if (img.width > 1280 || img.height > 1280) {
                                         exceedingFilesDimension.push(files[i].name);
                                     }
                                 };
@@ -5508,7 +5508,7 @@
                         if (exceedingFilesDimension.length > 0) {
                             Swal.fire({
                                 title: 'Cancelled',
-                                text: 'Following files exceeded 1200px width or height limit: ' + exceedingFilesDimension.join(', '),
+                                text: 'Following files exceeded 1280px width or height limit: ' + exceedingFilesDimension.join(', '),
                                 icon: 'error',
                                 scrollbarPadding: false,
                                 backdrop:false,
@@ -7120,6 +7120,8 @@
             event.preventDefault(); // Prevent default form submission
             var approved = "{{ $product->approved }}";
             var isEmpty = false;
+
+            var tagifyInputs = $(".aiz-tag-input").not(".tagify");
 
             tagifyInputs.each(function() {
                 var tagify = $(this).data('tagify');

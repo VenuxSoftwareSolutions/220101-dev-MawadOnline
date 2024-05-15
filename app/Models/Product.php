@@ -9,6 +9,7 @@ use App\Models\ProductAttributeValues;
 use App\Models\PricingConfiguration;
 use App\Models\Category;
 use App\Models\Shipping;
+use App\Models\Shop;
 use Illuminate\Database\Eloquent\Model;
 use \Venturecraft\Revisionable\RevisionableTrait;
 use App\Traits\EnhancedRevisionableTrait;
@@ -380,6 +381,15 @@ class Product extends Model
     public function hasUnapprovedChildren()
     {
         return $this->children()->where('approved', 0)->exists();
+    }
+
+    public function getShopName(){
+        $shop = Shop::where('user_id', $this->user_id)->first();
+        if($shop != null){
+            return $shop->name;
+        }else{
+            return null;
+        }
     }
 
 }

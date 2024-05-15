@@ -479,7 +479,7 @@ class HomeController extends Controller
 
                 }
             }
-
+            $storedFilePaths = [];
             if($parent->last_version == 1){
                 $images_parent = UploadProducts::where('id_product', $parent->id)->where('type', 'images')->get();
                 if(count($images_parent) > 0){
@@ -494,6 +494,11 @@ class HomeController extends Controller
                 }
             }else{
                 $storedFilePaths = UploadProducts::where('id_product', $parent->id)->where('type', 'images')->pluck('path')->toArray();
+            }
+
+            if(count($storedFilePaths) == 0){
+                $url = public_path().'/assets/img/placeholder.jpg';
+                array_push($storedFilePaths, $url);
             }
 
 
@@ -620,6 +625,7 @@ class HomeController extends Controller
                     'variationId' => $variationId ?? null,
                     'lastItem' => $lastItem ?? [],
                     'product_id' => $parent->id,
+                    'shop_name' => $parent->getShopName(),
                     'max' =>$max ?? 1 ,
                     'min' =>$min ?? 1 ,
                     'video_provider'  => $video_provider,

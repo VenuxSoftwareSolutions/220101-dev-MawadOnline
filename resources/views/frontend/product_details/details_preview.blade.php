@@ -26,6 +26,13 @@
             @endif
         @endif
     </div>
+    @if (array_key_exists('shop_name', $previewData['detailedProduct']))
+        <div class="row mb-3">
+            <div class="col-6">
+                <span class="text-secondary fs-14 fw-400 mr-4 w-50px">Sold by: </span> <a href="#" class="text-reset hov-text-primary fs-14 fw-700">{{ $previewData['detailedProduct']['shop_name'] }}</a>
+            </div>
+        </div>
+    @endif
 
 
     <div class="row align-items-center mb-3">
