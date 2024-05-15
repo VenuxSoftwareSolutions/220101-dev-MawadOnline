@@ -30,7 +30,7 @@ class ProductCollection extends ResourceCollection
                     ->where('type', 'thumbnails')
                     ->value('path') != null ? static_asset(UploadProducts::where('id_product', $data->id)
                     ->where('type', 'thumbnails')
-                    ->value('path')) : null,
+                    ->value('path')) : static_asset('assets/img/placeholder.jpg'),
                     //'price' => format_price($data->unit_price),
                     'price' => format_price($data->getPricingConfiguration()->first()->value("unit_price")),
                     'current_stock' => $qty,
