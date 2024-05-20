@@ -8,6 +8,10 @@
             border-radius: 5px !important; /* Rounded corners */
             border: #a3b8c7 !important;
         }
+        .customer-color {
+            background-color: #f77b0b !important;
+            border: #f77b0b !important;
+        }
 </style>
 <div class="aiz-titlebar text-left mt-2 mb-3">
     <div class="row align-items-center">
@@ -299,6 +303,27 @@
     </div>
 </div>
 
+ <!-- Bootstrap Modal for Confirmation -->
+ <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmationModalLabel">{{ __('stock.Product Exists') }}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          {{ __('stock.The product in this warehouse has been added to the table before. Do you want to search for it?') }}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('stock.No') }}</button>
+          <button type="button" class="btn btn-primary customer-color" id="confirmSearchBtn">{{ __('stock.Yes, search for it!') }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 @endsection
 
 {{-- @section('modal')
@@ -376,6 +401,8 @@
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
     <!-- Include SweetAlert from CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
     {{-- <script type="text/javascript">
         // $(document).on("change", ".check-all", function() {
@@ -495,11 +522,12 @@
         if (addRemove === 'remove' && quantity > currentStock) {
         // User is trying to remove more than the current stock
         // alert("{{__('stock.Error: Cannot remove more than the current stock.')}}");
-        Swal.fire({
-            icon: 'error',
-            title: "{{__('stock.Error: Cannot remove more than the current stock.')}}",
-            confirmButtonText: 'OK'
-        });
+        // Swal.fire({
+        //     icon: 'error',
+        //     title: "{{__('stock.Error: Cannot remove more than the current stock.')}}",
+        //     confirmButtonText: 'OK'
+        // });
+        toastr.error("{{__('stock.Error: Cannot remove more than the current stock.')}}", 'Error');
 
         // Reset the quantity field
         $('#quantityAddRemove').val("") ;
@@ -531,60 +559,92 @@
         }
     });
 
-    $('#add_inventory_record').on('submit', function(e) {
+//     $('#add_inventory_record').on('submit', function(e) {
 
-    e.preventDefault();
+//     e.preventDefault();
 
-    var productVariant = $('#product_variant').val();
-    var warehouse = $('#warehouse').val();
+//     var productVariant = $('#product_variant').val();
+//     var warehouse = $('#warehouse').val();
 
 
-    $.ajax({
-        url: '{{ route("seller.inventory.check") }}',
-        type: 'POST',
-        data: {
-            product_variant: productVariant,
-            warehouse: warehouse,
+//     $.ajax({
+//         url: '{{ route("seller.inventory.check") }}',
+//         type: 'POST',
+//         data: {
+//             product_variant: productVariant,
+//             warehouse: warehouse,
 
-            _token: '{{ csrf_token() }}'
-        },
-        success: function(response) {
-            // if(response.exists) {
-            //     // Prompt user and handle the 'Yes' response
-            //     if(confirm("The product in this warehouse has been added to the table before. Do you want to search for it?")) {
-            //         // Implement search functionality here
-            //         window.location.href = '{{ route("seller.stocks.index") }}?productVariant=' + productVariant + '&warehouse=' + warehouse;
-            //     }
-            // } else {
-            //     // Submit the form if the combination does not exist
-            //     $('#add_inventory_record').unbind('submit').submit();
-            // }
-            if (response.exists) {
-                // Using SweetAlert for confirmation
-                Swal.fire({
-                    title: '{{__("stock.Product Exists")}}',
-                    text: '{{__("stock.The product in this warehouse has been added to the table before. Do you want to search for it?")}}',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: '{{__("stock.Yes, search for it!")}}',
-                    cancelButtonText: '{{__("stock.No")}}'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // User clicked 'Yes', implement search functionality here
-                        window.location.href = '{{ route("seller.stocks.index") }}?productVariant=' + productVariant + '&warehouse=' + warehouse;
-                    }
+//             _token: '{{ csrf_token() }}'
+//         },
+//         success: function(response) {
+//             // if(response.exists) {
+//             //     // Prompt user and handle the 'Yes' response
+//             //     if(confirm("The product in this warehouse has been added to the table before. Do you want to search for it?")) {
+//             //         // Implement search functionality here
+//             //         window.location.href = '{{ route("seller.stocks.index") }}?productVariant=' + productVariant + '&warehouse=' + warehouse;
+//             //     }
+//             // } else {
+//             //     // Submit the form if the combination does not exist
+//             //     $('#add_inventory_record').unbind('submit').submit();
+//             // }
+//             if (response.exists) {
+//                 // Using SweetAlert for confirmation
+//                 Swal.fire({
+//                     title: '{{__("stock.Product Exists")}}',
+//                     text: '{{__("stock.The product in this warehouse has been added to the table before. Do you want to search for it?")}}',
+//                     icon: 'warning',
+//                     showCancelButton: true,
+//                     confirmButtonColor: '#3085d6',
+//                     cancelButtonColor: '#d33',
+//                     confirmButtonText: '{{__("stock.Yes, search for it!")}}',
+//                     cancelButtonText: '{{__("stock.No")}}'
+//                 }).then((result) => {
+//                     if (result.isConfirmed) {
+//                         // User clicked 'Yes', implement search functionality here
+//                         window.location.href = '{{ route("seller.stocks.index") }}?productVariant=' + productVariant + '&warehouse=' + warehouse;
+//                     }
+//                 });
+//             } else {
+//                 // Submit the form if the combination does not exist
+//                 $('#add_inventory_record').unbind('submit').submit();
+//             }
+
+//         }
+//     });
+// });
+        $('#add_inventory_record').on('submit', function(e) {
+                    e.preventDefault();
+
+                    var productVariant = $('#product_variant').val();
+                    var warehouse = $('#warehouse').val();
+
+                    $.ajax({
+                        url: '{{ route("seller.inventory.check") }}',
+                        type: 'POST',
+                        data: {
+                            product_variant: productVariant,
+                            warehouse: warehouse,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            if (response.exists) {
+                                // Show the Bootstrap modal
+                                $('#confirmationModal').modal('show');
+                            } else {
+                                // Submit the form if the combination does not exist
+                                $('#add_inventory_record').unbind('submit').submit();
+                            }
+                        }
+                    });
                 });
-            } else {
-                // Submit the form if the combination does not exist
-                $('#add_inventory_record').unbind('submit').submit();
-            }
 
-        }
-    });
-});
-
+                // Handle the confirmation button click event
+                $('#confirmSearchBtn').on('click', function() {
+                    var productVariant = $('#product_variant').val();
+                    var warehouse = $('#warehouse').val();
+                    // User clicked 'Yes', implement search functionality here
+                    window.location.href = '{{ route("seller.stocks.index") }}?productVariant=' + productVariant + '&warehouse=' + warehouse;
+                });
 
 </script>
 
