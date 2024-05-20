@@ -233,7 +233,7 @@
                                 <div class="h-200px h-sm-250px h-md-340px">
                                     <div class="h-100 w-100 w-xl-auto position-relative hov-scale-img overflow-hidden">
                                         <div class="position-absolute h-100 w-100 overflow-hidden">
-                                            <img src="{{ isset($category->coverImage->file_name) ? my_asset($category->coverImage->file_name) : static_asset('assets/img/placeholder.jpg') }}"
+                                            <img src="{{ isset($category->thumbnail_image) ? my_asset($category->thumbnail_image) : static_asset('assets/img/placeholder.jpg') }}"
                                                 alt="{{ $category_name }}"
                                                 class="img-fit h-100 has-transition"
                                                 onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
