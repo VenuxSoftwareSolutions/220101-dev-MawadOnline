@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\V2\Seller;
 
+use App\Models\UploadProducts;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class ProductCollection extends ResourceCollection
@@ -21,11 +22,18 @@ class ProductCollection extends ResourceCollection
                 foreach ($data->stocks as $key => $stock) {
                     $qty += $stock->qty;
                 }
+
                 return [
                     'id' => $data->id,
                     'name' => $data->name,
-                    'thumbnail_img' => uploaded_asset($data->thumbnail_img),
-                    'price' => format_price($data->unit_price),
+                    //'thumbnail_img' => uploaded_asset($data->thumbnail_img),
+                    'thumbnail_img' => UploadProducts::where('id_product', $data->id)
+                    ->where('type', 'thumbnails')
+                    ->value('path') != null ? static_asset(UploadProducts::where('id_product', $data->id)
+                    ->where('type', 'thumbnails')
+                    ->value('path')) : static_asset('assets/img/placeholder.jpg'),
+                    //'price' => format_price($data->unit_price),                    
+                    'price' => $data->getPricingConfiguration() != null ? format_price($data->getPricingConfiguration()->first()->unit_price) : "AED0.00" ,
                     'current_stock' => $qty,
                     'status' => $data->published == 0 ? false : true,
                     'category' => $data->main_category ? $data->main_category->getTranslation('name') : "",
