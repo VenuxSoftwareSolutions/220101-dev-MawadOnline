@@ -1488,6 +1488,20 @@
             </div>
         </div>
     </form>
+    <div id="modal-info" class="modal fade">
+        <div class="modal-dialog modal-md modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title h6" id="title-modal">{{translate('Delete Confirmation')}}</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="mt-1 fs-14" id="text-modal">{{translate('Are you sure to delete this?')}}</p>
+                    <button type="button" class="btn btn-secondary rounded-0 mt-2" data-dismiss="modal">{{translate('OK')}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('script')
@@ -1504,13 +1518,21 @@
 
         var files = event.target.files;
         if (files.length > 10) {
-            Swal.fire({
-                title: 'Cancelled',
-                text: '{{ translate("Maximum 10 photos allowed.")}}',
-                icon: 'error',
-                scrollbarPadding: false,
-                backdrop:false,
-            });
+            // Swal.fire({
+            //     title: 'Cancelled',
+            //     text: '{{ translate("Maximum 10 photos allowed.")}}',
+            //     icon: 'error',
+            //     scrollbarPadding: false,
+            //     backdrop:false,
+            // });
+
+            var title = "{{ translate('Product Media') }}";
+            var message = "{{ translate('Maximum 10 photos allowed.')}}";
+
+            $('#title-modal').text(title);
+            $('#text-modal').text(message);
+
+            $('#modal-info').modal('show');
 
             $('#photoUploadcustom').val('');
             $('#image-preview').empty();
@@ -1525,13 +1547,21 @@
             }
 
             if (exceedingFiles.length > 0) {
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: 'Following files exceed 2MB limit: ' + exceedingFiles.join(', '),
-                    icon: 'error',
-                    scrollbarPadding: false,
-                    backdrop:false,
-                });
+                // Swal.fire({
+                //     title: 'Cancelled',
+                //     text: 'Following files exceed 2MB limit: ' + exceedingFiles.join(', '),
+                //     icon: 'error',
+                //     scrollbarPadding: false,
+                //     backdrop:false,
+                // });
+                var title = "{{ translate('Product Media') }}";
+                var message = '<b>Following files exceed 2MB limit:</b> ' + exceedingFiles.join(', ');
+
+                $('#title-modal').text(title);
+                $('#text-modal').html(message);
+
+                $('#modal-info').modal('show');
+
                 $('#photoUploadcustom').val('');
                 $('#image-preview').empty();
             } else {
@@ -1564,13 +1594,21 @@
                 setTimeout(function() {
                     if (exceedingFilesDimension.length ) {
                         
-                        Swal.fire({
-                            title: 'Cancelled',
-                            text: 'The dimensions of the images have exceeded both a width and height of 1280 pixels: ' + exceedingFiles.join(', '),
-                            icon: 'error',
-                            scrollbarPadding: false,
-                            backdrop:false,
-                        });
+                        // Swal.fire({
+                        //     title: 'Cancelled',
+                        //     text: 'The dimensions of the images have exceeded both a width and height of 1280 pixels: ' + exceedingFiles.join(', '),
+                        //     icon: 'error',
+                        //     scrollbarPadding: false,
+                        //     backdrop:false,
+                        // });
+                        var title = "{{ translate('Product Media') }}";
+                        var message = '<b>The dimensions of the images have exceeded both a width and height of 1280 pixels: </b> ' + exceedingFiles.join(', ');
+
+                        $('#title-modal').text(title);
+                        $('#text-modal').html(message);
+
+                        $('#modal-info').modal('show');
+
                         $('#photoUploadcustom').val('');
                         $('#image-preview').empty();
                     }else{
@@ -1613,13 +1651,21 @@
 
         var files = event.target.files;
         if (files.length > 10) {
-            Swal.fire({
-                title: 'Cancelled',
-                text: '{{ translate("Maximum 10 photos allowed.")}}',
-                icon: 'error',
-                scrollbarPadding: false,
-                backdrop:false,
-            });
+            // Swal.fire({
+            //     title: 'Cancelled',
+            //     text: '{{ translate("Maximum 10 photos allowed.")}}',
+            //     icon: 'error',
+            //     scrollbarPadding: false,
+            //     backdrop:false,
+            // });
+
+            var title = "{{ translate('Product Media') }}";
+            var message = '{{ translate("Maximum 10 photos allowed.")}}';
+
+            $('#title-modal').text(title);
+            $('#text-modal').text(message);
+
+            $('#modal-info').modal('show');
 
             $('#photoUploadThumbnailSeconde').val('');
             $('#image-preview-Thumbnail').empty();
@@ -1634,13 +1680,22 @@
             }
 
             if (exceedingFiles.length > 0) {
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: 'Following files exceed 512Ko limit: ' + exceedingFiles.join(', '),
-                    icon: 'error',
-                    scrollbarPadding: false,
-                    backdrop:false,
-                });
+                // Swal.fire({
+                //     title: 'Cancelled',
+                //     text: 'Following files exceed 512Ko limit: ' + exceedingFiles.join(', '),
+                //     icon: 'error',
+                //     scrollbarPadding: false,
+                //     backdrop:false,
+                // });
+
+                var title = "{{ translate('Product Media') }}";
+                var message = '<b>Following files exceed 512Ko limit:</b> ' + exceedingFiles.join(', ');
+
+                $('#title-modal').text(title);
+                $('#text-modal').html(message);
+
+                $('#modal-info').modal('show');
+
                 $('#photoUploadThumbnailSeconde').val('');
                 $('#image-preview-Thumbnail').empty();
             } else {
@@ -1672,13 +1727,21 @@
 
                 setTimeout(function() {
                     if (exceedingFilesDimension.length ) {
-                        Swal.fire({
-                            title: 'Cancelled',
-                            text: 'Please upload images with dimensions between 300px and 400px for both width and height: ' + exceedingFilesDimension.join(', '),
-                            icon: 'error',
-                            scrollbarPadding: false,
-                            backdrop:false,
-                        });
+                        // Swal.fire({
+                        //     title: 'Cancelled',
+                        //     text: 'Please upload images with dimensions between 300px and 400px for both width and height: ' + exceedingFilesDimension.join(', '),
+                        //     icon: 'error',
+                        //     scrollbarPadding: false,
+                        //     backdrop:false,
+                        // });
+                        var title = "{{ translate('Product Media') }}";
+                        var message = '<b>Please upload images with dimensions between 300px and 400px for both width and height:</b> ' + exceedingFilesDimension.join(', ');
+
+                        $('#title-modal').text(title);
+                        $('#text-modal').html(message);
+
+                        $('#modal-info').modal('show');
+
                         $('#photoUploadThumbnailSeconde').val('');
                         $('#image-preview-Thumbnail').empty();
                     }else{
@@ -1806,11 +1869,19 @@
         if (!input.val().trim()) {
                 input.addClass('error'); // Add error class
                    // Show SweetAlert2 message
-                   Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Please enter a product name!'
-                });
+                // Swal.fire({
+                //     icon: 'error',
+                //     title: 'Oops...',
+                //     text: 'Please enter a product name!'
+                // });
+
+                var title = "{{ translate('Product Preview') }}";
+                var message = '{{ translate("Please enter a product name!")}}';
+
+                $('#title-modal').text(title);
+                $('#text-modal').text(message);
+
+                $('#modal-info').modal('show');
 
                 return ;
             }
@@ -1894,7 +1965,7 @@
                             searchTerm: v // Send the search term to your API
                         },
                         success: function(response) {
-                            console.log(response);
+                            //console.log(response);
                             // Assuming 'response' contains the data to update the jstree
                             // You will need to process 'response' to fit your jstree's data format
 
@@ -1937,23 +2008,38 @@
                         AIZ.plugins.bootstrapSelect('refresh');
                     } else {
                         $('body input[name="activate_attributes"]').prop('checked', false);
-                        Swal.fire({
-                            title: 'Cancelled',
-                            text: 'You are unable to enable the variant option because the selected category lacks any attributes.',
-                            icon: 'error',
-                            scrollbarPadding: false,
-                            backdrop:false,
-                        })
+                        // Swal.fire({
+                        //     title: 'Cancelled',
+                        //     text: 'You are unable to enable the variant option because the selected category lacks any attributes.',
+                        //     icon: 'error',
+                        //     scrollbarPadding: false,
+                        //     backdrop:false,
+                        // })
+
+                        var title = "{{ translate('Product Category') }}";
+                        var message = '{{ translate("You are unable to enable the variant option because the selected category lacks any attributes.")}}';
+
+                        $('#title-modal').text(title);
+                        $('#text-modal').text(message);
+
+                        $('#modal-info').modal('show');
                     }
                 } else {
                     $('body input[name="activate_attributes"]').prop('checked', false);
-                    Swal.fire({
-                        title: 'Cancelled',
-                        text: 'Select a category before activating the variant option.',
-                        icon: 'error',
-                        scrollbarPadding: false,
-                        backdrop:false,
-                    });
+                    // Swal.fire({
+                    //     title: 'Cancelled',
+                    //     text: 'Select a category before activating the variant option.',
+                    //     icon: 'error',
+                    //     scrollbarPadding: false,
+                    //     backdrop:false,
+                    // });
+                    var title = "{{ translate('Product Category') }}";
+                    var message = '{{ translate("Select a category before activating the variant option.")}}';
+
+                    $('#title-modal').text(title);
+                    $('#text-modal').text(message);
+
+                    $('#modal-info').modal('show');
                 }
             }
         });
@@ -2149,22 +2235,36 @@
             // Maximum number of allowed files
             var maxFiles = 10;
             if (all_files_length > maxFiles) {
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: '{{ translate("You can only upload a maximum of 10 files.")}}',
-                    icon: 'error',
-                    scrollbarPadding: false,
-                    backdrop:false,
-                });
+                // Swal.fire({
+                //     title: 'Cancelled',
+                //     text: '{{ translate("You can only upload a maximum of 10 files.")}}',
+                //     icon: 'error',
+                //     scrollbarPadding: false,
+                //     backdrop:false,
+                // });
+                var title = "{{ translate('Variant Media') }}";
+                var message = '{{ translate("You can only upload a maximum of 10 files.")}}';
+
+                $('#title-modal').text(title);
+                $('#text-modal').text(message);
+
+                $('#modal-info').modal('show');
                 this.value = ''; // Clear the file input
             }else if(all_files_length == 0){
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: '{{ translate("You need to select at least one picture.")}}',
-                    icon: 'error',
-                    scrollbarPadding: false,
-                    backdrop:false,
-                });
+                // Swal.fire({
+                //     title: 'Cancelled',
+                //     text: '{{ translate("You need to select at least one picture.")}}',
+                //     icon: 'error',
+                //     scrollbarPadding: false,
+                //     backdrop:false,
+                // });
+                var title = "{{ translate('Variant Media') }}";
+                var message = '{{ translate("You need to select at least one picture.")}}';
+
+                $('#title-modal').text(title);
+                $('#text-modal').text(message);
+
+                $('#modal-info').modal('show');
                 var labelText = '0 file selected';
                 $(this).next('.custom-file-label').html(labelText);
             }else if( (all_files_length <= maxFiles) && (all_files_length > 0)){
@@ -2638,39 +2738,60 @@
                         var difference = otherMinVal - parseFloat(valuesMaxQtyArray[j - 1]);
 
                         if(difference > 1){
-                            $('body .min-qty').eq(j).css('border-color', 'red');
-                            $('body .max-qty').eq(j - 1).css('border-color', 'red');
-                            Swal.fire({
-                                title: 'Cancelled',
-                                text: '{{ translate("Ensure that the difference between the minimum and maximum quantities of the preceding interval must be equal to one.")}}',
-                                icon: 'error',
-                                scrollbarPadding: false,
-                                backdrop:false,
-                            });
+                            $(this).parent().parent().parent().find('.min-qty').eq(j).css('border-color', 'red');
+                            $(this).parent().parent().parent().find('.max-qty').eq(j - 1).css('border-color', 'red');
+                            // Swal.fire({
+                            //     title: 'Cancelled',
+                            //     text: '{{ translate("Ensure that the difference between the minimum and maximum quantities of the preceding interval must be equal to one.")}}',
+                            //     icon: 'error',
+                            //     scrollbarPadding: false,
+                            //     backdrop:false,
+                            // });
+                            var title = "{{ translate('Pricing Configuration') }}";
+                            var message = '{{ translate("Ensure that the difference between the minimum and maximum quantities of the preceding interval must be equal to one.")}}';
+
+                            $('#title-modal').text(title);
+                            $('#text-modal').text(message);
+
+                            $('#modal-info').modal('show');
                             overlapFound = true;
                         }
 
                         if (minVal >= otherMinVal && minVal <= otherMaxVal) { //check if min value exist in another interval
-                            $('body .min-qty').eq(i).css('border-color', 'red');
-                            Swal.fire({
-                                title: 'Cancelled',
-                                text: '{{ translate("Overlap found.")}}',
-                                icon: 'error',
-                                scrollbarPadding: false,
-                                backdrop:false,
-                            });
+                            $(this).parent().parent().parent().find('.min-qty').eq(i).css('border-color', 'red');
+                            // Swal.fire({
+                            //     title: 'Cancelled',
+                            //     text: '{{ translate("Overlap found.")}}',
+                            //     icon: 'error',
+                            //     scrollbarPadding: false,
+                            //     backdrop:false,
+                            // });
+                            var title = "{{ translate('Pricing Configuration') }}";
+                            var message = '{{ translate("Overlap found.")}}';
+
+                            $('#title-modal').text(title);
+                            $('#text-modal').text(message);
+
+                            $('#modal-info').modal('show');
                             overlapFound = true;
                         }
 
                         if(maxVal >= otherMinVal && maxVal <= otherMaxVal){ //check if max value exist in another interval
-                            $('body .max-qty').eq(i).css('border-color', 'red');
-                            Swal.fire({
-                                title: 'Cancelled',
-                                text: '{{ translate("Overlap found.")}}',
-                                icon: 'error',
-                                scrollbarPadding: false,
-                                backdrop:false,
-                            });
+                            $(this).parent().parent().parent().find('.max-qty').eq(i).css('border-color', 'red');
+                            // Swal.fire({
+                            //     title: 'Cancelled',
+                            //     text: '{{ translate("Overlap found.")}}',
+                            //     icon: 'error',
+                            //     scrollbarPadding: false,
+                            //     backdrop:false,
+                            // });
+                            var title = "{{ translate('Pricing Configuration') }}";
+                            var message = '{{ translate("Overlap found.")}}';
+
+                            $('#title-modal').text(title);
+                            $('#text-modal').text(message);
+
+                            $('#modal-info').modal('show');
                             overlapFound = true;
                         }
                     }
@@ -3060,36 +3181,29 @@
                             dataType: 'JSON',
                             success: function(dataResult) {
                                 if(dataResult.status != 'failed'){
-                                    swal(
-                                        'Deleted',
-                                        'Deleted successfully',
-                                        'success'
-                                    )
-
                                     current.parent().parent().remove();
                                     if(parent.find('tr').length == 0){
                                         parent.append(html_added);
                                     }
 
                                 }else{
-                                    Swal.fire({
-                                        title: 'Cancelled',
-                                        text: '{{ translate("Something went wrong.")}}',
-                                        icon: 'warning',
-                                        scrollbarPadding: false,
-                                        backdrop:false,
-                                    });
+                                    // Swal.fire({
+                                    //     title: 'Cancelled',
+                                    //     text: '{{ translate("Something went wrong.")}}',
+                                    //     icon: 'warning',
+                                    //     scrollbarPadding: false,
+                                    //     backdrop:false,
+                                    // });
+                                    var title = "{{ translate('Pricing Configuration') }}";
+                                    var message = '{{ translate("Something went wrong.")}}';
+
+                                    $('#title-modal').text(title);
+                                    $('#text-modal').text(message);
+
+                                    $('#modal-info').modal('show');
                                 }
                             }
                         })
-                    } else if (result.dismiss === 'cancel') {
-                        Swal.fire({
-                            title: 'Cancelled',
-                            text: '{{ translate("Deletion successfully reverted.")}}',
-                            icon: 'warning',
-                            scrollbarPadding: false,
-                            backdrop:false,
-                        });
                     }
                 })
             }
@@ -3412,13 +3526,20 @@
                 var totalSize = 0;
 
                 if (fileSize > maxSize) {
-                    Swal.fire({
-                        title: 'Cancelled',
-                        text: 'File size exceeds 15MB.',
-                        icon: 'error',
-                        scrollbarPadding: false,
-                        backdrop:false,
-                    });
+                    // Swal.fire({
+                    //     title: 'Cancelled',
+                    //     text: 'File size exceeds 15MB.',
+                    //     icon: 'error',
+                    //     scrollbarPadding: false,
+                    //     backdrop:false,
+                    // });
+                    var title = "{{ translate('Product Description and Specifications') }}";
+                    var message = '{{ translate("File size exceeds 15MB.")}}';
+
+                    $('#title-modal').text(title);
+                    $('#text-modal').text(message);
+
+                    $('#modal-info').modal('show');
                 } else {
                     $('.file_input').each(function() {
                         var files = $(this)[0].files;
@@ -3428,17 +3549,22 @@
                         }
                     });
 
-                    console.log('totalSize: ', totalSize)
-
                     if (totalSize > maxAllUploadedSize) {
                         // If combined file size exceeds the limit, show an error message or take necessary action
-                        Swal.fire({
-                            title: 'Cancelled',
-                            text: 'Total file size exceeds 25MB. Please select smaller files.',
-                            icon: 'error',
-                            scrollbarPadding: false,
-                            backdrop:false,
-                        });
+                        // Swal.fire({
+                        //     title: 'Cancelled',
+                        //     text: 'Total file size exceeds 25MB. Please select smaller files.',
+                        //     icon: 'error',
+                        //     scrollbarPadding: false,
+                        //     backdrop:false,
+                        // });
+                        var title = "{{ translate('Product Description and Specifications') }}";
+                        var message = '{{ translate("Total file size exceeds 25MB. Please select smaller files.")}}';
+
+                        $('#title-modal').text(title);
+                        $('#text-modal').text(message);
+
+                        $('#modal-info').modal('show');
                         // Reset the file inputs to prevent exceeding the limit
                         $(this).val('');
                     } else {
@@ -3504,13 +3630,6 @@
                             dataType: 'JSON',
                             success: function(dataResult) {
                                 if(dataResult.status != 'failed'){
-                                    Swal.fire({
-                                        title: 'Deleted',
-                                        text: 'Deleted successfully.',
-                                        icon: 'success',
-                                        scrollbarPadding: false,
-                                        backdrop:false,
-                                    });
                                     current.parent().parent().remove();
 
                                     var numberOfChildren = $('#documents_bloc > div').length;
@@ -3545,14 +3664,6 @@
                                 }
                             }
                         })
-                    } else if (result.dismiss === 'cancel') {
-                        Swal.fire({
-                            title: 'Cancelled',
-                            text: 'Deletion successfully reverted.',
-                            icon: 'warning',
-                            scrollbarPadding: false,
-                            backdrop:false,
-                        });
                     }
                 })
             }else{
@@ -3584,13 +3695,6 @@
                             dataType: 'JSON',
                             success: function(dataResult) {
                                 if(dataResult.status != 'failed'){
-                                    Swal.fire({
-                                        title: 'Deleted',
-                                        text: 'Deleted successfully.',
-                                        icon: 'success',
-                                        scrollbarPadding: false,
-                                        backdrop:false,
-                                    });
                                     current.parent().remove();
                                 }
                             }
@@ -3649,13 +3753,20 @@
                 count_shippers = parseInt(count_shippers);
                 if(count_shippers == 0){
                     $('body input[name="activate_third_party"]').prop('checked', false);
-                    Swal.fire({
-                        title: 'Cancelled',
-                        text: "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product",
-                        icon: 'error',
-                        scrollbarPadding: false,
-                        backdrop:false,
-                    });
+                    // Swal.fire({
+                    //     title: 'Cancelled',
+                    //     text: "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product",
+                    //     icon: 'error',
+                    //     scrollbarPadding: false,
+                    //     backdrop:false,
+                    // });
+                    var title = "{{ translate('Default Shipping Configuration') }}";
+                    var message = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
+
+                    $('#title-modal').text(title);
+                    $('#text-modal').text(message);
+
+                    $('#modal-info').modal('show');
 
                     $(this).prop('checked', false)
                 }else{
@@ -4072,13 +4183,6 @@
                             success: function(dataResult) {
                                if(dataResult.status == 'success'){
                                 current.parent().parent().remove();
-                                Swal.fire({
-                                    title: 'Deleted',
-                                    text: "Deleted successfully",
-                                    icon: 'success',
-                                    scrollbarPadding: false,
-                                    backdrop:false,
-                                });
                                 var count =0;
                                 current_parent.find('.shipper').each(function(index) {
                                     if((new_variant_id == undefined) && (old_variant_id == undefined)){
@@ -4093,24 +4197,23 @@
                                     count++
                                 });
                                 }else{
-                                    Swal.fire({
-                                        title: 'Cancelled',
-                                        text: "Something went wrong",
-                                        icon: 'error',
-                                        scrollbarPadding: false,
-                                        backdrop:false,
-                                    });
+                                    // Swal.fire({
+                                    //     title: 'Cancelled',
+                                    //     text: "Something went wrong",
+                                    //     icon: 'error',
+                                    //     scrollbarPadding: false,
+                                    //     backdrop:false,
+                                    // });
+                                    var title = "{{ translate('Default Shipping Configuration') }}";
+                                    var message = "{{ translate('Something went wrong') }}";
+
+                                    $('#title-modal').text(title);
+                                    $('#text-modal').text(message);
+
+                                    $('#modal-info').modal('show');
                                 }
                             }
                         })
-                    } else if (result.dismiss === 'cancel') {
-                        Swal.fire({
-                            title: 'Cancelled',
-                            text: "Deletion successfully reverted.",
-                            icon: 'warning',
-                            scrollbarPadding: false,
-                            backdrop:false,
-                        });
                     }
                 })
             }
@@ -4131,24 +4234,31 @@
                     //     "You cannot choose a third-party option because our shippers are unable to reach the warehouse.",
                     //     'error'
                     // )
-                    Swal.fire({
-                            title: 'Cancelled',
-                            text: "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product",
-                            icon: 'error',
-                            scrollbarPadding: false,
-                            backdrop:false,
-                        });
+                    // Swal.fire({
+                    //         title: 'Cancelled',
+                    //         text: "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product",
+                    //         icon: 'error',
+                    //         scrollbarPadding: false,
+                    //         backdrop:false,
+                    //     });
 
-                        var checkbox = $(this).parent().find('input[type="checkbox"][value="third_party"]');
-                        if(selected.length == 1){
-                            $(this).parent().find('.multi-select-button').text('-- Select --');
-                        }else{
-                            $(this).parent().find('.multi-select-button').text('vendor');
-                        }
-                        // Uncheck the checkbox
-                        checkbox.prop('checked', false);
-                        $(this).find("option[value='third_party']").prop('disabled', false);
-                        $(this).find("option[value='third_party']").prop('selected', false);
+                    var title = "{{ translate('Default Shipping Configuration') }}";
+                    var message = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
+
+                    $('#title-modal').text(title);
+                    $('#text-modal').text(message);
+                    $('#modal-info').modal('show');
+
+                    var checkbox = $(this).parent().find('input[type="checkbox"][value="third_party"]');
+                    if(selected.length == 1){
+                        $(this).parent().find('.multi-select-button').text('-- Select --');
+                    }else{
+                        $(this).parent().find('.multi-select-button').text('vendor');
+                    }
+                    // Uncheck the checkbox
+                    checkbox.prop('checked', false);
+                    $(this).find("option[value='third_party']").prop('disabled', false);
+                    $(this).find("option[value='third_party']").prop('selected', false);
                 }else{
                     var weight = $('#weight').val();
                     var length = $('#length').val();
@@ -4159,13 +4269,22 @@
                     var max_third_party = $('#max_third_party').val();
                     var unit_third_party = $('#unit_third_party').val();
                     if((weight == '') || (length == '') ||(width == '') ||(height == '') ||(min_third_party == '') ||(max_third_party == '')){
-                            Swal.fire({
-                                title: 'Cancelled',
-                                text: "Please ensure that all required fields are filled to know all information about your package.",
-                                icon: 'error',
-                                scrollbarPadding: false,
-                                backdrop:false,
-                            });
+                            // Swal.fire({
+                            //     title: 'Cancelled',
+                            //     text: "Please ensure that all required fields are filled to know all information about your package.",
+                            //     icon: 'error',
+                            //     scrollbarPadding: false,
+                            //     backdrop:false,
+                            // });
+
+                            var title = "{{ translate('Default Shipping Configuration') }}";
+                            var message = "{{ translate('Please ensure that all required fields are filled to know all information about your package.') }}";
+
+                            $('#title-modal').text(title);
+                            $('#text-modal').text(message);
+
+                            $('#modal-info').modal('show');
+
                             var checkbox = $(this).parent().find('input[type="checkbox"][value="third_party"]');
                             if(selected.length == 1){
                                 $(this).parent().find('.multi-select-button').text('-- Select --');
@@ -4191,13 +4310,19 @@
                         }
 
                         if(chargeable_weight > 30){
-                            Swal.fire({
-                                title: 'Cancelled',
-                                text: "Chargeable Weight = " + Number(chargeable_weight.toFixed(2)) + ", then not accepted by our shipper",
-                                icon: 'error',
-                                scrollbarPadding: false,
-                                backdrop:false,
-                            });
+                            // Swal.fire({
+                            //     title: 'Cancelled',
+                            //     text: "Chargeable Weight = " + Number(chargeable_weight.toFixed(2)) + ", then not accepted by our shipper",
+                            //     icon: 'error',
+                            //     scrollbarPadding: false,
+                            //     backdrop:false,
+                            // });
+
+                            var title = "{{ translate('Default Shipping Configuration') }}";
+                            var message = "Chargeable Weight = " + Number(chargeable_weight.toFixed(2)) + ", then not accepted by our shipper";
+
+                            $('#title-modal').text(title);
+                            $('#text-modal').text(message);
 
                             $(this).find("option[value='third_party']").prop("disabled", true);
                             $(this).find("option[value='third_party']").prop('selected', false);
@@ -4246,25 +4371,46 @@
                     $(this).parent().parent().find('.shipping_charge').removeClass("disabled-select");
                 }
             }else{
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: "You cannot selected, if you don't selected vendor in shippers",
-                    icon: 'error',
-                    scrollbarPadding: false,
-                    backdrop:false,
-                });
+                // Swal.fire({
+                //     title: 'Cancelled',
+                //     text: "You cannot selected, if you don't selected vendor in shippers",
+                //     icon: 'error',
+                //     scrollbarPadding: false,
+                //     backdrop:false,
+                // });
+
+                var title = "{{ translate('Default Shipping Configuration') }}";
+                var messagePart1 = "{{ translate('You cannot selected, if you don') }}";
+                var messagePart2 = "{{ translate('t selected vendor in shippers') }}";
+
+                // Combine the parts with the single quote correctly placed
+                var message = messagePart1 + "'" + messagePart2;
+
+                $('#title-modal').text(title);
+                $('#text-modal').text(message);
+
+                $('#modal-info').modal('show');
+                $(this).prop('selectedIndex', 0);
             }
         })
 
         $('body').on('change', '.shipping_charge', function(){
             if($(this).parent().parent().find('.paid').val() == 'vendor'){
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: "You cannot choose shipping charge when it is paid by vendor.",
-                    icon: 'error',
-                    scrollbarPadding: false,
-                    backdrop:false,
-                });
+                // Swal.fire({
+                //     title: 'Cancelled',
+                //     text: "You cannot choose shipping charge when it is paid by vendor.",
+                //     icon: 'error',
+                //     scrollbarPadding: false,
+                //     backdrop:false,
+                // });
+
+                var title = "{{ translate('Default Shipping Configuration') }}";
+                var message = "{{ translate('You cannot choose shipping charge when it is paid by vendor.') }}";
+
+                $('#title-modal').text(title);
+                $('#text-modal').text(message);
+
+                $('#modal-info').modal('show');
 
                 $(this).find('option').eq(0).prop('selected', true);
             }else if($(this).parent().parent().find('.paid').val() == 'buyer'){
@@ -4278,13 +4424,21 @@
                     $(this).parent().parent().find('.flat_rate_shipping').val(null);
                 }
             }else{
-                Swal.fire({
-                    title: 'Cancelled',
-                    text: "Wrong choice.",
-                    icon: 'error',
-                    scrollbarPadding: false,
-                    backdrop:false,
-                });
+                // Swal.fire({
+                //     title: 'Cancelled',
+                //     text: "Wrong choice.",
+                //     icon: 'error',
+                //     scrollbarPadding: false,
+                //     backdrop:false,
+                // });
+
+                var title = "{{ translate('Default Shipping Configuration') }}";
+                var message = "{{ translate('Wrong choice.') }}";
+
+                $('#title-modal').text(title);
+                $('#text-modal').text(message);
+
+                $('#modal-info').modal('show');
 
                 $(this).find('option').eq(0).prop('selected', true);
             }
@@ -4664,24 +4818,32 @@
                 $(this).parent().parent().find('.paid_sample').val('');
                 $(this).parent().parent().find('.paid_sample').prop('disabled', true);
                 if(count_shippers == 0){
-                    Swal.fire({
-                            title: 'Cancelled',
-                            text: "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product",
-                            icon: 'error',
-                            scrollbarPadding: false,
-                            backdrop:false,
-                        });
+                    // Swal.fire({
+                    //         title: 'Cancelled',
+                    //         text: "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product",
+                    //         icon: 'error',
+                    //         scrollbarPadding: false,
+                    //         backdrop:false,
+                    //     });
 
-                        var checkbox = $(this).parent().find('input[type="checkbox"][value="third_party"]');
-                        if(selected.length == 1){
-                            $(this).parent().find('.multi-select-button').text('-- Select --');
-                        }else{
-                            $(this).parent().find('.multi-select-button').text('vendor');
-                        }
-                        // Uncheck the checkbox
-                        checkbox.prop('checked', false);
-                        $(this).find("option[value='third_party']").prop('disabled', false);
-                        $(this).find("option[value='third_party']").prop('selected', false);
+                    var title = "{{ translate('Default Shipping Configuration') }}";
+                    var message = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
+
+                    $('#title-modal').text(title);
+                    $('#text-modal').text(message);
+
+                    $('#modal-info').modal('show');
+
+                    var checkbox = $(this).parent().find('input[type="checkbox"][value="third_party"]');
+                    if(selected.length == 1){
+                        $(this).parent().find('.multi-select-button').text('-- Select --');
+                    }else{
+                        $(this).parent().find('.multi-select-button').text('vendor');
+                    }
+                    // Uncheck the checkbox
+                    checkbox.prop('checked', false);
+                    $(this).find("option[value='third_party']").prop('disabled', false);
+                    $(this).find("option[value='third_party']").prop('selected', false);
                 }else{
                     var weight = $('#package_weight_sample').val();
                     var length = $('#length_sample').val();
@@ -4693,24 +4855,33 @@
                     var unit_third_party = $('#unit_third_party_sample').val();
 
                     if((weight == '') || (length == '') ||(width == '') ||(height == '') ||(min_third_party == '') ||(max_third_party == '')){
-                        Swal.fire({
-                                title: 'Cancelled',
-                                text: "Please ensure that all required fields are filled to know all information about your package.",
-                                icon: 'error',
-                                scrollbarPadding: false,
-                                backdrop:false,
-                            });
-                            var checkbox = $(this).parent().find('input[type="checkbox"][value="third_party"]');
-                            if(selected.length == 1){
-                                $(this).parent().find('.multi-select-button').text('-- Select --');
-                            }else{
-                                $(this).parent().find('.multi-select-button').text('vendor');
-                            }
-                            
-                            // Uncheck the checkbox
-                            checkbox.prop('checked', false);
-                            $(this).find("option[value='third_party']").prop('disabled', false);
-                            $(this).find("option[value='third_party']").prop('selected', false);
+                        // Swal.fire({
+                        //         title: 'Cancelled',
+                        //         text: "Please ensure that all required fields are filled to know all information about your package.",
+                        //         icon: 'error',
+                        //         scrollbarPadding: false,
+                        //         backdrop:false,
+                        //     });
+
+                        var title = "{{ translate('Default Shipping Configuration') }}";
+                        var message = "{{ translate('Please ensure that all required fields are filled to know all information about your package.') }}";
+
+                        $('#title-modal').text(title);
+                        $('#text-modal').text(message);
+
+                        $('#modal-info').modal('show');
+
+                        var checkbox = $(this).parent().find('input[type="checkbox"][value="third_party"]');
+                        if(selected.length == 1){
+                            $(this).parent().find('.multi-select-button').text('-- Select --');
+                        }else{
+                            $(this).parent().find('.multi-select-button').text('vendor');
+                        }
+                        
+                        // Uncheck the checkbox
+                        checkbox.prop('checked', false);
+                        $(this).find("option[value='third_party']").prop('disabled', false);
+                        $(this).find("option[value='third_party']").prop('selected', false);
                     }else{
                         length = parseInt(length);
                         height = parseInt(height);
@@ -4735,13 +4906,21 @@
                         }
                         
                         if(chargeable_weight > max ){
-                            Swal.fire({
-                                title: 'Cancelled',
-                                text: "Chargeable Weight = " + Number(chargeable_weight.toFixed(2)) + ", then not accepted by our shipper",
-                                icon: 'error',
-                                scrollbarPadding: false,
-                                backdrop:false,
-                            });
+                            // Swal.fire({
+                            //     title: 'Cancelled',
+                            //     text: "Chargeable Weight = " + Number(chargeable_weight.toFixed(2)) + ", then not accepted by our shipper",
+                            //     icon: 'error',
+                            //     scrollbarPadding: false,
+                            //     backdrop:false,
+                            // });
+
+                            var title = "{{ translate('Default Shipping Configuration') }}";
+                            var message = "Chargeable Weight = " + Number(chargeable_weight.toFixed(2)) + ", then not accepted by our shipper";
+
+                            $('#title-modal').text(title);
+                            $('#text-modal').text(message);
+
+                            $('#modal-info').modal('show');
 
                             var checkbox = $(this).parent().find('input[type="checkbox"][value="third_party"]');
                             if(selected.length == 1){
@@ -4773,13 +4952,20 @@
                 count_shippers = parseInt(count_shippers);
                 if(count_shippers == 0){
                     $('body input[name="activate_third_party"]').prop('checked', false);
-                        Swal.fire({
-                            title: 'Cancelled',
-                            text: "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product",
-                            icon: 'error',
-                            scrollbarPadding: false,
-                            backdrop:false,
-                        });
+                        // Swal.fire({
+                        //     title: 'Cancelled',
+                        //     text: "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product",
+                        //     icon: 'error',
+                        //     scrollbarPadding: false,
+                        //     backdrop:false,
+                        // });
+                        var title = "{{ translate('Default Shipping Configuration') }}";
+                        var message = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
+
+                        $('#title-modal').text(title);
+                        $('#text-modal').text(message);
+
+                        $('#modal-info').modal('show');
 
                         $(this).prop('checked', false)
                 }else{
@@ -5002,23 +5188,39 @@
                         if (check == true) {
                             document.getElementById('choice_form').submit();
                         } else {
-                            Swal.fire({
-                                title: 'Pricing Configuration Check',
-                                text: 'Please check your pricing configuration',
-                                icon: 'error'
-                            });
+                            // Swal.fire({
+                            //     title: 'Pricing Configuration Check',
+                            //     text: 'Please check your pricing configuration',
+                            //     icon: 'error'
+                            // });
+
+                            var title = "{{ translate('Pricing Configuration') }}";
+                            var message = "Please check your pricing configuration.";
+
+                            $('#title-modal').text(title);
+                            $('#text-modal').text(message);
+
+                            $('#modal-info').modal('show');
                         }
                     }else{
                         document.getElementById('choice_form').submit(); 
                     }
                 }else{
-                    Swal.fire({
-                        title: 'Cancelled',
-                        text: 'Please select a category without subcategories.',
-                        icon: 'error',
-                        scrollbarPadding: false,
-                        backdrop:false,
-                    })
+                    // Swal.fire({
+                    //     title: 'Cancelled',
+                    //     text: 'Please select a category without subcategories.',
+                    //     icon: 'error',
+                    //     scrollbarPadding: false,
+                    //     backdrop:false,
+                    // })
+
+                    var title = "{{ translate('Product Category') }}";
+                            var message = "Please select a category without subcategories.";
+
+                            $('#title-modal').text(title);
+                            $('#text-modal').text(message);
+
+                            $('#modal-info').modal('show');
                 }
             }else{
                 var inputTopPosition = $("#tags").offset().top;

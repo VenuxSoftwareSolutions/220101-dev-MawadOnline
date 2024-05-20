@@ -93,7 +93,7 @@
                                     @can('enabling_product_attribute')
                                         <td>
                                             <label class="aiz-switch aiz-switch-success mb-0">
-                                                <input class="activated" data-id="{{ $attribute->id }}" type="checkbox" @if($attribute->is_activated == 1) {{ "checked" }} @endif >
+                                                <input class="activated" data-id="{{ $attribute->id }}" id="{{ $attribute->id }}" type="checkbox" @if($attribute->is_activated == 1) {{ "checked" }} @endif >
                                                 <span class="slider round"></span>
                                             </label>
                                         </td>
@@ -118,6 +118,42 @@
             </div>
         </div>
     </div>
+
+    <div id="modal-info" class="modal fade">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title h6" id="title-modal">{{translate('Delete Confirmation')}}</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                </div>
+                <input type="hidden" id="status">
+                <input type="hidden" id="attribute_id">
+                <div class="modal-body text-center">
+                    <p class="mt-1 fs-14" id="text-modal">{{translate('Are you sure to delete this?')}}</p>
+                    <button type="button" class="btn btn-secondary rounded-0 mt-2" data-dismiss="modal" id="cancel_published">{{translate('Cancel')}}</button>
+                    <button type="button" id="publish-link" class="btn btn-primary rounded-0 mt-2"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-success" class="modal fade">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title h6" id="title-modal-success">{{translate('Delete Confirmation')}}</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                </div>
+                <input type="hidden" id="status">
+                <input type="hidden" id="product_id">
+                <div class="modal-body text-center">
+                    <p class="mt-1 fs-14" id="text-modal-success">{{translate('Are you sure to delete this?')}}</p>
+                    <button type="button" class="btn btn-secondary rounded-0 mt-2" data-dismiss="modal">{{translate('OK')}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('script')
@@ -128,19 +164,50 @@
                 var message_success = '';
                 var message_btn = '';
                 var status = true;
+                var id = $(this).data('id');
 
                 if($(this).is(":checked") == true ){
+                    var published = 1;
                     message_confirm = 'Are you sure you want to enable this attribute ?';
                     message_success = 'Enabled successfully';
                     message_btn = "Enable";
                 }else{
+                    var published = 0;
                     message_confirm = 'Are you sure you want to disable this attribute ?';
                     message_success = 'Disabled successfully';
                     message_btn = "Disable";
                     status = false;
                 }
 
-                var id = $(this).data('id');
+                if(id != undefined){
+                    $("#title-modal").text('{{ translate("Enable Attribute") }}');
+                    $("#text-modal").text(message_confirm);
+                    $("#publish-link").text(message_btn);
+                    $("#status").val(published);
+                    $("#attribute_id").val(id);
+
+                    $("#modal-info").modal('show')
+                } 
+            })
+
+            $('body').on('click', '#cancel_published', function(){
+                $('#modal-info').modal('hide');
+                var id = $("#attribute_id").val();
+                var published = $("#status").val();
+
+                if((id != '') && (id != undefined)){
+                    if(published == 0){
+                        $('#' + id).prop('checked', true)
+                    }else{
+                        $('#' + id).prop('checked', false)
+                    }
+                }
+            })
+
+            $('body').on('click', '#publish-link', function(){
+                $("#modal-info").modal('hide');
+                var id = $("#attribute_id").val();
+                var status = $("#status").val();
 
                 $.ajaxSetup({
                     headers: {
@@ -148,47 +215,33 @@
                     }
                 });
 
-                var current = $(this);
+                if(status == 1){
+                    var message_success = "Enabled successfully";
+                    var message_icon = "Enabled"
+                }else{
+                    var message_success = "Disabled successfully";
+                    var message_icon = "Disabled"
+                }
 
-                swal({
-                    title: message_confirm,
-                    type: "warning",
-                    confirmButtonText: message_btn,
-                    showCancelButton: true
-                })
-                .then((result) => {
-                    if (result.value) {
-                        $.ajax({
-                            url: "{{ route('attributes.activated') }}",
-                            type: "POST",
-                            data: {
-                                status: status,
-                                id: id
-                            },
-                            cache: false,
-                            dataType: 'JSON',
-                            success: function(dataResult) {
-                                swal(
-                                    message_btn,
-                                    message_success,
-                                    'success'
-                                )
-                            }
-                        })
-                    } else if (result.dismiss === 'cancel') {
-                        swal(
-                            'Cancelled',
-                            'Your deletion is undone',
-                            'warning'
-                        )
-                        if(current.is(":checked") == true ){
-                            current.prop("checked", false);
-                        }else{
-                            current.prop("checked", true);
+                if((id != '') && (id != undefined)){
+                    $.ajax({
+                        url: "{{ route('attributes.activated') }}",
+                        type: "POST",
+                        data: {
+                            status: status,
+                            id: id
+                        },
+                        cache: false,
+                        dataType: 'JSON',
+                        success: function(dataResult) {
+                            $("#title-modal-success").text(message_icon);
+                            $("#text-modal-success").text(message_success);
+
+                            $("#modal-success").modal('show')
                         }
-                    }
-                })
-            })
+                    })
+                }
+            });
         });
     </script>
 @endsection
