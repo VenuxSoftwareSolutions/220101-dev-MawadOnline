@@ -1,5 +1,10 @@
 @extends('seller.layouts.app')
-
+<style>
+    .customer-color {
+    background-color: #f77b0b !important;
+    border: #f77b0b !important;
+}
+</style>
 @section('panel_content')
     <div class="aiz-titlebar text-left mt-2 mb-3">
         <div class="row align-items-center">
@@ -181,6 +186,46 @@
             </div>
         </form>
     </div>
+     <!-- Bootstrap Modal -->
+     <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="deleteConfirmationModalLabel">{{ trans('messages.confirm_delete') }}</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              {{ trans('messages.delete_warning') }}
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ trans('messages.cancel_button') }}</button>
+              <button type="button" class="btn btn-primary customer-color" id="confirmDeleteBtn">{{ trans('messages.confirm_button') }}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <!-- Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="successModalLabel">{{ trans('messages.delete_success') }}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+            {{ trans('messages.delete_success') }}
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
 @endsection
 @section('script')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -237,69 +282,129 @@
             });
         });
          // Add event listener to remove button
-         $('#warehouseTable').on('click', '.removeRow', function() {
-            var row = $(this).closest('tr');
-            var warehouseId = row.data('warehouse-id'); // Assuming each row has a data attribute for warehouse ID
-            if (typeof warehouseId !== 'undefined') {
-                 // Show confirmation dialog
-            Swal.fire({
-                title: '{{ trans('messages.confirm_delete') }}',
-                text: '{{ trans('messages.delete_warning') }}',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: '{{ trans('messages.confirm_button') }}',
-                cancelButtonText: '{{ trans('messages.cancel_button') }}',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Send AJAX request to remove the warehouse
-                    $.ajax({
-                        url: '{{route('seller.warehouses.remove')}}', // Update with your backend route
-                        method: 'POST',
-                        data: {
-                            warehouse_id: warehouseId,
-                            _token: '{{ csrf_token() }}', // Include the CSRF token
+        //  $('#warehouseTable').on('click', '.removeRow', function() {
+        //     var row = $(this).closest('tr');
+        //     var warehouseId = row.data('warehouse-id'); // Assuming each row has a data attribute for warehouse ID
+        //     if (typeof warehouseId !== 'undefined') {
+        //          // Show confirmation dialog
+        //     Swal.fire({
+        //         title: '{{ trans('messages.confirm_delete') }}',
+        //         text: '{{ trans('messages.delete_warning') }}',
+        //         icon: 'warning',
+        //         showCancelButton: true,
+        //         confirmButtonText: '{{ trans('messages.confirm_button') }}',
+        //         cancelButtonText: '{{ trans('messages.cancel_button') }}',
+        //         reverseButtons: true
+        //     }).then((result) => {
+        //         if (result.isConfirmed) {
+        //             // Send AJAX request to remove the warehouse
+        //             $.ajax({
+        //                 url: '{{route('seller.warehouses.remove')}}', // Update with your backend route
+        //                 method: 'POST',
+        //                 data: {
+        //                     warehouse_id: warehouseId,
+        //                     _token: '{{ csrf_token() }}', // Include the CSRF token
 
-                        },
-                        success: function(response) {
-                             // Check if the response contains an error
-                            if (response.error) {
-                                // Show error message
-                                toastr.error(response.error);
-                            } else {
-                            // Remove the row from the table on success
-                            row.remove();
-                            Swal.fire(
-                                '{{ trans('messages.delete_success') }}',
-                                '{{ trans('messages.delete_success') }}',
-                                'success'
-                            );
-                            }
+        //                 },
+        //                 success: function(response) {
+        //                      // Check if the response contains an error
+        //                     if (response.error) {
+        //                         // Show error message
+        //                         toastr.error(response.error);
+        //                     } else {
+        //                     // Remove the row from the table on success
+        //                     row.remove();
+        //                     Swal.fire(
+        //                         '{{ trans('messages.delete_success') }}',
+        //                         '{{ trans('messages.delete_success') }}',
+        //                         'success'
+        //                     );
+        //                     }
 
-                        },
-                        error: function(error) {
-                            console.error('Error removing warehouse:', error);
-                            Swal.fire(
-                                '{{ trans('messages.error') }}',
-                                '{{ trans('messages.delete_error') }}',
-                                'error'
-                            );
-                        }
-                    });
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    Swal.fire(
-                        '{{ trans('messages.cancelled') }}',
-                        '{{ trans('messages.warehouse_safe') }}',
-                        'error'
-                    );
+        //                 },
+        //                 error: function(error) {
+        //                     console.error('Error removing warehouse:', error);
+        //                     Swal.fire(
+        //                         '{{ trans('messages.error') }}',
+        //                         '{{ trans('messages.delete_error') }}',
+        //                         'error'
+        //                     );
+        //                 }
+        //             });
+        //         } else if (result.dismiss === Swal.DismissReason.cancel) {
+        //             Swal.fire(
+        //                 '{{ trans('messages.cancelled') }}',
+        //                 '{{ trans('messages.warehouse_safe') }}',
+        //                 'error'
+        //             );
+        //         }
+        //     });
+        //     } else {
+        //         row.remove();
+        //     }
+
+
+        // });
+        // Declare a variable to hold the warehouse ID
+        let warehouseIdToDelete;
+        let rowToDelete;
+
+        $('#warehouseTable').on('click', '.removeRow', function() {
+            rowToDelete = $(this).closest('tr');
+            warehouseIdToDelete = rowToDelete.data('warehouse-id'); // Assuming each row has a data attribute for warehouse ID
+            if (typeof warehouseIdToDelete !== 'undefined') {
+                // Show the Bootstrap modal
+                $('#deleteConfirmationModal').modal('show');
+            } else {
+                rowToDelete.remove();
+            }
+        });
+
+        // Handle the confirmation button click event
+        $('#confirmDeleteBtn').on('click', function() {
+            // If user clicks "Yes", send AJAX request to remove the warehouse
+            $.ajax({
+                url: '{{route('seller.warehouses.remove')}}', // Update with your backend route
+                method: 'POST',
+                data: {
+                    warehouse_id: warehouseIdToDelete,
+                    _token: '{{ csrf_token() }}', // Include the CSRF token
+                },
+                success: function(response) {
+                    // Check if the response contains an error
+                    if (response.error) {
+                        // Show error message
+                        toastr.error(response.error);
+                    } else {
+                        // Remove the row from the table on success
+                        rowToDelete.remove();
+                        // Swal.fire(
+                        //     '{{ trans('messages.delete_success') }}',
+                        //     '{{ trans('messages.delete_success') }}',
+                        //     'success'
+                        // );
+                        toastr.success('{{ trans('messages.delete_success') }}');
+
+                        // Show the success modal
+                        // $('#successModal').modal('show');
+                    }
+                },
+                error: function(error) {
+                    console.error('Error removing warehouse:', error);
+                    // Swal.fire(
+                    //     '{{ trans('messages.error') }}',
+                    //     '{{ trans('messages.delete_error') }}',
+                    //     'error'
+                    // );
+                    toastr.error('{{ trans('messages.delete_error') }}', '{{ trans('messages.error') }}');
+
                 }
             });
-            } else {
-                row.remove();
-            }
 
-
+            // Hide the modal after confirmation
+            $('#deleteConfirmationModal').modal('hide');
         });
+
         $('#addRow').on('click', function() {
     var warehouseName = $('input[name="warehouse_name_add"]').val();
     var street = $('input[name="street_warehouse_add"]').val();

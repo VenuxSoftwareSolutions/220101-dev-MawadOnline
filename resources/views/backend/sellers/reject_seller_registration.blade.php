@@ -50,6 +50,27 @@ use Carbon\Carbon;
 
     </div>
 </div>
+<!-- Bootstrap Modal for Confirmation -->
+<div class="modal fade" id="rejectionConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="rejectionConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="rejectionConfirmationModalLabel">Are you sure?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          You are about to reject. This action cannot be undone.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" id="confirmRejectBtn">Yes, reject it!</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 @endsection
 @section('script')
 
@@ -126,36 +147,56 @@ use Carbon\Carbon;
     })
 </script>
 <script>
+    // document.getElementById('submitRejection').addEventListener('click', function(event) {
+    //     event.preventDefault(); // Prevent the default form submission
+    //     // Check if the textarea is not empty
+    //     var rejectReason = document.getElementById('editor').value.trim();
+    //             if (rejectReason === '') {
+    //                 // If the textarea is empty, show an error message
+    //                 Swal.fire({
+    //                     title: 'Error!',
+    //                     text: 'Please provide a rejection reason.',
+    //                     icon: 'error',
+    //                     confirmButtonText: 'OK'
+    //                 });
+    //                 return; // Exit the function without submitting the form
+    //             }
+    //     // Use SweetAlert for confirmation
+    //     Swal.fire({
+    //         title: 'Are you sure?',
+    //         text: 'You are about to reject. This action cannot be undone.',
+    //         icon: 'warning',
+    //         showCancelButton: true,
+    //         confirmButtonColor: '#d33',
+    //         cancelButtonColor: '#3085d6',
+    //         confirmButtonText: 'Yes, reject it!'
+    //     }).then((result) => {
+    //         if (result.isConfirmed) {
+    //             // If user confirms, submit the form
+    //             document.getElementById('rejectionForm').submit();
+    //         }
+    //     });
+    // });
     document.getElementById('submitRejection').addEventListener('click', function(event) {
-        event.preventDefault(); // Prevent the default form submission
-        // Check if the textarea is not empty
-        var rejectReason = document.getElementById('editor').value.trim();
-                if (rejectReason === '') {
-                    // If the textarea is empty, show an error message
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Please provide a rejection reason.',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                    return; // Exit the function without submitting the form
-                }
-        // Use SweetAlert for confirmation
-        Swal.fire({
-            title: 'Are you sure?',
-            text: 'You are about to reject. This action cannot be undone.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, reject it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // If user confirms, submit the form
-                document.getElementById('rejectionForm').submit();
-            }
-        });
-    });
+    event.preventDefault(); // Prevent the default form submission
+    // Check if the textarea is not empty
+    var rejectReason = document.getElementById('editor').value.trim();
+   if (rejectReason === '') {
+        // If the textarea is empty, show an error message
+        toastr.error('Please provide a rejection reason.');
+        return; // Exit the function without submitting the form
+    }
+
+    // Show the Bootstrap modal for confirmation
+    $('#rejectionConfirmationModal').modal('show');
+});
+
+// Handle the confirmation button click event
+$('#confirmRejectBtn').on('click', function() {
+    // Submit the form when the user confirms the action
+    document.getElementById('rejectionForm').submit();
+});
+
 </script>
 
 

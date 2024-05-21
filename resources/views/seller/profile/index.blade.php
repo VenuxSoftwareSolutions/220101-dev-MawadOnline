@@ -103,6 +103,12 @@
     font-size: 14px; /* Or any other size you prefer */
 
 }
+
+.customer-color {
+    background-color: #f77b0b !important;
+    border: #f77b0b !important;
+}
+
 </style>
 @section('panel_content')
     <div class="aiz-titlebar mt-4 mb-4">
@@ -1426,6 +1432,26 @@
                     </form>
                 </div>
             </div> --}}
+            <!-- Bootstrap Modal -->
+            <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="confirmationModalLabel">Confirm</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+                    Changes in all tabs will be submitted for admin’s review. Are you sure?
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-primary customer-color" id="confirmSubmitBtn">Yes</button>
+                    </div>
+                </div>
+                </div>
+            </div>
 
         </div>
     </div>
@@ -1807,21 +1833,34 @@
                 });
             });
             // Submit for Review Button Click Event
+            // $('#submitForReviewBtn').on('click', function() {
+            //     // Show confirmation dialog
+            //     Swal.fire({
+            //         title: 'Confirm',
+            //         text: 'Changes in all tabs will be submitted for admin’s review. Are you sure?',
+            //         icon: 'warning',
+            //         showCancelButton: true,
+            //         confirmButtonText: 'Yes',
+            //         cancelButtonText: 'No'
+            //     }).then((result) => {
+            //         if (result.isConfirmed) {
+            //             // If user clicks "Yes", submit the form
+            //             submitChangesForReview();
+            //         }
+            //     });
+            // });
+            // Submit for Review Button Click Event
             $('#submitForReviewBtn').on('click', function() {
-                // Show confirmation dialog
-                Swal.fire({
-                    title: 'Confirm',
-                    text: 'Changes in all tabs will be submitted for admin’s review. Are you sure?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes',
-                    cancelButtonText: 'No'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // If user clicks "Yes", submit the form
-                        submitChangesForReview();
-                    }
-                });
+                // Show the Bootstrap modal
+                $('#confirmationModal').modal('show');
+            });
+
+            // Handle the confirmation button click event
+            $('#confirmSubmitBtn').on('click', function() {
+                // If user clicks "Yes", submit the form
+                submitChangesForReview();
+                // Hide the modal after submission
+                $('#confirmationModal').modal('hide');
             });
 
             // Function to submit the form for review

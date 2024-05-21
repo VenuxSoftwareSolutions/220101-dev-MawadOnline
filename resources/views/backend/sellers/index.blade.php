@@ -253,7 +253,7 @@
                                         <i class="las la-ellipsis-v"></i>
                                     </button>
                                     {{-- <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton"> --}}
-                                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-xs vendor-action">
+                                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-xs vendor-action-{{$seller->id}}">
                                         <a href="{{route('vendor.registration.view',$seller->id)}}" class="dropdown-item" >
                                             {{ __('messages.View') }}
                                         </a>
@@ -372,6 +372,48 @@
 				</div>
 			</div>
 		</div>
+
+    <!-- Bootstrap Modal for Confirmation -->
+    <div class="modal fade" id="pendingClosureModal" tabindex="-1" role="dialog" aria-labelledby="pendingClosureModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="pendingClosureModalLabel">Are you sure?</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              This will mark the vendor for pending closure. Are you sure you want to proceed?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary" id="confirmPendingClosureBtn">Yes, pending closure!</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Bootstrap Modal for Confirmation -->
+    <div class="modal fade" id="closeVendorModal" tabindex="-1" role="dialog" aria-labelledby="closeVendorModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="closeVendorModalLabel">Are you sure?</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+            This will close the vendor's e-shop. Are you sure you want to proceed?
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-danger" id="confirmCloseVendorBtn">Yes, close it!</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('script')
@@ -384,6 +426,9 @@
   <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
 <!-- Include SweetAlert library -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
     <script type="text/javascript">
         $(document).on("change", ".check-all", function() {
             if(this.checked) {
@@ -480,7 +525,7 @@
                 var updatedHtml = response.html;
 
                 // Update the dropdown menu content with the updated HTML
-                $('.dropdown-menu.vendor-action ').html(updatedHtml);
+                $('.dropdown-menu.vendor-action-'+vendorId).html(updatedHtml);
             },
             error: function(xhr, status, error) {
                 // Handle error
@@ -576,83 +621,160 @@
 </script>
 <!-- JavaScript code to handle status change -->
 <script>
-    $(document).on('click', '.pending-closure-btn', function () {
-        var vendorId = $(this).data('vendor-id');
+    // $(document).on('click', '.pending-closure-btn', function () {
+    //     var vendorId = $(this).data('vendor-id');
 
-        // Display SweetAlert confirmation dialog
-        Swal.fire({
-            title: 'Are you sure?',
-            text: 'This will mark the vendor for pending closure. Are you sure you want to proceed?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, pending closure!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Trigger AJAX request to change status to "Pending Closure"
-                $.ajax({
-                    url: "{{ route('vendors.pending-closure', ':id') }}".replace(':id', vendorId),
-                    method: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(data) {
-                        // Show success message
-                        Swal.fire('Vendor Suspended with Pending Closure', 'The vendor has been successfully suspended with pending closure.', 'success');
-                        $('#status-' + vendorId).text('Pending Closure');
-                        $('#last-status-update-' + vendorId).text(data.last_status_update);
-                        uncheckCheckboxByVendorId(vendorId);
-                        updateDropDownMenu(vendorId) ;
+    //     // Display SweetAlert confirmation dialog
+    //     Swal.fire({
+    //         title: 'Are you sure?',
+    //         text: 'This will mark the vendor for pending closure. Are you sure you want to proceed?',
+    //         icon: 'warning',
+    //         showCancelButton: true,
+    //         confirmButtonColor: '#3085d6',
+    //         cancelButtonColor: '#d33',
+    //         confirmButtonText: 'Yes, pending closure!'
+    //     }).then((result) => {
+    //         if (result.isConfirmed) {
+    //             // Trigger AJAX request to change status to "Pending Closure"
+    //             $.ajax({
+    //                 url: "{{ route('vendors.pending-closure', ':id') }}".replace(':id', vendorId),
+    //                 method: 'POST',
+    //                 data: {
+    //                     _token: '{{ csrf_token() }}'
+    //                 },
+    //                 success: function(data) {
+    //                     // Show success message
+    //                     Swal.fire('Vendor Suspended with Pending Closure', 'The vendor has been successfully suspended with pending closure.', 'success');
+    //                     $('#status-' + vendorId).text('Pending Closure');
+    //                     $('#last-status-update-' + vendorId).text(data.last_status_update);
+    //                     uncheckCheckboxByVendorId(vendorId);
+    //                     updateDropDownMenu(vendorId) ;
 
-                    },
-                    error: function(xhr, status, error) {
-                        // Show error message
-                        Swal.fire('Error', 'Failed to pending closure the vendor. Please try again later.', 'error');
-                    }
-                });
-            }
-        });
+    //                 },
+    //                 error: function(xhr, status, error) {
+    //                     // Show error message
+    //                     Swal.fire('Error', 'Failed to pending closure the vendor. Please try again later.', 'error');
+    //                 }
+    //             });
+    //         }
+    //     });
+    // });
+    let vendorIdToClose;
+
+$(document).on('click', '.pending-closure-btn', function () {
+    vendorIdToClose = $(this).data('vendor-id');
+    // Show the Bootstrap modal
+    $('#pendingClosureModal').modal('show');
+});
+
+// Handle the confirmation button click event
+$('#confirmPendingClosureBtn').on('click', function() {
+    // Trigger AJAX request to change status to "Pending Closure"
+    $.ajax({
+        url: "{{ route('vendors.pending-closure', ':id') }}".replace(':id', vendorIdToClose),
+        method: 'POST',
+        data: {
+            _token: '{{ csrf_token() }}'
+        },
+        success: function(data) {
+            // Show success message
+            // Swal.fire('Vendor Suspended with Pending Closure', 'The vendor has been successfully suspended with pending closure.', 'success');
+            toastr.success('Vendor Suspended with Pending Closure', 'The vendor has been successfully suspended with pending closure.');
+            $('#status-' + vendorIdToClose).text('Pending Closure');
+            $('#last-status-update-' + vendorIdToClose).text(data.last_status_update);
+            uncheckCheckboxByVendorId(vendorIdToClose);
+            updateDropDownMenu(vendorIdToClose);
+        },
+        error: function(xhr, status, error) {
+            // Show error message
+            toastr.error('Failed to pending closure the vendor. Please try again later.', 'Error');
+            // Swal.fire('Error', 'Failed to pending closure the vendor. Please try again later.', 'error');
+        }
     });
+
+    // Hide the confirmation modal after sending the request
+    $('#pendingClosureModal').modal('hide');
+});
 </script>
 <script>
-    $(document).on('click', '.close-vendor-btn', function () {
-        var vendorId = $(this).data('vendor-id');
+    // $(document).on('click', '.close-vendor-btn', function () {
+    //     var vendorId = $(this).data('vendor-id');
 
-        // Display SweetAlert confirmation dialog
-        Swal.fire({
-            title: 'Are you sure?',
-            text: 'This will close the vendor\'s e-shop. Are you sure you want to proceed?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, close it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Trigger AJAX request to change status to "Closed"
-                $.ajax({
-                    url: "{{ route('vendors.close', ':id') }}".replace(':id', vendorId),
-                    method: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(data) {
-                        // Show success message
-                        Swal.fire('Vendor Closed', 'The vendor\'s e-shop has been closed successfully', 'success');
-                        $('#status-' + vendorId).text('Closed');
-                        $('#last-status-update-' + vendorId).text(data.last_status_update);
-                        uncheckCheckboxByVendorId(vendorId);
-                        updateDropDownMenu(vendorId) ;
-                    },
-                    error: function(xhr, status, error) {
-                        // Show error message
-                        Swal.fire('Error', 'Failed to close the vendor\'s e-shop. Please try again later.', 'error');
-                    }
-                });
-            }
-        });
+    //     // Display SweetAlert confirmation dialog
+    //     Swal.fire({
+    //         title: 'Are you sure?',
+    //         text: 'This will close the vendor\'s e-shop. Are you sure you want to proceed?',
+    //         icon: 'warning',
+    //         showCancelButton: true,
+    //         confirmButtonColor: '#d33',
+    //         cancelButtonColor: '#3085d6',
+    //         confirmButtonText: 'Yes, close it!'
+    //     }).then((result) => {
+    //         if (result.isConfirmed) {
+    //             // Trigger AJAX request to change status to "Closed"
+    //             $.ajax({
+    //                 url: "{{ route('vendors.close', ':id') }}".replace(':id', vendorId),
+    //                 method: 'POST',
+    //                 data: {
+    //                     _token: '{{ csrf_token() }}'
+    //                 },
+    //                 success: function(data) {
+    //                     // Show success message
+    //                     Swal.fire('Vendor Closed', 'The vendor\'s e-shop has been closed successfully', 'success');
+    //                     $('#status-' + vendorId).text('Closed');
+    //                     $('#last-status-update-' + vendorId).text(data.last_status_update);
+    //                     uncheckCheckboxByVendorId(vendorId);
+    //                     updateDropDownMenu(vendorId) ;
+    //                 },
+    //                 error: function(xhr, status, error) {
+    //                     // Show error message
+    //                     Swal.fire('Error', 'Failed to close the vendor\'s e-shop. Please try again later.', 'error');
+    //                 }
+    //             });
+    //         }
+    //     });
+    // });
+    $(document).on('click', '.close-vendor-btn', function () {
+    var vendorId = $(this).data('vendor-id');
+    // Show the Bootstrap modal
+    $('#closeVendorModal').modal('show');
     });
+    $('#confirmCloseVendorBtn').on('click', function() {
+    var vendorId = $('.close-vendor-btn').data('vendor-id');
+    // Trigger AJAX request to change status to "Closed"
+    $.ajax({
+        url: "{{ route('vendors.close', ':id') }}".replace(':id', vendorId),
+        method: 'POST',
+        data: {
+            _token: '{{ csrf_token() }}'
+        },
+        success: function(data) {
+            // Show success message
+            // $('#successModal .modal-body').text('The vendor\'s e-shop has been closed successfully');
+            // $('#successModal').modal('show');
+            // Swal.fire('Vendor Closed', 'The vendor\'s e-shop has been closed successfully', 'success');
+            toastr.success('The vendor\'s e-shop has been closed successfully', 'Vendor Closed');
+
+            $('#status-' + vendorId).text('Closed');
+            $('#last-status-update-' + vendorId).text(data.last_status_update);
+            uncheckCheckboxByVendorId(vendorId);
+            updateDropDownMenu(vendorId);
+        },
+        error: function(xhr, status, error) {
+            // Show error message
+            // $('#errorModal .modal-body').text('Failed to close the vendor\'s e-shop. Please try again later.');
+            // $('#errorModal').modal('show');
+            // Swal.fire('Error', 'Failed to close the vendor\'s e-shop. Please try again later.', 'error');
+            toastr.error('Failed to close the vendor\'s e-shop. Please try again later.', 'Error');
+
+        }
+    });
+
+    // Hide the confirmation modal after sending the request
+    $('#closeVendorModal').modal('hide');
+});
+
+
 </script>
 <script>
     $(document).on('click', '.resubmit-registration', function() {
