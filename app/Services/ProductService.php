@@ -195,7 +195,6 @@ class ProductService
         }
 
         $shipping = [];
-
         if((isset($collection['from_shipping'])) &&(isset($collection['to_shipping'])) && (isset($collection['shipper'])) && (isset($collection['estimated_order']))){
             foreach($collection['from_shipping'] as $key => $from_shipping){
 

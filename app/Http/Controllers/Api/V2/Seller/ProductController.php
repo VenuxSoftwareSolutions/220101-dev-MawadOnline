@@ -30,6 +30,7 @@ use App\Services\ProductFlashDealService;
 use App\Services\ProductService;
 use App\Services\ProductStockService;
 use App\Services\ProductTaxService;
+use App\Services\ProductUploadsService;
 
 class ProductController extends Controller
 {
@@ -37,17 +38,20 @@ class ProductController extends Controller
     protected $productTaxService;
     protected $productFlashDealService;
     protected $productStockService;
+    protected $productUploadsService;
 
     public function __construct(
         ProductService $productService,
         ProductTaxService $productTaxService,
         ProductFlashDealService $productFlashDealService,
-        ProductStockService $productStockService
+        ProductStockService $productStockService,
+        ProductUploadsService $productUploadsService,
     ) {
         $this->productService = $productService;
         $this->productTaxService = $productTaxService;
         $this->productFlashDealService = $productFlashDealService;
         $this->productStockService = $productStockService;
+        $this->productUploadsService = $productUploadsService;
     }
 
     public function index()
@@ -92,7 +96,7 @@ class ProductController extends Controller
     }
 
 
-    public function store(ProductRequest $request)
+    public function store(Request $request)
     {
         if (addon_is_activated('seller_subscription')) {
             if (!seller_package_validity_check(auth()->user()->id)) {
@@ -100,37 +104,66 @@ class ProductController extends Controller
             }
         }
 
-        if (auth()->user()->user_type != 'seller') {
-            return $this->failed(translate('Unauthenticated User.'));
-        }
-
-        $request->merge(['added_by' => 'seller']);
+        //dd($request->all());
         $product = $this->productService->store($request->except([
-            '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
+            'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
         ]));
+
         $request->merge(['product_id' => $product->id]);
 
-        ///Product categories
-        $product->categories()->attach($request->category_ids);
+        //Product categories
+        if($product->is_parent == 1){
+            $products = Product::where('parent_id', $product->id)->get();
+            if(count($products) > 0){
+                foreach($products as $child){
+                    $child->categories()->attach($request->parent_id);
+                }
+            }
+        }
+        $product->categories()->attach($request->parent_id);
 
-
-        //VAT & Tax
-        if ($request->tax_id) {
-            $this->productTaxService->store($request->only([
-                'tax_id', 'tax', 'tax_type', 'product_id'
-            ]));
+        //Upload documents, images and thumbnails
+        if($request->document_names){
+            $data['document_names'] = $request->document_names;
+            $data['documents'] = $request->documents;
+            $data['product'] = $product;
+            $data['main_photos'] = $request->main_photos;
+            $data['photosThumbnail'] = $request->photosThumbnail;
+            $update = false;
+            $this->productUploadsService->store_uploads($data, $update);
         }
 
-        //Product Stock
-        $this->productStockService->store($request->only([
-            'colors_active', 'colors', 'choice_no', 'unit_price', 'sku', 'current_stock', 'product_id'
-        ]), $product);
+        // if (auth()->user()->user_type != 'seller') {
+        //     return $this->failed(translate('Unauthenticated User.'));
+        // }
 
-        // Product Translations
-        $request->merge(['lang' => env('DEFAULT_LANGUAGE')]);
-        ProductTranslation::create($request->only([
-            'lang', 'name', 'unit', 'description', 'product_id'
-        ]));
+        // $request->merge(['added_by' => 'seller']);
+        // $product = $this->productService->store($request->except([
+        //     '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
+        // ]));
+        // $request->merge(['product_id' => $product->id]);
+
+        // ///Product categories
+        // $product->categories()->attach($request->category_ids);
+
+
+        // //VAT & Tax
+        // if ($request->tax_id) {
+        //     $this->productTaxService->store($request->only([
+        //         'tax_id', 'tax', 'tax_type', 'product_id'
+        //     ]));
+        // }
+
+        // //Product Stock
+        // $this->productStockService->store($request->only([
+        //     'colors_active', 'colors', 'choice_no', 'unit_price', 'sku', 'current_stock', 'product_id'
+        // ]), $product);
+
+        // // Product Translations
+        // $request->merge(['lang' => env('DEFAULT_LANGUAGE')]);
+        // ProductTranslation::create($request->only([
+        //     'lang', 'name', 'unit', 'description', 'product_id'
+        // ]));
 
         return $this->success(translate('Product has been inserted successfully'));
     }

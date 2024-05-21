@@ -439,6 +439,9 @@ thead tr{
                     $('#' + id).prop('checked', false)
                 }
             }
+
+            $("#product_id").val('');
+            $("#status").val('');
         })
 
         $('body').on('click', '#publish-link', function(){
