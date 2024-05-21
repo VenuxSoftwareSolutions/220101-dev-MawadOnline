@@ -55,6 +55,26 @@ use Carbon\Carbon;
                 <button  type="button" class="btn btn-secondary" onclick="window.location.href='{{ route('sellers.index') }}'" data-dismiss="modal">Cancel</button>
             </div>
         </form>
+        <!-- Bootstrap Modal for Confirmation -->
+        <div class="modal fade" id="suspendConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="suspendConfirmationModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="suspendConfirmationModalLabel">Are you sure?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                You are about to suspend. This action cannot be undone.
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmSuspendBtn">Yes, suspend it!</button>
+                </div>
+            </div>
+            </div>
+        </div>
 
 
     </div>
@@ -135,62 +155,100 @@ use Carbon\Carbon;
     })
 </script>
 <script>
+//     document.getElementById('submitRejection').addEventListener('click', function(event) {
+//         event.preventDefault(); // Prevent the default form submission
+//  // Check if the Suspension Reason and Reason Title fields are not empty
+//  var suspensionReason = document.getElementById('reason').value.trim();
+//         var reasonTitle = document.getElementById('reason-title').value.trim();
+//         var reasonDetails = document.getElementById('editor').value.trim();
+
+//         if (!suspensionReason) {
+//             // If Suspension Reason is empty, show an error message
+//             Swal.fire({
+//                 title: 'Error!',
+//                 text: 'Please select a Suspension Reason.',
+//                 icon: 'error',
+//                 confirmButtonText: 'OK'
+//             });
+//             return; // Exit the function without submitting the form
+//         }
+
+//         if (!reasonTitle) {
+//             // If Reason Title is empty, show an error message
+//             Swal.fire({
+//                 title: 'Error!',
+//                 text: 'Please enter a Reason Title.',
+//                 icon: 'error',
+//                 confirmButtonText: 'OK'
+//             });
+//             return; // Exit the function without submitting the form
+//         }
+
+//         if (!reasonDetails) {
+//             // If Reason Details is empty, show an error message
+//             Swal.fire({
+//                 title: 'Error!',
+//                 text: 'Please provide Reason Details.',
+//                 icon: 'error',
+//                 confirmButtonText: 'OK'
+//             });
+//             return; // Exit the function without submitting the form
+//         }
+
+//         // Use SweetAlert for confirmation
+//         Swal.fire({
+//             title: 'Are you sure?',
+//             text: 'You are about to reject. This action cannot be undone.',
+//             icon: 'warning',
+//             showCancelButton: true,
+//             confirmButtonColor: '#d33',
+//             cancelButtonColor: '#3085d6',
+//             confirmButtonText: 'Yes, reject it!'
+//         }).then((result) => {
+//             if (result.isConfirmed) {
+//                 // If user confirms, submit the form
+//                 document.getElementById('rejectionForm').submit();
+//             }
+//         });
+//     });
     document.getElementById('submitRejection').addEventListener('click', function(event) {
-        event.preventDefault(); // Prevent the default form submission
- // Check if the Suspension Reason and Reason Title fields are not empty
- var suspensionReason = document.getElementById('reason').value.trim();
-        var reasonTitle = document.getElementById('reason-title').value.trim();
-        var reasonDetails = document.getElementById('editor').value.trim();
+    event.preventDefault(); // Prevent the default form submission
+    // Check if the Suspension Reason and Reason Title fields are not empty
+    var suspensionReason = document.getElementById('reason').value.trim();
+    var reasonTitle = document.getElementById('reason-title').value.trim();
+    var reasonDetails = document.getElementById('editor').value.trim();
 
-        if (!suspensionReason) {
-            // If Suspension Reason is empty, show an error message
-            Swal.fire({
-                title: 'Error!',
-                text: 'Please select a Suspension Reason.',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
-            return; // Exit the function without submitting the form
-        }
+    if (!suspensionReason) {
+        // If Suspension Reason is empty, show an error message
+        toastr.error('Please select a Suspension Reason.');
+        return; // Exit the function without submitting the form
+    }
 
-        if (!reasonTitle) {
-            // If Reason Title is empty, show an error message
-            Swal.fire({
-                title: 'Error!',
-                text: 'Please enter a Reason Title.',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
-            return; // Exit the function without submitting the form
-        }
+if (!reasonTitle) {
+    // If Reason Title is empty, show an error message
+    toastr.error('Please enter a Reason Title.');
+    return; // Exit the function without submitting the form
+}
 
-        if (!reasonDetails) {
-            // If Reason Details is empty, show an error message
-            Swal.fire({
-                title: 'Error!',
-                text: 'Please provide Reason Details.',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
-            return; // Exit the function without submitting the form
-        }
+if (!reasonDetails) {
+    // If Reason Details is empty, show an error message
+    toastr.error('Please provide Reason Details.');
+    return; // Exit the function without submitting the form
+}
 
-        // Use SweetAlert for confirmation
-        Swal.fire({
-            title: 'Are you sure?',
-            text: 'You are about to reject. This action cannot be undone.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, reject it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // If user confirms, submit the form
-                document.getElementById('rejectionForm').submit();
-            }
-        });
-    });
+
+
+
+    // Show the Bootstrap modal for confirmation
+    $('#suspendConfirmationModal').modal('show');
+});
+
+// Handle the confirmation button click event
+$('#confirmSuspendBtn').on('click', function() {
+    // Submit the form when the user confirms the action
+    document.getElementById('rejectionForm').submit();
+});
+
 </script>
 
 
