@@ -301,7 +301,7 @@ thead tr{
                                         </td>
                                         <td>
                                             <label class="aiz-switch aiz-switch-success mb-0">
-                                                <input value="{{ $children->id }}" class="publsihed_product" type="checkbox" <?php if($children->published == 1) echo "checked";?> >
+                                                <input value="{{ $children->id }}" class="publsihed_product" id="{{ $children->id }}" type="checkbox" <?php if($children->published == 1) echo "checked";?> >
                                                 <span class=""></span>
                                             </label>
                                         </td>
@@ -338,6 +338,41 @@ thead tr{
         </form>
     </div>
 
+    <div id="modal-info" class="modal fade">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title h6" id="title-modal">{{translate('Delete Confirmation')}}</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                </div>
+                <input type="hidden" id="status">
+                <input type="hidden" id="product_id">
+                <div class="modal-body text-center">
+                    <p class="mt-1 fs-14" id="text-modal">{{translate('Are you sure to delete this?')}}</p>
+                    <button type="button" class="btn btn-secondary rounded-0 mt-2" data-dismiss="modal" id="cancel_published">{{translate('Cancel')}}</button>
+                    <button type="button" id="publish-link" class="btn btn-primary rounded-0 mt-2"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-success" class="modal fade">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title h6" id="title-modal-success">{{translate('Delete Confirmation')}}</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                </div>
+                <input type="hidden" id="status">
+                <input type="hidden" id="product_id">
+                <div class="modal-body text-center">
+                    <p class="mt-1 fs-14" id="text-modal-success">{{translate('Are you sure to delete this?')}}</p>
+                    <button type="button" class="btn btn-secondary rounded-0 mt-2" data-dismiss="modal">{{translate('OK')}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('modal')
@@ -370,52 +405,75 @@ thead tr{
             if($(this).is(':not(:checked)')){
                 var published = 0;
                 var message = "Do you want to unpublish ?";
-                var_message_button = "Unpublish";
+                var message_button = "Unpublish";
                 var message_success = "The product unpublished successfully";
                 var message_icon = "Unpublished"
             }else{
                 var published = 1;
                 var message = "Do you want to publish ?";
-                var_message_button = "Publish";
+                var message_button = "Publish";
                 var message_success = "The product published successfully";
                 var message_icon = "Published"
             }
 
-                swal({
-                    title: message,
-                    type: "warning",
-                    confirmButtonText: var_message_button,
-                    showCancelButton: true
-                })
-                .then((result) => {
-                    if (result.value) {
-                        $.ajax({
-                            url: "{{ route('seller.products.published') }}",
-                            type: "GET",
-                            data: {
-                                status: published,
-                                id: id
-                            },
-                            cache: false,
-                            dataType: 'JSON',
-                            success: function(dataResult) {
-                               if(dataResult.status == 'success'){
-                                swal(
-                                        message_icon,
-                                        message_success,
-                                        'success'
-                                    )
-                                }
-                            }
-                        })
-                    } else if (result.dismiss === 'cancel') {
-                        if(published == 0){
-                            current.prop('checked', true)
-                        }else{
-                            current.prop('checked', false)
+            if(id != undefined){
+                $("#title-modal").text('{{ translate("Publish Product") }}');
+                $("#text-modal").text(message);
+                $("#publish-link").text(message_button);
+                $("#status").val(published);
+                $("#product_id").val(id);
+
+                $("#modal-info").modal('show')
+            } 
+        });
+
+        $('body').on('click', '#cancel_published', function(){
+            $('#modal-info').modal('hide');
+            var id = $("#product_id").val();
+            var published = $("#status").val();
+
+            if((id != '') && (id != undefined)){
+                if(published == 0){
+                    $('#' + id).prop('checked', true)
+                }else{
+                    $('#' + id).prop('checked', false)
+                }
+            }
+        })
+
+        $('body').on('click', '#publish-link', function(){
+            $("#modal-info").modal('hide');
+            var id = $("#product_id").val();
+            var published = $("#status").val();
+
+            if(published == 0){
+                var message_success = "The product unpublished successfully";
+                var message_icon = "Unpublished"
+            }else{
+                var message_success = "The product published successfully";
+                var message_icon = "Published"
+            }
+
+            if((id != '') && (id != undefined)){
+                $.ajax({
+                    url: "{{ route('seller.products.published') }}",
+                    type: "GET",
+                    data: {
+                        status: published,
+                        id: id
+                    },
+                    cache: false,
+                    dataType: 'JSON',
+                    success: function(dataResult) {
+                        if(dataResult.status == 'success'){
+                            $("#title-modal-success").text(message_icon);
+                            $("#text-modal-success").text(message_success);
+
+                            $("#modal-success").modal('show')
                         }
                     }
                 })
+            }
         });
 
         function update_featured(el){
