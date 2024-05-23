@@ -688,6 +688,7 @@ class ProductController extends Controller
                     }
                 }
             }
+            
 
             //Histroique General attributes
             $general_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->get();

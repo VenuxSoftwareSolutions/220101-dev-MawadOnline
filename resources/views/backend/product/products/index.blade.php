@@ -111,6 +111,8 @@
                                 <a href="{{ route('product', $product->slug) }}" target="_blank" class="text-reset">
                                     {{ $product->sku }}
                                 </a>
+                                <br>
+                                <small>{{ $product->getShopName() }}</small>
                             </td>
                             {{-- <td>
                                 @if ($product->main_category != null)
@@ -126,7 +128,7 @@
                                     echo $qty;
                                 @endphp
                             </td>
-                            <td>{{ $product->unit_price }}</td>
+                            <td>{{ count($product->getChildrenProducts()) > 0 ? '--' : $product->getPriceRange() }}</td>
                             <td>
                                 @if($product->is_parent == 0)
                                         @switch($product->approved)
@@ -196,7 +198,7 @@
                                             echo $qty;
                                         @endphp
                                     </td>
-                                    <td>{{ $children->unit_price }}</td>
+                                    <td>{{ $children->getPriceRange() }}</td>
                                     <td>
                                         @switch($children->approved)
                                             @case(0)

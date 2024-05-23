@@ -1438,7 +1438,6 @@
                                 </div>
                                 <div class="col-2">
                                     <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
-                                    <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
                                 </div>
                             </div>
                         @endif
