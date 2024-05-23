@@ -1209,7 +1209,12 @@ class ProductController extends Controller
                 $variations[$variationId]['variant_pricing-from']['to'] = $data['variant']['to'][$variationId] ?? [];
                 $variations[$variationId]['variant_pricing-from']['unit_price'] = $data['variant']['unit_price'][$variationId] ?? [];
                 $upload_products_db = UploadProducts::where('id_product',$variationId)->pluck('path')->toArray() ;
-
+                $variations[$variationId]['variant_pricing-from']['discount'] =[
+                    'type' => $data['variant']['discount_type'][$variationId]?? null,
+                    'amount' => $data['variant']['discount_amount'][$variationId]?? null,
+                    'percentage' => $data['variant']['discount_percentage'][$variationId]?? null,
+                    'date' => $data['variant']['date_range_pricing'][$variationId]?? null,
+                ] ;
                 $variations[$variationId]['storedFilePaths'] = $upload_products_db ;
                 // if (isset($variations[$variationId]['variant_pricing-from'])) {
                 //     // Sorting each array if it's not empty

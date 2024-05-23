@@ -1090,7 +1090,7 @@
     @endphp
 @endsection
 
-{{-- @section('modal')
+@section('modal')
     <!-- Image Modal -->
     <div class="modal fade" id="image_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
@@ -1197,7 +1197,7 @@
 
     <!-- Size chart show Modal -->
     @include('modals.size_chart_show_modal')
-@endsection --}}
+@endsection
 
 @section('script')
     <script type="text/javascript">
@@ -1299,8 +1299,10 @@
         }
 
         function product_review(product_id) {
+            var product_id = $("#variationId").val() || {{$previewData['detailedProduct']['product_id']}};
+
             @if (isCustomer())
-                @if ($review_status == 1)
+                @if (/* $review_status */ 1 == 1)
                     $.post('{{ route('product_review_modal') }}', {
                         _token: '{{ @csrf_token() }}',
                         product_id: product_id
