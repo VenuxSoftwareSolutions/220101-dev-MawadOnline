@@ -39,15 +39,36 @@
         <!-- Review -->
         {{-- @if ($detailedProduct->auction_product != 1) --}}
         <div class="col-12">
-            {{-- @php
-                    $total = 0;
-                    $total += $detailedProduct->reviews->count();
-                @endphp --}}
-            <span class="rating rating-mr-1">
-                0
+
+            @if($previewData['detailedProduct']['variationId'] || $previewData['detailedProduct']['product_id'])
+            @php
+                if($previewData['detailedProduct']['variationId'])
+                    $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['variationId']);
+                else {
+                    $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['product_id']);
+                }
+                $totalRating = $detailedProduct->reviews->count();
+            @endphp
+
+            <span class="rating rating-mr-1 rating-var">
+                @if($totalRating > 0)
+                    {{ renderStarRating($detailedProduct->reviews->sum('rating') / $totalRating) }}
+                @else
+                    {{ renderStarRating(0) }} <!-- Assuming 0 stars when there are no reviews -->
+                @endif
             </span>
-            <span class="ml-1 opacity-50 fs-14">(0
+            <span class="total-var-rating ml-1 opacity-50 fs-14">({{ $totalRating }} {{ translate('reviews') }})</span>
+         @else
+            <span class="rating rating-mr-1 rating-var">
+                {{ renderStarRating(0) }}
+
+
+            </span>
+            <span class="total-var-rating ml-1 opacity-50 fs-14">(0
                 {{ translate('reviews') }})</span>
+
+            @endif
+
         </div>
         {{-- @endif --}}
         <!-- Estimate Shipping Time -->
@@ -366,49 +387,49 @@
             <i class="la la-cart-arrow-down"></i> Out of Stock
         </button>
     </div>
-    {{-- <div class="row no-gutters mt-3">
+    <div class="row no-gutters mt-3">
         <div class="col-sm-2">
             <div class="text-secondary fs-14 fw-400 mt-2">Refund</div>
         </div>
         <div class="col-sm-10">
-            <a href="https://demo.activeitzone.com/ecommerce/return-policy" target="_blank">
+            <a href="{{route('terms-and-conditions')}}" target="_blank">
                 <img src="https://demo.activeitzone.com/ecommerce/public/assets/img/refund-sticker.jpg"
                     height="36">
             </a>
-            <a href="https://demo.activeitzone.com/ecommerce/return-policy"
+            <a href="{{route('terms-and-conditions')}}"
                 class="text-blue hov-text-primary fs-14 ml-3" target="_blank">View Policy</a>
         </div>
-    </div> --}}
-    {{-- <div class="row no-gutters mt-4">
+    </div>
+    <div class="row no-gutters mt-4">
         <div class="col-sm-2">
             <div class="text-secondary fs-14 fw-400 mt-2">Share</div>
         </div>
         <div class="col-sm-10">
-            <div class="aiz-share jssocials">
+            <div {{-- class="aiz-share jssocials" --}}>
                 <div class="jssocials-shares">
                     <div class="jssocials-share jssocials-share-email"><a target="_self"
-                            href="mailto:?subject=Product%20details%0AIs%20Discontinued%20By%20Manufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20No%0APackage%20Dimensions%20%E2%80%8F%20%3A%20%E2%80%8E%205.9%20x%204.2%20x%201.3%20inches%3B%201.59%20Ounces%0ADepartment%20%E2%80%8F%20%3A%20%E2%80%8E%20womens%0ADate%20First%20Available%20%E2%80%8F%20%3A%20%E2%80%8E%20October%203%2C%202017%0AManufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20Kate%20Spade%20New%20York%0AASIN%20%E2%80%8F%20%3A%20%20B077MMVB1B&amp;body=https%3A%2F%2Fdemo.activeitzone.com%2Fecommerce%2Fproduct%2Fbracelet-o0ru1952-rose-gold"
-                            class="jssocials-share-link"><i class="lar la-envelope jssocials-share-logo"></i></a>
+                            href="#"
+                            class="jssocials-share-link disabled"><i class="lar la-envelope jssocials-share-logo"></i></a>
                     </div>
                     <div class="jssocials-share jssocials-share-twitter"><a target="_blank"
-                            href="https://twitter.com/share?url=https%3A%2F%2Fdemo.activeitzone.com%2Fecommerce%2Fproduct%2Fbracelet-o0ru1952-rose-gold&amp;text=Product%20details%0AIs%20Discontinued%20By%20Manufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20No%0APackage%20Dimensions%20%E2%80%8F%20%3A%20%E2%80%8E%205.9%20x%204.2%20x%201.3%20inches%3B%201.59%20Ounces%0ADepartment%20%E2%80%8F%20%3A%20%E2%80%8E%20womens%0ADate%20First%20Available%20%E2%80%8F%20%3A%20%E2%80%8E%20October%203%2C%202017%0AManufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20Kate%20Spade%20New%20York%0AASIN%20%E2%80%8F%20%3A%20%20B077MMVB1B"
-                            class="jssocials-share-link"><i class="lab la-twitter jssocials-share-logo"></i></a></div>
+                            href="#"
+                            class="jssocials-share-link disabled"><i class="lab la-twitter jssocials-share-logo"></i></a></div>
                     <div class="jssocials-share jssocials-share-facebook"><a target="_blank"
-                            href="https://facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdemo.activeitzone.com%2Fecommerce%2Fproduct%2Fbracelet-o0ru1952-rose-gold"
-                            class="jssocials-share-link"><i class="lab la-facebook-f jssocials-share-logo"></i></a>
+                            href="#"
+                            class="jssocials-share-link disabled"><i class="lab la-facebook-f jssocials-share-logo"></i></a>
                     </div>
                     <div class="jssocials-share jssocials-share-linkedin"><a target="_blank"
-                            href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3A%2F%2Fdemo.activeitzone.com%2Fecommerce%2Fproduct%2Fbracelet-o0ru1952-rose-gold"
-                            class="jssocials-share-link"><i class="lab la-linkedin-in jssocials-share-logo"></i></a>
+                            href="#"
+                            class="jssocials-share-link disabled"><i class="lab la-linkedin-in jssocials-share-logo"></i></a>
                     </div>
                     <div class="jssocials-share jssocials-share-whatsapp"><a target="_self"
-                            href="whatsapp://send?text=https%3A%2F%2Fdemo.activeitzone.com%2Fecommerce%2Fproduct%2Fbracelet-o0ru1952-rose-gold Product%20details%0AIs%20Discontinued%20By%20Manufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20No%0APackage%20Dimensions%20%E2%80%8F%20%3A%20%E2%80%8E%205.9%20x%204.2%20x%201.3%20inches%3B%201.59%20Ounces%0ADepartment%20%E2%80%8F%20%3A%20%E2%80%8E%20womens%0ADate%20First%20Available%20%E2%80%8F%20%3A%20%E2%80%8E%20October%203%2C%202017%0AManufacturer%20%E2%80%8F%20%3A%20%E2%80%8E%20Kate%20Spade%20New%20York%0AASIN%20%E2%80%8F%20%3A%20%20B077MMVB1B"
-                            class="jssocials-share-link"><i class="lab la-whatsapp jssocials-share-logo"></i></a>
+                            href="#"
+                            class="jssocials-share-link disabled"><i class="lab la-whatsapp jssocials-share-logo"></i></a>
                     </div>
                 </div>
             </div>
         </div>
-    </div> --}}
+    </div>
     {{-- <!-- For auction product -->
     @if ($detailedProduct->auction_product)
         <div class="row no-gutters mb-3">

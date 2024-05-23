@@ -15,19 +15,69 @@
     </div>
 
 
-    <div class="row align-items-center mb-3">
+    {{-- <div class="row align-items-center mb-3">
         <!-- Review -->
-        {{-- @if ($detailedProduct->auction_product != 1) --}}
+       @if ($detailedProduct->auction_product != 1)
         <div class="col-12">
-            {{-- @php
+             @php
                     $total = 0;
                     $total += $detailedProduct->reviews->count();
-                @endphp --}}
+                @endphp
             <span class="rating rating-mr-1">
                 0
             </span>
             <span class="ml-1 opacity-50 fs-14">(0
                 {{ translate('reviews') }})</span>
+        </div>
+         @endif
+        <!-- Estimate Shipping Time -->
+        @if ($detailedProduct->est_shipping_days)
+            <div class="col-auto fs-14 mt-1">
+                <small class="mr-1 opacity-50 fs-14">{{ translate('Estimate Shipping Time') }}:</small>
+                <span class="fw-500">{{ $detailedProduct->est_shipping_days }} {{ translate('Days') }}</span>
+            </div>
+        @endif
+        <!-- In stock -->
+        @if ($detailedProduct->digital == 1)
+            <div class="col-12 mt-1">
+                <span class="badge badge-md badge-inline badge-pill badge-success">{{ translate('In stock') }}</span>
+            </div>
+        @endif
+    </div> --}}
+    <div class="row align-items-center mb-3">
+        <!-- Review -->
+        {{-- @if ($detailedProduct->auction_product != 1) --}}
+        <div class="col-12">
+
+            @if($previewData['detailedProduct']['variationId'] || $previewData['detailedProduct']['product_id'])
+            @php
+                if($previewData['detailedProduct']['variationId'])
+                    $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['variationId']);
+                else {
+                    $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['product_id']);
+                }
+                $totalRating = $detailedProduct->reviews->count();
+            @endphp
+
+            <span class="rating rating-mr-1 rating-var">
+                @if($totalRating > 0)
+                    {{ renderStarRating($detailedProduct->reviews->sum('rating') / $totalRating) }}
+                @else
+                    {{ renderStarRating(0) }} <!-- Assuming 0 stars when there are no reviews -->
+                @endif
+            </span>
+            <span class="total-var-rating ml-1 opacity-50 fs-14">({{ $totalRating }} {{ translate('reviews') }})</span>
+         @else
+            <span class="rating rating-mr-1 rating-var">
+                {{ renderStarRating(0) }}
+
+
+            </span>
+            <span class="total-var-rating ml-1 opacity-50 fs-14">(0
+                {{ translate('reviews') }})</span>
+
+            @endif
+
         </div>
         {{-- @endif --}}
         <!-- Estimate Shipping Time -->
@@ -155,10 +205,36 @@
         </div>
         <div class="col-sm-10">
             <div class="d-flex align-items-center">
+
                 <!-- Discount Price -->
                 <strong id="qty-interval" class="fs-16 fw-700 text-primary">
+                    @if (isset($previewData['detailedProduct']['discountedPrice']))
+                    {{ $previewData['detailedProduct']['discountedPrice'] }} AED
+                    @else
                     {{ $previewData['detailedProduct']['price'] }} AED
+                    @endif
+
                 </strong>
+
+                  <!-- Home Price -->
+                  <del id="previous-price" class="fs-14 opacity-60 ml-2">
+                    @if (isset($previewData['detailedProduct']['discountedPrice']))
+                  {{$previewData['detailedProduct']['price']}} AED
+                  @endif
+                </del>
+                <!-- Unit -->
+               <span class="opacity-70 ml-1">/pc</span>
+                 <!-- Discount percentage -->
+                <span id="percent" class="@if ($previewData['detailedProduct']['percent']> 0) bg-primary @endif ml-2 fs-11 fw-700 text-white w-35px text-center p-1"
+                    style="padding-top:2px;padding-bottom:2px;">
+                    @if ($previewData['detailedProduct']['percent']> 0)
+                        -{{$previewData['detailedProduct']['percent']}}%
+                    @endif
+
+                </span>
+
+                <!-- Club Point -->
+                </div>
                 <!-- Home Price -->
                 {{-- <del class="fs-14 opacity-60 ml-2">
                     $90.000
@@ -190,7 +266,6 @@
                 </div> --}}
             </div>
         </div>
-    </div>
     <form id="option-choice-form-preview">
         <input type="hidden" name="_token" value="4q2wUsXR8Psahk2hhNrRCBY6rAnlDDtK17T5izTc"> <input type="hidden"
             name="id" value="3">
@@ -320,19 +395,19 @@
             <i class="la la-cart-arrow-down"></i> Out of Stock
         </button>
     </div>
-    {{-- <div class="row no-gutters mt-3">
+    <div class="row no-gutters mt-3">
         <div class="col-sm-2">
             <div class="text-secondary fs-14 fw-400 mt-2">Refund</div>
         </div>
         <div class="col-sm-10">
-            <a href="https://demo.activeitzone.com/ecommerce/return-policy" target="_blank">
+            <a href="{{route('terms-and-conditions')}}" target="_blank">
                 <img src="https://demo.activeitzone.com/ecommerce/public/assets/img/refund-sticker.jpg"
                     height="36">
             </a>
-            <a href="https://demo.activeitzone.com/ecommerce/return-policy"
+            <a href="{{route('terms-and-conditions')}}"
                 class="text-blue hov-text-primary fs-14 ml-3" target="_blank">View Policy</a>
         </div>
-    </div> --}}
+    </div>
     <div class="row no-gutters mt-4">
         <div class="col-sm-2">
             <div class="text-secondary fs-14 fw-400 mt-2">Share</div>
