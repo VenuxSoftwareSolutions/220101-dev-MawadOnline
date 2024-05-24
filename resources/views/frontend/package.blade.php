@@ -133,7 +133,7 @@
             </div>
             <div class="row mt-2 justify-content-center">
                 <div class="fs-15">
-                    <a href="{{ route('terms-and-conditions') }}"><u>Terms & Conditions<i
+                    <a href="{{ route('terms-and-conditions') }}" target="_blank"><u>Terms & Conditions<i
                                 class="las la-external-link-alt"></i></u></a>
 
                 </div>
