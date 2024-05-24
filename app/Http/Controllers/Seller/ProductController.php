@@ -82,7 +82,7 @@ class ProductController extends Controller
         seller_lease_creation($user=Auth::user());
 
         $search = null;
-        $products = Product::where('user_id', Auth::user()->id)->where(function ($query) {
+        $products = Product::where('user_id', Auth::user()->owner_id)->where(function ($query) {
             $query->where('is_draft', '=', 1)
             ->where('parent_id', 0)
             ->orWhere(function ($query) {
@@ -102,6 +102,7 @@ class ProductController extends Controller
         }
         $products = $products->paginate(10);
         $tour_steps=Tour::orderBy('step_number')->get();
+
         return view('seller.product.products.index', compact('products', 'search','tour_steps'));
     }
 
@@ -149,7 +150,7 @@ class ProductController extends Controller
         //     }
         // }
 
-        $vat_user = BusinessInformation::where('user_id', Auth::user()->id)->first();
+        $vat_user = BusinessInformation::where('user_id', Auth::user()->owner_id)->first();
         $categories = Category::where('level', 1)
             ->with('childrenCategories')
             ->get();
@@ -163,7 +164,7 @@ class ProductController extends Controller
 
                 if(count($shipper_areas) > 0){
                     foreach($shipper_areas as $area){
-                        $warhouses = Warehouse::where('user_id', Auth::user()->id)->where('emirate_id', $area->emirate_id)->where('area_id', $area->area_id)->get();
+                        $warhouses = Warehouse::where('user_id', Auth::user()->owner_id)->where('emirate_id', $area->emirate_id)->where('area_id', $area->area_id)->get();
                         if(count($warhouses) > 0){
                             if(!array_key_exists($shipper->id, $supported_shippers)){
                                 $supported_shippers[$shipper->id] = $shipper;
@@ -501,7 +502,7 @@ class ProductController extends Controller
         $product = Product::find($id);
         $colors = Color::orderBy('name', 'asc')->get();
         $product_category = ProductCategory::where('product_id', $id)->first();
-        $vat_user = BusinessInformation::where('user_id', Auth::user()->id)->first();
+        $vat_user = BusinessInformation::where('user_id', Auth::user()->owner_id)->first();
         if($product_category != null){
             $categorie =  Category::find($product_category->category_id);
         }else{
@@ -526,7 +527,7 @@ class ProductController extends Controller
 
                 if(count($shipper_areas) > 0){
                     foreach($shipper_areas as $area){
-                        $warhouses = Warehouse::where('user_id', Auth::user()->id)->where('emirate_id', $area->emirate_id)->where('area_id', $area->area_id)->get();
+                        $warhouses = Warehouse::where('user_id', Auth::user()->owner_id)->where('emirate_id', $area->emirate_id)->where('area_id', $area->area_id)->get();
                         if(count($warhouses) > 0){
                             if(!array_key_exists($shipper->id, $supported_shippers)){
                                 $supported_shippers[$shipper->id] = $shipper;
@@ -1416,7 +1417,7 @@ class ProductController extends Controller
                 }
         }
 
-        $shop = Shop::where('user_id', Auth::user()->id)->first();
+        $shop = Shop::where('user_id', Auth::user()->owner_id)->first();
         if($shop != null){
             $shop_name = $shop->name;
         }else{
