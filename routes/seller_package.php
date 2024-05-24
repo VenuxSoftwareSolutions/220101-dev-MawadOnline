@@ -23,12 +23,12 @@ Route::group(['prefix' =>'admin', 'middleware' => ['auth', 'admin']], function()
 });
 
 //FrontEnd
-Route::group(['middleware' => ['seller']], function(){
+Route::group(['prefix' =>'vendor','middleware' => ['seller']], function(){
     Route::controller(SellerPackageController::class)->group(function () {
-        Route::get('/seller/seller-packages', 'seller_packages_list')->name('seller.seller_packages_list');
-        Route::get('/seller/packages-payment-list', 'packages_payment_list')->name('seller.packages_payment_list');
-        Route::post('/seller_packages/purchase', 'purchase_package')->name('seller_packages.purchase');
+        Route::get('/vendor-packages', 'seller_packages_list')->name('seller.seller_packages_list');
+        Route::get('/packages-payment-list', 'packages_payment_list')->name('seller.packages_payment_list');
+        Route::post('/vendor_packages/purchase', 'purchase_package')->name('seller_packages.purchase');
     });
 });
 
-Route::get('/seller_packages/check_for_invalid', [SellerPackageController::class, 'unpublish_products'])->name('seller_packages.unpublish_products');
+Route::get('/vendor_packages/check_for_invalid', [SellerPackageController::class, 'unpublish_products'])->name('seller_packages.unpublish_products');

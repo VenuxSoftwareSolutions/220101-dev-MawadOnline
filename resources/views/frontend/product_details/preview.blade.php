@@ -61,6 +61,11 @@
         border-color: #CB774B !important;
         cursor: default !important; /* Inherit cursor style from the parent element on hover */
     }
+    a.disabled {
+        pointer-events: none ;
+        cursor: default;
+
+    }
 </style>
 @endsection
 
@@ -319,23 +324,53 @@
                             <div class="border border-secondary-base bg-soft-secondary-base p-3 p-sm-4">
                                 <div class="row align-items-center">
                                     <div class="col-md-8 mb-3">
+                                        @if($previewData['detailedProduct']['variationId'] || $previewData['detailedProduct']['product_id'] )
+                                        @php
+                                        if($previewData['detailedProduct']['variationId'])
+                                            $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['variationId']);
+                                        else {
+                                            $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['product_id']);
+                                        }
+                                        $totalRating = $detailedProduct->reviews->count();
+                                        @endphp
                                         <div
                                             class="d-flex align-items-center justify-content-between justify-content-md-start">
                                             <div class="w-100 w-sm-auto">
-                                                <span class="fs-36 mr-3">0</span>
+                                                <span class="avgRating fs-36 mr-3">{{$totalRating > 0 ? $detailedProduct->reviews->sum('rating') / $totalRating : 0 }}</span>
                                                 <span class="fs-14 mr-3">out of 5.0</span>
                                             </div>
                                             <div
                                                 class="mt-sm-3 w-100 w-sm-auto d-flex flex-wrap justify-content-end justify-content-md-start">
-                                                <span class="rating rating-mr-1">
-                                                    <i class="las la-star"></i><i class="las la-star"></i><i
-                                                        class="las la-star"></i><i class="las la-star"></i><i
-                                                        class="las la-star"></i>
+                                                <span class="rating rating-mr-1 rating-var">
+                                                    @if($totalRating > 0)
+                                                    {{ renderStarRating($detailedProduct->reviews->sum('rating') / $totalRating) }}
+                                                @else
+                                                    {{ renderStarRating(0) }} <!-- Assuming 0 stars when there are no reviews -->
+                                                @endif
                                                 </span>
-                                                <span class="ml-1 fs-14">(0
+                                                <span class="total-var-rating ml-1 fs-14">({{$totalRating}}
                                                     reviews)</span>
                                             </div>
                                         </div>
+                                        @else
+                                        <div
+                                        class="d-flex align-items-center justify-content-between justify-content-md-start">
+                                        <div class="w-100 w-sm-auto">
+                                            <span class="fs-36 mr-3">0</span>
+                                            <span class="fs-14 mr-3">out of 5.0</span>
+                                        </div>
+                                        <div
+                                            class="mt-sm-3 w-100 w-sm-auto d-flex flex-wrap justify-content-end justify-content-md-start">
+                                            <span class="rating rating-mr-1 rating-var">
+                                                <i class="las la-star"></i><i class="las la-star"></i><i
+                                                    class="las la-star"></i><i class="las la-star"></i><i
+                                                    class="las la-star"></i>
+                                            </span>
+                                            <span class="total-var-rating ml-1 fs-14">(0
+                                                reviews)</span>
+                                        </div>
+                                        </div>
+                                        @endif
                                     </div>
                                     <div class="col-md-4 text-right">
                                         <a href="javascript:void(0);" onclick="product_review('3')"
@@ -1479,6 +1514,11 @@
                                     }
                             });
                         }
+
+                        $('.total-var-rating').text('(' + response.totalRating + ' reviews)');
+                        $('.rating-var').html(response.renderStarRating);
+                        $('.avgRating').text(response.avgRating);
+
                         var images = response.matchedImages; // Assuming response contains matchedImages array
 
                         // Clear existing images

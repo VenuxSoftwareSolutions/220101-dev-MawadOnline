@@ -150,9 +150,15 @@
         }
         .customer-btn-color {
             border-radius: 5px !important; /* Rounded corners */
-            background-color: #a2b8c6 !important;
-            border : #a2b8c6 !important ;
+            background-color: #a2b8c6 !important; /* Initial background color */
+            border: 1px solid #a2b8c6 !important; /* Border color */
         }
+
+        .customer-btn-color:hover {
+            background-color: #1b3a57 !important; /* Navy blue background on hover */
+            border: 1px solid #1b3a57 !important; /* Navy blue border on hover */
+        }
+
 
     </style>
 

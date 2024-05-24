@@ -45,7 +45,7 @@ use App\Services\ProductFlashDealService;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\ShopProductNotification;
 use AizPackages\CombinationGenerate\Services\CombinationService;
-
+use App\Models\Review;
 class ProductController extends Controller
 {
     protected $productService;
@@ -1210,7 +1210,12 @@ class ProductController extends Controller
                 $variations[$variationId]['variant_pricing-from']['to'] = $data['variant']['to'][$variationId] ?? [];
                 $variations[$variationId]['variant_pricing-from']['unit_price'] = $data['variant']['unit_price'][$variationId] ?? [];
                 $upload_products_db = UploadProducts::where('id_product',$variationId)->pluck('path')->toArray() ;
-
+                $variations[$variationId]['variant_pricing-from']['discount'] =[
+                    'type' => $data['variant']['discount_type'][$variationId]?? null,
+                    'amount' => $data['variant']['discount_amount'][$variationId]?? null,
+                    'percentage' => $data['variant']['discount_percentage'][$variationId]?? null,
+                    'date' => $data['variant']['date_range_pricing'][$variationId]?? null,
+                ] ;
                 $variations[$variationId]['storedFilePaths'] = $upload_products_db ;
                 // if (isset($variations[$variationId]['variant_pricing-from'])) {
                 //     // Sorting each array if it's not empty
@@ -1464,6 +1469,7 @@ class ProductController extends Controller
             'discount_percentage' => $data['discount_percentage'],
             'discount_amount'=> $data['discount_amount'],
             'percent'=> $percent ?? null,
+            'product_id' => $data['product_id'] ?? null ,
 
         ];
 
@@ -1651,6 +1657,22 @@ class ProductController extends Controller
      // Return the unit price as JSON response
      return response()->json(['unit_price' => $unitPrice,"qty"=>$qty,'total'=>$total,'maximum'=>$maximum,'minimum'=>$minimum,'totalDiscount'=>$totalDiscount,'discountPrice'=>$discountPrice,'percent'=> $percent ?? null,]);
     }
+    private function renderStarRating($rating, $maxRating = 5)
+    {
+        $fullStar = "<i class = 'las la-star active'></i>";
+        $halfStar = "<i class = 'las la-star half'></i>";
+        $emptyStar = "<i class = 'las la-star'></i>";
+        $rating = $rating <= $maxRating ? $rating : $maxRating;
+
+        $fullStarCount = (int)$rating;
+        $halfStarCount = ceil($rating) - $fullStarCount;
+        $emptyStarCount = $maxRating - $fullStarCount - $halfStarCount;
+
+        $html = str_repeat($fullStar, $fullStarCount);
+        $html .= str_repeat($halfStar, $halfStarCount);
+        $html .= str_repeat($emptyStar, $emptyStarCount);
+        return $html;
+    }
 
     public function ProductCheckedAttributes(Request $request) {
         // dd($request->all()) ;
@@ -1664,7 +1686,7 @@ class ProductController extends Controller
         $pickedAnyVariation = false ;
         $maximum = 1 ;
         $minimum = 1 ;
-        $totalDiscount = 0 ;
+        // $totalDiscount = 0 ;
         $discountedPrice = 0 ;
         foreach ($variations as $variationIdKey =>$variation) {
 
@@ -1689,6 +1711,21 @@ class ProductController extends Controller
                  }
                  if ($pickedAnyVariation == false) {
                     $variationId = $variationIdKey ;
+                    $reviewStats = Review::where('product_id', $variationId)
+                    ->selectRaw('COUNT(*) as total, SUM(rating) as sum')
+                    ->first();
+
+                    $totalRating = $reviewStats->total;
+                    $totalSum = $reviewStats->sum;
+
+                    if ($totalRating > 0) {
+                        $avgRating = $totalSum / $totalRating ;
+                        $renderStarRating = $this->renderStarRating($totalSum / $totalRating);
+                    } else {
+
+                        $renderStarRating = $this->renderStarRating(0);
+                    }
+
                     $quantity = $variation['variant_pricing-from']['from'][0] ?? "" ;
                     $price = $variation['variant_pricing-from']['unit_price'][0] ?? "" ;
                     $total =  isset($variation['variant_pricing-from']['from'][0]) && isset($variation['variant_pricing-from']['unit_price'][0]) ? $variation['variant_pricing-from']['from'][0] * $variation['variant_pricing-from']['unit_price'][0] : "" ;
@@ -1782,6 +1819,9 @@ class ProductController extends Controller
             'discountedPrice' => $discountedPrice ?? null,
             'totalDiscount' => $totalDiscount ?? null,
             'percent'=> $percent ?? null,
+            'totalRating' => $totalRating ?? 0 ,
+            'renderStarRating' => $renderStarRating ??  $this->renderStarRating(0),
+            'avgRating' => $avgRating ?? 0
         ];
         // return response()->json($availableAttributes);
         return response()->json($response);

@@ -306,7 +306,7 @@
                             </h3>
                         </div>
                         <!-- Ratting -->
-                        <div class="px-3 px-sm-4 mb-4">
+                        {{-- <div class="px-3 px-sm-4 mb-4">
                             <div class="border border-secondary-base bg-soft-secondary-base p-3 p-sm-4">
                                 <div class="row align-items-center">
                                     <div class="col-md-8 mb-3">
@@ -327,6 +327,67 @@
                                                     reviews)</span>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="col-md-4 text-right">
+                                        <a href="javascript:void(0);" onclick="product_review('3')"
+                                            class="btn btn-secondary-base fw-400 rounded-0 text-white">
+                                            <span class="d-md-inline-block"> Rate this Product</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> --}}
+                        <div class="px-3 px-sm-4 mb-4">
+                            <div class="border border-secondary-base bg-soft-secondary-base p-3 p-sm-4">
+                                <div class="row align-items-center">
+                                    <div class="col-md-8 mb-3">
+                                        @if($previewData['detailedProduct']['variationId'] || $previewData['detailedProduct']['product_id'] )
+                                        @php
+                                        if($previewData['detailedProduct']['variationId'])
+                                            $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['variationId']);
+                                        else {
+                                            $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['product_id']);
+                                        }
+                                        $totalRating = $detailedProduct->reviews->count();
+                                        @endphp
+                                        <div
+                                            class="d-flex align-items-center justify-content-between justify-content-md-start">
+                                            <div class="w-100 w-sm-auto">
+                                                <span class="avgRating fs-36 mr-3">{{$totalRating > 0 ? $detailedProduct->reviews->sum('rating') / $totalRating : 0 }}</span>
+                                                <span class="fs-14 mr-3">out of 5.0</span>
+                                            </div>
+                                            <div
+                                                class="mt-sm-3 w-100 w-sm-auto d-flex flex-wrap justify-content-end justify-content-md-start">
+                                                <span class="rating rating-mr-1 rating-var">
+                                                    @if($totalRating > 0)
+                                                    {{ renderStarRating($detailedProduct->reviews->sum('rating') / $totalRating) }}
+                                                @else
+                                                    {{ renderStarRating(0) }} <!-- Assuming 0 stars when there are no reviews -->
+                                                @endif
+                                                </span>
+                                                <span class="total-var-rating ml-1 fs-14">({{$totalRating}}
+                                                    reviews)</span>
+                                            </div>
+                                        </div>
+                                        @else
+                                        <div
+                                        class="d-flex align-items-center justify-content-between justify-content-md-start">
+                                        <div class="w-100 w-sm-auto">
+                                            <span class="fs-36 mr-3">0</span>
+                                            <span class="fs-14 mr-3">out of 5.0</span>
+                                        </div>
+                                        <div
+                                            class="mt-sm-3 w-100 w-sm-auto d-flex flex-wrap justify-content-end justify-content-md-start">
+                                            <span class="rating rating-mr-1 rating-var">
+                                                <i class="las la-star"></i><i class="las la-star"></i><i
+                                                    class="las la-star"></i><i class="las la-star"></i><i
+                                                    class="las la-star"></i>
+                                            </span>
+                                            <span class="total-var-rating ml-1 fs-14">(0
+                                                reviews)</span>
+                                        </div>
+                                        </div>
+                                        @endif
                                     </div>
                                     <div class="col-md-4 text-right">
                                         <a href="javascript:void(0);" onclick="product_review('3')"
@@ -1029,7 +1090,7 @@
     @endphp
 @endsection
 
-{{-- @section('modal')
+@section('modal')
     <!-- Image Modal -->
     <div class="modal fade" id="image_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
@@ -1136,7 +1197,7 @@
 
     <!-- Size chart show Modal -->
     @include('modals.size_chart_show_modal')
-@endsection --}}
+@endsection
 
 @section('script')
     <script type="text/javascript">
@@ -1238,8 +1299,10 @@
         }
 
         function product_review(product_id) {
+            var product_id = $("#variationId").val() || {{$previewData['detailedProduct']['product_id']}};
+
             @if (isCustomer())
-                @if ($review_status == 1)
+                @if (/* $review_status */ 1 == 1)
                     $.post('{{ route('product_review_modal') }}', {
                         _token: '{{ @csrf_token() }}',
                         product_id: product_id
@@ -1315,9 +1378,36 @@
                         // Handle successful response
                         console.log(response.unit_price)
                         if (response.unit_price != null) {
-                            $("#qty-interval").text(response.unit_price+" AED")
+                            if (response.discountPrice > 0) {
+                                $("#qty-interval").text(response.discountPrice+" AED")
+                                $("#chosen_price").text(response.totalDiscount+" AED")
+                                $("#previous-price").text(response.unit_price+" AED")
+
+                                if (response.percent !== null && response.percent > 0) {
+
+                                $("#percent").text('-'+response.percent+'%')
+                                $("#percent").addClass("bg-primary");
+
+                                }
+                                else {
+                                    $("#percent").text('')
+                                    $("#percent").removeClass("bg-primary");
+
+                                }
+
+                            }
+                            else {
+                                $("#previous-price").text('') ;
+                                $("#percent").removeClass("bg-primary");
+
+                                $("#qty-interval").text(response.unit_price+" AED")
+                                $("#chosen_price").text(response.total+" AED")
+                                $("#percent").text('')
+
+                            }
+                            // $("#qty-interval").text(response.unit_price+" AED")
                             $("#quantity").val(response.qty)
-                            $("#chosen_price").text(response.total+" AED")
+                            // $("#chosen_price").text(response.total+" AED")
                             $('#quantity').attr('min', response.minimum); // Minimum value
                             $('#quantity').attr('max', response.maximum); // Maximum value
                             // $('.quantity-control[data-type="minus"]').prop('disabled', response.qty <= response.minimum);
@@ -1390,6 +1480,33 @@
                             $("#chosen_price").text(response.total+" AED")
                             $('#quantity').attr('min', response.minimum); // Minimum value
                             $('#quantity').attr('max', response.maximum); // Maximum value
+                            if (response.discountedPrice > 0) {
+
+                                $("#qty-interval").text(response.discountedPrice+" AED")
+                                $("#chosen_price").text(response.totalDiscount+" AED")
+                                $("#previous-price").text(response.price+" AED")
+                                if (response.percent !== null && response.percent > 0) {
+
+                                    $("#percent").text('-'+response.percent+'%')
+                                    $("#percent").addClass("bg-primary");
+
+                                }
+                                else {
+                                    $("#percent").text('')
+                                    $("#percent").removeClass("bg-primary");
+
+                                }
+
+                                }
+                                else {
+                                $("#previous-price").text('') ;
+                                $("#percent").removeClass("bg-primary");
+
+                                $("#qty-interval").text(response.price+" AED")
+                                $("#chosen_price").text(response.total+" AED")
+                                $("#percent").text('')
+
+                                }
                             $('.aiz-plus-minus input').each(function() {
                                     var $this = $(this);
                                     var min = parseInt($(this).attr("min"));
@@ -1410,6 +1527,9 @@
                                     }
                             });
                         }
+                        $('.total-var-rating').text('(' + response.totalRating + ' reviews)');
+                        $('.rating-var').html(response.renderStarRating);
+                        $('.avgRating').text(response.avgRating);
                         var images = response.matchedImages; // Assuming response contains matchedImages array
 
                         // Clear existing images
