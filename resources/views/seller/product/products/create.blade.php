@@ -1247,7 +1247,38 @@
                         $('#modal-info').modal('show');
 
                         $('#photoUploadcustom').val('');
-                        $('#image-preview').empty();
+                        setTimeout(function() {
+                            var previewContainers = document.querySelectorAll('.preview-container');
+                            var files_update = [];
+
+                            previewContainers.forEach(function(container) {
+                                var img = container.querySelector('img');
+                                var file = dataURLtoFile(img.src, 'image_' + Date.now() + '.png');
+                                files_update.push(file);
+                            });
+
+                            var newInput = document.createElement('input');
+                            newInput.type = 'file';
+                            newInput.id = 'photoUploadcustom';
+                            newInput.name = 'main_photos[]';
+                            newInput.multiple = true;
+                            newInput.classList.add('form-control'); // Add the 'form-control' class
+                            newInput.accept = 'image/*'; // Accept only image files
+
+                            newInput.addEventListener('change', previewImages);
+
+                            // Replace the old input with the new one
+                            var oldInput = document.getElementById('photoUploadcustom');
+                            oldInput.parentNode.replaceChild(newInput, oldInput);
+
+                            // Set files to the new input
+                            var dataTransfer = new DataTransfer();
+                            files_update.forEach(function(file) {
+                                dataTransfer.items.add(file);
+                            });
+                            newInput.files = dataTransfer.files;
+                        }, 500);
+                        //$('#image-preview').empty();
                     }else{
                         for (var i = 0; i < files.length; i++) {
                             var file = files[i];
