@@ -27,7 +27,7 @@ class ProductController extends Controller
 
     public function reviews()
     {
-        $reviews = Review::all();
+        $reviews = Review::where('status','0')->get();
 
         return new ReviewCollection($reviews);
     }

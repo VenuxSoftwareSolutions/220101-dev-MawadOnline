@@ -11,6 +11,7 @@ class ReviewCollection extends ResourceCollection
         return [
             'data' => $this->collection->map(function($data) {
                 return [
+                    'id'=> $data->id,
                     'user_id'=> $data->user->id,
                     'user_name'=> $data->user->name,
                     'avatar'=> uploaded_asset($data->user->avatar_original),
