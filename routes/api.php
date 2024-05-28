@@ -239,6 +239,7 @@ Route::group(['prefix' => 'v2', 'middleware' => ['app_language']], function () {
     Route::get('products/digital', 'App\Http\Controllers\Api\V2\ProductController@digital')->name('products.digital');
     Route::apiResource('products', 'App\Http\Controllers\Api\V2\ProductController')->except(['store', 'update', 'destroy']);
 
+    Route::get('customer/products/reviews', 'App\Http\Controllers\Api\V2\ProductController@reviews')->name('products.reviews');
 
     //Use this route outside of auth because initialy we created outside of auth we do not need auth initialy
     //We can't change it now because we didn't send token in header from mobile app.

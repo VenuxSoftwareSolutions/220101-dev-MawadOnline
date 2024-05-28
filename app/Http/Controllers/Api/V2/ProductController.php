@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api\V2;
 
 use App\Http\Resources\V2\ClassifiedProductDetailCollection;
 use App\Http\Resources\V2\ClassifiedProductMiniCollection;
+use App\Http\Resources\V2\ReviewCollection;
+use App\Models\Review;
 use Cache;
 use App\Models\Shop;
 use App\Models\Color;
@@ -22,6 +24,14 @@ use App\Models\CustomerProduct;
 
 class ProductController extends Controller
 {
+
+    public function reviews()
+    {
+        $reviews = Review::all();
+
+        return new ReviewCollection($reviews);
+    }
+
     public function index()
     {
         return new ProductMiniCollection(Product::latest()->paginate(10));
