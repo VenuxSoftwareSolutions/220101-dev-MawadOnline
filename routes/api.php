@@ -22,7 +22,15 @@ Route::group(['prefix' => 'v2/auth', 'middleware' => ['app_language']], function
     });
 
     Route::post('info', 'App\Http\Controllers\Api\V2\AuthController@getUserInfoByAccessToken');
+
 });
+
+Route::group(['prefix' => 'v2/customer'], function () {
+    Route::post('products/reviews_approving', 'App\Http\Controllers\Api\V2\ProductController@reviews_approving')->name('products.reviews_approving');
+});
+
+
+
 
 
 Route::group(['prefix' => 'v2', 'middleware' => ['app_language']], function () {

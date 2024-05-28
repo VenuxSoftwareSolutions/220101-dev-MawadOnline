@@ -24,6 +24,33 @@ use App\Models\CustomerProduct;
 
 class ProductController extends Controller
 {
+    public function reviews_approving(Request $request)
+    {
+        // Force JSON response
+        if (!$request->expectsJson()) {
+            return response()->json(['error' => 'Accept header must be application/json'], 400);
+        }
+        
+         // Validate the request
+         $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:reviews,id'
+        ]);
+        
+        // Fetch the reviews by IDs
+        $reviews = Review::whereIn('id', $request->ids)->get();
+
+        // Approve each review
+        foreach ($reviews as $review) {
+            $review->status = true; // assuming there is an 'approved' field in your reviews table
+            $review->save();
+        }
+
+        return response()->json([
+            'message' => 'Reviews approved successfully.',
+            'approved_ids' => $request->ids
+        ], 200);
+    }
 
     public function reviews()
     {
