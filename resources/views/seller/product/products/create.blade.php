@@ -301,7 +301,7 @@
                                     <label class="col-md-3 col-from-label">{{translate('Short description')}} <span class="text-danger">*</span></label>
                                     <div class="col-md-8">
                                         <textarea class="form-control" name="short_description" id="short_description"></textarea>
-                                        <div id="charCountShortDescription">Remaining characters: 512</div>
+                                        <div id="charCountShortDescription">{{ translate('Remaining characters:') }} 512</div>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -424,21 +424,21 @@
                                     </thead>
                                     <tbody id="bloc_pricing_configuration">
                                         <tr>
-                                            <td><input type="number" name="from[]" min="1" class="form-control min-qty" id="min-qty-parent" placeholder="From QTY"></td>
-                                            <td><input type="number" name="to[]" min="1" class="form-control max-qty" id="max-qty-parent" placeholder="To QTY"></td>
-                                            <td><input type="number" name="unit_price[]" step="0.01" min="1" placeholder="Unit Price" class="form-control unit-price-variant" id="unit-price-parent"></td>
-                                            <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
+                                            <td><input type="number" name="from[]" min="1" class="form-control min-qty" id="min-qty-parent" placeholder="{{ translate('From QTY') }}"></td>
+                                            <td><input type="number" name="to[]" min="1" class="form-control max-qty" id="max-qty-parent" placeholder="{{ translate('To QTY') }}"></td>
+                                            <td><input type="number" name="unit_price[]" step="0.01" min="1" placeholder="{{ translate('Unit Price') }}" class="form-control unit-price-variant" id="unit-price-parent"></td>
+                                            <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{ translate('Select Date') }}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                             <td>
                                                 <select class="form-control discount_type" name="discount_type[]">
-                                                    <option value="" selected>{{translate('Choose type')}}</option>
+                                                    <option value="" selected>{{ translate('Choose type') }}</option>
                                                     <option value="amount" @selected(old('discount_type') == 'amount')>{{translate('Flat')}}</option>
                                                     <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                                 </select>
                                             </td>
-                                            <td><input type="number" class="form-control discount_amount" name="discount_amount[]" placeholder="Amount" readonly></td>
+                                            <td><input type="number" class="form-control discount_amount" name="discount_amount[]" placeholder="{{ translate('Amount') }}" readonly></td>
                                             <td style="width: 22% !important;">
                                                 <div class="col-md-9 input-group">
-                                                    <input type="number" class="form-control discount_percentage" name="discount_percentage[]" placeholder="Percentage" readonly>
+                                                    <input type="number" class="form-control discount_percentage" name="discount_percentage[]" placeholder="{{ translate('Percentage') }}" readonly>
                                                     <div class="input-group-append">
                                                         <span class="input-group-text">%</span>
                                                     </div>
@@ -1837,7 +1837,7 @@
                 var trimmedText = $(this).val().substr(0, maxCharacters);
                 $(this).val(trimmedText);
             }else{
-                var message = "<p>Remaining characters: <span style='color: red'>" + charactersLeft + "</span></p>"
+                var message = "<p>{{ translate('Remaining characters:') }}' <span style='color: red'>" + charactersLeft + "</span></p>"
                 $('#charCountShortDescription').html(message);
             }
         });
