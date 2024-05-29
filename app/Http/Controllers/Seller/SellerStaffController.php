@@ -176,7 +176,7 @@ class SellerStaffController extends Controller
         $uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $lowercase = 'abcdefghijklmnopqrstuvwxyz';
         $numbers = '0123456789';
-        $specialChars = '!@#$%^&*()-_+=\/{}[]|';
+        $specialChars = '!@#$%^&*-_+=';
 
         $password = '';
 
@@ -261,103 +261,114 @@ class SellerStaffController extends Controller
      */
     public function update(Request $request, $id)
     {
-        abort_if(!auth('web')->user()->can('seller_edit_staff'), Response::HTTP_FORBIDDEN, 'ACCESS FORBIDDEN');
+        try {
+            abort_if(!auth('web')->user()->can('seller_edit_staff'), Response::HTTP_FORBIDDEN, 'ACCESS FORBIDDEN');
 
-        $staff = Staff::findOrFail($id);
-        //dd($request->role_id);
-        $user = $staff->user;
-        $staffs=Staff::where('user_id',$user->id)->get();
-        $currentDate = Carbon::now();
-        $startDay = (clone $currentDate);
-        $endDay = (clone $currentDate)->subDay(1);
-        $selectedRoles = $request->input('roles');
-        $current_lease = SellerLease::where('vendor_id',Auth::user()->owner_id)->where('start_date', '<=', $startDay)
-                                        ->where('end_date', '>=', $endDay)->first();
-        foreach ($staffs as $key => $st) {
-            $staff_role=SellerLeaseDetail::where('lease_id',$current_lease->id)->where('role_id',$st->role_id)->where('is_used',true)->where('amount','!=',0)->first();
-            if($staff_role) {
-                $current_lease->total-=$staff_role->amount;
-                $current_lease->discount-=$staff_role->amount;
-                $current_lease->save();
-                $staff_role->delete();
+            $staff = Staff::findOrFail($id);
+            $user = $staff->user;
+            $staffs = Staff::where('user_id', $user->id)->get();
+            $currentDate = Carbon::now();
+            $startDay = (clone $currentDate);
+            $endDay = (clone $currentDate)->subDay(1);
+            $selectedRoles = $request->input('roles');
+            $current_lease = SellerLease::where('vendor_id', Auth::user()->owner_id)
+                                        ->where('start_date', '<=', $startDay)
+                                        ->where('end_date', '>=', $endDay)
+                                        ->first();
 
-            }else{
-                $staff_role=SellerLeaseDetail::where('lease_id',$current_lease->id)->where('role_id',$st->role_id)->where('is_used',true)->first();
-                $staff_role->is_used = 0;
-                $staff_role->save();
+            if (!$current_lease) {
+                throw new Exception('Current lease not found');
             }
-            $st->delete();
-        }
-        //dd($staffs);
-        //$user->name = $request->name;
-        //$user->email = $request->email;
-        //$user->phone = $request->mobile;
 
-
-        $roles_id=SellerLeaseDetail::where('lease_id',$current_lease->id)->get();
-        $cycleEnd = Carbon::parse($current_lease->end_date)->endOfDay();
-        $daysToCycleEnd = $cycleEnd->diffInDays($currentDate)+1;
-
-        // Calculate the lease cycle days
-        $start_date = Carbon::parse($current_lease->start_date);
-        $end_date = Carbon::parse($current_lease->end_date);
-        $leaseCycleDays = $start_date->diffInDays($end_date)+1;
-
-        foreach ($request->role_id as $roleId) {
-            if ($roles_id->pluck('role_id')->contains($roleId)) {
-                foreach ($roles_id as $role_detail) {
-
-                    if ($role_detail->role_id == $roleId && $role_detail->is_used == false){
-                        $role_detail->is_used = true;
-                        $role_detail->save();
-                        break;
-                    }
-                    elseif($role_detail->role_id == $roleId && $role_detail->is_used == true ) {
-                        $proratedLease = (10 * $daysToCycleEnd) / $leaseCycleDays;
-                        $lease_detail = new SellerLeaseDetail;
-                        $lease_detail->role_id = $roleId;
-                        $lease_detail->amount = $proratedLease;
-                        $lease_detail->lease_id = $current_lease->id;
-                        $lease_detail->is_used = true;
-                        $lease_detail->start_date = $currentDate;
-                        $lease_detail->end_date = $end_date;
-                        $lease_detail->save();
-                        $current_lease->total += $proratedLease;
-                        $current_lease->discount += $proratedLease;
-                        $current_lease->save();
-                        break;
+            foreach ($staffs as $key => $st) {
+                $staff_role = SellerLeaseDetail::where('lease_id', $current_lease->id)
+                                            ->where('role_id', $st->role_id)
+                                            ->where('is_used', true)
+                                            ->where('amount', '!=', 0)
+                                            ->first();
+                if ($staff_role) {
+                    $current_lease->total -= $staff_role->amount;
+                    $current_lease->discount -= $staff_role->amount;
+                    $current_lease->save();
+                    $staff_role->delete();
+                } else {
+                    $staff_role = SellerLeaseDetail::where('lease_id', $current_lease->id)
+                                                ->where('role_id', $st->role_id)
+                                                ->where('is_used', true)
+                                                ->first();
+                    if ($staff_role) {
+                        $staff_role->is_used = 0;
+                        $staff_role->save();
                     }
                 }
-            }else {
-                $lease_detail = new SellerLeaseDetail;
-                $lease_detail->role_id = $roleId;
-                $lease_detail->amount = 0;
-                $lease_detail->lease_id = $current_lease->id;
-                $lease_detail->is_used = true;
-                $lease_detail->start_date = $start_date;
-                $lease_detail->end_date = $end_date;
-                $lease_detail->save();
-
+                $st->delete();
             }
-            $staff = new Staff;
-            $staff->user_id = $user->id;
-            $staff->created_by = $user->owner_id;
-            $staff->role_id = $roleId;
-            $role = Role::findOrFail($roleId);
-            $user->assignRole($role->name);
-            $staff->save();
 
+            $roles_id = SellerLeaseDetail::where('lease_id', $current_lease->id)->get();
+            $cycleEnd = Carbon::parse($current_lease->end_date)->endOfDay();
+            $daysToCycleEnd = $cycleEnd->diffInDays($currentDate) + 1;
+
+            $start_date = Carbon::parse($current_lease->start_date);
+            $end_date = Carbon::parse($current_lease->end_date);
+            $leaseCycleDays = $start_date->diffInDays($end_date) + 1;
+
+            foreach ($request->role_id as $roleId) {
+                if ($roles_id->pluck('role_id')->contains($roleId)) {
+                    foreach ($roles_id as $role_detail) {
+                        if ($role_detail->role_id == $roleId && $role_detail->is_used == false) {
+                            $role_detail->is_used = true;
+                            $role_detail->save();
+                            break;
+                        } elseif ($role_detail->role_id == $roleId && $role_detail->is_used == true) {
+                            $proratedLease = (10 * $daysToCycleEnd) / $leaseCycleDays;
+                            $lease_detail = new SellerLeaseDetail;
+                            $lease_detail->role_id = $roleId;
+                            $lease_detail->amount = $proratedLease;
+                            $lease_detail->lease_id = $current_lease->id;
+                            $lease_detail->is_used = true;
+                            $lease_detail->start_date = $currentDate;
+                            $lease_detail->end_date = $end_date;
+                            $lease_detail->save();
+                            $current_lease->total += $proratedLease;
+                            $current_lease->discount += $proratedLease;
+                            $current_lease->save();
+                            break;
+                        }
+                    }
+                } else {
+                    $lease_detail = new SellerLeaseDetail;
+                    $lease_detail->role_id = $roleId;
+                    $lease_detail->amount = 0;
+                    $lease_detail->lease_id = $current_lease->id;
+                    $lease_detail->is_used = true;
+                    $lease_detail->start_date = $start_date;
+                    $lease_detail->end_date = $end_date;
+                    $lease_detail->save();
+                }
+                $staff = new Staff;
+                $staff->user_id = $user->id;
+                $staff->created_by = $user->owner_id;
+                $staff->role_id = $roleId;
+                $role = Role::findOrFail($roleId);
+                $user->assignRole($role->name);
+                $staff->save();
+            }
+
+            if ($staff->save()) {
+                $user->syncRoles(Role::whereIn('id', $request->role_id)->pluck('name'));
+                flash(translate('Staff has been updated successfully'))->success();
+                return redirect()->route('seller.staffs.index');
+            }
+
+            flash(translate('Something went wrong'))->error();
+            return back();
+        } catch (Exception $e) {
+            Log::error('Error updating staff: ' . $e->getMessage());
+            flash(translate('Something went wrong: ') . $e->getMessage())->error();
+            return back();
         }
-        if($staff->save()){
-            $user->syncRoles(Role::whereIn('id', $request->role_id)->pluck('name'));
-            flash(translate('Staff has been updated successfully'))->success();
-            return redirect()->route('seller.staffs.index');
-        }
-
-
-        flash(translate('Something went wrong'))->error();
-        return back();
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -367,36 +378,66 @@ class SellerStaffController extends Controller
      */
     public function destroy($id)
     {
-        $currentDate = Carbon::now();
-        $startDay = (clone $currentDate);
-        $endDay = (clone $currentDate)->subDay(1);
-        $current_lease = SellerLease::where('vendor_id',Auth::user()->owner_id)->where('start_date', '<=', $startDay)
-                                        ->where('end_date', '>=', $endDay)->first();
-        $roles_id=SellerLeaseDetail::where('lease_id',$current_lease->id)->orderBy('is_used')->get();
-        $staff=Staff::find($id);
-        $staffs=Staff::where('user_id',$staff->user->id)->get();
+        try {
+            $currentDate = Carbon::now();
+            $startDay = (clone $currentDate);
+            $endDay = (clone $currentDate)->subDay(1);
+            $current_lease = SellerLease::where('vendor_id', Auth::user()->owner_id)
+                                        ->where('start_date', '<=', $startDay)
+                                        ->where('end_date', '>=', $endDay)
+                                        ->first();
 
-        foreach ($staffs as $key => $st) {
-            $staff_role=SellerLeaseDetail::where('lease_id',$current_lease->id)->where('role_id',$st->role_id)->where('is_used',true)->where('amount','!=',0)->first();
-            if($staff_role) {
-                $staff_role->delete();
-
-            }else{
-                $staff_role=SellerLeaseDetail::where('lease_id',$current_lease->id)->where('role_id',$st->role_id)->where('is_used',true)->first();
-                $staff_role->is_used = 0;
-                $staff_role->save();
+            if (!$current_lease) {
+                throw new Exception('Current lease not found');
             }
 
-            $st->delete();
-        }
+            $roles_id = SellerLeaseDetail::where('lease_id', $current_lease->id)->orderBy('is_used')->get();
+            $staff = Staff::find($id);
 
-        if(User::destroy($staff->user->id)){
-            flash(translate('Staff has been deleted successfully'))->success();
-            return redirect()->route('seller.staffs.index');
-        }
+            if (!$staff) {
+                throw new Exception('Staff not found');
+            }
 
-        flash(translate('Something went wrong'))->error();
-        return back();
+            $staffs = Staff::where('user_id', $staff->user->id)->get();
+
+            foreach ($staffs as $key => $st) {
+                $staff_role = SellerLeaseDetail::where('lease_id', $current_lease->id)
+                                               ->where('role_id', $st->role_id)
+                                               ->where('is_used', true)
+                                               ->where('amount', '!=', 0)
+                                               ->first();
+                if ($staff_role) {
+                    $current_lease->total -= $staff_role->amount;
+                    $current_lease->discount -= $staff_role->amount;
+                    $current_lease->save();
+                    $staff_role->delete();
+                } else {
+                    $staff_role = SellerLeaseDetail::where('lease_id', $current_lease->id)
+                                                   ->where('role_id', $st->role_id)
+                                                   ->where('is_used', true)
+                                                   ->first();
+                    if ($staff_role) {
+                        $staff_role->is_used = 0;
+                        $staff_role->save();
+                    }
+                }
+                $st->delete();
+            }
+
+            if (User::destroy($staff->user->id)) {
+                flash(translate('Staff has been deleted successfully'))->success();
+                return redirect()->route('seller.staffs.index');
+            }
+
+            flash(translate('Something went wrong'))->error();
+            return back();
+        } catch (Exception $e) {
+            // Log the error message for debugging purposes
+            Log::error('Error deleting staff: ' . $e->getMessage());
+
+            flash(translate('Something went wrong: ') . $e->getMessage())->error();
+            return back();
+        }
     }
 
 

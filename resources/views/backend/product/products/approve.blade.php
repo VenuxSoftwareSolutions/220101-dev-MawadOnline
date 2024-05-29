@@ -18,6 +18,24 @@
         border: 1px solid #e2e5ec !important;
         box-shadow: none !important;
     }
+
+    body {
+        background-color: rgb(247, 248, 250) !important;
+    }
+    .aiz-content-wrapper{
+        background-color: rgb(247, 248, 250) !important;
+    }
+    .aiz-main-content .pr-lg-25px {
+        background-color: rgb(247, 248, 250) !important;
+    }
+
+    .col-md-2 input[type="text"]:disabled {
+        /* Your CSS styles here */
+        background-color: white !important;
+        border: none !important;
+        color: black;
+        font-size: 12px;
+    }
 </style>
 <link rel="stylesheet" href="{{ static_asset('assets/css/example-styles.css') }}">
 @section('content')
@@ -73,14 +91,14 @@
                     </div>
                     <div class="card-body">
                         <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Product Name')}} <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
+                            <label class="col-md-2 col-from-label">{{translate('Product Name')}} <span class="text-danger">*</span></label>
+                            <div class="col-md-10">
                                 <input type="text" class="form-control" name="name" value="{{ $product->name }}" @if(array_key_exists('name', $general_informations)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old value is: {{ $general_informations['name'] }}" @endif placeholder="{{ translate('Product Name') }}" >
                             </div>
                         </div>
                         <div class="form-group row" id="brand">
-                            <label class="col-md-3 col-from-label">{{translate('Brand')}}</label>
-                            <div class="col-md-8">
+                            <label class="col-md-2 col-from-label">{{translate('Brand')}}</label>
+                            <div class="col-md-10">
                                 <select class="form-control" name="brand_id" id="brand_id" @if(array_key_exists('brand_id', $general_informations)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old value is: {{ $general_informations['brand_id'] }}" @endif data-live-search="true">
                                     <option value="">{{ translate('Select Brand') }}</option>
                                     @foreach (\App\Models\Brand::all() as $brand)
@@ -90,14 +108,14 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Unit of Sale')}} <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
+                            <label class="col-md-2 col-from-label">{{translate('Unit of Sale')}} <span class="text-danger">*</span></label>
+                            <div class="col-md-10">
                                 <input type="text" class="form-control" name="unit" value="{{ $product->unit }}" @if(array_key_exists('unit', $general_informations)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old value is: {{ $general_informations['unit'] }}" @endif placeholder="{{ translate('Unit (e.g. KG, Pc etc)') }}" >
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Country of origin')}}</label>
-                            <div class="col-md-8">
+                            <label class="col-md-2 col-from-label">{{translate('Country of origin')}}</label>
+                            <div class="col-md-10">
                                 <div class="form-item">
                                     <input id="country_selector" type="text" @if(array_key_exists('country_code', $general_informations)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old value is: {{ $general_informations['country_code'] }}" @endif>
                                     <label for="country_selector" style="display:none;">Select a country here...</label>
@@ -109,28 +127,28 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Manufacturer')}} <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
+                            <label class="col-md-2 col-from-label">{{translate('Manufacturer')}} <span class="text-danger">*</span></label>
+                            <div class="col-md-10">
                                 <input type="text" class="form-control" name="manufacturer" @if(array_key_exists('manufacturer', $general_informations)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old value is: {{ $general_informations['manufacturer'] }}" @endif value="{{ $product->manufacturer }}" placeholder="Manufacturer" >
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Tags')}} <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
+                            <label class="col-md-2 col-from-label">{{translate('Tags')}} <span class="text-danger">*</span></label>
+                            <div class="col-md-10">
                                 <input type="text" class="form-control aiz-tag-input" value="{{ $product->tags }}" name="tags[]" placeholder="{{ translate('Type and hit enter to add a tag') }}">
                                 <small class="text-muted">{{translate('This is used for search. Input those words by which cutomer can find this product.')}}</small>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Short description')}} <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
+                            <label class="col-md-2 col-from-label">{{translate('Short description')}} <span class="text-danger">*</span></label>
+                            <div class="col-md-10">
                                 <textarea class="form-control" name="short_description" id="short_description" @if(array_key_exists('short_description', $general_informations)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old value is: {{ $general_informations['short_description'] }}" @endif>{{ $product->short_description }}</textarea>
                                 <div id="charCountShortDescription">Remaining characters: 512</div>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Show Stock Quantity')}}</label>
-                            <div class="col-md-8">
+                            <label class="col-md-2 col-from-label">{{translate('Show Stock Quantity')}}</label>
+                            <div class="col-md-10">
                                 <label class="aiz-switch aiz-switch-success mb-0">
                                     <input type="checkbox" name="stock_visibility_state" value="1" @if( $product->stock_visibility_state == "quantity") checked="checked" @endif>
                                     <span></span>
@@ -139,8 +157,8 @@
                         </div>
 
                         <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Published')}}</label>
-                            <div class="col-md-8">
+                            <label class="col-md-2 col-from-label">{{translate('Published')}}</label>
+                            <div class="col-md-10">
                                 <label class="aiz-switch aiz-switch-success mb-0" @if(array_key_exists('published', $general_informations)) style="border: 1px solid red !important; border-radius: 12px;" data-toggle="tooltip" data-html="true" title="Modified and old value is: @if($general_informations['published'] == 1) Enabled @else Disabled @endif" @endif>
                                     <input type="checkbox" name="published" value="1" @if( $product->published == 1) checked="checked" @endif>
                                     <span></span>
@@ -150,8 +168,8 @@
 
                         @if (addon_is_activated('pos_system'))
                         <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Barcode')}}</label>
-                            <div class="col-md-8">
+                            <label class="col-md-2 col-from-label">{{translate('Barcode')}}</label>
+                            <div class="col-md-10">
                                 <input type="text" class="form-control" name="barcode" value="{{ old('barcode') }}" placeholder="{{ translate('Barcode') }}">
                             </div>
                         </div>
@@ -159,8 +177,8 @@
 
                         @if (addon_is_activated('refund_request'))
                         <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Refundable')}}</label>
-                            <div class="col-md-8">
+                            <label class="col-md-2 col-from-label">{{translate('Refundable')}}</label>
+                            <div class="col-md-10">
                                 <label class="aiz-switch aiz-switch-success mb-0" @if(array_key_exists('refundable', $general_informations)) style="border: 1px solid red !important; border-radius: 12px;" data-toggle="tooltip" data-html="true" title="Modified and old value is: @if($general_informations['refundable'] == 1) Enabled @else Disabled @endif" @endif>
                                     <input type="checkbox" name="refundable" @if($product->refundable == 1) checked @endif>
                                     <span></span>
@@ -177,8 +195,8 @@
                     </div>
                     <div class="card-body">
                         <div class="form-group row">
-                            <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Gallery Images')}} <small>(1280x1280)</small></label>
-                            <div class="col-md-8" id="bloc_photos">
+                            <label class="col-md-2 col-form-label" for="signinSrEmail">{{translate('Gallery Images')}} <small>(1280x1280)</small></label>
+                            <div class="col-md-10" id="bloc_photos">
                                 <div class="row mt-3" id="dropifyUploadedFiles">
                                     @if(count($product->getImagesProduct()) > 0)
                                         @foreach ($product->getImagesProduct() as $image)
@@ -191,8 +209,8 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-md-3 col-form-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <small>(400x400)</small></label>
-                            <div class="col-md-8" id="bloc_thumbnails">
+                            <label class="col-md-2 col-form-label" for="signinSrEmail">{{translate('Thumbnail Image')}} <small>(400x400)</small></label>
+                            <div class="col-md-10" id="bloc_thumbnails">
                                 <div class="row mt-3" id="dropifyUploadedFilesThumbnail">
                                     @if(count($product->getThumbnailsProduct()) > 0)
                                         @foreach ($product->getThumbnailsProduct() as $image)
@@ -212,18 +230,18 @@
                         <h5 class="mb-0 h6">{{translate('Pricing Configuration')}}</h5>
                     </div>
                     <div class="card-body">
-                        <div class="row mb-3">
+                        {{-- <div class="row mb-3">
                             <div class="col-md-3">
                                 <input type="text" class="form-control" value="{{translate('VAT')}}" disabled>
                             </div>
-                            <div class="col-md-8">
+                            <div class="col-md-10">
                                 <label class="aiz-switch aiz-switch-success mb-0">
                                     <input value="1" type="checkbox" name="vat" @if($vat_user->vat_registered == 1) checked @endif>
                                     <span></span>
                                 </label>
                             </div>
                         </div>
-                        <hr>
+                        <hr> --}}
                         <div>
                             <table class="table" id="table_pricing_configuration" class="bloc_pricing_configuration_variant">
                                 <thead>
@@ -302,10 +320,7 @@
                     </div>
                     <div class="card-body">
                         <div class="row mb-3">
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" value="{{translate('Do you want to activate MawadOnline 3rd Party ?')}}" disabled>
-                                <small style="color:red">Fill all required fields for shippers to confirm delivery ability.</small>
-                            </div>
+                            <label class="col-md-4 col-from-label">{{translate('Activate MawadOnline 3rd Party Shipping')}}</label>
                             <div class="col-md-8">
                                 <label class="aiz-switch aiz-switch-success mb-0">
                                     <input value="1" type="checkbox" id="third_party_activate" name="activate_third_party" @if($product->activate_third_party == 1) checked @endif>
@@ -383,7 +398,7 @@
                                         <th>{{translate('Estimated Order Preparation Days')}}</th>
                                         <th>{{translate('Estimated Shipping Days')}}</th>
                                         <th>{{translate('Paid by')}}</th>
-                                        <th>{{translate('VAT')}}</th>
+                                        {{-- <th>{{translate('VAT')}}</th> --}}
                                         <th>{{translate('Shipping Charge')}}</th>
                                         <th>{{translate('Flat-rate Amount')}}</th>
                                         <th>{{translate('Charge per Unit of Sale')}}</th>
@@ -412,12 +427,12 @@
                                                         <option value="buyer" @if($shipping->paid == "buyer") {{ 'selected' }} @endif>{{translate('Buyer')}}</option>
                                                     </select>
                                                 </td>
-                                                <td>
+                                                {{-- <td>
                                                     <label class="aiz-switch aiz-switch-success mb-0">
                                                         <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping[]" @if($vat_user->vat_registered == 1) checked @endif>
                                                         <span></span>
                                                     </label>
-                                                </td>
+                                                </td> --}}
                                                 <td>
                                                     <select class="form-control shipping_charge" name="shipping_charge[]">
                                                         <option value="" selected>{{translate('Choose shipping charge')}}</option>
@@ -455,12 +470,12 @@
                                                     <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
                                                 </select>
                                             </td>
-                                            <td>
+                                            {{-- <td>
                                                 <label class="aiz-switch aiz-switch-success mb-0">
                                                     <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping[]" @if($vat_user->vat_registered == 1) checked @endif>
                                                     <span></span>
                                                 </label>
-                                            </td>
+                                            </td> --}}
                                             <td>
                                                 <select class="form-control shipping_charge" name="shipping_charge[]">
                                                     <option value="" selected>{{translate('Choose shipping charge')}}</option>
@@ -488,30 +503,30 @@
                     </div>
                     <div class="card-body">
                         <div id="sample_parent">
-                            <div class="row mb-3">
+                            {{-- <div class="row mb-3">
                                 <div class="col-md-3">
                                     <input type="text" class="form-control" value="{{translate('VAT')}}" disabled>
                                 </div>
-                                <div class="col-md-8">
+                                <div class="col-md-10">
                                     <label class="aiz-switch aiz-switch-success mb-0">
                                         <input value="1" type="checkbox" name="vat_sample" @if($vat_user->vat_registered == 1) checked @endif>
                                         <span></span>
                                     </label>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="row mb-3">
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <input type="text" class="form-control" value="{{translate('Sample description')}}" disabled>
                                 </div>
-                                <div class="col-md-8">
+                                <div class="col-md-10">
                                     <textarea class="form-control sample_description_parent" name="sample_description">{{ $product->sample_description }}</textarea>
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <input type="text" class="form-control" value="{{translate('Sample price')}}" disabled>
                                 </div>
-                                <div class="col-md-8">
+                                <div class="col-md-10">
                                     <input type="text" class="form-control sample_price_parent" name="sample_price" value="{{ $product->sample_price }}">
                                 </div>
                             </div>
@@ -523,7 +538,7 @@
                                     <th>{{translate('Estimated Sample Preparation Days')}}</th>
                                     <th>{{translate('Estimated Shipping Days')}}</th>
                                     <th>{{translate('Paid by')}}</th>
-                                    <th>{{translate('VAT')}}</th>
+                                    {{-- <th>{{translate('VAT')}}</th> --}}
                                     <th>{{translate('Shipping amount')}}</th>
                                 </tr>
                             </thead>
@@ -545,12 +560,12 @@
                                             <option value="buyer" @if($product->paid_sample == 'buyer') {{ 'selected' }} @endif>{{translate('Buyer')}}</option>
                                         </select>
                                     </td>
-                                    <td>
+                                    {{-- <td>
                                         <label class="aiz-switch aiz-switch-success mb-0">
                                             <input value="1" type="checkbox" class="vat_sample" name="vat_sample" @if($vat_user->vat_registered == 1) checked @endif>
                                             <span></span>
                                         </label>
-                                    </td>
+                                    </td> --}}
                                     <td><input type="number" class="form-control shipping_amount" name="shipping_amount" @if($product->shipping_amount != null) value="{{ $product->shipping_amount }}" @else readonly @endif></td>
                                 </tr>
                             </tbody>
@@ -564,8 +579,8 @@
                     </div>
                     <div class="card-body">
                         <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Video Provider')}}</label>
-                            <div class="col-md-8">
+                            <label class="col-md-2 col-from-label">{{translate('Video Provider')}}</label>
+                            <div class="col-md-10">
                                 <select class="form-control" @if(array_key_exists('video_provider', $general_informations)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old video provider is: {{ $general_informations['video_provider'] }}" @endif name="video_provider" id="video_provider">
                                     <option value="youtube" @selected($product->video_provider == 'youtube')>{{translate('Youtube')}}</option>
                                     <option value="vimeo" @selected($product->video_provider == 'vimeo')>{{translate('Vimeo')}}</option>
@@ -573,8 +588,8 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Video Link')}}</label>
-                            <div class="col-md-8">
+                            <label class="col-md-2 col-from-label">{{translate('Video Link')}}</label>
+                            <div class="col-md-10">
                                 <input type="text" class="form-control" @if(array_key_exists('video_link', $general_informations)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old link is: {{ $general_informations['video_link'] }}" @endif name="video_link" value="{{ $product->video_link }}" placeholder="{{ translate('Video Link') }}">
                                 <small class="text-muted">{{translate("Use proper link without extra parameter. Don't use short share link/embeded iframe code.")}}</small>
                             </div>
@@ -595,8 +610,8 @@
                     </div>
                     <div class="card-body">
                         <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Category Path')}} :</label>
-                            <div class="col-md-8">
+                            <label class="col-md-2 col-from-label">{{translate('Category Path')}} :</label>
+                            <div class="col-md-10">
                                 <b @if(array_key_exists('category_id', $general_informations)) style="color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old path is: {{ $general_informations['category_id'] }}" @endif >{{ $product->pathCategory() }}</b>
                             </div>
                         </div>
@@ -610,10 +625,10 @@
                     </div>
                     <div class="card-body">
                         <div class="form-group row gutters-5">
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <input type="text" class="form-control" value="{{translate('Attributes')}}" disabled>
                             </div>
-                            <div class="col-md-8" id="attributes_bloc">
+                            <div class="col-md-10" id="attributes_bloc">
                                 <select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" id="attributes" multiple @if((count($product->getChildrenProducts()) == 0) || (count($attributes) == 0)) disabled @endif data-placeholder="{{ translate('Choose Attributes') }}">
                                     @if(count($attributes) > 0)
                                         @foreach ($attributes as $attribute)
@@ -622,12 +637,12 @@
                                     @endif
                                 </select>
                             </div>
-                            <div class="col-md-1">
+                            {{-- <div class="col-md-1">
                                 <label class="aiz-switch aiz-switch-success mb-0">
                                     <input value="1" type="checkbox" name="activate_attributes" @if((count($product->getChildrenProducts()) > 0) && (count($attributes) > 0)) checked @endif>
                                     <span></span>
                                 </label>
-                            </div>
+                            </div> --}}
                         </div>
                         <div>
                             <p>{{ translate('Choose the attributes of this product and then input values of each attribute') }}</p>
@@ -639,24 +654,24 @@
                                     <div data-id="{{ $children->id }}">
                                         <div class="row">
                                             <div class="col-3">
-                                                <h3 class="mb-3">Variant informations {{ $key + 1 }}</h3>
+                                                <h3 class="mb-3">Variant information {{ $key + 1 }}</h3>
                                             </div>
                                         </div>
                                         
                                         <hr>
                                         <div class="row mb-3">
-                                            <div class="col-md-4">
+                                            <div class="col-md-2">
                                                 <input type="text" class="form-control" value="{{translate('Variant SKU')}}" disabled>
                                             </div>
-                                            <div class="col-md-8">
+                                            <div class="col-md-10">
                                                 <input type="text" class="form-control sku" id="sku" name="variant[sku][{{ $children->id }}]" value="{{ $children->sku }}" >
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-md-4">
+                                            <div class="col-md-2">
                                                 <input type="text" class="form-control" value="{{translate('Variant Photos')}}" disabled>
                                             </div>
-                                            <div class="col-md-8">
+                                            <div class="col-md-10">
                                                 <div class="custom-file mb-3">
                                                     <input type="file" class="custom-file-input photos_variant" name="variant[photo][{{ $children->id }}][]" id="photos_variant{{ $key }}" accept=".jpeg, .jpg, .png" multiple>
                                                     <label class="custom-file-label" for="photos_variant{{ $key }}">Choose files</label>
@@ -666,7 +681,6 @@
                                                         @foreach ($children->getImagesProduct() as $image)
                                                             <div class="col-2 container-img">
                                                                 <img src="{{ asset('/public/'.$image->path) }}" height="120" width="120" @if(in_array($image->id, $historique_images)) data-toggle="tooltip" data-html="true" title="Image added" style="border: 4px solid green" @endif/>
-                                                                <i class="fa-regular fa-circle-xmark fa-fw fa-lg icon-delete-image" title="delete this image" data-image_id="{{ $image->id }}" ></i>
                                                             </div>
                                                         @endforeach
                                                     </div>
@@ -674,10 +688,10 @@
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-md-4">
+                                            <div class="col-md-2">
                                                 <input type="text" class="form-control" value="{{translate('Use default pricing configuration')}}" disabled>
                                             </div>
-                                            <div class="col-md-8">
+                                            <div class="col-md-10">
                                                 <label class="aiz-switch aiz-switch-success mb-0">
                                                     <input value="1" type="checkbox" name="variant-pricing-{{ $children->id }}" class="variant-pricing" @if(count($children->getPricingConfiguration()) == 0) checked @endif>
                                                     <span></span>
@@ -738,10 +752,10 @@
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-md-4">
+                                            <div class="col-md-2">
                                                 <input type="text" class="form-control" value="{{translate('Use default Shipping')}}" disabled>
                                             </div>
-                                            <div class="col-md-8">
+                                            <div class="col-md-10">
                                                 <label class="aiz-switch aiz-switch-success mb-0">
                                                     <input value="1" type="checkbox" class="variant-shipping" data-id_variant="{{ $children->id }}" @if(count($children->getShipping()) == 0) checked @endif>
                                                     <span></span>
@@ -759,7 +773,7 @@
                                                             <th>{{translate('Estimated Order Preparation Days')}}</th>
                                                             <th>{{translate('Estimated Shipping Days')}}</th>
                                                             <th>{{translate('Paid by')}}</th>
-                                                            <th>{{translate('VAT')}}</th>
+                                                            {{-- <th>{{translate('VAT')}}</th> --}}
                                                             <th>{{translate('Shipping Charge')}}</th>
                                                             <th>{{translate('Flat-rate Amount')}}</th>
                                                             <th>{{translate('Charge per Unit of Sale')}}</th>
@@ -787,12 +801,12 @@
                                                                         <option value="buyer" @if($shipping->paid == "buyer") {{ 'selected' }} @endif>{{translate('Buyer')}}</option>
                                                                     </select>
                                                                 </td>
-                                                                <td>
+                                                                {{-- <td>
                                                                     <label class="aiz-switch aiz-switch-success mb-0">
                                                                         <input value="1" type="checkbox" class="vat_shipping" @if($vat_user->vat_registered == 1) checked @endif>
                                                                         <span></span>
                                                                     </label>
-                                                                </td>
+                                                                </td> --}}
                                                                 <td>
                                                                     <select class="form-control shipping_charge" name="variant[shipping_charge][{{ $children->id }}][]">
                                                                         <option value="" selected>{{translate('Choose shipping charge')}}</option>
@@ -816,10 +830,10 @@
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-md-4">
+                                            <div class="col-md-2">
                                                 <input type="text" class="form-control" value="{{translate('Sample Available?')}}" disabled>
                                             </div>
-                                            <div class="col-md-8">
+                                            <div class="col-md-10">
                                                 <label class="aiz-switch aiz-switch-success mb-0">
                                                     <input value="1" type="checkbox" class="variant-sample-available" name="variant[sample_available][{{ $children->id }}]" @if($children->sample_available == 1) checked @endif>
                                                     <span></span>
@@ -827,10 +841,10 @@
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-md-4">
+                                            <div class="col-md-2">
                                                 <input type="text" class="form-control" value="{{translate('Use default sample pricing configuration')}}" disabled>
                                             </div>
-                                            <div class="col-md-8">
+                                            <div class="col-md-10">
                                                 <label class="aiz-switch aiz-switch-success mb-0">
                                                     <input value="1" type="checkbox" name="variant[sample_pricing][{{ $children->id }}]" data-variant="{{ $children->id }}" class="variant-sample-pricing" @if($children->sample_price == null) checked @endif @if($children->sample_available != 1) disabled @endif>
                                                     <span></span>
@@ -838,30 +852,30 @@
                                             </div>
                                             <div class="bloc_sample_pricing_configuration_variant">
                                                 @if($children->sample_price != null)
-                                                    <div class="row mb-3">
+                                                    {{-- <div class="row mb-3">
                                                         <div class="col-md-3">
                                                             <input type="text" class="form-control" value="{{translate('VAT')}}" disabled>
                                                         </div>
-                                                        <div class="col-md-8">
+                                                        <div class="col-md-10">
                                                             <label class="aiz-switch aiz-switch-success mb-0">
                                                                 <input value="1" class="vat_sample" type="checkbox" name="variant[vat_sample][{{ $children->id }}]" @if($vat_user->vat_registered == 1) checked @endif>
                                                                 <span></span>
                                                             </label>
                                                         </div>
-                                                    </div>
+                                                    </div> --}}
                                                     <div class="row mb-3">
-                                                        <div class="col-md-3">
+                                                        <div class="col-md-2" style="padding-right: 0;">
                                                             <input type="text" class="form-control" value="{{translate('Sample description')}}" disabled>
                                                         </div>
-                                                        <div class="col-md-8">
+                                                        <div class="col-md-10">
                                                             <textarea class="form-control sample_description" name="variant[sample_description][{{ $children->id }}]">{{ $children->sample_description }}</textarea>
                                                         </div>
                                                     </div>
                                                     <div class="row mb-3">
-                                                        <div class="col-md-3">
+                                                        <div class="col-md-2" style="padding-right: 0;">
                                                             <input type="text" class="form-control" value="{{translate('Sample price')}}" disabled>
                                                         </div>
-                                                        <div class="col-md-8">
+                                                        <div class="col-md-10">
                                                             <input type="text" class="form-control sample_price" name="variant[sample_price][{{ $children->id }}]" value="{{ $children->sample_price }}">
                                                         </div>
                                                     </div>
@@ -869,10 +883,10 @@
                                             </div>
                                         </div>  
                                         <div class="row mb-3">
-                                            <div class="col-md-4">
+                                            <div class="col-md-2">
                                                 <input type="text" class="form-control" value="{{translate('Use default sample shipping')}}" disabled>
                                             </div>
-                                            <div class="col-md-8">
+                                            <div class="col-md-10">
                                                 <label class="aiz-switch aiz-switch-success mb-0">
                                                     <input value="1" type="checkbox" class="variant-sample-shipping" name="variant[sample_shipping][{{ $children->id }}]" @if($children->shipper_sample != null) checked @endif @if($children->sample_available != 1) disabled @endif>
                                                     <span></span>
@@ -887,7 +901,7 @@
                                                                 <th>{{translate('Estimated Sample Preparation Days')}}</th>
                                                                 <th>{{translate('Estimated Shipping Days')}}</th>
                                                                 <th>{{translate('Paid by')}}</th>
-                                                                <th>{{translate('VAT')}}</th>
+                                                                {{-- <th>{{translate('VAT')}}</th> --}}
                                                                 <th>{{translate('Shipping amount')}}</th>
                                                             </tr>
                                                         </thead>
@@ -909,12 +923,12 @@
                                                                         <option value="buyer" @if($children->paid_sample == 'buyer') {{ 'selected' }} @endif>{{translate('Buyer')}}</option>
                                                                     </select>
                                                                 </td>
-                                                                <td>
+                                                                {{-- <td>
                                                                     <label class="aiz-switch aiz-switch-success mb-0">
                                                                         <input value="1" type="checkbox" class="vat_sample" @if($vat_user->vat_registered == 1) checked @endif>
                                                                         <span></span>
                                                                     </label>
-                                                                </td>
+                                                                </td> --}}
                                                                 <td><input type="number" class="form-control shipping_amount" name="variant[shipping_amount][{{ $children->id }}]" @if($children->shipping_amount != null) value="{{ $children->shipping_amount }}" @else readonly @endif></td>
                                                             </tr>
                                                         </tbody>
@@ -923,10 +937,10 @@
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-md-4">
+                                            <div class="col-md-2">
                                                 <input type="text" class="form-control" value="{{translate('Published')}}" disabled>
                                             </div>
-                                            <div class="col-md-8">
+                                            <div class="col-md-10">
                                                 <label class="aiz-switch aiz-switch-success mb-0">
                                                     <input value="1" type="checkbox" class="variant-published" name="variant[published][{{ $children->id }}]" value="{{ $children->published }}" @if($children->published == 1) checked @endif>
                                                     <span></span>
@@ -934,10 +948,10 @@
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-md-4">
+                                            <div class="col-md-2">
                                                 <input type="text" class="form-control" value="{{translate('Low-Stock Warning')}}" disabled>
                                             </div>
-                                            <div class="col-md-8">
+                                            <div class="col-md-10">
                                                 <input type="number" class="form-control stock-warning" id="low_stock_warning" name="variant[low_stock_quantity][{{ $children->id }}]" value="{{ $children->low_stock_quantity }}">
                                             </div>
                                         </div>
@@ -961,7 +975,7 @@
                         <div class="row">
                             <div id="general_attributes">
                                 @if (count($general_attributes_ids_attributes) > 0)
-                                    <div class="row">
+                                    <div class="row" style="padding-left: 16px !important;">
                                         @include('seller.product.products.general_attributes', ['attributes' => $attributes, 'general_attributes_ids_attributes' => $general_attributes_ids_attributes, 'general_attributes' => $general_attributes])
                                     </div>
                                 @endif
@@ -976,8 +990,8 @@
                     </div>
                     <div class="card-body">
                         <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Description')}}</label>
-                            <div class="col-md-8">
+                            <label class="col-md-2 col-from-label">{{translate('Description')}}</label>
+                            <div class="col-md-10">
                                 <textarea class="aiz-text-editor" name="description" @if(array_key_exists('description', $general_informations)) data-value="{{ $general_informations['description'] }}" style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old link is: {{ $general_informations['description'] }}" @endif>{{ $product->description }}</textarea>
                                 <input type="hidden" id="hidden_value" value="">
                             </div>
@@ -1060,20 +1074,20 @@
                     </div>
                     <div class="card-body">
                         <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Meta Title')}}</label>
-                            <div class="col-md-8">
+                            <label class="col-md-2 col-from-label">{{translate('Meta Title')}}</label>
+                            <div class="col-md-10">
                                 <input type="text" class="form-control" name="meta_title" @if(array_key_exists('meta_title', $general_informations)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old link is: {{ $general_informations['meta_title'] }}" @endif value="{{ $product->meta_title }}" placeholder="{{ translate('Meta Title') }}">
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-md-3 col-from-label">{{translate('Description')}}</label>
-                            <div class="col-md-8">
+                            <label class="col-md-2 col-from-label">{{translate('Description')}}</label>
+                            <div class="col-md-10">
                                 <textarea name="meta_description" rows="8" class="form-control" @if(array_key_exists('meta_description', $general_informations)) style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old link is: {{ $general_informations['meta_description'] }}" @endif>{{ $product->meta_description }}</textarea>
                             </div>
                         </div>
-                        <div class="form-group row">
+                        {{-- <div class="form-group row">
                             <label class="col-md-3 col-form-label" for="signinSrEmail">{{ translate('Meta Image') }}</label>
-                            <div class="col-md-8">
+                            <div class="col-md-10">
                                 <div class="input-group" data-toggle="aizuploader" data-type="image">
                                     <div class="input-group-prepend">
                                         <div class="input-group-text bg-soft-secondary font-weight-medium">{{ translate('Browse')}}</div>
@@ -1084,7 +1098,7 @@
                                 <div class="file-preview box sm">
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>

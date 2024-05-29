@@ -16,6 +16,7 @@ class ProductUploadsService
         $collection = collect($data);
         $parent = Product::find($collection['product']->id);
         $historique = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_id', $collection['product']->id)->where('revisionable_type', 'App\Models\Product')->get();
+        
 
 
         //check if upload_products folder is existe, if not existe create it
@@ -56,7 +57,7 @@ class ProductUploadsService
                             DB::table('revisions')->insert([
                                 "revisionable_type" => "App\Models\UploadProducts",
                                 "revisionable_id" => $uploaded_document->id,
-                                "user_id" => Auth::user()->id,
+                                "user_id" => Auth::user()->owner_id,
                                 "key" => 'add_document',
                                 "old_value" => NULL,
                                 "new_value" => $uploaded_document->id,
@@ -122,7 +123,7 @@ class ProductUploadsService
                             DB::table('revisions')->insert([
                                 "revisionable_type" => "App\Models\UploadProducts",
                                 "revisionable_id" => $uploaded_document->id,
-                                "user_id" => Auth::user()->id,
+                                "user_id" => Auth::user()->owner_id,
                                 "key" => 'update_document',
                                 "old_value" => json_encode($historique["old"]),
                                 "new_value" => json_encode($historique["new"]),
@@ -167,7 +168,7 @@ class ProductUploadsService
                             DB::table('revisions')->insert([
                                 "revisionable_type" => "App\Models\UploadProducts",
                                 "revisionable_id" => $uploaded_document->id,
-                                "user_id" => Auth::user()->id,
+                                "user_id" => Auth::user()->owner_id,
                                 "key" => 'update_document',
                                 "old_value" => json_encode($historique["old"]),
                                 "new_value" => json_encode($historique["new"]),
@@ -180,7 +181,7 @@ class ProductUploadsService
             }
 
             $historique_documents = DB::table('revisions')->whereNull('deleted_at')->whereIn('revisionable_id', $ids_documents)->where('revisionable_type', 'App\Models\UploadProducts')->get();
-            if(($parent->product_added_from_catalog == 1) && (count($historique_documents) == 0)){
+            if(($parent->product_added_from_catalog == 1) && (count($historique_documents) == 0) && (count($historique) == 0)){
                 $parent->approved = 1;
                 $parent->save();
             }else{
@@ -236,7 +237,7 @@ class ProductUploadsService
                                 DB::table('revisions')->insert([
                                     "revisionable_type" => "App\Models\UploadProducts",
                                     "revisionable_id" => $uploaded_document->id,
-                                    "user_id" => Auth::user()->id,
+                                    "user_id" => Auth::user()->owner_id,
                                     "key" => 'add_image',
                                     "old_value" => NULL,
                                     "new_value" => $uploaded_document->id,
@@ -260,7 +261,7 @@ class ProductUploadsService
                             DB::table('revisions')->insert([
                                 "revisionable_type" => "App\Models\UploadProducts",
                                 "revisionable_id" => $uploaded_document->id,
-                                "user_id" => Auth::user()->id,
+                                "user_id" => Auth::user()->owner_id,
                                 "key" => 'add_image',
                                 "old_value" => NULL,
                                 "new_value" => $uploaded_document->id,
@@ -313,7 +314,7 @@ class ProductUploadsService
                         DB::table('revisions')->insert([
                             "revisionable_type" => "App\Models\UploadProducts",
                             "revisionable_id" => $uploaded_document->id,
-                            "user_id" => Auth::user()->id,
+                            "user_id" => Auth::user()->owner_id,
                             "key" => 'add_image',
                             "old_value" => NULL,
                             "new_value" => $uploaded_document->id,

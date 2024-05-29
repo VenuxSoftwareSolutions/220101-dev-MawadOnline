@@ -32,7 +32,7 @@
                         </div>
                     </div>
                     <div class="form-group row" id="role-selet">
-                        <label class="col-sm-3 col-from-label" for="name">{{translate('Role')}}</label>
+                        <label class="col-sm-3 col-from-label" for="name">{{translate('Roles')}}</label>
                         <div class="col-sm-9">
                             <select name="role_id[]" multiple required class="form-control aiz-selectpicker" onchange="checkRoleUsage()">
                                 @foreach($roles as $role)

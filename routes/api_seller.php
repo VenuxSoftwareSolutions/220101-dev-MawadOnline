@@ -47,6 +47,10 @@ Route::group(['prefix' => 'v2/seller', 'middleware' => ['app_language']], functi
             Route::post('withdraw-request/store', 'store');
         });
 
+        Route::post('test', function(){
+            return response()->json(['status' => "test"], 200);
+        });
+
         //Product Section
         Route::controller(ProductController::class)->group(function () {
             Route::get('products/all', 'index');

@@ -129,6 +129,26 @@
     </div>
 </div>
 
+<div id="modal-info" class="modal fade">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title h6" id="title-modal">{{translate('Delete Confirmation')}}</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            </div>
+            <div class="modal-body text-center">
+                <input type="hidden" id="id_bloc">
+                <input type="hidden" id="language">
+                <input type="hidden" id="link">
+                <input type="hidden" id="data_id">
+                <p class="mt-1 fs-14" id="text-modal">{{translate('Are you sure to delete this?')}}</p>
+                <button type="button" class="btn btn-secondary rounded-0 mt-2" data-dismiss="modal" id="cancel_delete">{{translate('Cancel')}}</button>
+                <button type="button" class="btn btn-primary rounded-0 mt-2" data-dismiss="modal" id="delete_value">{{translate('Delete')}}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('script')
@@ -147,246 +167,206 @@
 </script>
 
 <script src="{{ static_asset('assets/js/jQuery.tagify.min.js') }}"></script>
-    <script src="{{ static_asset('assets/js/tagify.min.js') }}"></script>
-    <script src="{{ static_asset('assets/js/filter-multi-select-bundle.js') }}"></script>
-    <script>
-        $( document ).ready(function() {
-            var shapes = $('#shapes').filterMultiSelect({
-                placeholderText: 'click to select a unit',
-                filterText: 'search',
-                labelText: 'Units',
-                caseSensitive: false,
-            });
-
-            $("body div[class*='values_'] .trash_values:first").hide();
-            $('body .trash_values:first').hide();
-
-            @if($attribute->type_value == "list")
-                $("div[class*='values_']").show();
-            @else
-                $("div[class*='values_']").hide();
-            @endif
-
-            @if($attribute->type_value == "numeric")
-                $('#unit').show();
-            @else
-                $('#unit').hide();
-            @endif
-
-            var id_bloc = 2;
-
-            $('body').on('click', '.add_values', function(){
-
-                var html_english = `<div class="row" style="width: 100%;margin-left: 1px;" id="bloc_english_${id_bloc}">
-                                    <div class="form-group mb-3 col-10">
-                                        <label for="name" class="tagify-label">{{ translate('Value in english') }}</label>
-                                        <input name='values_english[]' class="form-control" autofocus>
-                                    </div>
-                                    <div class="col-1">
-                                        <i class="las la-plus add_values" style="margin-left: 5px; margin-top: 40px;" title="{{ translate('Add another values') }}"></i>
-                                        <i class="las la-trash trash_values" data-language="english" data-id_bloc="${id_bloc}" style="margin-left: 5px; margin-top: 40px;" title="{{ translate('Delete this value') }}"></i>
-                                    </div>
-                                </div>`;
-
-                var html_arabic = `<div class="row" style="width: 100%;margin-left: 1px;" id="bloc_arabic_${id_bloc}">
-                                    <div class="form-group mb-3 col-10">
-                                        <label for="name" class="tagify-label">{{ translate('Value in arabic') }}</label>
-                                        <input name='values_arabic[]' class="form-control" autofocus>
-                                    </div>
-                                    <div class="col-1">
-                                        <i class="las la-plus add_values" style="margin-left: 5px; margin-top: 40px;" title="{{ translate('Add another values') }}"></i>
-                                        <i class="las la-trash trash_values" data-language="arabic" data-id_bloc="${id_bloc}" style="margin-left: 5px; margin-top: 40px;" title="{{ translate('Delete this value') }}"></i>
-                                    </div>
-                                </div>`;
-                $('.values_english').append(html_english);
-                $('.values_arabic').append(html_arabic);
-                id_bloc++;
-            })
-
-            $('body').on('click', '.trash_values', function(){
-                var link = $(this).data('href');
-                var language = $(this).data('language');
-                var current = $(this);
-
-                if(link == undefined){
-                   var id = $(this).data('id_bloc');
-                    swal({
-                        title: "{{ translate('This value will be deleted in both English and Arabic sections!')}}",
-                        type: "warning",
-                        confirmButtonText: "Delete",
-                        showCancelButton: true
-                    })
-                    .then((result) => {
-                        if (result.value) {
-                            if(language == "arabic"){
-                                current.parent().parent().remove();
-                                $(`body #bloc_english_${id}`).remove();
-                            }else{
-                                current.parent().parent().remove();
-                                $(`body #bloc_arabic_${id}`).remove();
-                            }
-
-                        } else if (result.dismiss === 'cancel') {
-                            swal(
-                                "{{ translate('Cancelled')}}",
-                                "{{ translate('Your deletion is undone')}}",
-                                'warning'
-                            )
-                        } else{
-                            swal(
-                                "{{ translate('Error')}}",
-                                "{{ translate('Something went wrong!')}}",
-                                'error'
-                            )
-                        }
-                    })
-                   $('.values_english div[data-id_bloc="'+id+'"]').remove();
-                }else{
-                    $.ajaxSetup({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        }
-                    });
-
-                    var id_to_delete = 0;
-
-                    $.ajax({
-                        url: link,
-                        type: "POST",
-                        data: {},
-                        cache: false,
-                        dataType: 'JSON',
-                        success: function(dataResult) {
-                            if(dataResult.status == "done"){
-                                var ids = current.data('id') + '-' + dataResult.id_to_delete;
-                                doSomethingWithValue(ids, dataResult.id_to_delete, current.data('id'));
-                            }
-
-                            if(dataResult.status == "failed used"){
-                                current.parent().parent().find('.form-control').attr('readonly', true);
-                                current.parent().parent().find('small').remove();
-                                current.parent().parent().find('.col-10').append("<small style='color:red'>{{ translate('Cannot delete this value because is used in product!')}}</small>");
-                            }
-
-                        }
-                    })
-
-                    function doSomethingWithValue(ids_to_delete, id_to_delete_from_another_language, current_id) {
-                        swal({
-                            title: "{{ translate('Are you sure you want to delete?')}}",
-                            type: "warning",
-                            confirmButtonText: "{{ translate('Delete') }}",
-                            showCancelButton: true
-                        })
-                        .then((result) => {
-                            if (result.value) {
-                                $.ajax({
-                                    url: "{{ route('attribute-delete-values') }}",
-                                    type: "GET",
-                                    data: {
-                                        ids: ids_to_delete
-                                    },
-                                    cache: false,
-                                    dataType: 'JSON',
-                                    success: function(dataResult) {
-                                        $('#id_bloc_' + current_id).remove();
-                                        $('#id_bloc_' + id_to_delete_from_another_language).remove();
-                                        swal(
-                                            "{{ translate('Delete')}}",
-                                            "{{ translate('Your deletion is done successfully') }}",
-                                            'success'
-                                        )
-                                    }
-                                })
-                            } else if (result.dismiss === 'cancel') {
-                                swal(
-                                    "{{ translate('Cancelled')}}",
-                                    "{{ translate('Your deletion is undone')}}",
-                                    'warning'
-                                )
-                            } else{
-                                swal(
-                                    "{{ translate('Error')}}",
-                                    "{{ translate('Something went wrong!')}}",
-                                    'error'
-                                )
-                            }
-                        })
-                    }
-
-
-                }
-            })
-
-            $('#value_type').on('change', function(){
-                if($(this).val() == "list"){
-                    $("#unit").hide();
-                    $("div[class*='values_']").show();
-                }else if($(this).val() == "color"){
-                    $("div[class*='values_']").hide();
-                    $("#unit").hide();
-                }else if($(this).val() == "numeric"){
-                    $("div[class*='values_']").hide();
-                    $("#unit").show();
-                }else{
-                    $("div[class*='values_']").hide();
-                    $("#unit").hide();
-                }
-            });
-
-            $('#value_type').on('click', function(){
-                var type_value = $(this).val();
-                var current = $(this);
-                var attribute_id = "{{ $attribute->id }}";
-
-                if(type_value == "list"){
-                    $.ajax({
-                        url: "{{route('search-attribute-has-values-used-by-type')}}",
-                        type: "GET",
-                        data: {
-                            attribute_id: attribute_id
-                        },
-                        cache: false,
-                        dataType: 'JSON',
-                        success: function(dataResult) {
-                            if(dataResult.status == "Exist"){
-                                current.attr('disabled', true);
-                                current.attr('readonly', true);
-                                current.attr('disabled', false);
-                                current.addClass('nonClickableSelect');
-                                current.parent().find('small').remove();
-                                current.parent().append('<small style="color:red">Cannot delete this value because is used in create product!</small>');
-                            }
-                        }
-                    })
-                }
-            });
-
-            $('body').on('focusin', '.values_attribute_list', function(){
-                var value_id = $(this).data('id');
-                var attribute_id = "{{ $attribute->id }}"
-                var current = $(this);
-                $.ajax({
-                        url: "{{route('search-value-is-used')}}",
-                        type: "GET",
-                        data: {
-                            value_id: value_id,
-                            attribute_id: attribute_id
-                        },
-                        cache: false,
-                        dataType: 'JSON',
-                        success: function(dataResult) {
-                            if(dataResult.status == "Exist"){
-                                current.attr('readonly', true);
-                                current.parent().find('small').remove();
-                                current.parent().append('<small style="color:red">Cannot delete this value because is used in create product!</small>');
-                            }
-
-                        }
-                    })
-            });
-
+<script src="{{ static_asset('assets/js/tagify.min.js') }}"></script>
+<script src="{{ static_asset('assets/js/filter-multi-select-bundle.js') }}"></script>
+<script>
+    $( document ).ready(function() {
+        var shapes = $('#shapes').filterMultiSelect({
+            placeholderText: 'click to select a unit',
+            filterText: 'search',
+            labelText: 'Units',
+            caseSensitive: false,
         });
-    </script>
+
+        $("body div[class*='values_'] .trash_values:first").hide();
+        $('body .trash_values:first').hide();
+
+        @if($attribute->type_value == "list")
+            $("div[class*='values_']").show();
+        @else
+            $("div[class*='values_']").hide();
+        @endif
+
+        @if($attribute->type_value == "numeric")
+            $('#unit').show();
+        @else
+            $('#unit').hide();
+        @endif
+
+        var id_bloc = 2;
+
+        $('body').on('click', '.add_values', function(){
+
+            var html_english = `<div class="row" style="width: 100%;margin-left: 1px;" id="bloc_english_${id_bloc}">
+                                <div class="form-group mb-3 col-10">
+                                    <label for="name" class="tagify-label">{{ translate('Value in english') }}</label>
+                                    <input name='values_english[]' class="form-control" autofocus>
+                                </div>
+                                <div class="col-1">
+                                    <i class="las la-plus add_values" style="margin-left: 5px; margin-top: 40px;" title="{{ translate('Add another values') }}"></i>
+                                    <i class="las la-trash trash_values" data-language="english" data-id_bloc="${id_bloc}" style="margin-left: 5px; margin-top: 40px;" title="{{ translate('Delete this value') }}"></i>
+                                </div>
+                            </div>`;
+
+            var html_arabic = `<div class="row" style="width: 100%;margin-left: 1px;" id="bloc_arabic_${id_bloc}">
+                                <div class="form-group mb-3 col-10">
+                                    <label for="name" class="tagify-label">{{ translate('Value in arabic') }}</label>
+                                    <input name='values_arabic[]' class="form-control" autofocus>
+                                </div>
+                                <div class="col-1">
+                                    <i class="las la-plus add_values" style="margin-left: 5px; margin-top: 40px;" title="{{ translate('Add another values') }}"></i>
+                                    <i class="las la-trash trash_values" data-language="arabic" data-id_bloc="${id_bloc}" style="margin-left: 5px; margin-top: 40px;" title="{{ translate('Delete this value') }}"></i>
+                                </div>
+                            </div>`;
+            $('.values_english').append(html_english);
+            $('.values_arabic').append(html_arabic);
+            id_bloc++;
+        })
+
+        $('body').on('click', '.trash_values', function(){
+            var language = $(this).data('language');
+            var id = $(this).data('id_bloc');
+            var link = $(this).data('href');
+            var data_id = $(this).data('id');
+
+            $('#id_bloc').val(id);
+            $('#language').val(language);
+            $('#link').val(link);
+            $('#data_id').val(data_id);
+            $('#text-modal').text("{{ translate('This value will be deleted in both English and Arabic sections!')}}");
+
+            $('#modal-info').modal('show');
+        });
+
+        $('body').on('click', '#delete_value', function(){
+            var id = $('#id_bloc').val();
+            var language = $('#language').val();
+            var link = $('#link').val();
+            var data_id = $('#data_id').val();
+
+            if(link == undefined){
+                $(`body #bloc_english_${id}`).remove();
+                $(`body #bloc_arabic_${id}`).remove();
+
+                $('.values_english div[data-id_bloc="'+id+'"]').remove();
+            }else{
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                var id_to_delete = 0;
+                
+                $.ajax({
+                    url: link,
+                    type: "POST",
+                    data: {},
+                    cache: false,
+                    dataType: 'JSON',
+                    success: function(dataResult) {
+                        if(dataResult.status == "done"){
+                            var ids = data_id + '-' + dataResult.id_to_delete;
+                            doSomethingWithValue(ids, dataResult.id_to_delete, data_id);
+                        }
+
+                        if(dataResult.status == "failed used"){
+                            $(`body #id_bloc_${data_id}`).find('.form-control').attr('readonly', true);
+                            $(`body #id_bloc_${data_id}`).find('small').remove();
+                            $(`body #id_bloc_${data_id}`).find('.col-10').append("<small style='color:red'>{{ translate('Cannot delete this value because is used in product!')}}</small>");
+                        }
+
+                    }
+                })
+
+                function doSomethingWithValue(ids_to_delete, id_to_delete_from_another_language, current_id) {
+                    $.ajax({
+                        url: "{{ route('attribute-delete-values') }}",
+                        type: "GET",
+                        data: {
+                            ids: ids_to_delete
+                        },
+                        cache: false,
+                        dataType: 'JSON',
+                        success: function(dataResult) {
+                            $('#id_bloc_' + current_id).remove();
+                            $('#id_bloc_' + id_to_delete_from_another_language).remove();
+                        }
+                    })
+                }
+            }
+        });
+
+
+        $('#value_type').on('change', function(){
+            if($(this).val() == "list"){
+                $("#unit").hide();
+                $("div[class*='values_']").show();
+            }else if($(this).val() == "color"){
+                $("div[class*='values_']").hide();
+                $("#unit").hide();
+            }else if($(this).val() == "numeric"){
+                $("div[class*='values_']").hide();
+                $("#unit").show();
+            }else{
+                $("div[class*='values_']").hide();
+                $("#unit").hide();
+            }
+        });
+
+        $('#value_type').on('click', function(){
+            var type_value = $(this).val();
+            var current = $(this);
+            var attribute_id = "{{ $attribute->id }}";
+
+            if(type_value == "list"){
+                $.ajax({
+                    url: "{{route('search-attribute-has-values-used-by-type')}}",
+                    type: "GET",
+                    data: {
+                        attribute_id: attribute_id
+                    },
+                    cache: false,
+                    dataType: 'JSON',
+                    success: function(dataResult) {
+                        if(dataResult.status == "Exist"){
+                            current.attr('disabled', true);
+                            current.attr('readonly', true);
+                            current.attr('disabled', false);
+                            current.addClass('nonClickableSelect');
+                            current.parent().find('small').remove();
+                            current.parent().append('<small style="color:red">Cannot delete this value because is used in create product!</small>');
+                        }
+                    }
+                })
+            }
+        });
+
+        $('body').on('focusin', '.values_attribute_list', function(){
+            var value_id = $(this).data('id');
+            var attribute_id = "{{ $attribute->id }}"
+            var current = $(this);
+            $.ajax({
+                    url: "{{route('search-value-is-used')}}",
+                    type: "GET",
+                    data: {
+                        value_id: value_id,
+                        attribute_id: attribute_id
+                    },
+                    cache: false,
+                    dataType: 'JSON',
+                    success: function(dataResult) {
+                        if(dataResult.status == "Exist"){
+                            current.attr('readonly', true);
+                            current.parent().find('small').remove();
+                            current.parent().append('<small style="color:red">Cannot delete this value because is used in create product!</small>');
+                        }
+
+                    }
+                })
+        });
+
+    });
+</script>
 
 @endsection

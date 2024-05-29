@@ -202,6 +202,9 @@
                         $('#' + id).prop('checked', false)
                     }
                 }
+
+                $("#attribute_id").val('');
+                $("#status").val('');
             })
 
             $('body').on('click', '#publish-link', function(){

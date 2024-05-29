@@ -122,6 +122,24 @@
     </div>
 </div>
 
+<div id="modal-info" class="modal fade">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title h6" id="title-modal">{{translate('Delete Confirmation')}}</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            </div>
+            <div class="modal-body text-center">
+                <input type="hidden" id="id_bloc">
+                <input type="hidden" id="language">
+                <p class="mt-1 fs-14" id="text-modal">{{translate('Are you sure to delete this?')}}</p>
+                <button type="button" class="btn btn-secondary rounded-0 mt-2" data-dismiss="modal" id="cancel_delete">{{translate('Cancel')}}</button>
+                <button type="button" class="btn btn-primary rounded-0 mt-2" data-dismiss="modal" id="delete_value">{{translate('Delete')}}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('script')
@@ -188,43 +206,68 @@
                 id_bloc++;
             })
 
+            // $('body').on('click', '.trash_values', function(){
+            //     var language = $(this).data('language');
+            //     var current = $(this);
+
+            //     var id = $(this).data('id_bloc');
+            //     swal({
+            //         title: "{{ translate('This value will be deleted in both English and Arabic sections!')}}",
+            //         type: "warning",
+            //         confirmButtonText: "{{ translate('Delete')}}",
+            //         showCancelButton: true
+            //     })
+            //     .then((result) => {
+            //         if (result.value) {
+            //             if(language == "arabic"){
+            //                 current.parent().parent().remove();
+            //                 $(`body #bloc_english_${id}`).remove();
+            //             }else{
+            //                 current.parent().parent().remove();
+            //                 $(`body #bloc_arabic_${id}`).remove();
+            //             }
+
+            //         } else if (result.dismiss === 'cancel') {
+            //             swal(
+            //                 "{{ translate('Cancelled')}}",
+            //                 "{{ translate('Your deletion is undone')}}",
+            //                 'warning'
+            //             )
+            //         } else{
+            //             swal(
+            //                 "{{ translate('Error')}}",
+            //                 "{{ translate('Something went wrong!')}}",
+            //                 'error'
+            //             )
+            //         }
+            //     })
+
+            // })
+
             $('body').on('click', '.trash_values', function(){
                 var language = $(this).data('language');
-                var current = $(this);
-
                 var id = $(this).data('id_bloc');
-                swal({
-                    title: "{{ translate('This value will be deleted in both English and Arabic sections!')}}",
-                    type: "warning",
-                    confirmButtonText: "{{ translate('Delete')}}",
-                    showCancelButton: true
-                })
-                .then((result) => {
-                    if (result.value) {
-                        if(language == "arabic"){
-                            current.parent().parent().remove();
-                            $(`body #bloc_english_${id}`).remove();
-                        }else{
-                            current.parent().parent().remove();
-                            $(`body #bloc_arabic_${id}`).remove();
-                        }
 
-                    } else if (result.dismiss === 'cancel') {
-                        swal(
-                            "{{ translate('Cancelled')}}",
-                            "{{ translate('Your deletion is undone')}}",
-                            'warning'
-                        )
-                    } else{
-                        swal(
-                            "{{ translate('Error')}}",
-                            "{{ translate('Something went wrong!')}}",
-                            'error'
-                        )
-                    }
-                })
+                $('#id_bloc').val(id);
+                $('#language').val(language);
+                $('#text-modal').text("{{ translate('This value will be deleted in both English and Arabic sections!')}}");
 
+                $('#modal-info').modal('show');
+            });
+
+            $('body').on('click', '#delete_value', function(){
+                var id = $('#id_bloc').val();
+                var language = $('#language').val();
+
+                $(`body #bloc_english_${id}`).remove();
+                $(`body #bloc_arabic_${id}`).remove();
             })
+
+            $('body').on('click', '#cancel_delete', function(){
+                $('body #id_bloc').val('');
+                $('body #language').val('');
+            });
+            
 
             $('#value_type').on('change', function(){
                 if($(this).val() == "list"){

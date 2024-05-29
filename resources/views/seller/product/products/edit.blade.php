@@ -1537,8 +1537,12 @@
         var preview = document.getElementById('image-preview');
         //preview.innerHTML = '';
 
+        var old_files = $('#image-preview').find('.preview-container').length;
+
         var files = event.target.files;
-        if (files.length > 10) {
+        var all_files = old_files + files.length;
+
+        if (all_files > 10) {
             // Swal.fire({
             //     title: 'Cancelled',
             //     text: '{{ translate("Maximum 10 photos allowed.")}}',
@@ -1556,7 +1560,38 @@
             $('#modal-info').modal('show');
 
             $('#photoUploadcustom').val('');
-            $('body .preview-container').empty();
+            setTimeout(function() {
+                var previewContainers = document.querySelectorAll('.preview-container');
+                var files_update = [];
+
+                previewContainers.forEach(function(container) {
+                    var img = container.querySelector('img');
+                    var file = dataURLtoFile(img.src, 'image_' + Date.now() + '.png');
+                    files_update.push(file);
+                });
+
+                var newInput = document.createElement('input');
+                newInput.type = 'file';
+                newInput.id = 'photoUploadcustom';
+                newInput.name = 'main_photos[]';
+                newInput.multiple = true;
+                newInput.classList.add('form-control'); // Add the 'form-control' class
+                newInput.accept = 'image/*'; // Accept only image files
+
+                newInput.addEventListener('change', previewImages);
+
+                // Replace the old input with the new one
+                var oldInput = document.getElementById('photoUploadcustom');
+                oldInput.parentNode.replaceChild(newInput, oldInput);
+
+                // Set files to the new input
+                var dataTransfer = new DataTransfer();
+                files_update.forEach(function(file) {
+                    dataTransfer.items.add(file);
+                });
+                newInput.files = dataTransfer.files;
+            }, 500);
+            //$('body .preview-container').empty();
         }else{
             let exceedingFiles = [];
 
@@ -1584,7 +1619,38 @@
 
                 $('#modal-info').modal('show');
                 $('#photoUploadcustom').val('');
-                $('body .preview-container').empty();
+                setTimeout(function() {
+                    var previewContainers = document.querySelectorAll('.preview-container');
+                    var files_update = [];
+
+                    previewContainers.forEach(function(container) {
+                        var img = container.querySelector('img');
+                        var file = dataURLtoFile(img.src, 'image_' + Date.now() + '.png');
+                        files_update.push(file);
+                    });
+
+                    var newInput = document.createElement('input');
+                    newInput.type = 'file';
+                    newInput.id = 'photoUploadcustom';
+                    newInput.name = 'main_photos[]';
+                    newInput.multiple = true;
+                    newInput.classList.add('form-control'); // Add the 'form-control' class
+                    newInput.accept = 'image/*'; // Accept only image files
+
+                    newInput.addEventListener('change', previewImages);
+
+                    // Replace the old input with the new one
+                    var oldInput = document.getElementById('photoUploadcustom');
+                    oldInput.parentNode.replaceChild(newInput, oldInput);
+
+                    // Set files to the new input
+                    var dataTransfer = new DataTransfer();
+                    files_update.forEach(function(file) {
+                        dataTransfer.items.add(file);
+                    });
+                    newInput.files = dataTransfer.files;
+                }, 500);
+                //$('body .preview-container').empty();
             } else {
                 let exceedingFilesDimension = [];
 
@@ -1660,6 +1726,38 @@
                             }
 
                             reader.readAsDataURL(file);
+
+                            setTimeout(function() {
+                                var previewContainers = document.querySelectorAll('.preview-container');
+                                var files_update = [];
+
+                                previewContainers.forEach(function(container) {
+                                    var img = container.querySelector('img');
+                                    var file = dataURLtoFile(img.src, 'image_' + Date.now() + '.png');
+                                    files_update.push(file);
+                                });
+
+                                var newInput = document.createElement('input');
+                                newInput.type = 'file';
+                                newInput.id = 'photoUploadcustom';
+                                newInput.name = 'main_photos[]';
+                                newInput.multiple = true;
+                                newInput.classList.add('form-control'); // Add the 'form-control' class
+                                newInput.accept = 'image/*'; // Accept only image files
+
+                                newInput.addEventListener('change', previewImages);
+
+                                // Replace the old input with the new one
+                                var oldInput = document.getElementById('photoUploadcustom');
+                                oldInput.parentNode.replaceChild(newInput, oldInput);
+
+                                // Set files to the new input
+                                var dataTransfer = new DataTransfer();
+                                files_update.forEach(function(file) {
+                                    dataTransfer.items.add(file);
+                                });
+                                newInput.files = dataTransfer.files;
+                            }, 500);
                         }
                     }
                 }, 500);
@@ -1671,8 +1769,11 @@
         var preview = document.getElementById('image-preview-Thumbnail');
         //preview.innerHTML = '';
 
+        var old_files = $('#image-preview-thumbnail').find('.preview-container-thumbnail').length;
+
         var files = event.target.files;
-        if (files.length > 10) {
+        var all_files = old_files + files.length;
+        if (all_files > 10) {
             // Swal.fire({
             //     title: 'Cancelled',
             //     text: '{{ translate("Maximum 10 photos allowed.")}}',
@@ -1693,7 +1794,38 @@
             $('#image-preview-thumbnail').empty();
 
             $('#photoUploadThumbnailSeconde').val('');
-            $('body .preview-container-thumbnail').empty();
+            setTimeout(function() {
+                var previewContainers = document.querySelectorAll('.preview-container-thumbnail');
+                var files_update = [];
+
+                previewContainers.forEach(function(container) {
+                    var img = container.querySelector('img');
+                    var file = dataURLtoFile(img.src, 'image_' + Date.now() + '.png');
+                    files_update.push(file);
+                });
+
+                var newInput = document.createElement('input');
+                newInput.type = 'file';
+                newInput.id = 'photoUploadThumbnailSeconde';
+                newInput.name = 'photosThumbnail[]';
+                newInput.multiple = true;
+                newInput.classList.add('form-control'); // Add the 'form-control' class
+                newInput.accept = 'image/*'; // Accept only image files
+
+                newInput.addEventListener('change', previewImagesThumbnail);
+
+                // Replace the old input with the new one
+                var oldInput = document.getElementById('photoUploadThumbnailSeconde');
+                oldInput.parentNode.replaceChild(newInput, oldInput);
+
+                // Set files to the new input
+                var dataTransfer = new DataTransfer();
+                files_update.forEach(function(file) {
+                    dataTransfer.items.add(file);
+                });
+                newInput.files = dataTransfer.files;
+            }, 500);
+            //$('body .preview-container-thumbnail').empty();
         }else{
             let exceedingFiles = [];
 
@@ -1722,7 +1854,38 @@
                 $('#modal-info').modal('show');
 
                 $('#photoUploadThumbnailSeconde').val('');
-                $('body .preview-container-thumbnail').empty();
+                setTimeout(function() {
+                    var previewContainers = document.querySelectorAll('.preview-container-thumbnail');
+                    var files_update = [];
+
+                    previewContainers.forEach(function(container) {
+                        var img = container.querySelector('img');
+                        var file = dataURLtoFile(img.src, 'image_' + Date.now() + '.png');
+                        files_update.push(file);
+                    });
+
+                    var newInput = document.createElement('input');
+                    newInput.type = 'file';
+                    newInput.id = 'photoUploadThumbnailSeconde';
+                    newInput.name = 'photosThumbnail[]';
+                    newInput.multiple = true;
+                    newInput.classList.add('form-control'); // Add the 'form-control' class
+                    newInput.accept = 'image/*'; // Accept only image files
+
+                    newInput.addEventListener('change', previewImagesThumbnail);
+
+                    // Replace the old input with the new one
+                    var oldInput = document.getElementById('photoUploadThumbnailSeconde');
+                    oldInput.parentNode.replaceChild(newInput, oldInput);
+
+                    // Set files to the new input
+                    var dataTransfer = new DataTransfer();
+                    files_update.forEach(function(file) {
+                        dataTransfer.items.add(file);
+                    });
+                    newInput.files = dataTransfer.files;
+                }, 500);
+                //$('body .preview-container-thumbnail').empty();
             } else {
                 let exceedingFilesDimension = [];
 
@@ -1769,7 +1932,38 @@
                         $('#modal-info').modal('show');
 
                         $('#photoUploadThumbnailSeconde').val('');
-                        $('body .preview-container-thumbnail').empty();
+                        setTimeout(function() {
+                            var previewContainers = document.querySelectorAll('.preview-container-thumbnail');
+                            var files_update = [];
+
+                            previewContainers.forEach(function(container) {
+                                var img = container.querySelector('img');
+                                var file = dataURLtoFile(img.src, 'image_' + Date.now() + '.png');
+                                files_update.push(file);
+                            });
+
+                            var newInput = document.createElement('input');
+                            newInput.type = 'file';
+                            newInput.id = 'photoUploadThumbnailSeconde';
+                            newInput.name = 'photosThumbnail[]';
+                            newInput.multiple = true;
+                            newInput.classList.add('form-control'); // Add the 'form-control' class
+                            newInput.accept = 'image/*'; // Accept only image files
+
+                            newInput.addEventListener('change', previewImagesThumbnail);
+
+                            // Replace the old input with the new one
+                            var oldInput = document.getElementById('photoUploadThumbnailSeconde');
+                            oldInput.parentNode.replaceChild(newInput, oldInput);
+
+                            // Set files to the new input
+                            var dataTransfer = new DataTransfer();
+                            files_update.forEach(function(file) {
+                                dataTransfer.items.add(file);
+                            });
+                            newInput.files = dataTransfer.files;
+                        }, 500);
+                        //$('body .preview-container-thumbnail').empty();
                     }else{
                         for (var i = 0; i < files.length; i++) {
                             var file = files[i];
@@ -1798,6 +1992,38 @@
 
                             reader.readAsDataURL(file);
                         }
+
+                        setTimeout(function() {
+                            var previewContainers = document.querySelectorAll('.preview-container-thumbnail');
+                            var files_update = [];
+
+                            previewContainers.forEach(function(container) {
+                                var img = container.querySelector('img');
+                                var file = dataURLtoFile(img.src, 'image_' + Date.now() + '.png');
+                                files_update.push(file);
+                            });
+
+                            var newInput = document.createElement('input');
+                            newInput.type = 'file';
+                            newInput.id = 'photoUploadThumbnailSeconde';
+                            newInput.name = 'photosThumbnail[]';
+                            newInput.multiple = true;
+                            newInput.classList.add('form-control'); // Add the 'form-control' class
+                            newInput.accept = 'image/*'; // Accept only image files
+
+                            newInput.addEventListener('change', previewImagesThumbnail);
+
+                            // Replace the old input with the new one
+                            var oldInput = document.getElementById('photoUploadThumbnailSeconde');
+                            oldInput.parentNode.replaceChild(newInput, oldInput);
+
+                            // Set files to the new input
+                            var dataTransfer = new DataTransfer();
+                            files_update.forEach(function(file) {
+                                dataTransfer.items.add(file);
+                            });
+                            newInput.files = dataTransfer.files;
+                        }, 500);
                     }
                 }, 500);
             }
@@ -7324,6 +7550,7 @@
         document.getElementById('choice_form').addEventListener('submit', function (event) {
             event.preventDefault(); // Prevent default form submission
             var approved = "{{ $product->approved }}";
+            var added_from_catalog = "{{ $product->product_added_from_catalog }}";
             var isEmpty = false;
 
             var tagifyInputs = $(".aiz-tag-input").not(".tagify");

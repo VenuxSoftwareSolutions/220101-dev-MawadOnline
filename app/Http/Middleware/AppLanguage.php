@@ -16,6 +16,7 @@ class AppLanguage
      */
     public function handle($request, Closure $next)
     {
+        
         // Check header request and determine localizaton
         if($request->hasHeader('App-Language')){
             $locale = $request->header('App-Language');
@@ -26,11 +27,11 @@ class AppLanguage
         else{
             $locale = 'en';
         }
+
     
 
         // set laravel localization
         App::setLocale($locale);
-
         // continue request
         return $next($request);
     }

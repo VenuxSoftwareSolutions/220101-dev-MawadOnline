@@ -1,5 +1,4 @@
 @foreach ($attributes as $attribute)
-
     @if (in_array($attribute->id, $variants_attributes_ids_attributes))
     <div class="row attribute-variant-{{ $attribute->id }}">
         <label class="col-md-2 col-from-label">{{ translate($attribute->getTranslation('name')) }}</label>
@@ -11,7 +10,7 @@
                                                                                 data-toggle="tooltip" data-html="true" title="Attribute added" style="border-color: green !important;" 
                                                                             @endif 
                                                                             @if(isset($variants_attributes[$attribute->id]->old_value)) 
-                                                                                style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old video provider is: {{ isset($variants_attributes[$attribute->id]->old_value) }}" 
+                                                                                style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old value is: {{ $variants_attributes[$attribute->id]->old_value }}" 
                                                                             @endif 
                                                                         @endif 
                                                                             data-id_attributes="{{ $attribute->id }}" name="variant[attributes][{{ $children->id }}][{{ $attribute->id }}]" value="{{ $variants_attributes[$attribute->id]->value }}">
@@ -27,7 +26,7 @@
                                                         data-toggle="tooltip" data-html="true" title="Attribute added" style="border-color: green !important;" 
                                                     @endif 
                                                     @if(isset($variants_attributes[$attribute->id]->old_value)) 
-                                                        style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old video provider is: {{ isset($variants_attributes[$attribute->id]->old_value) }}" 
+                                                        style="border-color: #FF3C50 !important;" data-toggle="tooltip" data-html="true" title="Modified and old value is: {{ $variants_attributes[$attribute->id]->old_value }}" 
                                                     @endif 
                                                 @endif data-id_attributes="{{ $attribute->id }}" data-live-search="true" data-selected-text-format="count" name="variant[attributes][{{ $children->id }}][{{ $attribute->id }}]">
                         @foreach ($values as $key => $value)
