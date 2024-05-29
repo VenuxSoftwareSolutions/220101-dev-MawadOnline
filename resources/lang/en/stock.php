@@ -57,5 +57,11 @@ return [
     'Product/Variant + SKU'=>'Product/Variant + SKU',
     'products_on_selected_date' => 'Products existing on the selected date',
     'warehouses_on_selected_date' => 'Warehouses existing on the selected date',
-
+    'search_records' => 'Search Records',
+    'fill_all_required_fields' => 'Please fill in all required fields:',
+    'warehouse_name' => 'Warehouse Name',
+    'state' => 'State',
+    'area' => 'Area',
+    'street' => 'Street',
+    'building' => 'Building',
 ];

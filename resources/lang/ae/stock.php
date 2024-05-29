@@ -57,4 +57,11 @@ return [
     'Product/Variant + SKU'=>'المنتج/المتغير + SKU',
     'products_on_selected_date' => 'المنتجات الموجودة في التاريخ المحدد',
     'warehouses_on_selected_date' => 'المستودعات الموجودة في التاريخ المحدد',
+    'search_records' => 'البحث في السجلات',
+    'fill_all_required_fields' => 'يرجى ملء جميع الحقول المطلوبة:',
+    'warehouse_name' => 'اسم المستودع',
+    'state' => 'الإمارة',
+    'area' => 'المنطقة',
+    'street' => 'الشارع',
+    'building' => 'المبنى',
 ];

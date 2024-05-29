@@ -426,27 +426,36 @@
     areaSelectClone.val(areaValue)
     areaSelectClone.prop('required', true); // Add required attribute to area select
 
+    var translations = {
+        fillAllRequiredFields: "{{ __('stock.fill_all_required_fields') }}",
+        warehouseName: "{{ __('stock.warehouse_name') }}",
+        state: "{{ __('stock.state') }}",
+        area: "{{ __('stock.area') }}",
+        street: "{{ __('stock.street') }}",
+        building: "{{ __('stock.building') }}"
+    };
+
   // Check if any input is empty
   if (!warehouseName || !stateValue || !areaValue || !street || !building) {
-        var errorMsg = 'Please fill in all required fields:';
-        if (!warehouseName) {
-            errorMsg += '\n- Warehouse Name';
+            var errorMsg = translations.fillAllRequiredFields;
+            if (!warehouseName) {
+                errorMsg += '\n- ' + translations.warehouseName;
+            }
+            if (!stateValue) {
+                errorMsg += '\n- ' + translations.state;
+            }
+            if (!areaValue) {
+                errorMsg += '\n- ' + translations.area;
+            }
+            if (!street) {
+                errorMsg += '\n- ' + translations.street;
+            }
+            if (!building) {
+                errorMsg += '\n- ' + translations.building;
+            }
+            toastr.error(errorMsg);
+            return; // Stop execution if any input is empty
         }
-        if (!stateValue) {
-            errorMsg += '\n- State';
-        }
-        if (!areaValue) {
-            errorMsg += '\n- Area';
-        }
-        if (!street) {
-            errorMsg += '\n- Street';
-        }
-        if (!building) {
-            errorMsg += '\n- Building';
-        }
-        toastr.error(errorMsg);
-        return; // Stop execution if any input is empty
-    }
 
 
     const newRow = $('<tr class="warehouseRow">');
