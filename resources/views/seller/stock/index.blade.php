@@ -655,7 +655,7 @@
             "dom": 'Bfrtip', // Add buttons to the layout
             "language": {
                 "search": "", // Remove the label text for search input
-                "searchPlaceholder": "Search Records" // Custom search placeholder text
+                "searchPlaceholder": "{{ __('stock.search_records') }}" // Custom search placeholder text
             },
             "buttons":   [{
                 extend: 'excelHtml5',

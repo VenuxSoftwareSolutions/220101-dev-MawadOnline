@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api\V2;
 
 use App\Http\Resources\V2\ClassifiedProductDetailCollection;
 use App\Http\Resources\V2\ClassifiedProductMiniCollection;
+use App\Http\Resources\V2\ReviewCollection;
+use App\Models\Review;
 use Cache;
 use App\Models\Shop;
 use App\Models\Color;
@@ -22,6 +24,41 @@ use App\Models\CustomerProduct;
 
 class ProductController extends Controller
 {
+    public function reviews_approving(Request $request)
+    {
+        // Force JSON response
+        if (!$request->expectsJson()) {
+            return response()->json(['error' => 'Accept header must be application/json'], 400);
+        }
+        
+         // Validate the request
+         $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:reviews,id'
+        ]);
+        
+        // Fetch the reviews by IDs
+        $reviews = Review::whereIn('id', $request->ids)->get();
+
+        // Approve each review
+        foreach ($reviews as $review) {
+            $review->status = true; // assuming there is an 'approved' field in your reviews table
+            $review->save();
+        }
+
+        return response()->json([
+            'message' => 'Reviews approved successfully.',
+            'approved_ids' => $request->ids
+        ], 200);
+    }
+
+    public function reviews()
+    {
+        $reviews = Review::where('status','0')->get();
+
+        return new ReviewCollection($reviews);
+    }
+
     public function index()
     {
         return new ProductMiniCollection(Product::latest()->paginate(10));
