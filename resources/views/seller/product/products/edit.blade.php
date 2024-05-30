@@ -191,6 +191,14 @@
     }
 
 </style>
+@if(app()->getLocale() == "ae")
+    <style>
+        .multi-select-menuitem input {
+            position: relative !important;
+            margin-left: 0 !important; 
+        }
+    </style>
+@endif
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 
 @section('panel_content')
@@ -274,7 +282,7 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{translate('Manufacturer')}} <span class="text-danger">*</span></label>
                                     <div class="col-md-8">
-                                        <input type="text" required class="form-control" name="manufacturer" value="{{ $product->manufacturer }}" placeholder="Manufacturer" >
+                                        <input type="text" required class="form-control" name="manufacturer" value="{{ $product->manufacturer }}" placeholder="{{translate('Manufacturer')}}" >
                                     </div>
                                 </div>
                             </div>
@@ -284,13 +292,14 @@
                                     <div class="col-md-8">
                                         <input type="text" required class="form-control aiz-tag-input" value="{{ $product->tags }}" id="tags" name="tags[]" placeholder="{{ translate('Type and hit enter to add a tag') }}">
                                         <small class="text-muted">{{translate('This is used for search. Input those words by which cutomer can find this product.')}}</small>
+                                        <div id="error-message" style="display:none; color: red">{{translate('tags input cannot be empty')}}</div>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{translate('Short description')}} <span class="text-danger">*</span></label>
                                     <div class="col-md-8">
                                         <textarea class="form-control" name="short_description" id="short_description">{{ $product->short_description }}</textarea>
-                                        <div id="charCountShortDescription">Remaining characters: 512</div>
+                                        <div id="charCountShortDescription">{{translate('Remaining characters: 512')}}</div>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -482,9 +491,9 @@
                                             @endforeach
                                         @else
                                             <tr>
-                                                <td><input type="number" name="from[]" class="form-control min-qty" id="min-qty-parent" placeholder="From QTY"></td>
-                                                <td><input type="number" name="to[]" class="form-control max-qty" id="max-qty-parent" placeholder="To QTY"></td>
-                                                <td><input type="number" name="unit_price[]" step="0.01" min="1" placeholder="Unit Price" class="form-control unit-price-variant" id="unit-price-parent"></td>
+                                                <td><input type="number" name="from[]" class="form-control min-qty" id="min-qty-parent" placeholder="{{ translate('From QTY') }}"></td>
+                                                <td><input type="number" name="to[]" class="form-control max-qty" id="max-qty-parent" placeholder="{{ translate('To QTY') }}"></td>
+                                                <td><input type="number" name="unit_price[]" step="0.01" min="1" placeholder="{{ translate('Unit Price') }}" class="form-control unit-price-variant" id="unit-price-parent"></td>
                                                 <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                                 <td>
                                                     <select class="form-control discount_type" name="discount_type[]">
@@ -493,17 +502,17 @@
                                                         <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                                     </select>
                                                 </td>
-                                                <td><input type="number" class="form-control discount_amount" name="discount_amount[]"></td>
+                                                <td><input type="number" class="form-control discount_amount" name="discount_amount[]" placeholder="{{ translate('Amount') }}"></td>
                                                 <td style="width: 22% !important;">
                                                     <div class="col-md-9 input-group">
-                                                        <input type="number" class="form-control discount_percentage" name="discount_percentage[]">
+                                                        <input type="number" class="form-control discount_percentage" name="discount_percentage[]" placeholder="{{ translate('Percentage') }}">
                                                         <div class="input-group-append">
                                                             <span class="input-group-text">%</span>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
+                                                    <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Add another ligne') }}"></i>
                                                 </td>
                                             </tr>
                                         @endif
@@ -612,14 +621,14 @@
                                         </tbody>
                                     </table>
                                     <div class="col-12" style="padding: 0">
-                                        <small style="display: block !important">Fill all required fields for shippers to confirm delivery ability.</small>
+                                        <small style="display: block !important">{{ translate('Fill all required fields for shippers to confirm delivery ability.')}}</small>
                                     </div>
                                     <div id="result_calculate_third_party">
                                         @if($product->activate_third_party == 1)
                                             @if ($chargeable_weight > 30)
-                                                <span style="color: red"> Chargeable Weight = {{ number_format($chargeable_weight, 2) }}, then not accepted by our shipper </span>
+                                                <span style="color: red"> {{ translate('Chargeable Weight = ')}} {{ number_format($chargeable_weight, 2) }}, {{ translate('then not accepted by our shipper')}} </span>
                                             @else
-                                                <span style="color: green"> Chargeable Weight = {{ number_format($chargeable_weight, 2) }}, then accepted by our shipper </span>
+                                                <span style="color: green"> {{ translate('Chargeable Weight = ')}} {{ number_format($chargeable_weight, 2) }}, {{ translate('then accepted by our shipper')}} </span>
                                             @endif
                                         @endif
                                     </div>
@@ -662,7 +671,7 @@
                                                         <td><input type="number" class="form-control estimated_shipping"  value="{{ $shipping->estimated_shipping }}" name="estimated_shipping[]"></td>
                                                         <td>
                                                             <select class="form-control paid" name="paid[]">
-                                                                <option value="" selected>{{translate('Choose shipper')}}</option>
+                                                                <option value="" selected>{{translate('Choose paid by')}}</option>
                                                                 <option value="vendor" @if($shipping->paid == "vendor") {{ 'selected' }} @endif>{{translate('vendor')}}</option>
                                                                 <option value="buyer" @if($shipping->paid == "buyer") {{ 'selected' }} @endif>{{translate('Buyer')}}</option>
                                                             </select>
@@ -692,16 +701,16 @@
                                                 @endforeach
                                             @else
                                                 <tr>
-                                                    <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id=""></td>
-                                                    <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id=""></td>
+                                                    <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id="" placeholder="{{translate('From QTY') }}"></td>
+                                                    <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id="" placeholder="{{translate('To QTY') }}"></td>
                                                     <td>
                                                         <select multiple class="shipper" name="shipper[0][]">
                                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                                         </select>
                                                     </td>
-                                                    <td><input type="number" class="form-control estimated_order" name="estimated_order[]"></td>
-                                                    <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]"></td>
+                                                    <td><input type="number" class="form-control estimated_order" name="estimated_order[]" placeholder="{{translate('Days') }}"></td>
+                                                    <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]" placeholder="{{translate('Days') }}"></td>
                                                     <td>
                                                         <select class="form-control paid" name="paid[]">
                                                             <option value="" >{{translate('Choose paid by')}}</option>
@@ -722,8 +731,8 @@
                                                             <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
                                                         </select>
                                                     </td>
-                                                    <td><input type="number" class="form-control flat_rate_shipping" name="flat_rate_shipping[]" readonly></td>
-                                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="charge_per_unit_shipping[]" readonly></td>
+                                                    <td><input type="number" class="form-control flat_rate_shipping" name="flat_rate_shipping[]" placeholder="{{translate('Flat rate amount') }}" readonly></td>
+                                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="charge_per_unit_shipping[]" placeholder="{{translate('Charge unit') }}" readonly></td>
                                                     <td>
                                                         <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                                     </td>
@@ -801,9 +810,9 @@
                                 <div id="result_calculate_third_party_sample">
                                     @if($product->activate_third_party_sample == 1)
                                         @if ($chargeable_weight_sample > 30)
-                                            <span style="color: red"> Chargeable Weight = {{ number_format($chargeable_weight_sample, 2) }}, then not accepted by our shipper </span>
+                                            <span style="color: red"> {{translate('Chargeable Weight = ')}} {{ number_format($chargeable_weight_sample, 2) }}, {{translate('then not accepted by our shipper')}} </span>
                                         @else
-                                            <span style="color: green"> Chargeable Weight = {{ number_format($chargeable_weight_sample, 2) }}, then accepted by our shipper </span>
+                                            <span style="color: green"> {{translate('Chargeable Weight = ')}} {{ number_format($chargeable_weight_sample, 2) }}, {{translate('then accepted by our shipper')}} </span>
                                         @endif
                                     @endif
                                 </div>
@@ -879,12 +888,12 @@
                     <div class="card-header">
                         <h5 class="mb-0 h6">{{ translate('Product Category') }}</h5>
                         <h6 class="float-right fs-13 mb-0">
-                            <span id="message-category"><span>
+                            {{-- <span id="message-category"><span>
                             {{ translate('Select Main') }}
                             <span class="position-relative main-category-info-icon">
                                 <i class="las la-question-circle fs-18 text-info"></i>
                                 <span class="main-category-info bg-soft-info p-2 position-absolute d-none border">{{ translate('This will be used for commission based calculations and homepage category wise product Show.') }}</span>
-                            </span>
+                            </span> --}}
 
                         </h6>
                     </div>
@@ -896,7 +905,7 @@
                         <div class="tree_main">
 
                             <input type="text" @if($categorie != null) value="{{ $categorie->name }}" @else value="" @endif id="search_input" class="form-control" placeholder="Search">
-                            <small style="color: red">To select a different category, please clear the search field, However, you must choose other attributes to modify your variants</small>
+                            <small style="color: red">{{translate('To select a different category, please clear the search field, However, you must choose other attributes to modify your variants')}}</small>
                             <div class="h-300px overflow-auto c-scrollbar-light">
 
                                 <div id="jstree"></div>
@@ -936,7 +945,7 @@
                             <br>
                         </div>
                         <div id="variant_informations">
-                            <h3 class="mb-3">Variant Information</h3>
+                            <h3 class="mb-3">{{ translate('Variant Information')}}</h3>
                             <hr>
                             <div class="row mb-3">
                                 <label class="col-md-2 col-from-label">{{translate('Variant SKU')}}</label>
@@ -1049,15 +1058,15 @@
                             </div>
                         </div>
                         <div class="row div-btn">
-                            <button type="button" class="btn btn-primary" id="btn-create-variant">Create variant</button>
+                            <button type="button" class="btn btn-primary" id="btn-create-variant">{{ translate('Create variant') }}</button>
                         </div>
                         <hr>
                         <div id="bloc_variants_created">
                             @if(count($product->getChildrenProductsDesc()) > 0)
                                 @foreach ($product->getChildrenProductsDesc() as $key => $children)
                                     <div data-id="{{ $children->id }}">
-                                        <h3 class="mb-3">Variant Information {{ $key + 1}}</h3>
-                                        <i class="fa-regular fa-circle-xmark fa-lx delete-variant" data-id={{ $children->id }} style="font-size: 16px; float: right; margin-top: -35px;" title="delete this variant"></i>
+                                        <h3 class="mb-3">{{ translate('Variant Information')}} {{ $key + 1}}</h3>
+                                        <i class="fa-regular fa-circle-xmark fa-lx delete-variant" data-id={{ $children->id }} @if(app()->getLocale() == "ae") style="font-size: 16px; float: left; margin-top: -35px;" @else style="font-size: 16px; float: right; margin-top: -35px;" @endif title="delete this variant"></i>
                                         <hr>
                                         <div class="row mb-3">
                                             <label class="col-md-2 col-from-label">{{translate('Variant SKU')}}</label>
@@ -1070,7 +1079,7 @@
                                             <div class="col-md-10">
                                                 <div class="custom-file mb-3">
                                                     <input type="file" class="custom-file-input photos_variant" data-count = "{{ count($children->getImagesProduct()) }}" name="variant[photo][{{ $children->id }}][]" id="photos_variant{{ $key }}" accept=".jpeg, .jpg, .png" multiple>
-                                                    <label class="custom-file-label" for="photos_variant{{ $key }}">Choose files</label>
+                                                    <label class="custom-file-label" for="photos_variant{{ $key }}">{{ translate('Choose files')}}</label>
                                                 </div>
                                                 @if(count($children->getImagesProduct()) > 0)
                                                     <div class="row mt-3 uploaded_images">
@@ -1413,13 +1422,13 @@
                                 <div class="row">
                                     <div class="col-5">
                                         <div class="form-group">
-                                            <label for="exampleInputEmail1">Document name</label>
+                                            <label for="exampleInputEmail1">{{ translate("Document name") }}</label>
                                             <input type="text" class="form-control" name="old_document_names[{{ $document->id }}]" value="{{ $document->document_name }}">
                                         </div>
                                     </div>
                                     <div class="col-5">
                                         <div class="form-group">
-                                            <label for="exampleInputEmail{{ $key }}">Document</label>
+                                            <label for="exampleInputEmail{{ $key }}">{{ translate("Document") }}</label>
                                             <div class="input-group padding-name-document">
                                                 <div class="custom-file">
                                                 <input type="file" name="old_documents[{{ $document->id }}]" accept=".pdf,.png,.jpg,.pln,.dwg,.dxf,.gsm,.stl,.rfa,.rvt,.ifc,.3ds,.max,.obj,.fbx,.skp,.rar,.zip" class="custom-file-input file_input" id="inputGroupFile{{ $key }}" aria-describedby="inputGroupFileAddon04">
@@ -1443,13 +1452,13 @@
                             <div class="row">
                                 <div class="col-5">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail1">Document name</label>
+                                        <label for="exampleInputEmail1">{{ translate("Document name") }}</label>
                                         <input type="text" class="form-control" name="document_names[]">
                                     </div>
                                 </div>
                                 <div class="col-5">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail1">Document</label>
+                                        <label for="exampleInputEmail1">{{ translate("Document") }}</label>
                                         <div class="input-group padding-name-document">
                                             <div class="custom-file">
                                             <input type="file" name="documents[]" accept=".pdf,.png,.jpg,.pln,.dwg,.dxf,.gsm,.stl,.rfa,.rvt,.ifc,.3ds,.max,.obj,.fbx,.skp,.rar,.zip" class="custom-file-input file_input" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
@@ -1503,7 +1512,7 @@
             </div>
             <div class="col-12">
                 <div class="mar-all text-right mb-2">
-                    <button type="submit" class="btn btn-primary">Edit Product</button>
+                    <button type="submit" class="btn btn-primary">{{ translate('Edit Product') }}</button>
                 </div>
             </div>
         </div>
@@ -1612,7 +1621,7 @@
                 // });
 
                 var title = "{{ translate('Product Media') }}";
-                var message = '<b>Following files exceed 2MB limit:</b> ' + exceedingFiles.join(', ');
+                var message = '<b> {{ translate("Following files exceed 2MB limit: ") }} </b> ' + exceedingFiles.join(', ');
 
                 $('#title-modal').text(title);
                 $('#text-modal').html(message);
@@ -1690,7 +1699,7 @@
                         // });
 
                         var title = "{{ translate('Product Media') }}";
-                        var message = '<b>The dimensions of the images have exceeded both a width and height of 1280 pixels: </b> ' + exceedingFiles.join(', ');
+                        var message = '<b> {{ translate("The dimensions of the images have exceeded both a width and height of 1280 pixels: ") }} </b> ' + exceedingFilesDimension.join(', ');
 
                         $('#title-modal').text(title);
                         $('#text-modal').html(message);
@@ -1846,7 +1855,7 @@
                 // });
 
                 var title = "{{ translate('Product Media') }}";
-                var message = '<b>Following files exceed 512Ko limit:</b> ' + exceedingFiles.join(', ');
+                var message = '<b>{{ translate("Following files exceed 512Ko limit: ") }}</b> ' + exceedingFiles.join(', ');
 
                 $('#title-modal').text(title);
                 $('#text-modal').html(message);
@@ -1924,7 +1933,7 @@
                         // });
 
                         var title = "{{ translate('Product Media') }}";
-                        var message = '<b>Please upload images with dimensions between 300px and 400px for both width and height:</b> ' + exceedingFilesDimension.join(', ');
+                        var message = '<b>{{ translate("Please upload images with dimensions between 300px and 400px for both width and height: ")}}</b> ' + exceedingFilesDimension.join(', ');
 
                         $('#title-modal').text(title);
                         $('#text-modal').html(message);
@@ -2112,2386 +2121,6 @@
 <script>
     var previewUrlBase  = "{{ route('seller.product.preview', ['slug' => 'PLACEHOLDER']) }}";
 </script>
-{{-- <script type="text/javascript">
-    function submitForm() {
-        var input = $('#nameProduct');
-        input.removeClass('error'); // Add error class
-        if (!input.val().trim()) {
-                input.addClass('error'); // Add error class
-                 // Show SweetAlert2 message
-                 Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Please enter a product name!'
-                });
-                return ;
-            }
-        const formData = new FormData(document.getElementById('choice_form'));
-
-        fetch('{{route("seller.product.tempStore")}}', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Replace 'PLACEHOLDER' with the actual slug from the response
-                var previewUrl = previewUrlBase.replace('PLACEHOLDER', data.data.slug);
-
-                // Open the URL in a new tab
-                window.open(previewUrl, '_blank');
-            }
-        });
-    }
-
-    $(document).ready(function() {
-        @if(count($product->getChildrenProducts()) > 0)
-            $('#variant_informations').show();
-        @else
-            $('#variant_informations').hide();
-        @endif
-
-        @if(count($product->getChildrenProducts()) > 0)
-            $('#btn-create-variant').show();
-        @else
-            $('#btn-create-variant').hide();
-        @endif
-
-        $('body #bloc_pricing_configuration_variant').hide();
-        $('body #bloc_sample_pricing_configuration_variant').hide();
-        $('body .btn-variant-pricing').hide();
-        var numbers_variant = "{{ count($product->getChildrenProducts()) }}";
-        numbers_variant = parseInt(numbers_variant);
-        var today = moment().startOf("day");
-        var initial_attributes = $('#attributes').val();
-        Array.prototype.diff = function(a) {
-            return this.filter(function(i) {return a.indexOf(i) < 0;});
-        };
-
-        function getCategorySelected(){
-            if (to) {
-                clearTimeout(to);
-            }
-            to = setTimeout(function() {
-                @if($categorie != null)
-                    var v = "{{ $categorie->name }}";
-                @else
-                    var v = ""
-                @endif
-                if (v === "") {
-                    lastSearchTerm = null;
-                        // Explicitly reset the URL for the initial data load
-                    $('#jstree').jstree(true).settings.core.data.url = "{{ route('seller.categories.jstree') }}";
-
-                    $('#jstree').jstree(true).settings.core.data.data = function(node) {
-                        return {
-                            "id": node.id
-                        };
-                    },
-                    $('#jstree').jstree(false, true).refresh(); // Refresh the tree to load initial data
-                } else {
-                    lastSearchTerm = v;
-                    $.ajax({
-                        url: "{{ route('seller.categories.jstreeSearch') }}", // Your actual API endpoint
-                        type: 'GET', // Or 'POST', depending on your API
-                        dataType: 'json', // Expected data format from API
-                        data: {
-                            searchTerm: v // Send the search term to your API
-                        },
-                        success: function(response) {
-                            console.log(response);
-                            // Assuming 'response' contains the data to update the jstree
-                            // You will need to process 'response' to fit your jstree's data format
-
-                            // Example: clear the existing jstree and populate with new data
-                            $('#jstree').jstree(true).settings.core.data = response;
-                            $('#jstree').jstree(true).refresh();
-                        },
-                        error: function(xhr, status, error) {
-                            console.error("Error during search API call:", status, error);
-                        }
-                    });
-                }
-            }, 250);
-        }
-
-        getCategorySelected();
-
-        //activate variant option
-        $('body input[name="activate_attributes"]').on('change', function() {
-            if (!$('body input[name="activate_attributes"]').is(':checked')) {
-                $('body #attributes').val('');
-                $('body #attributes').prop('disabled', true);
-                $('#variant_informations').hide();
-                $('#btn-create-variant').hide();
-                $('body #sku_product_product').show();
-                $('body #bloc_variants_created').hide();
-                AIZ.plugins.bootstrapSelect('refresh');
-            } else {
-                var category_choosen = $("#selected_parent_id").val();
-                if (category_choosen != "1") {
-                    if ($('#attributes option').length > 0) {
-                        $('body #attributes').prop('disabled', false);
-                        $('#variant_informations').show();
-                        $('body #sku_product_product').hide();
-                        $('body #product_sk').val(null);
-                        $('body #stock_qty_warning').val(null);
-                        $('#btn-create-variant').show();
-                        $('.div-btn').show();
-                        AIZ.plugins.bootstrapSelect('refresh');
-                    } else {
-                        $('body input[name="activate_attributes"]').prop('checked', false);
-                        swal(
-                            'Cancelled',
-                            "You are unable to enable the variant option because the selected category lacks any attributes.",
-                            'error'
-                        )
-                    }
-                } else {
-                    $('body input[name="activate_attributes"]').prop('checked', false);
-                    swal(
-                            'Cancelled',
-                            'Select a category before activating the variant option.',
-                            'error'
-                        )
-                }
-            }
-        });
-
-        //Check length short description
-        $('#short_description').on('keyup', function(event) {
-            var currentLength = $(this).val().length;
-            var maxCharacters = 512;
-            let charactersLeft = maxCharacters - currentLength;
-
-            // Check if the length is greater than the limit
-            if (currentLength > maxCharacters) {
-                event.preventDefault();
-                // Trim the text to the allowed limit
-                var trimmedText = $(this).val().substr(0, maxCharacters);
-                $(this).val(trimmedText);
-            }else{
-                var message = "<p>Remaining characters: <span style='color: red'>" + charactersLeft + "</span></p>"
-                $('#charCountShortDescription').html(message);
-            }
-        });
-
-        //Get attribute of category checked
-        $("body").on("click", '.radio-category', function() {
-            var categorie_id = $(this).val();
-
-            $.ajax({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                type:"GET",
-                url:'{{ route('seller.products.getAttributeCategorie') }}',
-                data:{
-                    id: categorie_id
-                },
-                success: function(data) {
-                    if(data.html != ""){
-                        $('#attributes_bloc').html(data.html);
-                    }else{
-                        $('#attributes_bloc').html('<select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" id="attributes" multiple disabled data-placeholder="{{ translate("No attributes found") }}"></select>');
-                        $('body input[name="activate_attributes"]').prop("checked", false);
-                        $('#variant_informations').hide();
-                        $('#variant_informations').hide();
-                        $('body .div-btn').hide();
-                        $('body #bloc_variants_created').hide();
-                    }
-
-                    $('#general_attributes').html(data.html_attributes_generale);
-
-                    AIZ.plugins.bootstrapSelect('refresh');
-                }
-            });
-        });
-
-        //Get value of attribute checked
-        $('body').on('change', '#attributes', function() {
-            var ids_attributes = $(this).val();
-
-            var clicked = ids_attributes.diff( initial_attributes );
-            if(clicked.length == 0){
-                clicked = initial_attributes.diff( ids_attributes );
-            }
-
-            if(initial_attributes.includes(clicked[0])){
-                initial_attributes.splice(initial_attributes.indexOf(clicked[0]), 1);
-            }else{
-                initial_attributes.push(clicked[0]);
-            }
-
-            var allValues = $('#attributes option').map(function() {
-                return $(this).val();
-            }).get();
-
-            $.ajax({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                type:"GET",
-                url:'{{ route('seller.products.getAttributes') }}',
-                data:{
-                    ids: clicked,
-                    id_variant: numbers_variant,
-                    selected: ids_attributes,
-                    allValues: allValues
-                },
-                success: function(data) {
-                    var attribute_variant_exist = $('#bloc_attributes > .attribute-variant-' + clicked[0]).length
-                    var numberOfChildren = $('#general_attributes > div').length;
-
-                    if (numberOfChildren == 0) {
-                        $('#general_attributes').append(data.html_attributes_generale);
-                    }else{
-                        var numberOfChildrenOfChildren = $('#general_attributes > div > div').length;
-                        if(numberOfChildrenOfChildren == 0){
-                            $('#general_attributes').append(data.html_attributes_generale);
-                        }else{
-                            $('#general_attributes .attribute-variant-' + clicked[0]).remove();
-                        }
-                    }
-
-                    if(attribute_variant_exist > 0){
-                        $('#bloc_attributes .attribute-variant-' + clicked[0]).remove();
-                        $('#general_attributes .attribute-variant-' + clicked[0]).remove();
-                        $('#general_attributes').append(data.html);
-                    }else{
-                        $('body #bloc_attributes').append(data.html);
-                    }
-
-                    AIZ.plugins.bootstrapSelect('refresh');
-
-                    var count_boolean = 1;
-                    $("#variant_informations > #bloc_attributes:first > div").each(function(index, element) {
-                        $(element).find('.attributes').each(function(index, child_element) {
-                            // Change the attribute name of the current input
-                            if ($(child_element).attr("type") == 'radio') {
-                                $(child_element).parent().parent().find(':radio').each(function(index, radio_element) {
-                                    $(radio_element).attr('name', 'boolean'+count_boolean);
-                                });
-
-                                count_boolean++;
-                            }
-                        });
-                    });
-
-                    $("#bloc_variants_created div").each(function(index, element) {
-                        console.log('not done yet')
-                        if($(element).data('id') != undefined){
-                            console.log('not done')
-                            id_variant = $(element).data('id');
-                            $(element).find('.attributes').each(function(index, element) {
-                                console.log('done')
-                                // Change the attribute name of the current input
-                                if ($(element).attr("name") == undefined) {
-                                    var id_attribute = $(element).data('id_attributes');
-                                    var name = 'variant[attributes]['+ id_variant +']['+ id_attribute +']'
-                                    $(element).attr('name', name);
-                                }
-
-                            });
-
-                            $(element).find('.attributes-units').each(function(index, element) {
-                                if ($(element).attr("name") == undefined) {
-                                    console.log('done done')
-                                    var id_attribute = $(element).data('id_attributes');
-                                    var name = 'unit_variant['+ id_variant +']['+ id_attribute +']'
-                                    $(element).attr('name', name);
-                                }
-                            });
-                        }
-                    });
-
-                    $("#general_attributes div").each(function(index, element) {
-                        $(element).find('.attributes').each(function(index, child_element) {
-                            // Change the attribute name of the current input
-                            if ($(child_element).attr("name") == undefined) {
-                                var id_attribute = $(child_element).data('id_attributes');
-                                var name = 'attribute_generale-'+ id_attribute
-                                $(child_element).attr('name', name);
-                            }
-
-                        });
-
-                        $(element).find('.attributes-units').each(function(index, child_element_units) {
-                            if ($(child_element_units).attr("name") == undefined) {
-                                var id_attribute = $(child_element_units).data('id_attributes');
-                                var name = 'unit_attribute_generale-'+ id_attribute
-                                $(child_element_units).attr('name', name);
-                            }
-                        });
-
-                    });
-
-                    AIZ.plugins.bootstrapSelect('refresh');
-                }
-            });
-
-
-        })
-
-        //Change label of input value by name of file selected
-        $('body').on('change', '.photos_variant', function() {
-            // Get the number of selected files
-            var numFiles = $(this)[0].files.length;
-            var files = this.files;
-            var uploaded_files = $(this).data('count');
-            var all_files_length = files.length + uploaded_files
-
-            // Maximum number of allowed files
-            var maxFiles = 10;
-            if (all_files_length > maxFiles) {
-                swal(
-                    'Cancelled',
-                    '{{ translate("You can only upload a maximum of 10 files.")}}',
-                    'error'
-                )
-                this.value = ''; // Clear the file input
-            }else if(all_files_length == 0){
-                swal(
-                    'Cancelled',
-                    '{{ translate("You need to select at least one picture.")}}',
-                    'error'
-                )
-                var labelText = '0 file selected';
-                $(this).next('.custom-file-label').html(labelText);
-            }else if( (all_files_length <= maxFiles) && (all_files_length > 0)){
-                // Update the label text accordingly
-                var labelText = numFiles === 1 ? '1 file selected' : numFiles + ' files selected';
-                $(this).next('.custom-file-label').html(labelText);
-            }
-        });
-
-        //Create variant when click on button create variant
-        $('body').on('click', '#btn-create-variant', function() {
-            // Clone the original div
-            var clonedDiv = $('#variant_informations').clone();
-
-            // Add some unique identifier to the cloned div (optional)
-            clonedDiv.attr('class', 'clonedDiv');
-            clonedDiv.attr('data-id', numbers_variant);
-            // Disable all input elements in the cloned div
-            //clonedDiv.find('input').prop('readonly', true);
-
-            // Append the cloned div to the container
-            var count = numbers_variant + 1;
-            //add attribute name for each input cloned
-            var html_to_add = '<div style="float: right; margin-top: -35px"><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
-            clonedDiv.find('h3').after(html_to_add);
-            //clonedDiv.find('.fa-circle-xmark').hide();
-            clonedDiv.find('.fa-circle-check').hide();
-            clonedDiv.find('#btn-add-pricing-variant').hide();
-            clonedDiv.find('div.row').each(function() {
-                // Check if the div has display:none set
-                if ($(this).css('display') === 'none') {
-                    // If it's set to display:none, change it to its default value
-                    $(this).css('display', '');
-                }
-            });
-            clonedDiv.find('.sku').attr('name', 'sku-' + numbers_variant);
-            clonedDiv.find('.sku').prop('readonly', true);
-            clonedDiv.find('.vat_sample').attr('name', 'vat_sample-' + numbers_variant);
-            clonedDiv.find('.sample_description').attr('name', 'sample_description-' + numbers_variant);
-            clonedDiv.find('.sample_price').attr('name', 'sample_price-' + numbers_variant);
-            clonedDiv.find('.sample_description_parent').attr('name', 'sample_description-' + numbers_variant);
-            clonedDiv.find('.sample_price_parent').attr('name', 'sample_price-' + numbers_variant);
-            clonedDiv.find('.photos_variant').attr('name', 'photos_variant-' + numbers_variant + '[]');
-            clonedDiv.find('.photos_variant').attr('id', 'photos_variant-' + numbers_variant);
-            clonedDiv.find('.custom-file-label').attr('for', 'photos_variant-' + numbers_variant);
-            clonedDiv.find('.variant-pricing').attr('name', 'variant-pricing-' + numbers_variant);
-            clonedDiv.find('.variant-pricing').attr('data-variant', numbers_variant);
-            clonedDiv.find('.variant-sample-pricing').attr('name', 'variant-sample-pricing-' + numbers_variant);
-            clonedDiv.find('.variant-published').attr('name', 'variant-published-' + numbers_variant);
-            clonedDiv.find('.min-qty-variant').each(function(index, element) {
-                $(element).attr('name', 'variant_pricing-from' + numbers_variant + '[from][]');
-            });
-            clonedDiv.find('.max-qty-variant').each(function(index, element) {
-                $(element).attr('name', 'variant_pricing-from' + numbers_variant + '[to][]');
-            });
-            clonedDiv.find('.unit-price-variant').each(function(index, element) {
-                $(element).attr('name', 'variant_pricing-from' + numbers_variant + '[unit_price][]');
-            });
-            clonedDiv.find('.discount_percentage-variant').each(function(index, element) {
-                 $(element).attr('name', 'variant_pricing-from' + numbers_variant + '[discount_percentage][]');
-            });
-            clonedDiv.find('.discount_amount-variant').each(function(index, element) {
-                 $(element).attr('name', 'variant_pricing-from' + numbers_variant + '[discount_amount][]');
-            });
-            clonedDiv.find('.discount-range-variant').each(function(index, element) {
-                $(element).attr('name', 'variant_pricing-from' + numbers_variant + '[discount_range][]');
-                $(element).daterangepicker({
-                    timePicker: true,
-                    autoUpdateInput: false,
-                    minDate: today,
-                    locale: {
-                        format: 'DD-MM-Y HH:mm:ss',
-                        separator : " to ",
-                    },
-                });
-
-                var format = 'DD-MM-Y HH:mm:ss';
-                var separator = " to ";
-                $(element).on("apply.daterangepicker", function (ev, picker) {
-                    $(this).val(
-                        picker.startDate.format(format) +
-                            separator +
-                            picker.endDate.format(format)
-                    );
-                });
-            });
-            clonedDiv.find('.variant-shipping').attr('name', 'variant-shipping-' + numbers_variant);
-            clonedDiv.find('.variant-shipping').attr('data-id', numbers_variant);
-            clonedDiv.find('.stock-warning').attr('name', 'stock-warning-' + numbers_variant);
-            clonedDiv.find('.discount_type-variant').each(function(index, element) {
-                $(element).attr('name', 'variant_pricing-from' + numbers_variant + '[discount_type][]');
-                $('#variant_informations').find('.discount_type-variant').each(function(key, element_original) {
-                    if(index == key){
-                        $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
-                    }
-                })
-            });
-            clonedDiv.find('.attributes').each(function(index, element) {
-                // Retrieve the data-id_attributes value of the current input
-                var dataIdValue = $(element).data('id_attributes');
-                var value= 0;
-                if($(element).attr('data-type')){
-                    $('#variant_informations').find('.color').each(function(key, element_original) {
-                        if($(element_original).data('id_attributes') == dataIdValue){
-                            value = $(element_original).val();
-                        }
-                    })
-
-                    $(element).val(value);
-                }
-
-                // Change the attribute name of the current input
-                $(element).attr('name', 'attributes-' + dataIdValue + '-' + numbers_variant);
-            });
-
-            clonedDiv.find('.attributes-units').each(function(index, element) {
-                // Retrieve the data-id_attributes value of the current input
-                var dataIdValue = $(element).data('id_attributes');
-
-                // Change the attribute name of the current input
-                $(element).attr('name', 'attributes_units-' + dataIdValue + '-' + numbers_variant);
-                $('#variant_informations').find('.attributes-units').each(function(key, element_original) {
-                    if(index == key){
-                        $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
-                    }
-                })
-            });
-
-            clonedDiv.find('.variant-sample-available').attr('name', 'variant-sample-available' + numbers_variant);
-            clonedDiv.find('.variant-sample-pricing').attr('name', 'variant-sample-pricing' + numbers_variant);
-            clonedDiv.find('.variant-sample-pricing').attr('data-id_newvariant', numbers_variant);
-            clonedDiv.find('.variant-sample-shipping').attr('name', 'variant-sample-shipping' + numbers_variant);
-            clonedDiv.find('.variant-sample-shipping').attr('data-id_new_variant', numbers_variant);
-
-            clonedDiv.find('.min-qty-shipping').each(function(index, element) {
-                $(element).attr('name', 'variant_shipping-' + numbers_variant + '[from][]');
-            });
-
-            clonedDiv.find('.max-qty-shipping').each(function(index, element) {
-                $(element).attr('name', 'variant_shipping-' + numbers_variant + '[to][]');
-            });
-
-            var id_shipper = 0;
-            clonedDiv.find('.shipper').each(function(index, element) {
-                $(element).attr('name', 'variant_shipping-' + numbers_variant + '[shipper]['+ id_shipper +'][]');
-                $('#variant_informations #table_shipping_configuration').find('.shipper').each(function(key, element_original) {
-                    if(index == key){
-                        $(element_original).val().forEach(value => {
-                            $(element).find('option[value="' + value + '"]').prop('selected', true);
-                        });
-                    }
-                })
-
-                id_shipper++;
-            });
-
-            clonedDiv.find('.estimated_order').each(function(index, element) {
-                $(element).attr('name', 'variant_shipping-' + numbers_variant + '[estimated_order][]');
-            });
-
-            clonedDiv.find('.estimated_shipping').each(function(index, element) {
-                $(element).attr('name', 'variant_shipping-' + numbers_variant + '[estimated_shipping][]');
-            });
-
-            clonedDiv.find('.paid').each(function(index, element) {
-                $(element).attr('name', 'variant_shipping-' + numbers_variant + '[paid][]');
-                $('#variant_informations #table_shipping_configuration').find('.paid').each(function(key, element_original) {
-                    if(index == key){
-                        $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
-                    }
-                })
-            });
-
-            clonedDiv.find('.vat_shipping').each(function(index, element) {
-                $(element).attr('name', 'variant_shipping-' + numbers_variant + '[vat_shipping][]');
-            });
-
-            clonedDiv.find('.shipping_charge').each(function(index, element) {
-                $(element).attr('name', 'variant_shipping-' + numbers_variant + '[shipping_charge][]');
-                $('#variant_informations #table_shipping_configuration').find('.shipping_charge').each(function(key, element_original) {
-                    if(index == key){
-                        $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
-                    }
-                })
-            });
-
-            clonedDiv.find('.flat_rate_shipping').each(function(index, element) {
-                $(element).attr('name', 'variant_shipping-' + numbers_variant + '[flat_rate_shipping][]');
-            });
-
-            clonedDiv.find('.charge_per_unit_shipping').each(function(index, element) {
-                $(element).attr('name', 'variant_shipping-' + numbers_variant + '[charge_per_unit_shipping][]');
-            });
-
-            clonedDiv.find('.shipper_sample').each(function(index, element) {
-                $(element).attr('name', 'variant_shipper_sample-' + numbers_variant);
-                $('#variant_informations #table_sample_configuration').find('.shipper_sample').each(function(key, element_original) {
-                    if(index == key){
-                        $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
-                    }
-                })
-            });
-
-            clonedDiv.find('.paid_sample').each(function(index, element) {
-                $(element).attr('name', 'paid_sample-' + numbers_variant);
-                $('#variant_informations #table_sample_configuration').find('.paid_sample').each(function(key, element_original) {
-                    if(index == key){
-                        $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
-                    }
-                })
-            });
-
-            clonedDiv.find('.estimated_sample').attr('name', 'estimated_sample-' + numbers_variant);
-            clonedDiv.find('.estimated_shipping_sample').attr('name', 'estimated_shipping_sample-' + numbers_variant);
-            clonedDiv.find('.shipping_amount').attr('name', 'shipping_amount-' + numbers_variant);
-
-            clonedDiv.find('.delete_shipping_canfiguration').attr('data-variant-id', numbers_variant);
-            clonedDiv.find('.btn-add-shipping').attr('data-variant-id', numbers_variant);
-            clonedDiv.find('.btn-add-pricing').attr('data-newvariant-id', numbers_variant);
-            clonedDiv.find('.delete_pricing_canfiguration').attr('data-newvariant-id', numbers_variant);
-
-            $('#bloc_variants_created').prepend(clonedDiv);
-            var divId = "#bloc_variants_created";
-
-            // Get the length of all h3 tags under the specific div
-            var h3Count = $(divId + " h3").length;
-
-            // Loop through each h3 tag and display its order
-            $(divId + " h3").each(function(index) {
-                var order = h3Count - index; // Number in descending order
-                $(this).text("Variant Information  " + order);
-            });
-            numbers_variant++;
-        });
-
-        //enabled all input under specific variant to edit
-        $('body').on('click', '.fa-pen-to-square', function(){
-            $(this).parent().find('input').prop('readonly', false);
-            $(this).parent().find('.fa-circle-xmark').show();
-            $(this).parent().find('#btn-add-pricing-variant').show();
-            $(this).parent().find('.fa-pen-to-square').hide();
-            $(this).parent().find('.fa-circle-check').show();
-        })
-
-        //disabled all input under specific variant to edit
-        $('body').on('click', '.fa-circle-check', function(){
-            $(this).parent().find('input').prop('readonly', true);
-            $(this).parent().find('.fa-circle-xmark').hide();
-            $(this).parent().find('#btn-add-pricing-variant').hide();
-            $(this).parent().find('.fa-pen-to-square').show();
-            $(this).parent().find('.fa-circle-check').hide();
-        })
-
-        $('body').on('change', '.variant-pricing', function(){
-            if ($(this).is(':not(:checked)')) {
-                var is_variant = $(this).data("variant");
-                var old_variant = $(this).data("old_variant");
-                var clonedElement = $("#table_pricing_configuration").clone();
-                clonedElement.find('.min-qty').each(function(index, element) {
-                    $(element).removeClass("min-qty").addClass("min-qty-variant");
-                    if(is_variant != undefined){
-                        $(element).attr('name', 'variant_pricing-from' + is_variant + '[from][]');
-                    }else if(old_variant != undefined){
-                        $(element).attr('name', 'variant[from][' + old_variant + '][]');
-                    }else{
-                        $(element).removeAttr("name");
-                    }
-                });
-                clonedElement.find('.max-qty').each(function(index, element) {
-                    $(element).removeClass("max-qty").addClass("max-qty-variant");
-                    if(is_variant != undefined){
-                        $(element).attr('name', 'variant_pricing-from' + is_variant + '[to][]');
-                    }else if(old_variant != undefined){
-                        $(element).attr('name', 'variant[to][' + old_variant + '][]');
-                    }else{
-                        $(element).removeAttr("name");
-                    }
-                });
-                clonedElement.find('.discount_percentage').each(function(index, element) {
-                    $(element).removeClass("discount_percentage").addClass("discount_percentage-variant");
-                    if(is_variant != undefined){
-                        $(element).attr('name', 'variant_pricing-from' + is_variant + '[discount_percentage][]');
-                    }else if(old_variant != undefined){
-                        $(element).attr('name', 'variant[discount_percentage][' + old_variant + '][]');
-                    }else{
-                        $(element).removeAttr("name");
-                    }
-                });
-                clonedElement.find('.discount_amount').each(function(index, element) {
-                    $(element).removeClass("discount_amount").addClass("discount_amount-variant");
-                    if(is_variant != undefined){
-                        $(element).attr('name', 'variant_pricing-from' + is_variant + '[discount_amount][]');
-                    }else if(old_variant != undefined){
-                        $(element).attr('name', 'variant[discount_amount][' + old_variant + '][]');
-                    }else{
-                        $(element).removeAttr("name");
-                    }
-                });
-                clonedElement.find('.discount-range').each(function(index, element) {
-                    $(element).daterangepicker({
-                        timePicker: true,
-                        autoUpdateInput: false,
-                        minDate: today,
-                        locale: {
-                            format: 'DD-MM-Y HH:mm:ss',
-                            separator : " to ",
-                        },
-                    });
-
-                    var format = 'DD-MM-Y HH:mm:ss';
-                    var separator = " to ";
-                    $(element).on("apply.daterangepicker", function (ev, picker) {
-                        $(this).val(
-                            picker.startDate.format(format) +
-                                separator +
-                                picker.endDate.format(format)
-                        );
-                    });
-                    $(element).removeClass("discount-range").addClass("discount-range-variant");
-
-                    if(is_variant != undefined){
-                        $(element).attr('name', 'variant_pricing-from' + is_variant + '[discount_range][]');
-                    }else if(old_variant != undefined){
-                        $(element).attr('name', 'variant[date_range_pricing][' + old_variant + '][]');
-                    }else{
-                        $(element).removeAttr("name");
-                    }
-                });
-                clonedElement.find('.unit-price-variant').each(function(index, element) {
-                    $(element).removeClass("unit-price").addClass("unit-price-variant");
-                    if(is_variant != undefined){
-                        $(element).attr('name', 'variant_pricing-from' + is_variant + '[unit_price][]');
-                    }else if(old_variant != undefined){
-                        $(element).attr('name', 'variant[unit_price][' + old_variant + '][]');
-                    }else{
-                        $(element).removeAttr("name");
-                    }
-                });
-                clonedElement.find('.discount_type').each(function(index, element) {
-                    $(element).removeClass("discount_type").addClass("discount_type-variant");
-                    $(element).removeClass("aiz-selectpicker")
-                    if(is_variant != undefined){
-                        $(element).attr('name', 'variant_pricing-from' + is_variant + '[discount_type][]');
-                    }else if(old_variant != undefined){
-                        $(element).attr('name', 'variant[discount_type][' + old_variant + '][]');
-                    }else{
-                        $(element).removeAttr("name");
-                    }
-                    $('#bloc_pricing_configuration').find('.discount_type').each(function(key, element_original) {
-                        if(index == key){
-                            $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
-                        }
-                    })
-                });
-
-                if(is_variant != undefined){
-                    clonedElement.find('.btn-add-pricing').attr('data-newvariant-id', is_variant);
-                }else if(old_variant != undefined){
-                    clonedElement.find('.btn-add-pricing').attr('data-id_variant', old_variant);
-                    clonedElement.find('.delete_pricing_canfiguration').attr('data-pricing_id', old_variant);
-                }
-
-
-
-                $(this).parent().parent().parent().find('.bloc_pricing_configuration_variant').show();
-                $(this).parent().parent().parent().find('.bloc_pricing_configuration_variant').append(clonedElement);
-            }else{
-                $(this).parent().parent().parent().find('.bloc_pricing_configuration_variant').empty();
-            }
-        })
-
-        $("#country_selector").countrySelect({
-            responsiveDropdown: true,
-            defaultCountry:"{{ $product->country_code }}"
-        });
-
-        //A text-field for “Product Short Description”. Maximum length is 512 characters
-        $('#summernote').on("summernote.change", function (e) {
-            //Get the text in textarea with tags
-            let htmlContent = $('#summernote').summernote('code');
-            //Extract the text from code summernote
-            let textContent = $(htmlContent).text();
-            let maxLength = 512;
-            let charactersLeft = maxLength - textContent.length;
-
-            //Check if difference between maxlength and text is greater than 0
-            if (charactersLeft >= 0) {
-                if($('#hidden_value').val() != ''){
-                    $('#hidden_value').val('');
-                }
-                var message = "<p>Remaining characters: <span style='color: red'>" + charactersLeft + "</span></p>"
-                $('#charCount').html(message);
-            } else {
-                let trimmedText = '<p>' + textContent.substr(0, maxLength) + '</p>';
-                if($('#hidden_value').val() == ''){
-                    $('#hidden_value').val(trimmedText);
-                }
-                $("#summernote").summernote("code", $('#hidden_value').val());
-            }
-        });
-
-        $('body').on('focusout', '.max-qty', function() {
-            let overlapFound = false; // Flag to track if any overlaps are found
-
-            var valuesMinQtyArray = [];
-            var valuesMaxQtyArray = [];
-            var parent_selector = $(this).parent().parent().parent();
-
-            $(parent_selector).find('.min-qty').each(function() {
-                // Get the value of each input field and push it to the array
-                valuesMinQtyArray.push($(this).val());
-                $(this).css('border-color', '#e2e5ec');
-            });
-
-            $(parent_selector).find('.max-qty').each(function() {
-                // Get the value of each input field and push it to the array
-                valuesMaxQtyArray.push($(this).val());
-                $(this).css('border-color', '#e2e5ec');
-            });
-
-            console.log('valuesMinQtyArray: ', valuesMinQtyArray)
-            console.log('valuesMaxQtyArray: ', valuesMaxQtyArray)
-
-            //check if there is any overlaps
-            for (let i = 0; i < valuesMinQtyArray.length; i++) {
-                var minVal = parseFloat(valuesMinQtyArray[i]); //get current min value to compare with other value
-                var maxVal = parseFloat(valuesMaxQtyArray[i]); //get current max value to compare with other value
-                for (let j = 0; j < valuesMinQtyArray.length; j++) {
-                    if(i == j){
-                        continue;
-                    }else{
-                        var otherMinVal = parseFloat(valuesMinQtyArray[j]);
-                        var otherMaxVal = parseFloat(valuesMaxQtyArray[j]);
-                        var difference = otherMinVal - parseFloat(valuesMaxQtyArray[j - 1]);
-
-                        if(difference > 1){
-                            $('body .min-qty').eq(j).css('border-color', 'red');
-                            $('body .max-qty').eq(j - 1).css('border-color', 'red');
-                            swal(
-                                'Cancelled',
-                                'Ensure that the difference between the minimum and maximum quantities of the preceding interval must be equal to one',
-                                'error'
-                            )
-                            overlapFound = true;
-                        }
-
-                        if (minVal >= otherMinVal && minVal <= otherMaxVal) { //check if min value exist in another interval
-                            $('body .min-qty').eq(i).css('border-color', 'red');
-                            swal(
-                                'Cancelled',
-                                'Overlap found',
-                                'error'
-                            )
-                            overlapFound = true;
-                        }
-
-                        if(maxVal >= otherMinVal && maxVal <= otherMaxVal){ //check if max value exist in another interval
-                            $('body .max-qty').eq(i).css('border-color', 'red');
-                            swal(
-                                'Cancelled',
-                                'Overlap found',
-                                'error'
-                            )
-                            overlapFound = true;
-                        }
-                    }
-                }
-            }
-            // add another ligne in pricing configuration when not any overlaps are found
-        });
-
-        $('#btn-add-pricing-variant').click(() => {
-            var html_to_add = `
-                            <div>
-                                <hr>
-                                <div class="icon-delete-pricing">
-                                    <i class="fa-regular fa-circle-xmark fa-fw fa-2xl"></i>
-                                </div>
-                                <div class="row qty-stock">
-                                    <div class="col-3">
-                                        <div class="form-group">
-                                            <label for="exampleInputEmail1">{{ translate('From Quantity') }}</label>
-                                            <input type="number" class="form-control min-qty-variant">
-                                        </div>
-                                    </div>
-                                    <div class="col-3">
-                                        <div class="form-group">
-                                            <label for="exampleInputEmail1">{{ translate('To Quantity') }}</label>
-                                            <input type="number" class="form-control max-qty-variant">
-                                        </div>
-                                    </div>
-                                    <div class="col-3">
-                                        <div class="form-group">
-                                            <label for="exampleInputEmail1">{{ translate('Unit Price (VAT Exclusive)') }}</label>
-                                            <input type="number" class="form-control unit-price-variant">
-                                        </div>
-                                    </div>
-                                    <div class="col-3">
-                                        <div class="form-group">
-                                            <label for="exampleInputEmail1">{{ translate('Discount(Start/End)') }}</label>
-                                            <input type="text" class="form-control aiz-date-range-variant discount-range-variant" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-format="DD-MM-Y HH:mm:ss" data-separator=" to " autocomplete="off">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-4">
-                                        <div class="form-group">
-                                            <label for="exampleInputEmail1">{{ translate('Discount Type') }}</label>
-                                            <select class="form-control discount_type-variant">
-                                                <option value="">{{translate('Choose type')}}</option>
-                                                <option value="amount" @selected(old('discount_type') == 'amount')>{{translate('Flat')}}</option>
-                                                <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-4">
-                                        <div class="form-group">
-                                            <label for="exampleInputEmail1">{{ translate('Discount Amount') }}</label>
-                                            <input type="number" class="form-control discount_amount-variant">
-                                        </div>
-                                    </div>
-                                    <div class="col-4">
-                                        <div class="form-group">
-                                            <label for="exampleInputEmail1">{{ translate('Discount Percentage') }}</label>
-                                            <input type="number" class="form-control discount_percentage-variant">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            `;
-                // add another bloc in pricing configuration
-                $('#bloc_pricing_configuration_variant').append(html_to_add);
-                //Initialize last date range picker
-                $('#bloc_pricing_configuration_variant .aiz-date-range-variant:last').daterangepicker({
-                    timePicker: true,
-                    autoUpdateInput: false,
-                    minDate: today,
-                    locale: {
-                        format: 'DD-MM-Y HH:mm:ss',
-                        separator : " to ",
-                    },
-                });
-
-                var format = 'DD-MM-Y HH:mm:ss';
-                var separator = " to ";
-                $('#bloc_pricing_configuration_variant .aiz-date-range-variant:last').on("apply.daterangepicker", function (ev, picker) {
-                    $(this).val(
-                        picker.startDate.format(format) +
-                            separator +
-                            picker.endDate.format(format)
-                    );
-                });
-
-                //refresh select discount type
-                AIZ.plugins.bootstrapSelect('refresh');
-
-        });
-
-        $('body').on('focusout', '.unit-price-variant, .sample_price_parent, .sample_price, input[name="sample_price"]', function(){
-            var value = parseFloat(this.value);
-            if (isNaN(value)) {
-                // Reset to 0.00 if the input is not a valid number
-                this.value = '0.00';
-            } else {
-                // Round the value to two decimal places
-                this.value = value.toFixed(2);
-            }
-        })
-
-        $('body').on('click', '.btn-add-pricing', function() {
-            var id_variant = $(this).data('id_variant');
-            var newvariant = $(this).data('newvariant-id');
-
-            if(id_variant != undefined){
-                var html_to_add = `
-                                <tr>
-                                    <td><input type="number" min="1" name="variant[from][`+ id_variant +`][]" class="form-control min-qty" id=""></td>
-                                    <td><input type="number" min="1" name="variant[to][`+ id_variant +`][]" class="form-control max-qty" id=""></td>
-                                    <td><input type="number" name="variant[unit_price][`+ id_variant +`][]" class="form-control unit-price-variant" id=""></td>
-                                    <td><input type="text" class="form-control aiz-date-range discount-range" name="variant[date_range_pricing][`+ id_variant +`][]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
-                                    <td>
-                                        <select class="form-control discount_type" name="variant[discount_type][`+ id_variant +`][]">
-                                            <option value="" selected>{{translate('Choose type')}}</option>
-                                            <option value="amount" @selected(old('discount_type') == 'amount')>{{translate('Flat')}}</option>
-                                            <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="number" class="form-control discount_amount" name="variant[discount_amount][`+ id_variant +`][]"></td>
-                                    <td><input type="number" class="form-control discount_percentage" name="variant[discount_percentage][`+ id_variant +`][]"></td>
-                                    <td>
-                                        <i class="las la-plus btn-add-pricing" data-id_variant="` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_pricing_canfiguration" data-pricing_id="` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
-                                    </td>
-                                </tr>
-                            `;
-            }else if(newvariant != undefined){
-                var html_to_add = `<tr>
-                                    <td><input type="number" min="1" name="variant_pricing-from`+ newvariant +`[from][]" class="form-control min-qty" id=""></td>
-                                    <td><input type="number" min="1" name="variant_pricing-from`+ newvariant +`[to][]" class="form-control max-qty" id=""></td>
-                                    <td><input type="number" step="0.01" min="1" name="variant_pricing-from`+ newvariant +`[unit_price][]" class="form-control unit-price-variant" id=""></td>
-                                    <td><input type="text" class="form-control aiz-date-range discount-range" name="variant_pricing-from`+ newvariant +`[discount_range][]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
-                                    <td>
-                                        <select class="form-control discount_type" name="variant_pricing-from`+ newvariant +`[discount_type][]">
-                                            <option value="" selected>{{translate('Choose type')}}</option>
-                                            <option value="amount" @selected(old('discount_type') == 'amount')>{{translate('Flat')}}</option>
-                                            <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="number" class="form-control discount_amount" name="variant_pricing-from`+ newvariant +`[discount_amount][]"></td>
-                                    <td><input type="number" class="form-control discount_percentage" name="variant_pricing-from`+ newvariant +`[discount_percentage][]"></td>
-                                    <td>
-                                        <i class="las la-plus btn-add-pricing" data-id_variant="` + newvariant + `" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
-                                    </td>
-                                </tr>`;
-            }else{
-                // Check if the element or any of its parents has the specific Id
-                if ($(this).closest('#variant_informations').length) {
-                    var html_to_add = `
-                                <tr>
-                                    <td><input type="number" min="1" class="form-control min-qty-variant" id=""></td>
-                                    <td><input type="number" min="1" class="form-control max-qty-variant" id=""></td>
-                                    <td><input type="number" step="0.01" min="1" class="form-control unit-price-variant" id=""></td>
-                                    <td><input type="text" class="form-control aiz-date-range discount-range-variant" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
-                                    <td>
-                                        <select class="form-control discount_type-variant">
-                                            <option value="" selected>{{translate('Choose type')}}</option>
-                                            <option value="amount" @selected(old('discount_type') == 'amount')>{{translate('Flat')}}</option>
-                                            <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="number" class="form-control discount_amount-variant"></td>
-                                    <td><input type="number" class="form-control discount_percentage-variant"></td>
-                                    <td>
-                                        <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
-                                    </td>
-                                </tr>
-                            `;
-                }else{
-                    var html_to_add = `
-                                <tr>
-                                    <td><input type="number" min="1" name="from[]" class="form-control min-qty" id=""></td>
-                                    <td><input type="number" min="1" name="to[]" class="form-control max-qty" id=""></td>
-                                    <td><input type="number" step="0.01" min="1" name="unit_price[]" class="form-control unit-price-variant" id=""></td>
-                                    <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
-                                    <td>
-                                        <select class="form-control discount_type" name="discount_type[]">
-                                            <option value="" selected>{{translate('Choose type')}}</option>
-                                            <option value="amount" @selected(old('discount_type') == 'amount')>{{translate('Flat')}}</option>
-                                            <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="number" class="form-control discount_amount" name="discount_amount[]"></td>
-                                    <td><input type="number" class="form-control discount_percentage" name="discount_percentage[]"></td>
-                                    <td>
-                                        <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
-                                    </td>
-                                </tr>
-                            `;
-                }
-            }
-
-            // add another bloc in pricing configuration
-            $(this).parent().parent().parent().append(html_to_add);
-
-            //Initialize last date range picker
-            $(this).parent().parent().parent().find('.aiz-date-range:last').daterangepicker({
-                timePicker: true,
-                autoUpdateInput: false,
-                minDate: today,
-                locale: {
-                    format: 'DD-MM-Y HH:mm:ss',
-                    separator : " to ",
-                },
-            });
-
-            var format = 'DD-MM-Y HH:mm:ss';
-            var separator = " to ";
-            $(this).parent().parent().parent().find('.aiz-date-range:last').on("apply.daterangepicker", function (ev, picker) {
-                $(this).val(
-                    picker.startDate.format(format) +
-                        separator +
-                        picker.endDate.format(format)
-                );
-            });
-
-            //refresh select discount type
-            AIZ.plugins.bootstrapSelect('refresh');
-        });
-
-        $('body').on('click', '.delete_pricing_canfiguration', function(){
-            //remove bloc pricing configuration
-            var current = $(this);
-            var parent = $(this).parent().parent().parent();
-
-            var id_pricing = $(this).data('pricing_id')
-
-            var html_added = `<tr>
-                                    <td><input type="number" name="from[]" class="form-control min-qty" id=""></td>
-                                    <td><input type="number" name="to[]" class="form-control max-qty" id=""></td>
-                                    <td><input type="number" name="unit_price[]" class="form-control unit-price-variant" id=""></td>
-                                    <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
-                                    <td>
-                                        <select class="form-control discount_type" name="discount_type[]">
-                                            <option value="" selected>{{translate('Choose type')}}</option>
-                                            <option value="amount" @selected(old('discount_type') == 'amount')>{{translate('Flat')}}</option>
-                                            <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="number" class="form-control discount_amount" name="discount_amount[]"></td>
-                                    <td><input type="number" class="form-control discount_percentage" name="discount_percentage[]"></td>
-                                    <td>
-                                        <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
-                                    </td>
-                                </tr>`
-            if(id_pricing == undefined){
-                $(this).parent().parent().remove();
-                if(parent.find('tr').length == 0){
-                    parent.append(html_added);
-                }
-            }else{
-                swal({
-                    title: 'Are you sure you want to delete this pricing ?',
-                    type: "warning",
-                    confirmButtonText: 'Delete',
-                    showCancelButton: true
-                })
-                .then((result) => {
-                    if (result.value) {
-                        $.ajax({
-                            url: "{{ route('seller.products.delete_pricing') }}",
-                            type: "GET",
-                            data: {
-                                id: id_pricing
-                            },
-                            cache: false,
-                            dataType: 'JSON',
-                            success: function(dataResult) {
-                                if(dataResult.status != 'failed'){
-                                    swal(
-                                        'Deleted',
-                                        'Deleted successfully',
-                                        'success'
-                                    )
-
-                                    current.parent().parent().remove();
-                                    if(parent.find('tr').length == 0){
-                                        parent.append(html_added);
-                                    }
-
-                                }else{
-                                    swal(
-                                        'Cancelled',
-                                        'Something went wrong.',
-                                        'warning'
-                                    )
-                                }
-                            }
-                        })
-                    } else if (result.dismiss === 'cancel') {
-                        swal(
-                            'Cancelled',
-                            'Deletion successfully reverted.',
-                            'warning'
-                        )
-                    }
-                })
-            }
-
-
-        })
-
-        $('body').on('change', '.discount_type', function(){
-            //enablig or disabling input discount amout or discount percentage
-            if($(this).val() == "amount"){
-                $(this).parent().parent().find('.discount_amount').prop('readonly', false);
-                $(this).parent().parent().find('.discount_percentage').prop('readonly', true);
-                $(this).parent().parent().find('.discount_percentage').val('');
-            }
-            if($(this).val() == "percent"){
-                $(this).parent().parent().find('.discount_amount').prop('readonly', true);
-                $(this).parent().parent().find('.discount_percentage').prop('readonly', false);
-                $(this).parent().parent().find('.discount_amount').val('');
-            }
-        })
-
-        $('body').on('change', '.discount_type-variant', function(){
-            //enablig or disabling input discount amout or discount percentage
-            if($(this).val() == "amount"){
-                $(this).parent().parent().find('.discount_amount-variant').prop('readonly', false);
-                $(this).parent().parent().find('.discount_percentage-variant').prop('readonly', true);
-                $(this).parent().parent().find('.discount_percentage-variant').val('');
-            }
-            if($(this).val() == "percent"){
-                $(this).parent().parent().find('.discount_amount-variant').prop('readonly', true);
-                $(this).parent().parent().find('.discount_percentage-variant').prop('readonly', false);
-                $(this).parent().parent().find('.discount_amount-variant').val('');
-            }
-        })
-
-        let dropifyInput = $('#photoUpload');
-        let originalInput = dropifyInput.clone(true);
-
-        let dropifyInputThumbnail = $('#photoUploadThumbnail');
-        let originalInputThumbnail = dropifyInputThumbnail.clone(true);
-
-        function removeDropify() {
-            dropifyInput.closest('.dropify-wrapper').find('.dropify-clear').remove();
-            dropifyInput.unwrap().siblings().remove();
-            dropifyInput.removeClass('dropify').removeAttr('data-plugin-init');
-            dropifyInput.val('');
-        }
-        function removeDropifyThumbnail() {
-            dropifyInputThumbnail.closest('.dropify-wrapper').find('.dropify-clear').remove();
-            dropifyInputThumbnail.unwrap().siblings().remove();
-            dropifyInputThumbnail.removeClass('dropify').removeAttr('data-plugin-init');
-            dropifyInputThumbnail.val('');
-        }
-
-        function initializeDropify() {
-            dropifyInput.dropify({
-                messages: {
-                    'default': 'Drag and drop a file here or click',
-                    'replace': 'Drag and drop or click to replace',
-                    'remove': 'Remove',
-                    'error': 'Ooops, something wrong happened.'
-                }
-            });
-        }
-        function initializeDropifyThumbnail() {
-            dropifyInputThumbnail.dropify({
-                messages: {
-                    'default': 'Drag and drop a file here or click',
-                    'replace': 'Drag and drop or click to replace',
-                    'remove': 'Remove',
-                    'error': 'Ooops, something wrong happened.'
-                }
-            });
-        }
-
-        initializeDropify();
-        initializeDropifyThumbnail();
-
-        $('body').on('change', '#photoUpload', function() {
-            let files = $(this)[0].files;
-            var old_files =  "{{ count($product->getImagesProduct()) }}";
-            old_files = parseInt(old_files);
-            var new_size = old_files + files.length;
-
-            //$('#dropifyUploadedFiles').empty();
-            if (new_size > 10) {
-                swal(
-                            'Cancelled',
-                            'Maximum 10 photos allowed.',
-                            'error'
-                        )
-                $(this).val('');
-                removeDropify();
-                dropifyInput.replaceWith(originalInput.clone(true));
-                dropifyInput = $('#photoUpload');
-                initializeDropify();
-            } else {
-                let exceedingFiles = [];
-
-                for (let i = 0; i < files.length; i++) {
-                    const fileSizeInMB = files[i].size / (1024 * 1024);
-                    if (fileSizeInMB > 2) {
-                        exceedingFiles.push(files[i].name);
-                    }
-                }
-
-                if (exceedingFiles.length > 0) {
-                    swal(
-                            'Cancelled',
-                            'Following files exceed 2MB limit: ' + exceedingFiles.join(', '),
-                            'error'
-                        )
-                    $(this).val('');
-                    removeDropify();
-                    dropifyInput.replaceWith(originalInput.clone(true));
-                    dropifyInput = $('#photoUpload');
-                    initializeDropify();
-                } else {
-                    let exceedingFilesDimension = [];
-
-                    for (let i = 0; i < files.length; i++) {
-                        let file = files[i];
-                        if (file.type.startsWith('image/')) {
-                            // Create a FileReader object to read the uploaded file
-                            let reader = new FileReader();
-
-                            // Closure to capture the file information
-                            reader.onload = function(event) {
-                                let img = new Image();
-                                img.src = event.target.result;
-
-                                // Check image dimensions after it's loaded
-                                img.onload = function() {
-                                    if (img.width > 1280 || img.height > 1280) {
-                                        exceedingFilesDimension.push(files[i].name);
-                                    }
-                                };
-                            };
-
-                            // Read the file as a data URL
-                            reader.readAsDataURL(file);
-                        }
-                    }
-                    setTimeout(function() {
-                        if (exceedingFilesDimension.length > 0) {
-                            swal(
-                                'Cancelled',
-                                'Following files exceeded 1280px width or height limit: ' + exceedingFilesDimension.join(', '),
-                                'error'
-                            )
-                            $(this).val('');
-                            removeDropify();
-                            dropifyInput.replaceWith(originalInput.clone(true));
-                            dropifyInput = $('#photoUpload');
-                            initializeDropify();
-                        }else{
-                            let uploadedFilesHTML = '';
-                            for (let i = 0; i < files.length; i++) {
-                                let file = files[i];
-                                if (file.type.startsWith('image/')) {
-                                    uploadedFilesHTML += `<div class="col-2"><img src="${URL.createObjectURL(file)}" alt="${file.name}" height="120" width="120" /></div>`; // Display image preview
-                                } else {
-                                    // Display icon for document type
-                                    uploadedFilesHTML += `<li><i class="fa fa-file-text-o"></i> ${file.name}</li>`;
-                                }
-                            }
-
-                            if ($('body #dropifyUploadedFiles').length === 0) {
-                                $("#bloc_photos").append('<div class="row mt-3" id="dropifyUploadedFiles"></div>');
-                                $('body #dropifyUploadedFiles').append(uploadedFilesHTML);
-                            }else{
-                                $('body #dropifyUploadedFiles').append(uploadedFilesHTML);
-                            }
-                        }
-                    }, 500);
-                }
-            }
-        });
-
-        $('body').on('change', '#photoUploadThumbnail', function() {
-            let files = $(this)[0].files;
-            var old_files =  "{{ count($product->getThumbnailsProduct()) }}";
-            old_files = parseInt(old_files);
-            var new_size = old_files + files.length;
-
-            //$('#dropifyUploadedFilesThumbnail').empty();
-            if (new_size > 10) {
-                swal(
-                            'Cancelled',
-                            'Maximum 10 photos allowed.',
-                            'error'
-                        )
-                $(this).val('');
-                removeDropifyThumbnail();
-                dropifyInputThumbnail.replaceWith(dropifyInputThumbnail.clone(true));
-                dropifyInputThumbnail = $('#photoUploadThumbnail');
-                initializeDropifyThumbnail();
-            } else {
-                let exceedingFiles = [];
-
-                for (let i = 0; i < files.length; i++) {
-                    if (files[i].size > 512 * 1024) {
-                        exceedingFiles.push(files[i].name);
-                    }
-                }
-
-                if (exceedingFiles.length > 0) {
-                    swal(
-                            'Cancelled',
-                            'Following files exceed 512Ko limit: ' + exceedingFiles.join(', '),
-                            'error'
-                        )
-                    $(this).val('');
-                    removeDropifyThumbnail();
-                    dropifyInputThumbnail.replaceWith(originalInputThumbnail.clone(true));
-                    dropifyInputThumbnail = $('#photoUploadThumbnail');
-                    initializeDropifyThumbnail();
-                } else {
-                    let exceedingFilesDimension = [];
-
-                    for (let i = 0; i < files.length; i++) {
-                        let file = files[i];
-                        if (file.type.startsWith('image/')) {
-                            // Create a FileReader object to read the uploaded file
-                            let reader = new FileReader();
-
-                            // Closure to capture the file information
-                            reader.onload = function(event) {
-                                let img = new Image();
-                                img.src = event.target.result;
-
-                                // Check image dimensions after it's loaded
-                                img.onload = function() {
-                                    if (img.width > 400 || img.width < 300 || img.height > 400 || img.height < 300) {
-                                        exceedingFilesDimension.push(files[i].name);
-                                    }
-                                };
-                            };
-
-                            // Read the file as a data URL
-                            reader.readAsDataURL(file);
-                        }
-                    }
-
-                    setTimeout(function() {
-                        if (exceedingFilesDimension.length > 0) {
-                            swal(
-                                'Cancelled',
-                                'Please upload images with dimensions between 300px and 400px for both width and height: ' + exceedingFilesDimension.join(', '),
-                                'error'
-                            )
-                            $(this).val('');
-                            removeDropifyThumbnail();
-                            dropifyInputThumbnail.replaceWith(originalInputThumbnail.clone(true));
-                            dropifyInputThumbnail = $('#photoUploadThumbnail');
-                            initializeDropifyThumbnail();
-                        }else{
-
-                            let uploadedFilesHTML = '';
-                            for (let i = 0; i < files.length; i++) {
-                                let file = files[i];
-                                if (file.type.startsWith('image/')) {
-                                    uploadedFilesHTML += `<div class="col-2"><img src="${URL.createObjectURL(file)}" alt="${file.name}" height="120" width="120" /></div>`; // Display image preview
-                                } else {
-                                    // Display icon for document type
-                                    uploadedFilesHTML += `<li><i class="fa fa-file-text-o"></i> ${file.name}</li>`;
-                                }
-                            }
-
-                            if ($('body #dropifyUploadedFilesThumbnail').length == 0) {
-                                $("#bloc_thumbnails").append('<div class="row mt-3" id="dropifyUploadedFilesThumbnail"></div>');
-                                $('body #dropifyUploadedFilesThumbnail').append(uploadedFilesHTML);
-                            }else{
-                                console.log('existe')
-                                $('body #dropifyUploadedFilesThumbnail').append(uploadedFilesHTML);
-                            }
-                        }
-                    }, 500);
-                }
-            }
-        });
-
-        let fileInputCounter = 1;
-
-        $('body').on('click', '.dropify-clear', function(){
-            if($(this).parent().parent().parent().find('#dropifyUploadedFilesThumbnail').length) {
-                $('body #dropifyUploadedFilesThumbnail').empty();
-            }else{
-                $('body #dropifyUploadedFiles').empty();
-            }
-        });
-
-        $('body').on('change', '.file_input', function() {
-            var file = $(this)[0].files[0]; // Get the file object
-            if (file) {
-                var maxSize = 15 * 1024 * 1024; // 15MB in bytes
-                var maxAllUploadedSize = 25 * 1024 * 1024; // 25MB in bytes
-                var fileSize = file.size; // Get the file size in bytes
-                var totalSize = 0;
-
-                if (fileSize > maxSize) {
-                    swal(
-                        'Cancelled',
-                        'File size exceeds 15MB.',
-                        'error'
-                        )
-                } else {
-                    $('.file_input').each(function() {
-                        var files = $(this)[0].files;
-
-                        for (var i = 0; i < files.length; i++) {
-                            totalSize += files[i].size;
-                        }
-                    });
-
-                    console.log('totalSize: ', totalSize)
-
-                    if (totalSize > maxAllUploadedSize) {
-                        // If combined file size exceeds the limit, show an error message or take necessary action
-                        swal(
-                            'Cancelled',
-                            'Total file size exceeds 25MB. Please select smaller files.',
-                            'error'
-                            )
-                        // Reset the file inputs to prevent exceeding the limit
-                        $(this).val('');
-                    } else {
-                        let fileName = $(this).val().split('\\').pop();
-                        $(this).next('.custom-file-label').addClass('selected').html(fileName);
-                    }
-                }
-            } else {
-                console.log('No file selected.');
-            }
-        });
-
-        $('body').on('click', '.add_document', function(){
-            var html_document = `<div class="row">
-                                <div class="col-5">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail">Document name</label>
-                                        <input type="text" class="form-control" name="document_names[]">
-                                    </div>
-                                </div>
-                                <div class="col-5">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail${fileInputCounter}">Document</label>
-                                        <div class="input-group">
-                                            <div class="custom-file">
-                                            <input type="file" name="documents[]" class="custom-file-input file_input" id="exampleInputEmail${fileInputCounter}" accept=".pdf,.png,.jpg,.pln,.dwg,.dxf,.gsm,.stl,.rfa,.rvt,.ifc,.3ds,.max,.obj,.fbx,.skp,.rar,.zip" aria-describedby="inputGroupFileAddon04">
-                                            <label class="custom-file-label" for="exampleInputEmail${fileInputCounter}">Choose file</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-2">
-                                    <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
-                                    <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
-                                </div>
-                            </div>`;
-            $('#documents_bloc').append(html_document);
-            fileInputCounter++;
-        })
-
-        $('body').on('click', '.trash_document', function(){
-            var id_document = $(this).data('id_document');
-
-            if(id_document != undefined){
-                var current = $(this);
-                swal({
-                    title: 'Are you sure you want to delete this document ?',
-                    type: "warning",
-                    confirmButtonText: 'Delete',
-                    showCancelButton: true
-                })
-                .then((result) => {
-                    if (result.value) {
-                        $.ajax({
-                            url: "{{ route('seller.products.delete_image') }}",
-                            type: "GET",
-                            data: {
-                                id: id_document
-                            },
-                            cache: false,
-                            dataType: 'JSON',
-                            success: function(dataResult) {
-                                if(dataResult.status != 'failed'){
-                                    swal(
-                                        'Deleted',
-                                        'Deleted successfully',
-                                        'success'
-                                    )
-                                    current.parent().parent().remove();
-
-                                    var numberOfChildren = $('#documents_bloc > div').length;
-
-                                    if (numberOfChildren == 0) {
-                                        var html_document = `<div class="row">
-                                                            <div class="col-5">
-                                                                <div class="form-group">
-                                                                    <label for="exampleInputEmail">Document name</label>
-                                                                    <input type="text" class="form-control" name="document_names[]">
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-5">
-                                                                <div class="form-group">
-                                                                    <label for="exampleInputEmail${fileInputCounter}">Document</label>
-                                                                    <div class="input-group">
-                                                                        <div class="custom-file">
-                                                                        <input type="file" name="documents[]" class="custom-file-input file_input" id="exampleInputEmail${fileInputCounter}" accept=".jpeg, .jpg, .png" aria-describedby="inputGroupFileAddon04">
-                                                                        <label class="custom-file-label" for="exampleInputEmail${fileInputCounter}">Choose file</label>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-2">
-                                                                <i class="las la-plus add_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
-                                                                <i class="las la-trash trash_document font-size-icon" style="margin-left: 5px; margin-top: 34px;" ></i>
-                                                            </div>
-                                                        </div>`;
-                                        $('#documents_bloc').append(html_document);
-                                        fileInputCounter++;
-                                    }
-                                }
-                            }
-                        })
-                    } else if (result.dismiss === 'cancel') {
-                        swal(
-                            'Cancelled',
-                            'Deletion successfully reverted.',
-                            'warning'
-                        )
-                    }
-                })
-            }else{
-                $(this).parent().parent().remove();
-            }
-        })
-
-        $('body').on('click', '.icon-delete-image', function(){
-            var id_image = $(this).data('image_id');
-
-            if(id_image != undefined){
-                var current = $(this);
-                swal({
-                    title: 'Are you sure you want to delete this picture ?',
-                    type: "warning",
-                    confirmButtonText: 'Delete',
-                    showCancelButton: true
-                })
-                .then((result) => {
-                    if (result.value) {
-                        $.ajax({
-                            url: "{{ route('seller.products.delete_image') }}",
-                            type: "GET",
-                            data: {
-                                id: id_image
-                            },
-                            cache: false,
-                            dataType: 'JSON',
-                            success: function(dataResult) {
-                                if(dataResult.status != 'failed'){
-                                    swal(
-                                        'Deleted',
-                                        'Deleted successfully',
-                                        'success'
-                                    )
-                                    current.parent().remove();
-                                }
-                            }
-                        })
-                    } else if (result.dismiss === 'cancel') {
-                        swal(
-                            'Cancelled',
-                            'Deletion successfully reverted.',
-                            'warning'
-                        )
-                    }
-                })
-            }
-        })
-
-        $('body').on('click', '.delete-variant', function(){
-            if($(this).data('id')){
-                var id_variant = $(this).data('id');
-                var current = $(this);
-                swal({
-                    title: 'Are you sure you want to delete this variant ?',
-                    type: "warning",
-                    confirmButtonText: 'Delete',
-                    showCancelButton: true
-                })
-                .then((result) => {
-                    if (result.value) {
-                        $.ajax({
-                            url: "{{ route('seller.products.delete_variant') }}",
-                            type: "GET",
-                            data: {
-                                id_variant: id_variant
-                            },
-                            cache: false,
-                            dataType: 'JSON',
-                            success: function(dataResult) {
-
-                            }
-                        })
-                    } else if (result.dismiss === 'cancel') {
-                        swal(
-                            'Cancelled',
-                            'Deletion successfully reverted.',
-                            'warning'
-                        )
-                    }
-                })
-            }
-
-            // $(this).parent().parent().remove();
-
-            // var divId = "#bloc_variants_created";
-
-            // // Get the length of all h3 tags under the specific div
-            // var h3Count = $(divId + " h3").length;
-
-
-            // // Loop through each h3 tag and display its order
-            // $(divId + " h3").each(function(index) {
-            //     var order = h3Count - index; // Number in descending order
-            //     $(this).text("Variant Information  " + order);
-            // });
-        })
-
-        //Shipping script
-        $('body').on('click', '#third_party_activate', function() {
-            if ($(this).is(':checked')) {
-                var count_shippers = "{{ count($supported_shippers) }}";
-                count_shippers = parseInt(count_shippers);
-                if(count_shippers == 0){
-                    $('body input[name="activate_third_party"]').prop('checked', false);
-                    swal(
-                            'Cancelled',
-                            "You don't have any warehouse supported by our shippers",
-                            'error'
-                        )
-                }else{
-                    $('#bloc_third_party input[type="number"]').each(function() {
-                        // Change readonly attribute from true to false
-                        $(this).prop('readonly', false);
-                    });
-
-                    $('#bloc_third_party select').each(function() {
-                        // Change readonly attribute from true to false
-                        $(this).prop('disabled', false);
-                    });
-                }
-            }else{
-                $('#bloc_third_party input[type="number"]').each(function() {
-                    // Change readonly attribute from true to false
-                    $(this).prop('readonly', true);
-                });
-
-                $('#bloc_third_party select').each(function() {
-                    // Change readonly attribute from true to false
-                    $(this).prop('disabled', true);
-                });
-
-                $('#bloc_third_party input[type="number"]').val('').prop('readonly', true);
-            }
-        });
-
-        $('#btn-calculate-formules').on('click', function(){
-            var weight = $('#weight').val();
-            var length = $('#length').val();
-            var width = $('#width').val();
-            var height = $('#height').val();
-            var breakable = $('#breakable').val();
-            var min_third_party = $('#min_third_party').val();
-            var max_third_party = $('#max_third_party').val();
-            var unit_third_party = $('#unit_third_party').val();
-
-            if((weight == '') || (length == '') ||(width == '') ||(height == '') ||(min_third_party == '') ||(max_third_party == '')){
-                swal(
-                        'Cancelled',
-                        "Please ensure that all required fields are filled in.",
-                        'error'
-                    )
-            }else{
-                length = parseInt(length);
-                height = parseInt(height);
-                width = parseInt(width);
-                weight = parseInt(weight);
-                var volumetric_weight = (length * height * width) / 5000;
-                var chargeable_weight = 0;
-                var html = '';
-                if(volumetric_weight > weight){
-                    chargeable_weight = volumetric_weight;
-                }else{
-                    chargeable_weight = weight;
-                }
-
-                if(chargeable_weight > 30){
-                    html = '<span style="color: red"> Chargeable Weight = ' + Number(chargeable_weight.toFixed(2)) + ", then not accepted by our shipper </span>"
-                }else{
-                    html = '<span style="color: green"> Chargeable Weight = ' + Number(chargeable_weight.toFixed(2)) + ", then accepted by our shipper </span>"
-                }
-
-
-
-                $('#result_calculate_third_party').html(html);
-            }
-        });
-
-        $('body').on('click', '.btn-add-shipping', function() {
-            var row = $(this).parent().parent().parent().find('tr').length;
-            var id_new_variant = $(this).data('id');
-            var id_variant = $(this).data('id_variant');
-
-            if((id_variant == undefined) && (id_new_variant == undefined)){
-                if ($(this).closest('#variant_informations').length) {
-                    var html_to_add = `
-                                <tr>
-                                    <td><input type="number"  class="form-control min-qty-shipping" id=""></td>
-                                    <td><input type="number"  class="form-control max-qty-shipping" id=""></td>
-                                    <td>
-                                        <select multiple class="form-control shipper" >
-                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
-                                            <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="number" class="form-control estimated_order" ></td>
-                                    <td><input type="number" class="form-control estimated_shipping" ></td>
-                                    <td>
-                                        <select class="form-control paid" >
-                                            <option value="" selected>{{translate('Choose shipper')}}</option>
-                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
-                                            <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <select class="form-control shipping_charge" >
-                                            <option value="" selected>{{translate('Choose shipping charge')}}</option>
-                                            <option value="flat" @selected(old('shipping_charge') == 'flat')>{{translate('Flat-rate regardless of quantity')}}</option>
-                                            <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="number" class="form-control flat_rate_shipping" readonly></td>
-                                    <td><input type="number" class="form-control charge_per_unit_shipping" readonly></td>
-                                    <td>
-                                        <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_shipping_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
-                                    </td>
-                                </tr>
-                            `;
-                }else{
-                    var html_to_add = `
-                                <tr>
-                                    <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id=""></td>
-                                    <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id=""></td>
-                                    <td>
-                                        <select multiple class="form-control shipper" name="shipper[${row}][]">
-                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
-                                            <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="number" class="form-control estimated_order" name="estimated_order[]"></td>
-                                    <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]"></td>
-                                    <td>
-                                        <select class="form-control paid" name="paid[]">
-                                            <option value="" selected>{{translate('Choose shipper')}}</option>
-                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
-                                            <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <select class="form-control shipping_charge" name="shipping_charge[]">
-                                            <option value="" selected>{{translate('Choose shipping charge')}}</option>
-                                            <option value="flat" @selected(old('shipping_charge') == 'flat')>{{translate('Flat-rate regardless of quantity')}}</option>
-                                            <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="number" class="form-control flat_rate_shipping" name="flat_rate_shipping[]" readonly></td>
-                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="charge_per_unit_shipping[]" readonly></td>
-                                    <td>
-                                        <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_shipping_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
-                                    </td>
-                                </tr>
-                            `;
-                }
-            }else if(id_variant != undefined){
-                var html_to_add = `
-                                <tr>
-                                    <td><input type="number" name="variant[from_shipping][` + id_variant + `][]" class="form-control min-qty-shipping" id=""></td>
-                                    <td><input type="number" name="variant[to_shipping][` + id_variant + `][]" class="form-control max-qty-shipping" id=""></td>
-                                    <td>
-                                        <select multiple class="form-control shipper" name="variant[shipper][` + id_variant + `][${row}][]">
-                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
-                                            <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="number" class="form-control estimated_order" name="variant[estimated_order][` + id_variant + `][]"></td>
-                                    <td><input type="number" class="form-control estimated_shipping" name="variant[estimated_shipping][` + id_variant + `][]"></td>
-                                    <td>
-                                        <select class="form-control paid" name="variant[paid][` + id_variant + `][]">
-                                            <option value="" selected>{{translate('Choose shipper')}}</option>
-                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
-                                            <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <select class="form-control shipping_charge" name="variant[shipping_charge][` + id_variant + `][]">
-                                            <option value="" selected>{{translate('Choose shipping charge')}}</option>
-                                            <option value="flat" @selected(old('shipping_charge') == 'flat')>{{translate('Flat-rate regardless of quantity')}}</option>
-                                            <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="number" class="form-control flat_rate_shipping" name="variant[flat_rate_shipping][` + id_variant + `][]" readonly></td>
-                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="variant[charge_per_unit_shipping][` + id_variant + `][]" readonly></td>
-                                    <td>
-                                        <i class="las la-plus btn-add-shipping" data-id_variant="` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_shipping_canfiguration" data-id_variant = "` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
-                                    </td>
-                                </tr>
-                            `;
-            }else if(id_new_variant != undefined){
-                var html_to_add = `
-                                <tr>
-                                    <td><input type="number" name="variant_shipping-${id_new_variant}[from][]" class="form-control min-qty-shipping" id=""></td>
-                                    <td><input type="number" name="variant_shipping-${id_new_variant}[to][]" class="form-control max-qty-shipping" id=""></td>
-                                    <td>
-                                        <select multiple class="form-control shipper" name="variant_shipping-${id_new_variant}[shipper][${row}][]">
-                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
-                                            <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="number" class="form-control estimated_order" name="variant_shipping-${id_new_variant}[estimated_order][]"></td>
-                                    <td><input type="number" class="form-control estimated_shipping" name="variant_shipping-${id_new_variant}[estimated_shipping][]"></td>
-                                    <td>
-                                        <select class="form-control paid" name="variant_shipping-${id_new_variant}[paid][]">
-                                            <option value="" selected>{{translate('Choose shipper')}}</option>
-                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
-                                            <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <select class="form-control shipping_charge" name="variant_shipping-${id_new_variant}[shipping_charge][]">
-                                            <option value="" selected>{{translate('Choose shipping charge')}}</option>
-                                            <option value="flat" @selected(old('shipping_charge') == 'flat')>{{translate('Flat-rate regardless of quantity')}}</option>
-                                            <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="number" class="form-control flat_rate_shipping" name="variant_shipping-${id_new_variant}[flat_rate_shipping][]" readonly></td>
-                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="variant_shipping-${id_new_variant}[charge_per_unit_shipping][]" readonly></td>
-                                    <td>
-                                        <i class="las la-plus btn-add-shipping" data-variant-id="${id_new_variant}" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_shipping_canfiguration" data-variant-id="${id_new_variant}" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
-                                    </td>
-                                </tr>
-                            `;
-            }
-
-            // add another row in shipping configuration
-            $(this).parent().parent().parent().append(html_to_add);
-        });
-
-        $('body').on('click', '.delete_shipping_canfiguration', function(){
-            //remove row in shipping configuration
-            var id_shipping = $(this).data('id');
-            var current_parent = $(this).parent().parent().parent();
-            var current = $(this);
-            var new_variant_id = $(this).data('variant-id');
-            var old_variant_id = $(this).data('id_variant');
-
-            if((id_shipping == undefined) && (new_variant_id == undefined) && (old_variant_id == undefined)){
-                $(this).parent().parent().remove();
-                var count = 0;
-                current.find('.shipper').each(function(index) {
-                    $(this).attr('name', 'shipper[' + count + '][]')
-                    count++
-                });
-            }else{
-
-                swal({
-                    title: 'Are you sure you want to delete this shipping ?',
-                    type: "warning",
-                    confirmButtonText: 'Delete',
-                    showCancelButton: true
-                })
-                .then((result) => {
-                    if (result.value) {
-                        $.ajax({
-                            url: "{{ route('seller.products.delete_shipping') }}",
-                            type: "GET",
-                            data: {
-                                id: id_shipping
-                            },
-                            cache: false,
-                            dataType: 'JSON',
-                            success: function(dataResult) {
-                               if(dataResult.status == 'success'){
-                                current.parent().parent().remove();
-                                swal(
-                                        'Deleted',
-                                        'Deleted successfully',
-                                        'success'
-                                    )
-                                var count =0;
-                                current_parent.find('.shipper').each(function(index) {
-                                    if((new_variant_id == undefined) && (old_variant_id == undefined)){
-                                        $(this).attr('name', 'shipper[' + count + '][]')
-                                    }else if(new_variant_id != undefined){
-                                        $(this).attr('name', 'variant_shipping-' + new_variant_id + '[shipper]['+ count +'][]')
-
-                                    }else if(old_variant_id != undefined){
-                                        $(this).attr('name', 'variant[shipper][' + old_variant_id + ']['+ count +'][]')
-                                    }
-
-                                    count++
-                                });
-                               }else{
-                                swal(
-                                        'Cancelled',
-                                        "Something went wrong.",
-                                        'error'
-                                    )
-                               }
-                            }
-                        })
-                    } else if (result.dismiss === 'cancel') {
-                        swal(
-                            'Cancelled',
-                            'Deletion successfully reverted.',
-                            'warning'
-                        )
-                    }
-                })
-            }
-
-        })
-
-        $('body').on('change', '.shipper', function(){
-            var count_shippers = "{{ count($supported_shippers) }}";
-                count_shippers = parseInt(count_shippers);
-            var selected = $(this).val();
-
-
-
-            if(selected.indexOf('third_party') !== -1){
-                if(count_shippers == 0){
-                    swal(
-                        'Cancelled',
-                        "You cannot choose a third-party option because our shippers are unable to reach the warehouse.",
-                        'error'
-                    )
-
-                    $(this).find("option[value='third_party']").prop('disabled', false);
-                }else{
-                    var weight = $('#weight').val();
-                    var length = $('#length').val();
-                    var width = $('#width').val();
-                    var height = $('#height').val();
-                    var breakable = $('#breakable').val();
-                    var min_third_party = $('#min_third_party').val();
-                    var max_third_party = $('#max_third_party').val();
-                    var unit_third_party = $('#unit_third_party').val();
-                    if((weight == '') || (length == '') ||(width == '') ||(height == '') ||(min_third_party == '') ||(max_third_party == '')){
-                        swal(
-                                'Cancelled',
-                                "Please ensure that all required fields are filled to know all information about your package.",
-                                'error'
-                            )
-                            $(this).find("option[value='third_party']").prop('disabled', false);
-                            $(this).find("option[value='third_party']").prop('selected', false);
-                    }else{
-                        length = parseInt(length);
-                        height = parseInt(height);
-                        width = parseInt(width);
-                        weight = parseInt(weight);
-                        var volumetric_weight = (length * height * width) / 5000;
-                        var chargeable_weight = 0;
-                        var html = '';
-                        if(volumetric_weight > weight){
-                            chargeable_weight = volumetric_weight;
-                        }else{
-                            chargeable_weight = weight;
-                        }
-
-                        if(chargeable_weight > 30){
-                            swal(
-                                'Cancelled',
-                                "Chargeable Weight = " + Number(chargeable_weight.toFixed(2)) + ", then not accepted by our shipper",
-                                'error'
-                            )
-
-                            $(this).find("option[value='third_party']").prop("disabled", true);
-                            $(this).find("option[value='third_party']").prop('selected', false);
-                        }else{
-                            $(this).parent().parent().find('.estimated_shipping').prop('readonly', true);
-                            $(this).parent().parent().find('.shipping_charge').find("option:first").prop("selected", true);
-                            $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly', true);
-                            $(this).parent().parent().find('.charge_per_unit_shipping').val(null);
-                            $(this).parent().parent().find('.paid').val(null);
-                            $(this).parent().parent().find('.estimated_shipping').val(null);
-                            $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', true);
-                            $(this).parent().parent().find('.flat_rate_shipping').val(null);
-                        }
-                    }
-                }
-
-            }
-
-            if(selected.indexOf('vendor') !== -1){
-                $(this).parent().parent().find('.estimated_shipping').prop('readonly', false);
-                $(this).parent().parent().find('.shipping_charge').find("option:first").prop("selected", true);
-                $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly', true);
-                $(this).parent().parent().find('.charge_per_unit_shipping').val(null);
-                $(this).parent().parent().find('.paid').val(null);
-                $(this).parent().parent().find('.estimated_shipping').val(null);
-                $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', true);
-                $(this).parent().parent().find('.flat_rate_shipping').val(null);
-            }
-
-        })
-
-        $('body').on('change', '.paid', function(){
-            var shippers = $(this).parent().parent().find('.shipper').val();
-            if(shippers.indexOf('vendor') !== -1){
-                if($(this).val() != "buyer"){
-                    $(this).parent().parent().find('.shipping_charge').find("option:first").prop("selected", true);
-                    $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly', true);
-                    $(this).parent().parent().find('.charge_per_unit_shipping').val(null);
-                    $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', true);
-                    $(this).parent().parent().find('.flat_rate_shipping').val(null);
-                }
-            }else{
-                swal(
-                        'Cancelled',
-                        "You cannot selected, if you don't selected vendor in shippers",
-                        'error'
-                    )
-            }
-        })
-
-        $('body').on('change', '.shipping_charge', function(){
-            if($(this).parent().parent().find('.paid').val() == 'vendor'){
-                swal(
-                        'Cancelled',
-                        "You cannot choose shipping charge when it is paid by vendor.",
-                        'error'
-                    )
-
-                    $(this).find('option').eq(0).prop('selected', true);
-            }else{
-                if($(this).val() == "flat"){
-                    $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', false);
-                    $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly', true);
-                    $(this).parent().parent().find('.charge_per_unit_shipping').val(null);
-                }else{
-                    $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly', false);
-                    $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', true);
-                    $(this).parent().parent().find('.flat_rate_shipping').val(null);
-                }
-            }
-        })
-
-        $('body').on('change', '.variant-shipping', function(){
-            var id_variant = $(this).data('id_variant');
-            var id = $(this).data('id');
-            if ($(this).is(':not(:checked)')){
-                var clonedDiv = $('#table_shipping_configuration').clone();
-
-                clonedDiv.find('.shipper').each(function(index, element) {
-                    if(id_variant != undefined){
-                        $(element).attr('name', `variant[shipper][` + id_variant + `][` + index + `][]`)
-                    }else if(id != undefined){
-
-                        $(element).attr('name', `variant_shipping-` + id + `[shipper][` + index + `][]`)
-                    }else{
-                        $(element).removeAttr('name');
-                    }
-
-                    $('#shipping_configuration_box #table_shipping_configuration').find('.shipper').each(function(key, element_original) {
-                        if(index == key){
-                            var values = $(element_original).val(); // Array containing values to check
-
-                            $(element).find('option').each(function() {
-                                var optionValue = $(this).val(); // Get value of the option
-
-                                if ($.inArray(optionValue, values) !== -1) {
-                                    $(this).prop('selected', true); // Select the option if value exists in array
-                                }
-                            });
-                        }
-                    })
-                });
-
-                clonedDiv.find('.paid').each(function(index, element) {
-                    if(id_variant != undefined){
-                        $(element).attr('name', `variant[paid][` + id_variant + `][]`)
-                    }else if(id != undefined){
-
-                        $(element).attr('name', `variant_shipping-` + id + `[paid][]`)
-                    }else{
-                        $(element).removeAttr('name');
-                    }
-
-                    $('#shipping_configuration_box #table_shipping_configuration').find('.paid').each(function(key, element_original) {
-                        if(index == key){
-                            $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
-                        }
-                    })
-                });
-
-                clonedDiv.find('.shipping_charge').each(function(index, element) {
-                    if(id_variant != undefined){
-                        $(element).attr('name', `variant[shipping_charge][` + id_variant + `][]`)
-                    }else if(id != undefined){
-
-                        $(element).attr('name', `variant_shipping-` + id + `[shipping_charge][]`)
-                    }else{
-                        $(element).removeAttr('name');
-                    }
-
-                    $('#shipping_configuration_box #table_shipping_configuration').find('.shipping_charge').each(function(key, element_original) {
-                        if(index == key){
-                            $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
-                        }
-                    })
-                });
-
-                if(id_variant != undefined){
-                    clonedDiv.find('.min-qty-shipping').attr('name', `variant[from_shipping][` + id_variant + `][]`)
-                }else if(id != undefined){
-
-                    clonedDiv.find('.min-qty-shipping').attr('name', `variant_shipping-` + id + `[from][]`)
-                }else{
-                    clonedDiv.find('.min-qty-shipping').removeAttr('name');
-                }
-
-                if(id_variant != undefined){
-                    clonedDiv.find('.max-qty-shipping').attr('name', `variant[to_shipping][` + id_variant + `][]`)
-                }else if(id != undefined){
-
-                    clonedDiv.find('.max-qty-shipping').attr('name', `variant_shipping-` + id + `[to][]`)
-                }else{
-                    clonedDiv.find('.max-qty-shipping').removeAttr('name');
-                }
-
-                if(id_variant != undefined){
-                    clonedDiv.find('.estimated_order').attr('name', `variant[estimated_order][` + id_variant + `][]`)
-                }else if(id != undefined){
-
-                    clonedDiv.find('.estimated_order').attr('name', `variant_shipping-` + id + `[estimated_order][]`)
-                }else{
-                    clonedDiv.find('.estimated_order').removeAttr('name');
-                }
-
-                if(id_variant != undefined){
-                    clonedDiv.find('.estimated_shipping').attr('name', `variant[estimated_shipping][` + id_variant + `][]`)
-                }else if(id != undefined){
-
-                    clonedDiv.find('.estimated_shipping').attr('name', `variant_shipping-` + id + `[estimated_shipping][]`)
-                }else{
-                    clonedDiv.find('.estimated_shipping').removeAttr('name');
-                }
-
-                if(id_variant != undefined){
-                    clonedDiv.find('.shipping_charge').attr('name', `variant[shipping_charge][` + id_variant + `][]`)
-                }else if(id != undefined){
-
-                    clonedDiv.find('.shipping_charge').attr('name', `variant_shipping-` + id + `[shipping_charge][]`)
-                }else{
-                    clonedDiv.find('.shipping_charge').removeAttr('name');
-                }
-
-                if(id_variant != undefined){
-                    clonedDiv.find('.flat_rate_shipping').attr('name', `variant[flat_rate_shipping][` + id_variant + `][]`)
-                }else if(id != undefined){
-
-                    clonedDiv.find('.flat_rate_shipping').attr('name', `variant_shipping-` + id + `[flat_rate_shipping][]`)
-                }else{
-                    clonedDiv.find('.flat_rate_shipping').removeAttr('name');
-                }
-
-                if(id_variant != undefined){
-                    clonedDiv.find('.charge_per_unit_shipping').attr('name', `variant[charge_per_unit_shipping][` + id_variant + `][]`)
-                }else if(id != undefined){
-
-                    clonedDiv.find('.charge_per_unit_shipping').attr('name', `variant_shipping-` + id + `[charge_per_unit_shipping][]`)
-                }else{
-                    clonedDiv.find('.charge_per_unit_shipping').removeAttr('name');
-                }
-
-                if(id_variant != undefined){
-                    clonedDiv.find('.btn-add-shipping').attr('data-id_variant', id_variant);
-                    clonedDiv.find('.delete_shipping_canfiguration').attr('data-id_variant', id_variant);
-                }else if(id != undefined){
-                    clonedDiv.find('.btn-add-shipping').attr('data-id', id);
-                    clonedDiv.find('.delete_shipping_canfiguration').attr('data-variant-id', id);
-                }
-
-                $(this).parent().parent().parent().find('#bloc_default_shipping').append(clonedDiv);
-            }else{
-                $(this).parent().parent().parent().find('#bloc_default_shipping').empty();
-            }
-        })
-
-        $('#bloc_third_party input[type="number"], select.calculate').on('input change', function() {
-            var weight = $(this).parent().parent().find('#weight').val();
-            var length = $(this).parent().parent().find('#length').val();
-            var width = $(this).parent().parent().find('#width').val();
-            var height = $(this).parent().parent().find('#height').val();
-            var breakable = $(this).parent().parent().find('#breakable').val();
-            var min_third_party = $(this).parent().parent().find('#min_third_party').val();
-            var max_third_party = $(this).parent().parent().find('#max_third_party').val();
-            var unit_third_party = $(this).parent().parent().find('#unit_third_party').val();
-
-            if((weight == '') || (length == '') ||(width == '') ||(height == '') ||(min_third_party == '') ||(max_third_party == '')){
-                html = '<span style="color: green"> Chargeable Weight = 0, then accepted by our shipper </span>';
-                $('#result_calculate_third_party').html(html);
-            }else{
-                length = parseInt(length);
-                height = parseInt(height);
-                width = parseInt(width);
-                weight = parseInt(weight);
-                var volumetric_weight = (length * height * width) / 5000;
-                var chargeable_weight = 0;
-                var unit = $(this).parent().parent().find('#weight_unit').val();
-                var max = 30;
-                if(unit == "pounds"){
-                    max *= 2.2;
-                }
-                var html = '';
-                if(volumetric_weight > weight){
-                    chargeable_weight = volumetric_weight;
-                }else{
-                    chargeable_weight = weight;
-                }
-
-                if(unit == "pounds"){
-                    chargeable_weight *= 2.2;
-                }
-
-                if(chargeable_weight > max ){
-                    html = '<span style="color: red">Chargeable Weight = ' + Number(chargeable_weight.toFixed(2)) + ", then not accepted by Aramex </span>"
-                }else{
-                    html = '<span style="color: green">Chargeable Weight = ' + Number(chargeable_weight.toFixed(2)) + ", then accepted by Aramex </span>"
-                }
-
-
-
-                $('#result_calculate_third_party').html(html);
-            }
-        });
-
-        //sample script
-        $('body').on('click', '.btn-add-sample', function() {
-            var html_to_add = `
-                                <tr>
-                                    <td>
-                                        <select class="form-control shipper_sample" name="shipper_sample[]">
-                                            <option value="" disabled selected>{{translate('Choose shipper')}}</option>
-                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
-                                            <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
-                                        </select>
-                                    </td>shipping_
-                                    <td><input type="number" class="form-control estimated_sample" name="estimated_sample[]"></td>
-                                    <td><input type="number" class="form-control estimated_shipping_sample" name="estimated_shipping_sample[]"></td>
-                                    <td>
-                                        <select class="form-control paid_sample" name="paid_sample[]">
-                                            <option value="" disabled selected>{{translate('Choose shipper')}}</option>
-                                            <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
-                                            <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="number" class="form-control shipping_amount" name="shipping_amount[]"></td>
-                                    <td>
-                                        <i class="las la-plus btn-add-sample" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_sample_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
-                                    </td>
-                                </tr>
-                            `;
-                // add another row in shipping configuration
-                $(this).parent().parent().parent().append(html_to_add);
-        });
-
-        $('body').on('click', '.delete_sample_canfiguration', function(){
-            //remove row in shipping configuration
-            $(this).parent().parent().remove();
-        })
-
-        $('body').on('change', '.paid_sample', function(){
-            if($(this).val() == "buyer"){
-                $(this).parent().parent().find('.shipping_amount').prop('readonly', false);
-            }else{
-                $(this).parent().parent().find('.shipping_amount').prop('readonly', true);
-                $(this).parent().parent().find('.shipping_amount').val(null);
-            }
-        });
-
-        //show or hide bloc sample variant under specific variant
-        $('body').on('change', '.variant-sample-pricing', function(){
-            if ($(this).is(':not(:checked)')) {
-                var clonedDiv = $('#sample_parent').clone();
-                id_variant = $(this).data('variant');
-                id_new_variant = $(this).data('id_newvariant');
-                if(id_variant != undefined){
-                    clonedDiv.find('.sample_description_parent').attr('name', 'variant[sample_description][' + id_variant + "]");
-                    clonedDiv.find('.sample_price_parent').attr('name', 'variant[sample_price][' + id_variant + "]");
-                }else if(id_new_variant != undefined){
-                    clonedDiv.find('.sample_description_parent').attr('name', 'sample_description-' + id_new_variant);
-                    clonedDiv.find('.sample_price_parent').attr('name', 'sample_price-' + id_new_variant);
-                    clonedDiv.find('.sample_price_parent').attr('readonly', false);
-                }
-                $(this).parent().parent().parent().find('.bloc_sample_pricing_configuration_variant').show();
-                $(this).parent().parent().parent().find('.bloc_sample_pricing_configuration_variant').html(clonedDiv);
-            }else{
-                $(this).parent().parent().parent().find('.bloc_sample_pricing_configuration_variant').empty();
-            }
-        })
-
-        $('body').on('change', '.variant-sample-shipping', function(){
-            if ($(this).is(':not(:checked)')) {
-                var clonedDiv = $('#table_sample_configuration').clone();
-                var paid_sample = $('#table_sample_configuration').find('.paid_sample').val();
-                var shipper_sample = $('#table_sample_configuration').find('.shipper_sample').val();
-                clonedDiv.find('.paid_sample').find('option[value="' + paid_sample + '"]').prop('selected', true);
-                clonedDiv.find('.shipper_sample').find('option[value="' + shipper_sample + '"]').prop('selected', true);
-                if($(this).data('id_old_variant') != undefined){
-                    var id_variant = $(this).data('id_old_variant');
-
-                    clonedDiv.find('.shipper_sample').attr('name', 'variant[shipper_sample][' + id_variant + ']');
-                    clonedDiv.find('.estimated_sample').attr('name', 'variant[estimated_sample][' + id_variant + ']');
-                    clonedDiv.find('.estimated_shipping_sample').attr('name', 'variant[estimated_shipping_sample][' + id_variant + ']');
-                    clonedDiv.find('.paid_sample').attr('name', 'variant[paid_sample][' + id_variant + ']');
-                    clonedDiv.find('.shipping_amount').attr('name', 'variant[shipping_amount][' + id_variant + ']');
-                }else if($(this).data('id_new_variant') != undefined){
-                    var id_variant = $(this).data('id_new_variant');
-
-                    clonedDiv.find('.shipper_sample').attr('name', 'variant_shipper_sample-' + numbers_variant);
-                    clonedDiv.find('.paid_sample').attr('name', 'paid_sample-' + numbers_variant);
-                    clonedDiv.find('.estimated_sample').attr('name', 'estimated_sample-' + numbers_variant);
-                    clonedDiv.find('.estimated_shipping_sample').attr('name', 'estimated_shipping_sample-' + numbers_variant);
-                    clonedDiv.find('.shipping_amount').attr('name', 'shipping_amount-' + numbers_variant);
-                }
-                $(this).parent().parent().parent().find('#bloc-sample-shipping').append(clonedDiv);
-            }else{
-                $(this).parent().parent().parent().find('#bloc-sample-shipping').empty();
-            }
-        })
-
-        $('body').on('change', '.variant-sample-available', function(){
-            if ($(this).is(':checked')) {
-                $(this).parent().parent().parent().parent().find('.variant-sample-pricing').prop('disabled', false);
-                $(this).parent().parent().parent().parent().find('.variant-sample-shipping').prop('disabled', false);
-            }else{
-                $(this).parent().parent().parent().parent().find('.variant-sample-pricing').prop('checked', true);
-                $(this).parent().parent().parent().parent().find('.variant-sample-shipping').prop('checked', true);
-                $(this).parent().parent().parent().parent().find('.variant-sample-pricing').prop('disabled', true);
-                $(this).parent().parent().parent().parent().find('.variant-sample-shipping').prop('disabled', true);
-                $(this).parent().parent().parent().parent().find('.bloc_sample_pricing_configuration_variant').empty();
-                $(this).parent().parent().parent().parent().find('#bloc-sample-shipping').empty();
-            }
-        })
-    });
-</script> --}}
 <script type="text/javascript">
        function submitForm() {
         var input = $('#nameProduct');
@@ -4697,7 +2326,7 @@
                 var trimmedText = $(this).val().substr(0, maxCharacters);
                 $(this).val(trimmedText);
             }else{
-                var message = "<p>Remaining characters: <span style='color: red'>" + charactersLeft + "</span></p>"
+                var message = "<p>{{ translate('Remaining characters:') }} <span style='color: red'>" + charactersLeft + "</span></p>"
                 $('#charCountShortDescription').html(message);
             }
         });
@@ -4944,7 +2573,11 @@
             // Append the cloned div to the container
             var count = numbers_variant + 1;
             //add attribute name for each input cloned
-            var html_to_add = '<div style="float: right; margin-top: -35px"><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
+            @if(app()->getLocale() == "ae")
+                var html_to_add = '<div style="float: left; margin-top: -35px"><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
+            @else
+                var html_to_add = '<div style="float: right; margin-top: -35px"><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
+            @endif
             clonedDiv.find('h3').after(html_to_add);
             //clonedDiv.find('.fa-circle-xmark').hide();
             clonedDiv.find('.fa-circle-check').hide();
@@ -5151,7 +2784,7 @@
             // Loop through each h3 tag and display its order
             $(divId + " h3").each(function(index) {
                 var order = h3Count - index; // Number in descending order
-                $(this).text("Variant Information  " + order);
+                $(this).text("{{translate('Variant Information')}}" + ' ' + order);
             });
             numbers_variant++;
         });
@@ -5471,9 +3104,9 @@
             if(id_variant != undefined){
                 var html_to_add = `
                                 <tr>
-                                    <td><input type="number" min="1" name="variant[from][`+ id_variant +`][]" class="form-control min-qty" id="" placeholder="From QTY"></td>
-                                    <td><input type="number" min="1" name="variant[to][`+ id_variant +`][]" class="form-control max-qty" id="" placeholder="To QTY"></td>
-                                    <td><input type="number" step="0.01" min="1" name="variant[unit_price][`+ id_variant +`][]" class="form-control unit-price-variant" id="" placeholder="Unit Price"></td>
+                                    <td><input type="number" min="1" name="variant[from][`+ id_variant +`][]" class="form-control min-qty" id="" placeholder="{{ translate('From QTY')}}"></td>
+                                    <td><input type="number" min="1" name="variant[to][`+ id_variant +`][]" class="form-control max-qty" id="" placeholder="{{ translate('To QTY')}}"></td>
+                                    <td><input type="number" step="0.01" min="1" name="variant[unit_price][`+ id_variant +`][]" class="form-control unit-price-variant" id="" placeholder="{{ translate('Unit Price')}}"></td>
                                     <td><input type="text" class="form-control aiz-date-range discount-range" name="variant[date_range_pricing][`+ id_variant +`][]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                     <td>
                                         <select class="form-control discount_type" name="variant[discount_type][`+ id_variant +`][]">
@@ -5482,26 +3115,26 @@
                                             <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control discount_amount" name="variant[discount_amount][`+ id_variant +`][]" placeholder="Amount" readonly></td>
+                                    <td><input type="number" class="form-control discount_amount" name="variant[discount_amount][`+ id_variant +`][]" placeholder="{{ translate('Amount')}}" readonly></td>
                                     <td style="width: 19% !important;">
                                         <div class="col-md-9 input-group">
-                                            <input type="number" class="form-control discount_percentage" name="variant[discount_percentage][`+ id_variant +`][]" placeholder="Percentage" readonly>
+                                            <input type="number" class="form-control discount_percentage" name="variant[discount_percentage][`+ id_variant +`][]" placeholder="{{ translate('Percentage')}}" readonly>
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        <i class="las la-plus btn-add-pricing" data-id_variant="` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_pricing_canfiguration" data-pricing_id="` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                        <i class="las la-plus btn-add-pricing" data-id_variant="` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Add another ligne')}}"></i>
+                                        <i class="las la-trash delete_pricing_canfiguration" data-pricing_id="` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne')}}"></i>
                                     </td>
                                 </tr>
                             `;
             }else if(newvariant != undefined){
                 var html_to_add = `<tr>
-                                    <td><input type="number" min="1" name="variant_pricing-from`+ newvariant +`[from][]" class="form-control min-qty" id="" placeholder="From QTY"></td>
-                                    <td><input type="number" min="1" name="variant_pricing-from`+ newvariant +`[to][]" class="form-control max-qty" id="" placeholder="To QTY"></td>
-                                    <td><input type="number" step="0.01" min="1" name="variant_pricing-from`+ newvariant +`[unit_price][]" class="form-control unit-price-variant" id="" placeholder="Unit Price"></td>
+                                    <td><input type="number" min="1" name="variant_pricing-from`+ newvariant +`[from][]" class="form-control min-qty" id="" placeholder="{{ translate('From QTY')}}"></td>
+                                    <td><input type="number" min="1" name="variant_pricing-from`+ newvariant +`[to][]" class="form-control max-qty" id="" placeholder="{{ translate('To QTY')}}"></td>
+                                    <td><input type="number" step="0.01" min="1" name="variant_pricing-from`+ newvariant +`[unit_price][]" class="form-control unit-price-variant" id="" placeholder="{{ translate('Unit Price')}}"></td>
                                     <td><input type="text" class="form-control aiz-date-range discount-range" name="variant_pricing-from`+ newvariant +`[discount_range][]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                     <td>
                                         <select class="form-control discount_type" name="variant_pricing-from`+ newvariant +`[discount_type][]">
@@ -5510,18 +3143,18 @@
                                             <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control discount_amount" name="variant_pricing-from`+ newvariant +`[discount_amount][]" placeholder="Amount" readonly></td>
+                                    <td><input type="number" class="form-control discount_amount" name="variant_pricing-from`+ newvariant +`[discount_amount][]" placeholder="{{ translate('Amount')}}" readonly></td>
                                     <td style="width: 19% !important;">
                                         <div class="col-md-9 input-group">
-                                            <input type="number" class="form-control discount_percentage" name="variant_pricing-from`+ newvariant +`[discount_percentage][]" placeholder="Percentage" readonly>
+                                            <input type="number" class="form-control discount_percentage" name="variant_pricing-from`+ newvariant +`[discount_percentage][]" placeholder="{{ translate('Percentage')}}" readonly>
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        <i class="las la-plus btn-add-pricing" data-id_variant="` + newvariant + `" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                        <i class="las la-plus btn-add-pricing" data-id_variant="` + newvariant + `" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Add another ligne')}}"></i>
+                                        <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Delete this ligne')}}"></i>
                                     </td>
                                 </tr>`;
             }else{
@@ -5529,9 +3162,9 @@
                 if ($(this).closest('#variant_informations').length) {
                     var html_to_add = `
                                 <tr>
-                                    <td><input type="number" min="1" class="form-control min-qty-variant" id="" placeholder="From QTY"></td>
-                                    <td><input type="number" min="1" class="form-control max-qty-variant" id="" placeholder="To QTY"></td>
-                                    <td><input type="number" step="0.01" min="1" class="form-control unit-price-variant" id="" placeholder="Unit Price"></td>
+                                    <td><input type="number" min="1" class="form-control min-qty-variant" id="" placeholder="{{ translate('From QTY')}}"></td>
+                                    <td><input type="number" min="1" class="form-control max-qty-variant" id="" placeholder="{{ translate('To QTY')}}"></td>
+                                    <td><input type="number" step="0.01" min="1" class="form-control unit-price-variant" id="" placeholder="{{ translate('Unit Price')}}"></td>
                                     <td><input type="text" class="form-control aiz-date-range discount-range-variant" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                     <td>
                                         <select class="form-control discount_type-variant">
@@ -5540,27 +3173,27 @@
                                             <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control discount_amount-variant" placeholder="Amount" readonly></td>
+                                    <td><input type="number" class="form-control discount_amount-variant" placeholder="{{ translate('Amount')}}" readonly></td>
                                     <td style="width: 19% !important;">
                                         <div class="col-md-9 input-group">
-                                            <input type="number" class="form-control discount_percentage-variant" placeholder="Percentage" readonly>
+                                            <input type="number" class="form-control discount_percentage-variant" placeholder="{{ translate('Percentage')}}" readonly>
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                        <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Add another ligne')}}"></i>
+                                        <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Delete this ligne')}}"></i>
                                     </td>
                                 </tr>
                             `;
                 }else{
                     var html_to_add = `
                                 <tr>
-                                    <td><input type="number" min="1" name="from[]" class="form-control min-qty" id="" placeholder="From QTY"></td>
-                                    <td><input type="number" min="1" name="to[]" class="form-control max-qty" id="" placeholder="To QTY"></td>
-                                    <td><input type="number" step="0.01" min="1" name="unit_price[]" class="form-control unit-price-variant" id="" placeholder="Unit Price"></td>
+                                    <td><input type="number" min="1" name="from[]" class="form-control min-qty" id="" placeholder="{{ translate('From QTY')}}"></td>
+                                    <td><input type="number" min="1" name="to[]" class="form-control max-qty" id="" placeholder="{{ translate('To QTY')}}"></td>
+                                    <td><input type="number" step="0.01" min="1" name="unit_price[]" class="form-control unit-price-variant" id="" placeholder="{{ translate('Unit Price')}}"></td>
                                     <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                     <td>
                                         <select class="form-control discount_type" name="discount_type[]">
@@ -5569,18 +3202,18 @@
                                             <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control discount_amount" name="discount_amount[]" placeholder="Amount" readonly></td>
+                                    <td><input type="number" class="form-control discount_amount" name="discount_amount[]" placeholder="{{ translate('Amount')}}" readonly></td>
                                     <td style="width: 19% !important;">
                                         <div class="col-md-9 input-group">
-                                            <input type="number" class="form-control discount_percentage" name="discount_percentage[]" placeholder="Percentage" readonly>
+                                            <input type="number" class="form-control discount_percentage" name="discount_percentage[]" placeholder="{{ translate('Percentage')}}" readonly>
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                        <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Add another ligne')}}"></i>
+                                        <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Delete this ligne')}}"></i>
                                     </td>
                                 </tr>
                             `;
@@ -5655,7 +3288,7 @@
                 }
             }else{
                 swal({
-                    title: 'Are you sure you want to delete this pricing ?',
+                    title: '{{ translate("Are you sure you want to delete this pricing ?")}}',
                     type: "warning",
                     confirmButtonText: 'Delete',
                     showCancelButton: true
@@ -5688,7 +3321,7 @@
                                     // });
 
                                     var title = "{{ translate('Pricing Configuration') }}";
-                                    var message = '{{ translate("Something went wrong.")}}';
+                                    var message = '{{ translate("Something went wrong")}}';
 
                                     $('#title-modal').text(title);
                                     $('#text-modal').text(message);
@@ -6074,13 +3707,13 @@
             var html_document = `<div class="row">
                                 <div class="col-5">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail">Document name</label>
+                                        <label for="exampleInputEmail">{{ translate('Document name')}}</label>
                                         <input type="text" class="form-control" name="document_names[]">
                                     </div>
                                 </div>
                                 <div class="col-5">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail${fileInputCounter}">Document</label>
+                                        <label for="exampleInputEmail${fileInputCounter}">{{ translate('Document')}}</label>
                                         <div class="input-group">
                                             <div class="custom-file">
                                             <input type="file" name="documents[]" class="custom-file-input file_input" id="exampleInputEmail${fileInputCounter}" accept=".pdf,.png,.jpg,.pln,.dwg,.dxf,.gsm,.stl,.rfa,.rvt,.ifc,.3ds,.max,.obj,.fbx,.skp,.rar,.zip" aria-describedby="inputGroupFileAddon04">
@@ -6104,10 +3737,11 @@
             if(id_document != undefined){
                 var current = $(this);
                 Swal.fire({
-                    title: 'Are you sure you want to delete this documet ?',
+                    title: '{{ translate("Are you sure you want to delete this documet ?")}}',
                     icon: "warning",
                     showCancelButton: true,
-                    confirmButtonText: 'Delete',
+                    confirmButtonText: '{{ translate("Delete") }}',
+                    denyButtonText: "{{ translate('No') }}",
                     scrollbarPadding: false,
                     backdrop:false,
                 })
@@ -6170,10 +3804,11 @@
             if(id_image != undefined){
                 var current = $(this);
                 Swal.fire({
-                    title: 'Are you sure you want to delete this picture ?',
+                    title: '{{ translate("Are you sure you want to delete this picture ?")}}',
                     icon: "warning",
                     showCancelButton: true,
-                    confirmButtonText: 'Delete',
+                    confirmButtonText: '{{ translate("Delete") }}',
+                    denyButtonText: "{{ translate('No') }}",
                     scrollbarPadding: false,
                     backdrop:false,
                 }).then((result) => {
@@ -6202,10 +3837,11 @@
                 var id_variant = $(this).data('id');
                 var current = $(this);
                 Swal.fire({
-                    title: 'Are you sure you want to delete this variant ?',
+                    title: '{{ translate("Are you sure you want to delete this variant ?") }}',
                     icon: "warning",
                     showCancelButton: true,
-                    confirmButtonText: 'Delete',
+                    confirmButtonText: '{{ translate("Delete") }}',
+                    denyButtonText: "{{ translate('No') }}",
                     backdrop:false,
                 })
                 .then((result) => {
@@ -6236,6 +3872,8 @@
                         })
                     }
                 })
+            }else{
+                $(this).parent().parent().parent().remove();
             }
         })
 
@@ -6254,7 +3892,8 @@
                     //     backdrop:false,
                     // });
                     var title = "{{ translate('Default Shipping Configuration') }}";
-                    var message = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
+                    var message = `<?php $text = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
+                        echo translate($text); ?>`;
 
                     $('#title-modal').text(title);
                     $('#text-modal').text(message);
@@ -6341,19 +3980,19 @@
                 if ($(this).closest('#variant_informations').length) {
                     var html_to_add = `
                                 <tr>
-                                    <td><input type="number"  class="form-control min-qty-shipping" id="" placeholder="From QTY"></td>
-                                    <td><input type="number"  class="form-control max-qty-shipping" id="" placeholder="To QTY"></td>
+                                    <td><input type="number"  class="form-control min-qty-shipping" id="" placeholder="{{ translate('From QTY')}}"></td>
+                                    <td><input type="number"  class="form-control max-qty-shipping" id="" placeholder="{{ translate('To QTY')}}"></td>
                                     <td>
                                         <select multiple class="shipper" >
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control estimated_order"  placeholder="Days"></td>
-                                    <td><input type="number" class="form-control estimated_shipping"  placeholder="Days"></td>
+                                    <td><input type="number" class="form-control estimated_order"  placeholder="{{ translate('Days')}}"></td>
+                                    <td><input type="number" class="form-control estimated_shipping"  placeholder="{{ translate('Days')}}"></td>
                                     <td>
                                         <select class="form-control paid" >
-                                            <option value="" selected>{{translate('Choose shipper')}}</option>
+                                            <option value="" selected>{{translate('Choose option')}}</option>
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
                                         </select>
@@ -6365,30 +4004,30 @@
                                             <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control flat_rate_shipping" placeholder="Flat rate amount" readonly></td>
-                                    <td><input type="number" class="form-control charge_per_unit_shipping" placeholder="Charge unit" readonly></td>
+                                    <td><input type="number" class="form-control flat_rate_shipping" placeholder="{{ translate('Flat rate amount')}}" readonly></td>
+                                    <td><input type="number" class="form-control charge_per_unit_shipping" placeholder="{{ translate('Charge unit')}}" readonly></td>
                                     <td>
-                                        <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_shipping_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                        <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Add another ligne')}}"></i>
+                                        <i class="las la-trash delete_shipping_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Delete this ligne')}}"></i>
                                     </td>
                                 </tr>
                             `;
                 }else{
                     var html_to_add = `
                                 <tr>
-                                    <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id="" placeholder="From QTY"></td>
-                                    <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id="" placeholder="To QTY"></td>
+                                    <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id="" placeholder="{{ translate('From QTY')}}"></td>
+                                    <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id="" placeholder="{{ translate('To QTY')}}"></td>
                                     <td>
                                         <select multiple class="shipper" name="shipper[${row}][]">
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control estimated_order" name="estimated_order[]" placeholder="Days"></td>
-                                    <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]" placeholder="Days"></td>
+                                    <td><input type="number" class="form-control estimated_order" name="estimated_order[]" placeholder="{{ translate('Days')}}"></td>
+                                    <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]" placeholder="{{ translate('Days')}}"></td>
                                     <td>
                                         <select class="form-control paid" name="paid[]">
-                                            <option value="" selected>{{translate('Choose shipper')}}</option>
+                                            <option value="" selected>{{translate('Choose option')}}</option>
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
                                         </select>
@@ -6400,11 +4039,11 @@
                                             <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control flat_rate_shipping" name="flat_rate_shipping[]" placeholder="Flat rate amount" readonly></td>
-                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="charge_per_unit_shipping[]" placeholder="Charge unit" readonly></td>
+                                    <td><input type="number" class="form-control flat_rate_shipping" name="flat_rate_shipping[]" placeholder="{{ translate('Flat rate amount')}}" readonly></td>
+                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="charge_per_unit_shipping[]" placeholder="{{ translate('Charge unit')}}" readonly></td>
                                     <td>
-                                        <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_shipping_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                        <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Add another ligne')}}"></i>
+                                        <i class="las la-trash delete_shipping_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Delete this ligne')}}"></i>
                                     </td>
                                 </tr>
                             `;
@@ -6412,19 +4051,19 @@
             }else if(id_variant != undefined){
                 var html_to_add = `
                                 <tr>
-                                    <td><input type="number" name="variant[from_shipping][` + id_variant + `][]" class="form-control min-qty-shipping" id="" placeholder="From QTY"></td>
-                                    <td><input type="number" name="variant[to_shipping][` + id_variant + `][]" class="form-control max-qty-shipping" id="" placeholder="To QTY"></td>
+                                    <td><input type="number" name="variant[from_shipping][` + id_variant + `][]" class="form-control min-qty-shipping" id="" placeholder="{{ translate('From QTY')}}"></td>
+                                    <td><input type="number" name="variant[to_shipping][` + id_variant + `][]" class="form-control max-qty-shipping" id="" placeholder="{{ translate('To QTY')}}"></td>
                                     <td>
                                         <select multiple class="shipper" name="variant[shipper][` + id_variant + `][${row}][]">
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control estimated_order" name="variant[estimated_order][` + id_variant + `][]" placeholder="Days"></td>
-                                    <td><input type="number" class="form-control estimated_shipping" name="variant[estimated_shipping][` + id_variant + `][]" placeholder="Days"></td>
+                                    <td><input type="number" class="form-control estimated_order" name="variant[estimated_order][` + id_variant + `][]" placeholder="{{ translate('Days')}}"></td>
+                                    <td><input type="number" class="form-control estimated_shipping" name="variant[estimated_shipping][` + id_variant + `][]" placeholder="{{ translate('Days')}}"></td>
                                     <td>
                                         <select class="form-control paid" name="variant[paid][` + id_variant + `][]">
-                                            <option value="" selected>{{translate('Choose shipper')}}</option>
+                                            <option value="" selected>{{translate('Choose option')}}</option>
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
                                         </select>
@@ -6436,30 +4075,30 @@
                                             <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control flat_rate_shipping" name="variant[flat_rate_shipping][` + id_variant + `][]" placeholder="Flat rate amount" readonly></td>
-                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="variant[charge_per_unit_shipping][` + id_variant + `][]" placeholder="Charge unit" readonly></td>
+                                    <td><input type="number" class="form-control flat_rate_shipping" name="variant[flat_rate_shipping][` + id_variant + `][]" placeholder="{{ translate('Flat rate amount')}}" readonly></td>
+                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="variant[charge_per_unit_shipping][` + id_variant + `][]" placeholder="{{ translate('Charge unit')}}" readonly></td>
                                     <td>
-                                        <i class="las la-plus btn-add-shipping" data-id_variant="` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_shipping_canfiguration" data-id_variant = "` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                        <i class="las la-plus btn-add-shipping" data-id_variant="` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Add another ligne')}}"></i>
+                                        <i class="las la-trash delete_shipping_canfiguration" data-id_variant = "` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Delete this ligne')}}"></i>
                                     </td>
                                 </tr>
                             `;
             }else if(id_new_variant != undefined){
                 var html_to_add = `
                                 <tr>
-                                    <td><input type="number" name="variant_shipping-${id_new_variant}[from][]" class="form-control min-qty-shipping" id="" placeholder="From QTY"></td>
-                                    <td><input type="number" name="variant_shipping-${id_new_variant}[to][]" class="form-control max-qty-shipping" id="" placeholder="To QTY"></td>
+                                    <td><input type="number" name="variant_shipping-${id_new_variant}[from][]" class="form-control min-qty-shipping" id="" placeholder="{{ translate('From QTY')}}"></td>
+                                    <td><input type="number" name="variant_shipping-${id_new_variant}[to][]" class="form-control max-qty-shipping" id="" placeholder="{{ translate('To QTY')}}"></td>
                                     <td>
                                         <select multiple class="shipper" name="variant_shipping-${id_new_variant}[shipper][${row}][]">
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control estimated_order" name="variant_shipping-${id_new_variant}[estimated_order][]" placeholder="Days"></td>
-                                    <td><input type="number" class="form-control estimated_shipping" name="variant_shipping-${id_new_variant}[estimated_shipping][]" placeholder="Days"></td>
+                                    <td><input type="number" class="form-control estimated_order" name="variant_shipping-${id_new_variant}[estimated_order][]" placeholder="{{ translate('Days')}}"></td>
+                                    <td><input type="number" class="form-control estimated_shipping" name="variant_shipping-${id_new_variant}[estimated_shipping][]" placeholder="{{ translate('Days')}}"></td>
                                     <td>
                                         <select class="form-control paid" name="variant_shipping-${id_new_variant}[paid][]">
-                                            <option value="" selected>{{translate('Choose shipper')}}</option>
+                                            <option value="" selected>{{translate('Choose option')}}</option>
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
                                         </select>
@@ -6471,11 +4110,11 @@
                                             <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control flat_rate_shipping" name="variant_shipping-${id_new_variant}[flat_rate_shipping][]" placeholder="Flat rate amount" readonly></td>
-                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="variant_shipping-${id_new_variant}[charge_per_unit_shipping][]" placeholder="Charge unit" readonly></td>
+                                    <td><input type="number" class="form-control flat_rate_shipping" name="variant_shipping-${id_new_variant}[flat_rate_shipping][]" placeholder="{{ translate('Flat rate amount')}}" readonly></td>
+                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="variant_shipping-${id_new_variant}[charge_per_unit_shipping][]" placeholder="{{ translate('Charge unit')}}" readonly></td>
                                     <td>
-                                        <i class="las la-plus btn-add-shipping" data-variant-id="${id_new_variant}" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_shipping_canfiguration" data-variant-id="${id_new_variant}" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                        <i class="las la-plus btn-add-shipping" data-variant-id="${id_new_variant}" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Add another ligne')}}"></i>
+                                        <i class="las la-trash delete_shipping_canfiguration" data-variant-id="${id_new_variant}" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Delete this ligne')}}"></i>
                                     </td>
                                 </tr>
                             `;
@@ -6504,9 +4143,10 @@
             }else{
 
                 swal({
-                    title: 'Are you sure you want to delete this shipping ?',
+                    title: '{{ translate("Are you sure you want to delete this shipping ?")}}',
                     type: "warning",
-                    confirmButtonText: 'Delete',
+                    confirmButtonText: '{{ translate("Delete") }}',
+                    denyButtonText: "{{ translate('No') }}",
                     showCancelButton: true
                 })
                 .then((result) => {
@@ -6590,7 +4230,8 @@
                     //     });
 
                     var title = "{{ translate('Default Shipping Configuration') }}";
-                    var message = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
+                    var message = `<?php $text = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
+                        echo translate($text); ?>`;
 
                     $('#title-modal').text(title);
                     $('#text-modal').text(message);
@@ -6952,7 +4593,7 @@
             var unit_third_party = $(this).parent().parent().find('#unit_third_party').val();
 
             if((weight == '') || (length == '') ||(width == '') ||(height == '') ||(min_third_party == '') ||(max_third_party == '')){
-                html = '<span style="color: green"> Chargeable Weight = 0, then accepted by our shipper </span>';
+                html = '<span style="color: green"> {{ translate("Chargeable Weight = 0, then accepted by our shipper") }} </span>';
                 $('#result_calculate_third_party').html(html);
             }else{
                 length = parseInt(length);
@@ -6978,9 +4619,9 @@
                 }
 
                 if(chargeable_weight > max ){
-                    html = '<span style="color: red">Chargeable Weight = ' + Number(chargeable_weight.toFixed(2)) + ", then not accepted by Aramex </span>"
+                    html = '<span style="color: red">{{ translate("Chargeable Weight = ") }}' + Number(chargeable_weight.toFixed(2)) + ", {{ translate('then not accepted by Aramex') }} </span>"
                 }else{
-                    html = '<span style="color: green">Chargeable Weight = ' + Number(chargeable_weight.toFixed(2)) + ", then accepted by Aramex </span>"
+                    html = '<span style="color: green">{{ translate("Chargeable Weight = ") }}' + Number(chargeable_weight.toFixed(2)) + ", {{ translate('then accepted by Aramex') }} </span>"
                 }
 
 
@@ -7105,7 +4746,7 @@
             var unit_third_party = $(this).parent().parent().find('#unit_third_party_sample').val();
 
             if((weight == '') || (length == '') ||(width == '') ||(height == '') ||(min_third_party == '') ||(max_third_party == '')){
-                html = '<span style="color: green"> Chargeable Weight = 0, then accepted by our shipper </span>';
+                html = '<span style="color: green"> {{ translate("Chargeable Weight = 0, then accepted by our shipper") }} </span>';
                 $('#result_calculate_third_party_sample').html(html);
             }else{
                 length = parseInt(length);
@@ -7131,9 +4772,9 @@
                 }
 
                 if(chargeable_weight > max ){
-                    html = '<span style="color: red">Chargeable Weight = ' + Number(chargeable_weight.toFixed(2)) + ", then not accepted by Aramex </span>"
+                    html = '<span style="color: red">{{ translate("Chargeable Weight = ") }}' + Number(chargeable_weight.toFixed(2)) + ", {{ translate('then not accepted by Aramex') }} </span>"
                 }else{
-                    html = '<span style="color: green">Chargeable Weight = ' + Number(chargeable_weight.toFixed(2)) + ", then accepted by Aramex </span>"
+                    html = '<span style="color: green">{{ translate("Chargeable Weight = ") }}' + Number(chargeable_weight.toFixed(2)) + ", {{ translate('then accepted by Aramex') }} </span>"
                 }
 
                 $('#result_calculate_third_party_sample').html(html);
@@ -7173,7 +4814,8 @@
                     //     });
 
                     var title = "{{ translate('Default Shipping Configuration') }}";
-                    var message = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
+                    var message = `<?php $text = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
+                        echo translate($text); ?>`;
 
                     $('#title-modal').text(title);
                     $('#text-modal').text(message);
@@ -7261,7 +4903,7 @@
                             // });
 
                             var title = "{{ translate('Default Shipping Configuration') }}";
-                            var message = "Chargeable Weight = " + Number(chargeable_weight.toFixed(2)) + ", then not accepted by our shipper";
+                            var message = "{{ translate('Chargeable Weight = ')}}" + Number(chargeable_weight.toFixed(2)) + ", {{ translate('then not accepted by our shipper')}}";
 
                             $('#title-modal').text(title);
                             $('#text-modal').text(message);
@@ -7307,7 +4949,8 @@
                     // });
 
                     var title = "{{ translate('Default Shipping Configuration') }}";
-                    var message = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
+                    var message = `<?php $text = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
+                        echo translate($text); ?>`;
 
                     $('#title-modal').text(title);
                     $('#text-modal').text(message);
@@ -7483,68 +5126,6 @@
     };
 </script>
 
-
-{{-- <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('choice_form').addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent default form submission
-
-            Swal.fire({
-                title: "Do wants to keep the last approved product published on the marketplace or it shall be turned to unpublished ?",
-                text: "Do wants to keep the last approved product published on the marketplace or it shall be turned to unpublished ?",
-                icon: "info",
-                showCancelButton: false,
-                confirmButtonText: "Next",
-                html: '<input type="checkbox" id="publicationToggle" value="published" checked> keep the last version approved',
-                focusConfirm: false,
-                preConfirm: () => {
-                    const publicationStatus = document.getElementById('publicationToggle').checked ? 'use' : 'not use';
-                    if(publicationStatus == 'use'){
-                        $('#last_version').val(1)
-                    }
-
-                    var check = true;
-                    var min_qty = $('#min-qty-parent').val();
-                    var max_qty = $('#max-qty-parent').val();
-                    var unit_price = $('#unit-price-parent').val();
-
-                    if($('body input[name="activate_attributes"]').is(':checked')){
-                        $('body #bloc_variants_created .variant-pricing').each(function() {
-                            if($(this).is(':checked')){
-                                if((min_qty == "") || (max_qty == "") || (unit_price == "")){
-                                    check = false;
-                                }
-                            }else{
-                                var min_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.min-qty-variant').val();
-                                var max_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.max-qty-variant').val();
-                                var unit_price_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.unit-price-variant').val();
-
-                                if((min_qty_variant == "") || (max_qty_variant == "") || (unit_price_variant == "")){
-                                    check = false;
-                                }
-                            }
-                        });
-                    }else{
-                        if((min_qty == "") || (max_qty == "") || (unit_price == "")){
-                            check = false;
-                        }
-                    }
-
-                    if(check == true){
-                        document.getElementById('choice_form').submit();
-                    }else{
-                        Swal.fire({
-                            title: 'Pricing Configuration Check',
-                            text: 'Please check your pricing configuration',
-                            icon: 'error'
-                        });
-                    }
-                }
-            });
-        });
-    });
-</script> --}}
-
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('choice_form').addEventListener('submit', function (event) {
@@ -7567,14 +5148,14 @@
                 $('#error-message').hide();
                 if(approved == 1){
                     Swal.fire({
-                        title: "Product Update?",
-                        text: "As this product update requires approval, you can keep the last approved product published in the marketplace until the update is approved. If you unpublish the last approved product, then you have to publish the updated product after approval, manually. Do you want to keep the last approved product published?",
+                        title: "{{ translate('Product Update?')}}",
+                        text: "{{ translate('As this product update requires approval, you can keep the last approved product published in the marketplace until the update is approved. If you unpublish the last approved product, then you have to publish the updated product after approval, manually. Do you want to keep the last approved product published?')}}",
                         icon: "info",
                         showCancelButton: true,
-                        cancelButtonText: "Cancel Update",
-                        confirmButtonText: "Yes",
+                        cancelButtonText: "{{ translate('Cancel Update') }}",
+                        confirmButtonText: "{{ translate('Yes') }}",
                         showDenyButton: true,
-                        denyButtonText: "No",
+                        denyButtonText: "{{ translate('No') }}",
                         focusConfirm: false,
                         backdrop:false,
                         preConfirm: () => {
@@ -7633,7 +5214,7 @@
                                 // });
 
                                 var title = "{{ translate('Pricing Configuration') }}";
-                                var message = "Please check your pricing configuration.";
+                                var message = "{{ translate('Please check your pricing configuration.')}}";
 
                                 $('#title-modal').text(title);
                                 $('#text-modal').text(message);
@@ -7652,7 +5233,7 @@
                             // })
 
                             var title = "{{ translate('Product Category') }}";
-                            var message = "Please select a category without subcategories.";
+                            var message = "{{ translate('Please select a category without subcategories.')}}";
 
                             $('#title-modal').text(title);
                             $('#text-modal').text(message);
