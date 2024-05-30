@@ -821,9 +821,12 @@ if (!function_exists('renderStarRating')) {
 
 function translate($key, $lang = null, $addslashes = false)
 {
+    
     if ($lang == null) {
         $lang = App::getLocale();
     }
+
+    
 
     $lang_key = preg_replace('/[^A-Za-z0-9\_]/', '', str_replace(' ', '_', strtolower($key)));
 
@@ -844,6 +847,7 @@ function translate($key, $lang = null, $addslashes = false)
     $translation_locale = Cache::rememberForever("translations-{$lang}", function () use ($lang) {
         return Translation::where('lang', $lang)->pluck('lang_value', 'lang_key')->toArray();
     });
+    
     if (isset($translation_locale[$lang_key])) {
         return $addslashes ? addslashes(trim($translation_locale[$lang_key])) : trim($translation_locale[$lang_key]);
     }
