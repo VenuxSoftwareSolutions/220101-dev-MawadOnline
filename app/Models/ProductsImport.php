@@ -19,64 +19,141 @@ use Storage;
 class ProductsImport implements ToCollection, WithHeadingRow, WithValidation, ToModel
 {
     private $rows = 0;
+    private $products = [];
+    private $keys = [];
+
+    const SECTION_KEYS = [
+        'Product Information' => [
+            'Product type',
+            'Product Name *',
+            'Brand *',
+            'Unit of Sale',
+            'Country of origin',
+            'Manufacturer *',
+            'Tags *',
+            'Short Description *',
+            'Long description',
+            'Show Stock Quantity',
+            'Refundable'
+        ],
+        'Product Media' => [
+            'GI 1',
+            'GI 2',
+            'GI 3',
+            'GI 4',
+            'GI 5',
+            'GI 6',
+            'GI 7',
+            'GI 8',
+            'GI 9',
+            'GI 10',
+            'Video provider',
+            'video Link'
+        ],
+        'Product documentation' => [
+            'Doc 1',
+            'Doc 2',
+            'Doc 3',
+            'Doc 4',
+            'Doc 5',
+            'Doc 6',
+            'Doc 7',
+            'Doc 8',
+            'Doc 9',
+            'Doc 10', 
+        ],
+        'Product specification' => [
+            'SKU',
+            'Att 1',
+            'Att 2',
+            'Att 3',
+            'Att 4',
+            'Att 5',
+            'Att 6',
+        ],
+        'Product selling option' => [
+            'Grouping',
+            'Parent SKU',
+            'variation theme',
+        ],
+        'Default Pricing Configuration' => [
+            'From qty',
+            'to qty',
+            'unit price',
+            'discount (start/end)',
+            'Discount type',
+            'Discount Amount',
+            'Discount Percentage',
+        ],
+    ];
+
+    const SECTION_RANGES = [
+        'Product Information' => ['start' => 'A', 'end' => 'K'],
+        'Product Media' => ['start' => 'L', 'end' => 'W'],
+        'Product documentation' => ['start' => 'X', 'end' => 'AG'],
+        'Product specification' => ['start' => 'AH', 'end' => 'AN'],
+        'Product selling option' => ['start' => 'AO', 'end' => 'AQ'],
+        'Default Pricing Configuration' => ['start' => 'AR', 'end' => 'AX'],
+
+        // Add ranges for other sections as needed
+    ];
 
     public function collection(Collection $rows)
     {
         $canImport = true;
         $user = Auth::user();
-        if ($user->user_type == 'seller' && addon_is_activated('seller_subscription')) {
-            if ((count($rows) + $user->products()->count()) > $user->shop->product_upload_limit
-                || $user->shop->package_invalid_at == null
-                || Carbon::now()->diffInDays(Carbon::parse($user->shop->package_invalid_at), false) < 0
-            ) {
-                $canImport = false;
-                flash(translate('Please upgrade your package.'))->warning();
-            }
-        }
-
+        
         if ($canImport) {
-            foreach ($rows as $row) {
-                $approved = 1;
-                if ($user->user_type == 'seller' && get_setting('product_approve_by_admin') == 1) {
-                    $approved = 0;
+            foreach ($rows as $index => $row) {
+                if ($index === 0 || $index === 1) {
+                    // Skip the first row which contains headers
+                    continue;
                 }
 
-                $productId = Product::create([
-                    'name' => $row['name'],
-                    'description' => $row['description'],
-                    'added_by' => $user->user_type == 'seller' ? 'seller' : 'admin',
-                    'user_id' => $user->user_type == 'seller' ? $user->id : User::where('user_type', 'admin')->first()->id,
-                    'approved' => $approved,
-                    'category_id' => $row['category_id'],
-                    'brand_id' => $row['brand_id'],
-                    'video_provider' => $row['video_provider'],
-                    'video_link' => $row['video_link'],
-                    'tags' => $row['tags'],
-                    'unit_price' => $row['unit_price'],
-                    'unit' => $row['unit'],
-                    'meta_title' => $row['meta_title'],
-                    'meta_description' => $row['meta_description'],
-                    'est_shipping_days' => $row['est_shipping_days'],
-                    'colors' => json_encode(array()),
-                    'choice_options' => json_encode(array()),
-                    'variations' => json_encode(array()),
-                    'slug' => preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', strtolower($row['slug']))) . '-' . Str::random(5),
-                    'thumbnail_img' => $this->downloadThumbnail($row['thumbnail_img']),
-                    'photos' => $this->downloadGalleryImages($row['photos']),
-                ]);
-                ProductStock::create([
-                    'product_id' => $productId->id,
-                    'qty' => $row['current_stock'],
-                    'price' => $row['unit_price'],
-                    'sku' => $row['sku'],
-                    'variant' => '',
-                ]);
+                $product = $this->initializeProductStructure();
+                
+                foreach (self::SECTION_RANGES as $section => $range) {
+                    $startCol = $this->columnLetterToIndex($range['start']);
+                    $endCol = $this->columnLetterToIndex($range['end']);
+
+                    $subKeys = self::SECTION_KEYS[$section];
+
+                    for ($i = $startCol, $subKeyIndex = 0; $i <= $endCol && $subKeyIndex < count($subKeys); $i++, $subKeyIndex++) {
+                        $subKey = $subKeys[$subKeyIndex];
+                        $product[$section][$subKey] = $row[$i] ?? null;
+                    }
+                }
+
+                $this->products[] = $product;
             }
+            dd($this->products);
 
             flash(translate('Products imported successfully'))->success();
         }
     }
 
+
+    private function initializeProductStructure()
+    {
+        $product = [];
+        foreach (self::SECTION_KEYS as $section => $subKeys) {
+            $product[$section] = array_fill_keys($subKeys, null);
+        }
+        return $product;
+    }
+
+    private function columnLetterToIndex($column)
+    {
+        $column = strtoupper($column);
+        $length = strlen($column);
+        $index = 0;
+
+        for ($i = 0; $i < $length; $i++) {
+            $index = $index * 26 + ord($column[$i]) - ord('A') + 1;
+        }
+
+        return $index - 1; // Convert to 0-based index
+    }
     public function model(array $row)
     {
         ++$this->rows;

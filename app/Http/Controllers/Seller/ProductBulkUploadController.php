@@ -14,8 +14,8 @@ use App\Models\ProductsImport;
 class ProductBulkUploadController extends Controller
 {
     public function __construct() {
-        $this->middleware(['permission:seller_product_bulk_import'])->only('index');
-        $this->middleware(['permission:seller_product_bulk_export'])->only('export');
+       // $this->middleware(['permission:seller_product_bulk_import'])->only('index');
+      //  $this->middleware(['permission:seller_product_bulk_export'])->only('export');
 
     }
 
