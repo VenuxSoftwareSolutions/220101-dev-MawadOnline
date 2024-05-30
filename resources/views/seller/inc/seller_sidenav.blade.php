@@ -260,7 +260,7 @@
                 <li id="setting" id="profile" class="aiz-side-nav-item">
                     <a href="{{ route('seller.profile.index') }}" class="aiz-side-nav-link">
                         <i class="las la-user aiz-side-nav-icon"></i>
-                        <span class="aiz-side-nav-text">{{ translate('e-Shop Profile') }}</span>
+                        <span class="aiz-side-nav-text">{{ __('profile.e_shop_profile') }}</span>
                     </a>
                 </li>
                 {{-- @can('seller_shop_settings')
