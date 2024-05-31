@@ -1,0 +1,37 @@
+<?php
+
+return [
+
+'PreviewProduct' => 'معاينة المنتج',
+'Product Inquiry' => 'استفسار عن المنتج',
+'Price'=> 'ثمن',
+'Quantity'=> 'الكميه',
+'Total Price' => 'السعر الإجمالي',
+'Sold by' => 'تباع من قبل',
+'Refund' => 'استرداد',
+'Share' => 'مشاركه',
+'Add to cart' => 'إضافة إلى السلة',
+'Buy Now' => 'اشتري الآن',
+'Top Selling Products' => 'المنتجات الأكثر مبيعا',
+'Reviews and Ratings' => 'التعليقات والتقييمات',
+'Rate this Product' => 'قيم هذا المنتج ',
+'Description' => 'وصف',
+'Video' => 'فيديو ',
+'Product details' => 'تفاصيل المنتج',
+'Product Queries' => 'استفسارات المنتج',
+'Other Questions' => 'أسئلة أخرى',
+'Login' => 'تسجيل الدخول',
+'Register' => 'سجل',
+'Or' => 'أو',
+'tosubmit' => 'لتقديم ',
+'to submit your questions to seller' => 'لإرسال أسئلتك إلى البائع',
+'No description available.' => 'لا يوجد وصف متاح.',
+'There have been no reviews for this product yet.' => 'لم تكن هناك مراجعات لهذا المنتج حتى الآن.',
+'reviews' => 'ملاحظات',
+
+
+
+
+
+];
+
