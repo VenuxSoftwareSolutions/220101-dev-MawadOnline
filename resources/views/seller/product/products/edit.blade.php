@@ -4,16 +4,16 @@
         display: flex;
         flex-wrap: wrap;
     }
-    
+
     #image-preview img {
         margin: 5px;
     }
-    
+
     #image-preview-thumbnail {
         display: flex;
         flex-wrap: wrap;
     }
-    
+
     #image-preview-thumbnail img {
         margin: 5px;
     }
@@ -25,12 +25,12 @@
         align-items: center;
         margin: 5px;
     }
-    
+
     .preview-container img {
         max-width: 100px;
         max-height: 100px;
     }
-    
+
     .preview-container button {
         margin-top: 5px;
         background-color: #ff0000;
@@ -40,19 +40,19 @@
         cursor: pointer;
         border-radius: 5px;
     }
-    
+
     .preview-container-thumbnail {
         display: flex;
         flex-direction: column;
         align-items: center;
         margin: 5px;
     }
-    
+
     .preview-container-thumbnail img {
         max-width: 100px;
         max-height: 100px;
     }
-    
+
     .preview-container-thumbnail button {
         margin-top: 5px;
         background-color: #ff0000;
@@ -63,7 +63,7 @@
         border-radius: 5px;
     }
     </style>
-    
+
 <style>
     .table th{
         font-size: 12px !important;
@@ -213,7 +213,8 @@
         </div>
     @endif
     <div class="button-container">
-        <button type="button" class="preview-button" onclick="submitForm()">Preview Product</button>
+
+        <button type="button" class="preview-button" onclick="submitForm()">{{ __('product.PreviewProduct') }}</button>
     </div>
 
     <form class="" action="{{route('seller.products.update', $product->id)}}" method="POST" enctype="multipart/form-data" id="choice_form">
@@ -1680,7 +1681,7 @@
 
                 setTimeout(function() {
                     if (exceedingFilesDimension.length ) {
-                        
+
                         // Swal.fire({
                         //     title: 'Cancelled',
                         //     text: 'The dimensions of the images have exceeded both a width and height of 1280 pixels: ' + exceedingFiles.join(', '),
@@ -1707,13 +1708,13 @@
                             reader.onload = function (e) {
                                 var imgContainer = document.createElement('div');
                                 imgContainer.classList.add('preview-container');
-                                
+
                                 var img = document.createElement('img');
                                 img.src = e.target.result;
                                 img.style.maxWidth = '100px'; // Adjust the size of the preview image as needed
                                 img.style.maxHeight = '100px';
                                 imgContainer.appendChild(img);
-                                
+
                                 var deleteBtn = document.createElement('button');
                                 deleteBtn.innerText = 'Delete';
                                 deleteBtn.onclick = function() {
@@ -1721,7 +1722,7 @@
                                     updateFileInput(); // Update the file input after deleting
                                 };
                                 imgContainer.appendChild(deleteBtn);
-                                
+
                                 preview.appendChild(imgContainer);
                             }
 
@@ -1972,13 +1973,13 @@
                             reader.onload = function (e) {
                                 var imgContainer = document.createElement('div');
                                 imgContainer.classList.add('preview-container-thumbnail');
-                                
+
                                 var img = document.createElement('img');
                                 img.src = e.target.result;
                                 img.style.maxWidth = '100px'; // Adjust the size of the preview image as needed
                                 img.style.maxHeight = '100px';
                                 imgContainer.appendChild(img);
-                                
+
                                 var deleteBtn = document.createElement('button');
                                 deleteBtn.innerText = 'Delete';
                                 deleteBtn.onclick = function() {
@@ -1986,7 +1987,7 @@
                                     updateFileInputThumbnail(); // Update the file input after deleting
                                 };
                                 imgContainer.appendChild(deleteBtn);
-                                
+
                                 preview.appendChild(imgContainer);
                             }
 
@@ -2101,7 +2102,7 @@
             bstr = atob(arr[1]),
             n = bstr.length,
             u8arr = new Uint8Array(n);
-            
+
         while (n--) {
             u8arr[n] = bstr.charCodeAt(n);
         }
@@ -4869,7 +4870,7 @@
             if(uploaded_files != undefined){
                 var all_files_length = files.length + uploaded_files
             }else{
-                var all_files_length = files.length 
+                var all_files_length = files.length
             }
 
             // Maximum number of allowed files
@@ -5464,7 +5465,7 @@
         })
 
 
-        $('body').on('click', '.btn-add-pricing', function() { 
+        $('body').on('click', '.btn-add-pricing', function() {
             var id_variant = $(this).data('id_variant');
             var newvariant = $(this).data('newvariant-id');
 
@@ -5711,7 +5712,7 @@
                 $(this).parent().parent().find('.discount_percentage').prop('readonly', true);
                 $(this).parent().parent().find('.discount_percentage').val('');
             }
-            
+
             if($(this).val() == "percent"){
                 $(this).parent().parent().find('.discount_amount').prop('readonly', true);
                 $(this).parent().parent().find('.discount_percentage').prop('readonly', false);
@@ -6192,7 +6193,7 @@
                                 }
                             }
                         })
-                    } 
+                    }
                 })
             }
         })
@@ -6705,7 +6706,7 @@
 
         $('body').on('change', '.paid', function(){
             var shippers = $(this).parent().parent().find('.shipper').val();
-            
+
             if(shippers.indexOf('vendor') !== -1){
                 if($(this).val() != "buyer"){
                     $(this).parent().parent().find('.shipping_charge').find("option:first").prop("selected", true);
@@ -7223,7 +7224,7 @@
                         }else{
                             $(this).parent().find('.multi-select-button').text('vendor');
                         }
-                        
+
                         // Uncheck the checkbox
                         checkbox.prop('checked', false);
                         $(this).find("option[value='third_party']").prop('disabled', false);
@@ -7250,7 +7251,7 @@
                         if(unit == "pounds"){
                             chargeable_weight *= 2.2;
                         }
-                        
+
                         if(chargeable_weight > max ){
                             // Swal.fire({
                             //     title: 'Cancelled',
@@ -7274,7 +7275,7 @@
                             }else{
                                 $(this).parent().find('.multi-select-button').text('vendor');
                             }
-                            
+
                             // Uncheck the checkbox
                             checkbox.prop('checked', false);
                             $(this).find("option[value='third_party']").prop('disabled', false);
@@ -7283,7 +7284,7 @@
                     }
                 }
             }
-            
+
             if(selected.indexOf('vendor') !== -1){
                 $(this).parent().parent().find('.shipping_amount').prop('disabled', false);
                 $(this).parent().parent().find('.estimated_sample').prop('disabled', false);
@@ -7661,7 +7662,7 @@
 
                             $(this).prop('checked', false)
                         }
-                        
+
                     });
                 }else{
                     var valid_category = $('#check_selected_parent_id').val();

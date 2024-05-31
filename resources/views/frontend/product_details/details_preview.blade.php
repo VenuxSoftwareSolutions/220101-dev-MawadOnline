@@ -29,7 +29,7 @@
     @if (array_key_exists('shop_name', $previewData['detailedProduct']))
         <div class="row mb-3">
             <div class="col-6">
-                <span class="text-secondary fs-14 fw-400 mr-4 w-50px">Sold by: </span> <a href="#" class="text-reset hov-text-primary fs-14 fw-700">{{ $previewData['detailedProduct']['shop_name'] }}</a>
+                <span class="text-secondary fs-14 fw-400 mr-4 w-50px">{{ __('product.Sold by') }}:</span> <a href="#" class="text-reset hov-text-primary fs-14 fw-700">{{ $previewData['detailedProduct']['shop_name'] }}</a>
             </div>
         </div>
     @endif
@@ -106,7 +106,7 @@
                             fill="{{ get_setting('secondary_base_color', '#ffc519') }}" />
                     </g>
                 </svg>
-                <span class="ml-2 text-primary animate-underline-blue">{{ translate('Product Inquiry') }}</span>
+                <span class="ml-2 text-primary animate-underline-blue">{{ __('product.Product Inquiry') }}</span>
             </a>
         </div>
         {{-- @endif --}}
@@ -192,7 +192,7 @@
     <hr>
     <div class="row no-gutters mb-3">
         <div class="col-sm-2">
-            <div class="text-secondary fs-14 fw-400">Price</div>
+            <div class="text-secondary fs-14 fw-400">{{ __('product.Price') }}</div>
         </div>
         <div class="col-sm-10">
             <div class="d-flex align-items-center">
@@ -269,7 +269,7 @@
         <!-- Quantity + Add to cart -->
         <div class="row no-gutters mb-3">
             <div class="col-sm-2">
-                <div  class="text-secondary fs-14 fw-400 mt-2">Quantity</div>
+                <div  class="text-secondary fs-14 fw-400 mt-2">{{ __('product.Quantity') }}</div>
             </div>
             <div class="col-sm-10">
                 <div class="product-quantity d-flex align-items-center">
@@ -301,7 +301,7 @@
         <!-- Total Price -->
         <div class="row no-gutters pb-3" id="chosen_price_div">
             <div class="col-sm-2">
-                <div class="text-secondary fs-14 fw-400 mt-1">Total Price</div>
+                <div class="text-secondary fs-14 fw-400 mt-1">{{ __('product.Total Price') }}</div>
             </div>
             <div class="col-sm-10">
                 <div class="product-price">
@@ -377,11 +377,11 @@
     <div class="mt-3">
         <button type="button" class="readonly-button btn btn-secondary-base mr-2 add-to-cart fw-600 min-w-150px rounded-0 text-white"
            {{--  onclick="showLoginModal()" --}}>
-            <i class="las la-shopping-bag"></i> Add to cart
+            <i class="las la-shopping-bag"></i>{{ __('product.Add to cart') }}
         </button>
         <button type="button" class="btn btn-primary buy-now fw-600 add-to-cart min-w-150px rounded-0"
            {{--  onclick="showLoginModal()" --}}>
-            <i class="la la-shopping-cart"></i> Buy Now
+            <i class="la la-shopping-cart"></i>{{ __('product.Buy Now') }}
         </button>
         <button type="button" class="btn btn-secondary out-of-stock fw-600 d-none" disabled="">
             <i class="la la-cart-arrow-down"></i> Out of Stock
@@ -389,7 +389,7 @@
     </div>
     <div class="row no-gutters mt-3">
         <div class="col-sm-2">
-            <div class="text-secondary fs-14 fw-400 mt-2">Refund</div>
+            <div class="text-secondary fs-14 fw-400 mt-2">{{ __('product.Refund') }}</div>
         </div>
         <div class="col-sm-10">
             <a href="{{route('terms-and-conditions')}}" target="_blank">
@@ -402,7 +402,7 @@
     </div>
     <div class="row no-gutters mt-4">
         <div class="col-sm-2">
-            <div class="text-secondary fs-14 fw-400 mt-2">Share</div>
+            <div class="text-secondary fs-14 fw-400 mt-2">{{ __('product.Share') }}</div>
         </div>
         <div class="col-sm-10">
             <div {{-- class="aiz-share jssocials" --}}>

@@ -227,7 +227,7 @@
     @endif
     {{-- <button type="button" onclick="submitForm()">Preview Product</button> --}}
     <div class="button-container">
-        <button type="button" class="preview-button" onclick="submitForm()">Preview Product</button>
+        <button type="button" class="preview-button" onclick="submitForm()">{{ __('product.PreviewProduct') }}</button>
     </div>
 
     <form class="" action="{{route('seller.products.store')}}" method="POST" enctype="multipart/form-data" id="choice_form">
@@ -301,7 +301,7 @@
                                     <label class="col-md-3 col-from-label">{{translate('Short description')}} <span class="text-danger">*</span></label>
                                     <div class="col-md-8">
                                         <textarea class="form-control" name="short_description" id="short_description"></textarea>
-                                        <div id="charCountShortDescription">Remaining characters: 512</div>
+                                        <div id="charCountShortDescription">{{ translate('Remaining characters:') }} 512</div>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -358,7 +358,7 @@
                                 <div id="image-preview-thumbnail"></div>
 
                                 {{-- <input type="file" class="dropify" name="photosThumbnail[]" id="photoUploadThumbnail" accept=".jpeg, .jpg, .png" multiple />
-                               
+
                                 <div id="dropifyUploadedFilesThumbnail"></div> --}}
                             </div>
                         </div>
@@ -424,21 +424,21 @@
                                     </thead>
                                     <tbody id="bloc_pricing_configuration">
                                         <tr>
-                                            <td><input type="number" name="from[]" min="1" class="form-control min-qty" id="min-qty-parent" placeholder="From QTY"></td>
-                                            <td><input type="number" name="to[]" min="1" class="form-control max-qty" id="max-qty-parent" placeholder="To QTY"></td>
-                                            <td><input type="number" name="unit_price[]" step="0.01" min="1" placeholder="Unit Price" class="form-control unit-price-variant" id="unit-price-parent"></td>
-                                            <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
+                                            <td><input type="number" name="from[]" min="1" class="form-control min-qty" id="min-qty-parent" placeholder="{{ translate('From QTY') }}"></td>
+                                            <td><input type="number" name="to[]" min="1" class="form-control max-qty" id="max-qty-parent" placeholder="{{ translate('To QTY') }}"></td>
+                                            <td><input type="number" name="unit_price[]" step="0.01" min="1" placeholder="{{ translate('Unit Price') }}" class="form-control unit-price-variant" id="unit-price-parent"></td>
+                                            <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{ translate('Select Date') }}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                             <td>
                                                 <select class="form-control discount_type" name="discount_type[]">
-                                                    <option value="" selected>{{translate('Choose type')}}</option>
+                                                    <option value="" selected>{{ translate('Choose type') }}</option>
                                                     <option value="amount" @selected(old('discount_type') == 'amount')>{{translate('Flat')}}</option>
                                                     <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                                 </select>
                                             </td>
-                                            <td><input type="number" class="form-control discount_amount" name="discount_amount[]" placeholder="Amount" readonly></td>
+                                            <td><input type="number" class="form-control discount_amount" name="discount_amount[]" placeholder="{{ translate('Amount') }}" readonly></td>
                                             <td style="width: 22% !important;">
                                                 <div class="col-md-9 input-group">
-                                                    <input type="number" class="form-control discount_percentage" name="discount_percentage[]" placeholder="Percentage" readonly>
+                                                    <input type="number" class="form-control discount_percentage" name="discount_percentage[]" placeholder="{{ translate('Percentage') }}" readonly>
                                                     <div class="input-group-append">
                                                         <span class="input-group-text">%</span>
                                                     </div>
@@ -1229,7 +1229,7 @@
 
                 setTimeout(function() {
                     if (exceedingFilesDimension.length ) {
-                        
+
                         // Swal.fire({
                         //     title: 'Cancelled',
                         //     text: 'The dimensions of the images have exceeded both a width and height of 1280 pixels: ' + exceedingFiles.join(', '),
@@ -1247,7 +1247,38 @@
                         $('#modal-info').modal('show');
 
                         $('#photoUploadcustom').val('');
-                        $('#image-preview').empty();
+                        setTimeout(function() {
+                            var previewContainers = document.querySelectorAll('.preview-container');
+                            var files_update = [];
+
+                            previewContainers.forEach(function(container) {
+                                var img = container.querySelector('img');
+                                var file = dataURLtoFile(img.src, 'image_' + Date.now() + '.png');
+                                files_update.push(file);
+                            });
+
+                            var newInput = document.createElement('input');
+                            newInput.type = 'file';
+                            newInput.id = 'photoUploadcustom';
+                            newInput.name = 'main_photos[]';
+                            newInput.multiple = true;
+                            newInput.classList.add('form-control'); // Add the 'form-control' class
+                            newInput.accept = 'image/*'; // Accept only image files
+
+                            newInput.addEventListener('change', previewImages);
+
+                            // Replace the old input with the new one
+                            var oldInput = document.getElementById('photoUploadcustom');
+                            oldInput.parentNode.replaceChild(newInput, oldInput);
+
+                            // Set files to the new input
+                            var dataTransfer = new DataTransfer();
+                            files_update.forEach(function(file) {
+                                dataTransfer.items.add(file);
+                            });
+                            newInput.files = dataTransfer.files;
+                        }, 500);
+                        //$('#image-preview').empty();
                     }else{
                         for (var i = 0; i < files.length; i++) {
                             var file = files[i];
@@ -1256,13 +1287,13 @@
                             reader.onload = function (e) {
                                 var imgContainer = document.createElement('div');
                                 imgContainer.classList.add('preview-container');
-                                
+
                                 var img = document.createElement('img');
                                 img.src = e.target.result;
                                 img.style.maxWidth = '100px'; // Adjust the size of the preview image as needed
                                 img.style.maxHeight = '100px';
                                 imgContainer.appendChild(img);
-                                
+
                                 var deleteBtn = document.createElement('button');
                                 deleteBtn.innerText = 'Delete';
                                 deleteBtn.onclick = function() {
@@ -1270,7 +1301,7 @@
                                     updateFileInput(); // Update the file input after deleting
                                 };
                                 imgContainer.appendChild(deleteBtn);
-                                
+
                                 preview.appendChild(imgContainer);
                             }
 
@@ -1339,7 +1370,7 @@
 
             $('#photoUploadThumbnailSeconde').val('');
             setTimeout(function() {
-                
+
                 var previewContainers = document.querySelectorAll('.preview-container-thumbnail');
                 var files_update = [];
 
@@ -1517,13 +1548,13 @@
                             reader.onload = function (e) {
                                 var imgContainer = document.createElement('div');
                                 imgContainer.classList.add('preview-container-thumbnail');
-                                
+
                                 var img = document.createElement('img');
                                 img.src = e.target.result;
                                 img.style.maxWidth = '100px'; // Adjust the size of the preview image as needed
                                 img.style.maxHeight = '100px';
                                 imgContainer.appendChild(img);
-                                
+
                                 var deleteBtn = document.createElement('button');
                                 deleteBtn.innerText = 'Delete';
                                 deleteBtn.onclick = function() {
@@ -1531,7 +1562,7 @@
                                     updateFileInputThumbnail(); // Update the file input after deleting
                                 };
                                 imgContainer.appendChild(deleteBtn);
-                                
+
                                 preview.appendChild(imgContainer);
                             }
 
@@ -1646,7 +1677,7 @@
             bstr = atob(arr[1]),
             n = bstr.length,
             u8arr = new Uint8Array(n);
-            
+
         while (n--) {
             u8arr[n] = bstr.charCodeAt(n);
         }
@@ -1806,7 +1837,7 @@
                 var trimmedText = $(this).val().substr(0, maxCharacters);
                 $(this).val(trimmedText);
             }else{
-                var message = "<p>Remaining characters: <span style='color: red'>" + charactersLeft + "</span></p>"
+                var message = "<p>{{ translate('Remaining characters:') }}' <span style='color: red'>" + charactersLeft + "</span></p>"
                 $('#charCountShortDescription').html(message);
             }
         });
@@ -1957,7 +1988,7 @@
                 //         scrollbarPadding: false,
                 //         backdrop:false,
                 //     });
-                
+
                 var title = "{{ translate('Variant Media') }}";
                 var message = '{{ translate("You need to select at least one picture.")}}';
 
@@ -2815,7 +2846,7 @@
                     }
                     setTimeout(function() {
                         if (exceedingFilesDimension.length ) {
-                         
+
                         }else{
                             let uploadedFilesHTML = '<div class="row">';
                             for (let i = 0; i < files.length; i++) {
@@ -3092,7 +3123,7 @@
                         $('#text-modal').text(message);
 
                         $('#modal-info').modal('show');
-                        
+
 
                         $(this).prop('checked', false)
                 }else{
@@ -4093,7 +4124,7 @@
                                 if (result.isConfirmed) {
                                     $('#published_after_approve').val(1)
                                 }
-                                
+
                                 Swal.fire({
                                     title: "Product Inventory",
                                     text: "You can create the product's inventory and make it ready before admin approval. This is recommended if your product will be immediately published upon approval. Do you want to continue?",
@@ -4144,7 +4175,7 @@
                                                 check = false;
                                                 return false;
                                             }
-                                            
+
                                         }else{
                                             if((min_qty == "") || (max_qty == "") || (unit_price == "")){
                                                 check = false;
@@ -4177,7 +4208,7 @@
                         backdrop:false,
                     })
                 }
-                
+
             }else{
                 var inputTopPosition = $("#tags").offset().top;
 

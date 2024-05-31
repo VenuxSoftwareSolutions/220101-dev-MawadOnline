@@ -369,11 +369,11 @@ class StockController extends Controller
         $warehouse = Warehouse::findOrFail($warehouseId);
         // Check if the warehouse has associated products
         if ($warehouse->checkWhHasProducts()) {
-            return response()->json(['error' => 'Warehouse has associated products. Cannot delete.']);
+            return response()->json(['error' => __('stock.Warehouse has associated products. Cannot delete')]);
         }
         $warehouse->delete();
 
-        return response()->json(['message' => 'Warehouse removed successfully']);
+        return response()->json(['message' => __('stock.Warehouse removed successfully')]);
     }
 
     public function storeWarehouses(Request $request)
@@ -424,7 +424,7 @@ class StockController extends Controller
             }
         }
 
-        return redirect()->back()->with('success', 'Warehouses saved successfully');
+        return redirect()->back()->with('success', __('stock.Warehouses saved successfully'));
 
     }
 
