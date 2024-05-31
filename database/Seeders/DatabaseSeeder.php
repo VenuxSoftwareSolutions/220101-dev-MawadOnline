@@ -15,6 +15,7 @@ use Database\Seeders\AddSellerRoleToUserSeeder;
 use Database\Seeders\CreateSellerAndShopSeeder;
 use Database\Seeders\TranslationsRegisterVendorPart2;
 use Database\Seeders\AddPermessionEnablingAttributeSeeder;
+use Database\Seeders\TranslationProductSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -37,8 +38,9 @@ class DatabaseSeeder extends Seeder
         //$this->call(RoleSeeder::class);
         //$this->call(AddSellerRoleToUserSeeder::class);
         //$this->call(CreateSellerAndShopSeeder::class);
-        $this->call(TourSeeder::class);
-        $this->call(LeaseSeeder::class);
+        //$this->call(TourSeeder::class);
+        //$this->call(LeaseSeeder::class);
+        $this->call(TranslationProductSeeder::class);
 
 
     }
