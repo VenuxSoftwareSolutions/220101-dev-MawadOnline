@@ -154,7 +154,7 @@
                                 <li id="packages" class="aiz-side-nav-item">
                                     <a href="{{ route('seller.seller_packages_list') }}" class="aiz-side-nav-link">
                                         <i class="las la-shopping-cart aiz-side-nav-icon"></i>
-                                        <span class="aiz-side-nav-text">{{ translate('Packages') }}</span>
+                                        <span class="aiz-side-nav-text">{{ translate('seller_packages') }}</span>
                                     </a>
                                 </li>
                                 @endcan
@@ -213,7 +213,7 @@
                     <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link">
                             <i class="las la-shopping-cart aiz-side-nav-icon"></i>
-                            <span class="aiz-side-nav-text">{{ translate('Billing') }}</span>
+                            <span class="aiz-side-nav-text">{{__('staff.Billing')}}</span>
                             <span class="aiz-side-nav-arrow"></span>
                         </a>
                         <!--Submenu-->
@@ -222,7 +222,7 @@
                                 <li id="lease" class="aiz-side-nav-item">
                                     <a href="{{ route('seller.lease.index') }}"
                                     class="aiz-side-nav-link {{ areActiveRoutes(['seller.lease.index'])}}">
-                                        <span class="aiz-side-nav-text">{{ translate('e-Shop lease') }}</span>
+                                        <span class="aiz-side-nav-text">{{__('staff.e-Shop lease')}}</span>
                                     </a>
                                 </li>
                             @endcan
@@ -230,7 +230,7 @@
                                 <li id="sales" class="aiz-side-nav-item">
                                     <a href="{{route('seller.sales.index')}}"
                                     class="aiz-side-nav-link {{ areActiveRoutes(['seller.sales.index'])}}">
-                                        <span class="aiz-side-nav-text">{{ translate('Sales') }}</span>
+                                        <span class="aiz-side-nav-text">{{__('staff.Sales')}}</span>
                                     </a>
                                 </li>
                             @endcan

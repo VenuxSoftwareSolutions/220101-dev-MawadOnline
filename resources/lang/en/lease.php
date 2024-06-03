@@ -1,0 +1,24 @@
+<?php
+
+return [
+    'From Date' => 'From Date',
+    'To Date' => 'To Date',
+    'Charge for' =>  'Charge for',
+    'Amount (AED)' => 'Amount (AED)',
+    'Status' => 'Status' ,
+    'e-Shop lease' => 'e-Shop lease',
+    'Unpaid' => 'Unpaid',
+    'Role' => 'Role',
+    'Onboarding Discount' =>  'Onboarding Discount' ,
+    'Sub Total' => 'Sub Total' ,
+    'VAT' => 'VAT',
+    'Paid Amount' => 'Paid Amount' ,
+    'Total Lease Due' => 'Total Lease Due' ,
+    'AED' =>  'AED' ,
+    'Pay Now' =>'Pay Now',
+    'Leases' => 'Leases' ,
+    'to' => 'to',
+    'Lease History' => 'Lease History',
+    'Current Lease Due' => 'Current Lease Due' ,
+
+];
