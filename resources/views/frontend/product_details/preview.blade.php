@@ -337,7 +337,7 @@
                                             class="d-flex align-items-center justify-content-between justify-content-md-start">
                                             <div class="w-100 w-sm-auto">
                                                 <span class="avgRating fs-36 mr-3">{{$totalRating > 0 ? $detailedProduct->reviews->sum('rating') / $totalRating : 0 }}</span>
-                                                <span class="fs-14 mr-3">out of 5.0</span>
+                                                <span class="fs-14 mr-3"> {{ __('product.out of 5.0') }}</span>
                                             </div>
                                             <div
                                                 class="mt-sm-3 w-100 w-sm-auto d-flex flex-wrap justify-content-end justify-content-md-start">

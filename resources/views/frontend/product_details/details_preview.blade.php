@@ -397,7 +397,7 @@
                     height="36">
             </a>
             <a href="{{route('terms-and-conditions')}}"
-                class="text-blue hov-text-primary fs-14 ml-3" target="_blank">View Policy</a>
+                class="text-blue hov-text-primary fs-14 ml-3" target="_blank">{{ __('product.View Policy') }}</a>
         </div>
     </div>
     <div class="row no-gutters mt-4">

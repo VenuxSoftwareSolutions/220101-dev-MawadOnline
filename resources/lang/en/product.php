@@ -1,0 +1,35 @@
+<?php
+
+return [
+
+    'PreviewProduct' => 'Preview Product',
+    'Product Inquiry' => 'Product Inquiry',
+    'Price' => 'Price',
+    'Quantity' => 'Quantity',
+    'Total Price' => 'Total Price',
+    'Sold by' => 'Sold by',
+    'Refund' => 'Refund',
+    'Share' => 'Share',
+    'Add to cart' => 'Add to Cart',
+    'Buy Now' => 'Buy Now',
+    'Top Selling Products' => 'Top Selling Products',
+    'Reviews and Ratings' => 'Reviews and Ratings',
+    'Rate this Product' => 'Rate this Product',
+    'Description' => 'Description',
+    'Video' => 'Video',
+    'Product details' => 'Product Details',
+    'Product Queries' => 'Product Queries',
+    'Other Questions' => 'Other Questions',
+    'Login' => 'Login',
+    'Register' => 'Register',
+    'Or' => 'Or',
+    'tosubmit' => 'to submit',
+    'to submit your questions to seller' => 'to submit your questions to the seller',
+    'No description available.' => 'No description available.',
+    'There have been no reviews for this product yet.' => 'There have been no reviews for this product yet.',
+    'reviews' => 'Reviews',
+    'View Policy' => 'View Policy',
+    'out of 5.0' => 'out of 5.0',
+
+];
+

@@ -137,7 +137,7 @@
                         <a href="{{ route('seller.orders.index') }}"
                             class="aiz-side-nav-link {{ areActiveRoutes(['seller.orders.index', 'seller.orders.show']) }}">
                             <i class="las la-money-bill aiz-side-nav-icon"></i>
-                            <span class="aiz-side-nav-text">{{ translate('Orders Management') }}</span>
+                            <span class="aiz-side-nav-text">{{ __('sidenav.Orders Management') }}</span>
                         </a>
                     </li>
                 @endcan
@@ -154,7 +154,7 @@
                                 <li id="packages" class="aiz-side-nav-item">
                                     <a href="{{ route('seller.seller_packages_list') }}" class="aiz-side-nav-link">
                                         <i class="las la-shopping-cart aiz-side-nav-icon"></i>
-                                        <span class="aiz-side-nav-text">{{ translate('Packages') }}</span>
+                                        <span class="aiz-side-nav-text">{{ __('sidenav.Packages') }}</span>
                                     </a>
                                 </li>
                                 @endcan
@@ -213,7 +213,7 @@
                     <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link">
                             <i class="las la-shopping-cart aiz-side-nav-icon"></i>
-                            <span class="aiz-side-nav-text">{{ translate('Billing') }}</span>
+                            <span class="aiz-side-nav-text">{{ __('sidenav.Billing') }}</span>
                             <span class="aiz-side-nav-arrow"></span>
                         </a>
                         <!--Submenu-->

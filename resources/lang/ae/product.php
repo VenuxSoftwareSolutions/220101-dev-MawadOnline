@@ -28,7 +28,8 @@ return [
 'No description available.' => 'لا يوجد وصف متاح.',
 'There have been no reviews for this product yet.' => 'لم تكن هناك مراجعات لهذا المنتج حتى الآن.',
 'reviews' => 'ملاحظات',
-
+'View Policy' => 'عرض السياسة',
+'out of 5.0' => 'من 5.0',
 
 
 
