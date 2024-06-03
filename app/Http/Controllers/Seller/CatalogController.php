@@ -402,7 +402,7 @@ class CatalogController extends Controller
         unset($data['product_id']);
         $data['added_from_catalog'] = 1;
         $data['product_added_from_catalog'] = 1;
-        $data['user_id'] = Auth::user()->id;
+        $data['user_id'] = Auth::user()->owner_id;
         $newProduct = Product::insertGetId($data);
 
         DB::table('product_categories')->insert([
@@ -470,7 +470,7 @@ class CatalogController extends Controller
                 $data = $children->attributesToArray();
                 unset($data['id']);
                 $data['parent_id'] = $newProduct;
-                $data['user_id'] = Auth::user()->id;
+                $data['user_id'] = Auth::user()->owner_id;
                 unset($data['product_id']);
                 $data['added_from_catalog'] = 1;
                 $data['product_added_from_catalog'] = 1;

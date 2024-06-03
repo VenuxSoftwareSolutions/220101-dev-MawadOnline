@@ -7550,6 +7550,7 @@
         document.getElementById('choice_form').addEventListener('submit', function (event) {
             event.preventDefault(); // Prevent default form submission
             var approved = "{{ $product->approved }}";
+            var added_from_catalog = "{{ $product->product_added_from_catalog }}";
             var isEmpty = false;
 
             var tagifyInputs = $(".aiz-tag-input").not(".tagify");

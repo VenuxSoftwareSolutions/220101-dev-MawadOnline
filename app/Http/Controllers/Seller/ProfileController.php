@@ -421,7 +421,7 @@ class ProfileController extends Controller
                 Notification::send($admin, new VendorProfileChangesWebNotification($user));
             }
          }
-        return back()->with('success', 'Your changes have been proposed for review.');
+         return back()->with('success', trans('profile.changes_proposed'));
 
         }
 

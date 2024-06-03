@@ -29,11 +29,11 @@ class ProductService
     {
         $collection = collect($data);
 
-        $vat_user = BusinessInformation::where('user_id', Auth::user()->id)->first();
+        $vat_user = BusinessInformation::where('user_id', Auth::user()->owner_id)->first();
 
         $approved = 1;
         if (auth()->user()->user_type == 'seller') {
-            $user_id = auth()->user()->id;
+            $user_id = Auth::user()->owner_id;
             if (get_setting('product_approve_by_admin') == 1) {
                 $approved = 0;
             }
@@ -1116,10 +1116,10 @@ class ProductService
     {
         $collection = collect($data);
 
-        $collection['user_id'] = auth()->user()->id;
+        $collection['user_id'] = Auth::user()->owner_id;
 
         $collection['rejection_reason'] = null;
-        $vat_user = BusinessInformation::where('user_id', Auth::user()->id)->first();
+        $vat_user = BusinessInformation::where('user_id', Auth::user()->owner_id)->first();
 
         $slug = Str::slug($collection['name']);
         $same_slug_count = Product::where('slug', 'LIKE', $slug . '%')->count();
@@ -1864,7 +1864,7 @@ class ProductService
                             DB::table('revisions')->insert([
                                 "revisionable_type" => "App\Models\ProductAttributeValues",
                                 "revisionable_id" => $attribute_product->id,
-                                "user_id" => Auth::user()->id,
+                                "user_id" => Auth::user()->owner_id,
                                 "key" => 'add_attribute',
                                 "old_value" => NULL,
                                 "new_value" => $value,
@@ -1904,6 +1904,7 @@ class ProductService
             }
 
             $historique = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_id', $product_update->id)->where('revisionable_type', 'App\Models\Product')->get();
+            
             $historique_attributes = DB::table('revisions')->whereNull('deleted_at')->whereIn('revisionable_id', $ids_product_attribute_values)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
             if(($product_update->product_added_from_catalog == 1) && (count($historique) == 0) && (count($historique_attributes) == 0)){
                 $product_update->approved = 1;
@@ -1912,7 +1913,7 @@ class ProductService
                 // Update the approved field in the parent product
                 $product_update->update(['approved' => 0, 'published' => $collection['last_version']]);
             }
-
+            
             return $product_update;
         }else{
             // //Create Parent Product
@@ -2127,7 +2128,7 @@ class ProductService
                                     DB::table('revisions')->insert([
                                         "revisionable_type" => "App\Models\ProductAttributeValues",
                                         "revisionable_id" => $attribute_product->id,
-                                        "user_id" => Auth::user()->id,
+                                        "user_id" => Auth::user()->owner_id,
                                         "key" => 'add_attribute',
                                         "old_value" => NULL,
                                         "new_value" => $value_attribute,
@@ -2178,7 +2179,7 @@ class ProductService
                                 DB::table('revisions')->insert([
                                     "revisionable_type" => "App\Models\UploadProducts",
                                     "revisionable_id" => $uploaded_document->id,
-                                    "user_id" => Auth::user()->id,
+                                    "user_id" => Auth::user()->owner_id,
                                     "key" => 'add_image',
                                     "old_value" => NULL,
                                     "new_value" => $uploaded_document->id,
@@ -2443,7 +2444,7 @@ class ProductService
                             DB::table('revisions')->insert([
                                 "revisionable_type" => "App\Models\ProductAttributeValues",
                                 "revisionable_id" => $attribute_product->id,
-                                "user_id" => Auth::user()->id,
+                                "user_id" => Auth::user()->owner_id,
                                 "key" => 'add_attribute',
                                 "old_value" => NULL,
                                 "new_value" => $value,
@@ -2599,7 +2600,7 @@ class ProductService
                                 DB::table('revisions')->insert([
                                     "revisionable_type" => "App\Models\UploadProducts",
                                     "revisionable_id" => $uploaded_document->id,
-                                    "user_id" => Auth::user()->id,
+                                    "user_id" => Auth::user()->owner_id,
                                     "key" => 'add_image',
                                     "old_value" => NULL,
                                     "new_value" => $uploaded_document->id,
@@ -2834,10 +2835,10 @@ class ProductService
 
         $collection = collect($data);
 
-        $collection['user_id'] = auth()->user()->id;
+        $collection['user_id'] = Auth::user()->owner_id;
         $collection['approved'] = 0;
         $collection['rejection_reason'] = null;
-        $vat_user = BusinessInformation::where('user_id', Auth::user()->id)->first();
+        $vat_user = BusinessInformation::where('user_id', Auth::user()->owner_id)->first();
 
         $slug = Str::slug($collection['name']);
         $same_slug_count = Product::where('slug', 'LIKE', $slug . '%')->count();

@@ -114,10 +114,10 @@
     <div class="aiz-titlebar mt-4 mb-4">
         <div class="row align-items-center">
             <div class="col-md-6">
-                <h1 class="h1">{{ translate('Profile Management') }}</h1>
+                <h1 class="h1">{{ __('profile.profile_management') }}</h1>
             </div>
             <div class="col-md-12 mt-2">
-                <p class="text-muted">Easily update you profile details in one place. keep your personal info and contact details current with our Profile Management screen</p>
+                <p class="text-muted">{{ __('profile.update_profile_details') }}</p>
 
             </div>
         </div>
@@ -450,7 +450,7 @@
                                             value="{{ auth()->check() ? auth()->user()->email : '' }}"
                                             placeholder="{{ translate('Email') }}" name="email" >
                                             <div style="color: red;">
-                                                Email cannot be changed
+                                                {{ __('profile.email_cannot_be_changed') }}
                                             </div>
                                     </div>
                                 </div>
@@ -599,7 +599,7 @@
                                     </div>
                                     <div class="col-md-12" style="padding-left: 0px">
                                         <div class="fs-20 fw-600 p-3 orange-text">
-                                            E-Shop Information
+                                            {{ __('profile.e_shop_information') }}
                                         </div>   </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -630,7 +630,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label><b>{{ translate('English e-Shop description') }} </b><span
-                                                    class="optional"> (Optional)</span></label>
+                                                    class="optional"> ({{ __('profile.optional') }})</span></label>
 
                                             <textarea class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_desc_english') ? 'color-modified' : '' }}" placeholder="{{ translate('English e-Shop description') }}"
                                                 name="eshop_desc_english">{{ $eshop_desc_english }}</textarea>
@@ -642,7 +642,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label><b>{{ translate('Arabic e-Shop description') }}</b> <span
-                                                class="optional"> (Optional)</span></label>
+                                                class="optional"> ({{ __('profile.optional') }})</span></label>
 
                                             <textarea class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('eshop_desc_arabic') ? 'color-modified' : '' }}" placeholder="{{ translate('Arabic e-Shop description') }}"
                                                 name="eshop_desc_arabic">{{ $eshop_desc_arabic  }}</textarea>
@@ -654,7 +654,7 @@
 
                                     <div class="col-md-12 Grand-title">
                                         <div class="fs-20 fw-600 p-3 orange-text">
-                                               License Information
+                                            {{ __('profile.license_information') }}
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -691,7 +691,7 @@
                                     </div>
                                     <div class="col-md-12 Grand-title">
                                         <div class="fs-20 fw-600 p-3 orange-text">
-                                            Location Information
+                                            {{ __('profile.location_information') }}
                                         </div>
                                     </div>
 
@@ -798,7 +798,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label><b>{{ translate('Unit/Office No.') }} </b><span
-                                                class="optional"> (Optional)</span></label>
+                                                class="optional"> ({{ __('profile.optional') }})</span></label>
                                             <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('unit') ? 'color-modified' : '' }}"
                                                 value="{{$unit }}"
                                                 placeholder="{{ translate('Unit/Office No.') }}" name="unit">
@@ -810,7 +810,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label><b>{{ translate('PO Box') }} </b><span
-                                                class="optional"> (Optional)</span></label>
+                                                class="optional"> ({{ __('profile.optional') }})</span></label>
                                             <input type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('po_box') ? 'color-modified' : '' }}"
                                                 value="{{ $po_box }}"
                                                 placeholder="{{ translate('PO Box') }}" name="po_box">
@@ -820,14 +820,14 @@
                                         </div>
                                     </div>
                                     <div class="fs-20 fw-600 p-3 orange-text">
-                                        Contact Information
+                                        {{ __('profile.contact_information') }}
                                      </div>
                                     <div class="col-md-12">
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="form-group">
                                                     <label><b>{{ translate('Landline Phone No.') }} </b><span
-                                                        class="optional"> (Optional)</span></label>
+                                                        class="optional"> ({{ __('profile.optional') }})</span></label>
                                                     <input value="{{$landline }}"
                                                         type="text" class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('landline') ? 'color-modified' : '' }}"
                                                         placeholder="{{ translate('Landline Phone No.') }}" name="landline">
@@ -841,7 +841,7 @@
                                     </div>
                                     <div class="col-md-12" style="padding-left: 0px">
                                         <div class="fs-20 fw-600 p-3 orange-text">
-                                            Tax Information
+                                            {{ __('profile.tax_information') }}
                                         </div>   </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -910,7 +910,7 @@
 
                                     <div class="col-md-12 Grand-title">
                                         <div class="fs-20 fw-600 p-3 orange-text">
-                                            Regulatory Information
+                                            {{ __('profile.regulatory_information') }}
                                         </div>
                                     </div>
                                     <div class="col-md-6" id="taxWaiverGroup" {{-- style="display: none;" --}}>
@@ -934,7 +934,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label><b>{{ translate('Civil Defense Approval') }}</b> <span
-                                                class="optional"> (Optional)</span></label>
+                                                class="optional"> ({{ __('profile.optional') }})</span></label>
                                             {{-- <input  type="file" class="form-control rounded-0"
                                             name="civil_defense_approval"> --}}
                                             @if ($civil_defense_approval )
@@ -985,7 +985,8 @@
                     <!-- ... Contact Person form fields ... -->
                     <div class="bg-white border mb-4">
                         <div class="fs-20 fw-600 p-3 orange-text">
-                            {{ translate('Personal Information') }}
+                            {{ __('profile.personal_information') }}
+
                         </div>
 
 
@@ -1083,7 +1084,7 @@
                                     </div>
                                 </div>
                                 <div class="fs-20 fw-600 p-3 orange-text">
-                                    Contact Information
+                                    {{ __('profile.contact_information') }}
                                  </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
@@ -1124,7 +1125,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label><b>{{ translate('Additional Mobile Phone') }} </b><span
-                                            class="optional"> (Optional)</span></label>
+                                            class="optional"> ({{ __('profile.optional') }})</span></label>
                                         <input type="text" dir="auto"
                                             class="form-control rounded-0 {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('additional_mobile_phone') ? 'color-modified' : '' }}"
                                             placeholder="{{ translate('Additional Mobile Phone') }}"
@@ -1140,7 +1141,7 @@
                                 </div>
 
                                 <div class="fs-20 fw-600 p-3 orange-text">
-                                    Emirates ID
+                                    {{ __('profile.emirates_id') }}
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
@@ -1216,7 +1217,8 @@
                                 </div>
                                 <div class="col-md-12" style="padding-left: 0px">
                                     <div class="fs-20 fw-600 p-3 orange-text">
-                                        Employment Information
+                                        {{ __('profile.employment_information') }}
+
                                     </div>
                                 </div>
 
@@ -1279,7 +1281,8 @@
                     <div class="bg-white border mb-4">
 
                        <div class="fs-20 fw-600 p-3 orange-text">
-                                                {{ translate('Trade Information') }}
+                        {{ __('profile.trade_information') }}
+
                         </div>
                         {{-- <div id="validation-errors" class="alert alert-danger"
                                 style="display: none;"></div> --}}
@@ -1361,7 +1364,7 @@
                                         @if ($ibanCertificate)
                                             <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('iban_certificate') ? 'color-modified-file' : '' }}"
                                                 href="{{ static_asset($ibanCertificate) }}"
-                                                target="_blank">{{ translate('View IBAN Certificate') }}</a>
+                                                target="_blank">{{ __('profile.view_iban_certificate') }}</a>
                                             <input type="hidden" name="iban_certificate"
                                                 value="{{ $ibanCertificate }}">
                                         @endif
@@ -1399,7 +1402,7 @@
                         @if ($proposedPayoutChange && $proposedPayoutChange->admin_viewed == 0 || !$proposedPayoutChange)
                         <!-- Submit for Review Button -->
                         <button type="button" id="submitForReviewBtn" class="btn btn-primary fw-600 rounded-0">
-                            {{ translate('Submit for Review') }}
+                            {{ __('profile.submit_for_review') }}
                         </button>
                         @endif
 
@@ -1437,17 +1440,17 @@
                 <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                    <h5 class="modal-title" id="confirmationModalLabel">Confirm</h5>
+                    <h5 class="modal-title" id="confirmationModalLabel">{{ __('profile.confirm') }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                     </div>
                     <div class="modal-body">
-                    Changes in all tabs will be submitted for admin’s review. Are you sure?
+                        {{ __('profile.changes_confirmation') }}
                     </div>
                     <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-                    <button type="button" class="btn btn-primary customer-color" id="confirmSubmitBtn">Yes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('profile.no') }}</button>
+                    <button type="button" class="btn btn-primary customer-color" id="confirmSubmitBtn">{{ __('profile.yes') }}</button>
                     </div>
                 </div>
                 </div>

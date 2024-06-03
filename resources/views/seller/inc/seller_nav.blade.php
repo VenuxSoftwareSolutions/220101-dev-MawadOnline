@@ -144,7 +144,7 @@
                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-animated dropdown-menu-md">
                         <a href="{{ route('seller.profile.index') }}" class="dropdown-item">
                             <i class="las la-user-circle"></i>
-                            <span>{{translate('e-Shop Profile')}}</span>
+                            <span>{{ __('profile.e_shop_profile') }}</span>
                         </a>
 
                         <a href="{{ route('logout')}}" class="dropdown-item">
