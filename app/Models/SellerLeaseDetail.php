@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Role;
 use App\Models\SellerLease;
-use Spatie\Permission\Models\Role;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 

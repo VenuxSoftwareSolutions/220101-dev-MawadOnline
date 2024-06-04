@@ -30,7 +30,7 @@
                     <th data-breakpoints="lg">{{translate('Email')}}</th>
                     <th data-breakpoints="lg">{{translate('Phone')}}</th>
                     <th data-breakpoints="lg">{{translate('Roles')}}</th>
-                    <th data-breakpoints="lg">{{__('Enabled')}}</th>
+                    <th data-breakpoints="lg">{{__('staff.Enabled')}}</th>
                     <th width="10%" class="text-right">{{translate('Options')}}</th>
                 </tr>
             </thead>
@@ -44,8 +44,8 @@
                             <td>{{$staff->user->email}}</td>
                             <td>{{$staff->user->phone}}</td>
                             <td>
-                                @foreach ($staff->user->getRoleNames() as $name)
-                                {{ $name }}
+                                @foreach ($staff->user->roles as $role)
+                                {{ $role->getTranslation('name') }}
                                 <br>
                                 @endforeach
 

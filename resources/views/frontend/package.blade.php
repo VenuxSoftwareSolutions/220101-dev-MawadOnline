@@ -7,11 +7,11 @@
                 <div class="col-xl-10 mx-auto text-center">
                     <h1 class="mb-4 fw-700">{{ translate('MawadOnline') }}</h1>
                     <h6 class="mb-4 fw-400">
-                        {{ translate('MawadOnline offers the best marketplace for contruction materials in UAE...') }}</h6>
+                        {{ __('package.MawadOnline offers the best marketplace for contruction materials in UAE...') }}</h6>
                     <h6 class="mb-0 fw-700">
-                        {{ translate('You will not pay now. Choose your package, registre your e-Shop, create your products and inventory.') }}
+                        {{ __('package.You will not pay now. Choose your package, registre your e-Shop, create your products and inventory.') }}
                         <br>
-                        {{ translate('Make your e-Shop ready for MawadOnline launch') }}
+                        {{ __('package.Make your e-Shop ready for MawadOnline launch') }}
                     </h6>
                 </div>
             </div>
@@ -31,8 +31,8 @@
                                 @if ($seller_packages[0]->amount == 0)
                                     <span class="fs-30 fw-600 lh-1 mb-0">-</span>
                                 @else
-                                    <span class="fs-32 fw-700 lh-1 mb-0">AED {{ $seller_packages[0]->amount }} /
-                                        month</span>
+                                    <span class="fs-32 fw-700 lh-1 mb-0">{{ __('package.AED') }} {{ $seller_packages[0]->amount }} /
+                                        {{ __('package.month') }}</span>
                                 @endif
                                 {{-- <span
                                         class="text-secondary border-left ml-2 pl-2">{{ $seller_packages->duration }}<br>{{ translate('Days') }}</span> --}}
@@ -41,19 +41,19 @@
                             <ul class="list-group list-group-raw fs-13 mb-5">
                                 <li class="list-group-item py-2 fw-700">
                                     <i class="las la-check text-success mr-2"></i>
-                                    {{ translate('Full access to all e-Shop essentials') }}
+                                    {{ __('package.Full access to all e-Shop essentials') }}
                                 </li>
                                 <li class="list-group-item py-2 fw-700">
                                     <i class="las la-check text-success mr-2"></i>
-                                    {{ translate('Unlimited products') }}
+                                    {{ __('package.Unlimited products') }}
                                 </li>
                                 <li class="list-group-item py-2 fw-700">
                                     <i class="las la-check text-success mr-2"></i>
-                                    {{ translate('Free e-Shop adminstrator + 4 positions') }}
+                                    {{ __('package.Free e-Shop administrator + 4 positions') }}
                                 </li>
                                 <li class="list-group-item py-2 fw-700">
                                     <i class="las la-check text-success mr-2"></i>
-                                    {{ translate('Additional staff position just for AED 10/month') }}
+                                    {{ __('package.Additional staff position just for AED 10/month') }}
                                 </li>
                             </ul>
 
@@ -71,7 +71,7 @@
                                         @endif
                                     @endif --}}
                                 <button class="btn btn-primary fw-600 col-10"
-                                    onclick="select_package({{ $seller_packages[0]->id }})">{{ translate('Register your e-Shop') }}</button>
+                                    onclick="select_package({{ $seller_packages[0]->id }})">{{ __('package.Register your e-Shop') }}</button>
                             </div>
                         </div>
                     </div>
@@ -86,8 +86,8 @@
                                 @if ($seller_packages[1]->amount == 0)
                                     <span class="fs-30 fw-600 lh-1 mb-0">-</span>
                                 @else
-                                    <span class="fs-32 fw-700 lh-1 mb-0">AED {{ $seller_packages[1]->amount }} /
-                                        month</span>
+                                    <span class="fs-32 fw-700 lh-1 mb-0">{{ __('package.AED') }} {{ $seller_packages[1]->amount }} /
+                                        {{ __('package.month') }}</span>
                                 @endif
                                 {{-- <span
                                         class="text-secondary border-left ml-2 pl-2">{{ $seller_packages->duration }}<br>{{ translate('Days') }}</span> --}}
@@ -95,19 +95,19 @@
                             <ul class="list-group list-group-raw fs-13 mb-5">
                                 <li class="list-group-item py-2 fw-700">
                                     <i class="las la-check text-success mr-2"></i>
-                                    {{ translate('Everything in the Pro Plan') }}
+                                    {{ __('package.Everything in the Pro Plan') }}
                                 </li>
                                 <li class="list-group-item py-2 fw-700">
                                     <i class="las la-check text-success mr-2"></i>
-                                    {{ translate('Customized e-Shop roles') }}
+                                    {{__('package.Customized e-Shop roles') }}
                                 </li>
                                 <li class="list-group-item py-2 fw-700">
                                     <i class="las la-check text-success mr-2"></i>
-                                    {{ translate('Marketing analytics') }}
+                                    {{ __('package.Marketing analytics') }}
                                 </li>
                                 <li class="list-group-item py-2 fw-700">
                                     <i class="las la-check text-success mr-2"></i>
-                                    {{ translate('And much more...') }}
+                                    {{ __('package.And much more...') }}
                                 </li>
                             </ul>
 
@@ -125,7 +125,7 @@
                                         @endif
                                     @endif --}}
                                 <button class="btn btn-primary fw-600 col-10"
-                                    disabled>{{ translate('Coming soon') }}</button>
+                                    disabled>{{ __('package.Coming Soon') }}</button>
                             </div>
                         </div>
                     </div>
@@ -133,7 +133,7 @@
             </div>
             <div class="row mt-2 justify-content-center">
                 <div class="fs-15">
-                    <a href="{{ route('terms-and-conditions') }}" target="_blank"><u>Terms & Conditions<i
+                    <a href="{{ route('terms-and-conditions') }}" target="_blank"><u>{{ __('package.Terms & Conditions') }}<i
                                 class="las la-external-link-alt"></i></u></a>
 
                 </div>
@@ -155,13 +155,13 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label
-                                    class="fs-15 fw-400">{{ translate('Welcome to MawadOnline, and thank you for selecting the Pro package! You\'re on your way to setting up your own e-shop—no payment needed just yet. Once we\'ve got your registration squared away, you\'ll be all set to showcase your products. Get ready to be part of an exciting chapter in construction retail! Keep an eye out—we\'re launching soon!') }}</label>
+                                    class="fs-15 fw-400">{{__('package.Welcome to MawadOnline, and thank you for selecting the Pro package! You\'re on your way to setting up your own e-shop—no payment needed just yet. Once we\'ve got your registration squared away, you\'ll be all set to showcase your products. Get ready to be part of an exciting chapter in construction retail! Keep an eye out—we\'re launching soon!') }}</label>
                             </div>
 
                         </div>
                         <div class="form-group text-center mt-4 ">
                             <button type="submit"
-                                class="btn btn-sm btn-primary transition-3d-hover mr-1">{{ translate('OK') }}</button>
+                                class="btn btn-sm btn-primary transition-3d-hover mr-1">{{ __('package.OK') }}</button>
                         </div>
                     </div>
                 </div>

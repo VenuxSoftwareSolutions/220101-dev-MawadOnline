@@ -64,7 +64,10 @@ class SellerStaffController extends Controller
     public function store(StoreStaffRequest $request)
     {
         abort_if(!auth('web')->user()->can('seller_add_staff'), Response::HTTP_FORBIDDEN, 'ACCESS FORBIDDEN');
-
+        if(User::where('phone', $request->mobile)->first() != null){
+            flash(__('staff.Phone already exists'))->error();
+            return back();
+        }
         $currentDate = Carbon::now();
         $startDay = (clone $currentDate);
         $endDay = (clone $currentDate)->subDay(1);
@@ -150,24 +153,24 @@ class SellerStaffController extends Controller
 
                     if ($staff->save()) {
                         Mail::to($user->email)->send(new SellerStaffMail($user, $role, $password, $vendor , $url));
-                        flash(translate('Success! Your new team member is now part of your eShop crew. Ready to take on the world together!'))->success();
+                        flash(__('staff.Success! Your new team member is now part of your eShop crew. Ready to take on the world together!'))->success();
                         DB::commit(); // Commit the transaction
                         return redirect()->route('seller.staffs.index');
                     }
                 }
 
                 DB::rollback(); // Rollback the transaction
-                flash(translate('Failed to insert staff'))->error();
+                flash(__('staff.Failed to insert staff'))->error();
                 return redirect()->back()->withInput();
             } catch (\Exception $e) {
                 DB::rollback(); // Rollback the transaction
-                flash(translate('An error occurred while inserting staff'))->error();
+                flash(__('staff.An error occurred while inserting staff'))->error();
                 Log::info($e);
                 return redirect()->back()->withInput();
             }
         }
 
-        flash(translate('Email already used'))->error();
+        flash(translate('Email already exists'))->error();
         return back();
     }
 
@@ -356,15 +359,15 @@ class SellerStaffController extends Controller
 
             if ($staff->save()) {
                 $user->syncRoles(Role::whereIn('id', $request->role_id)->pluck('name'));
-                flash(translate('Staff has been updated successfully'))->success();
+                flash(__('staff.Staff has been updated successfully'))->success();
                 return redirect()->route('seller.staffs.index');
             }
 
-            flash(translate('Something went wrong'))->error();
+            flash(__('staff.Something went wrong'))->error();
             return back();
         } catch (Exception $e) {
             Log::error('Error updating staff: ' . $e->getMessage());
-            flash(translate('Something went wrong: ') . $e->getMessage())->error();
+            flash(__('staff.Something went wrong') . $e->getMessage())->error();
             return back();
         }
     }
@@ -425,17 +428,17 @@ class SellerStaffController extends Controller
             }
 
             if (User::destroy($staff->user->id)) {
-                flash(translate('Staff has been deleted successfully'))->success();
+                flash(__('staff.Staff has been deleted successfully'))->success();
                 return redirect()->route('seller.staffs.index');
             }
 
-            flash(translate('Something went wrong'))->error();
+            flash(__('staff.Something went wrong'))->error();
             return back();
         } catch (Exception $e) {
             // Log the error message for debugging purposes
             Log::error('Error deleting staff: ' . $e->getMessage());
 
-            flash(translate('Something went wrong: ') . $e->getMessage())->error();
+            flash(__('staff.Something went wrong') . $e->getMessage())->error();
             return back();
         }
     }
@@ -486,8 +489,7 @@ class SellerStaffController extends Controller
         }
 
         if($amount>0){
-            return response()->json(['isUsed' => 1,'message' => 'Great choice! Adding this role now is on us until the end of this month. Starting next month,
-             an additional AED '. number_format($amount,2) .' will apply with your eShop lease. We\'re excited to see your team grow! ']);
+            return response()->json(['isUsed' => 1,'message' => __('staff.Great choice! Adding this role now is on us until the end of this month. Starting next month,an additional AED ').' '. number_format($amount,2) .' '.__('staff.will apply with your eShop lease. We\'re excited to see your team grow!')]);
 
         }
     }
