@@ -81,4 +81,6 @@ return [
     'approve' => 'Approve',
     'view_approved_iban_certificate' => 'View Approved IBAN Certificate',
     'view_iban_certificate' => 'View IBAN Certificate',
+    'strict_email' => 'The email address is not valid.',
+
 ];

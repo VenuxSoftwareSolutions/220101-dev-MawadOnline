@@ -26,6 +26,15 @@
 
                                 <!-- Register form -->
                                 <div class="pt-3">
+                                    @if ($errors->any())
+                                        <div class="alert alert-danger">
+                                            <ul>
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                            </ul>
+                                        </div>
+                                        @endif
                                     <div class="">
                                         <form id="reg-form" class="form-default" role="form" action="{{ route('register') }}" method="POST">
                                             @csrf
@@ -41,7 +50,7 @@
                                             </div>
 
                                             <!-- Email or Phone -->
-                                            @if (addon_is_activated('otp_system'))
+                                            {{-- @if (addon_is_activated('otp_system'))
                                                 <div class="form-group phone-form-group mb-1">
                                                     <label for="phone" class="fs-12 fw-700 text-soft-dark">{{  translate('Phone') }}</label>
                                                     <input type="tel" id="phone-code" class="form-control rounded-0{{ $errors->has('phone') ? ' is-invalid' : '' }}" value="{{ old('phone') }}" placeholder="" name="phone" autocomplete="off">
@@ -62,7 +71,7 @@
                                                 <div class="form-group text-right">
                                                     <button class="btn btn-link p-0 text-primary" type="button" onclick="toggleEmailPhone(this)"><i>*{{ translate('Use Email Instead') }}</i></button>
                                                 </div>
-                                            @else
+                                            @else --}}
                                                 <div class="form-group">
                                                     <label for="email" class="fs-12 fw-700 text-soft-dark">{{  translate('Email') }}</label>
                                                     <input type="email" class="form-control rounded-0{{ $errors->has('email') ? ' is-invalid' : '' }}" value="{{ old('email') }}" placeholder="{{  translate('Email') }}" name="email">
@@ -72,7 +81,7 @@
                                                         </span>
                                                     @endif
                                                 </div>
-                                            @endif
+                                            {{-- @endif --}}
 
                                             <!-- password -->
                                             <div class="form-group mb-0">
@@ -126,8 +135,8 @@
                                                 <button type="submit" class="btn btn-primary btn-block fw-600 rounded-0">{{  translate('Create Account') }}</button>
                                             </div>
                                         </form>
-                                        
-                                        <!-- Social Login -->
+
+                                        {{-- <!-- Social Login -->
                                         @if(get_setting('google_login') == 1 || get_setting('facebook_login') == 1 || get_setting('twitter_login') == 1 || get_setting('apple_login') == 1)
                                             <div class="text-center mb-3">
                                                 <span class="bg-white fs-12 text-gray">{{ translate('Or Join With')}}</span>
@@ -162,7 +171,7 @@
                                                     </li>
                                                 @endif
                                             </ul>
-                                        @endif
+                                        @endif --}}
                                     </div>
 
                                     <!-- Log In -->

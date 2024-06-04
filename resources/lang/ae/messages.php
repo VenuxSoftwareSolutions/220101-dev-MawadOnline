@@ -79,4 +79,6 @@ return [
     'approve' => 'الموافقة',
     'view_approved_iban_certificate' => 'عرض شهادة الآيبان المعتمدة',
     'view_iban_certificate' => 'عرض شهادة الآيبان',
+    'strict_email' => 'البريد الإلكتروني غير صالح.',
+
 ];
