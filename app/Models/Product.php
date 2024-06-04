@@ -9,6 +9,7 @@ use App\Models\ProductAttributeValues;
 use App\Models\PricingConfiguration;
 use App\Models\Category;
 use App\Models\Shipping;
+use App\Models\Product;
 use App\Models\Shop;
 use Illuminate\Database\Eloquent\Model;
 use \Venturecraft\Revisionable\RevisionableTrait;
@@ -95,6 +96,15 @@ class Product extends Model
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'product_categories');
+    }
+    public function variants()
+    {
+        return $this->hasMany(Product::class, 'parent_id', 'id');
+    }
+
+    public function medias()
+    {
+        return $this->hasMany(UploadProducts::class, 'id_product', 'id');
     }
 
     public function brand()
