@@ -154,11 +154,7 @@
                                 <li id="packages" class="aiz-side-nav-item">
                                     <a href="{{ route('seller.seller_packages_list') }}" class="aiz-side-nav-link">
                                         <i class="las la-shopping-cart aiz-side-nav-icon"></i>
-<<<<<<< HEAD
-                                        <span class="aiz-side-nav-text">{{ __('sidenav.Packages') }}</span>
-=======
                                         <span class="aiz-side-nav-text">{{ translate('seller_packages') }}</span>
->>>>>>> 1414f1d3948479e450812dae133dbc582c87b36f
                                     </a>
                                 </li>
                                 @endcan
