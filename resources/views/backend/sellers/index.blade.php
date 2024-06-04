@@ -5,7 +5,7 @@
 <div class="aiz-titlebar text-left mt-2 mb-3">
     <div class="row align-items-center">
         <div class="col-md-6">
-            <h1 class="h3">{{translate('All Vendors')}}</h1>
+            <h1 class="h3">{{ __('messages.all_vendors') }}</h1>
         </div>
     </div>
 </div>
@@ -14,7 +14,7 @@
     {{-- <form class="" id="sort_sellers" action="" method="GET"> --}}
         <div class="card-header row gutters-5">
             <div class="col">
-                <h5 class="mb-md-0 h6">{{ translate('Vendors') }}</h5>
+                <h5 class="mb-md-0 h6">{{ __('messages.vendors') }}</h5>
             </div>
 
             {{-- @can('delete_seller')
@@ -194,11 +194,11 @@
                     <tr>
                         <th>{{__('messages.email_address')}}</th>
                         {{-- <th>{{__('messages.approval')}}</th> --}}
-                        <th>Business name</th>
-                        <th>Vendor name</th>
+                        <th>{{ __('messages.business_name') }}</th>
+                        <th>{{ __('messages.vendor_name') }}</th>
                         <th>{{ __('messages.status') }}</th>
-                        <th>Joining Date/Time</th>
-                        <th>Last Status Update</th>
+                        <th>{{ __('messages.joining_datetime') }}</th>
+                        <th>{{ __('messages.last_status_update') }}</th>
                         <th width="10%">{{__('messages.options')}}</th>
                     </tr>
                     </thead>
@@ -226,7 +226,8 @@
                                {{-- Check if there are pending profile changes --}}
                                 @if ($seller->checkProposedChanges())
                                 {{-- Display a message indicating pending changes --}}
-                                <span class="text-danger"> - Changes Pending Approval</span>
+                                <span class="text-danger"> - {{ __('messages.changes_pending_approval') }}
+                                </span>
                                 @endif
                                 {{-- @if($seller->status == 'Rejected')
                                     <span class="badge bg-danger">{{ __('Rejected') }}</span>
@@ -378,17 +379,18 @@
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="pendingClosureModalLabel">Are you sure?</h5>
+              <h5 class="modal-title" id="pendingClosureModalLabel">{{ __('messages.pending_closure_modal_title') }}</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div class="modal-body">
-              This will mark the vendor for pending closure. Are you sure you want to proceed?
+                {{ __('messages.pending_closure_modal_body') }}
+
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-              <button type="button" class="btn btn-primary" id="confirmPendingClosureBtn">Yes, pending closure!</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('messages.pending_closure_modal_cancel_btn') }}</button>
+              <button type="button" class="btn btn-primary" id="confirmPendingClosureBtn">{{ __('messages.pending_closure_modal_confirm_btn') }}</button>
             </div>
           </div>
         </div>
@@ -398,17 +400,17 @@
         <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title" id="closeVendorModalLabel">Are you sure?</h5>
+            <h5 class="modal-title" id="closeVendorModalLabel">{{ __('messages.close_vendor_modal_title') }}</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
             </div>
             <div class="modal-body">
-            This will close the vendor's e-shop. Are you sure you want to proceed?
+                {{ __('messages.close_vendor_modal_body') }}
             </div>
             <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-danger" id="confirmCloseVendorBtn">Yes, close it!</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('messages.close_vendor_modal_cancel_btn') }}</button>
+            <button type="button" class="btn btn-danger" id="confirmCloseVendorBtn">{{ __('messages.close_vendor_modal_confirm_btn') }}</button>
             </div>
         </div>
         </div>
@@ -679,7 +681,7 @@ $('#confirmPendingClosureBtn').on('click', function() {
         success: function(data) {
             // Show success message
             // Swal.fire('Vendor Suspended with Pending Closure', 'The vendor has been successfully suspended with pending closure.', 'success');
-            toastr.success('Vendor Suspended with Pending Closure', 'The vendor has been successfully suspended with pending closure.');
+            toastr.success('{{ __('messages.vendor_suspended_success') }}', '{{ __('messages.toastr_vendor_suspended') }}');
             $('#status-' + vendorIdToClose).text('Pending Closure');
             $('#last-status-update-' + vendorIdToClose).text(data.last_status_update);
             uncheckCheckboxByVendorId(vendorIdToClose);
@@ -687,7 +689,7 @@ $('#confirmPendingClosureBtn').on('click', function() {
         },
         error: function(xhr, status, error) {
             // Show error message
-            toastr.error('Failed to pending closure the vendor. Please try again later.', 'Error');
+            toastr.error('{{ __('messages.vendor_suspended_error') }}', '{{ __('messages.toastr_error') }}');
             // Swal.fire('Error', 'Failed to pending closure the vendor. Please try again later.', 'error');
         }
     });
@@ -753,7 +755,7 @@ $('#confirmPendingClosureBtn').on('click', function() {
             // $('#successModal .modal-body').text('The vendor\'s e-shop has been closed successfully');
             // $('#successModal').modal('show');
             // Swal.fire('Vendor Closed', 'The vendor\'s e-shop has been closed successfully', 'success');
-            toastr.success('The vendor\'s e-shop has been closed successfully', 'Vendor Closed');
+            toastr.success('{{ __('messages.vendor_closed_success') }}', '{{ __('messages.toastr_vendor_closed') }}');
 
             $('#status-' + vendorId).text('Closed');
             $('#last-status-update-' + vendorId).text(data.last_status_update);
@@ -765,7 +767,7 @@ $('#confirmPendingClosureBtn').on('click', function() {
             // $('#errorModal .modal-body').text('Failed to close the vendor\'s e-shop. Please try again later.');
             // $('#errorModal').modal('show');
             // Swal.fire('Error', 'Failed to close the vendor\'s e-shop. Please try again later.', 'error');
-            toastr.error('Failed to close the vendor\'s e-shop. Please try again later.', 'Error');
+            toastr.error('{{ __('messages.vendor_closed_error') }}', '{{ __('messages.toastr_error') }}');
 
         }
     });

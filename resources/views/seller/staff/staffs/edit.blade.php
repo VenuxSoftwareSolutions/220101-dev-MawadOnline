@@ -6,7 +6,7 @@
     <div class="col-lg-6 mx-auto">
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0 h6">{{translate('Staff Information')}}</h5>
+                <h5 class="mb-0 h6">{{ __('staff.Staff Information') }}</h5>
             </div>
 
             <form action="{{ route('seller.staffs.update', $staff->id) }}" method="POST">
@@ -36,7 +36,7 @@
                         <div class="col-sm-9">
                             <select name="role_id[]" multiple required class="form-control aiz-selectpicker" onchange="checkRoleUsage()">
                                 @foreach($roles as $role)
-                                    <option value="{{$role->id}}" @php if($staff->user->getRoleNames()->contains($role->name)) echo "selected"; @endphp >{{$role->name}}</option>
+                                    <option value="{{$role->id}}" @php if($staff->user->getRoleNames()->contains($role->name)) echo "selected"; @endphp >{{$role->getTranslation('name')}}</option>
                                 @endforeach
                             </select>
                         </div>

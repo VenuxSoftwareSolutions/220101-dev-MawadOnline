@@ -86,7 +86,7 @@ class StaffController extends Controller
             }
         }
 
-        flash(translate('Email already used'))->error();
+        flash(translate('Email already exists'))->error();
         return back();
     }
 
@@ -165,7 +165,7 @@ class StaffController extends Controller
             $staff->role_id = $request->role_id;
             if($staff->save()){
                 $user->syncRoles(Role::findOrFail($request->role_id)->name);
-                flash(translate('Staff has been updated successfully'))->success();
+                flash(__('staff.Staff has been updated successfully'))->success();
                 return redirect()->route('staffs.index');
             }
         }
@@ -184,7 +184,7 @@ class StaffController extends Controller
     {
         User::destroy(Staff::findOrFail($id)->user->id);
         if(Staff::destroy($id)){
-            flash(translate('Staff has been deleted successfully'))->success();
+            flash(__('staff.Staff has been deleted successfully'))->success();
             return redirect()->route('staffs.index');
         }
 

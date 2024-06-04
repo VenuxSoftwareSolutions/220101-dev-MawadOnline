@@ -173,7 +173,7 @@
         this.options = FilterMultiSelect.createOptions(this, name, array, args.items); // restrict selection
 
         this.numSelectedItems = 0;
-        this.maxNumSelectedItems = !select.multiple ? 1 : args.selectionLimit > 0 ? args.selectionLimit : parseInt(select.getAttribute('multiple')) > 0 ? parseInt(select.getAttribute('multiple')) : 0; //magic number 
+        this.maxNumSelectedItems = !select.multiple ? 1 : args.selectionLimit > 0 ? args.selectionLimit : parseInt(select.getAttribute('multiple')) > 0 ? parseInt(select.getAttribute('multiple')) : 0; //magic number
 
         var numOptions = this.options.length;
         var restrictSelection = this.maxNumSelectedItems > 0 && this.maxNumSelectedItems < numOptions;
@@ -390,7 +390,7 @@
         } else {
           this.options.forEach(function (o, i) {
             if (o.getLabel().toLowerCase().indexOf(text.toLowerCase()) !== -1) {
-              //magic number 
+              //magic number
               o.show();
               showing.push(i);
             } else {

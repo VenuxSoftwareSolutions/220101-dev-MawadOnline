@@ -85,9 +85,11 @@
                                 selected
                             @endif value="1">Lucian Burke</option> --}}
                             @foreach ($productVariants as $productVariant)
+                            @if ($productVariant)
                                 <option @if (is_array(request('product_variants')) && (in_array($productVariant->id,request('product_variants')))|| !(request('product_variants')))
                                     selected
                                 @endif value="{{$productVariant->id}}">{{$productVariant->name.' '.$productVariant->sku /* .$productVariant->productVariantDetails() */}}</option>
+                                @endif
                                 @endforeach
                             </select>
                             <small class="form-text text-muted">{{ trans('stock.products_on_selected_date') }}</small>

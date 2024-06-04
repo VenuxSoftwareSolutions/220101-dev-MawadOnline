@@ -5,16 +5,16 @@
         display: flex;
         flex-wrap: wrap;
     }
-    
+
     #image-preview img {
         margin: 5px;
     }
-    
+
     #image-preview-thumbnail {
         display: flex;
         flex-wrap: wrap;
     }
-    
+
     #image-preview-thumbnail img {
         margin: 5px;
     }
@@ -26,12 +26,12 @@
         align-items: center;
         margin: 5px;
     }
-    
+
     .preview-container img {
         max-width: 100px;
         max-height: 100px;
     }
-    
+
     .preview-container button {
         margin-top: 5px;
         background-color: #ff0000;
@@ -41,19 +41,19 @@
         cursor: pointer;
         border-radius: 5px;
     }
-    
+
     .preview-container-thumbnail {
         display: flex;
         flex-direction: column;
         align-items: center;
         margin: 5px;
     }
-    
+
     .preview-container-thumbnail img {
         max-width: 100px;
         max-height: 100px;
     }
-    
+
     .preview-container-thumbnail button {
         margin-top: 5px;
         background-color: #ff0000;
@@ -64,7 +64,7 @@
         border-radius: 5px;
     }
     </style>
-    
+
 <style>
     .table th{
         font-size: 12px !important;
@@ -167,6 +167,14 @@
     }
 
 </style>
+@if(app()->getLocale() == "ae")
+    <style>
+        .multi-select-menuitem input {
+            position: relative !important;
+            margin-left: 0 !important; 
+        }
+    </style>
+@endif
 @section('panel_content')
     <div class="aiz-titlebar mt-2 mb-4">
         <div class="row align-items-center">
@@ -187,7 +195,7 @@
         </div>
     @endif
     <div class="button-container">
-        <button type="button" class="preview-button" onclick="submitForm()">Preview Product</button>
+        <button type="button" class="preview-button" onclick="submitForm()">{{ __('product.PreviewProduct') }}</button>
     </div>
     <form class="" action="{{route('seller.products.store_draft')}}" method="POST" enctype="multipart/form-data" id="choice_form">
         <div class="row gutters-5">
@@ -256,6 +264,7 @@
                                     <div class="col-md-8">
                                         <input type="text" required class="form-control aiz-tag-input" value="{{ $product->tags }}" id="tags" name="tags[]" placeholder="{{ translate('Type and hit enter to add a tag') }}">
                                         <small class="text-muted">{{translate('This is used for search. Input those words by which cutomer can find this product.')}}</small>
+                                        <div id="error-message" style="display:none; color: red">{{translate('tags input cannot be empty')}}</div>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -461,9 +470,9 @@
                                             @endforeach
                                         @else
                                             <tr>
-                                                <td><input type="number" name="from[]" class="form-control min-qty" id="min-qty-parent" placeholder="From QTY"></td>
-                                                <td><input type="number" name="to[]" class="form-control max-qty" id="max-qty-parent" placeholder="To QTY"></td>
-                                                <td><input type="number" name="unit_price[]" step="0.01" min="1" placeholder="Unit Price" class="form-control unit-price-variant" id="unit-price-parent"></td>
+                                                <td><input type="number" name="from[]" class="form-control min-qty" id="min-qty-parent" placeholder="{{ translate('From QTY')}}"></td>
+                                                <td><input type="number" name="to[]" class="form-control max-qty" id="max-qty-parent" placeholder="{{ translate('To QTY')}}"></td>
+                                                <td><input type="number" name="unit_price[]" step="0.01" min="1" placeholder="{{ translate('Unit Price')}}" class="form-control unit-price-variant" id="unit-price-parent"></td>
                                                 <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                                 <td>
                                                     <select class="form-control discount_type" name="discount_type[]">
@@ -472,17 +481,17 @@
                                                         <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                                     </select>
                                                 </td>
-                                                <td><input type="number" class="form-control discount_amount" name="discount_amount[]" placeholder="Amount"></td>
+                                                <td><input type="number" class="form-control discount_amount" name="discount_amount[]" placeholder="{{ translate('Amount') }}"></td>
                                                 <td style="width: 22% !important;">
                                                     <div class="col-md-9 input-group">
-                                                        <input type="number" class="form-control discount_percentage" name="discount_percentage[]" placeholder="Percentage">
+                                                        <input type="number" class="form-control discount_percentage" name="discount_percentage[]" placeholder="{{ translate('Percentage') }}">
                                                         <div class="input-group-append">
                                                             <span class="input-group-text">%</span>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
+                                                    <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Add another ligne')}}"></i>
                                                 </td>
                                             </tr>
                                         @endif
@@ -670,16 +679,16 @@
                                                 @endforeach
                                             @else
                                                 <tr>
-                                                    <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id="" placeholder="From QTY"></td>
-                                                    <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id="" placeholder="To QTY"></td>
+                                                    <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id="" placeholder="{{translate('From QTY')}}"></td>
+                                                    <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id="" placeholder="{{translate('To QTY')}}"></td>
                                                     <td>
                                                         <select multiple class="shipper" name="shipper[0][]">
                                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                                         </select>
                                                     </td>
-                                                    <td><input type="number" class="form-control estimated_order" name="estimated_order[]" placeholder="Days"></td>
-                                                    <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]" placeholder="Days"></td>
+                                                    <td><input type="number" class="form-control estimated_order" name="estimated_order[]" placeholder="{{translate('Days')}}"></td>
+                                                    <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]" placeholder="{{translate('Days')}}"></td>
                                                     <td>
                                                         <select class="form-control paid" name="paid[]">
                                                             <option value="" >{{translate('Choose paid by')}}</option>
@@ -700,10 +709,10 @@
                                                             <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
                                                         </select>
                                                     </td>
-                                                    <td><input type="number" class="form-control flat_rate_shipping" name="flat_rate_shipping[]" placeholder="Flat rate amount" readonly></td>
-                                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="charge_per_unit_shipping[]" placeholder="Charge unit" readonly></td>
+                                                    <td><input type="number" class="form-control flat_rate_shipping" name="flat_rate_shipping[]" placeholder="{{translate('Flat rate amount')}}" readonly></td>
+                                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="charge_per_unit_shipping[]" placeholder="{{translate('Charge unit')}}" readonly></td>
                                                     <td>
-                                                        <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
+                                                        <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="{{translate('Add another ligne')}}"></i>
                                                     </td>
                                                 </tr>
                                             @endif
@@ -779,9 +788,9 @@
                                 <div id="result_calculate_third_party_sample">
                                     @if($product->activate_third_party_sample == 1)
                                         @if ($chargeable_weight_sample > 30)
-                                            <span style="color: red"> Chargeable Weight = {{ number_format($chargeable_weight_sample, 2) }}, then not accepted by our shipper </span>
+                                            <span style="color: red"> {{translate('Chargeable Weight = ')}} {{ number_format($chargeable_weight_sample, 2) }}, {{translate('then not accepted by our shipper')}} </span>
                                         @else
-                                            <span style="color: green"> Chargeable Weight = {{ number_format($chargeable_weight_sample, 2) }}, then accepted by our shipper </span>
+                                            <span style="color: green"> {{translate('Chargeable Weight = ')}} {{ number_format($chargeable_weight_sample, 2) }}, {{translate('then accepted by our shipper')}} </span>
                                         @endif
                                     @endif
                                 </div>
@@ -857,12 +866,12 @@
                     <div class="card-header">
                         <h5 class="mb-0 h6">{{ translate('Product Category') }}</h5>
                         <h6 class="float-right fs-13 mb-0">
-                            <span id="message-category"><span>
+                            {{-- <span id="message-category"><span>
                             {{ translate('Select Main') }}
                             <span class="position-relative main-category-info-icon">
                                 <i class="las la-question-circle fs-18 text-info"></i>
                                 <span class="main-category-info bg-soft-info p-2 position-absolute d-none border">{{ translate('This will be used for commission based calculations and homepage category wise product Show.') }}</span>
-                            </span>
+                            </span> --}}
 
                         </h6>
                     </div>
@@ -874,7 +883,7 @@
                         <div class="tree_main">
 
                             <input type="text" @if($categorie != null) value="{{ $categorie->name }}" @else value="" @endif id="search_input" class="form-control" placeholder="Search">
-                            <small style="color: red">To select a different category, please clear the search field, However, you must choose other attributes to modify your variants</small>
+                            <small style="color: red">{{translate('To select a different category, please clear the search field, However, you must choose other attributes to modify your variants')}}</small>
                             <div class="h-300px overflow-auto c-scrollbar-light">
 
                                 <div id="jstree"></div>
@@ -914,7 +923,7 @@
                             <br>
                         </div>
                         <div id="variant_informations">
-                            <h3 class="mb-3">Variant Information</h3>
+                            <h3 class="mb-3">{{ translate('Variant Information')}}</h3>
                             <hr>
                             <div class="row mb-3">
                                 <label class="col-md-2 col-from-label">{{translate('Variant SKU')}}</label>
@@ -927,7 +936,7 @@
                                 <div class="col-md-10">
                                     <div class="custom-file mb-3">
                                         <input type="file" class="custom-file-input photos_variant" id="photos_variant" accept=".jpeg, .jpg, .png" multiple>
-                                        <label class="custom-file-label" for="photos_variant">Choose files</label>
+                                        <label class="custom-file-label" for="photos_variant">{{ translate('Choose files')}}</label>
                                     </div>
                                     <div class="row uploaded_images">
 
@@ -1027,15 +1036,15 @@
                             </div>
                         </div>
                         <div class="row div-btn">
-                            <button type="button" class="btn btn-primary" id="btn-create-variant">Create variant</button>
+                            <button type="button" class="btn btn-primary" id="btn-create-variant">{{ translate('Create variant') }}</button>
                         </div>
                         <hr>
                         <div id="bloc_variants_created">
                             @if(count($product->getChildrenProductsDesc()) > 0)
                                 @foreach ($product->getChildrenProductsDesc() as $key => $children)
                                     <div data-id="{{ $children->id }}">
-                                        <h3 class="mb-3">Variant Information {{ $key + 1}}</h3>
-                                        <i class="fa-regular fa-circle-xmark fa-lx delete-variant" data-id={{ $children->id }} style="font-size: 16px; float: right; margin-top: -35px;" title="delete this variant"></i>
+                                        <h3 class="mb-3">{{ translate('Variant Information')}} {{ $key + 1}}</h3>
+                                        <i class="fa-regular fa-circle-xmark fa-lx delete-variant" data-id={{ $children->id }} @if(app()->getLocale() == "ae") style="font-size: 16px; float: left; margin-top: -35px;" @else style="font-size: 16px; float: right; margin-top: -35px;" @endif title="delete this variant"></i>
                                         <hr>
                                         <div class="row mb-3">
                                             <label class="col-md-2 col-from-label">{{translate('Variant SKU')}}</label>
@@ -1048,7 +1057,7 @@
                                             <div class="col-md-10">
                                                 <div class="custom-file mb-3">
                                                     <input type="file" class="custom-file-input photos_variant" data-count = "{{ count($children->getImagesProduct()) }}" name="variant[photo][{{ $children->id }}][]" id="photos_variant{{ $key }}" accept=".jpeg, .jpg, .png" multiple>
-                                                    <label class="custom-file-label" for="photos_variant{{ $key }}">Choose files</label>
+                                                    <label class="custom-file-label" for="photos_variant{{ $key }}">{{ translate('Choose files')}}</label>
                                                 </div>
                                                 @if(count($children->getImagesProduct()) > 0)
                                                     <div class="row mt-3 uploaded_images">
@@ -1391,13 +1400,13 @@
                                 <div class="row">
                                     <div class="col-5">
                                         <div class="form-group">
-                                            <label for="exampleInputEmail1">Document name</label>
+                                            <label for="exampleInputEmail1">{{ translate('Document name')}}</label>
                                             <input type="text" class="form-control" name="old_document_names[{{ $document->id }}]" value="{{ $document->document_name }}">
                                         </div>
                                     </div>
                                     <div class="col-5">
                                         <div class="form-group">
-                                            <label for="exampleInputEmail{{ $key }}">Document</label>
+                                            <label for="exampleInputEmail{{ $key }}">{{ translate('Document')}}</label>
                                             <div class="input-group padding-name-document">
                                                 <div class="custom-file">
                                                 <input type="file" name="old_documents[{{ $document->id }}]" accept=".pdf,.png,.jpg,.pln,.dwg,.dxf,.gsm,.stl,.rfa,.rvt,.ifc,.3ds,.max,.obj,.fbx,.skp,.rar,.zip" class="custom-file-input file_input" id="inputGroupFile{{ $key }}" aria-describedby="inputGroupFileAddon04">
@@ -1421,13 +1430,13 @@
                             <div class="row">
                                 <div class="col-5">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail1">Document name</label>
+                                        <label for="exampleInputEmail1">{{ translate('Document name')}}</label>
                                         <input type="text" class="form-control" name="document_names[]">
                                     </div>
                                 </div>
                                 <div class="col-5">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail1">Document</label>
+                                        <label for="exampleInputEmail1">{{ translate('Document')}}</label>
                                         <div class="input-group padding-name-document">
                                             <div class="custom-file">
                                             <input type="file" name="documents[]" accept=".pdf,.png,.jpg,.pln,.dwg,.dxf,.gsm,.stl,.rfa,.rvt,.ifc,.3ds,.max,.obj,.fbx,.skp,.rar,.zip" class="custom-file-input file_input" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
@@ -1480,8 +1489,8 @@
             </div>
             <div class="col-12">
                 <div class="mar-all text-right mb-2">
-                    <button type="submit" name="button" value="draft" class="btn btn-success">Save as draft</button>
-                    <button type="submit" name="button" value="edit" class="btn btn-primary">Create Product</button>
+                    <button type="submit" name="button" value="draft" class="btn btn-success">{{translate('Save as draft') }}</button>
+                    <button type="submit" name="button" value="edit" class="btn btn-primary">{{translate('Create Product') }}</button>
                     <input type="hidden" name="button" id="submit_button">
                 </div>
             </div>
@@ -1589,7 +1598,7 @@
                 //     backdrop:false,
                 // });
                 var title = "{{ translate('Product Media') }}";
-                var message = '<b>Following files exceed 2MB limit:</b> ' + exceedingFiles.join(', ');
+                var message = '<b> {{ translate("Following files exceed 2MB limit: ") }} </b> ' + exceedingFiles.join(', ');
 
                 $('#title-modal').text(title);
                 $('#text-modal').html(message);
@@ -1627,7 +1636,7 @@
 
                 setTimeout(function() {
                     if (exceedingFilesDimension.length ) {
-                        
+
                         // Swal.fire({
                         //     title: 'Cancelled',
                         //     text: 'The dimensions of the images have exceeded both a width and height of 1280 pixels: ' + exceedingFiles.join(', '),
@@ -1636,8 +1645,7 @@
                         //     backdrop:false,
                         // });
                         var title = "{{ translate('Product Media') }}";
-                        var message = '<b>The dimensions of the images have exceeded both a width and height of 1280 pixels: </b> ' + exceedingFiles.join(', ');
-
+                        var message = '<b> {{ translate("The dimensions of the images have exceeded both a width and height of 1280 pixels: ") }} </b> ' + exceedingFilesDimension.join(', ');
                         $('#title-modal').text(title);
                         $('#text-modal').html(message);
 
@@ -1684,13 +1692,13 @@
                             reader.onload = function (e) {
                                 var imgContainer = document.createElement('div');
                                 imgContainer.classList.add('preview-container');
-                                
+
                                 var img = document.createElement('img');
                                 img.src = e.target.result;
                                 img.style.maxWidth = '100px'; // Adjust the size of the preview image as needed
                                 img.style.maxHeight = '100px';
                                 imgContainer.appendChild(img);
-                                
+
                                 var deleteBtn = document.createElement('button');
                                 deleteBtn.innerText = 'Delete';
                                 deleteBtn.onclick = function() {
@@ -1698,7 +1706,7 @@
                                     updateFileInput(); // Update the file input after deleting
                                 };
                                 imgContainer.appendChild(deleteBtn);
-                                
+
                                 preview.appendChild(imgContainer);
                             }
 
@@ -1820,7 +1828,7 @@
                 // });
 
                 var title = "{{ translate('Product Media') }}";
-                var message = '<b>Following files exceed 512Ko limit:</b> ' + exceedingFiles.join(', ');
+                var message = '<b>{{ translate("Following files exceed 512Ko limit: ") }}</b> ' + exceedingFiles.join(', ');
 
                 $('#title-modal').text(title);
                 $('#text-modal').html(message);
@@ -1897,7 +1905,7 @@
                         //     backdrop:false,
                         // });
                         var title = "{{ translate('Product Media') }}";
-                        var message = '<b>Please upload images with dimensions between 300px and 400px for both width and height:</b> ' + exceedingFilesDimension.join(', ');
+                        var message = '<b>{{ translate("Please upload images with dimensions between 300px and 400px for both width and height: ")}}</b> ' + exceedingFilesDimension.join(', ');
 
                         $('#title-modal').text(title);
                         $('#text-modal').html(message);
@@ -1945,13 +1953,13 @@
                             reader.onload = function (e) {
                                 var imgContainer = document.createElement('div');
                                 imgContainer.classList.add('preview-container-Thumbnail');
-                                
+
                                 var img = document.createElement('img');
                                 img.src = e.target.result;
                                 img.style.maxWidth = '100px'; // Adjust the size of the preview image as needed
                                 img.style.maxHeight = '100px';
                                 imgContainer.appendChild(img);
-                                
+
                                 var deleteBtn = document.createElement('button');
                                 deleteBtn.innerText = 'Delete';
                                 deleteBtn.onclick = function() {
@@ -1959,7 +1967,7 @@
                                     updateFileInputThumbnail(); // Update the file input after deleting
                                 };
                                 imgContainer.appendChild(deleteBtn);
-                                
+
                                 preview.appendChild(imgContainer);
                             }
 
@@ -2074,7 +2082,7 @@
             bstr = atob(arr[1]),
             n = bstr.length,
             u8arr = new Uint8Array(n);
-            
+
         while (n--) {
             u8arr[n] = bstr.charCodeAt(n);
         }
@@ -2131,7 +2139,7 @@
         });
     }
     $(document).ready(function() {
-        
+
 
         @if(count($product->getChildrenProducts()) > 0)
             $('#variant_informations').show();
@@ -2144,8 +2152,8 @@
         @else
             $('#btn-create-variant').hide();
         @endif
-        
-        
+
+
         $('body #bloc_pricing_configuration_variant').hide();
         $('body #bloc_sample_pricing_configuration_variant').hide();
         $('.shipper').multiSelect();
@@ -2282,7 +2290,7 @@
                 var trimmedText = $(this).val().substr(0, maxCharacters);
                 $(this).val(trimmedText);
             }else{
-                var message = "<p>Remaining characters: <span style='color: red'>" + charactersLeft + "</span></p>"
+                var message = "<p>{{ translate('Remaining characters:') }} <span style='color: red'>" + charactersLeft + "</span></p>"
                 $('#charCountShortDescription').html(message);
             }
         });
@@ -2447,16 +2455,16 @@
         //Change label of input value by name of file selected
         $('body').on('change', '.photos_variant', function() {
             // Get the number of selected files
-            
+
             var numFiles = $(this)[0].files.length;
             var files = this.files;
             var uploaded_files = $(this).data('count');
             if(uploaded_files != undefined){
                 var all_files_length = files.length + uploaded_files
             }else{
-                var all_files_length = files.length 
+                var all_files_length = files.length
             }
-            
+
             // Maximum number of allowed files
             var maxFiles = 10;
             if (all_files_length > maxFiles) {
@@ -2528,7 +2536,11 @@
             // Append the cloned div to the container
             var count = numbers_variant + 1;
             //add attribute name for each input cloned
-            var html_to_add = '<div style="float: right; margin-top: -35px"><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
+            @if(app()->getLocale() == "ae")
+                var html_to_add = '<div style="float: left; margin-top: -35px"><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
+            @else
+                var html_to_add = '<div style="float: right; margin-top: -35px"><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
+            @endif
             clonedDiv.find('h3').after(html_to_add);
             //clonedDiv.find('.fa-circle-xmark').hide();
             clonedDiv.find('.fa-circle-check').hide();
@@ -2735,7 +2747,7 @@
             // Loop through each h3 tag and display its order
             $(divId + " h3").each(function(index) {
                 var order = h3Count - index; // Number in descending order
-                $(this).text("Variant Information  " + order);
+                $(this).text("{{translate('Variant Information')}}" + ' ' + order);
             });
             numbers_variant++;
         });
@@ -3198,16 +3210,16 @@
         //         //refresh select discount type
         //         AIZ.plugins.bootstrapSelect('refresh');
         // });
-        $('body').on('click', '.btn-add-pricing', function() { 
+        $('body').on('click', '.btn-add-pricing', function() {
             var id_variant = $(this).data('id_variant');
             var newvariant = $(this).data('newvariant-id');
 
             if(id_variant != undefined){
                 var html_to_add = `
                                 <tr>
-                                    <td><input type="number" min="1" name="variant[from][`+ id_variant +`][]" class="form-control min-qty" id="" placeholder="From QTY"></td>
-                                    <td><input type="number" min="1" name="variant[to][`+ id_variant +`][]" class="form-control max-qty" id="" placeholder="To QTY"></td>
-                                    <td><input type="number" step="0.01" min="1" name="variant[unit_price][`+ id_variant +`][]" class="form-control unit-price-variant" id="" placeholder="Unit Price"></td>
+                                    <td><input type="number" min="1" name="variant[from][`+ id_variant +`][]" class="form-control min-qty" id="" placeholder="{{ translate('From QTY')}}"></td>
+                                    <td><input type="number" min="1" name="variant[to][`+ id_variant +`][]" class="form-control max-qty" id="" placeholder="{{ translate('To QTY')}}"></td>
+                                    <td><input type="number" step="0.01" min="1" name="variant[unit_price][`+ id_variant +`][]" class="form-control unit-price-variant" id="" placeholder="{{ translate('Unit Price')}}"></td>
                                     <td><input type="text" class="form-control aiz-date-range discount-range" name="variant[date_range_pricing][`+ id_variant +`][]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                     <td>
                                         <select class="form-control discount_type" name="variant[discount_type][`+ id_variant +`][]">
@@ -3216,26 +3228,26 @@
                                             <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control discount_amount" name="variant[discount_amount][`+ id_variant +`][]" placeholder="Amount" readonly></td>
+                                    <td><input type="number" class="form-control discount_amount" name="variant[discount_amount][`+ id_variant +`][]" placeholder="{{ translate('Amount')}}" readonly></td>
                                     <td style="width: 19% !important;">
                                         <div class="col-md-9 input-group">
-                                            <input type="number" class="form-control discount_percentage" name="variant[discount_percentage][`+ id_variant +`][]" placeholder="Percentage" readonly>
+                                            <input type="number" class="form-control discount_percentage" name="variant[discount_percentage][`+ id_variant +`][]" placeholder="{{ translate('Percentage')}}" readonly>
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        <i class="las la-plus btn-add-pricing" data-id_variant="` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_pricing_canfiguration" data-pricing_id="` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                        <i class="las la-plus btn-add-pricing" data-id_variant="` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Add another ligne')}}"></i>
+                                        <i class="las la-trash delete_pricing_canfiguration" data-pricing_id="` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Delete this ligne')}}"></i>
                                     </td>
                                 </tr>
                             `;
             }else if(newvariant != undefined){
                 var html_to_add = `<tr>
-                                    <td><input type="number" min="1" name="variant_pricing-from`+ newvariant +`[from][]" class="form-control min-qty" id="" placeholder="From QTY"></td>
-                                    <td><input type="number" min="1" name="variant_pricing-from`+ newvariant +`[to][]" class="form-control max-qty" id="" placeholder="To QTY"></td>
-                                    <td><input type="number" step="0.01" min="1" name="variant_pricing-from`+ newvariant +`[unit_price][]" class="form-control unit-price-variant" id="" placeholder="Unit Price"></td>
+                                    <td><input type="number" min="1" name="variant_pricing-from`+ newvariant +`[from][]" class="form-control min-qty" id="" placeholder="{{ translate('From QTY')}}"></td>
+                                    <td><input type="number" min="1" name="variant_pricing-from`+ newvariant +`[to][]" class="form-control max-qty" id="" placeholder="{{ translate('To QTY')}}"></td>
+                                    <td><input type="number" step="0.01" min="1" name="variant_pricing-from`+ newvariant +`[unit_price][]" class="form-control unit-price-variant" id="" placeholder="{{ translate('Unit Price')}}"></td>
                                     <td><input type="text" class="form-control aiz-date-range discount-range" name="variant_pricing-from`+ newvariant +`[discount_range][]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                     <td>
                                         <select class="form-control discount_type" name="variant_pricing-from`+ newvariant +`[discount_type][]">
@@ -3244,18 +3256,18 @@
                                             <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control discount_amount" name="variant_pricing-from`+ newvariant +`[discount_amount][]" placeholder="Amount" readonly></td>
+                                    <td><input type="number" class="form-control discount_amount" name="variant_pricing-from`+ newvariant +`[discount_amount][]" placeholder="{{ translate('Amount')}}" readonly></td>
                                     <td style="width: 19% !important;">
                                         <div class="col-md-9 input-group">
-                                            <input type="number" class="form-control discount_percentage" name="variant_pricing-from`+ newvariant +`[discount_percentage][]" placeholder="Percentage" readonly>
+                                            <input type="number" class="form-control discount_percentage" name="variant_pricing-from`+ newvariant +`[discount_percentage][]" placeholder="{{ translate('Percentage')}}" readonly>
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        <i class="las la-plus btn-add-pricing" data-id_variant="` + newvariant + `" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                        <i class="las la-plus btn-add-pricing" data-id_variant="` + newvariant + `" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Add another ligne')}}"></i>
+                                        <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Delete this ligne')}}"></i>
                                     </td>
                                 </tr>`;
             }else{
@@ -3263,9 +3275,9 @@
                 if ($(this).closest('#variant_informations').length) {
                     var html_to_add = `
                                 <tr>
-                                    <td><input type="number" min="1" class="form-control min-qty-variant" id="" placeholder="From QTY"></td>
-                                    <td><input type="number" min="1" class="form-control max-qty-variant" id="" placeholder="To QTY"></td>
-                                    <td><input type="number" step="0.01" min="1" class="form-control unit-price-variant" id="" placeholder="Unit Price"></td>
+                                    <td><input type="number" min="1" class="form-control min-qty-variant" id="" placeholder="{{ translate('From QTY')}}"></td>
+                                    <td><input type="number" min="1" class="form-control max-qty-variant" id="" placeholder="{{ translate('To QTY')}}"></td>
+                                    <td><input type="number" step="0.01" min="1" class="form-control unit-price-variant" id="" placeholder="{{ translate('Unit Price')}}"></td>
                                     <td><input type="text" class="form-control aiz-date-range discount-range-variant" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                     <td>
                                         <select class="form-control discount_type-variant">
@@ -3274,27 +3286,27 @@
                                             <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control discount_amount-variant" placeholder="Amount" readonly></td>
+                                    <td><input type="number" class="form-control discount_amount-variant" placeholder="{{ translate('Amount')}}" readonly></td>
                                     <td style="width: 19% !important;">
                                         <div class="col-md-9 input-group">
-                                            <input type="number" class="form-control discount_percentage-variant" placeholder="Percentage" readonly>
+                                            <input type="number" class="form-control discount_percentage-variant" placeholder="{{ translate('Percentage')}}" readonly>
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                        <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Add another ligne')}}"></i>
+                                        <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Delete this ligne')}}"></i>
                                     </td>
                                 </tr>
                             `;
                 }else{
                     var html_to_add = `
                                 <tr>
-                                    <td><input type="number" min="1" name="from[]" class="form-control min-qty" id="" placeholder="From QTY"></td>
-                                    <td><input type="number" min="1" name="to[]" class="form-control max-qty" id="" placeholder="To QTY"></td>
-                                    <td><input type="number" step="0.01" min="1" name="unit_price[]" class="form-control unit-price-variant" id="" placeholder="Unit Price"></td>
+                                    <td><input type="number" min="1" name="from[]" class="form-control min-qty" id="" placeholder="{{ translate('From QTY')}}"></td>
+                                    <td><input type="number" min="1" name="to[]" class="form-control max-qty" id="" placeholder="{{ translate('To QTY')}}"></td>
+                                    <td><input type="number" step="0.01" min="1" name="unit_price[]" class="form-control unit-price-variant" id="" placeholder="{{ translate('Unit Price')}}"></td>
                                     <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{translate('Select Date')}}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
                                     <td>
                                         <select class="form-control discount_type" name="discount_type[]">
@@ -3303,18 +3315,18 @@
                                             <option value="percent" @selected(old('discount_type') == 'percent')>{{translate('Percent')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control discount_amount" name="discount_amount[]" placeholder="Amount" readonly></td>
+                                    <td><input type="number" class="form-control discount_amount" name="discount_amount[]" placeholder="{{ translate('Amount')}}" readonly></td>
                                     <td style="width: 19% !important;">
                                         <div class="col-md-9 input-group">
-                                            <input type="number" class="form-control discount_percentage" name="discount_percentage[]" placeholder="Percentage" readonly>
+                                            <input type="number" class="form-control discount_percentage" name="discount_percentage[]" placeholder="{{ translate('Percentage')}}" readonly>
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                        <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Add another ligne')}}"></i>
+                                        <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Delete this ligne')}}"></i>
                                     </td>
                                 </tr>
                             `;
@@ -3389,7 +3401,7 @@
                 }
             }else{
                 swal({
-                    title: 'Are you sure you want to delete this pricing ?',
+                    title: '{{ translate("Are you sure you want to delete this pricing ?") }}',
                     type: "warning",
                     confirmButtonText: 'Delete',
                     showCancelButton: true
@@ -3420,7 +3432,7 @@
                                     //     backdrop:false,
                                     // });
                                     var title = "{{ translate('Pricing Configuration') }}";
-                                    var message = '{{ translate("Something went wrong.")}}';
+                                    var message = '{{ translate("Something went wrong")}}';
 
                                     $('#title-modal').text(title);
                                     $('#text-modal').text(message);
@@ -3449,7 +3461,7 @@
                 $(this).parent().parent().find('.discount_percentage').prop('readonly', false);
                 $(this).parent().parent().find('.discount_amount').val('');
             }
-            
+
             if($(this).val() == ''){
                 $(this).parent().parent().find('.discount_amount').prop('readonly', true);
                 $(this).parent().parent().find('.discount_amount').val('');
@@ -3733,6 +3745,50 @@
 
 
         let fileInputCounter = 1;
+        $('body').on('click', '.delete-variant', function(){
+            if($(this).data('id')){
+                var id_variant = $(this).data('id');
+                var current = $(this);
+                Swal.fire({
+                    title: '{{ translate("Are you sure you want to delete this variant ?") }}',
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: '{{ translate("Delete") }}',
+                    denyButtonText: "{{ translate('No') }}",
+                    backdrop:false,
+                })
+                .then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            url: "{{ route('seller.products.delete_variant') }}",
+                            type: "GET",
+                            data: {
+                                id_variant: id_variant
+                            },
+                            cache: false,
+                            dataType: 'JSON',
+                            success: function(dataResult) {
+                                current.parent().parent().remove();
+
+                                var divId = "#bloc_variants_created";
+
+                                // Get the length of all h3 tags under the specific div
+                                var h3Count = $(divId + " h3").length;
+
+
+                                // Loop through each h3 tag and display its order
+                                $(divId + " h3").each(function(index) {
+                                    var order = h3Count - index; // Number in descending order
+                                    $(this).text("Variant Information  " + order);
+                                });
+                            }
+                        })
+                    }
+                })
+            }else{
+                $(this).parent().parent().parent().remove();
+            }
+        })
 
         $('body').on('click', '.dropify-clear', function(){
             if($(this).parent().parent().parent().find('#dropifyUploadedFilesThumbnail').length) {
@@ -3806,13 +3862,13 @@
             var html_document = `<div class="row">
                                 <div class="col-5">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail">Document name</label>
+                                        <label for="exampleInputEmail">{{ translate("Document name")}}</label>
                                         <input type="text" class="form-control" name="document_names[]">
                                     </div>
                                 </div>
                                 <div class="col-5">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail${fileInputCounter}">Document</label>
+                                        <label for="exampleInputEmail${fileInputCounter}">{{ translate("Document")}}</label>
                                         <div class="input-group">
                                             <div class="custom-file">
                                             <input type="file" name="documents[]" class="custom-file-input file_input" id="exampleInputEmail${fileInputCounter}" accept=".pdf,.png,.jpg,.pln,.dwg,.dxf,.gsm,.stl,.rfa,.rvt,.ifc,.3ds,.max,.obj,.fbx,.skp,.rar,.zip" aria-describedby="inputGroupFileAddon04">
@@ -3836,10 +3892,11 @@
             if(id_document != undefined){
                 var current = $(this);
                 Swal.fire({
-                    title: 'Are you sure you want to delete this documet ?',
+                    title: '{{ translate("Are you sure you want to delete this documet ?") }}',
                     icon: "warning",
                     showCancelButton: true,
-                    confirmButtonText: 'Delete',
+                    confirmButtonText: '{{ translate("Delete") }}',
+                    denyButtonText: "{{ translate('No') }}",
                     scrollbarPadding: false,
                     backdrop:false,
                 })
@@ -3902,10 +3959,11 @@
             if(id_image != undefined){
                 var current = $(this);
                 Swal.fire({
-                    title: 'Are you sure you want to delete this picture ?',
+                    title: '{{ translate("Are you sure you want to delete this picture ?")}}',
                     icon: "warning",
                     showCancelButton: true,
-                    confirmButtonText: 'Delete',
+                    confirmButtonText: '{{ translate("Delete") }}',
+                    denyButtonText: "{{ translate('No') }}",
                     scrollbarPadding: false,
                     backdrop:false,
                 }).then((result) => {
@@ -3924,52 +3982,12 @@
                                 }
                             }
                         })
-                    } 
-                })
-            }
-        })
-
-        $('body').on('click', '.delete-variant', function(){
-            if($(this).data('id')){
-                var id_variant = $(this).data('id');
-                var current = $(this);
-                swal({
-                    title: 'Are you sure you want to delete this variant ?',
-                    type: "warning",
-                    confirmButtonText: 'Delete',
-                    showCancelButton: true
-                })
-                .then((result) => {
-                    if (result.value) {
-                        $.ajax({
-                            url: "{{ route('seller.products.delete_variant') }}",
-                            type: "GET",
-                            data: {
-                                id_variant: id_variant
-                            },
-                            cache: false,
-                            dataType: 'JSON',
-                            success: function(dataResult) {
-                                current.parent().parent().remove();
-
-                                var divId = "#bloc_variants_created";
-
-                                // Get the length of all h3 tags under the specific div
-                                var h3Count = $(divId + " h3").length;
-
-
-                                // Loop through each h3 tag and display its order
-                                $(divId + " h3").each(function(index) {
-                                    var order = h3Count - index; // Number in descending order
-                                    $(this).text("Variant Information  " + order);
-                                });
-                            }
-                        })
                     }
                 })
             }
-
         })
+
+        
 
         //Shipping script
         $('body').on('click', '#third_party_activate', function() {
@@ -3986,7 +4004,8 @@
                     //     backdrop:false,
                     // });
                     var title = "{{ translate('Default Shipping Configuration') }}";
-                    var message = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
+                    var message = `<?php $text = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
+                        echo translate($text); ?>`;
 
                     $('#title-modal').text(title);
                     $('#text-modal').text(message);
@@ -4227,19 +4246,19 @@
                 if ($(this).closest('#variant_informations').length) {
                     var html_to_add = `
                                 <tr>
-                                    <td><input type="number"  class="form-control min-qty-shipping" id="" placeholder="From QTY"></td>
-                                    <td><input type="number"  class="form-control max-qty-shipping" id="" placeholder="To QTY"></td>
+                                    <td><input type="number"  class="form-control min-qty-shipping" id="" placeholder="{{ translate('From QTY')}}"></td>
+                                    <td><input type="number"  class="form-control max-qty-shipping" id="" placeholder="{{ translate('To QTY')}}"></td>
                                     <td>
                                         <select multiple class="shipper" >
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control estimated_order"  placeholder="Days"></td>
-                                    <td><input type="number" class="form-control estimated_shipping"  placeholder="Days"></td>
+                                    <td><input type="number" class="form-control estimated_order"  placeholder="{{ translate('Days')}}"></td>
+                                    <td><input type="number" class="form-control estimated_shipping"  placeholder="{{ translate('Days')}}"></td>
                                     <td>
                                         <select class="form-control paid" >
-                                            <option value="" selected>{{translate('Choose shipper')}}</option>
+                                            <option value="" selected>{{translate('Choose option')}}</option>
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
                                         </select>
@@ -4251,30 +4270,30 @@
                                             <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control flat_rate_shipping" placeholder="Flat rate amount" readonly></td>
-                                    <td><input type="number" class="form-control charge_per_unit_shipping" placeholder="Charge unit" readonly></td>
+                                    <td><input type="number" class="form-control flat_rate_shipping" placeholder="{{ translate('Flat rate amount')}}" readonly></td>
+                                    <td><input type="number" class="form-control charge_per_unit_shipping" placeholder="{{ translate('Charge unit')}}" readonly></td>
                                     <td>
-                                        <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_shipping_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                        <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Add another ligne')}}"></i>
+                                        <i class="las la-trash delete_shipping_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Delete this ligne')}}"></i>
                                     </td>
                                 </tr>
                             `;
                 }else{
                     var html_to_add = `
                                 <tr>
-                                    <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id="" placeholder="From QTY"></td>
-                                    <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id="" placeholder="To QTY"></td>
+                                    <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id="" placeholder="{{ translate('From QTY')}}"></td>
+                                    <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id="" placeholder="{{ translate('To QTY')}}"></td>
                                     <td>
                                         <select multiple class="shipper" name="shipper[${row}][]">
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control estimated_order" name="estimated_order[]" placeholder="Days"></td>
-                                    <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]" placeholder="Days"></td>
+                                    <td><input type="number" class="form-control estimated_order" name="estimated_order[]" placeholder="{{ translate('Days')}}"></td>
+                                    <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]" placeholder="{{ translate('Days')}}"></td>
                                     <td>
                                         <select class="form-control paid" name="paid[]">
-                                            <option value="" selected>{{translate('Choose shipper')}}</option>
+                                            <option value="" selected>{{translate('Choose option')}}</option>
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
                                         </select>
@@ -4286,11 +4305,11 @@
                                             <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control flat_rate_shipping" name="flat_rate_shipping[]" placeholder="Flat rate amount" readonly></td>
-                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="charge_per_unit_shipping[]" placeholder="Charge unit" readonly></td>
+                                    <td><input type="number" class="form-control flat_rate_shipping" name="flat_rate_shipping[]" placeholder="{{ translate('Flat rate amount')}}" readonly></td>
+                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="charge_per_unit_shipping[]" placeholder="{{ translate('Charge unit')}}" readonly></td>
                                     <td>
-                                        <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_shipping_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                        <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Add another ligne')}}"></i>
+                                        <i class="las la-trash delete_shipping_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Delete this ligne')}}"></i>
                                     </td>
                                 </tr>
                             `;
@@ -4298,19 +4317,19 @@
             }else if(id_variant != undefined){
                 var html_to_add = `
                                 <tr>
-                                    <td><input type="number" name="variant[from_shipping][` + id_variant + `][]" class="form-control min-qty-shipping" id="" placeholder="From QTY"></td>
-                                    <td><input type="number" name="variant[to_shipping][` + id_variant + `][]" class="form-control max-qty-shipping" id="" placeholder="To QTY"></td>
+                                    <td><input type="number" name="variant[from_shipping][` + id_variant + `][]" class="form-control min-qty-shipping" id="" placeholder="{{ translate('From QTY')}}"></td>
+                                    <td><input type="number" name="variant[to_shipping][` + id_variant + `][]" class="form-control max-qty-shipping" id="" placeholder="{{ translate('To QTY')}}"></td>
                                     <td>
                                         <select multiple class="shipper" name="variant[shipper][` + id_variant + `][${row}][]">
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control estimated_order" name="variant[estimated_order][` + id_variant + `][]" placeholder="Days"></td>
-                                    <td><input type="number" class="form-control estimated_shipping" name="variant[estimated_shipping][` + id_variant + `][]" placeholder="Days"></td>
+                                    <td><input type="number" class="form-control estimated_order" name="variant[estimated_order][` + id_variant + `][]" placeholder="{{ translate('Days')}}"></td>
+                                    <td><input type="number" class="form-control estimated_shipping" name="variant[estimated_shipping][` + id_variant + `][]" placeholder="{{ translate('Days')}}"></td>
                                     <td>
                                         <select class="form-control paid" name="variant[paid][` + id_variant + `][]">
-                                            <option value="" selected>{{translate('Choose shipper')}}</option>
+                                            <option value="" selected>{{translate('Choose option')}}</option>
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
                                         </select>
@@ -4322,30 +4341,30 @@
                                             <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control flat_rate_shipping" name="variant[flat_rate_shipping][` + id_variant + `][]" placeholder="Flat rate amount" readonly></td>
-                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="variant[charge_per_unit_shipping][` + id_variant + `][]" placeholder="Charge unit" readonly></td>
+                                    <td><input type="number" class="form-control flat_rate_shipping" name="variant[flat_rate_shipping][` + id_variant + `][]" placeholder="{{ translate('Flat rate amount')}}" readonly></td>
+                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="variant[charge_per_unit_shipping][` + id_variant + `][]" placeholder="{{ translate('Charge unit')}}" readonly></td>
                                     <td>
-                                        <i class="las la-plus btn-add-shipping" data-id_variant="` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_shipping_canfiguration" data-id_variant = "` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                        <i class="las la-plus btn-add-shipping" data-id_variant="` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Add another ligne')}}"></i>
+                                        <i class="las la-trash delete_shipping_canfiguration" data-id_variant = "` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Delete this ligne')}}"></i>
                                     </td>
                                 </tr>
                             `;
             }else if(id_new_variant != undefined){
                 var html_to_add = `
                                 <tr>
-                                    <td><input type="number" name="variant_shipping-${id_new_variant}[from][]" class="form-control min-qty-shipping" id="" placeholder="From QTY"></td>
-                                    <td><input type="number" name="variant_shipping-${id_new_variant}[to][]" class="form-control max-qty-shipping" id="" placeholder="To QTY"></td>
+                                    <td><input type="number" name="variant_shipping-${id_new_variant}[from][]" class="form-control min-qty-shipping" id="" placeholder="{{ translate('From QTY')}}"></td>
+                                    <td><input type="number" name="variant_shipping-${id_new_variant}[to][]" class="form-control max-qty-shipping" id="" placeholder="{{ translate('To QTY')}}"></td>
                                     <td>
                                         <select multiple class="shipper" name="variant_shipping-${id_new_variant}[shipper][${row}][]">
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control estimated_order" name="variant_shipping-${id_new_variant}[estimated_order][]" placeholder="Days"></td>
-                                    <td><input type="number" class="form-control estimated_shipping" name="variant_shipping-${id_new_variant}[estimated_shipping][]" placeholder="Days"></td>
+                                    <td><input type="number" class="form-control estimated_order" name="variant_shipping-${id_new_variant}[estimated_order][]" placeholder="{{ translate('Days')}}"></td>
+                                    <td><input type="number" class="form-control estimated_shipping" name="variant_shipping-${id_new_variant}[estimated_shipping][]" placeholder="{{ translate('Days')}}"></td>
                                     <td>
                                         <select class="form-control paid" name="variant_shipping-${id_new_variant}[paid][]">
-                                            <option value="" selected>{{translate('Choose shipper')}}</option>
+                                            <option value="" selected>{{translate('Choose option')}}</option>
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                             <option value="buyer" @selected(old('shipper') == 'buyer')>{{translate('Buyer')}}</option>
                                         </select>
@@ -4357,11 +4376,11 @@
                                             <option value="charging" @selected(old('shipping_charge') == 'charging')>{{translate('Charging per Unit of Sale')}}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control flat_rate_shipping" name="variant_shipping-${id_new_variant}[flat_rate_shipping][]" placeholder="Flat rate amount" readonly></td>
-                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="variant_shipping-${id_new_variant}[charge_per_unit_shipping][]" placeholder="Charge unit" readonly></td>
+                                    <td><input type="number" class="form-control flat_rate_shipping" name="variant_shipping-${id_new_variant}[flat_rate_shipping][]" placeholder="{{ translate('Flat rate amount')}}" readonly></td>
+                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="variant_shipping-${id_new_variant}[charge_per_unit_shipping][]" placeholder="{{ translate('Charge unit')}}" readonly></td>
                                     <td>
-                                        <i class="las la-plus btn-add-shipping" data-variant-id="${id_new_variant}" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-                                        <i class="las la-trash delete_shipping_canfiguration" data-variant-id="${id_new_variant}" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
+                                        <i class="las la-plus btn-add-shipping" data-variant-id="${id_new_variant}" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Add another ligne')}}"></i>
+                                        <i class="las la-trash delete_shipping_canfiguration" data-variant-id="${id_new_variant}" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Delete this ligne')}}"></i>
                                     </td>
                                 </tr>
                             `;
@@ -4390,9 +4409,10 @@
             }else{
 
                 swal({
-                    title: 'Are you sure you want to delete this shipping ?',
+                    title: '{{ translate("Are you sure you want to delete this shipping ?") }}',
                     type: "warning",
-                    confirmButtonText: 'Delete',
+                    confirmButtonText: '{{ translate("Delete") }}',
+                    denyButtonText: "{{ translate('No') }}",
                     showCancelButton: true
                 })
                 .then((result) => {
@@ -4468,7 +4488,8 @@
                     //     });
 
                     var title = "{{ translate('Default Shipping Configuration') }}";
-                    var message = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
+                    var message = `<?php $text = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
+                        echo translate($text); ?>`;
 
                     $('#title-modal').text(title);
                     $('#text-modal').text(message);
@@ -4830,7 +4851,7 @@
             var unit_third_party = $(this).parent().parent().find('#unit_third_party').val();
 
             if((weight == '') || (length == '') ||(width == '') ||(height == '') ||(min_third_party == '') ||(max_third_party == '')){
-                html = '<span style="color: green"> Chargeable Weight = 0, then accepted by our shipper </span>';
+                html = '<span style="color: green"> {{ translate("Chargeable Weight = 0, then accepted by our shipper") }} </span>';
                 $('#result_calculate_third_party').html(html);
             }else{
                 length = parseInt(length);
@@ -4856,9 +4877,9 @@
                 }
 
                 if(chargeable_weight > max ){
-                    html = '<span style="color: red">Chargeable Weight = ' + Number(chargeable_weight.toFixed(2)) + ", then not accepted by Aramex </span>"
+                    html = '<span style="color: red">{{ translate("Chargeable Weight = ") }}' + Number(chargeable_weight.toFixed(2)) + ", {{ translate('then not accepted by Aramex') }} </span>"
                 }else{
-                    html = '<span style="color: green">Chargeable Weight = ' + Number(chargeable_weight.toFixed(2)) + ", then accepted by Aramex </span>"
+                    html = '<span style="color: green">{{ translate("Chargeable Weight = ") }}' + Number(chargeable_weight.toFixed(2)) + ", {{ translate('then accepted by Aramex') }} </span>"
                 }
 
 
@@ -4984,7 +5005,7 @@
             var unit_third_party = $(this).parent().parent().find('#unit_third_party_sample').val();
 
             if((weight == '') || (length == '') ||(width == '') ||(height == '') ||(min_third_party == '') ||(max_third_party == '')){
-                html = '<span style="color: green"> Chargeable Weight = 0, then accepted by our shipper </span>';
+                html = '<span style="color: green"> {{ translate("Chargeable Weight = 0, then accepted by our shipper") }} </span>';
                 $('#result_calculate_third_party_sample').html(html);
             }else{
                 length = parseInt(length);
@@ -5010,9 +5031,9 @@
                 }
 
                 if(chargeable_weight > max ){
-                    html = '<span style="color: red">Chargeable Weight = ' + Number(chargeable_weight.toFixed(2)) + ", then not accepted by Aramex </span>"
+                    html = '<span style="color: red">{{ translate("Chargeable Weight = ") }}' + Number(chargeable_weight.toFixed(2)) + ", {{ translate('then not accepted by Aramex') }} </span>"
                 }else{
-                    html = '<span style="color: green">Chargeable Weight = ' + Number(chargeable_weight.toFixed(2)) + ", then accepted by Aramex </span>"
+                    html = '<span style="color: green">{{ translate("Chargeable Weight = ") }}' + Number(chargeable_weight.toFixed(2)) + ", {{ translate('then accepted by Aramex') }} </span>"
                 }
 
                 $('#result_calculate_third_party_sample').html(html);
@@ -5052,7 +5073,8 @@
                     //     });
 
                     var title = "{{ translate('Default Shipping Configuration') }}";
-                    var message = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
+                    var message = `<?php $text = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
+                        echo translate($text); ?>`;
 
                     $('#title-modal').text(title);
                     $('#text-modal').text(message);
@@ -5102,7 +5124,7 @@
                         }else{
                             $(this).parent().find('.multi-select-button').text('vendor');
                         }
-                        
+
                         // Uncheck the checkbox
                         checkbox.prop('checked', false);
                         $(this).find("option[value='third_party']").prop('disabled', false);
@@ -5129,7 +5151,7 @@
                         if(unit == "pounds"){
                             chargeable_weight *= 2.2;
                         }
-                        
+
                         if(chargeable_weight > max ){
                             // Swal.fire({
                             //     title: 'Cancelled',
@@ -5140,7 +5162,7 @@
                             // });
 
                             var title = "{{ translate('Default Shipping Configuration') }}";
-                            var message = "Chargeable Weight = " + Number(chargeable_weight.toFixed(2)) + ", then not accepted by our shipper";
+                            var message = "{{ translate('Chargeable Weight = ')}}" + Number(chargeable_weight.toFixed(2)) + ", {{ translate('then not accepted by our shipper')}}";
 
                             $('#title-modal').text(title);
                             $('#text-modal').text(message);
@@ -5153,7 +5175,7 @@
                             }else{
                                 $(this).parent().find('.multi-select-button').text('vendor');
                             }
-                            
+
                             // Uncheck the checkbox
                             checkbox.prop('checked', false);
                             $(this).find("option[value='third_party']").prop('disabled', false);
@@ -5162,7 +5184,7 @@
                     }
                 }
             }
-            
+
             if(selected.indexOf('vendor') !== -1){
                 $(this).parent().parent().find('.shipping_amount').prop('disabled', false);
                 $(this).parent().parent().find('.estimated_sample').prop('disabled', false);
@@ -5185,7 +5207,8 @@
                         //     backdrop:false,
                         // });
                         var title = "{{ translate('Default Shipping Configuration') }}";
-                        var message = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
+                        var message = `<?php $text = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
+                        echo translate($text); ?>`;
 
                         $('#title-modal').text(title);
                         $('#text-modal').text(message);
@@ -5420,7 +5443,7 @@
                             // });
 
                             var title = "{{ translate('Pricing Configuration') }}";
-                            var message = "Please check your pricing configuration.";
+                            var message = "{{ translate('Please check your pricing configuration.')}}";
 
                             $('#title-modal').text(title);
                             $('#text-modal').text(message);
@@ -5428,7 +5451,7 @@
                             $('#modal-info').modal('show');
                         }
                     }else{
-                        document.getElementById('choice_form').submit(); 
+                        document.getElementById('choice_form').submit();
                     }
                 }else{
                     // Swal.fire({
@@ -5440,7 +5463,7 @@
                     // })
 
                     var title = "{{ translate('Product Category') }}";
-                            var message = "Please select a category without subcategories.";
+                            var message = "{{ translate('Please select a category without subcategories.')}}";
 
                             $('#title-modal').text(title);
                             $('#text-modal').text(message);
