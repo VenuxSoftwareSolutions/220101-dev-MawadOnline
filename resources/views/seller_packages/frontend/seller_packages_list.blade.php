@@ -82,7 +82,7 @@
 @section('panel_content')
     <section class="py-4">
         <div class="justify-content-start">
-            <h5 style="font-weight: 500;font-size: 24px;line-height: 32px">Subscription Packages</h5>
+            <h5 style="font-weight: 500;font-size: 24px;line-height: 32px">{{  __('package.Subscription Packages') }}</h5>
         </div>
     </section>
 
@@ -100,7 +100,7 @@
                                     @if ($seller_packages[0]->amount == 0)
                                         <span class="sub-title">-</span>
                                     @else
-                                        <span class="sub-title">AED {{ $seller_packages[0]->amount }}<span style="color:#BDBDBD;">/ month</span></span>
+                                        <span class="sub-title">{{  __('package.AED') }} {{ $seller_packages[0]->amount }}<span style="color:#BDBDBD;">/ {{  __('package.month') }}</span></span>
                                     @endif
                                     {{-- <span
                                         class="text-secondary border-left ml-2 pl-2">{{ $seller_packages->duration }}<br>{{ translate('Days') }}</span> --}}
@@ -109,19 +109,19 @@
                                 <ul class="list-group list-group-raw fs-13 mb-5">
                                     <li class="list-group-item py-2 fw-700">
                                         <img src="{{ asset('public/images/tick-circle.png') }}" alt="Tick">
-                                        <p>{{ translate('Full access to all e-Shop essentials') }}</p>
+                                        <p>{{ __('package.Full access to all e-Shop essentials') }}</p>
                                     </li>
                                     <li class="list-group-item py-2 fw-700">
                                         <img src="{{ asset('public/images/tick-circle.png') }}" alt="Tick">
-                                        <p>{{ translate('Unlimited products') }}</p>
+                                        <p>{{ __('package.Unlimited products') }}</p>
                                     </li>
                                     <li class="list-group-item py-2 fw-700">
                                         <img src="{{ asset('public/images/tick-circle.png') }}" alt="Tick">
-                                        <p>{{ translate('Free e-Shop administrator + 4 positions') }}</p>
+                                        <p>{{ __('package.Free e-Shop administrator + 4 positions') }}</p>
                                     </li>
                                     <li class="list-group-item py-2 fw-700">
                                         <img src="{{ asset('public/images/tick-circle.png') }}" alt="Tick">
-                                        <p>{{ translate('Additional staff position just for AED 10/month') }}</p>
+                                        <p>{{ __('package.Additional staff position just for AED 10/month') }}</p>
                                     </li>
                                 </ul>
 
@@ -140,7 +140,7 @@
                                         @endif
                                     @endif --}}
                                     <button class="btn btn-light fw-600 col-10"
-                                                onclick="select_package({{ $seller_packages[0]->id }})">{{ translate('E-Shop Already Registered') }}</button>
+                                                onclick="select_package({{ $seller_packages[0]->id }})">{{ __('package.E-Shop Already Registered') }}</button>
                                 </div>
                             </div>
                         </div>
@@ -156,7 +156,7 @@
                                         <span class="fs-30 fw-600 lh-1 mb-0">-</span>
                                     @else
                                         <span
-                                            class="fs-32 fw-700 lh-1 mb-0">AED {{ $seller_packages[1]->amount }} / month</span>
+                                            class="fs-32 fw-700 lh-1 mb-0">{{  __('package.AED') }} {{ $seller_packages[1]->amount }} / {{  __('package.month') }}</span>
                                     @endif
                                     {{-- <span
                                         class="text-secondary border-left ml-2 pl-2">{{ $seller_packages->duration }}<br>{{ translate('Days') }}</span> --}}
@@ -164,19 +164,19 @@
                                 <ul class="list-group list-group-raw fs-13 mb-5">
                                     <li class="list-group-item py-2 fw-700">
                                        <img src="{{ asset('public/images/tick-circle.png') }}">
-                                        <p> {{ translate('Everything in the Pro Plan') }}</p>
+                                        <p> {{ __('package.Everything in the Pro Plan') }}</p>
                                     </li>
                                     <li class="list-group-item py-2 fw-700">
                                        <img src="{{ asset('public/images/tick-circle.png') }}">
-                                        <p> {{ translate('Customized e-Shop roles') }}</p>
+                                        <p> {{ __('package.Customized e-Shop roles') }}</p>
                                     </li>
                                     <li class="list-group-item py-2 fw-700">
                                         <img src="{{ asset('public/images/tick-circle.png') }}">
-                                        <p>{{ translate('Marketing analytics') }}</p>
+                                        <p>{{ __('package.Marketing analytics') }}</p>
                                     </li>
                                     <li class="list-group-item py-2 fw-700">
                                          <img src="{{ asset('public/images/tick-circle.png') }}">
-                                        <p>   {{ translate('And much more...') }}</p>
+                                        <p>   {{ __('package.And much more...') }}</p>
                                     </li>
                                 </ul>
 
@@ -193,7 +193,7 @@
                                                 onclick="show_price_modal({{ $seller_packages->id }})">{{ translate('Purchase Package') }}</button>
                                         @endif
                                     @endif --}}
-                                    <button class="btn btn-primary fw-600 col-10" disabled>{{ translate('Coming Soon') }}</button>
+                                    <button class="btn btn-primary fw-600 col-10" disabled>{{  __('package.Coming Soon') }}</button>
                                 </div>
                             </div>
                         </div>
@@ -253,7 +253,7 @@
     </section> --}}
 @endsection
 
-@section('modal')
+{{-- @section('modal')
     <!-- Select Payment Type Modal -->
     <div class="modal fade" id="select_payment_type_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
@@ -405,7 +405,7 @@
         </div>
     </div>
 
-@endsection
+@endsection --}}
 
 @section('script')
     <script type="text/javascript">
