@@ -174,7 +174,14 @@ button {
                     <h1 class="fw-700 fs-20 fs-md-24 text-dark text-center mb-3">
                         @if (!Auth::user() || (Auth::user() && Auth::user()->owner_id == null))
                             {{ translate('Register Your Shop') }}
-                            <h1 class="smaller-gray-text text-center">Start selling on our platform by filling in your business details. It's the first step to reaching customers <br> globally and growing your brand. Let's get started!</h1>
+                            <h1 class="smaller-gray-text text-center">
+                                {{ __('profile.It is the first step to reaching customers globally and growing your brand.') }}
+                                <br>
+                                {{ __('profile.Let get started') }}
+                            </h1>
+
+
+
                         @else
                             {{ translate('Account verification') }}
 
@@ -351,7 +358,7 @@ button {
                                             {{-- <div id="validation-errors" class="alert alert-danger"
                                                 style="display: none;"></div> --}}
                                                 <div class="fs-20 fw-600 p-3 orange-text">
-                                                    Trade Information
+                                                    {{ __('profile.Trade Information') }}
                                                 </div>
                                             <div class="p-3">
                                                 <div class="row">
@@ -400,7 +407,8 @@ button {
 
                                                     <div class="col-md-12" style="padding-left: 0px">
                                                     <div class="fs-20 fw-600 p-3 orange-text">
-                                                        E-Shop Information
+
+                                                        {{ __('profile.E-Shop Information') }}
                                                     </div>   </div>
 
 
@@ -431,7 +439,7 @@ button {
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label><b>{{ translate('English e-Shop description') }} </b><span
-                                                                    class="text-primary"> (Optional)</span></label>
+                                                                    class="text-primary">{{ __('profile.Optional') }}</span></label>
 
                                                             <textarea class="form-control rounded-0" placeholder="{{ translate('English e-Shop description') }}"
                                                                 name="eshop_desc_en">{{ isset($user->business_information->eshop_desc) ? $user->business_information->getTranslation('eshop_desc', 'en', false) : '' }}</textarea>
@@ -440,7 +448,7 @@ button {
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label><b>{{ translate('Arabic e-Shop description') }}</b> <span
-                                                                    class="text-primary"> (Optional)</span></label>
+                                                                    class="text-primary">{{ __('profile.Optional') }}</span></label>
 
                                                             <textarea class="form-control rounded-0" placeholder="{{ translate('Arabic e-Shop description') }}"
                                                                 name="eshop_desc_ar">{{ isset($user->business_information->eshop_desc) ? $user->business_information->getTranslation('eshop_desc', 'ar', false) : '' }}</textarea>
@@ -449,7 +457,9 @@ button {
 
                                                     <div class="col-md-12 Grand-title">
                                                  <div class="fs-20 fw-600 p-3 orange-text">
-                                                        License Information
+
+
+                            {{ __('profile.License Information') }}
                                                     </div>
                                                 </div>
                                                     <div class="col-md-6">
@@ -478,7 +488,7 @@ button {
                                                         </div>
                                                     </div>
                                                     <div class="fs-20 fw-600 p-3 orange-text">
-                                                       Location Information
+                                                     {{ __('profile.location_information') }}
                                                     </div>
                                                     <div class="p-3">
                                                         <div class="row">
@@ -573,7 +583,7 @@ button {
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label><b>{{ translate('Unit/Office No.') }}</b> <span
-                                                                    class="text-primary"> (Optional)</span></label>
+                                                                    class="text-primary">{{ __('profile.Optional') }}</span></label>
                                                             <input type="text" class="form-control rounded-0"
                                                                 value="{{ $user->business_information->unit ?? '' }}"
                                                                 placeholder="{{ translate('Unit/Office No.') }}"
@@ -584,7 +594,7 @@ button {
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label><b>{{ translate('PO Box') }} </b><span
-                                                                    class="text-primary"> (Optional)</span> </label>
+                                                                    class="text-primary">{{ __('profile.Optional') }}</span> </label>
                                                             <input type="text" class="form-control rounded-0"
                                                                 value="{{ $user->business_information->po_box ?? '' }}"
                                                                 placeholder="{{ translate('PO Box') }}" name="po_box">
@@ -594,12 +604,12 @@ button {
                                                 </div>
                                             </div>
                                             <div class="fs-20 fw-600 p-3 orange-text">
-                                               Contact Information
+                                             {{ __('profile.contact_information') }}
                                             </div>
                                                     <div class="col-md-12">
                                                         <div class="form-group">
                                                             <label><b>{{ translate('Landline Phone No.') }}</b><span
-                                                                    class="text-primary"> (Optional) </span></label>
+                                                                    class="text-primary">{{ __('profile.Optional') }}</span></label>
                                                             <input
                                                                 value="{{ $user->business_information->landline ?? '' }}"
                                                                 type="text" class="form-control rounded-0"
@@ -610,7 +620,8 @@ button {
                                                     </div>
                                                     <div class="col-md-12" style="padding-left: 0px">
                                                         <div class="fs-20 fw-600 p-3 orange-text">
-                                                            Tax Information
+
+                                                            {{ __('profile.Tax Information') }}
                                                         </div>   </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
@@ -641,7 +652,7 @@ button {
                                                     </div>
                                                     <div class="col-md-6" id="vatCertificateGroup">
                                                         <div class="form-group">
-                                                            <label><b>{{ translate('Vat Certificate') }} File upload</b> <span class="text-primary">*</span></label>
+                                                            <label><b>{{ translate('Vat Certificate') }}   {{ __('profile.File upload') }}</b> <span class="text-primary">*</span></label>
                                                             @if (isset($user) && isset($user->business_information) && $user->business_information->vat_certificate)
                                                                 <a class="old_file"
                                                                     href="{{ static_asset($user->business_information->vat_certificate) }}"
@@ -662,11 +673,14 @@ button {
 
                                                     <div class="col-md-12" id="trnGroup">
                                                         <div class="form-group">
-                                                            <label><b>{{ translate('TRN') }} (Tax Registration Number)</b><span
+                                                            <label><b>{{ translate('') }}
+                                                                {{ __('profile.TRN') }}
+                                                                {{ __('profile.Tax Registration Number') }}
+                                                            </b><span
                                                                     class="text-primary">*</span></label>
                                                             <input value="{{ $user->business_information->trn ?? '' }}"
                                                                 type="text" class="form-control rounded-0"
-                                                                placeholder="{{ translate('TRN (Tax Registration Number)') }}" name="trn">
+                                                                placeholder="{{ __('profile.TRN') }} {{ __('profile.Tax Registration Number') }}" name="trn">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6" id="taxWaiverGroup" {{-- style="display: none;" --}}>
@@ -685,7 +699,8 @@ button {
                                                         </div>
                                                     </div>
                                                     <div class="fs-20 fw-600 p-3 orange-text">
-                                                        Regulatory Information
+
+                                                        {{ __('profile.Regulatory Information') }}
                                                     </div>
                                                     <div class="col-md-12">
                                                         <div class="form-group">
@@ -731,7 +746,7 @@ button {
                                         <div class="bg-white border mb-4">
 
                                                 <div class="fs-20 fw-600 p-3 orange-text">
-                                                    {{ translate('Personal Information') }}
+                                                    {{ __('profile.personal_information') }}
                                                 </div>
 
                                             {{-- <div id="validation-errors" class="alert alert-danger"
@@ -806,7 +821,7 @@ button {
                                                         </div>
                                                     </div>
                                                     <div class="fs-20 fw-600 p-3 orange-text">
-                                                        Contact Information
+                                                        {{ __('profile.contact_information') }}
                                                     </div>
                                                     <div class="col-md-12">
                                                         <div class="form-group">
@@ -861,7 +876,7 @@ button {
 
 
                                                     <div class="fs-20 fw-600 p-3 orange-text">
-                                                        Emirates ID
+                                                        {{ __('profile.Emirates ID') }}
                                                     </div>
                                                     <div class="col-md-12">
                                                         <div class="form-group">
@@ -919,7 +934,8 @@ button {
 
                                                     <div class="col-md-12" style="padding-left: 0px">
                                                         <div class="fs-20 fw-600 p-3 orange-text">
-                                                            Employment Information
+
+                                                            {{ __('profile.Employment Information') }}
                                                         </div>
                                                     </div>
 
@@ -993,7 +1009,7 @@ button {
                                         <div class="bg-white border mb-4">
 
                                             <div class="fs-20 fw-600 p-3 orange-text">
-                                                {{ translate('Location Information') }}
+                                                {{ __('profile.location_information') }}
                                             </div>
                                             {{-- <div id="validation-errors" class="alert alert-danger"
                                                 style="display: none;"></div> --}}
@@ -1407,28 +1423,28 @@ button {
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label><b>{{ translate('IBAN') }} </b><span
+                                                            <label><b>{{ __('profile.IBAN') }}</b><span
                                                                     class="text-primary">*</span></label>
                                                             <input value="{{ $user->payout_information->iban ?? '' }}"
                                                                 type="text" class="form-control rounded-0"
-                                                                placeholder="{{ translate('IBAN') }}" name="iban"
+                                                                placeholder="{{ __('profile.IBAN') }}" name="iban"
                                                                 required>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label><b>{{ translate('Swift Code') }}</b><span
+                                                            <label><b>{{ __('profile.Swift Code') }}</b><span
                                                                     class="text-primary">*</span></label>
                                                             <input
                                                                 value="{{ $user->payout_information->swift_code ?? '' }}"
                                                                 type="text" class="form-control rounded-0"
-                                                                placeholder="{{ translate('Swift Code') }}"
+                                                                placeholder="{{ __('profile.Swift Code') }}"
                                                                 name="swift_code" required>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label><b>{{ translate('IBAN Certificate') }}</b><span
+                                                            <label><b>{{ __('profile.IBAN Certificate') }}</b><span
                                                                     class="text-primary">*</span></label>
                                                             @if (isset($user) && isset($user->payout_information) && $user->payout_information->iban_certificate)
                                                                 <a class="old_file"
@@ -1479,7 +1495,7 @@ button {
                                             <div class="form-check mb-3">
                                                 <input class="form-check-input" type="checkbox" id="acceptTermsCheckbox" onchange="enableRegisterButton()">
                                                 <label class="form-check-label" for="acceptTermsCheckbox">
-                                                    Accept <a href="#" target="_blank" onclick="openTermsPage()">Terms & Conditions</a>
+                                                    {{ __('profile.Accept') }} <a href="#" target="_blank" onclick="openTermsPage()">{{ __('profile.Terms & Conditions') }}</a>
                                                 </label>
                                             </div>
 
@@ -1495,7 +1511,7 @@ button {
 
                                             <!-- Register Your e-Shop Button (Initially Disabled) -->
                                             <button id="registerShop" type="submit" class="btn btn-primary fw-600 rounded-0" style="font-size: 14px;" disabled>
-                                                {{ translate('Register your e-Shop') }}
+                                                {{ __('profile.Register your e-Shop') }}
                                             </button>
                                         </div>
 

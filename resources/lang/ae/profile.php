@@ -24,6 +24,38 @@ return [
     'no' => 'لا',
     'yes' => 'نعم',
     'changes_proposed' => 'تم اقتراح التغييرات الخاصة بك للمراجعة.',
+    'It is the first step to reaching customers globally and growing your brand.' =>  'إنها الخطوة الأولى للوصول إلى العملاء على مستوى العالم وتنمية علامتك التجارية.',
+    'Let get started' => 'دعنا نبدأ',
+    'Trade Information' => 'المعلومات التجارية',
+    'E-Shop Information' => ' معلومات المتجر الإلكتروني',
+    'License Information' => 'معلومات الترخيص',
+    'location_information' => 'معلومات الموقع',
+    'Tax Information' => 'المعلومات الضريبية',
+    'Regulatory Information' => 'المعلومات التنظيمية',
+    'File upload' => 'تحميل الملف',
+    'TRN' => 'ترن',
+    'Tax Registration Number' => 'رقم التسجيل الضريبي',
+    'Optional' => 'اختياري',
+    'personal_information' => 'المعلومات الشخصية',
+    'Emirates ID'=> 'بطاقة الهوية الإماراتية',
+    'Employment Information' => 'معلومات التوظيف',
+    'IBAN Certificate' =>'شهادة رقم الحساب المصرفي الدولي',
+    'IBAN' => 'ايبان ',
+    'Swift Code' => 'رمز السويفت',
+    'Register your e-Shop' => 'سجل متجرك الإلكتروني',
+    'Terms & Conditions' => 'الشروط والأحكام',
+    'Accept' => 'تقبل',
+
+
+
+
+
+
+
+
+
+
+
 
 
 ];

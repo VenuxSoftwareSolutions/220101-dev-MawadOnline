@@ -72,5 +72,19 @@ class LeaseSeeder extends Seeder
                 }
             };
         };
+
+        $leases = SellerLease:: all();
+        foreach ($leases as $lease) {
+            $details =SellerLeaseDetail::where('lease_id',$lease->id)->get();
+            $amount=450;
+            if ($details) {
+                foreach ($details as $detail) {
+                    $amount += $detail->amount;
+                }
+            }
+            $lease->total = $amount;
+            $lease->discount= $amount;
+            $lease->save();
+        }
     }
 }
