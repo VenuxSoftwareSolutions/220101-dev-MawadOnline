@@ -1,11 +1,5 @@
 @extends('seller.layouts.app')
 <style>
-    .btn-create{
-        float: right;
-        background-color: #a2b8c6 !important;
-        border: none !important;
-    }
-
     .btn-filter{
         background-color: #a2b8c6 !important;
         border: none !important;
@@ -34,19 +28,6 @@
         padding-right: 30px; /* Adjust the padding to fit the icon */
     }
 
-    .search-icon {
-        position: absolute !important;
-        top: 50%;
-        right: 10px; /* Adjust the position to fit the input field */
-        transform: translateY(-50%);
-        width: 20px; /* Adjust the size of the icon */
-        height: 20px;
-        background-image: url('search-icon.png'); /* Replace 'search-icon.png' with your image path */
-        background-size: cover;
-        background-repeat: no-repeat;
-        cursor: pointer;
-    }
-
     .pagination .active .page-link {
         /* background-color: var(--primary); */
         background-color: #a2b8c6 !important;
@@ -61,6 +42,51 @@
     }
 
 </style>
+
+@if(app()->getLocale() == "ae")
+    <style>
+        .search-icon {
+            position: absolute !important;
+            top: 50%;
+            left: 10px; /* Adjust the position to fit the input field */
+            transform: translateY(-50%);
+            width: 20px; /* Adjust the size of the icon */
+            height: 20px;
+            background-image: url('search-icon.png'); /* Replace 'search-icon.png' with your image path */
+            background-size: cover;
+            background-repeat: no-repeat;
+            cursor: pointer;
+        }
+
+        .btn-create{
+            float: left;
+            background-color: #a2b8c6 !important;
+            border: none !important;
+        }
+
+    </style>
+@else
+    <style>
+        .search-icon {
+            position: absolute !important;
+            top: 50%;
+            right: 10px; /* Adjust the position to fit the input field */
+            transform: translateY(-50%);
+            width: 20px; /* Adjust the size of the icon */
+            height: 20px;
+            background-image: url('search-icon.png'); /* Replace 'search-icon.png' with your image path */
+            background-size: cover;
+            background-repeat: no-repeat;
+            cursor: pointer;
+        }
+
+        .btn-create{
+            float: right;
+            background-color: #a2b8c6 !important;
+            border: none !important;
+        }
+    </style>
+@endif
 
 @section('panel_content')
 
