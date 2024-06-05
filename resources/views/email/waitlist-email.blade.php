@@ -306,32 +306,15 @@
                                         @enderror
                                     </div>
                                     <div class="champ2">
-                                        <label>Work base
+                                        <label>company
                                         </label>
                                         <input type="text" id="work" name="work"
-                                            placeholder="Enter work base " value="{{ old('work') }}">
+                                            placeholder="Enter company " value="{{ old('work') }}">
                                         @error('work')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                    <div class="champ2">
-                                        <label>Job title
-                                        </label>
-                                        <input type="text" id="job" name="job"
-                                            placeholder="Enter job title" value="{{ old('job') }}">
-                                        @error('job')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                    <div class="champ2">
-                                        <label>Location
-                                        </label>
-                                        <input type="text" id="location" name="location"
-                                            placeholder="Enter location" value="{{ old('location') }}">
-                                        @error('location')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
+
                                     <div class="champ2">
                                         <label>Comments
                                         </label>
