@@ -45,8 +45,8 @@ thead tr{
             <h2 class="h3">{{ translate('All Products') }}</h2>
             <div class="row">
                 <div class="col-md-8">
-                    <p style="font-size: 16px;">Quickly access and organize your inventory with intuitive tools and features. Simplify your
-                        inventory management process and stay in control of your products effortlessly.</p>
+                    <p style="font-size: 16px;">{{ translate('Quickly access and organize your inventory with intuitive tools and features. Simplify your
+                        inventory management process and stay in control of your products effortlessly.') }}</p>
                 </div>
                 @can('seller_create_product')
                 <div class="col-md-4">
@@ -256,7 +256,7 @@ thead tr{
                                             </div>
                                         </td>
                                         <td >
-                                            <a href="{{ route('product', $children->slug) }}" style="margin-left: 34px !important" target="_blank" class="text-reset">
+                                            <a href="{{ route('product', $children->slug) }}" @if(app()->getLocale() == "ae") style="margin-right: 34px !important" @else style="margin-left: 34px !important" @endif target="_blank" class="text-reset">
                                                 {{ $children->sku }}
                                             </a>
                                         </td>

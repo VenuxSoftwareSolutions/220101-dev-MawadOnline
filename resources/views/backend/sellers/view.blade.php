@@ -21,7 +21,7 @@ use Carbon\Carbon;
 <div class="aiz-titlebar text-left mt-2 mb-3">
     <div class="row align-items-center">
         <div class="col-md-6">
-            <h1 class="h3">Vendor Registration View</h1>
+            <h1 class="h3">{{ __('messages.vendor_registration_view') }}</h1>
 
         </div>
     </div>
@@ -1236,7 +1236,7 @@ use Carbon\Carbon;
                                             <div class="col-6">
                                                 <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('iban_certificate') ? 'color-modified-file' : '' }}"
                                                     href="{{ static_asset($proposedPayoutChange->getNewValue('iban_certificate')) }}"
-                                                    target="_blank">{{ translate('View IBAN Certificate') }}
+                                                    target="_blank">   {{ __('messages.view_iban_certificate') }}
                                                 </a>
                                             </div>
                                             @endif
@@ -1246,9 +1246,9 @@ use Carbon\Carbon;
                                                 <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('iban_certificate') ? 'color-modified-file' : '' }}"
                                                     href="{{ static_asset($user->payout_information->iban_certificate) }}"
                                                     target="_blank">@if ($user->status =="Enabled")
-                                                         {{ translate('View Approved IBAN Certificate') }}
+                                                        {{ __('messages.view_approved_iban_certificate') }}
                                                     @else
-                                                        {{ translate('View IBAN Certificate') }}
+                                                    {{ __('messages.view_iban_certificate') }}
                                                     @endif
                                                 </a>
                                             </div>
@@ -1284,7 +1284,8 @@ use Carbon\Carbon;
                         @if ($user->status == "Pending Approval" || $user->status == "Suspended" || $user->status =="Pending Closure")
                         <!-- Approve Button -->
                         <a href="{{route('vendors.approve.registration', $user->id)}}" name="action" value="approve" class="btn btn-success fw-600 rounded-0">
-                            {{ translate('Approve') }}
+                            {{ __('messages.approve') }}
+
                         </a>
                         @endif
                         <!-- Reject Button -->

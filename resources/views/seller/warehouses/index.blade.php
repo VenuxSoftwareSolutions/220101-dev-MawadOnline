@@ -182,7 +182,7 @@
             </div>
 
             <div class="card-footer d-flex justify-content-end">
-                <button type="submit" id="saveButton" class="btn btn-primary">Save</button>
+                <button type="submit" id="saveButton" class="btn btn-primary">{{ translate('Save') }}</button>
             </div>
         </form>
     </div>
@@ -238,7 +238,6 @@
             var emirateId = $(this).val();
 
             var areaSelect = $(this).closest('.warehouseRow').find('.areaSelect');
-
             // Make an AJAX call to get areas based on the selected emirate
             $.ajax({
                 url: '{{ route('get.area', ['id' => ':id']) }}'.replace(':id', emirateId),
@@ -467,7 +466,7 @@
     newRow.append('<td><input type="text" class="form-control" name="street_warehouse[]" value="' + street + '" required></td>');
     newRow.append('<td><input type="text" class="form-control" name="building_warehouse[]" value="' + building + '" required></td>');
     newRow.append('<td><input type="text" class="form-control" name="unit_warehouse[]" value="' + unit + '"></td>');
-    newRow.append('<td><button type="button" class="btn btn-danger removeRow">Remove</button></td>');
+    newRow.append('<td><button type="button" class="btn btn-danger removeRow">{{ translate('Remove') }}</button></td>');
 
     // Append the new row to the table body
     $('#warehouseTable tbody').append(newRow);

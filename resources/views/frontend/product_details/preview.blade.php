@@ -98,7 +98,7 @@
                     <div class="d-none d-lg-block">
                         <div class="bg-white border mb-4">
                             <div class="p-3 p-sm-4 fs-16 fw-600">
-                                Top Selling Products
+                                {{ __('product.Top Selling Products') }}
                             </div>
                             {{-- <div class="px-3 px-sm-4 pb-4">
                                 <ul class="list-group list-group-flush">
@@ -316,7 +316,7 @@
                     <div class="bg-white border mb-4">
                         <div class="p-3 p-sm-4">
                             <h3 class="fs-16 fw-700 mb-0">
-                                <span class="mr-4">Reviews &amp; Ratings</span>
+                                <span class="mr-4">{{ __('product.Reviews and Ratings') }}</span>
                             </h3>
                         </div>
                         <!-- Ratting -->
@@ -337,7 +337,7 @@
                                             class="d-flex align-items-center justify-content-between justify-content-md-start">
                                             <div class="w-100 w-sm-auto">
                                                 <span class="avgRating fs-36 mr-3">{{$totalRating > 0 ? $detailedProduct->reviews->sum('rating') / $totalRating : 0 }}</span>
-                                                <span class="fs-14 mr-3">out of 5.0</span>
+                                                <span class="fs-14 mr-3"> {{ __('product.out of 5.0') }}</span>
                                             </div>
                                             <div
                                                 class="mt-sm-3 w-100 w-sm-auto d-flex flex-wrap justify-content-end justify-content-md-start">
@@ -349,7 +349,7 @@
                                                 @endif
                                                 </span>
                                                 <span class="total-var-rating ml-1 fs-14">({{$totalRating}}
-                                                    reviews)</span>
+                                                    {{ __('product.reviews') }})</span>
                                             </div>
                                         </div>
                                         @else
@@ -367,7 +367,7 @@
                                                     class="las la-star"></i>
                                             </span>
                                             <span class="total-var-rating ml-1 fs-14">(0
-                                                reviews)</span>
+                                                {{ __('product.reviews') }}</span>
                                         </div>
                                         </div>
                                         @endif
@@ -375,7 +375,7 @@
                                     <div class="col-md-4 text-right">
                                         <a href="javascript:void(0);" onclick="product_review('3')"
                                             class="btn btn-secondary-base fw-400 rounded-0 text-white">
-                                            <span class="d-md-inline-block"> Rate this Product</span>
+                                            <span class="d-md-inline-block">{{ __('product.Rate this Product') }}</span>
                                         </a>
                                     </div>
                                 </div>
@@ -387,7 +387,7 @@
                             </ul>
 
                             <div class="text-center fs-18 opacity-70">
-                                There have been no reviews for this product yet.
+                              {{ __('product.There have been no reviews for this product yet.') }}
                             </div>
 
                             <!-- Pagination -->
@@ -401,8 +401,8 @@
                         <!-- Tabs -->
                         <div class="nav aiz-nav-tabs">
                             <a href="#tab_default_1" data-toggle="tab"
-                                class="mr-5 pb-2 fs-16 fw-700 text-reset active show">Description</a>
-                            <a href="#tab_default_2" data-toggle="tab" class="mr-5 pb-2 fs-16 fw-700 text-reset">Video</a>
+                                class="mr-5 pb-2 fs-16 fw-700 text-reset active show">{{ __('product.Description') }}</a>
+                            <a href="#tab_default_2" data-toggle="tab" class="mr-5 pb-2 fs-16 fw-700 text-reset">{{ __('product.Video') }}</a>
                         </div>
 
                         <!-- Description -->
@@ -417,7 +417,7 @@
                                     </div>
                                     @else
                                         <div class="mw-100 overflow-hidden text-left aiz-editor-data">
-                                            No description available.
+                                            {{ __('product.No description available.') }}
                                         </div>
                                     @endif
 
@@ -459,7 +459,7 @@
                                                             style="box-sizing: border-box; color: rgb(15, 17, 17); overflow-wrap: break-word; display: block;">
                                                             <h2
                                                                 style="padding: 0px 0px 4px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; text-rendering: optimizelegibility; font-weight: 700; font-size: 24px; line-height: 32px;">
-                                                                Product details</h2>
+                                                                {{ __('product.Product details') }}</h2>
                                                             <div id="detailBullets_feature_div">
                                                                 <ul class="a-unordered-list a-nostyle a-vertical a-spacing-none detail-bullet-list"
                                                                     style="margin-right: 0px; margin-bottom: 1px; margin-left: 18px; padding: 0px;">
@@ -552,15 +552,15 @@
                     <div class="bg-white border mt-4 mb-4" id="product_query">
                         <div class="p-3 p-sm-4">
                             <h3 class="fs-16 fw-700 mb-0">
-                                <span>Product Queries (4)</span>
+                                <span>{{ __('product.Product Queries') }}(4)</span>
                             </h3>
                         </div>
 
                         <!-- Login & Register -->
                         <p class="fs-14 fw-400 mb-0 px-3 px-sm-4 mt-3"><a
-                                href="https://demo.activeitzone.com/ecommerce/users/login">Login</a> Or <a class="mr-1"
-                                href="https://demo.activeitzone.com/ecommerce/users/registration">Register</a>to submit
-                            your questions to seller
+                                href="https://demo.activeitzone.com/ecommerce/users/login">{{ __('product.Login') }}</a> {{ __('product.Or') }} <a class="mr-1"
+                                href="https://demo.activeitzone.com/ecommerce/users/registration">{{ __('product.Register') }}</a>
+                                {{ __('product.to submit your questions to seller') }}
                         </p>
 
                         <!-- Query Submit -->
@@ -569,7 +569,7 @@
                         <div class="queries-area my-4 mb-0 px-3 px-sm-4">
                             <div class="py-3">
                                 <h3 class="fs-16 fw-700 mb-0">
-                                    <span>Other Questions</span>
+                                    <span>{{ __('product.Other Questions') }}</span>
                                 </h3>
                             </div>
 

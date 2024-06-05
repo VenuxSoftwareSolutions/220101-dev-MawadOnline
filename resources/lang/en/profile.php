@@ -24,7 +24,27 @@ return [
     'no' => 'No',
     'yes' => 'Yes',
     'changes_proposed' => 'Your changes have been proposed for review.',
-
+    'It is the first step to reaching customers globally and growing your brand.' => 'It is the first step to reaching customers globally and growing your brand.',
+    'Let get started' => 'Let\'s get started',
+    'Trade Information' => 'Trade Information',
+    'E-Shop Information' => 'E-Shop Information',
+    'License Information' => 'License Information',
+    'location_information' => 'Location Information',
+    'Tax Information' => 'Tax Information',
+    'Regulatory Information' => 'Regulatory Information',
+    'File upload' => 'File Upload',
+    'TRN' => 'TRN',
+    'Tax Registration Number' => 'Tax Registration Number',
+    'Optional' => 'Optional',
+    'personal_information' => 'Personal Information',
+    'Emirates ID' => 'Emirates ID',
+    'Employment Information' => 'Employment Information',
+    'IBAN Certificate' => 'IBAN Certificate',
+    'IBAN' => 'IBAN',
+    'Swift Code' => 'Swift Code',
+    'Register your e-Shop' => 'Register your e-Shop',
+    'Terms & Conditions' => 'Terms & Conditions',
+    'Accept' => 'Accept',
 
 
 ];
