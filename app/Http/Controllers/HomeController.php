@@ -874,7 +874,7 @@ class HomeController extends Controller
 
     public function all_categories(Request $request)
     {
-        $categories = Category::with('childrenCategories')->where('parent_id', 0)->orderBy('order_level', 'asc')->get();
+        $categories = Category::with('childrenCategories')->where('parent_id', 1)->orderBy('order_level', 'asc')->get();
 
         // dd($categories);
         return view('frontend.all_category', compact('categories'));
@@ -1255,8 +1255,6 @@ class HomeController extends Controller
             // Updated phone validation rule to match the specified formats
             'phone' => ['required', 'regex:/^(?:(?:\+9715|009715)\d{2}\s?\d{2}\s?\d{2}\s?\d{2}|05\d\s?\d{3}\s?\d{2}\s?\d{2})$/'],
             'work' => 'nullable|regex:/^[\pL\s]+$/u',
-            'job' => 'nullable|regex:/^[\pL\s]+$/u',
-            'location' => 'nullable|regex:/^[\pL\s]+$/u',
             'info' => 'nullable|string',
         ]);
 
@@ -1270,12 +1268,10 @@ class HomeController extends Controller
         $email = $request->email;
         $phone = $request->phone;
         $work = $request->work;
-        $job = $request->job;
-        $location = $request->location;
         $info = $request->info;
         $subscribeNewsletter = $request->has('subscribeNewsletter') ? "yes" : "no";
 
-        Mail::to('email@example.com')->send(new WaitlistApplication($name, $email, $phone, $work, $job, $location, $info, $subscribeNewsletter));
+        Mail::to('email@example.com')->send(new WaitlistApplication($name, $email, $phone, $work, $info, $subscribeNewsletter));
 
         Mail::to($email)->send(new WaitlistUserApplication($name));
 

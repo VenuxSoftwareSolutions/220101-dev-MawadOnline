@@ -41,7 +41,7 @@
                     <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link">
                             <i class="las la-shopping-cart aiz-side-nav-icon"></i>
-                            <span class="aiz-side-nav-text">{{ translate('Products Management') }}</span>
+                            <span class="aiz-side-nav-text">{{ __('sidenav.product_management') }}</span>
                             <span class="aiz-side-nav-arrow"></span>
                         </a>
                         <!--Submenu-->
@@ -57,7 +57,7 @@
                             <li id="catalog" class="aiz-side-nav-item">
                                 <a href="{{ route('catalog.search_page') }}"
                                     class="aiz-side-nav-link {{ areActiveRoutes([ 'catalog.search_page']) }}">
-                                    <span class="aiz-side-nav-text">{{ translate('Mawad catalogue') }}</span>
+                                    <span class="aiz-side-nav-text">{{ __('sidenav.mawad_catalogue') }}</span>
                                 </a>
                             </li>
                             {{-- @can('seller_product_bulk_import')
@@ -154,7 +154,7 @@
                                 <li id="packages" class="aiz-side-nav-item">
                                     <a href="{{ route('seller.seller_packages_list') }}" class="aiz-side-nav-link">
                                         <i class="las la-shopping-cart aiz-side-nav-icon"></i>
-                                        <span class="aiz-side-nav-text">{{ translate('seller_packages') }}</span>
+                                        <span class="aiz-side-nav-text">{{ __('sidenav.Packages') }}</span>
                                     </a>
                                 </li>
                                 @endcan
