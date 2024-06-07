@@ -110,7 +110,7 @@
                                                     <button type="submit" class="btn btn-primary btn-block fw-600 rounded-4">{{  translate('Create Account') }}</button>
                                                 </div>
                                             </form>
-                                            
+
                                             <!-- Social Login -->
                                             @if(get_setting('google_login') == 1 || get_setting('facebook_login') == 1 || get_setting('twitter_login') == 1 || get_setting('apple_login') == 1)
                                                 <div class="text-center mb-3">
@@ -156,7 +156,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Right Side Image -->
                                 <div class="col-lg-6 col-md-5 py-3 py-md-0">
                                     <img src="{{ uploaded_asset(get_setting('register_page_image')) }}" alt="" class="img-fit h-100">

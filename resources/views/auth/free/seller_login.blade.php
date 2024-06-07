@@ -11,7 +11,7 @@
                         <img src="{{ uploaded_asset(get_setting('seller_login_page_image')) }}" alt="" class="img-fit h-100">
                     </div>
                 </div>
-                
+
                 <!-- Right Side -->
                 <div class="col-xxl-6 col-lg-5">
                     <div class="right-content">
@@ -31,7 +31,7 @@
                                     <div class="">
                                         <form class="form-default" role="form" action="{{ route('login') }}" method="POST">
                                             @csrf
-                                            
+
                                             <div class="form-group">
                                                 <label for="email" class="fs-12 fw-700 text-soft-dark">{{  translate('Email') }}</label>
                                                 <input type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }} rounded-0" value="{{ old('email') }}" placeholder="{{  translate('johndoe@example.com') }}" name="email" id="email" autocomplete="off">
@@ -41,7 +41,7 @@
                                                     </span>
                                                 @endif
                                             </div>
-                                                
+
                                             <!-- password -->
                                             <div class="form-group">
                                                 <label for="password" class="fs-12 fw-700 text-soft-dark">{{  translate('Password') }}</label>
@@ -92,7 +92,7 @@
                                     <!-- Register Now -->
                                     <p class="fs-12 text-gray mb-0">
                                         {{ translate('Dont have an account?')}}
-                                        <a href="{{ route('shops.create') }}" class="ml-2 fs-14 fw-700 animate-underline-primary">{{ translate('Register Now')}}</a>
+                                        <a href="{{ route('shops.packages') }}" class="ml-2 fs-14 fw-700 animate-underline-primary">{{ translate('Register Now')}}</a>
                                     </p>
                                     <!-- Go Back -->
                                     <a href="{{ url()->previous() }}" class="mt-3 fs-14 fw-700 d-flex align-items-center text-primary" style="max-width: fit-content;">

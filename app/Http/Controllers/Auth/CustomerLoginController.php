@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
+use App\Models\EmailAllowedClient;
 use Auth;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
@@ -15,6 +16,7 @@ class CustomerLoginController extends Controller
 
     public function login(Request $request)
     {
+
         $this->validateLogin($request);
 
         if (session('temp_user_id') != null) {
@@ -23,16 +25,18 @@ class CustomerLoginController extends Controller
                     'user_id' => auth()->user()->id,
                     'temp_user_id' => null
                 ]);
-    
+
             Session::forget('temp_user_id');
         }
-        
+        // if(EmailAllowedClient::where('email', $request->email)->first() == null){
+        //     return redirect()->route('business');
+        // }
         // Attempt to log the user in
-        if ($this->attemptLogin($request, 'customer')) {
+        if ($this->attemptLogin($request, 'customer') && EmailAllowedClient::where('email', $request->email)->exists()) {
             // Redirect to admin dashboard
             return redirect()->intended('dashboard');
         }
-    
+
         // If login attempt was unsuccessful
         return $this->sendFailedLoginResponse($request);
     }

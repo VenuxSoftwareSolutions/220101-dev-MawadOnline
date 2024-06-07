@@ -1888,18 +1888,19 @@
             @foreach($tour_steps as $key => $step)
             {
                 element: document.querySelector('#{{$step->element_id}}'),
-                title: '{{$step->title}}',
-                intro: "{{$step->description}}",
-                position: 'right'
+                title: '{{$step->getTranslation('title')}}',
+                intro: "{{$step->getTranslation('description')}}",
+                position: '{{ $step->getTranslation('lang') === 'en' ? 'right' : 'left' }}'
             },
             @endforeach
         ];
-
+        var lang = '{{$tour_steps[0]->getTranslation('lang')}}';
         let tour = introJs();
         let step_number = 0 ;
         tour.setOptions({
             steps: tour_steps ,
-            doneLabel: 'Finish', // Replace the "Done" button with "Next"
+            doneLabel: lang == 'en' ? 'Done' : 'تم',
+            prevLabel: lang == 'en' ? 'Back' : 'رجوع',
             exitOnEsc : false ,
             exitOnOverlayClick : false ,
             disableInteraction : true ,
@@ -1908,6 +1909,7 @@
             hidePrev : true ,
             showProgress :true ,
         });
+
         tour.onexit(function() {
             $.ajax({
                 url: "{{ route('seller.tour') }}",

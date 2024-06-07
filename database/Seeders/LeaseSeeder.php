@@ -48,26 +48,29 @@ class LeaseSeeder extends Seeder
                             $seller_lease->save();
 
                             $lease_details=SellerLeaseDetail::where('lease_id',$last_lease->id)->get();
-                            foreach ($lease_details as $detail){
-                                $lease_detail = new SellerLeaseDetail;
-                                $lease_detail->role_id = $detail->role_id;
-                                if($detail->amount > 0){
-                                    $lease_detail->amount = 10;
-                                }else{
-                                    $lease_detail->amount = 0;
+                            if ($lease_details) {
+                                foreach ($lease_details as $detail){
+                                    $lease_detail = new SellerLeaseDetail;
+                                    $lease_detail->role_id = $detail->role_id;
+                                    if($detail->amount > 0){
+                                        $lease_detail->amount = 10;
+                                    }else{
+                                        $lease_detail->amount = 0;
+                                    }
+
+                                    $lease_detail->lease_id = $seller_lease->id;
+                                    $lease_detail->is_used = true;
+                                    $lease_detail->start_date = $startDate->format('Y-m-d');
+                                    $lease_detail->end_date = $endDate->format('Y-m-d');
+                                    $lease_detail->save();
+
+                                    $seller_lease->total += $lease_detail->amount;
+                                    $seller_lease->discount += $lease_detail->amount;
+                                    $seller_lease->save();
+
                                 }
+                            }
 
-                                $lease_detail->lease_id = $seller_lease->id;
-                                $lease_detail->is_used = true;
-                                $lease_detail->start_date = $startDate->format('Y-m-d');
-                                $lease_detail->end_date = $endDate->format('Y-m-d');
-                                $lease_detail->save();
-
-                                $seller_lease->total += $lease_detail->amount;
-                                $seller_lease->discount += $lease_detail->amount;
-                                $seller_lease->save();
-
-                        }
                     }
                 }
             };

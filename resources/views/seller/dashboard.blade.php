@@ -67,7 +67,7 @@
                         <div class="col">
                             <p class="small text-muted mb-0">
                                 <span class="fe fe-arrow-down fe-12"></span>
-                                <span class="fs-14 text-light">{{ translate('Total Order') }}</span>
+                                <span class="fs-14 text-light">{{ __('dashboard.total_order') }}</span>
                             </p>
                             <h3 class="mb-0 text-white fs-30">
                                 {{ \App\Models\Order::where('seller_id', Auth::user()->owner_id)->where('delivery_status', 'delivered')->count() }}
@@ -123,7 +123,7 @@
                         <div class="col">
                             <p class="small text-muted mb-0">
                                 <span class="fe fe-arrow-down fe-12"></span>
-                                <span class="fs-14 text-light">{{ translate('Total Sales') }}</span>
+                                <span class="fs-14 text-light">{{ __('dashboard.total_sales') }}</span>
                             </p>
                             <h3 class="mb-0 text-white fs-30">
                                 @php
@@ -217,7 +217,7 @@
             <div class="card shadow-none bg-soft-primary">
                 <div class="card-body">
                     <div class="card-title text-primary fs-16 fw-600">
-                        {{ translate('Sales Stat') }}
+                        {{ __('dashboard.sales_stat') }}
                     </div>
                     <canvas id="graph-1" class="w-100" height="150"></canvas>
                 </div>
@@ -260,7 +260,7 @@
             <div class="card shadow-none h-450px mb-0 h-100">
                 <div class="card-body">
                     <div class="card-title text-primary fs-16 fw-600">
-                        {{ translate('Category wise product count') }}
+                        {{ __('dashboard.category_wise_product_count') }}
                     </div>
                     <hr>
                     <ul class="list-group">
@@ -289,9 +289,9 @@
             <div class="card h-450px mb-0 h-100">
                 <div class="card-body">
                     <div class="card-title text-primary fs-16 fw-600">
-                        {{ translate('Orders') }}
+                        {{ __('dashboard.orders') }}
                         <p class="small text-muted mb-0">
-                            <span class="fs-12 fw-600">{{ translate('This Month') }}</span>
+                            <span class="fs-12 fw-600">{{ __('dashboard.this_month') }}</span>
                         </p>
                     </div>
                     <div class="row align-items-center mb-4">
@@ -314,7 +314,7 @@
                         <div class="col">
                             <p class="small text-muted mb-0">
                                 <span class="fe fe-arrow-down fe-12"></span>
-                                <span class="fs-13 text-primary fw-600">{{ translate('New Order') }}</span>
+                                <span class="fs-13 text-primary fw-600">{{ __('dashboard.new_order') }}</span>
                             </p>
                             <h3 class="mb-0" style="color: #A9A3CC">
                                 {{ \App\Models\OrderDetail::where('seller_id', Auth::user()->owner_id)->where('delivery_status', 'pending')->count() }}
@@ -353,7 +353,7 @@
                         <div class="col">
                             <p class="small text-muted mb-0">
                                 <span class="fe fe-arrow-down fe-12"></span>
-                                <span class="fs-13 text-primary fw-600">{{ translate('Cancelled') }}</span>
+                                <span class="fs-13 text-primary fw-600">{{ __('dashboard.cancelled') }}</span>
                             </p>
                             <h3 class="mb-0" style="color: #A9A3CC">
                                 {{ \App\Models\OrderDetail::where('seller_id', Auth::user()->owner_id)->where('delivery_status', 'cancelled')->count() }}
@@ -663,18 +663,19 @@
             @foreach($tour_steps as $key => $step)
             {
                 element: document.querySelector('#{{$step->element_id}}'),
-                title: '{{$step->title}}',
-                intro: "{{$step->description}}",
-                position: 'right'
+                title: '{{$step->getTranslation('title')}}',
+                intro: "{{$step->getTranslation('description')}}",
+                position: '{{ $step->getTranslation('lang') === 'en' ? 'right' : 'left' }}'
             },
             @endforeach
         ];
-
+        var lang = '{{$tour_steps[0]->getTranslation('lang')}}';
         let tour = introJs();
         let step_number = 0 ;
         tour.setOptions({
             steps: tour_steps ,
-            doneLabel: 'Next', // Replace the "Done" button with "Next"
+            nextLabel: lang == 'en' ? 'Next' : 'التالي',
+            prevLabel: lang == 'en' ? 'Back' : 'رجوع',
             exitOnEsc : false ,
             exitOnOverlayClick : false ,
             disableInteraction : true ,
@@ -683,6 +684,7 @@
             hidePrev : true ,
             showProgress :true ,
         });
+
 
         tour.onexit(function() {
             $.ajax({
