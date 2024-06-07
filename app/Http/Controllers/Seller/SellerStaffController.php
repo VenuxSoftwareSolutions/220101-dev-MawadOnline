@@ -268,6 +268,8 @@ class SellerStaffController extends Controller
             abort_if(!auth('web')->user()->can('seller_edit_staff'), Response::HTTP_FORBIDDEN, 'ACCESS FORBIDDEN');
 
             $staff = Staff::findOrFail($id);
+
+            if ($staff->created_by == Auth::user()->owner_id) {
             $user = $staff->user;
             $staffs = Staff::where('user_id', $user->id)->get();
             $currentDate = Carbon::now();
@@ -365,6 +367,11 @@ class SellerStaffController extends Controller
 
             flash(__('staff.Something went wrong'))->error();
             return back();
+        }
+            else{
+                flash(__('staff.Something went wrong'))->error();
+                return back();
+            }
         } catch (Exception $e) {
             Log::error('Error updating staff: ' . $e->getMessage());
             flash(__('staff.Something went wrong') . $e->getMessage())->error();
@@ -400,36 +407,40 @@ class SellerStaffController extends Controller
             if (!$staff) {
                 throw new Exception('Staff not found');
             }
+            if ($staff->user->owner_id == Auth::user()->id) {
+                $staffs = Staff::where('user_id', $staff->user->id)->get();
 
-            $staffs = Staff::where('user_id', $staff->user->id)->get();
-
-            foreach ($staffs as $key => $st) {
-                $staff_role = SellerLeaseDetail::where('lease_id', $current_lease->id)
-                                               ->where('role_id', $st->role_id)
-                                               ->where('is_used', true)
-                                               ->where('amount', '!=', 0)
-                                               ->first();
-                if ($staff_role) {
-                    $current_lease->total -= $staff_role->amount;
-                    $current_lease->discount -= $staff_role->amount;
-                    $current_lease->save();
-                    $staff_role->delete();
-                } else {
+                foreach ($staffs as $key => $st) {
                     $staff_role = SellerLeaseDetail::where('lease_id', $current_lease->id)
                                                    ->where('role_id', $st->role_id)
                                                    ->where('is_used', true)
+                                                   ->where('amount', '!=', 0)
                                                    ->first();
                     if ($staff_role) {
-                        $staff_role->is_used = 0;
-                        $staff_role->save();
+                        $current_lease->total -= $staff_role->amount;
+                        $current_lease->discount -= $staff_role->amount;
+                        $current_lease->save();
+                        $staff_role->delete();
+                    } else {
+                        $staff_role = SellerLeaseDetail::where('lease_id', $current_lease->id)
+                                                       ->where('role_id', $st->role_id)
+                                                       ->where('is_used', true)
+                                                       ->first();
+                        if ($staff_role) {
+                            $staff_role->is_used = 0;
+                            $staff_role->save();
+                        }
                     }
+                    $st->delete();
                 }
-                $st->delete();
-            }
 
-            if (User::destroy($staff->user->id)) {
-                flash(__('staff.Staff has been deleted successfully'))->success();
-                return redirect()->route('seller.staffs.index');
+                if (User::destroy($staff->user->id)) {
+                    flash(__('staff.Staff has been deleted successfully'))->success();
+                    return redirect()->route('seller.staffs.index');
+                }
+            }
+            else{
+                flash(__('staff.Something went wrong'))->error();
             }
 
             flash(__('staff.Something went wrong'))->error();
