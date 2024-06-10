@@ -28,9 +28,9 @@ class CustomerLoginController extends Controller
 
             Session::forget('temp_user_id');
         }
-        if(EmailAllowedClient::where('email', $request->email)->first() == null){
-            return redirect()->route('business');
-        }
+        // if(EmailAllowedClient::where('email', $request->email)->first() == null){
+        //     return redirect()->route('business');
+        // }
         // Attempt to log the user in
         if ($this->attemptLogin($request, 'customer') && EmailAllowedClient::where('email', $request->email)->exists()) {
             // Redirect to admin dashboard

@@ -87,6 +87,14 @@ class SupportTicketController extends Controller
     public function show($id)
     {
         $ticket = Ticket::findOrFail(decrypt($id));
+        // Get the current authenticated user
+        $currentUser = auth()->user();
+
+        // Check if the ticket belongs to the current user
+        if ($ticket->user_id !== $currentUser->id) {
+            // Optionally, you can redirect to a 403 error page or a custom unauthorized page
+            abort(403, 'Unauthorized action.');
+        }
         $ticket->client_viewed = 1;
         $ticket->save();
         $ticket_replies = $ticket->ticketreplies;

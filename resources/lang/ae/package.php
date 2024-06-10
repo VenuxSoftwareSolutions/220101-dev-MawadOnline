@@ -22,5 +22,17 @@ return [
     'Make your e-Shop ready for MawadOnline launch' => 'اجعل متجرك الإلكتروني جاهزاً لإطلاق MawadOnline',
     'You will not pay now. Choose your package, registre your e-Shop, create your products and inventory.' => 'لن تدفع الآن. اختر الحزمة الخاصة بك، وقم بتسجيل متجرك الإلكتروني، وأنشئ منتجاتك ومخزونك.',
     'MawadOnline offers the best marketplace for contruction materials in UAE...' => 'يقدم موقع معوض أونلاين أفضل سوق لمواد البناء في الإمارات العربية المتحدة...',
+    'Welcome aboard! ' => 'مرحباً بك معنا!',
+    'Welcome to MawadOnline' => 'يسعدنا انضمامك إلينا في مواد أونلاين. أنت الآن في مرحلة الإحماء. رتِّب أرفف متجرك الإلكتروني وحسِّن مخزونك. نحن نستعد للإنطلاق قريباً.
+عندما تكون جاهزًا للبدء، اضغط على زر "بدء الجولة" لاستكشاف منصة متجرك.
+نحن هنا معك في كل خطوة!',
+    'Skip' => 'تخطي',
+    'Start Tour' => 'بدء الجولة',
+    'You\'re on your way to setting up your own eShop—no payment needed just yet. Once we\'ve got your registration squared away, you\'ll be all set to showcase your products. Get ready to be part of an exciting chapter in construction retail! Keep an eye out, we\'re launching soon!' => 'أنت في طريقك لإنشاء متجر إلكتروني خاص بك، لن يكون عليك دفع أي مبالغ الآن.
+بمجرد أن نقوم بتأكيد تسجيلك، ستكون جاهزًا للبدء برص منتجاتك على أرفف متجرك.
+إستعد لتكون جزءًا من فصل مثير في عالم التشييد والبناء!
+
+ترقبونا قريباً، نحن على وشك إطلاق المنصة!',
+    'Welcome to MawadOnline and thank you for joining our family!' => 'مرحبًا بك في مواد أونلاين، وشكرًا لانضمامك إلى عائلتنا! ',
 
 ];
