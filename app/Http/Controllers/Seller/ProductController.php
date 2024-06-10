@@ -497,9 +497,12 @@ class ProductController extends Controller
 
     public function edit(Request $request, $id)
     {
-        $product = Product::findOrFail($id);
+        //$product = Product::findOrFail($id);
 
         $product = Product::find($id);
+        if (Auth::user()->id != $product->user_id) {
+            abort(404);
+        }
         $colors = Color::orderBy('name', 'asc')->get();
         $product_category = ProductCategory::where('product_id', $id)->first();
         $vat_user = BusinessInformation::where('user_id', Auth::user()->owner_id)->first();
@@ -907,13 +910,17 @@ class ProductController extends Controller
         //         return back();
         //     }
 
-        if(count($product->getChildrenProducts()) > 0){
-            foreach($product->getChildrenProducts() as $children){
-                $children->delete();
+        if (Auth::user()->id == $product->user_id) {
+            if(count($product->getChildrenProducts()) > 0){
+                foreach($product->getChildrenProducts() as $children){
+                    $children->delete();
+                }
             }
+            Product::destroy($id);
+            return back();
+        }else{
+            abort(404);
         }
-        Product::destroy($id);
-        return back();
     }
 
     public function bulk_product_delete(Request $request)

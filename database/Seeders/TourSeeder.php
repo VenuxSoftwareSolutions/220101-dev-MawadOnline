@@ -67,7 +67,7 @@ class TourSeeder extends Seeder
             ['step_number' => 9],
             ['element_id' => 'packages',
             'title' => 'Step 8: Package Management',
-            'description' => 'In package management, choose the right materials and methods to ensure your products are well-protected and presented beautifully as they travel to customers.']
+            'description' => 'Package Management allows you to select the best subscription plan for your needs. Compare features, choose your plan, and manage your subscription to enhance your business operations.']
         );
         // Tour::updateOrCreate(
         //     ['step_number' => 10],

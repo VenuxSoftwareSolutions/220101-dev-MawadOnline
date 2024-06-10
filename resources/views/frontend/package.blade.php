@@ -155,7 +155,11 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label
-                                    class="fs-15 fw-400">{{__('package.Welcome to MawadOnline, and thank you for selecting the Pro package! You\'re on your way to setting up your own e-shop—no payment needed just yet. Once we\'ve got your registration squared away, you\'ll be all set to showcase your products. Get ready to be part of an exciting chapter in construction retail! Keep an eye out—we\'re launching soon!') }}</label>
+                                    class="fs-15 fw-600">{{__('package.Welcome to MawadOnline and thank you for joining our family!') }}</label>
+                            </div>
+                            <div class="col-md-12">
+                                <label
+                                    class="fs-15 fw-400">{{__('package.You\'re on your way to setting up your own eShop—no payment needed just yet. Once we\'ve got your registration squared away, you\'ll be all set to showcase your products. Get ready to be part of an exciting chapter in construction retail! Keep an eye out, we\'re launching soon!') }}</label>
                             </div>
 
                         </div>

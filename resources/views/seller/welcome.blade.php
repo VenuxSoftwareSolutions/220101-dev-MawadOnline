@@ -20,12 +20,12 @@
         <div class="modal-content"  style="border-radius: 20px !important;">
             <div class="modal-body text-center">
                 <img class="mt-4" src="{{asset('public/images/Welcome.svg')}}" alt="Welcome Image">
-                <h4 id="modal-title" class="mt-5">Welcome to MawadOnline</h4>
-                <p id="modal-content">Thank you for joining us on this journey! Start by adding your products and organizing your inventory. Get ready to manage your offerings effectively.</p>
+                <h4 id="modal-title" class="mt-5">{{__('package.Welcome aboard! ')}}</h4>
+                <p id="modal-content">{{__('package.Welcome to MawadOnline')}}</p>
 
                 <div class="mt-3">
-                <button type="button" class="btn btn-light mr-2" data-dismiss="modal">Skip</button>
-                    <button type="button" class="btn btn-secondary" onclick="start_tour()">Start Tour</button>
+                <button type="button" class="btn btn-light mr-2" data-dismiss="modal">{{__('package.Skip')}}</button>
+                    <button type="button" class="btn btn-secondary" onclick="start_tour()">{{__('package.Start Tour')}}</button>
                 </div>
             </div>
         </div>
