@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Seller;
 
+use App\Imports\ProductsBulkImport;
 use PDF;
 use Auth;
 use Excel;
@@ -10,14 +11,44 @@ use App\Models\Brand;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\ProductsImport;
+use App\Services\ProductFlashDealService;
+use App\Services\ProductPricingService;
+use App\Services\ProductService;
+use App\Services\ProductStockService;
+use App\Services\ProductTaxService;
+use App\Services\ProductUploadsService;
 
 class ProductBulkUploadController extends Controller
 {
-    public function __construct() {
-       // $this->middleware(['permission:seller_product_bulk_import'])->only('index');
-      //  $this->middleware(['permission:seller_product_bulk_export'])->only('export');
+    protected $productService;
+    protected $productTaxService;
+    protected $productFlashDealService;
+    protected $productStockService;
+    protected $productUploadsService;
+    protected $productPricingService;
 
+    public function __construct(
+        ProductService $productService,
+        ProductTaxService $productTaxService,
+        ProductFlashDealService $productFlashDealService,
+        ProductStockService $productStockService,
+        ProductUploadsService $productUploadsService,
+        ProductPricingService $productPricingService
+    ) {
+        $this->productService = $productService;
+        $this->productTaxService = $productTaxService;
+        $this->productFlashDealService = $productFlashDealService;
+        $this->productStockService = $productStockService;
+        $this->productUploadsService = $productUploadsService;
+        $this->productPricingService = $productPricingService;
     }
+
+
+    // public function __construct() {
+    //    // $this->middleware(['permission:seller_product_bulk_import'])->only('index');
+    //   //  $this->middleware(['permission:seller_product_bulk_export'])->only('export');
+
+    // }
 
     public function index()
     {
@@ -52,7 +83,15 @@ class ProductBulkUploadController extends Controller
     public function bulk_upload(Request $request)
     {
         if($request->hasFile('bulk_file')){
-            $import = new ProductsImport;
+             $import = new ProductsBulkImport(
+            $this->productService,
+            $this->productTaxService,
+            $this->productFlashDealService,
+            $this->productStockService,
+            $this->productUploadsService,
+            $this->productPricingService
+        );
+        
             Excel::import($import, request()->file('bulk_file'));
         }
 

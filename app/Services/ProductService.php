@@ -28,7 +28,6 @@ class ProductService
     public function store(array $data)
     {
         $collection = collect($data);
-
         $vat_user = BusinessInformation::where('user_id', Auth::user()->owner_id)->first();
 
         $approved = 1;
@@ -599,6 +598,7 @@ class ProductService
                 }
             }
 
+        
             if(count($general_attributes_data) > 0){
                 foreach ($general_attributes_data as $attr => $value) {
                     if($value != null){
@@ -639,6 +639,7 @@ class ProductService
 
             return $product;
         }else{
+
             // //Create Parent Product
             $data['is_parent'] = 1;
             $data['sku'] = $data['name'];
@@ -2834,6 +2835,7 @@ class ProductService
     {
 
         $collection = collect($data);
+        
 
         $collection['user_id'] = Auth::user()->owner_id;
         $collection['approved'] = 0;
