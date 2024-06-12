@@ -579,9 +579,9 @@
                                     <table class="table" id="table_third_party_configuration" class="bloc_third_configuration_variant">
                                         <thead>
                                             <tr>
-                                                <th>{{translate('Length (Cm)')}}</th>
-                                                <th>{{translate('Width (Cm)')}}</th>
-                                                <th>{{translate('Height (Cm)')}}</th>
+                                                <th>{{translate('Package Length (Cm)')}}</th>
+                                                <th>{{translate('Package Width (Cm)')}}</th>
+                                                <th>{{translate('Package Height (Cm)')}}</th>
                                                 <th>{{translate('Package Weight')}}</th>
                                                 <th>{{translate('Weight Unit')}}</th>
                                                 <th>{{translate('Breakable')}}</th>
@@ -764,9 +764,9 @@
                                     <table class="table" id="table_third_party_configuration_sample" class="bloc_third_configuration_variant_sample">
                                         <thead>
                                             <tr>
-                                                <th>{{translate('Length (Cm)')}}</th>
-                                                <th>{{translate('Width (Cm)')}}</th>
-                                                <th>{{translate('Height (Cm)')}}</th>
+                                                <th>{{translate('Package Length (Cm)')}}</th>
+                                                <th>{{translate('Package Width (Cm)')}}</th>
+                                                <th>{{translate('Package Height (Cm)')}}</th>
                                                 <th>{{translate('Package Weight')}}</th>
                                                 <th>{{translate('Weight Unit')}}</th>
                                                 <th>{{translate('Breakable')}}</th>
@@ -842,7 +842,7 @@
                                                         <option value="third_party" @if(in_array("third_party", $shippers_sample)) {{ 'selected' }} @endif>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                                     </select>
                                                 </td>
-                                                <td><input type="number" @if(!in_array("vendor", $shippers_sample)) {{ 'disabled' }} @endif class="form-control estimated_sample" name="estimated_sample" @if($product->estimated_sample != null) value="{{ $product->estimated_sample }}" @endif></td>
+                                                <td><input type="number" class="form-control estimated_sample" name="estimated_sample" @if($product->estimated_sample != null) value="{{ $product->estimated_sample }}" @endif></td>
                                                 <td><input type="number" @if(!in_array("vendor", $shippers_sample)) {{ 'disabled' }} @endif class="form-control estimated_shipping_sample" name="estimated_shipping_sample" @if($product->estimated_shipping_sample != null) value="{{ $product->estimated_shipping_sample }}" @endif></td>
                                                 <td>
                                                     <select class="form-control paid_sample" name="paid_sample" @if(!in_array("vendor", $shippers_sample)) {{ 'disabled' }} @endif>
@@ -4594,8 +4594,8 @@
             var unit_third_party = $(this).parent().parent().find('#unit_third_party').val();
 
             if((weight == '') || (length == '') ||(width == '') ||(height == '') ||(min_third_party == '') ||(max_third_party == '')){
-                html = '<span style="color: green"> {{ translate("Chargeable Weight = 0, then accepted by our shipper") }} </span>';
-                $('#result_calculate_third_party').html(html);
+                //html = '<span style="color: green"> {{ translate("Chargeable Weight = 0, then accepted by our shipper") }} </span>';
+                $('#result_calculate_third_party').empty();
             }else{
                 length = parseInt(length);
                 height = parseInt(height);
@@ -4747,8 +4747,8 @@
             var unit_third_party = $(this).parent().parent().find('#unit_third_party_sample').val();
 
             if((weight == '') || (length == '') ||(width == '') ||(height == '') ||(min_third_party == '') ||(max_third_party == '')){
-                html = '<span style="color: green"> {{ translate("Chargeable Weight = 0, then accepted by our shipper") }} </span>';
-                $('#result_calculate_third_party_sample').html(html);
+                //html = '<span style="color: green"> {{ translate("Chargeable Weight = 0, then accepted by our shipper") }} </span>';
+                $('#result_calculate_third_party_sample').empty();
             }else{
                 length = parseInt(length);
                 height = parseInt(height);
@@ -4789,8 +4789,8 @@
             if(selected.length == 0){
                 $(this).parent().parent().find('.shipping_amount').val('');
                 $(this).parent().parent().find('.shipping_amount').prop('disabled', true);
-                $(this).parent().parent().find('.estimated_sample').val('');
-                $(this).parent().parent().find('.estimated_sample').prop('disabled', true);
+                // $(this).parent().parent().find('.estimated_sample').val('');
+                // $(this).parent().parent().find('.estimated_sample').prop('disabled', true);
                 $(this).parent().parent().find('.estimated_shipping_sample').val('');
                 $(this).parent().parent().find('.estimated_shipping_sample').prop('disabled', true);
                 $(this).parent().parent().find('.paid_sample').val('');
@@ -4799,8 +4799,8 @@
             if(selected.indexOf('third_party') !== -1){
                 $(this).parent().parent().find('.shipping_amount').val('');
                 $(this).parent().parent().find('.shipping_amount').prop('disabled', true);
-                $(this).parent().parent().find('.estimated_sample').val('');
-                $(this).parent().parent().find('.estimated_sample').prop('disabled', true);
+                // $(this).parent().parent().find('.estimated_sample').val('');
+                // $(this).parent().parent().find('.estimated_sample').prop('disabled', true);
                 $(this).parent().parent().find('.estimated_shipping_sample').val('');
                 $(this).parent().parent().find('.estimated_shipping_sample').prop('disabled', true);
                 $(this).parent().parent().find('.paid_sample').val('');
@@ -4929,7 +4929,7 @@
 
             if(selected.indexOf('vendor') !== -1){
                 $(this).parent().parent().find('.shipping_amount').prop('disabled', false);
-                $(this).parent().parent().find('.estimated_sample').prop('disabled', false);
+                // $(this).parent().parent().find('.estimated_sample').prop('disabled', false);
                 $(this).parent().parent().find('.estimated_shipping_sample').prop('disabled', false);
                 $(this).parent().parent().find('.paid_sample').prop('disabled', false);
             }
