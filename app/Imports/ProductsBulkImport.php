@@ -111,15 +111,8 @@ class ProductsBulkImport implements ToCollection, WithHeadingRow, WithValidation
                     //$this->products[] = $product;
 
                     $mappedProduct = $this->productMapping($product);
-                   // dd($mappedProduct);
-                    $data=  $this->productService->store($mappedProduct);
-                    dd($data["id"]);
-                    dd(Product::find($data["id"]));
+                    $product=  $this->productService->store($mappedProduct);
                    
-                   // $product->save($mappedProduct);
-                 //   $new_product = Product::find($product->id);
-
-                  //  dd($new_product);
                     if($product->is_parent == 1){
                         $products = Product::where('parent_id', $product->id)->get();
                         if(count($products) > 0){
@@ -130,7 +123,6 @@ class ProductsBulkImport implements ToCollection, WithHeadingRow, WithValidation
                     }
                     $product->categories()->attach($mappedProduct["parent_id"]);
             
-                    dd($product);
                 }
                 
 
@@ -152,18 +144,16 @@ class ProductsBulkImport implements ToCollection, WithHeadingRow, WithValidation
             'name'=> $product['Product Information']['Product Name'],
             'published_modal'=> 0,
             'create_stock'=> 0,
-            'brand_id'=> 1,
+            'brand_id'=> $this->idExtracting($product,'Brand'),
             'unit'=> $product['Product Information']['Unit of Sale'],
-            'country_code'=> "ae",
+            'country_code'=> $this->idExtracting($product,'Country of origin'),
             'manufacturer'=> $product['Product Information']['Manufacturer'],
-            'tags'=> [json_encode([["value"=>"badis"]])
-                
-            ],
+            'tags'=>  [json_encode($this->tagsHandling($product))],
             'short_description'=> $product['Product Information']['Short Description'],
             'stock_visibility_state'=> $product['Product Information']['Show Stock Quantity'],
             'refundable'=> $product['Product Information']['Refundable'],
-            'video_provider'=> null,
-            'video_link'=> null,
+            'video_provider'=> $product['Product Media']['Video provider'],
+            'video_link'=> $product['Product Media']['video Link'],
             'from'=> [
                 []
             ],
@@ -231,14 +221,40 @@ class ProductsBulkImport implements ToCollection, WithHeadingRow, WithValidation
             'meta_description'=> null,
             'button'=> 'draft',
             'submit_button'=> null,
-
         ]);
 
 
         return Request::except('bulk_file');
     }
 
+    private function idExtracting($product,$key)
+    {
+        $value_string = $product['Product Information'][$key];
 
+        // Split the comma-separated string into an array
+        $value_parts = explode('-', $value_string);
+
+        // Transform the tags array into the desired format
+        $extracted_id = (int) $value_parts[0];
+
+
+        return $extracted_id;
+    }
+
+    private function tagsHandling($product)
+    {
+        $product_tags = $product['Product Information']['Tags']; // Example input for tags
+
+        // Split the comma-separated string into an array
+        $tags_array = explode(', ', $product_tags);
+
+        // Transform the tags array into the desired format
+        $formatted_tags = array_map(function($tag) {
+            return ['value' => trim($tag)];
+        }, $tags_array);
+
+        return $formatted_tags;
+    }
     private function checkEmptyData(array $product): bool
     {
         if(
