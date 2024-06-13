@@ -267,9 +267,9 @@
             </div>
         </div>
     <form id="option-choice-form-preview">
-        <input type="hidden" name="_token" value="4q2wUsXR8Psahk2hhNrRCBY6rAnlDDtK17T5izTc"> <input type="hidden"
-            name="id" value="3">
-
+        {{-- <input type="hidden" name="_token" value="4q2wUsXR8Psahk2hhNrRCBY6rAnlDDtK17T5izTc"> <input type="hidden"
+            name="id" value="3"> --}}
+        @csrf
         <!-- Choice Options -->
 
         <!-- Color Options -->
@@ -294,7 +294,7 @@
                             data-type="plus" data-field="quantity">
                             <i class="las la-plus"></i>
                         </button>
-                        <input type="hidden" value="{{$previewData['detailedProduct']['variationId']}}" name="variationId" id="variationId">
+                        <input type="hidden" value="{{$previewData['detailedProduct']['variationId'] ?? $previewData['detailedProduct']['product_id']}}" name="variationId" id="variationId">
 
                     </div>
                     <div class="avialable-amount opacity-60">
@@ -314,7 +314,7 @@
             <div class="col-sm-10">
                 <div class="product-price">
                     <strong id="chosen_price"
-                        class="fs-20 fw-700 text-primary">{{ $previewData['detailedProduct']['total'] }} AED</strong>
+                        class="fs-20 fw-700 text-primary">{{ $previewData['detailedProduct']['totalDiscount'] ??  $previewData['detailedProduct']['total'] }} AED</strong>
                 </div>
             </div>
         </div>
@@ -384,11 +384,11 @@
     </form>
     <div class="mt-3">
         <button type="button" class="btn btn-secondary-base mr-2 add-to-cart fw-600 min-w-150px rounded-0 text-white"
-           {{--  onclick="showLoginModal()" --}}>
+        @if (Auth::check()) onclick="addToCart()" @else onclick="showLoginModal()" @endif>
             <i class="las la-shopping-bag"></i> Add to cart
         </button>
         <button type="button" class="btn btn-primary buy-now fw-600 add-to-cart min-w-150px rounded-0"
-           {{--  onclick="showLoginModal()" --}}>
+        @if (Auth::check()) onclick="addToCart()" @else onclick="showLoginModal()" @endif>
             <i class="la la-shopping-cart"></i> Buy Now
         </button>
         <button type="button" class="btn btn-secondary out-of-stock fw-600 d-none" disabled="">

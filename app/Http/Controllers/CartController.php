@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Cart;
+use App\Models\PricingConfiguration;
+use App\Models\StockSummary;
 use Auth;
 use App\Utility\CartUtility;
 use Session;
@@ -49,14 +51,85 @@ class CartController extends Controller
         $product = Product::find($request->id);
         return view('auction.frontend.addToCartAuction', compact('product'));
     }
+    // public function addToCart(Request $request)
+    // {
+    //     $carts = Cart::where('user_id', auth()->user()->id)->get();
+    //     $check_auction_in_cart = CartUtility::check_auction_in_cart($carts);
+    //     $product = Product::find($request->id);
+    //     $carts = array();
 
+    //     if($check_auction_in_cart && $product->auction_product == 0) {
+    //         return array(
+    //             'status' => 0,
+    //             'cart_count' => count($carts),
+    //             'modal_view' => view('frontend.'.get_setting('homepage_select').'.partials.removeAuctionProductFromCart')->render(),
+    //             'nav_cart_view' => view('frontend.'.get_setting('homepage_select').'.partials.cart')->render(),
+    //         );
+    //     }
+
+    //     $quantity = $request['quantity'];
+
+    //     if ($quantity < $product->min_qty) {
+    //         return array(
+    //             'status' => 0,
+    //             'cart_count' => count($carts),
+    //             'modal_view' => view('frontend.'.get_setting('homepage_select').'.partials.minQtyNotSatisfied', ['min_qty' => $product->min_qty])->render(),
+    //             'nav_cart_view' => view('frontend.'.get_setting('homepage_select').'.partials.cart')->render(),
+    //         );
+    //     }
+
+    //     //check the color enabled or disabled for the product
+    //     $str = CartUtility::create_cart_variant($product, $request->all());
+    //     $product_stock = $product->stocks->where('variant', $str)->first();
+
+    //     $cart = Cart::firstOrNew([
+    //         'variation' => $str,
+    //         'user_id' => auth()->user()->id,
+    //         'product_id' => $request['id']
+    //     ]);
+
+    //     if ($cart->exists && $product->digital == 0) {
+    //         if ($product->auction_product == 1 && ($cart->product_id == $product->id)) {
+    //             return array(
+    //                 'status' => 0,
+    //                 'cart_count' => count($carts),
+    //                 'modal_view' => view('frontend.'.get_setting('homepage_select').'.partials.auctionProductAlredayAddedCart')->render(),
+    //                 'nav_cart_view' => view('frontend.'.get_setting('homepage_select').'.partials.cart')->render(),
+    //             );
+    //         }
+    //         if ($product_stock->qty < $cart->quantity + $request['quantity']) {
+    //             return array(
+    //                 'status' => 0,
+    //                 'cart_count' => count($carts),
+    //                 'modal_view' => view('frontend.'.get_setting('homepage_select').'.partials.outOfStockCart')->render(),
+    //                 'nav_cart_view' => view('frontend.'.get_setting('homepage_select').'.partials.cart')->render(),
+    //             );
+    //         }
+    //         $quantity = $cart->quantity + $request['quantity'];
+    //     }
+
+    //     $price = CartUtility::get_price($product, $product_stock, $request->quantity);
+    //     $tax = CartUtility::tax_calculation($product, $price);
+
+    //     CartUtility::save_cart_data($cart, $product, $price, $tax, $quantity);
+
+    //     $carts = Cart::where('user_id', auth()->user()->id)->get();
+    //     return array(
+    //         'status' => 1,
+    //         'cart_count' => count($carts),
+    //         'modal_view' => view('frontend.'.get_setting('homepage_select').'.partials.addedToCart', compact('product', 'cart'))->render(),
+    //         'nav_cart_view' => view('frontend.'.get_setting('homepage_select').'.partials.cart')->render(),
+    //     );
+    // }
     public function addToCart(Request $request)
     {
+        $dataProduct=$request->session()->get('productPreviewData', null) ;
+
         $carts = Cart::where('user_id', auth()->user()->id)->get();
         $check_auction_in_cart = CartUtility::check_auction_in_cart($carts);
-        $product = Product::find($request->id);
+        $product = Product::find($request->variationId);
         $carts = array();
-        
+
         if($check_auction_in_cart && $product->auction_product == 0) {
             return array(
                 'status' => 0,
@@ -65,26 +138,27 @@ class CartController extends Controller
                 'nav_cart_view' => view('frontend.'.get_setting('homepage_select').'.partials.cart')->render(),
             );
         }
-        
-        $quantity = $request['quantity'];
 
-        if ($quantity < $product->min_qty) {
+        $quantity = $request['quantity'];
+        $min_from_value = PricingConfiguration::where('id_products', $request['variationId'])->min('from');
+
+        if ($quantity < $min_from_value) {
             return array(
                 'status' => 0,
                 'cart_count' => count($carts),
-                'modal_view' => view('frontend.'.get_setting('homepage_select').'.partials.minQtyNotSatisfied', ['min_qty' => $product->min_qty])->render(),
+                'modal_view' => view('frontend.'.get_setting('homepage_select').'.partials.minQtyNotSatisfied', ['min_qty' => $min_from_value])->render(),
                 'nav_cart_view' => view('frontend.'.get_setting('homepage_select').'.partials.cart')->render(),
             );
         }
 
         //check the color enabled or disabled for the product
-        $str = CartUtility::create_cart_variant($product, $request->all());
-        $product_stock = $product->stocks->where('variant', $str)->first();
+        $str = $product->productVariantDetails();
+        $product_stock = StockSummary::where('variant_id',$request->variationId)->sum('current_total_quantity');
 
         $cart = Cart::firstOrNew([
             'variation' => $str,
             'user_id' => auth()->user()->id,
-            'product_id' => $request['id']
+            'product_id' => $request['variationId']
         ]);
 
         if ($cart->exists && $product->digital == 0) {
@@ -96,7 +170,7 @@ class CartController extends Controller
                     'nav_cart_view' => view('frontend.'.get_setting('homepage_select').'.partials.cart')->render(),
                 );
             }
-            if ($product_stock->qty < $cart->quantity + $request['quantity']) {
+            if ($product_stock < $cart->quantity + $request['quantity']) {
                 return array(
                     'status' => 0,
                     'cart_count' => count($carts),
@@ -106,12 +180,13 @@ class CartController extends Controller
             }
             $quantity = $cart->quantity + $request['quantity'];
         }
+        $price = CartUtility::get_price_mawad($dataProduct, $request->variationId , $request->quantity);
 
-        $price = CartUtility::get_price($product, $product_stock, $request->quantity);
-        $tax = CartUtility::tax_calculation($product, $price);
-        
+        // $price = CartUtility::get_price($product, $product_stock, $request->quantity);
+        // $tax = CartUtility::tax_calculation($product, $price);
+        $tax = 0 ;
         CartUtility::save_cart_data($cart, $product, $price, $tax, $quantity);
-        
+
         $carts = Cart::where('user_id', auth()->user()->id)->get();
         return array(
             'status' => 1,

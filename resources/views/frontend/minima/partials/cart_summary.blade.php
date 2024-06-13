@@ -8,7 +8,7 @@
                 {{ count($carts) }}
                 {{ translate('Items') }}
             </span>
-            
+
             <!-- Minimum Order Amount -->
             @php
                 $coupon_discount = 0;
@@ -44,7 +44,7 @@
                     {{ translate('Minimum Order Amount') . ' ' . single_price(get_setting('minimum_order_amount')) }}
                 </span>
             @endif
-            
+
         </div>
     </div>
 
@@ -103,9 +103,9 @@
                         $subtotal += cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
                         $tax += cart_product_tax($cartItem, $product, false) * $cartItem['quantity'];
                         $product_shipping_cost = $cartItem['shipping_cost'];
-                        
+
                         $shipping += $product_shipping_cost;
-                        
+
                         $product_name_with_choice = $product->getTranslation('name');
                         if ($cartItem['variant'] != null) {
                             $product_name_with_choice = $product->getTranslation('name') . ' - ' . $cartItem['variant'];

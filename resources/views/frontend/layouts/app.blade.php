@@ -650,7 +650,7 @@
                 $.ajax({
                     type:"POST",
                     url: '{{ route('cart.addToCart') }}',
-                    data: $('#option-choice-form').serializeArray(),
+                    data: $('#option-choice-form-preview').serializeArray(),
                     success: function(data){
                        $('#addToCart-modal-body').html(null);
                        $('.c-preloader').hide();
