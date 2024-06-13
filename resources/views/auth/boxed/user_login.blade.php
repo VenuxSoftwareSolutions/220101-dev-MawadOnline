@@ -152,10 +152,10 @@
                                     </div>
 
                                     <!-- Register Now -->
-                                    <p class="fs-12 text-gray mb-0">
-                                        {{ translate('Dont have an account?')}}
-                                        <a href="{{ route('user.registration') }}" class="ml-2 fs-14 fw-700 animate-underline-primary">{{ translate('Register Now')}}</a>
-                                    </p>
+                                    {{-- <p class="fs-12 text-gray mb-0"> --}}
+                                        {{-- {{ translate('Dont have an account?')}} --}}
+                                        {{-- <a href="{{ route('user.registration') }}" class="ml-2 fs-14 fw-700 animate-underline-primary">{{ translate('Register Now')}}</a> --}}
+                                    {{-- </p> --}}
                                 </div>
                             </div>
                         </div>
