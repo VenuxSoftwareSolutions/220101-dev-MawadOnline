@@ -4,7 +4,7 @@
 <div class="row">
 	<div class="col-xl-10 mx-auto">
 		<h6 class="fw-600">{{ translate('Home Page Settings') }}</h6>
-		@php 
+		@php
 			$activeLanguages = get_all_active_language();
 			$defaultLanguage = env('DEFAULT_LANGUAGE');
 		@endphp
@@ -517,7 +517,7 @@
 				</ul>
 				<form action="{{ route('business_settings.update') }}" method="POST" enctype="multipart/form-data">
 					@csrf
-					
+
 					<div class="form-group">
 						<div class="input-group" data-toggle="aizuploader" data-type="image">
 							<div class="input-group-prepend">
