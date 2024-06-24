@@ -166,7 +166,17 @@
           </div>
         </div>
     </form>
-
+    <li class="aiz-side-nav-item">
+        <a href="javascript:void(0)" onclick="account_delete_confirm_modal('{{ route('account_delete') }}')" class="aiz-side-nav-link text-danger font-weight-bold">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                <g id="Group_25000" data-name="Group 25000" transform="translate(-240.535 -537)">
+                    <path id="Path_2961" data-name="Path 2961" d="M221.069,0a8,8,0,1,0,8,8,8,8,0,0,0-8-8m0,15a7,7,0,1,1,7-7,7,7,0,0,1-7,7" transform="translate(27.466 537)" fill="#b5b5bf"/>
+                    <rect id="Rectangle_18942" data-name="Rectangle 18942" width="8" height="1" rx="0.5" transform="translate(244.535 544.5)" fill="#b5b5bf"/>
+                </g>
+            </svg>
+            <span class="aiz-side-nav-text ml-3">{{ translate('Delete My Account') }}</span>
+        </a>
+    </li>
 @endsection
 
 @section('modal')

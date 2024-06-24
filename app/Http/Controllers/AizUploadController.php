@@ -235,21 +235,21 @@ class AizUploadController extends Controller
                     }
                 }
 
-                if (env('FILESYSTEM_DRIVER') != 'local') {
+                // if (env('FILESYSTEM_DRIVER') != 'local') {
 
-                    Storage::disk(env('FILESYSTEM_DRIVER'))->put(
-                        $path,
-                        file_get_contents(base_path('public/') . $path),
-                        [
-                            'visibility' => 'public',
-                            'ContentType' =>  $extension == 'svg' ? 'image/svg+xml' : $file_mime
-                        ]
-                    );
-                    // dd($storage);
-                    if ($arr[0] != 'updates') {
-                        unlink(base_path('public/') . $path);
-                    }
-                }
+                //     Storage::disk(env('FILESYSTEM_DRIVER'))->put(
+                //         $path,
+                //         file_get_contents(base_path('public/') . $path),
+                //         [
+                //             'visibility' => 'public',
+                //             'ContentType' =>  $extension == 'svg' ? 'image/svg+xml' : $file_mime
+                //         ]
+                //     );
+                //     // dd($storage);
+                //     if ($arr[0] != 'updates') {
+                //         unlink(base_path('public/') . $path);
+                //     }
+                // }
 
                 $upload->extension = $extension;
                 $upload->file_name = $path;

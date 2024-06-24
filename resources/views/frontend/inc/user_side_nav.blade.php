@@ -41,7 +41,7 @@
         <!-- Menus -->
         <div class="sidemnenu">
             <ul class="aiz-side-nav-list mb-3 pb-3 border-bottom" data-toggle="aiz-side-menu">
-                
+
                 <!-- Dashboard -->
                 <li class="aiz-side-nav-item">
                     <a href="{{ route('dashboard') }}" class="aiz-side-nav-link {{ areActiveRoutes(['dashboard']) }}">
@@ -75,15 +75,14 @@
                                 <path id="Path_2960" data-name="Path 2960" d="M13.5,28.963h5a.5.5,0,0,1,0,1h-5a.5.5,0,0,1,0-1" transform="translate(20.966 525.5)" fill="#b5b5bf"/>
                             </g>
                         </svg>
-                        <span class="aiz-side-nav-text ml-3">{{ translate('Purchase History') }}</span>
+                        <span class="aiz-side-nav-text ml-3">{{__('sidenav.orders') }}{{-- {{ translate('Purchase History') }} --}}</span>
                         @if ($delivery_viewed > 0 || $payment_status_viewed > 0)
                             <span class="badge badge-inline badge-success">{{ translate('New') }}</span>
                         @endif
                     </a>
                 </li>
-
-                <!-- Downloads -->
-                <li class="aiz-side-nav-item">
+                    <!-- Downloads -->
+                    <li class="aiz-side-nav-item">
                     <a href="{{ route('digital_purchase_history.index') }}"
                         class="aiz-side-nav-link {{ areActiveRoutes(['digital_purchase_history.index']) }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16.001" height="16" viewBox="0 0 16.001 16">
@@ -92,10 +91,22 @@
                                 <path id="Path_2964" data-name="Path 2964" d="M67.155,88.6a3,3,0,0,1-.474-5.963q-.009-.089-.015-.179a5.5,5.5,0,0,1,10.977-.718,3.5,3.5,0,0,1-.989,6.859h-1.5a.5.5,0,0,1,0-1l1.5,0a2.5,2.5,0,0,0,.417-4.967.5.5,0,0,1-.417-.5,4.5,4.5,0,1,0-8.908.866.512.512,0,0,1,.009.121.5.5,0,0,1-.52.479,2,2,0,1,0-.162,4l.081,0h2a.5.5,0,0,1,0,1Z" transform="translate(1324 486)" fill="#b5b5bf"/>
                             </g>
                         </svg>
-                        <span class="aiz-side-nav-text ml-3">{{ translate('Downloads') }}</span>
+                        <span class="aiz-side-nav-text ml-3">{{__('sidenav.digital_products') }}{{-- {{ translate('Downloads') }} --}}</span>
                     </a>
                 </li>
-                
+                <!-- Documents -->
+                <li class="aiz-side-nav-item">
+                    <a href="#" class="aiz-side-nav-link {{-- {{ areActiveRoutes(['documents.index']) }} --}}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        <span class="aiz-side-nav-text ml-3">{{__('sidenav.documents') }}{{-- {{ translate('Documents') }} --}}</span>
+                    </a>
+                </li>
+
+
+
                 <!-- Refund Requests -->
                 @if (addon_is_activated('refund_request'))
                     <li class="aiz-side-nav-item">
@@ -131,7 +142,7 @@
                 </li>
 
                 <!-- Compare -->
-                <li class="aiz-side-nav-item">
+                {{-- <li class="aiz-side-nav-item">
                     <a href="{{ route('compare') }}" class="aiz-side-nav-link {{ areActiveRoutes(['compare']) }}">
                         <svg id="Group_22071" data-name="Group 22071" xmlns="http://www.w3.org/2000/svg" width="14.6" height="16" viewBox="0 0 14.6 16">
                             <g id="LWPOLYLINE" transform="translate(0.158)">
@@ -143,7 +154,7 @@
                         </svg>
                         <span class="aiz-side-nav-text ml-3">{{ translate('Compare') }}</span>
                     </a>
-                </li>
+                </li> --}}
 
                 <!-- Followed Sellers -->
                 <li class="aiz-side-nav-item">
@@ -153,7 +164,7 @@
                                 <path id="Path_2977" data-name="Path 2977" d="M193.408,3.756,192.05.862A1.5,1.5,0,0,0,190.692,0H180.666a1.5,1.5,0,0,0-1.357.862L177.95,3.756l.029-.062A3,3,0,0,0,179.373,7.7a3.091,3.091,0,0,0,.306.128V16h12V9.5a.5.5,0,0,0-1,0V15h-3V10.5a.5.5,0,0,0-.5-.5h-3a.5.5,0,0,0-.5.5V15h-3V8a3,3,0,0,0,2.5-1.342,3,3,0,0,0,5,0,3,3,0,0,0,5.229-2.9M184.679,11h2v4h-2Zm6.4-4.041A2,2,0,0,1,188.719,5.4a.5.5,0,0,0-.49-.4h-.1a.5.5,0,0,0-.49.4,2,2,0,0,1-3.919,0,.5.5,0,0,0-.49-.4h-.1a.5.5,0,0,0-.49.4,2,2,0,1,1-3.781-1.225l1.357-2.888A.5.5,0,0,1,180.666,1h10.025a.5.5,0,0,1,.452.288L192.5,4.175a2,2,0,0,1-1.422,2.784" transform="translate(1324 486)" fill="#b5b5bf"/>
                             </g>
                         </svg>
-                        <span class="aiz-side-nav-text ml-3">{{ translate('Followed Sellers') }}</span>
+                        <span class="aiz-side-nav-text ml-3">{{__('sidenav.followed_vendors')}}{{-- {{ translate('Followed Sellers') }} --}}</span>
                     </a>
                 </li>
 
@@ -219,7 +230,7 @@
                 @endif
 
                 <!-- Conversations -->
-                @if (get_setting('conversation_system') == 1)
+                {{-- @if (get_setting('conversation_system') == 1)
                     @php
                         $conversation = get_non_viewed_conversations();
                     @endphp
@@ -240,7 +251,7 @@
                             @endif
                         </a>
                     </li>
-                @endif
+                @endif --}}
 
                 <!-- My Wallet -->
                 @if (get_setting('wallet_system') == 1)
@@ -263,7 +274,7 @@
                 @endif
 
                 <!-- Earning Points -->
-                @if (addon_is_activated('club_point'))
+                {{-- @if (addon_is_activated('club_point'))
                     <li class="aiz-side-nav-item">
                         <a href="{{ route('earnng_point_for_user') }}"
                             class="aiz-side-nav-link {{ areActiveRoutes(['earnng_point_for_user']) }}">
@@ -276,7 +287,7 @@
                             <span class="aiz-side-nav-text ml-3">{{ translate('Earning Points') }}</span>
                         </a>
                     </li>
-                @endif
+                @endif --}}
 
                 <!-- Affiliate -->
                 @if (addon_is_activated('affiliate_system') &&
@@ -336,13 +347,13 @@
                                 <path id="Union_12" data-name="Union 12" d="M16414,895a1,1,0,1,1,1,1A1,1,0,0,1,16414,895Zm.5-2.5V891h.5a2,2,0,1,0-2-2h-1a3,3,0,1,1,3.5,2.958v.54a.5.5,0,1,1-1,0Zm-2.5-3.5h1a.5.5,0,1,1-1,0Z" transform="translate(-16090.998 183.001)" fill="#b5b5bf"/>
                             </g>
                         </svg>
-                        <span class="aiz-side-nav-text ml-3">{{ translate('Support Ticket') }}</span>
+                        <span class="aiz-side-nav-text ml-3">{{__('sidenav.customer_support') }}{{-- {{ translate('Support Ticket') }} --}}</span>
                         @if ($support_ticket > 0)
                             <span class="badge badge-inline badge-success">{{ $support_ticket }}</span>
                         @endif
                     </a>
                 </li>
-                
+
                 <!-- Manage Profile -->
                 <li class="aiz-side-nav-item">
                     <a href="{{ route('profile') }}" class="aiz-side-nav-link {{ areActiveRoutes(['profile']) }}">
@@ -357,7 +368,7 @@
                 </li>
 
                 <!-- Delete My Account -->
-                <li class="aiz-side-nav-item">
+                {{-- <li class="aiz-side-nav-item">
                     <a href="javascript:void(0)" onclick="account_delete_confirm_modal('{{ route('account_delete') }}')" class="aiz-side-nav-link">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
                             <g id="Group_25000" data-name="Group 25000" transform="translate(-240.535 -537)">
@@ -367,10 +378,10 @@
                         </svg>
                         <span class="aiz-side-nav-text ml-3">{{ translate('Delete My Account') }}</span>
                     </a>
-                </li>
+                </li> --}}
 
             </ul>
-        
+
             <!-- logout -->
             <a href="{{ route('logout') }}" class="btn btn-primary btn-block fs-14 fw-700 mb-5 mb-md-0" style="border-radius: 25px;">{{ translate('Sign Out') }}</a>
         </div>
