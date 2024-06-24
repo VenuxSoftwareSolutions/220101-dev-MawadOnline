@@ -4494,6 +4494,35 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\Waitlist
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $email
+ * @property string $phone
+ * @property string|null $work
+ * @property string|null $info
+ * @property int $subscribe_newsletter
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|Waitlist newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Waitlist newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Waitlist query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Waitlist whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Waitlist whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Waitlist whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Waitlist whereInfo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Waitlist whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Waitlist wherePhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Waitlist whereSubscribeNewsletter($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Waitlist whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Waitlist whereWork($value)
+ */
+	class Waitlist extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\Wallet
  *
  * @property int $id

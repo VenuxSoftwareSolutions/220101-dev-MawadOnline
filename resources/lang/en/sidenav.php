@@ -7,6 +7,7 @@ return [
     'Billing' => 'Billing',
     'product_management' => 'Product Management',
     'mawad_catalogue' => 'Mawad catalogue',
+    'bulk_upload' => 'Bulk Upload',
 
 
 

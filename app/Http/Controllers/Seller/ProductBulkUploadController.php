@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Seller;
 
+use App\Exports\ProductBulkExport;
 use App\Imports\ProductsBulkImport;
 use PDF;
 use Auth;
@@ -98,4 +99,9 @@ class ProductBulkUploadController extends Controller
         return back();
     }
 
+    public function download_file(Request $request)
+    {
+        return Excel::download(new ProductBulkExport, 'products.xlsx');
+
+    }
 }
