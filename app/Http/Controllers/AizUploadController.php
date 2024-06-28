@@ -148,7 +148,16 @@ class AizUploadController extends Controller
                     file_put_contents($request->file('aiz_file'), $cleanSVG);
                 }
 
-                $path = $request->file('aiz_file')->store('uploads/all', 'local');
+                if ($type[$extension] == 'image'){
+                    $file = $request->file('aiz_file');
+                    $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                    $filename = preg_replace('/[^A-Za-z0-9\-]/', '', $filename); // Nettoyer le nom de fichier
+                    $newFilename = $filename . '.jpg';
+                    $path = $file->storeAs('uploads/all', $newFilename, 'local');
+                }else{
+                    $path = $request->file('aiz_file')->store('uploads/all', 'local');
+                }
+                
                 $size = $request->file('aiz_file')->getSize();
 
                 // Return MIME type ala mimetype extension
@@ -157,44 +166,48 @@ class AizUploadController extends Controller
                 // Get the MIME type of the file
                 $file_mime = finfo_file($finfo, base_path('public/') . $path);
 
-
                 if ($type[$extension] == 'image' && get_setting('disable_image_optimization') != 1) {
                     try {
-                        $img = Image::make($request->file('aiz_file')->getRealPath())->encode();
+                        $img = Image::make($request->file('aiz_file')->getRealPath())->encode('jpg');
                         $height = $img->height();
                         $width = $img->width();
-                        if ($width > $height && $width > 1500) {
-                            $img->resize(1500, null, function ($constraint) {
-                                $constraint->aspectRatio();
-                            });
-                        } elseif ($height > 1500) {
-                            $img->resize(null, 800, function ($constraint) {
+                        
+                        $setting_min_width = get_setting('image_min_width');
+                        $setting_img_quality = get_setting('image_img_quality');
+                        if($width<$setting_min_width){
+                            if (file_exists(base_path('public/') .$path)) {
+                                unlink(base_path('public/') .$path); // Supprimer l'image précédente
+                            }
+                            dd(0);
+                        }elseif($width > $setting_min_width){
+                            $img->resize($setting_min_width, null, function ($constraint) {
                                 $constraint->aspectRatio();
                             });
                         }
-                        $img->save(base_path('public/') . $path);
+                        
+                        $img->save(base_path('public/') . $path,80);
                         clearstatcache();
                         $size = $img->filesize();
                     } catch (\Exception $e) {
                         //dd($e);
                     }
                 }
+                
+                // if (env('FILESYSTEM_DRIVER') != 'local') {
 
-                if (env('FILESYSTEM_DRIVER') != 'local') {
-
-                    Storage::disk(env('FILESYSTEM_DRIVER'))->put(
-                        $path,
-                        file_get_contents(base_path('public/') . $path),
-                        [
-                            'visibility' => 'public',
-                            'ContentType' =>  $extension == 'svg' ? 'image/svg+xml' : $file_mime
-                        ]
-                    );
-                    // dd($storage);
-                    if ($arr[0] != 'updates') {
-                        unlink(base_path('public/') . $path);
-                    }
-                }
+                //     Storage::disk(env('FILESYSTEM_DRIVER'))->put(
+                //         $path,
+                //         file_get_contents(base_path('public/') . $path),
+                //         [
+                //             'visibility' => 'public',
+                //             'ContentType' =>  $extension == 'svg' ? 'image/svg+xml' : $file_mime
+                //         ]
+                //     );
+                //     // dd($storage);
+                //     if ($arr[0] != 'updates') {
+                //         unlink(base_path('public/') . $path);
+                //     }
+                // }
 
                 $upload->extension = $extension;
                 $upload->file_name = $path;

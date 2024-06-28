@@ -208,7 +208,7 @@
 																	</div>
 																	<div class="form-control file-amount">{{ translate('Choose File') }}</div>
 																	<input type="hidden" name="types[][{{ $lang }}]" value="home_slider_images">
-																	<input type="hidden" name="home_slider_images[]" class="selected-files" value="{{ json_decode($home_slider_images, true)[$key] }}">
+																	<input type="hidden" name="home_slider_images[]" class="selected-files" value="{{ (isset($home_slider_images) && json_decode($home_slider_images, true)[$key] ) ? json_decode($home_slider_images, true)[$key] : "" }}">
 																</div>
 																<div class="file-preview box sm">
 																</div>
@@ -218,7 +218,7 @@
 														<div class="col-md">
 															<div class="form-group mb-md-0">
 																<input type="hidden" name="types[]" value="home_slider_links">
-																<input type="text" class="form-control" placeholder="http://" name="home_slider_links[]" value="{{ json_decode(get_setting('home_slider_links'), true)[$key] }}">
+																<input type="text" class="form-control" placeholder="http://" name="home_slider_links[]" value="{{ (isset($home_slider_links) && json_decode($home_slider_links, true)[$key] ) ? json_decode($home_slider_links, true)[$key] : "" }}">
 															</div>
 														</div>
 														<!-- remove parent button -->

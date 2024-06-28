@@ -58,7 +58,6 @@ class HomeController extends Controller
         $featured_categories = Cache::rememberForever('featured_categories', function () {
             return Category::with('bannerImage')->where('featured', 1)->get();
         });
-
         return view('frontend.'.get_setting('homepage_select').'.index', compact('featured_categories'));
 
     }
