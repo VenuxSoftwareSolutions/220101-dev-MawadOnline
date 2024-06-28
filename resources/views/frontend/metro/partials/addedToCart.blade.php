@@ -82,6 +82,6 @@
         <div class="col-sm-6">
             <a href="{{ route('cart') }}" class="btn btn-primary mb-3 mb-sm-0 btn-block rounded-0">{{ translate('Proceed to Checkout')}}</a>
         </div>
-        
+
     </div>
 </div>

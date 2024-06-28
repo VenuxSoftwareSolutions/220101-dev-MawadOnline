@@ -44,8 +44,8 @@
                                                     <input type="number" name="quantity[{{ $cartItem['id'] }}]"
                                                         class="col border-0 text-left px-0 flex-grow-1 fs-14 input-number"
                                                         placeholder="1" value="{{ $cartItem['quantity'] }}"
-                                                        min="{{ $product->min_qty }}"
-                                                        max="{{ $product_stock->qty }}"
+                                                        {{-- min="{{ $product->min_qty }}" --}}
+                                                        {{-- max="{{ $product_stock->qty }}" --}}
                                                         onchange="updateQuantity({{ $cartItem['id'] }}, this)" style="padding-left:0.75rem !important;">
                                                     <button
                                                         class="btn col-auto btn-icon btn-sm btn-circle btn-light"
@@ -76,7 +76,7 @@
                                         <!-- Tax -->
                                         <div class="col-md col-4 order-3 order-md-0 my-3 my-md-0">
                                             <span class="opacity-60 fs-12 d-block d-md-none">{{ translate('Tax')}}</span>
-                                            <span class="fw-700 fs-14">{{ cart_product_tax($cartItem, $product) }}</span>
+                                            <span class="fw-700 fs-14">0{{-- {{ cart_product_tax($cartItem, $product) }} --}}</span>
                                         </div>
                                         <!-- Total -->
                                         <div class="col-md col-5 order-4 order-md-0 my-3 my-md-0">

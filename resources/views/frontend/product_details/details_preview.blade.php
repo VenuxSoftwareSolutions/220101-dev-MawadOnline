@@ -306,7 +306,7 @@
             <div class="col-sm-10">
                 <div class="product-price">
                     <strong id="chosen_price"
-                        class="fs-20 fw-700 text-primary">{{ $previewData['detailedProduct']['total'] }} AED</strong>
+                        class="fs-20 fw-700 text-primary">{{  $previewData['detailedProduct']['totalDiscount'] ?? $previewData['detailedProduct']['total'] }} AED</strong>
                 </div>
             </div>
         </div>

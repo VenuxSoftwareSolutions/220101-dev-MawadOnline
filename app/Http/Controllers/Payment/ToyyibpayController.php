@@ -59,7 +59,7 @@ class ToyyibpayController extends Controller
             }
         }
 
-        
+
         $option = array(
             'userSecretKey' => config('toyyibpay.key'),
             'categoryCode' => config('toyyibpay.category'),
@@ -88,7 +88,7 @@ class ToyyibpayController extends Controller
 
         $url = $site_url.'index.php/api/createBill';
         $response = Http::asForm()->post($url, $option);
-        $billcode = $response[0]['BillCode'];
+        $billcode = $response[0]['BillCode'] ?? "";
         $final_url = $site_url . $billcode;
         return redirect($final_url);
 
@@ -127,10 +127,10 @@ class ToyyibpayController extends Controller
         else
             {
                 flash(translate('Payment is cancelled'))->error();
-                return redirect()->route('home');   
+                return redirect()->route('home');
             }
-        
-    
+
+
     }
 
     public function callback()

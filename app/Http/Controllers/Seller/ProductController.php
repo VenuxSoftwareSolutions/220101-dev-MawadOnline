@@ -1530,7 +1530,8 @@ class ProductController extends Controller
         $discountPrice = 0 ;
         // Iterate through the ranges
         $unitPrice = null;
-        if($request->variationId != null) {
+        // if($request->variationId != null) {
+            if(count($variations ) > 0) {
 
             foreach ($variations[$request->variationId]['variant_pricing-from']['from'] as $index => $from) {
                 $to = $variations[$request->variationId]['variant_pricing-from']['to'][$index];
@@ -1641,7 +1642,9 @@ class ProductController extends Controller
         }
         $maximum = 1 ;
         $minimum = 1 ;
-        if($request->variationId != null) {
+        // if($request->variationId != null) {
+            if(count($variations ) > 0) {
+
             // Convert array values to integers
             $valuesFrom = array_map('intval', $variations[$request->variationId]['variant_pricing-from']['from']);
             $valuesMax = array_map('intval', $variations[$request->variationId]['variant_pricing-from']['to']);

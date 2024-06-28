@@ -312,19 +312,19 @@ class Product extends Model
             foreach ($this->productAttributeValues as $productAttributeValue  ) {
                 if($productAttributeValue->attribute->type_value == "numeric")
                 {
-                    $productVariantName.= $productAttributeValue->attribute->id.' '.$productAttributeValue->value." ".$productAttributeValue->unity->name." " ;
+                    $productVariantName.= $productAttributeValue->attribute->name.' '.$productAttributeValue->value." ".$productAttributeValue->unity->name." " ;
                 }
                 elseif($productAttributeValue->attribute->type_value =="list") {
-                    $productVariantName.=$productAttributeValue->attribute->id.' '.$productAttributeValue->attributeValues->value." " ;
+                    $productVariantName.=$productAttributeValue->attribute->name.' '.$productAttributeValue->attributeValues->value." " ;
 
 
                 }
                 elseif($productAttributeValue->attribute->type_value =="color") {
-                    $productVariantName.= $productAttributeValue->attribute->id.' '.$productAttributeValue->color->name." "  ;
+                    $productVariantName.= $productAttributeValue->attribute->name.' '.$productAttributeValue->color->name." "  ;
 
                 }
                 else{
-                    $productVariantName.= $productAttributeValue->attribute->id.' '.$productAttributeValue->value." "  ;
+                    $productVariantName.= $productAttributeValue->attribute->name.' '.$productAttributeValue->value." "  ;
 
                 }
 
