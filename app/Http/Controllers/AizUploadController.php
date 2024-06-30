@@ -158,43 +158,98 @@ class AizUploadController extends Controller
                 $file_mime = finfo_file($finfo, base_path('public/') . $path);
 
 
+                // if ($type[$extension] == 'image' && get_setting('disable_image_optimization') != 1) {
+                //     try {
+                //         $img = Image::make($request->file('aiz_file')->getRealPath())->encode();
+                //         $height = $img->height();
+                //         $width = $img->width();
+                //         if ($width > $height && $width > 1500) {
+                //             $img->resize(1500, null, function ($constraint) {
+                //                 $constraint->aspectRatio();
+                //             });
+                //         } elseif ($height > 1500) {
+                //             $img->resize(null, 800, function ($constraint) {
+                //                 $constraint->aspectRatio();
+                //             });
+                //         }
+                //         $img->save(base_path('public/') . $path);
+                //         clearstatcache();
+                //         $size = $img->filesize();
+                //     } catch (\Exception $e) {
+                //         //dd($e);
+                //     }
+                // }
                 if ($type[$extension] == 'image' && get_setting('disable_image_optimization') != 1) {
                     try {
+                        // Create an instance of the image
                         $img = Image::make($request->file('aiz_file')->getRealPath())->encode();
+
+                        // Get image dimensions
                         $height = $img->height();
                         $width = $img->width();
-                        if ($width > $height && $width > 1500) {
+
+                        // Resize logic with multiple size constraints
+                        if ($width > $height && $width > 3000) {
+                            $img->resize(3000, null, function ($constraint) {
+                                $constraint->aspectRatio();
+                                $constraint->upsize(); // Prevent upsizing
+                            });
+                        } elseif ($width > $height && $width > 2000) {
+                            $img->resize(2000, null, function ($constraint) {
+                                $constraint->aspectRatio();
+                                $constraint->upsize(); // Prevent upsizing
+                            });
+                        } elseif ($width > $height && $width > 1500) {
                             $img->resize(1500, null, function ($constraint) {
                                 $constraint->aspectRatio();
+                                $constraint->upsize(); // Prevent upsizing
+                            });
+                        } elseif ($height > 3000) {
+                            $img->resize(null, 3000, function ($constraint) {
+                                $constraint->aspectRatio();
+                                $constraint->upsize(); // Prevent upsizing
+                            });
+                        } elseif ($height > 2000) {
+                            $img->resize(null, 2000, function ($constraint) {
+                                $constraint->aspectRatio();
+                                $constraint->upsize(); // Prevent upsizing
                             });
                         } elseif ($height > 1500) {
-                            $img->resize(null, 800, function ($constraint) {
+                            $img->resize(null, 1500, function ($constraint) {
                                 $constraint->aspectRatio();
+                                $constraint->upsize(); // Prevent upsizing
                             });
                         }
-                        $img->save(base_path('public/') . $path);
+
+                        // Save the image with quality parameter
+                        $img->save(base_path('public/') . $path, 90); // Adjust quality parameter as needed
+
+                        // Clear file status cache
                         clearstatcache();
+
+                        // Get the file size
                         $size = $img->filesize();
                     } catch (\Exception $e) {
-                        //dd($e);
+                        // Log the exception or handle it accordingly
+                        // Log::error('Image processing error: ' . $e->getMessage());
                     }
                 }
 
-                if (env('FILESYSTEM_DRIVER') != 'local') {
+                // if (env('FILESYSTEM_DRIVER') != 'local') {
 
-                    Storage::disk(env('FILESYSTEM_DRIVER'))->put(
-                        $path,
-                        file_get_contents(base_path('public/') . $path),
-                        [
-                            'visibility' => 'public',
-                            'ContentType' =>  $extension == 'svg' ? 'image/svg+xml' : $file_mime
-                        ]
-                    );
-                    // dd($storage);
-                    if ($arr[0] != 'updates') {
-                        unlink(base_path('public/') . $path);
-                    }
-                }
+                //     Storage::disk(env('FILESYSTEM_DRIVER'))->put(
+                //         $path,
+                //         file_get_contents(base_path('public/') . $path),
+                //         [
+                //             'visibility' => 'public',
+                //             'ContentType' =>  $extension == 'svg' ? 'image/svg+xml' : $file_mime
+                //         ]
+                //     );
+                //     // dd($storage);
+                //     if ($arr[0] != 'updates') {
+                //         unlink(base_path('public/') . $path);
+                //     }
+                // }
 
                 $upload->extension = $extension;
                 $upload->file_name = $path;

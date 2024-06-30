@@ -215,11 +215,11 @@
                         </div>
                     </div>
                     <!-- Compare -->
-                    <div class="d-none d-lg-block ml-3 mr-0">
+                    {{-- <div class="d-none d-lg-block ml-3 mr-0">
                         <div class="" id="compare">
                             @include('frontend.'.get_setting('homepage_select').'.partials.compare')
                         </div>
-                    </div>
+                    </div> --}}
                     <!-- Wishlist -->
                     <div class="d-none d-lg-block mr-3" style="margin-left: 36px;">
                         <div class="" id="wishlist">

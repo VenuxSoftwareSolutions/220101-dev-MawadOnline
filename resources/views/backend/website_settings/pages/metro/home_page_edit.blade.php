@@ -8,7 +8,7 @@
 					<h1 class="h3">{{ translate('Homepage Settings (Metro)') }}</h1>
 				</div>
 				{{-- <div class="col text-right">
-					<a class="btn has-transition btn-xs p-0 hov-svg-danger" href="{{ route('home') }}" 
+					<a class="btn has-transition btn-xs p-0 hov-svg-danger" href="{{ route('home') }}"
 						target="_blank" data-toggle="tooltip" data-placement="top" data-title="{{ translate('View Tutorial Video') }}">
 						<svg xmlns="http://www.w3.org/2000/svg" width="19.887" height="16" viewBox="0 0 19.887 16">
 							<path id="_42fbab5a39cb8436403668a76e5a774b" data-name="42fbab5a39cb8436403668a76e5a774b" d="M18.723,8H5.5A3.333,3.333,0,0,0,2.17,11.333v9.333A3.333,3.333,0,0,0,5.5,24h13.22a3.333,3.333,0,0,0,3.333-3.333V11.333A3.333,3.333,0,0,0,18.723,8Zm-3.04,8.88-5.47,2.933a1,1,0,0,1-1.473-.88V13.067a1,1,0,0,1,1.473-.88l5.47,2.933a1,1,0,0,1,0,1.76Zm-5.61-3.257L14.5,16l-4.43,2.377Z" transform="translate(-2.17 -8)" fill="#9da3ae"/>
@@ -97,7 +97,7 @@
 					<li class="nav-item">
 						<a class="nav-link" id="auction-tab" href="#auction"
 							data-toggle="tab" data-target="#auction" type="button" role="tab" aria-controls="auction" aria-selected="false">
-							{{ translate('Auction Products') }} 
+							{{ translate('Auction Products') }}
 							@if (env("DEMO_MODE") == "On")
 							<span class="badge badge-pill badge-secondary ml-1">{{ translate('Addon') }}</span>
 							@endif
@@ -154,7 +154,7 @@
 			<!-- tab content -->
 			<div class="flex-grow-1 p-sm-3 p-lg-2rem mb-2rem mb-md-0">
 				<div class="tab-content">
-					
+
 					<!-- Language Bar -->
 					<ul class="nav nav-tabs nav-fill border-light language-bar">
 						@foreach (get_all_active_language() as $key => $language)
@@ -195,6 +195,9 @@
 									<!-- Images & links -->
 									<div class="home-slider-target">
 										@php $home_slider_images = get_setting('home_slider_images', null, $lang)  @endphp
+                                        @php
+                                        $homeSliderLinks = json_decode(get_setting('home_slider_links'), true);
+                                         @endphp
 										@if ($home_slider_images != null)
 											@foreach (json_decode($home_slider_images, true) as $key => $value)
 												<div class="p-3 p-md-4 mb-3 mb-md-2rem remove-parent" style="border: 1px dashed #e4e5eb;">
@@ -215,10 +218,11 @@
 															</div>
 														</div>
 														<!-- link -->
+
 														<div class="col-md">
 															<div class="form-group mb-md-0">
 																<input type="hidden" name="types[]" value="home_slider_links">
-																<input type="text" class="form-control" placeholder="http://" name="home_slider_links[]" value="{{ json_decode(get_setting('home_slider_links'), true)[$key] }}">
+																<input type="text" class="form-control" placeholder="http://" name="home_slider_links[]" value="{{ isset($homeSliderLinks[$key]) ? $homeSliderLinks[$key] : '' }}">
 															</div>
 														</div>
 														<!-- remove parent button -->
@@ -234,11 +238,11 @@
 											@endforeach
 										@endif
 									</div>
-									
+
 									<!-- Add button -->
 									<div class="">
-										<button 
-											type="button" 
+										<button
+											type="button"
 											class="btn btn-block border hov-bg-soft-secondary fs-14 rounded-0 d-flex align-items-center justify-content-center" style="background: #fcfcfc;"
 											data-toggle="add-more"
 											data-content='
@@ -473,7 +477,7 @@
 							<div class="bg-white p-3 p-sm-2rem">
 								<div class="w-100">
 									<label class="col-from-label fs-13 fw-500 mb-3">{{ translate('Banner & Links (Max 3)') }}</label>
-									
+
 									<!-- Images & links -->
 									<div class="home-banner1-target">
 										@php $home_banner1_images = get_setting('home_banner1_images', null, $lang); @endphp
@@ -516,11 +520,11 @@
 											@endforeach
 										@endif
 									</div>
-								
+
 									<!-- Add button -->
 									<div class="">
-										<button 
-											type="button" 
+										<button
+											type="button"
 											class="btn btn-block border hov-bg-soft-secondary fs-14 rounded-0 d-flex align-items-center justify-content-center" style="background: #fcfcfc;"
 											data-toggle="add-more"
 											data-content='
@@ -580,7 +584,7 @@
 							<div class="bg-white p-3 p-sm-2rem">
 								<div class="w-100">
 									<label class="col-from-label fs-13 fw-500 mb-3">{{ translate('Banner & Links (Max 3)') }}</label>
-									
+
 									<!-- Images & links -->
 									<div class="home-banner2-target">
 										@php $home_banner2_images = get_setting('home_banner2_images', null, $lang); @endphp
@@ -623,11 +627,11 @@
 											@endforeach
 										@endif
 									</div>
-								
+
 									<!-- Add button -->
 									<div class="">
-										<button 
-											type="button" 
+										<button
+											type="button"
 											class="btn btn-block border hov-bg-soft-secondary fs-14 rounded-0 d-flex align-items-center justify-content-center" style="background: #fcfcfc;"
 											data-toggle="add-more"
 											data-content='
@@ -678,7 +682,7 @@
 							</div>
 						</form>
 					</div>
-					
+
 					<!-- Banner Level 3 -->
 					<div class="tab-pane fade" id="banner_3" role="tabpanel" aria-labelledby="banner-3-tab">
 						<form action="{{ route('business_settings.update') }}" method="POST" enctype="multipart/form-data">
@@ -687,7 +691,7 @@
 							<div class="bg-white p-3 p-sm-2rem">
 								<div class="w-100">
 									<label class="col-from-label fs-13 fw-500 mb-3">{{ translate('Banner & Links (Max 3)') }}</label>
-									
+
 									<!-- Images & links -->
 									<div class="home-banner3-target">
 										@php $home_banner3_images = get_setting('home_banner3_images', null, $lang); @endphp
@@ -730,11 +734,11 @@
 											@endforeach
 										@endif
 									</div>
-								
+
 									<!-- Add button -->
 									<div class="">
-										<button 
-											type="button" 
+										<button
+											type="button"
 											class="btn btn-block border hov-bg-soft-secondary fs-14 rounded-0 d-flex align-items-center justify-content-center" style="background: #fcfcfc;"
 											data-toggle="add-more"
 											data-content='
@@ -817,7 +821,7 @@
 						</form>
 					</div>
 					@endif
-					
+
 					@if(get_setting('coupon_system') == 1)
 					<!-- Coupon system -->
 					<div class="tab-pane fade" id="coupon" role="tabpanel" aria-labelledby="coupon-tab">
@@ -928,11 +932,11 @@
 											@endforeach
 										@endif
 									</div>
-									
+
 									<!-- Add button -->
 									<div class="">
-										<button 
-											type="button" 
+										<button
+											type="button"
 											class="btn btn-block border hov-bg-soft-secondary fs-14 rounded-0 d-flex align-items-center justify-content-center" style="background: #fcfcfc;"
 											data-toggle="add-more"
 											data-content='
@@ -1064,7 +1068,7 @@
 			}else{
 				$('.nav-tabs a[href="#home_slider"]').tab('show');
 			}
-			
+
 			// Change hash for page-reload
 			$('.nav-tabs a').on('shown.bs.tab', function (e) {
 				window.location.hash = e.target.hash;
