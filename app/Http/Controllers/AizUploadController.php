@@ -148,7 +148,16 @@ class AizUploadController extends Controller
                     file_put_contents($request->file('aiz_file'), $cleanSVG);
                 }
 
-                $path = $request->file('aiz_file')->store('uploads/all', 'local');
+                if ($type[$extension] == 'image'){
+                    $file = $request->file('aiz_file');
+                    $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                    $filename = preg_replace('/[^A-Za-z0-9\-]/', '', $filename); // Nettoyer le nom de fichier
+                    $newFilename = $filename . '.jpg';
+                    $path = $file->storeAs('uploads/all', $newFilename, 'local');
+                }else{
+                    $path = $request->file('aiz_file')->store('uploads/all', 'local');
+                }
+                
                 $size = $request->file('aiz_file')->getSize();
 
                 // Return MIME type ala mimetype extension
@@ -157,74 +166,27 @@ class AizUploadController extends Controller
                 // Get the MIME type of the file
                 $file_mime = finfo_file($finfo, base_path('public/') . $path);
 
-
-                // if ($type[$extension] == 'image' && get_setting('disable_image_optimization') != 1) {
-                //     try {
-                //         $img = Image::make($request->file('aiz_file')->getRealPath())->encode();
-                //         $height = $img->height();
-                //         $width = $img->width();
-                //         if ($width > $height && $width > 1500) {
-                //             $img->resize(1500, null, function ($constraint) {
-                //                 $constraint->aspectRatio();
-                //             });
-                //         } elseif ($height > 1500) {
-                //             $img->resize(null, 800, function ($constraint) {
-                //                 $constraint->aspectRatio();
-                //             });
-                //         }
-                //         $img->save(base_path('public/') . $path);
-                //         clearstatcache();
-                //         $size = $img->filesize();
-                //     } catch (\Exception $e) {
-                //         //dd($e);
-                //     }
-                // }
                 if ($type[$extension] == 'image' && get_setting('disable_image_optimization') != 1) {
                     try {
-                        // Create an instance of the image
-                        $img = Image::make($request->file('aiz_file')->getRealPath())->encode();
-
-                        // Get image dimensions
+                        $img = Image::make($request->file('aiz_file')->getRealPath())->encode('jpg');
                         $height = $img->height();
                         $width = $img->width();
-
-                        // Resize logic with multiple size constraints
-                        if ($width > $height && $width > 3000) {
-                            $img->resize(3000, null, function ($constraint) {
-                                $constraint->aspectRatio();
-                                $constraint->upsize(); // Prevent upsizing
-                            });
-                        } elseif ($width > $height && $width > 2000) {
-                            $img->resize(2000, null, function ($constraint) {
-                                $constraint->aspectRatio();
-                                $constraint->upsize(); // Prevent upsizing
-                            });
-                        } elseif ($width > $height && $width > 1500) {
-                            $img->resize(1500, null, function ($constraint) {
-                                $constraint->aspectRatio();
-                                $constraint->upsize(); // Prevent upsizing
-                            });
-                        } elseif ($height > 3000) {
-                            $img->resize(null, 3000, function ($constraint) {
-                                $constraint->aspectRatio();
-                                $constraint->upsize(); // Prevent upsizing
-                            });
-                        } elseif ($height > 2000) {
-                            $img->resize(null, 2000, function ($constraint) {
-                                $constraint->aspectRatio();
-                                $constraint->upsize(); // Prevent upsizing
-                            });
-                        } elseif ($height > 1500) {
-                            $img->resize(null, 1500, function ($constraint) {
+                        
+                        $setting_min_width = get_setting('image_min_width');
+                        $setting_img_quality = get_setting('image_img_quality');
+                        if($width<$setting_min_width){
+                            if (file_exists(base_path('public/') .$path)) {
+                                unlink(base_path('public/') .$path); // Supprimer l'image précédente
+                            }
+                            dd(0);
+                        }elseif($width > $setting_min_width){
+                            $img->resize($setting_min_width, null, function ($constraint) {
                                 $constraint->aspectRatio();
                                 $constraint->upsize(); // Prevent upsizing
                             });
                         }
-
-                        // Save the image with quality parameter
-                        $img->save(base_path('public/') . $path, 90); // Adjust quality parameter as needed
-
-                        // Clear file status cache
+                        
+                        $img->save(base_path('public/') . $path,80);
                         clearstatcache();
 
                         // Get the file size
@@ -234,7 +196,7 @@ class AizUploadController extends Controller
                         // Log::error('Image processing error: ' . $e->getMessage());
                     }
                 }
-
+                
                 // if (env('FILESYSTEM_DRIVER') != 'local') {
 
                 //     Storage::disk(env('FILESYSTEM_DRIVER'))->put(

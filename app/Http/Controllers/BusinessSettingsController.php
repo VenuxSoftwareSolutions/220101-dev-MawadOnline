@@ -391,6 +391,7 @@ class BusinessSettingsController extends Controller
 
     public function update(Request $request)
     {
+
         foreach ($request->types as $key => $type) {
             if($type == 'site_name'){
                 $this->overWriteEnvFile('APP_NAME', $request[$type]);
