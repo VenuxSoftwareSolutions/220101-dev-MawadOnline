@@ -182,14 +182,18 @@ class AizUploadController extends Controller
                         }elseif($width > $setting_min_width){
                             $img->resize($setting_min_width, null, function ($constraint) {
                                 $constraint->aspectRatio();
+                                $constraint->upsize(); // Prevent upsizing
                             });
                         }
                         
                         $img->save(base_path('public/') . $path,80);
                         clearstatcache();
+
+                        // Get the file size
                         $size = $img->filesize();
                     } catch (\Exception $e) {
-                        //dd($e);
+                        // Log the exception or handle it accordingly
+                        // Log::error('Image processing error: ' . $e->getMessage());
                     }
                 }
                 
