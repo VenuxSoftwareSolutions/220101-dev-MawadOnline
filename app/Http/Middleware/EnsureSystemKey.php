@@ -19,7 +19,7 @@ class EnsureSystemKey
         if (
             !$request->header('Platform-Key') ||
             $request->header('Platform-Key') !== config('app.system_key') ||
-            !in_array($request->header('mobile-version'), ["1.0.0", "1.0.1"])
+            !in_array($request->header('mobile-version'), ["1.0.0", "1.0.1",'1.1.0'])
         ) {
             return response()->json([
                 'result' => false,
