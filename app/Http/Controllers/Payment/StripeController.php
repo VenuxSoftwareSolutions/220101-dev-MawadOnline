@@ -109,7 +109,7 @@ class StripeController extends Controller
     public function success(Request $request)
     {
         $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
-        
+
         try {
             $session = $stripe->checkout->sessions->retrieve($request->session_id);
             $payment = ["status" => "Success"];
