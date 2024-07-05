@@ -403,6 +403,7 @@ class CatalogController extends Controller
         $data['added_from_catalog'] = 1;
         $data['product_added_from_catalog'] = 1;
         $data['user_id'] = Auth::user()->owner_id;
+        $data['product_catalog_id'] = $request->id;
         $newProduct = Product::insertGetId($data);
 
         DB::table('product_categories')->insert([

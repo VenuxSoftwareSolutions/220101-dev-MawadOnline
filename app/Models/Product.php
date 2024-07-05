@@ -64,6 +64,7 @@ class Product extends Model
                                     'unit_third_party_sample',
                                     'min_third_party_sample',
                                     'max_third_party_sample',
+                                    'product_catalog_id',
                                 ];
 
     protected function getLastActionNumber()
