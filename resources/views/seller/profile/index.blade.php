@@ -357,8 +357,6 @@
 
     <div class="card">
         <div class="card-body">
-
-
             <ul class="nav nav-tabs shop" id="registerTabs">
                 <li class="nav-item">
                     <a class="nav-link active" id="personal-info-tab" data-toggle="tab"

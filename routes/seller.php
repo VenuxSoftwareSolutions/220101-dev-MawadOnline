@@ -145,6 +145,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
         Route::post('/profile-seller/update/{id}', 'updateProfile')->name('profile.seller.update');
         Route::post('/profile-seller/update/{id}', 'updateProfile')->name('profile.seller.update');
         Route::post('/personal-info/update}', 'updatePersonalInfo')->name('personal-info.update');
+        Route::get('/help-centre', 'helpCenter')->name('help-center.index');
 
     });
 

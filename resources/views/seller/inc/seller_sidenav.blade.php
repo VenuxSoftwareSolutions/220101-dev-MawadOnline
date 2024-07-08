@@ -102,6 +102,7 @@
                             <span class="aiz-side-nav-arrow"></span>
                         </a>
                         <!--Submenu-->
+
                         <ul class="aiz-side-nav-list level-2">
                             @can('seller_add_inventory')
                             <li id="stock" class="aiz-side-nav-item">
@@ -123,6 +124,7 @@
                             </li>
                             @endcan
                         </ul>
+                        
                     </li>
                 @endcanany
                 {{-- <li class="aiz-side-nav-item">
@@ -261,6 +263,13 @@
                     <a href="{{ route('seller.profile.index') }}" class="aiz-side-nav-link">
                         <i class="las la-user aiz-side-nav-icon"></i>
                         <span class="aiz-side-nav-text">{{ __('profile.e_shop_profile') }}</span>
+                    </a>
+                </li>
+
+                <li id="help" id="help_centre" class="aiz-side-nav-item">
+                    <a href="{{  route('seller.help-center.index') }}" class="aiz-side-nav-link">
+                        <i class="las la-user aiz-side-nav-icon"></i>
+                        <span class="aiz-side-nav-text">{{ __('profile.Help_center') }}</span>
                     </a>
                 </li>
                 {{-- @can('seller_shop_settings')

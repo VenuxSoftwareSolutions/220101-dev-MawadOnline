@@ -431,4 +431,20 @@ class ProfileController extends Controller
         return back();
     }
 
+    public function helpCenter(Request $request){
+        $user = Auth::user();
+
+        /*         $addresses = $user->addresses; */
+        $emirates = Emirate::all();
+        $proposedPayoutChange = ProposedPayoutChange::where('user_id', $user->id)->latest()->first();
+
+        if ($proposedPayoutChange && ($proposedPayoutChange->status=="approved" || $proposedPayoutChange->status=="rejected" )  ) {
+            $proposedPayoutChange = null ;
+        }
+
+        $tour_steps=Tour::orderBy('step_number')->get();
+        return view('seller.help_centre.help-center', compact('user', 'emirates', 'proposedPayoutChange' , 'tour_steps'));
+    }
+    
+
 }
