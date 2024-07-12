@@ -91,7 +91,7 @@ class Kernel extends ConsoleKernel
                     }
                 };
             };
-        })->daily();
+        })->everyMinute();
     }
     /**
      * Register the commands for the application.
