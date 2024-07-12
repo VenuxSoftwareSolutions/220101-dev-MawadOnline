@@ -41,6 +41,10 @@
         border-radius: 5px !important;
     }
 
+    .see_all:hover{
+        cursor: pointer;
+    }
+
 </style>
 
 @if(app()->getLocale() == "ae")
@@ -177,7 +181,7 @@
 
 @section('script')
 <script>
-    $('body').on('click', '.search-icon', function(){
+    $('body').on('click', '.search-icon, .see_all', function(){
         var search = $('.search').val();
         $('#memList').empty();
         if(search == ""){
