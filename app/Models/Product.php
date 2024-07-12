@@ -368,6 +368,7 @@ class Product extends Model
 
     public function getFirstImage(){
         $upload = UploadProducts::where('id_product', $this->id)->where('type', 'images')->first();
+
         $path = '';
         if($upload != null){
             $path = $upload->path;
@@ -401,6 +402,10 @@ class Product extends Model
         }else{
             return null;
         }
+    }
+
+    public function getPrice(){
+        // dd($this->getPricingConfiguration()) ;
     }
 
 }

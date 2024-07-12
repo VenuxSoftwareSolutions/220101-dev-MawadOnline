@@ -13,7 +13,7 @@
 
     <!-- Product Info -->
     <div class="media mb-1">
-        <img src="{{ static_asset('assets/img/placeholder.jpg') }}" data-src="{{ uploaded_asset($product->thumbnail_img) }}"
+        <img src="{{ static_asset('assets/img/placeholder.jpg') }}" data-src="{{ asset('/public/'.$product->getFirstImage()) }}"
             class="mr-4 lazyload size-90px img-fit rounded-0" alt="Product Image" onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
         <div class="media-body mt-2 text-left d-flex flex-column justify-content-between">
             <h6 class="fs-14 fw-700 text-truncate-2">
