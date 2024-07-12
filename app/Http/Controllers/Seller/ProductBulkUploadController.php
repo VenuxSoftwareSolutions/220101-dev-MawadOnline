@@ -18,6 +18,8 @@ use App\Services\ProductService;
 use App\Services\ProductStockService;
 use App\Services\ProductTaxService;
 use App\Services\ProductUploadsService;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ProductBulkUploadController extends Controller
 {
@@ -101,7 +103,37 @@ class ProductBulkUploadController extends Controller
 
     public function download_file(Request $request)
     {
-        return Excel::download(new ProductBulkExport, 'products.xlsx');
+        {
+            // Define the payload
+            $payload = [
+                'vendorId' => Auth::id(),
+                'level2CategoryId' => $request->selectedId,
+                'level3CategoryId' => null,
+            ];
+
+            // Send the POST request    
+            $response = Http::post('http://localhost:9115/bu/xlgen', $payload);
+
+            if ($response->successful()) {
+                $data = $response->json();
+    
+                if ($data['success']) {
+                    $filePath = $data['fileName'];
+    
+                    // Check if the file exists and is readable
+                    if (file_exists($filePath) && is_readable($filePath)) {
+                        // Return the file for download
+                        return response()->download($filePath);
+                    } else {
+                        return response()->json(['error' => 'File does not exist or is not readable.'], 404);
+                    }
+                } else {
+                    return response()->json(['error' => $data['errorMsg']], 400);
+                }
+            } else {
+                return response()->json(['error' => 'Request failed.'], $response->status());
+            }
+        }
 
     }
 }

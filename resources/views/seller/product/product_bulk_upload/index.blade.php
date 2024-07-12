@@ -125,7 +125,7 @@ $(function() {
                     // Check if the selected node has children
                     var node = $('#jstree').jstree(true).get_node(selectedId);
 
-                    if ((!node.children || node.children.length === 0) && node.state.loaded ==  true) {
+                    if (node.parent != '#' && node.children.length != 0) {
                         $('#message-category').text("");
                         $('#message-category').css({'color': 'green', 'margin-right': '7px'});
                         $("#download_button").show();
@@ -138,7 +138,7 @@ $(function() {
                         $("#download_button").hide();
 
                         // The node has children, maybe clear selection or handle differently
-                        $('#message-category').text("Please select a category without subcategories.");
+                        $('#message-category').text("Please select a category!");
                         $('#message-category').css({'color': 'red', 'margin-right': '7px'});
                         $('#check_selected_parent_id').val(-1);                
                         AIZ.plugins.bootstrapSelect('refresh');
@@ -208,18 +208,46 @@ $(function() {
             xhrFields: {
                 responseType: 'blob'
             },
-            success: function(data) {
-                var a = document.createElement('a');
-                var url = window.URL.createObjectURL(data);
-                a.href = url;
-                a.download = 'products.xlsx'; // Replace with your desired file name and extension
-                document.body.append(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                a.remove();
+            success: function(response, status, xhr) {
+                var filename = "";                   
+                var disposition = xhr.getResponseHeader('Content-Disposition');
+
+                if (disposition && disposition.indexOf('attachment') !== -1) {
+                    var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                    var matches = filenameRegex.exec(disposition);
+                    if (matches !== null && matches[1]) filename = matches[1].replace(/['"]/g, '');
+                }
+
+                var type = xhr.getResponseHeader('Content-Type');
+
+                var blob = new Blob([response], { type: type });
+
+                if (typeof window.navigator.msSaveBlob !== 'undefined') {
+                    window.navigator.msSaveBlob(blob, filename);
+                } else {
+                    var URL = window.URL || window.webkitURL;
+                    var downloadUrl = URL.createObjectURL(blob);
+
+                    if (filename) {
+                        var a = document.createElement("a");
+
+                        if (typeof a.download === 'undefined') {
+                            window.location = downloadUrl;
+                        } else {
+                            a.href = downloadUrl;
+                            a.download = filename;
+                            document.body.appendChild(a);
+                            a.click();
+                        }
+                    } else {
+                        window.location = downloadUrl;
+                    }
+
+                    setTimeout(function () { URL.revokeObjectURL(downloadUrl); }, 100);
+                }
             },
-            error: function(xhr, status, error) {
-                console.error('Download failed:', error);
+            error: function() {
+                alert('Failed to generate and download the file.');
             }
         });
     });
