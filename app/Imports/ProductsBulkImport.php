@@ -53,7 +53,7 @@ class ProductsBulkImport implements ToCollection, WithHeadingRow, WithValidation
         ],
         'Product Media' => [
             'GI 1', 'GI 2', 'GI 3', 'GI 4', 'GI 5', 'GI 6', 'GI 7', 'GI 8', 'GI 9', 
-            'GI 10', 'Video provider', 'video Link'
+            'GI 10','G11', 'Video Provider', 'video Link'
         ],
         'Product documentation' => [
             'Doc 1', 'Doc 2', 'Doc 3', 'Doc 4', 'Doc 5', 'Doc 6', 'Doc 7', 'Doc 8', 'Doc 9', 'Doc 10'
@@ -72,7 +72,7 @@ class ProductsBulkImport implements ToCollection, WithHeadingRow, WithValidation
 
     const SECTION_RANGES = [
         'Product Information' => ['start' => 'A', 'end' => 'K'],
-        'Product Media' => ['start' => 'L', 'end' => 'W'],
+        'Product Media' => ['start' => 'L', 'end' => 'X'],
         'Product documentation' => ['start' => 'X', 'end' => 'AG'],
         'Product specification' => ['start' => 'AH', 'end' => 'AN'],
         'Product selling option' => ['start' => 'AO', 'end' => 'AQ'],
@@ -92,7 +92,6 @@ class ProductsBulkImport implements ToCollection, WithHeadingRow, WithValidation
                 }
 
                 $product = $this->initializeProductStructure();
-
                 foreach (self::SECTION_RANGES as $section => $range) {
                     $startCol = $this->columnLetterToIndex($range['start']);
                     $endCol = $this->columnLetterToIndex($range['end']);
@@ -111,6 +110,8 @@ class ProductsBulkImport implements ToCollection, WithHeadingRow, WithValidation
                     //$this->products[] = $product;
 
                     $mappedProduct = $this->productMapping($product);
+
+                    dd($mappedProduct);
                     $product=  $this->productService->store($mappedProduct);
                    
                     if($product->is_parent == 1){
@@ -152,7 +153,7 @@ class ProductsBulkImport implements ToCollection, WithHeadingRow, WithValidation
             'short_description'=> $product['Product Information']['Short Description'],
             'stock_visibility_state'=> $product['Product Information']['Show Stock Quantity'],
             'refundable'=> $product['Product Information']['Refundable'],
-            'video_provider'=> $product['Product Media']['Video provider'],
+            'video_provider'=> $product['Product Media']['Video Provider'],
             'video_link'=> $product['Product Media']['video Link'],
             'from'=> [
                 []

@@ -124,8 +124,7 @@ $(function() {
 
                     // Check if the selected node has children
                     var node = $('#jstree').jstree(true).get_node(selectedId);
-
-                    if (node.parent != '#' && node.children.length != 0) {
+                    if (node.parent != '#' && node.parent != 1) {
                         $('#message-category').text("");
                         $('#message-category').css({'color': 'green', 'margin-right': '7px'});
                         $("#download_button").show();

@@ -103,12 +103,31 @@ class ProductBulkUploadController extends Controller
 
     public function download_file(Request $request)
     {
+
+        $selectedId = $request->selectedId;
+
+        // Determine the category level
+        $categoryLevel = $this->getCategoryLevel($selectedId);
+
+        // Initialize variables for payload
+        $level2CategoryId = null;
+        $level3CategoryId = null;
+
+        if ($categoryLevel == 3) {
+            // If third level, set level3CategoryId and find the parent (level2CategoryId)
+            $level3CategoryId = $selectedId;
+            $level2CategoryId = $this->getParentCategoryId($selectedId);
+        } elseif ($categoryLevel == 2) {
+            // If second level, set level2CategoryId
+            $level2CategoryId = $selectedId;
+        }
+
         {
             // Define the payload
             $payload = [
                 'vendorId' => Auth::id(),
-                'level2CategoryId' => $request->selectedId,
-                'level3CategoryId' => null,
+                'level2CategoryId' => $level2CategoryId,
+                'level3CategoryId' => $level3CategoryId,
             ];
 
             // Send the POST request    
@@ -135,5 +154,36 @@ class ProductBulkUploadController extends Controller
             }
         }
 
+    }
+
+
+    // Function to get the level of the category
+    private function getCategoryLevel($categoryId)
+    {
+        // Retrieve the category from the database
+        $category = Category::find($categoryId);
+
+        // Check if the category exists and return its level
+        if ($category) {
+            return $category->level;
+        }
+
+        // Return null if the category doesn't exist
+        return null;
+    }
+
+    // Function to get the parent category ID for a third-level category
+    private function getParentCategoryId($categoryId)
+    {
+        // Retrieve the category from the database
+        $category = Category::find($categoryId);
+
+        // Check if the category exists and return its parent ID
+        if ($category) {
+            return $category->parent_id; // Assuming 'parent_id' is the foreign key for the parent category
+        }
+
+        // Return null if the category doesn't exist or has no parent
+        return null;
     }
 }
