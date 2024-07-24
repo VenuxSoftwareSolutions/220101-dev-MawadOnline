@@ -86,6 +86,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
     // Product Bulk Upload
     Route::controller(ProductBulkUploadController::class)->group(function () {
         Route::get('/product-bulk-upload/index', 'index')->name('product_bulk_upload.index');
+        Route::get('/product-bulk-upload/getFiles', 'getFiles')->name('product_bulk_upload.getFiles');
+
         Route::post('/product-bulk-upload/store', 'bulk_upload')->name('bulk_product_upload');
         Route::group(['prefix' => 'bulk-upload/download'], function() {
             Route::get('/category', 'pdf_download_category')->name('pdf.download_category');

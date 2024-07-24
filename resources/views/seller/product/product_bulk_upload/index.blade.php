@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
+
 @endpush
 @section('panel_content')
 
@@ -19,7 +20,6 @@
          <div class="card-header">
                         <h5 class="mb-0 h6">{{ translate('Product Category') }}</h5>
                         <h6 class="float-right fs-13 mb-0">
-                            <span id="message-category"><span>
                             {{ translate('Select Main') }}
                             <span class="position-relative main-category-info-icon">
                                 <i class="las la-question-circle fs-18 text-info"></i>
@@ -40,7 +40,14 @@
 
                 </div>
             </div>
-            <a  href="#"><button id="download_button" type="button" class="btn btn-primary mt-2 float-right">{{ translate('Download File') }}</button></a>
+
+            <div class="float-right">
+            <a href="#">
+                <button id="download_button" disabled type="button" class="btn btn-primary mt-2 ">{{ translate('Download File') }}</button>
+                <span class="d-block " id="message-category"></span>
+            </a>
+            
+            </div>
 
             {{-- <table class="table aiz-table mb-0" style="font-size:14px; background-color: #cce5ff; border-color: #b8daff">
                 <tr>
@@ -68,7 +75,7 @@
             </div>
         </div>
         <div class="card-body">
-            <form class="form-horizontal" action="{{ route('seller.bulk_product_upload') }}" method="POST" enctype="multipart/form-data">
+            <form  class="form-horizontal" action="{{ route('seller.bulk_product_upload') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group row">
                     <label class="col-md-2 col-form-label">{{ translate('EXCEL') }}</label>
@@ -79,12 +86,38 @@
     							<span class="custom-file-name">{{ translate('Choose File')}}</span>
     						</label>
     					</div>
+                        @error('bulk_file')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
                 <div class="form-group mb-0 text-right">
                     <button type="submit" class="btn btn-primary">{{translate('Upload CSV')}}</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+
+
+    <div class="card">
+        <div class="card-header">
+            <div class="col text-center text-md-left">
+                <h5 class="mb-md-0 h6">{{ translate('List of uploaded files') }}</h5>
+            </div>
+        </div>
+        <div class="card-body">
+            <table id="step3" class="table {{-- aiz-table --}} mb-0">
+                <thead>
+                    <tr>
+                        <th class="custom-th">{{ __('File name') }}</th>
+                        <th class="custom-th">{{ __('Submission date') }}</th>
+                        <th class="custom-th">{{ __('Status') }}</th>
+                        <th class="custom-th">{{ __('Extension') }}</th>
+                        <th class="custom-th">{{ __('Size') }}</th>
+                </thead>
+                
+            </table>
         </div>
     </div>
 
@@ -96,10 +129,6 @@
 <script src="{{ static_asset('assets/js/filter-multi-select-bundle.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js"></script>
 <script>
-
-$(document).ready(function() {
-            $("#download_button").hide();
-        });
 $(function() {
         $('#jstree').jstree({
             'core': {
@@ -127,17 +156,17 @@ $(function() {
                     if (node.parent != '#' && node.parent != 1) {
                         $('#message-category').text("");
                         $('#message-category').css({'color': 'green', 'margin-right': '7px'});
-                        $("#download_button").show();
+                        $("#download_button").prop("disabled", false);
 
                         // The node does not have children, proceed with your logic
                         $('#selected_parent_id').val(selectedId); // Update hidden input with selected ID
                         AIZ.plugins.bootstrapSelect('refresh');
                         // Call your functions to load attributes
                     } else {
-                        $("#download_button").hide();
+                        $("#download_button").prop("disabled", true);
 
                         // The node has children, maybe clear selection or handle differently
-                        $('#message-category').text("Please select a category!");
+                        $('#message-category').text("Please select a sub category!");
                         $('#message-category').css({'color': 'red', 'margin-right': '7px'});
                         $('#check_selected_parent_id').val(-1);                
                         AIZ.plugins.bootstrapSelect('refresh');
@@ -247,6 +276,41 @@ $(function() {
             },
             error: function() {
                 alert('Failed to generate and download the file.');
+            }
+        });
+    });
+</script>
+
+
+<script>
+    $(document).ready(function() {
+        $('#step3').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "ajax": "{{ route('seller.product_bulk_upload.getFiles') }}", // Replace 'your-route-name' with the actual route name
+            "columns": [
+                { "data": "filename" },
+                { "data": "created_at" },
+                { 
+                        "data": "status",
+                        "render": function(data, type, row) {
+                            if (data === 'processing') {
+                                return '<span class="badge badge-primary" style="display:inline">Processing</span>';
+                            } else if (data === 'failed') {
+                                return '<span class="badge badge-danger" style="display:inline">Failed</span>';
+                            }else{
+                                return data
+                            }
+                        }
+                    },
+                { "data": "extension" },
+                { "data": "size" }
+            ],
+            "order": [[0, "asc"]], // Sort by first column in ascending order
+            "dom": 'Bfrtip', // Add buttons to the layout
+            "language": {
+                "search": "", // Remove the label text for search input
+                "searchPlaceholder": "{{ __('stock.search_records') }}" // Custom search placeholder text
             }
         });
     });
