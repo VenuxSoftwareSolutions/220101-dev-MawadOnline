@@ -46,8 +46,7 @@ return [
     'Terms & Conditions' => 'Terms & Conditions',
     'Accept' => 'Accept',
     'Help_center' => 'Help center',
-    'mawed_vendor_help_center' => 'Mawed Online vendor help center',
     'FAQs'=>'FAQs',
-    'All_help_topics'=>'All help topics',
+
 
 ];

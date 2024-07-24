@@ -445,6 +445,151 @@ class ProfileController extends Controller
         $tour_steps=Tour::orderBy('step_number')->get();
         return view('seller.help_centre.help-center', compact('user', 'emirates', 'proposedPayoutChange' , 'tour_steps'));
     }
-    
+
+
+    public function AccountRegistration(Request $request){
+        $user = Auth::user();
+
+        /*         $addresses = $user->addresses; */
+        $emirates = Emirate::all();
+        $proposedPayoutChange = ProposedPayoutChange::where('user_id', $user->id)->latest()->first();
+
+        if ($proposedPayoutChange && ($proposedPayoutChange->status=="approved" || $proposedPayoutChange->status=="rejected" )  ) {
+            $proposedPayoutChange = null ;
+        }
+
+        $tour_steps=Tour::orderBy('step_number')->get();
+        return view('seller.help_centre.AccountRegistration', compact('user', 'emirates', 'proposedPayoutChange' , 'tour_steps'));
+    }
+
+    public function ProductManagement(Request $request){
+        $user = Auth::user();
+
+        /*         $addresses = $user->addresses; */
+        $emirates = Emirate::all();
+        $proposedPayoutChange = ProposedPayoutChange::where('user_id', $user->id)->latest()->first();
+
+        if ($proposedPayoutChange && ($proposedPayoutChange->status=="approved" || $proposedPayoutChange->status=="rejected" )  ) {
+            $proposedPayoutChange = null ;
+        }
+
+        $tour_steps=Tour::orderBy('step_number')->get();
+        return view('seller.help_centre.ProductManagement', compact('user', 'emirates', 'proposedPayoutChange' , 'tour_steps'));
+    }
+
+
+    public function InventoryManagement(Request $request){
+        $user = Auth::user();
+
+        /*         $addresses = $user->addresses; */
+        $emirates = Emirate::all();
+        $proposedPayoutChange = ProposedPayoutChange::where('user_id', $user->id)->latest()->first();
+
+        if ($proposedPayoutChange && ($proposedPayoutChange->status=="approved" || $proposedPayoutChange->status=="rejected" )  ) {
+            $proposedPayoutChange = null ;
+        }
+
+        $tour_steps=Tour::orderBy('step_number')->get();
+        return view('seller.help_centre.InventoryManagement', compact('user', 'emirates', 'proposedPayoutChange' , 'tour_steps'));
+    }
+
+
+
+    public function OrderManagement(Request $request){
+        $user = Auth::user();
+
+        /*         $addresses = $user->addresses; */
+        $emirates = Emirate::all();
+        $proposedPayoutChange = ProposedPayoutChange::where('user_id', $user->id)->latest()->first();
+
+        if ($proposedPayoutChange && ($proposedPayoutChange->status=="approved" || $proposedPayoutChange->status=="rejected" )  ) {
+            $proposedPayoutChange = null ;
+        }
+
+        $tour_steps=Tour::orderBy('step_number')->get();
+        return view('seller.help_centre.OrderManagement', compact('user', 'emirates', 'proposedPayoutChange' , 'tour_steps'));
+    }
+
+    public function eshop(Request $request){
+        $user = Auth::user();
+
+        /*         $addresses = $user->addresses; */
+        $emirates = Emirate::all();
+        $proposedPayoutChange = ProposedPayoutChange::where('user_id', $user->id)->latest()->first();
+
+        if ($proposedPayoutChange && ($proposedPayoutChange->status=="approved" || $proposedPayoutChange->status=="rejected" )  ) {
+            $proposedPayoutChange = null ;
+        }
+
+        $tour_steps=Tour::orderBy('step_number')->get();
+        return view('seller.help_centre.eshop', compact('user', 'emirates', 'proposedPayoutChange' , 'tour_steps'));
+    }
+
+
+
+    public function eshopProfile(Request $request){
+        $user = Auth::user();
+
+        /*         $addresses = $user->addresses; */
+        $emirates = Emirate::all();
+        $proposedPayoutChange = ProposedPayoutChange::where('user_id', $user->id)->latest()->first();
+
+        if ($proposedPayoutChange && ($proposedPayoutChange->status=="approved" || $proposedPayoutChange->status=="rejected" )  ) {
+            $proposedPayoutChange = null ;
+        }
+
+        $tour_steps=Tour::orderBy('step_number')->get();
+        return view('seller.help_centre.eshopProfile', compact('user', 'emirates', 'proposedPayoutChange' , 'tour_steps'));
+    }
+
+    public function FAQS(Request $request){
+        $user = Auth::user();
+
+        /*         $addresses = $user->addresses; */
+        $emirates = Emirate::all();
+        $proposedPayoutChange = ProposedPayoutChange::where('user_id', $user->id)->latest()->first();
+
+        if ($proposedPayoutChange && ($proposedPayoutChange->status=="approved" || $proposedPayoutChange->status=="rejected" )  ) {
+            $proposedPayoutChange = null ;
+        }
+
+        $tour_steps=Tour::orderBy('step_number')->get();
+        return view('seller.help_centre.FAQS', compact('user', 'emirates', 'proposedPayoutChange' , 'tour_steps'));
+    }
+
+
+    public function SupportTicket(Request $request){
+        $user = Auth::user();
+
+        /*         $addresses = $user->addresses; */
+        $emirates = Emirate::all();
+        $proposedPayoutChange = ProposedPayoutChange::where('user_id', $user->id)->latest()->first();
+
+        if ($proposedPayoutChange && ($proposedPayoutChange->status=="approved" || $proposedPayoutChange->status=="rejected" )  ) {
+            $proposedPayoutChange = null ;
+        }
+
+        $tour_steps=Tour::orderBy('step_number')->get();
+        return view('seller.help_centre.SupportTicket', compact('user', 'emirates', 'proposedPayoutChange' , 'tour_steps'));
+    }
+
+    public function billing(Request $request){
+        $user = Auth::user();
+
+        /*         $addresses = $user->addresses; */
+        $emirates = Emirate::all();
+        $proposedPayoutChange = ProposedPayoutChange::where('user_id', $user->id)->latest()->first();
+
+        if ($proposedPayoutChange && ($proposedPayoutChange->status=="approved" || $proposedPayoutChange->status=="rejected" )  ) {
+            $proposedPayoutChange = null ;
+        }
+
+        $tour_steps=Tour::orderBy('step_number')->get();
+        return view('seller.help_centre.billing', compact('user', 'emirates', 'proposedPayoutChange' , 'tour_steps'));
+    }
+
+
+
+
 
 }

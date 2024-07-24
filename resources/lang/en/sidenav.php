@@ -21,7 +21,7 @@ return [
     'eShop-lease'=>'eShop Lease Billing',
     'e_shop_profile'=>'eShop Profile Management',
     'FAQs'=>'FAQs',
-    'Support_ticket'=>'Support_ticket',
+    'Support_ticket'=>'Support Ticket',
     'Inventory Management'=>'Inventory Management',
     'product-management'=>'Product Management',
     'Account_and_Registration'=>'Account and Registration',
