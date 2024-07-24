@@ -16,6 +16,7 @@ return [
     'Success! Your new team member is now part of your eShop crew. Ready to take on the world together!' => 'Success! Your new team member is now part of your eShop crew. Ready to take on the world together!',
     'Phone already exists' => 'Phone already exists',
     'Staff has been deleted successfully' => 'Staff has been deleted successfully',
+    
 
 
 ];

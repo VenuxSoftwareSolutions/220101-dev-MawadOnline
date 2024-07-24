@@ -45,12 +45,10 @@ return [
     'Register your e-Shop' => 'سجل متجرك الإلكتروني',
     'Terms & Conditions' => 'الشروط والأحكام',
     'Accept' => 'تقبل',
-
-
-
-
-
-
+    'Help_center' => 'مركز المساعدة',
+    'mawed_vendor_help_center' => 'مرحبًا بكم في مركز المساعدة الخاص بمواد',
+    'FAQs'=>'الأسئلة المتكررة',
+    'All_help_topics'=>'إدارة المرتجعات',
 
 
 
