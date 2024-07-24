@@ -582,7 +582,100 @@
                 getVariantPrice();
             });
         }
+        $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+        $(document).on('click', '.quantity-control', function() {
 
+            var action = $(this).data('type');
+            var quantityInput = $('#quantity');
+            var currentQuantity = parseInt(quantityInput.val());
+            var variationId = $('#variationId').val() ;
+            // if (action === 'plus') {
+            //     // Increment quantity
+            //     quantityInput.val(currentQuantity + 1);
+            // } else if (action === 'minus' && currentQuantity > 1) {
+            //     // Decrement quantity, ensuring it doesn't go below 1
+            //     quantityInput.val(currentQuantity - 1);
+            // }
+
+            // // Update the disabled state of buttons based on quantity
+            // $('.quantity-control[data-type="minus"]').prop('disabled', currentQuantity <= 1);
+            // $('.quantity-control[data-type="plus"]').prop('disabled', currentQuantity >= 197);
+
+            // AJAX request to update quantity
+            $.ajax({
+                url: '{{route("seller.update-price-preview")}}', // URL to your backend endpoint
+                method: 'POST', // or 'GET' depending on your backend implementation
+                data: { quantity: quantityInput.val(),variationId },
+                success: function(response) {
+                    // Handle successful response
+                    console.log(response.unit_price)
+                    if (response.unit_price != null) {
+                        if (response.discountPrice > 0) {
+                            $("#qty-interval").text(response.discountPrice+" AED")
+                            $("#chosen_price").text(response.totalDiscount+" AED")
+                            $("#previous-price").text(response.unit_price+" AED")
+
+                            if (response.percent !== null && response.percent > 0) {
+
+                            $("#percent").text('-'+response.percent+'%')
+                            $("#percent").addClass("bg-primary");
+
+                            }
+                            else {
+                                $("#percent").text('')
+                                $("#percent").removeClass("bg-primary");
+
+                            }
+
+                        }
+                        else {
+                            $("#previous-price").text('') ;
+                            $("#percent").removeClass("bg-primary");
+
+                            $("#qty-interval").text(response.unit_price+" AED")
+                            $("#chosen_price").text(response.total+" AED")
+                            $("#percent").text('')
+
+                        }
+                        // $("#qty-interval").text(response.unit_price+" AED")
+                        $("#quantity").val(response.qty)
+                        // $("#chosen_price").text(response.total+" AED")
+                        $('#quantity').attr('min', response.minimum); // Minimum value
+                        $('#quantity').attr('max', response.maximum); // Maximum value
+                        // $('.quantity-control[data-type="minus"]').prop('disabled', response.qty <= response.minimum);
+                        // $('.quantity-control[data-type="plus"]').prop('disabled', response.qty >= response.maximum);
+                        $('.aiz-plus-minus input').each(function() {
+                            var $this = $(this);
+                            var min = parseInt($(this).attr("min"));
+                            var max = parseInt($(this).attr("max"));
+                            var value = parseInt($(this).val());
+                            console.log(min)
+                            console.log(max)
+                            console.log(value)
+                            if(value <= min){
+                                $this.siblings('[data-type="minus"]').attr('disabled',true)
+                            }else if($this.siblings('[data-type="minus"]').attr('disabled')){
+                                $this.siblings('[data-type="minus"]').removeAttr('disabled')
+                            }
+                            if(value >= max){
+                                $this.siblings('[data-type="plus"]').attr('disabled',true)
+                            }else if($this.siblings('[data-type="plus"]').attr('disabled')){
+                                $this.siblings('[data-type="plus"]').removeAttr('disabled')
+                            }
+                        });
+                    }
+
+                },
+                error: function(xhr, status, error) {
+                    // Handle errors
+                    console.error('Error updating quantity:', error);
+                }
+            });
+            });
         $('#option-choice-form input').on('change', function(){
             getVariantPrice();
         });

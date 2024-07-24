@@ -47,7 +47,12 @@
                 else {
                     $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['product_id']);
                 }
-                $totalRating = $detailedProduct->reviews->count();
+                if($detailedProduct == null){
+                    $totalRating = 0;
+                }else{
+                    $totalRating = $detailedProduct->reviews->count();
+                }
+                
             @endphp
 
             <span class="rating rating-mr-1 rating-var">

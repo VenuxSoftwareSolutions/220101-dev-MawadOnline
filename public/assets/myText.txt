@@ -1,1 +1,5 @@
+<<<<<<< HEAD
+Todays date is: 28-06-2024
+=======
 Todays date is: 01-07-2024
+>>>>>>> c277cfdd78a3c84df475dce517a3d5716d8311e9

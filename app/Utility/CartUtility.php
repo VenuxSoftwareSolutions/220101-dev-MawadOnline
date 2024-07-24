@@ -170,12 +170,12 @@ class CartUtility
         }
 
 
-        $total=$qty*$unitPrice;
+        // $total=$qty*$unitPrice;
         if (isset($discountPrice) && $discountPrice > 0) {
-            $totalDiscount=$qty*$discountPrice;
-            return $totalDiscount ;
+            // $totalDiscount=$qty*$discountPrice;
+            return $discountPrice ;
         }
-        return $total ;
+        return $unitPrice ;
      // Return the unit price as JSON response
     }
 
