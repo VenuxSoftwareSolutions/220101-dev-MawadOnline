@@ -147,7 +147,7 @@
         window.location.href = '{{ route("seller.dashboard") }}'; // Redirect to the dashboard
     });
     if (localStorage.getItem('guide_tour') != '0') {
-        if ({{Auth::user()->tour}} == true | {{Auth::user()->id}} != {{Auth::user()->owner_id}} | localStorage.getItem('guide_tour') != '0') {
+        if ({{Auth::user()->tour}} == true | {{Auth::user()->id}} != {{Auth::user()->owner_id}} ) {
             return;
         }
     }
