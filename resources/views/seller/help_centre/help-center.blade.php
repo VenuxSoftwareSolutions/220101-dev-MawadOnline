@@ -68,7 +68,7 @@
 
     .btn-primary {
         background-color: #2e294e !important;
-        border-color: ##2e294e !important;
+        border-color: #2e294e !important;
     }
 
     /* .changes-button {
