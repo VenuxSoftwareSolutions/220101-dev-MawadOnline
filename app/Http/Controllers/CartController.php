@@ -345,7 +345,7 @@ class CartController extends Controller
             }
 
             $total = isset($pricing['from'][0]) && isset($pricing['unit_price'][0]) ? $pricing['from'][0] * $pricing['unit_price'][0] : "";
-            if( isset($lastItem['variant_pricing-from']['discount']['date']) && is_array($lastItem['variant_pricing-from']['discount']['date']) && !empty($lastItem['variant_pricing-from']['discount']['date']) && $lastItem['variant_pricing-from']['discount']['date'][0] !== null){
+            if( isset($lastItem['variant_pricing-from']['discount']['date']) && is_array($lastItem['variant_pricing-from']['discount']['date']) && !empty($lastItem['variant_pricing-from']['discount']['date']) &&  isset($lastItem['variant_pricing-from']['discount']['date'][0]) && $lastItem['variant_pricing-from']['discount']['date'][0] !== null){
                 // Extract start and end dates from the first date interval
 
                 $dateRange = $lastItem['variant_pricing-from']['discount']['date'][0];
@@ -395,7 +395,7 @@ class CartController extends Controller
                     $totalDiscount=$lastItem['variant_pricing-from']['from'][0]*$discountedPrice;
                 }
                 if (count($variations) == 0) {
-                    if( isset($pricing['date_range_pricing']) && is_array($pricing['date_range_pricing']) && !empty($pricing['date_range_pricing']) && $pricing['date_range_pricing'][0] !== null){
+                    if( isset($pricing['date_range_pricing']) && is_array($pricing['date_range_pricing']) && !empty($pricing['date_range_pricing']) && isset($pricing['date_range_pricing'][0]) && $pricing['date_range_pricing'][0] !== null){
                         // Extract start and end dates from the first date interval
 
                         $dateRange = $pricing['date_range_pricing'][0];
