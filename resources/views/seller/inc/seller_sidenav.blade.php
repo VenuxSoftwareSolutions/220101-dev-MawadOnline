@@ -31,6 +31,13 @@
             <ul class="aiz-side-nav-list" id="search-menu">
             </ul>
             <ul class="aiz-side-nav-list" id="main-menu" data-toggle="aiz-side-menu">
+                 <li id="AddProduct" class="aiz-side-nav-item">
+                    <a href="{{ route('seller.dashboard') }}" class="aiz-side-nav-link">
+                        <i class="las la-home aiz-side-nav-icon"></i>
+                        <span class="aiz-side-nav-text">{{ __('sidenav.Add_Product') }}</span>
+                    </a>
+                </li>
+
                 <li id="dashboard" class="aiz-side-nav-item">
                     <a href="{{ route('seller.dashboard') }}" class="aiz-side-nav-link">
                         <i class="las la-home aiz-side-nav-icon"></i>
@@ -51,7 +58,7 @@
                                 <li id="products" class="aiz-side-nav-item">
                                     <a href="{{ route('seller.products') }}"
                                         class="aiz-side-nav-link {{ areActiveRoutes(['seller.products', 'seller.products.create', 'seller.products.edit']) }}">
-                                        <span class="aiz-side-nav-text">{{ translate('Products') }}</span>
+                                        <span class="aiz-side-nav-text">{{ __('sidenav.Products_list') }}</span>
                                     </a>
                                 </li>
                             @endcan
@@ -81,7 +88,7 @@
                                 <li id="reviews" class="aiz-side-nav-item">
                                     <a href="{{ route('seller.reviews') }}"
                                         class="aiz-side-nav-link {{ areActiveRoutes(['seller.reviews']) }}">
-                                        <span class="aiz-side-nav-text">{{ translate('Product Reviews') }}</span>
+                                        <span class="aiz-side-nav-text">{{ __('sidenav.Product_Reviews') }}</span>
                                     </a>
                                 </li>
                             @endcan
@@ -253,7 +260,7 @@
                         <a href="{{ route('seller.support_ticket.index') }}"
                             class="aiz-side-nav-link {{ areActiveRoutes(['seller.support_ticket.index']) }}">
                             <i class="las la-atom aiz-side-nav-icon"></i>
-                            <span class="aiz-side-nav-text">{{ translate('Support Ticket') }}</span>
+                            <span class="aiz-side-nav-text">{{ __('sidenav.Contact_us') }}</span>
                             @if ($support_ticket > 0)
                                 <span class="badge badge-inline badge-success">{{ $support_ticket }}</span>
                             @endif
@@ -271,7 +278,7 @@
                 <li id="help" id="help_centre" class="aiz-side-nav-item">
                     <a href="{{ route('seller.help-center.index') }}" class="aiz-side-nav-link">
                         <div class="svg-change" style="width: 30px;
-                height: 22px;">
+                            height: 22px;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                 fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16">
                                 <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
@@ -279,8 +286,22 @@
                                     d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
                             </svg>
                         </div>
-
                         <span class="aiz-side-nav-text">{{ __('help.Help_center') }}</span>
+                    </a>
+                </li>
+
+                <li id="start-tour" id="start_tour" class="aiz-side-nav-item">
+                    <a href="{{ route('seller.help-center.index') }}" class="aiz-side-nav-link">
+                        <div class="svg-change" style="width: 30px;
+                            height: 22px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                                <path
+                                    d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
+                            </svg>
+                        </div>
+                        <span class="aiz-side-nav-text">{{ __('help.start_tour') }}</span>
                     </a>
                 </li>
 
