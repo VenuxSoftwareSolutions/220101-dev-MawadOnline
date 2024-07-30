@@ -6,7 +6,7 @@ return [
     'Packages' => 'eShop lease',
     'Billing' => 'Billing',
     'product_management' => 'Product Management',
-    'mawad_catalogue' => 'Mawad catalogue',
+    'mawad_catalogue' => 'MawadOnline Catalogue',
     'orders' => 'Orders',
     'documents' => 'Documents',
     'digital_products' => 'Digital Products',
@@ -21,10 +21,15 @@ return [
     'eShop-lease'=>'eShop Lease Billing',
     'e_shop_profile'=>'eShop Profile Management',
     'FAQs'=>'FAQs',
-    'Support_ticket'=>'Support Ticket',
+    'Support_ticket'=>'Support ticket',
     'Inventory Management'=>'Inventory Management',
     'product-management'=>'Product Management',
     'Account_and_Registration'=>'Account and Registration',
+    'Add_Product'=>'Add Product',
+    'Products_list'=>'Products List',
+    'Product_Reviews'=>'Product Reviews',
+    'Contact_us'=>'Contact Us',
+
 
 
 
