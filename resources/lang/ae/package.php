@@ -2,12 +2,12 @@
 
 return [
     'Subscription Packages' => 'خطط إيجار المتجر الإلكتروني',
-    'Full access to all e-Shop essentials' => 'وصول كامل إلى جميع أساسيات المتجر الإلكتروني',
+    'Full access to all eShop essentials' => 'وصول كامل إلى جميع أساسيات المتجر الإلكتروني',
     'Unlimited products' => 'منتجات غير محدودة',
-    'Free e-Shop administrator + 4 positions' => 'مدير متجر إلكتروني + 4 وظائف مدير متجر إلكتروني مجاناً',
+    'Free eShop administrator + 4 positions' => 'مدير متجر إلكتروني + 4 وظائف مدير متجر إلكتروني مجاناً',
     'Additional staff position just for AED 10/month' => 'وظيفة إضافية للموظفين مقابل 10 دراهم إماراتية/الشهر فقط',
     'AED' => 'درهم إماراتي',
-    'E-Shop Already Registered' => 'المتجر الإلكتروني مسجل بالفعل',
+    'EShop Already Registered' => 'المتجر الإلكتروني مسجل بالفعل',
     'month' => 'الشهر',
     'Terms & Conditions' => 'الشروط والأحكام',
     'Everything in the Pro Plan' => 'كل شيء في الخطة الاحترافية',

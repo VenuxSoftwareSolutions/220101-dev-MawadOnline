@@ -109,7 +109,7 @@
                                 <ul class="list-group list-group-raw fs-13 mb-5">
                                     <li class="list-group-item py-2 fw-700">
                                         <img src="{{ asset('public/images/tick-circle.png') }}" alt="Tick">
-                                        <p>{{ __('package.Full access to all e-Shop essentials') }}</p>
+                                        <p>{{ __('package.Full access to all eShop essentials') }}</p>
                                     </li>
                                     <li class="list-group-item py-2 fw-700">
                                         <img src="{{ asset('public/images/tick-circle.png') }}" alt="Tick">
@@ -117,7 +117,7 @@
                                     </li>
                                     <li class="list-group-item py-2 fw-700">
                                         <img src="{{ asset('public/images/tick-circle.png') }}" alt="Tick">
-                                        <p>{{ __('package.Free e-Shop administrator + 4 positions') }}</p>
+                                        <p>{{ __('package.Free eShop administrator + 4 positions') }}</p>
                                     </li>
                                     {{-- <li class="list-group-item py-2 fw-700">
                                         <img src="{{ asset('public/images/tick-circle.png') }}" alt="Tick">
@@ -140,7 +140,7 @@
                                         @endif
                                     @endif --}}
                                     <button class="btn btn-light fw-600 col-10"
-                                                onclick="select_package({{ $seller_packages[0]->id }})">{{ __('package.E-Shop Already Registered') }}</button>
+                                                onclick="select_package({{ $seller_packages[0]->id }})">{{ __('package.EShop Already Registered') }}</button>
                                 </div>
                             </div>
                         </div>
