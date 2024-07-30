@@ -1526,7 +1526,7 @@ button {
                                             // Function to open terms and conditions page in new tab
                                             function openTermsPage() {
                                                 // Replace 'YOUR_TERMS_URL_HERE' with the actual URL agreed upon with Amine
-                                                var termsURL = '{{route('terms')}}';
+                                                var termsURL = '{{route('terms-and-conditions')}}';
                                                 window.open(termsURL, '_blank');
                                             }
                                         </script>

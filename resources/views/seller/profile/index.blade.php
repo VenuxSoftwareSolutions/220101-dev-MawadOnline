@@ -1879,9 +1879,16 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        if ({{Auth::user()->tour}} == true | {{Auth::user()->id}} != {{Auth::user()->owner_id}}) {
+        document.getElementById('startTourButton').addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent the default anchor click behavior
+        localStorage.setItem('guide_tour', '0'); // Set local storage as required
+        window.location.href = '{{ route("seller.dashboard") }}'; // Redirect to the dashboard
+    });
+    if (localStorage.getItem('guide_tour') != '0') {
+        if ({{Auth::user()->tour}} == true | {{Auth::user()->id}} != {{Auth::user()->owner_id}} ) {
             return;
         }
+    }
         var tour_steps = [
             @foreach($tour_steps as $key => $step)
             {
@@ -1922,6 +1929,7 @@
                     console.error('Error updating user tour status:', error);
                 }
             });
+            localStorage.setItem('guide_tour', '1'); // Set local storage as required
             setTimeout(function() {
                 window.location.href = '{{ route("seller.dashboard") }}';
             }, 500);
