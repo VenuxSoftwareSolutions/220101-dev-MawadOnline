@@ -10,7 +10,7 @@ return [
     'this_month' => 'This Month',
     'new_order' => 'New Order',
     'cancelled' => 'Cancelled',
-    'Start tour' => 'Start tour',
+    'Start Tour' => 'Start Tour',
 
 
 
