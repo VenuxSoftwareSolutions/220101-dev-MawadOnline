@@ -31,30 +31,12 @@
             <div class="row">
                 <div class="col-lg-6 col">
                     <ul class="list-inline d-flex justify-content-between justify-content-lg-start mb-0">
-                        <!-- Language switcher -->
-                        @if (get_setting('show_language_switcher') == 'on')
-                            <li class="list-inline-item dropdown mr-4" id="lang-change">
-
-                                <a href="javascript:void(0)" class="dropdown-toggle text-secondary fs-12 py-2"
-                                    data-toggle="dropdown" data-display="static">
-                                    <span class="">{{ $system_language->name }}</span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-left">
-                                    @foreach (get_all_active_language() as $key => $language)
-                                        <li>
-                                            <a href="javascript:void(0)" data-flag="{{ $language->code }}"
-                                                class="dropdown-item @if ($system_language->code == $language->code) active @endif">
-                                                <img src="{{ static_asset('assets/img/placeholder.jpg') }}"
-                                                    data-src="{{ static_asset('assets/img/flags/' . $language->code . '.png') }}"
-                                                    class="mr-1 lazyload" alt="{{ $language->name }}" height="11">
-                                                <span class="language">{{ $language->name }}</span>
-                                            </a>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            </li>
-                        @endif
-
+                        <!-- Welcome -->
+                        <li class="list-inline-item mr-0 pl-0 py-2">
+                            <div class="text-dark fs-12 pr-3 d-inline-block border-width-2">
+                                Welcome To MawadOnline's Marketpalce
+                            </div>
+                        </li>
                         <!-- Currency Switcher -->
                         @if (get_setting('show_currency_switcher') == 'on')
                             <li class="list-inline-item dropdown ml-auto ml-lg-0 mr-0" id="currency-change">
@@ -84,6 +66,29 @@
 
                 <div class="col-6 text-right d-none d-lg-block">
                     <ul class="list-inline mb-0 h-100 d-flex justify-content-end align-items-center">
+                        <!-- Language switcher -->
+                        @if (get_setting('show_language_switcher') == 'on')
+                            <li class="list-inline-item dropdown mr-4" id="lang-change">
+
+                                <a href="javascript:void(0)" class="dropdown-toggle text-secondary fs-12 py-2"
+                                    data-toggle="dropdown" data-display="static">
+                                    <span class="">{{ $system_language->name }}</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-left">
+                                    @foreach (get_all_active_language() as $key => $language)
+                                        <li>
+                                            <a href="javascript:void(0)" data-flag="{{ $language->code }}"
+                                                class="dropdown-item @if ($system_language->code == $language->code) active @endif">
+                                                <img src="{{ static_asset('assets/img/placeholder.jpg') }}"
+                                                    data-src="{{ static_asset('assets/img/flags/' . $language->code . '.png') }}"
+                                                    class="mr-1 lazyload" alt="{{ $language->name }}" height="11">
+                                                <span class="language">{{ $language->name }}</span>
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </li>
+                        @endif
                         @if (get_setting('vendor_system_activation') == 1)
                         @unless(Auth::check() && Auth::user()->user_type == 'seller')
 
@@ -118,7 +123,7 @@
 
     <header class="@if (get_setting('header_stikcy') == 'on') sticky-top @endif z-1020 bg-white">
         <!-- Search Bar -->
-        <div class="position-relative logo-bar-area border-bottom border-md-nonea z-1025">
+        <div class="position-relative logo-bar-area border-md-nonea z-1025 border-header background-header">
             <div class="container">
                 <div class="d-flex align-items-center">
                     <!-- top menu sidebar button -->
@@ -169,7 +174,7 @@
                                     </div>
                                     <div class="search-input-box">
                                         <input type="text"
-                                            class="border border-soft-light form-control fs-14 hov-animate-outline"
+                                            class="border border-soft-light form-control fs-14 hov-animate-outline radius-search"
                                             id="search" name="keyword"
                                             @isset($query)
                                             value="{{ $query }}"
@@ -349,7 +354,7 @@
                             <span class="d-flex align-items-center nav-user-info ml-3">
                                 <!-- Image -->
                                 <span
-                                    class="size-40px rounded-circle overflow-hidden border d-flex align-items-center justify-content-center nav-user-img">
+                                    class="size-40px rounded-circle overflow-hidden border d-flex align-items-center justify-content-center nav-user-img bg-white">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="19.902" height="20.012"
                                         viewBox="0 0 19.902 20.012">
                                         <path id="fe2df171891038b33e9624c27e96e367"
@@ -358,9 +363,9 @@
                                     </svg>
                                 </span>
                                 <a href="{{ route('user.login') }}"
-                                    class="text-reset opacity-60 hov-opacity-100 hov-text-primary fs-12 d-inline-block border-right border-soft-light border-width-2 pr-2 ml-3">{{ translate('Login') }}</a>
+                                    class="opacity-60 hov-opacity-100 hov-text-white text-white fs-12 d-inline-block border-right border-soft-light border-width-2 pr-2 ml-3">{{ translate('Login') }}</a>
                                 <a href="{{ route('business') }}"
-                                    class="text-reset opacity-60 hov-opacity-100 hov-text-primary fs-12 d-inline-block py-2 pl-2">{{ translate('Registration') }}</a>
+                                    class="opacity-60 hov-opacity-100 hov-text-white text-white fs-12 d-inline-block py-2 pl-2">{{ translate('Registration') }}</a>
                             </span>
                         @endauth
                     </div>
@@ -563,7 +568,7 @@
         </div>
 
         <!-- Menu Bar -->
-        <div class="d-none d-lg-block position-relative bg-primary h-50px">
+        <div class="d-none d-lg-block position-relative background-header h-50px">
             <div class="container h-100">
                 <div class="d-flex h-100">
                     <!-- Categoty Menu Button -->
@@ -585,7 +590,7 @@
                     </div>
                     <!-- Header Menus -->
                     @php
-                        $nav_txt_color = ((get_setting('header_nav_menu_text') == 'light') ||  (get_setting('header_nav_menu_text') == null)) ? 'text-white' : 'text-dark';
+                        $nav_txt_color = ((get_setting('header_nav_menu_text') == 'light') ||  (get_setting('header_nav_menu_text') == null)) ? 'text-white' : 'text-white';
                     @endphp
                     <div class="ml-xl-4 w-100 overflow-hidden">
                         <div class="d-flex align-items-center justify-content-center justify-content-xl-start h-100">

@@ -25,7 +25,7 @@
 
     <!-- Sliders -->
     <div class="home-banner-area mb-3">
-        <div class="p-0">
+        <div class="banner-inner">
             <!-- Sliders -->
             <div class="home-slider slider-full">
                 @if (get_setting('home_slider_images') != null)
@@ -38,7 +38,7 @@
                             <div class="carousel-box">
                                 <a href="{{ json_decode(get_setting('home_slider_links'), true)[$key] }}">
                                     <!-- Image -->
-                                    <div class="d-block mw-100 img-fit overflow-hidden h-180px h-md-320px h-lg-460px h-xl-553px overflow-hidden">
+                                    <div class="d-block mw-100 img-fit overflow-hidden h-180px h-md-320px h-lg-460px h-xl-553px overflow-hidden radius-banner">
                                         <img class="img-fit h-100 m-auto has-transition ls-is-cached lazyloaded"
                                         src="{{ $slider ? my_asset($slider->file_name) : static_asset('assets/img/placeholder.jpg') }}"
                                         alt="{{ env('APP_NAME') }} promo"
@@ -59,7 +59,7 @@
         $flash_deal_bg = get_setting('flash_deal_bg_color');
         $flash_deal_bg_full_width = (get_setting('flash_deal_bg_full_width') == 1) ? true : false;
         $flash_deal_banner_menu_text = ((get_setting('flash_deal_banner_menu_text') == 'dark') ||  (get_setting('flash_deal_banner_menu_text') == null)) ? 'text-dark' : 'text-white';
-        
+
     @endphp
     @if ($flash_deal != null)
         <section class="mb-2 mb-md-3 mt-2 mt-md-3" style="background: {{ ($flash_deal_bg_full_width && $flash_deal_bg != null) ? $flash_deal_bg : '' }};" id="flash_deal">
@@ -107,7 +107,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="col-xxl-8 col-lg-7 col-6">
                         <div class="pl-3 pr-lg-3 pl-xl-2rem pr-xl-2rem">
                             <!-- Top Section from lg device -->
@@ -151,7 +151,7 @@
                                     <div class="carousel-box bg-white @if ($i == 0) border-left @endif">
                                         @foreach ($flash_deal_products as $key => $flash_deal_product)
                                             @if ($key >= $init && $key <= $end)
-                                                
+
                                                 @if ($flash_deal_product->product != null && $flash_deal_product->product->published != 0)
                                                     @php
                                                         $product_url = route('product', $flash_deal_product->product->slug);
@@ -222,41 +222,42 @@
                 </div>
                 <!-- Categories -->
                 <div class="bg-white px-sm-3">
-                    <div class="aiz-carousel sm-gutters-17" data-items="4" data-xxl-items="4" data-xl-items="3.5"
-                        data-lg-items="3" data-md-items="2" data-sm-items="2" data-xs-items="1" data-arrows="true"
-                        data-dots="false" data-autoplay="false" data-infinite="true">
+                    <div class="aiz-carousel sm-gutters-17" data-items="7" data-xxl-items="7" data-xl-items="6"
+                        data-lg-items="4" data-md-items="5" data-sm-items="5" data-xs-items="2" data-arrows="true"
+                        data-dots="false" data-autoplay="false" data-infinite="true"  style="height:250px;">
                         @foreach ($featured_categories as $key => $category)
                             @php
                                 $category_name = $category->getTranslation('name');
                             @endphp
-                            <div class="carousel-box position-relative p-0 has-transition border-right border-top border-bottom @if ($key == 0) border-left @endif">
-                                <div class="h-200px h-sm-250px h-md-340px">
-                                    <div class="h-100 w-100 w-xl-auto position-relative hov-scale-img overflow-hidden">
+                            <div class="carousel-box position-relative p-0 has-transition @if ($key == 0) @endif" style="height:250px;">
+                                <div class="h-200px p-4">
+                                    <div class="h-100 w-100 w-xl-auto position-relative hov-scale-img overflow-hidden radius-category">
                                         <div class="position-absolute h-100 w-100 overflow-hidden">
                                             <img src="{{ isset($category->thumbnail_image) ? my_asset($category->thumbnail_image) : static_asset('assets/img/placeholder.jpg') }}"
                                                 alt="{{ $category_name }}"
-                                                class="img-fit h-100 has-transition"
+                                                class="img-fit h-100 has-transition radius-category"
                                                 onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
                                         </div>
-                                        <div class="pb-4 px-4 absolute-bottom-left has-transition h-50 w-100 d-flex flex-column align-items-center justify-content-end"
-                                            style="background: linear-gradient(to top, rgba(0,0,0,0.5) 50%,rgba(0,0,0,0) 100%) !important;">
-                                            <div class="w-100">
-                                                <a class="fs-16 fw-700 text-white animate-underline-white home-category-name d-flex align-items-center hov-column-gap-1"
+
+                                    </div>
+                                    <div style="top:180px;" class="px-4 absolute-bottom-left has-transition h-50 w-100 d-flex flex-column align-items-center justify-content-start align-center">
+                                            <div>
+                                                <a class="d-flex flex-wrap overflow-hidden fs-15 text-dark home-category-name align-items-center hov-column-gap-1"
                                                     href="{{ route('products.category', $category->slug) }}"
-                                                    style="width: max-content;">
-                                                    {{ $category_name }}&nbsp;
-                                                    <i class="las la-angle-right"></i>
+                                                    >
+                                                   <center>{{ $category_name }}&nbsp;</center>
                                                 </a>
+                                                <!--
                                                 <div class="d-flex flex-wrap h-50px overflow-hidden mt-2">
                                                     @foreach ($category->childrenCategories->take(6) as $key => $child_category)
-                                                    <a href="{{ route('products.category', $child_category->slug) }}" class="fs-13 fw-300 text-soft-light hov-text-white pr-3 pt-1">
+                                                    <a href="{{ route('products.category', $child_category->slug) }}" class="fs-13 fw-300 text-soft-dark hov-text-dark text-dark pr-3 pt-1">
                                                         {{ $child_category->getTranslation('name') }}
                                                     </a>
                                                     @endforeach
                                                 </div>
+                                            -->
                                             </div>
                                         </div>
-                                    </div>
                                 </div>
                             </div>
                         @endforeach
