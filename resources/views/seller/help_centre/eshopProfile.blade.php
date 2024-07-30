@@ -67,8 +67,8 @@
     }
 
     .btn-primary {
-        background-color: #a2b8c6 !important;
-        border-color: #a2b8c6 !important;
+        background-color: #2e294e !important;
+        border-color: ##2e294e !important;
     }
 
     .swal2-confirm {
