@@ -688,7 +688,7 @@ class ProductController extends Controller
                     }
                 }
             }
-            
+
 
             //Histroique General attributes
             $general_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->get();
@@ -1593,7 +1593,7 @@ class ProductController extends Controller
 
         $total = isset($data['from'][0]) && isset($data['unit_price'][0]) ? $data['from'][0] * $data['unit_price'][0] : "";
         // return response()->json(['status', $attributesArray]);
-        if( isset($lastItem['variant_pricing-from']['discount']['date']) && is_array($lastItem['variant_pricing-from']['discount']['date']) && !empty($lastItem['variant_pricing-from']['discount']['date']) && $lastItem['variant_pricing-from']['discount']['date'][0] !== null){
+        if( isset($lastItem['variant_pricing-from']['discount']['date']) && is_array($lastItem['variant_pricing-from']['discount']['date']) && !empty($lastItem['variant_pricing-from']['discount']['date']) && isset($lastItem['variant_pricing-from']['discount']['date'][0])  && $lastItem['variant_pricing-from']['discount']['date'][0] !== null){
         // Extract start and end dates from the first date interval
 
         $dateRange = $lastItem['variant_pricing-from']['discount']['date'][0];
@@ -1643,7 +1643,7 @@ class ProductController extends Controller
             $totalDiscount=$lastItem['variant_pricing-from']['from'][0]*$discountedPrice;
         }
 
-        if( isset($data['date_range_pricing']) && is_array($data['date_range_pricing']) && !empty($data['date_range_pricing']) && $data['date_range_pricing'][0] !== null){
+        if( isset($data['date_range_pricing']) && is_array($data['date_range_pricing']) && !empty($data['date_range_pricing']) && isset($data['date_range_pricing'][0] )  && $data['date_range_pricing'][0] !== null){
             // Extract start and end dates from the first date interval
 
             $dateRange = $data['date_range_pricing'][0];
