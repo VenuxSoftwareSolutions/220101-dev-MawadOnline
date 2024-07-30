@@ -9,9 +9,9 @@
                     <h6 class="mb-4 fw-400">
                         {{ __('package.MawadOnline offers the best marketplace for contruction materials in UAE...') }}</h6>
                     <h6 class="mb-0 fw-700">
-                        {{ __('package.You will not pay now. Choose your package, registre your e-Shop, create your products and inventory.') }}
+                        {{ __('package.You will not pay now. Choose your package, registre your eShop, create your products and inventory.') }}
                         <br>
-                        {{ __('package.Make your e-Shop ready for MawadOnline launch') }}
+                        {{ __('package.Make your eShop ready for MawadOnline launch') }}
                     </h6>
                 </div>
             </div>
@@ -28,12 +28,12 @@
                                 <h5 class="mb-1 h5 fw-600">{{ $seller_packages[0]->getTranslation('name') }}</h5>
                             </div>
                             <div class="mb-3 d-flex align-items-center justify-content-center">
-                                @if ($seller_packages[0]->amount == 0)
+                                {{-- @if ($seller_packages[0]->amount == 0)
                                     <span class="fs-30 fw-600 lh-1 mb-0">-</span>
                                 @else
                                     <span class="fs-32 fw-700 lh-1 mb-0">{{ __('package.AED') }} {{ $seller_packages[0]->amount }} /
                                         {{ __('package.month') }}</span>
-                                @endif
+                                @endif --}}
                                 {{-- <span
                                         class="text-secondary border-left ml-2 pl-2">{{ $seller_packages->duration }}<br>{{ translate('Days') }}</span> --}}
                             </div>
@@ -41,7 +41,7 @@
                             <ul class="list-group list-group-raw fs-13 mb-5">
                                 <li class="list-group-item py-2 fw-700">
                                     <i class="las la-check text-success mr-2"></i>
-                                    {{ __('package.Full access to all e-Shop essentials') }}
+                                    {{ __('package.Full access to all eShop essentials') }}
                                 </li>
                                 <li class="list-group-item py-2 fw-700">
                                     <i class="las la-check text-success mr-2"></i>
@@ -49,12 +49,12 @@
                                 </li>
                                 <li class="list-group-item py-2 fw-700">
                                     <i class="las la-check text-success mr-2"></i>
-                                    {{ __('package.Free e-Shop administrator + 4 positions') }}
+                                    {{ __('package.Free eShop administrator + 4 positions') }}
                                 </li>
-                                <li class="list-group-item py-2 fw-700">
+                                {{-- <li class="list-group-item py-2 fw-700">
                                     <i class="las la-check text-success mr-2"></i>
                                     {{ __('package.Additional staff position just for AED 10/month') }}
-                                </li>
+                                </li> --}}
                             </ul>
 
                             <div class="text-center">
@@ -71,12 +71,12 @@
                                         @endif
                                     @endif --}}
                                 <button class="btn btn-primary fw-600 col-10"
-                                    onclick="select_package({{ $seller_packages[0]->id }})">{{ __('package.Register your e-Shop') }}</button>
+                                    onclick="select_package({{ $seller_packages[0]->id }})">{{ __('package.Register your eShop') }}</button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col">
+                {{-- <div class="col">
                     <div class="card overflow-hidden">
                         <div class="card-body">
                             <div class="text-center mb-4 mt-3">
@@ -91,7 +91,7 @@
                                 @endif
                                 {{-- <span
                                         class="text-secondary border-left ml-2 pl-2">{{ $seller_packages->duration }}<br>{{ translate('Days') }}</span> --}}
-                            </div>
+                            {{-- </div>
                             <ul class="list-group list-group-raw fs-13 mb-5">
                                 <li class="list-group-item py-2 fw-700">
                                     <i class="las la-check text-success mr-2"></i>
@@ -99,7 +99,7 @@
                                 </li>
                                 <li class="list-group-item py-2 fw-700">
                                     <i class="las la-check text-success mr-2"></i>
-                                    {{__('package.Customized e-Shop roles') }}
+                                    {{__('package.Customized eShop roles') }}
                                 </li>
                                 <li class="list-group-item py-2 fw-700">
                                     <i class="las la-check text-success mr-2"></i>
@@ -111,7 +111,7 @@
                                 </li>
                             </ul>
 
-                            <div class=" text-center">
+                            <div class=" text-center"> --}}
                                 {{-- @if ($seller_packages->amount == 0)
                                         <button class="btn btn-primary fw-600"
                                             onclick="get_free_package({{ $seller_packages->id }})">{{ translate('Free Package') }}</button>
@@ -124,12 +124,12 @@
                                                 onclick="show_price_modal({{ $seller_packages->id }})">{{ translate('Purchase Package') }}</button>
                                         @endif
                                     @endif --}}
-                                <button class="btn btn-primary fw-600 col-10"
+                                {{-- <button class="btn btn-primary fw-600 col-10"
                                     disabled>{{ __('package.Coming Soon') }}</button>
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
             <div class="row mt-2 justify-content-center">
                 <div class="fs-15">

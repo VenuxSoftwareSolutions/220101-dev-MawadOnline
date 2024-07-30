@@ -18,10 +18,11 @@
         </div>
         <div class="aiz-side-nav-wrap">
             <div class="ripple d-flex justify-content-center py-1">
-            <img class="top-logo" style="width: 140px;height: 40px" src="{{ asset('public/images/vendor_logo.svg') }} " class="brand-icon" alt="{{ get_setting('site_name') }}">
+                <img class="top-logo" style="width: 140px;height: 40px" src="{{ asset('public/images/vendor_logo.svg') }} "
+                    class="brand-icon" alt="{{ get_setting('site_name') }}">
             </div>
             <div class="ripple d-flex justify-content-center py-2 pt-1">
-                <span>{{ Auth::user()->email}}</span>
+                <span>{{ Auth::user()->email }}</span>
             </div>
             <div class="px-20px mb-3">
                 <input class="form-control bg-soft-secondary border-0 form-control-sm" type="text" name=""
@@ -37,7 +38,7 @@
                     </a>
                 </li>
 
-                @canany(['seller_show_product','seller_view_product_reviews'])
+                @canany(['seller_show_product', 'seller_view_product_reviews'])
                     <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link">
                             <i class="las la-shopping-cart aiz-side-nav-icon"></i>
@@ -47,16 +48,16 @@
                         <!--Submenu-->
                         <ul class="aiz-side-nav-list level-2">
                             @can('seller_show_product')
-                            <li id="products" class="aiz-side-nav-item">
-                                <a href="{{ route('seller.products') }}"
-                                    class="aiz-side-nav-link {{ areActiveRoutes(['seller.products','seller.products.create','seller.products.edit']) }}">
-                                    <span class="aiz-side-nav-text">{{ translate('Products') }}</span>
-                                </a>
-                            </li>
+                                <li id="products" class="aiz-side-nav-item">
+                                    <a href="{{ route('seller.products') }}"
+                                        class="aiz-side-nav-link {{ areActiveRoutes(['seller.products', 'seller.products.create', 'seller.products.edit']) }}">
+                                        <span class="aiz-side-nav-text">{{ translate('Products') }}</span>
+                                    </a>
+                                </li>
                             @endcan
                             <li id="catalog" class="aiz-side-nav-item">
                                 <a href="{{ route('catalog.search_page') }}"
-                                    class="aiz-side-nav-link {{ areActiveRoutes([ 'catalog.search_page']) }}">
+                                    class="aiz-side-nav-link {{ areActiveRoutes(['catalog.search_page']) }}">
                                     <span class="aiz-side-nav-text">{{ __('sidenav.mawad_catalogue') }}</span>
                                 </a>
                             </li>
@@ -77,12 +78,12 @@
                             </li>
                             @endcan --}}
                             @can('seller_view_product_reviews')
-                            <li id="reviews" class="aiz-side-nav-item">
-                                <a href="{{ route('seller.reviews') }}"
-                                    class="aiz-side-nav-link {{ areActiveRoutes(['seller.reviews']) }}">
-                                    <span class="aiz-side-nav-text">{{ translate('Product Reviews') }}</span>
-                                </a>
-                            </li>
+                                <li id="reviews" class="aiz-side-nav-item">
+                                    <a href="{{ route('seller.reviews') }}"
+                                        class="aiz-side-nav-link {{ areActiveRoutes(['seller.reviews']) }}">
+                                        <span class="aiz-side-nav-text">{{ translate('Product Reviews') }}</span>
+                                    </a>
+                                </li>
                             @endcan
                         </ul>
                     </li>
@@ -102,27 +103,30 @@
                             <span class="aiz-side-nav-arrow"></span>
                         </a>
                         <!--Submenu-->
+
                         <ul class="aiz-side-nav-list level-2">
                             @can('seller_add_inventory')
-                            <li id="stock" class="aiz-side-nav-item">
-                                <a href="{{ route('seller.stocks.index') }}" class="aiz-side-nav-link">
-                                    <span class="aiz-side-nav-text">{{__('stock.Add/Remove Stock')}}</span>
-                                </a>
-                            </li>
+                                <li id="stock" class="aiz-side-nav-item">
+                                    <a href="{{ route('seller.stocks.index') }}" class="aiz-side-nav-link">
+                                        <span class="aiz-side-nav-text">{{ __('stock.Add/Remove Stock') }}</span>
+                                    </a>
+                                </li>
                             @endcan
                             <li class="aiz-side-nav-item">
                                 <a id="warehouses" href="{{ route('seller.warehouses.index') }}" class="aiz-side-nav-link">
-                                    <span class="aiz-side-nav-text">{{__('stock.Warehouses')}}</span>
+                                    <span class="aiz-side-nav-text">{{ __('stock.Warehouses') }}</span>
                                 </a>
                             </li>
                             @can('seller_inventory_history')
-                            <li id="stock_details" class="aiz-side-nav-item">
-                                <a href="{{ route('seller.stock.operation.report') }}" class="aiz-side-nav-link {{ areActiveRoutes(['seller.stock.search']) }}">
-                                    <span class="aiz-side-nav-text">{{__('stock.Stock Operation Details')}}</span>
-                                </a>
-                            </li>
+                                <li id="stock_details" class="aiz-side-nav-item">
+                                    <a href="{{ route('seller.stock.operation.report') }}"
+                                        class="aiz-side-nav-link {{ areActiveRoutes(['seller.stock.search']) }}">
+                                        <span class="aiz-side-nav-text">{{ __('stock.Stock Operation Details') }}</span>
+                                    </a>
+                                </li>
                             @endcan
                         </ul>
+
                     </li>
                 @endcanany
                 {{-- <li class="aiz-side-nav-item">
@@ -150,15 +154,15 @@
                                 <span class="aiz-side-nav-arrow"></span>
                             </a>
                             <ul class="aiz-side-nav-list level-2"> --}}
-                                @can('seller_view_package_list')
-                                <li id="packages" class="aiz-side-nav-item">
-                                    <a href="{{ route('seller.seller_packages_list') }}" class="aiz-side-nav-link">
-                                        <i class="las la-shopping-cart aiz-side-nav-icon"></i>
-                                        <span class="aiz-side-nav-text">{{ __('sidenav.Packages') }}</span>
-                                    </a>
-                                </li>
-                                @endcan
-                                {{-- @can('seller_view_all_packages')
+                    @can('seller_view_package_list')
+                        <li id="packages" class="aiz-side-nav-item">
+                            <a href="{{ route('seller.seller_packages_list') }}" class="aiz-side-nav-link">
+                                <i class="las la-shopping-cart aiz-side-nav-icon"></i>
+                                <span class="aiz-side-nav-text">{{ __('sidenav.Packages') }}</span>
+                            </a>
+                        </li>
+                    @endcan
+                    {{-- @can('seller_view_all_packages')
                                 <li id="package_list" class="aiz-side-nav-item">
                                     <a href="{{ route('seller.packages_payment_list') }}" class="aiz-side-nav-link">
                                         <span class="aiz-side-nav-text">{{ translate('Purchase Packages') }}</span>
@@ -173,7 +177,7 @@
                 @can('seller_view_all_staffs')
                     <li id="staff" class="aiz-side-nav-item">
                         <a href="{{ route('seller.staffs.index') }}"
-                        class="aiz-side-nav-link {{ areActiveRoutes(['seller.staffs.index', 'seller.staffs.create', 'seller.staffs.edit'])}}">
+                            class="aiz-side-nav-link {{ areActiveRoutes(['seller.staffs.index', 'seller.staffs.create', 'seller.staffs.edit']) }}">
                             <i class="las la-users aiz-side-nav-icon"></i>
                             <span class="aiz-side-nav-text">{{ translate('Staffs') }}</span>
                         </a>
@@ -213,7 +217,7 @@
                     <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link">
                             <i class="las la-shopping-cart aiz-side-nav-icon"></i>
-                            <span class="aiz-side-nav-text">{{__('staff.Billing')}}</span>
+                            <span class="aiz-side-nav-text">{{ __('staff.Billing') }}</span>
                             <span class="aiz-side-nav-arrow"></span>
                         </a>
                         <!--Submenu-->
@@ -227,16 +231,16 @@
                             @can('seller_view_all_leases')
                                 <li id="lease" class="aiz-side-nav-item">
                                     <a href="{{ route('seller.lease.index') }}"
-                                    class="aiz-side-nav-link {{ areActiveRoutes(['seller.lease.index'])}}">
-                                        <span class="aiz-side-nav-text">{{__('staff.e-Shop lease')}}</span>
+                                        class="aiz-side-nav-link {{ areActiveRoutes(['seller.lease.index']) }}">
+                                        <span class="aiz-side-nav-text">{{ __('staff.e-Shop lease') }}</span>
                                     </a>
                                 </li>
                             @endcan
                             @can('seller_view_all_sales')
                                 <li id="sales" class="aiz-side-nav-item">
-                                    <a href="{{route('seller.sales.index')}}"
-                                    class="aiz-side-nav-link {{ areActiveRoutes(['seller.sales.index'])}}">
-                                        <span class="aiz-side-nav-text">{{__('staff.Sales')}}</span>
+                                    <a href="{{ route('seller.sales.index') }}"
+                                        class="aiz-side-nav-link {{ areActiveRoutes(['seller.sales.index']) }}">
+                                        <span class="aiz-side-nav-text">{{ __('staff.Sales') }}</span>
                                     </a>
                                 </li>
                             @endcan
@@ -245,10 +249,10 @@
                 @endcanany
 
                 @php
-                $support_ticket = DB::table('tickets')
-                    ->where('client_viewed', 0)
-                    ->where('user_id', Auth::user()->owner_id)
-                    ->count();
+                    $support_ticket = DB::table('tickets')
+                        ->where('client_viewed', 0)
+                        ->where('user_id', Auth::user()->owner_id)
+                        ->count();
                 @endphp
                 @can('seller_view_support_tickets')
                     <li id="support_tickets" class="aiz-side-nav-item">
@@ -269,6 +273,36 @@
                         <span class="aiz-side-nav-text">{{ __('profile.e_shop_profile') }}</span>
                     </a>
                 </li>
+
+                <li id="help" id="help_centre" class="aiz-side-nav-item">
+                    <a href="{{ route('seller.help-center.index') }}" class="aiz-side-nav-link">
+                        <div class="svg-change" style="width: 30px;
+                height: 22px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                                <path
+                                    d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
+                            </svg>
+                        </div>
+
+                        <span class="aiz-side-nav-text">{{ __('help.Help_center') }}</span>
+                    </a>
+                </li>
+
+                <li id="startTourButton" class="aiz-side-nav-item">
+                    <a href="javascript:void(0);" class="aiz-side-nav-link">
+                        <div class="svg-change" style="width: 30px; height: 22px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0"/>
+                            </svg>
+                        </div>
+                        <span class="aiz-side-nav-text">{{ __('dashboard.Start tour') }}</span>
+                    </a>
+                </li>
+
+
                 {{-- @can('seller_shop_settings')
                     <li id="setting" class="aiz-side-nav-item">
                         <a href="{{ route('seller.shop.index') }}"
@@ -386,9 +420,7 @@
                     </li>
                 @endif --}}
 
-                {{-- @if (addon_is_activated('pos_system') &&
-                        get_setting('pos_activation_for_seller') != null &&
-                        get_setting('pos_activation_for_seller') != 0)
+                {{-- @if (addon_is_activated('pos_system') && get_setting('pos_activation_for_seller') != null && get_setting('pos_activation_for_seller') != 0)
                     <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link">
                             <i class="las la-tasks aiz-side-nav-icon"></i>

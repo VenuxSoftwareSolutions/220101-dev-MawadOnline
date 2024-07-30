@@ -146,6 +146,18 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
         Route::post('/profile-seller/update/{id}', 'updateProfile')->name('profile.seller.update');
         Route::post('/profile-seller/update/{id}', 'updateProfile')->name('profile.seller.update');
         Route::post('/personal-info/update}', 'updatePersonalInfo')->name('personal-info.update');
+        Route::get('/help-centre', 'helpCenter')->name('help-center.index');
+        Route::get('/Account-registration', 'AccountRegistration')->name('second-center.index');
+        Route::get('/product-management', 'ProductManagement')->name('product-management.index');
+        Route::get('/Inventory-Management', 'InventoryManagement')->name('Inventory-Management.index');
+        Route::get('/Order-Management', 'OrderManagement')->name('Order-Management.index');
+        Route::get('/eshop-LeaseManagement', 'eshop')->name('eshop.index');
+        Route::get('/Billing', 'Billing')->name('billing.index');
+        Route::get('/support-ticket', 'SupportTicket')->name('SupportTicket.index');
+        Route::get('/eshop-ProfileManagement', 'eshopProfile')->name('eshopProfile.index');
+        Route::get('/FAQS', 'FAQS')->name('FAQS.index');
+
+
 
     });
 

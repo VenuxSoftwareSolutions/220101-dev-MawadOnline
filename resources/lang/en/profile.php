@@ -45,6 +45,8 @@ return [
     'Register your e-Shop' => 'Register your e-Shop',
     'Terms & Conditions' => 'Terms & Conditions',
     'Accept' => 'Accept',
+    'Help_center' => 'Help center',
+    'FAQs'=>'FAQs',
 
 
 ];
