@@ -149,6 +149,8 @@ thead tr{
                                 </div>
                             </th>
                             <th width="30%" style="padding-left: 12px !important;">{{ translate('Name')}}</th>
+                            <th width="30%" style="padding-left: 12px !important;">{{ translate('SKU')}}</th>
+
                             {{-- <th data-breakpoints="md">{{ translate('Category')}}</th> --}}
                             <th data-breakpoints="md">{{ translate('QTY')}}</th>
                             <th>{{ translate('Base Price')}}</th>
@@ -172,8 +174,11 @@ thead tr{
                                 </td>
                                 <td>
                                     <a href="{{ route('product', $product->slug) }}" target="_blank" class="text-reset">
-                                        {{ $product->sku }}
+                                        {{ $product->name }}
                                     </a>
+                                </td>
+                                <td>
+                                    {{ $product->sku }}
                                 </td>
                                 {{-- <td>
                                     @if ($product->main_category != null)
@@ -257,8 +262,11 @@ thead tr{
                                         </td>
                                         <td >
                                             <a href="{{ route('product', $children->slug) }}" @if(app()->getLocale() == "ae") style="margin-right: 34px !important" @else style="margin-left: 34px !important" @endif target="_blank" class="text-reset">
-                                                {{ $children->sku }}
+                                                {{ $children->name }}
                                             </a>
+                                        </td>
+                                        <td>
+                                            {{ $children->sku }}
                                         </td>
                                         <td>
                                             @php
