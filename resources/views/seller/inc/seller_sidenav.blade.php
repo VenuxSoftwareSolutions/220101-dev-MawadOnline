@@ -218,6 +218,12 @@
                         </a>
                         <!--Submenu-->
                         <ul class="aiz-side-nav-list level-2">
+                            <li id="sales" class="aiz-side-nav-item">
+                                <a href="{{route('seller.subscription.index')}}"
+                                class="aiz-side-nav-link {{ areActiveRoutes(['seller.subscription.index'])}}">
+                                    <span class="aiz-side-nav-text">Subscription</span>
+                                </a>
+                            </li>
                             @can('seller_view_all_leases')
                                 <li id="lease" class="aiz-side-nav-item">
                                     <a href="{{ route('seller.lease.index') }}"

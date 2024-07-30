@@ -36,7 +36,7 @@ class Kernel extends ConsoleKernel
             User::where('status', 'Rejected')->where('user_type','seller')
                 ->where('updated_at', '<=', now()->subDays(30))
                 ->delete();
-        })->daily();
+        })->everyMinute();
 
         $schedule->call(function () {
             $currentDate = Carbon::now();

@@ -50,6 +50,9 @@ use App\Http\Controllers\SupportTicketController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\SizeChartController;
+use Laravel\Cashier\Http\Controllers\WebhookController;
+use Stripe\Stripe;
+use Stripe\Checkout\Session;
 
 /*
   |--------------------------------------------------------------------------
@@ -117,6 +120,39 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/users/registration', 'registration')->name('user.registration')->middleware('handle-demo-login');
     Route::post('/users/login/cart', 'cart_login')->name('cart.login.submit')->middleware('handle-demo-login');
     // Route::get('/new-page', 'new_page')->name('new_page');
+    Route::post('stripe/webhook', [WebhookController::class, 'handleWebhook']);
+    Route::get('checkout/{plan?}',  'checkout')->name('checkout');
+    // Route::middleware(['auth', 'subscribed'])->group(function () {
+        Route::get('/subscription/cancel',  'cancel')->name('subscription.cancel');
+        // Route::get('/subscription/update',  'updatePaymentInformation')->name('subscription.update');
+        Route::get('/subscription/card/change',  'changePaymentMethod')->name('subscription.card.change');
+        // Route to change payment method
+        Route::get('/subscription/card/change',  'showChangePaymentMethodForm')
+        ->name('subscription.card.change');
+        Route::post('/subscription/card/change',  'changePaymentMethod');
+
+        // Route to update payment information
+        Route::get('/subscription/update',  'updatePaymentInformation')
+        ->name('subscription.update');
+        Route::post('/subscription/update',  'updatePaymentInformation');
+        Route::get('subscription/reactivate', 'reactivateSubscription')->name('subscription.reactivate');
+        Route::get('/subscription/resume', 'resume')->name('subscription.resume');
+        Route::get('/subscription/suspend',  'suspend')->name('subscription.suspend');
+        Route::get('/subscription/pause', 'pause')->name('subscription.pause');
+        Route::get('/subscription/unpause', 'unpause')->name('subscription.unpause');
+        Route::post('/add-extra-amount',  'addExtraAmount')->name('subscription.add-extra');
+        Route::post('/create-checkout-session', 'createCheckoutSession')->name('checkout.session');
+
+    // });
+
+    // Route::get('/subscription/success', function () {
+    //     return 'Subscription successful!';
+    // })->name('subscription.success');
+
+    // Route::get('/subscription/cancel', function () {
+    //     return 'Subscription cancelled!';
+    // })->name('subscription.cancel');
+
 
     Route::get('/terms-and-conditions', function () {
         return view('email.terms');

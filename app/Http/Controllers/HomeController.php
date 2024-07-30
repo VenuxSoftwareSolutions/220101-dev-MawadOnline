@@ -43,7 +43,11 @@ use Illuminate\Support\Facades\Validator;
 use App\Mail\SecondEmailVerifyMailManager;
 use DateTime;
 use Illuminate\Support\Facades\DB;
-
+use Stripe\Exception\ApiErrorException;
+use Stripe\Stripe;
+use Stripe\Subscription;
+use Stripe\Subscription as StripeSubscription;
+use Stripe\Checkout\Session;
 
 class HomeController extends Controller
 {
@@ -294,6 +298,7 @@ class HomeController extends Controller
 
     public function product(Request $request, $slug)
     {
+
         if (!Auth::check()) {
             session(['link' => url()->current()]);
         }
@@ -434,6 +439,27 @@ class HomeController extends Controller
 
             $variations = [];
             $pricing_children = [];
+            $storedFilePaths = [];
+            if($parent->last_version == 1){
+                $images_parent = UploadProducts::where('id_product', $parent->id)->where('type', 'images')->get();
+                if(count($images_parent) > 0){
+                    $path = [];
+                    foreach($images_parent as $image){
+                        $revision_parent_image = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\UploadProducts')->where('revisionable_id', $image->id)->latest()->first();
+                        if($revision_parent_image == null){
+                            array_push($path, $image->path);
+                        }
+                    }
+                    $storedFilePaths = $path;
+                }
+            }else{
+                $storedFilePaths = UploadProducts::where('id_product', $parent->id)->where('type', 'images')->pluck('path')->toArray();
+            }
+
+            if(count($storedFilePaths) == 0){
+                $url = public_path().'/assets/img/placeholder.jpg';
+                array_push($storedFilePaths, $url);
+            }
             if($parent->is_parent == 1){
                 $childrens_ids = Product::where('parent_id', $parent->id)->pluck('id')->toArray();
 
@@ -509,30 +535,17 @@ class HomeController extends Controller
                     }else{
                         $variations[$children_id]['storedFilePaths'] = UploadProducts::where('id_product', $children_id)->where('type', 'images')->pluck('path')->toArray();
                     }
+                    if (count($storedFilePaths) > 0) {
+                        // If you want to merge main photo paths with variation photo paths
+                        $variations[$children_id]['storedFilePaths'] = array_merge(
+                            $variations[$children_id]['storedFilePaths'],
+                            $storedFilePaths
+                         );
+                         }
 
                 }
             }
-            $storedFilePaths = [];
-            if($parent->last_version == 1){
-                $images_parent = UploadProducts::where('id_product', $parent->id)->where('type', 'images')->get();
-                if(count($images_parent) > 0){
-                    $path = [];
-                    foreach($images_parent as $image){
-                        $revision_parent_image = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\UploadProducts')->where('revisionable_id', $image->id)->latest()->first();
-                        if($revision_parent_image == null){
-                            array_push($path, $image->path);
-                        }
-                    }
-                    $storedFilePaths = $path;
-                }
-            }else{
-                $storedFilePaths = UploadProducts::where('id_product', $parent->id)->where('type', 'images')->pluck('path')->toArray();
-            }
 
-            if(count($storedFilePaths) == 0){
-                $url = public_path().'/assets/img/placeholder.jpg';
-                array_push($storedFilePaths, $url);
-            }
 
 
             $attributes_general = ProductAttributeValues::where('id_products', $parent->id)->where('is_general', 1)->get();
@@ -638,7 +651,8 @@ class HomeController extends Controller
             }
 
             $total = isset($pricing['from'][0]) && isset($pricing['unit_price'][0]) ? $pricing['from'][0] * $pricing['unit_price'][0] : "";
-            if( isset($lastItem['variant_pricing-from']['discount']['date']) && is_array($lastItem['variant_pricing-from']['discount']['date']) && !empty($lastItem['variant_pricing-from']['discount']['date']) && $lastItem['variant_pricing-from']['discount']['date'][0] !== null){
+
+            if( isset($lastItem['variant_pricing-from']['discount']['date']) && is_array($lastItem['variant_pricing-from']['discount']['date']) && !empty($lastItem['variant_pricing-from']['discount']['date']) && isset($lastItem['variant_pricing-from']['discount']['date'][0]) && $lastItem['variant_pricing-from']['discount']['date'][0] !== null){
                 // Extract start and end dates from the first date interval
 
                 $dateRange = $lastItem['variant_pricing-from']['discount']['date'][0];
@@ -688,7 +702,7 @@ class HomeController extends Controller
                     $totalDiscount=$lastItem['variant_pricing-from']['from'][0]*$discountedPrice;
                 }
                 if (count($variations) == 0) {
-                    if( isset($pricing['date_range_pricing']) && is_array($pricing['date_range_pricing']) && !empty($pricing['date_range_pricing']) && $pricing['date_range_pricing'][0] !== null){
+                    if( isset($pricing['date_range_pricing']) && is_array($pricing['date_range_pricing']) && !empty($pricing['date_range_pricing']) && isset($pricing['date_range_pricing'][0]) && $pricing['date_range_pricing'][0] !== null){
                         // Extract start and end dates from the first date interval
 
                         $dateRange = $pricing['date_range_pricing'][0];
@@ -1276,5 +1290,203 @@ class HomeController extends Controller
 
         return Redirect::back()->with('success', 'Your request to join the waitlist has been submitted successfully!');
     }
+
+    public function checkout(Request $request, string $plan = 'price_1P0Rl4BP5icTBuiejLMD4n0h') {
+        return $request->user()
+        ->newSubscription('prod_QToCjFrgzq3KmV', $plan)
+        ->checkout([
+            // 'success_url' => route('subscription.success'),
+            // 'cancel_url' => route('subscription.cancel'),
+        ]);
+    }
+    public function createCheckoutSession(Request $request)
+    {
+        Stripe::setApiKey(env('STRIPE_SECRET')); // Use test key in test mode
+
+        try {
+            $plan = 'price_1PdD6kRvNlBWfmPI6CWSZVOW'; // Replace with your Stripe price ID
+
+            $session = Session::create([
+                'payment_method_types' => ['card'],
+                'line_items' => [[
+                    'price' => $plan,
+                    'quantity' => 1,
+                ]],
+                'mode' => 'subscription',
+                'success_url' => route('sellerpolicy') . '?session_id={CHECKOUT_SESSION_ID}',
+                'cancel_url' => route('sellerpolicy'),
+            ]);
+
+            return response()->json(['clientSecret' => env('STRIPE_SECRET')]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+
+    public function cancel()
+    {
+
+        // Authenticate with Stripe using your API key
+        Stripe::setApiKey(config('services.stripe.secret'));
+
+        // try {
+            $user = Auth::user();
+
+            // Retrieve the Stripe subscription ID from your database or use directly if known
+            $subscriptionId = $user->subscription('prod_QToCjFrgzq3KmV')->stripe_id;
+
+            // Cancel the subscription in Stripe
+            $subscription = \Stripe\Subscription::update(
+                $subscriptionId,
+                ['cancel_at_period_end' => true] // Set to true to cancel at the end of the current period
+            );
+
+            // Optionally, update your database to reflect the cancellation
+            $user->subscription('prod_QToCjFrgzq3KmV')->cancel(); // Update Laravel Cashier subscription status
+
+            // Redirect to a success page or return a response
+            return redirect()->back()->with('success', 'Subscription canceled successfully.');
+        // } catch (ApiErrorException $e) {
+        //     // Handle Stripe API errors
+        //     return redirect()->back()->with('error', 'Failed to cancel subscription: ' . $e->getMessage());
+        // }
+    }
+    public function changePaymentMethod(Request $request)
+    {
+        $validated = $request->validate([
+            'payment_method' => 'required|string',
+        ]);
+
+        $user = Auth::user();
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        try {
+            // Attach the payment method to the customer
+            $user->updateDefaultPaymentMethod($validated['payment_method']);
+
+            return back()->with('success', 'Payment method changed successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error changing payment method: ' . $e->getMessage());
+        }
+    }
+
+    public function updatePaymentInformation(Request $request)
+    {
+        $validated = $request->validate([
+            'payment_method' => 'required|string',
+        ]);
+
+
+        $user = Auth::user();
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        // try {
+            // Attach the payment method to the customer and update the subscription
+            $user->updateDefaultPaymentMethod($validated['payment_method']);
+            // $user->subscription('prod_QToCjFrgzq3KmV')->updateDefaultPaymentMethod($validated['payment_method']);
+
+            return redirect()->route('subscription.update')->with('success', 'Payment information updated successfully.');
+        // } catch (\Exception $e) {
+        //     return back()->with('error', 'Error updating payment information: ' . $e->getMessage());
+        // }
+    }
+    public function reactivateSubscription()
+    {
+        // $user = Auth::user();
+        // Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        // $stripeSubscriptionId = $user->subscription('prod_QToCjFrgzq3KmV')->stripe_id; // Replace with your subscription ID logic
+
+        //     // Retrieve the subscription from Stripe
+        //     $subscription = Subscription::retrieve($stripeSubscriptionId);
+
+        //     // Reactivate the subscription
+        //     $subscription->resume();
+
+        //     return redirect()->back()->with('success', 'Subscription reactivated successfully!');
+            $user = Auth::user();
+            $subscription = $user->subscription('prod_QToCjFrgzq3KmV'); // Or the name of your subscription plan
+
+            if ($subscription->ends_at && $subscription->ends_at > now()) {
+                $subscription->resume();
+                return redirect()->back()->with('success', 'Subscription cancellation has been canceled.');
+            }
+
+            return redirect()->back()->with('error', 'Unable to cancel the scheduled cancellation.');
+    }
+
+    public function resume()
+{
+    $user = Auth::user();
+    $subscription = $user->subscription('prod_QToCjFrgzq3KmV'); // Or the name of your subscription plan
+
+    if ($subscription->ends_at && $subscription->ends_at > now()) {
+        $subscription->resume();
+        return redirect()->back()->with('success', 'Subscription cancellation has been canceled.');
+    }
+
+    return redirect()->back()->with('error', 'Unable to cancel the scheduled cancellation.');
+}
+public function pause()
+{
+    $user = Auth::user();
+    $subscription = $user->subscription('prod_QToCjFrgzq3KmV'); // Or the name of your subscription plan
+
+
+
+
+    if (!$subscription) {
+        return redirect()->back()->with('error', 'No subscription found.');
+    }
+
+    Stripe::setApiKey(env('STRIPE_SECRET'));
+
+
+        $stripeSubscription = StripeSubscription::retrieve($subscription->stripe_id);
+        $stripeSubscription->pause_collection = [
+            'behavior' => 'keep_as_draft', // or 'mark_uncollectible' or 'void'
+        ];
+        $stripeSubscription->save();
+        // Optionally update your database if you have a pause_collection column
+        $subscription->update([
+            'pause_collection' => [
+                'behavior' => 'keep_as_draft',
+            ],
+        ]);
+        return redirect()->back()->with('success', 'Subscription paused successfully.');
+
+}
+public function unpause()
+{
+    $user = Auth::user();
+    $subscription = $user->subscription('prod_QToCjFrgzq3KmV'); // Adjust as necessary
+
+    if (!$subscription) {
+        return redirect()->back()->with('error', 'No subscription found.');
+    }
+
+    Stripe::setApiKey(env('STRIPE_SECRET'));
+
+    $stripeSubscription = StripeSubscription::retrieve($subscription->stripe_id);
+    $stripeSubscription->pause_collection = null; // Unpause the subscription
+    $stripeSubscription->save();
+    $subscription->update([
+        'pause_collection' => null,
+    ]);
+
+    return redirect()->back()->with('success', 'Subscription unpaused successfully.');
+    // $user = Auth::user();
+    // Stripe::setApiKey(env('STRIPE_SECRET'));
+
+
+    //     $subscription = Subscription::retrieve($user->subscription_id);
+    //     $subscription->resume();
+
+    //     return back()->with('success', 'Subscription resumed successfully.');
+
+}
+
+
 
 }

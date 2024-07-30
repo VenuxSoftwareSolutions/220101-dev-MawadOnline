@@ -25,6 +25,22 @@ class SellerLeaseController extends Controller
      */
     public function index()
     {
+
+        $user = Auth::user();
+        $planName = 'prod_QToCjFrgzq3KmV';
+
+        $isSubscribedToDailyPlan = $user->subscriptions()->where('name', $planName)->exists();
+
+        $subscription = $user->subscriptions()->where('name', $planName)->first();
+
+        // $isActiveSubscription = false;
+
+        // if ($subscription && $subscription->stripe_status === 'active') {
+        //     $isActiveSubscription = true;
+        // }
+
+
+
         seller_lease_creation($user=Auth::user());
 
         $currentDate = Carbon::now();
@@ -43,7 +59,7 @@ class SellerLeaseController extends Controller
         $leases = $leases->splice(1);
         //$leases=SellerLease::where('vendor_id',Auth::user()->owner_id)->get();
         $tour_steps=Tour::orderBy('step_number')->get();
-        return view('seller.lease',compact('current_lease','current_details','leases','tour_steps'));
+        return view('seller.lease',compact('current_lease','current_details','leases','tour_steps','isSubscribedToDailyPlan','user','subscription'));
     }
 
     /**
@@ -118,4 +134,5 @@ class SellerLeaseController extends Controller
         $tour_steps=Tour::orderBy('step_number')->get();
         return view('seller.coming_soon',compact('step','tour_steps'));
     }
+
 }

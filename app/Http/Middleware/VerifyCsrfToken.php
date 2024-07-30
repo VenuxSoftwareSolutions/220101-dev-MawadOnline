@@ -35,5 +35,6 @@ class VerifyCsrfToken extends Middleware
         '/lnmo*',
         '/rozer*',
         '/phonepe*',
+        '/stripe/webhook'
     ];
 }

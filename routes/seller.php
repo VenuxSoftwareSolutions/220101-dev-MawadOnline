@@ -8,6 +8,7 @@ use App\Http\Controllers\Seller\StockController;
 use App\Http\Controllers\Seller\SellerRoleController;
 use App\Http\Controllers\Seller\SellerStaffController;
 use App\Http\Controllers\Seller\CatalogController;
+use App\Http\Controllers\Seller\SubscriptionController;
 
 //Upload
 Route::group(['prefix' => 'vendor', 'middleware' => ['seller', 'verified', 'user', 'prevent-back-history'], 'as' => 'seller.'], function () {
@@ -219,6 +220,12 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
     Route::controller(SellerLeaseController::class)->group(function () {
         Route::get('/lease', 'index')->name('lease.index');
         Route::get('/sales', 'allSales')->name('sales.index');
+
+    });
+
+    Route::controller(SubscriptionController::class)->group(function () {
+        Route::get('/subscription', 'index')->name('subscription.index');
+
 
     });
 
