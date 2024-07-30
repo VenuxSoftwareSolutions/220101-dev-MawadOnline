@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'Subscription Packages' => 'Subscription Packages',
+    'Subscription Packages' => 'eShop lease plans',
     'Full access to all eShop essentials' =>  'Full access to all eShop essentials',
     'Unlimited products' => 'Unlimited products',
     'Free eShop administrator + 4 positions' =>'Free eShop administrator + 4 positions',

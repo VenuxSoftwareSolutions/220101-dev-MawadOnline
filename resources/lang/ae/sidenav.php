@@ -3,7 +3,7 @@
 return [
 
     'Orders Management' => 'إدارة الطلبات',
-    'Packages' => 'الحزم',
+    'Packages' => 'إيجار المتجر الإلكتروني',
     'Billing' => 'الفواتير',
     'product_management' => 'إدارة المنتجات',
     'mawad_catalogue' => 'كتالوج مواد',

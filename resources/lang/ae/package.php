@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'Subscription Packages' => 'حزم الاشتراك',
+    'Subscription Packages' => 'خطط إيجار المتجر الإلكتروني',
     'Full access to all e-Shop essentials' => 'وصول كامل إلى جميع أساسيات المتجر الإلكتروني',
     'Unlimited products' => 'منتجات غير محدودة',
     'Free e-Shop administrator + 4 positions' => 'مدير متجر إلكتروني + 4 وظائف مدير متجر إلكتروني مجاناً',

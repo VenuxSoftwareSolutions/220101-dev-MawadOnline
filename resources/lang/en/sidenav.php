@@ -3,7 +3,7 @@
 return [
 
     'Orders Management' => 'Orders Management',
-    'Packages' => 'Packages',
+    'Packages' => 'eShop lease',
     'Billing' => 'Billing',
     'product_management' => 'Product Management',
     'mawad_catalogue' => 'Mawad catalogue',
