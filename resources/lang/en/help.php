@@ -754,7 +754,7 @@ o	Access to the analytics and reports.',
     'eShop_Profile_content'=>'Update your personal and business information, contact person details, and payout information.',
     'mawed_vendor_help_center' => 'MawadOnline Vendor Help Center',
     'All_help_topics'=>'All Help Topics',
-    'Help_center' => 'Help center',
+    'Help_center' => 'Help Center',
 
 
 

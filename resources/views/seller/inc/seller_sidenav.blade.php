@@ -300,7 +300,7 @@
                               </svg>
 
                         </div>
-                        <span class="aiz-side-nav-text ml-2">{{ __('dashboard.Start tour') }}</span>
+                        <span class="aiz-side-nav-text ml-2">{{ __('dashboard.Start Tour') }}</span>
                     </a>
                 </li>
 

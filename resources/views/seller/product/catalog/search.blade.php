@@ -97,7 +97,7 @@
     <div class="aiz-titlebar mt-2 mb-4">
       <div class="row align-items-center">
         <div class="col-md-12">
-            <h1 class="h3">{{ translate('Mawad Catalog Search Page') }}</h1>
+            <h1 class="h3">{{ translate('MawadOnline Catalogue Search Page') }}</h1>
         </div>
         <div class="col-6">
             <p>
