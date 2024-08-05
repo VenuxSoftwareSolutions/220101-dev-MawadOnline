@@ -323,7 +323,7 @@
                 <div class="text-center text-sm-left mt-4">
                     <!-- Seller -->
                     @if (get_setting('vendor_system_activation') == 1)
-                        <h4 class="fs-14 text-white fw-700 mb-3 letter-spacing-1">{{ translate('Seller Zone') }}</h4>
+                        <h4 class="fs-14 text-white fw-700 mb-3 letter-spacing-1">{{ translate('Vendor Zone') }}</h4>
                         <ul class="list-unstyled">
                             <li class="mb-2">
                                 <p class="fs-13 text-secondary mb-0">
