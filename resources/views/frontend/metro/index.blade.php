@@ -234,7 +234,7 @@
                                 <div class="h-200px p-4">
                                     <div class="h-100 w-100 w-xl-auto position-relative overflow-hidden radius-category">
                                         <div class="position-absolute h-100 w-100 overflow-hidden">
-                                            <img src="{{ isset($category->thumbnail_image) ? my_asset($category->thumbnail_image) : static_asset('assets/img/placeholder.jpg') }}"
+                                            <img src="{{ isset($category->cover_image) ? my_asset($category->cover_image) : static_asset('assets/img/placeholder.jpg') }}"
                                                 alt="{{ $category_name }}"
                                                 class="img-fit h-100 has-transition radius-category"
                                                 onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
