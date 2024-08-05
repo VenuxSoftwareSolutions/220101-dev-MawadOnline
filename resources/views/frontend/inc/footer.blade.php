@@ -71,9 +71,9 @@
 </section>
 
 <!-- footer subscription & icons -->
-<section class="py-3 text-light footer-widget border-bottom" style="border-color: #3d3d46 !important; background-color: #212129 !important;">
+<section class="py-3 text-light footer-widget border-bottom" style="border-color: #3d3d46 !important; background-color: #3D3D3B !important;">
     <div class="container">
-        <!-- footer logo -->
+        <!-- footer logo
         <div class="mt-3 mb-4">
             <a href="{{ route('home') }}" class="d-block">
                 @if(get_setting('footer_logo') != null)
@@ -83,64 +83,118 @@
                 @endif
             </a>
         </div>
-        <div class="row">
+        <div class="col-auto pl-0 pr-3 d-flex align-items-center">
+            <a class="d-block py-20px mr-3 ml-0" href="{{ route('home') }}">
+                @php
+                    $header_logo = get_setting('header_logo');
+                @endphp
+                @if ($header_logo != null)
+                    <img src="{{ uploaded_asset($header_logo) }}" alt="{{ env('APP_NAME') }}"
+                        class="mw-100 h-30px h-md-40px" height="40">
+                @else
+                    <img src="{{ static_asset('assets/img/logo.png') }}" alt="{{ env('APP_NAME') }}"
+                        class="mw-100 h-30px h-md-40px" height="40">
+                @endif
+            </a>
+        </div>-->
+        <div class="row" style="border-bottom:solid 1px #63646C;">
             <!-- about & subscription -->
             <div class="col-xl-6 col-lg-7">
+                <a class="d-block py-20px mr-3 ml-0" href="{{ route('home') }}">
+                    @php
+                        $header_logo = get_setting('header_logo');
+                    @endphp
+                    @if ($header_logo != null)
+                        <img src="{{ uploaded_asset($header_logo) }}" alt="{{ env('APP_NAME') }}"
+                            class="mw-100 h-30px h-md-40px" height="40">
+                    @else
+                        <img src="{{ static_asset('assets/img/logo.png') }}" alt="{{ env('APP_NAME') }}"
+                            class="mw-100 h-30px h-md-40px" height="40">
+                    @endif
+                </a>
                 <div class="mb-4 text-secondary text-justify">
                     {!! get_setting('about_us_description',null,App::getLocale()) !!}
                 </div>
-                <h5 class="fs-14 fw-700 text-soft-light mt-1 mb-3">{{ translate('Subscribe to our newsletter for regular updates about Offers, Coupons & more') }}</h5>
-                <div class="mb-3">
-                    <form method="POST" action="{{ route('subscribers.store') }}">
-                        @csrf
-                        <div class="row gutters-10">
-                            <div class="col-8">
-                                <input type="email" class="form-control border-secondary rounded-0 text-white w-100 bg-transparent" placeholder="{{ translate('Your Email Address') }}" name="email" required>
-                            </div>
-                            <div class="col-4">
-                                <button type="submit" class="btn btn-primary rounded-0 w-100">{{ translate('Subscribe') }}</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <div class="col d-none d-lg-block"></div>
-
-            <!-- Follow & Apps -->
-            <div class="col-xxl-3 col-xl-4 col-lg-4">
+                 <!-- Follow & Apps -->
+            <div class="col-xxl-6 col-xl-8 col-lg-8 p-0">
                 <!-- Social -->
                 @if ( get_setting('show_social_links') )
-                    <h5 class="fs-14 fw-700 text-secondary text-uppercase mt-3 mt-lg-0">{{ translate('Follow Us') }}</h5>
-                    <ul class="list-inline social colored mb-4">
-                        @if (!empty(get_setting('facebook_link')))
+                    <ul class="list-inline social colored mb-4 ml-0">
+                        @if (!empty(get_setting('linkedin_link')))
                             <li class="list-inline-item ml-2 mr-2">
-                                <a href="{{ get_setting('facebook_link') }}" target="_blank"
-                                    class="facebook"><i class="lab la-facebook-f"></i></a>
+                                <a href="{{ get_setting('linkedin_link') }}" target="_blank">
+                                    <svg width="32" height="33" viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M27.2655 27.5328H22.5241V20.1073C22.5241 18.3366 22.4925 16.0572 20.0581 16.0572C17.5886 16.0572 17.2108 17.9864 17.2108 19.9784V27.5323H12.4694V12.2625H17.0211V14.3492H17.0848C17.5404 13.5704 18.1986 12.9296 18.9895 12.4953C19.7803 12.0609 20.6742 11.8492 21.5758 11.8826C26.3815 11.8826 27.2675 15.0437 27.2675 19.156L27.2655 27.5328ZM7.1195 10.1752C6.57531 10.1753 6.04329 10.014 5.59076 9.71174C5.13822 9.40947 4.7855 8.97979 4.57716 8.47704C4.36882 7.97429 4.31421 7.42105 4.42029 6.88728C4.52636 6.3535 4.78833 5.86317 5.17307 5.47828C5.5578 5.0934 6.04803 4.83125 6.58174 4.72498C7.11546 4.61871 7.66869 4.6731 8.1715 4.88128C8.67431 5.08945 9.10409 5.44205 9.40651 5.89449C9.70893 6.34693 9.87041 6.87889 9.87051 7.42311C9.87057 7.78445 9.79945 8.14227 9.66124 8.47613C9.52302 8.80999 9.32043 9.11336 9.06497 9.36892C8.80952 9.62447 8.50621 9.8272 8.17241 9.96554C7.8386 10.1039 7.48083 10.1751 7.1195 10.1752ZM9.4902 27.5328H4.74386V12.2625H9.4902V27.5328ZM29.6293 0.268782H2.36132C1.74241 0.261797 1.14602 0.50082 0.703253 0.933325C0.260483 1.36583 0.00755341 1.95643 0 2.57535V29.9574C0.00729489 30.5766 0.260076 31.1676 0.702831 31.6006C1.14559 32.0335 1.74211 32.273 2.36132 32.2664H29.6293C30.2497 32.2742 30.8479 32.0354 31.2924 31.6024C31.7369 31.1695 31.9914 30.5778 32 29.9574V2.57338C31.9912 1.95323 31.7365 1.36196 31.292 0.92946C30.8475 0.496966 30.2494 0.258626 29.6293 0.266805" fill="#A2A4AD"/>
+                                        </svg>
+                                </a>
                             </li>
                         @endif
                         @if (!empty(get_setting('twitter_link')))
                             <li class="list-inline-item ml-2 mr-2">
-                                <a href="{{ get_setting('twitter_link') }}" target="_blank"
-                                    class="twitter"><i class="lab la-twitter"></i></a>
+                                <a href="{{ get_setting('twitter_link') }}" target="_blank">
+                                    <svg width="27" height="25" viewBox="0 0 27 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <g clip-path="url(#clip0_5007_1600)">
+                                        <path d="M21.253 0.266602H25.3734L16.3734 10.4533L26.9999 24.2666H18.6505L12.1445 15.8933L4.66259 24.2666H0.542108L10.1927 13.3866L-6.10352e-05 0.266602H8.5662L14.4758 7.9466L21.253 0.266602ZM19.7891 21.8133H22.0662L7.31922 2.55994H4.82524L19.7891 21.8133Z" fill="#A2A4AD"/>
+                                        </g>
+                                        <defs>
+                                        <clipPath id="clip0_5007_1600">
+                                        <rect width="27" height="24" fill="white" transform="translate(-6.10352e-05 0.266602)"/>
+                                        </clipPath>
+                                        </defs>
+                                        </svg>
+
+                                </a>
+                            </li>
+                        @endif
+                        @if (!empty(get_setting('facebook_link')))
+                            <li class="list-inline-item ml-2 mr-2">
+                                <a href="{{ get_setting('facebook_link') }}" target="_blank">
+                                    <svg width="32" height="33" viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <g clip-path="url(#clip0_5007_1603)">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M15.9999 0.266602C24.8364 0.266602 31.9999 7.47382 31.9999 16.3644C31.9999 24.3992 26.1489 31.0589 18.4999 32.2666V21.0176H22.228L22.9374 16.3644H22.7688L22.8081 16.1113H18.4999V13.3447C18.4999 12.0716 19.1197 10.8308 21.1073 10.8308H23.1249V6.86921C23.1249 6.86921 23.0808 6.86164 22.9999 6.84886V6.58214C22.9999 6.58214 21.127 6.2666 19.3365 6.2666C15.5984 6.2666 13.1551 8.50311 13.1551 12.552V16.1113H8.99988V20.7812H9.43738V21.0176H13.1551V32.0703C13.2697 32.0881 13.3846 32.1047 13.4999 32.12V32.2666C5.85085 31.0589 -0.00012207 24.3992 -0.00012207 16.3644C-0.00012207 7.47382 7.16332 0.266602 15.9999 0.266602Z" fill="#A2A4AD"/>
+                                        </g>
+                                        <defs>
+                                        <clipPath id="clip0_5007_1603">
+                                        <rect width="32" height="32" fill="white" transform="translate(-6.10352e-05 0.266602)"/>
+                                        </clipPath>
+                                        </defs>
+                                        </svg>
+
+                                </a>
                             </li>
                         @endif
                         @if (!empty(get_setting('instagram_link')))
                             <li class="list-inline-item ml-2 mr-2">
-                                <a href="{{ get_setting('instagram_link') }}" target="_blank"
-                                    class="instagram"><i class="lab la-instagram"></i></a>
+                                <a href="{{ get_setting('instagram_link') }}" target="_blank">
+                                    <svg width="32" height="33" viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <g clip-path="url(#clip0_5007_1609)">
+                                        <path d="M9.37341 0.378502C7.67101 0.458822 6.50844 0.730502 5.49212 1.12986C4.44028 1.53978 3.54876 2.08986 2.66172 2.9801C1.77468 3.87034 1.22844 4.7625 0.821405 5.81594C0.427485 6.8345 0.160605 7.99802 0.0854049 9.70138C0.0102049 11.4047 -0.00643509 11.9523 0.00188491 16.2972C0.0102049 20.6422 0.0294049 21.1868 0.111965 22.8937C0.193245 24.5958 0.463965 25.758 0.863325 26.7747C1.27388 27.8265 1.82332 28.7177 2.71388 29.6051C3.60444 30.4924 4.49596 31.0374 5.55196 31.4451C6.56956 31.8383 7.73341 32.1065 9.43645 32.1811C11.1395 32.2556 11.6876 32.2729 16.0313 32.2646C20.375 32.2563 20.9219 32.2371 22.6284 32.1561C24.335 32.0751 25.4912 31.8025 26.5081 31.4051C27.56 30.9935 28.4518 30.4451 29.3385 29.5542C30.2252 28.6633 30.7712 27.7705 31.1779 26.7164C31.5721 25.6988 31.84 24.535 31.9139 22.8332C31.9884 21.1254 32.006 20.5801 31.9977 16.2358C31.9894 11.8915 31.9699 11.3468 31.8889 9.64058C31.808 7.93434 31.5369 6.77562 31.1379 5.75834C30.7267 4.7065 30.1779 3.81594 29.2876 2.92794C28.3974 2.03994 27.504 1.49434 26.4502 1.08858C25.432 0.694662 24.2688 0.426182 22.5657 0.352582C20.8627 0.278982 20.3145 0.260102 15.9692 0.268422C11.624 0.276742 11.08 0.295302 9.37341 0.378502ZM9.56028 29.3027C8.00029 29.2348 7.15324 28.9756 6.58876 28.7587C5.84124 28.4707 5.30876 28.1225 4.7462 27.5654C4.18364 27.0083 3.83804 26.4739 3.5462 25.7279C3.327 25.1635 3.063 24.3174 2.99004 22.7574C2.91068 21.0713 2.89404 20.5651 2.88476 16.2934C2.87548 12.0217 2.8918 11.5161 2.96572 9.82938C3.03228 8.27066 3.29308 7.42266 3.50972 6.8585C3.79772 6.11002 4.1446 5.5785 4.703 5.01626C5.2614 4.45402 5.7942 4.10778 6.54076 3.81594C7.1046 3.59578 7.95069 3.33402 9.51005 3.25978C11.1974 3.17978 11.703 3.16378 15.974 3.1545C20.2451 3.14522 20.752 3.16122 22.44 3.23546C23.9987 3.3033 24.847 3.56154 25.4105 3.77946C26.1584 4.06746 26.6905 4.41338 27.2528 4.97274C27.815 5.5321 28.1616 6.06298 28.4534 6.81114C28.6739 7.37338 28.9356 8.21914 29.0092 9.77946C29.0896 11.4668 29.1078 11.9727 29.1155 16.2435C29.1232 20.5142 29.1081 21.0214 29.0342 22.7075C28.966 24.2675 28.7075 25.1148 28.4902 25.6799C28.2022 26.4271 27.855 26.9599 27.2963 27.5219C26.7376 28.0838 26.2054 28.43 25.4585 28.7219C24.8953 28.9417 24.0483 29.2041 22.4902 29.2783C20.8028 29.3577 20.2972 29.3743 16.0246 29.3836C11.752 29.3929 11.248 29.3756 9.5606 29.3027M22.6038 7.71514C22.6044 8.09491 22.7177 8.46596 22.9292 8.78136C23.1407 9.09676 23.441 9.34235 23.7922 9.48707C24.1433 9.63179 24.5294 9.66913 24.9017 9.59437C25.2741 9.51961 25.6159 9.33612 25.8839 9.06709C26.152 8.79806 26.3342 8.45559 26.4076 8.08298C26.481 7.71037 26.4422 7.32437 26.2962 6.97379C26.1502 6.62321 25.9035 6.3238 25.5874 6.11343C25.2712 5.90306 24.8997 5.79118 24.52 5.79194C24.0109 5.79296 23.523 5.99613 23.1637 6.35678C22.8043 6.71744 22.603 7.20604 22.6038 7.71514ZM7.7846 16.2825C7.79356 20.8201 11.4787 24.4902 16.0153 24.4815C20.552 24.4729 24.2246 20.7881 24.216 16.2505C24.2073 11.7129 20.5212 8.04186 15.984 8.05082C11.4467 8.05978 7.77596 11.7455 7.7846 16.2825ZM10.6665 16.2767C10.6644 15.2219 10.9752 14.1901 11.5595 13.3119C12.1438 12.4336 12.9754 11.7484 13.9492 11.3428C14.9229 10.9372 15.9951 10.8294 17.0301 11.0332C18.0651 11.2369 19.0164 11.743 19.7638 12.4874C20.5112 13.2318 21.021 14.1812 21.2288 15.2153C21.4367 16.2495 21.3332 17.3221 20.9314 18.2974C20.5297 19.2728 19.8477 20.1071 18.9718 20.6949C18.0959 21.2827 17.0654 21.5975 16.0105 21.5996C15.3101 21.6011 14.6163 21.4646 13.9686 21.1979C13.3209 20.9311 12.7322 20.5394 12.2359 20.0452C11.7397 19.5509 11.3457 18.9636 11.0764 18.3171C10.8071 17.6705 10.6678 16.9772 10.6665 16.2767Z" fill="#A2A4AD"/>
+                                        </g>
+                                        <defs>
+                                        <clipPath id="clip0_5007_1609">
+                                        <rect width="32" height="32" fill="white" transform="translate(-6.10352e-05 0.266602)"/>
+                                        </clipPath>
+                                        </defs>
+                                        </svg>
+
+                                </a>
                             </li>
                         @endif
                         @if (!empty(get_setting('youtube_link')))
                             <li class="list-inline-item ml-2 mr-2">
-                                <a href="{{ get_setting('youtube_link') }}" target="_blank"
-                                    class="youtube"><i class="lab la-youtube"></i></a>
-                            </li>
-                        @endif
-                        @if (!empty(get_setting('linkedin_link')))
-                            <li class="list-inline-item ml-2 mr-2">
-                                <a href="{{ get_setting('linkedin_link') }}" target="_blank"
-                                    class="linkedin"><i class="lab la-linkedin-in"></i></a>
+                                <a href="{{ get_setting('youtube_link') }}" target="_blank">
+                                    <svg width="32" height="33" viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <g clip-path="url(#clip0_5007_1611)">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M28.502 5.92341C29.8789 6.28481 30.9631 7.34968 31.3311 8.70197C31.9998 11.1529 31.9998 16.2666 31.9998 16.2666C31.9998 16.2666 31.9998 21.3802 31.3311 23.8314C30.9631 25.1835 29.8789 26.2484 28.502 26.6099C26.0066 27.2666 15.9998 27.2666 15.9998 27.2666C15.9998 27.2666 5.99317 27.2666 3.49765 26.6099C2.12087 26.2484 1.03649 25.1835 0.668526 23.8314C-0.000152588 21.3802 -0.000152588 16.2666 -0.000152588 16.2666C-0.000152588 16.2666 -0.000152588 11.1529 0.668526 8.70197C1.03649 7.34968 2.12087 6.28481 3.49765 5.92341C5.99317 5.2666 15.9998 5.2666 15.9998 5.2666C15.9998 5.2666 26.0066 5.2666 28.502 5.92341ZM20.9998 16.7668L12.9998 21.2666V12.2666L20.9998 16.7668Z" fill="#A2A4AD"/>
+                                        </g>
+                                        <defs>
+                                        <clipPath id="clip0_5007_1611">
+                                        <rect width="32" height="32" fill="white" transform="translate(-6.10352e-05 0.266602)"/>
+                                        </clipPath>
+                                        </defs>
+                                        </svg>
+
+                                </a>
                             </li>
                         @endif
                     </ul>
@@ -164,21 +218,16 @@
                 @endif
 
             </div>
-        </div>
-    </div>
-</section>
 
-@php
-    $col_values = ((get_setting('vendor_system_activation') == 1) || addon_is_activated('delivery_boy')) ? "col-lg-3 col-md-6 col-sm-6" : "col-md-4 col-sm-6";
-@endphp
-<section class="py-lg-3 text-light footer-widget" style="background-color: #212129 !important;">
-    <!-- footer widgets ========== [Accordion Fotter widgets are bellow from this]-->
-    <div class="container d-none d-lg-block">
-        <div class="row">
-            <!-- Quick links -->
-            <div class="{{ $col_values }}">
+            </div>
+            @php
+                $col_values = ((get_setting('vendor_system_activation') == 1) || addon_is_activated('delivery_boy')) ? "col-lg-3 col-md-6 col-sm-6" : "col-md-4 col-sm-6";
+            @endphp
+            <div class="col d-none d-lg-block font-prompt">
+                <!-- Quick links -->
+            <div class="{{ $col_values }} float-left my-3 mx-4">
                 <div class="text-center text-sm-left mt-4">
-                    <h4 class="fs-14 text-secondary text-uppercase fw-700 mb-3">
+                    <h4 class="fs-14 text-white fw-700 mb-3 letter-spacing-1">
                         {{ get_setting('widget_one',null,App::getLocale()) }}
                     </h4>
                     <ul class="list-unstyled">
@@ -190,8 +239,8 @@
 									$widget_one_links = json_decode(get_setting('widget_one_links'), true)[$key];
 								}
 							@endphp
-                            <li class="mb-2">
-                                <a href="{{ $widget_one_links }}" class="fs-13 text-soft-light animate-underline-white">
+                            <li class="mb-2 font-prompt">
+                                <a href="{{ $widget_one_links }}" class="fs-13 text-secondary animate-underline-white">
                                     {{ $value }}
                                 </a>
                             </li>
@@ -201,7 +250,7 @@
                 </div>
             </div>
 
-            <!-- Contacts -->
+            <!-- Contacts
             <div class="{{ $col_values }}">
                 <div class="text-center text-sm-left mt-4">
                     <h4 class="fs-14 text-secondary text-uppercase fw-700 mb-3">{{ translate('Contacts') }}</h4>
@@ -223,43 +272,43 @@
                     </ul>
                 </div>
             </div>
-
+            -->
             <!-- My Account -->
-            <div class="{{ $col_values }}">
+            <div class="{{ $col_values }} float-left my-3">
                 <div class="text-center text-sm-left mt-4">
-                    <h4 class="fs-14 text-secondary text-uppercase fw-700 mb-3">{{ translate('My Account') }}</h4>
+                    <h4 class="fs-14 text-white fw-700 mb-3 letter-spacing-1">{{ translate('My Account') }}</h4>
                     <ul class="list-unstyled">
                         @if (Auth::check())
                             <li class="mb-2">
-                                <a class="fs-13 text-soft-light animate-underline-white" href="{{ route('logout') }}">
+                                <a class="fs-13 text-secondary animate-underline-white" href="{{ route('logout') }}">
                                     {{ translate('Logout') }}
                                 </a>
                             </li>
                         @else
                             <li class="mb-2">
-                                <a class="fs-13 text-soft-light animate-underline-white" href="{{ route('user.login') }}">
+                                <a class="fs-13 text-secondary animate-underline-white" href="{{ route('user.login') }}">
                                     {{ translate('Login') }}
                                 </a>
                             </li>
                         @endif
                         <li class="mb-2">
-                            <a class="fs-13 text-soft-light animate-underline-white" href="{{ route('purchase_history.index') }}">
+                            <a class="fs-13 text-secondary animate-underline-white" href="{{ route('purchase_history.index') }}">
                                 {{ translate('Order History') }}
                             </a>
                         </li>
                         <li class="mb-2">
-                            <a class="fs-13 text-soft-light animate-underline-white" href="{{ route('wishlists.index') }}">
+                            <a class="fs-13 text-secondary animate-underline-white" href="{{ route('wishlists.index') }}">
                                 {{ translate('My Wishlist') }}
                             </a>
                         </li>
                         <li class="mb-2">
-                            <a class="fs-13 text-soft-light animate-underline-white" href="{{ route('orders.track') }}">
+                            <a class="fs-13 text-secondary animate-underline-white" href="{{ route('orders.track') }}">
                                 {{ translate('Track Order') }}
                             </a>
                         </li>
                         @if (addon_is_activated('affiliate_system'))
                             <li class="mb-2">
-                                <a class="fs-13 text-soft-light animate-underline-white" href="{{ route('affiliate.apply') }}">
+                                <a class="fs-13 text-secondary animate-underline-white" href="{{ route('affiliate.apply') }}">
                                     {{ translate('Be an affiliate partner')}}
                                 </a>
                             </li>
@@ -270,28 +319,28 @@
 
             <!-- Seller & Delivery Boy -->
             @if ((get_setting('vendor_system_activation') == 1) || addon_is_activated('delivery_boy'))
-            <div class="col-lg-3 col-md-4 col-sm-6">
+            <div class="col-lg-4 col-md-4 col-sm-6 float-left my-3 ml-4">
                 <div class="text-center text-sm-left mt-4">
                     <!-- Seller -->
                     @if (get_setting('vendor_system_activation') == 1)
-                        <h4 class="fs-14 text-secondary text-uppercase fw-700 mb-3">{{ translate('Seller Zone') }}</h4>
+                        <h4 class="fs-14 text-white fw-700 mb-3 letter-spacing-1">{{ translate('Seller Zone') }}</h4>
                         <ul class="list-unstyled">
                             <li class="mb-2">
-                                <p class="fs-13 text-soft-light mb-0">
+                                <p class="fs-13 text-secondary mb-0">
                                     {{ translate('Become A Seller') }}
                                     <a href="{{ route('shops.packages') }}" class="fs-13 fw-700 text-secondary-base ml-2">{{ translate('Apply Now') }}</a>
                                 </p>
                             </li>
                             @guest
                                 <li class="mb-2">
-                                    <a class="fs-13 text-soft-light animate-underline-white" href="{{ route('seller.login') }}">
+                                    <a class="fs-13 text-secondary animate-underline-white" href="{{ route('seller.login') }}">
                                         {{ translate('Login to Seller Panel') }}
                                     </a>
                                 </li>
                             @endguest
                             @if(get_setting('seller_app_link'))
                                 <li class="mb-2">
-                                    <a class="fs-13 text-soft-light animate-underline-white" target="_blank" href="{{ get_setting('seller_app_link')}}">
+                                    <a class="fs-13 text-secondary animate-underline-white" target="_blank" href="{{ get_setting('seller_app_link')}}">
                                         {{ translate('Download Seller App') }}
                                     </a>
                                 </li>
@@ -301,11 +350,11 @@
 
                     <!-- Delivery Boy -->
                     @if (addon_is_activated('delivery_boy'))
-                        <h4 class="fs-14 text-secondary text-uppercase fw-700 mt-4 mb-3">{{ translate('Delivery Boy') }}</h4>
+                        <h4 class="fs-14 text-white text-uppercase fw-700 mt-4 mb-3">{{ translate('Delivery Boy') }}</h4>
                         <ul class="list-unstyled">
                             @guest
                                 <li class="mb-2">
-                                    <a class="fs-13 text-soft-light animate-underline-white" href="{{ route('deliveryboy.login') }}">
+                                    <a class="fs-13 text-secondary animate-underline-white" href="{{ route('deliveryboy.login') }}">
                                         {{ translate('Login to Delivery Boy Panel') }}
                                     </a>
                                 </li>
@@ -313,7 +362,7 @@
 
                             @if(get_setting('delivery_boy_app_link'))
                                 <li class="mb-2">
-                                    <a class="fs-13 text-soft-light animate-underline-white" target="_blank" href="{{ get_setting('delivery_boy_app_link')}}">
+                                    <a class="fs-13 text-secondary animate-underline-white" target="_blank" href="{{ get_setting('delivery_boy_app_link')}}">
                                         {{ translate('Download Delivery Boy App') }}
                                     </a>
                                 </li>
@@ -323,6 +372,35 @@
                 </div>
             </div>
             @endif
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="py-lg-3 text-light footer-widget" style="background-color: #3D3D3B !important;">
+    <!-- footer widgets ========== [Accordion Fotter widgets are bellow from this]-->
+    <div class="container d-none d-lg-block">
+        <div class="row">
+            <div class="col-12 col-md-6">
+            <h5 class="fs-14 fw-700 mt-1 mb-3 font-prompt" style="color:#CB774B;">{{ translate('Subscribe to our newsletter for regular updates about Offers, Coupons & more') }}</h5>
+            <div class="mb-4 fs-16 text-secondary text-justify font-prompt">
+                Stay in the loop with our newsletter! Get exclusive offers, discounts, and the <br/> latest updates delivered right to your inbox. Don’t miss out and subscribe now!
+            </div>
+            </div>
+            <div class="mb-3 col-12 col-md-6 mt-1">
+                    <form method="POST" action="{{ route('subscribers.store') }}">
+                        @csrf
+                        <div class="row gutters-10">
+                            <div class="col-10">
+                                <input type="email" class="form-control border-secondary text-white w-100 bg-white font-prompt border-radius-8px border-0" placeholder="{{ translate('Your Email Address') }}" name="email" required>
+                            </div>
+                            <div class="col-2">
+                                <button type="submit" class="btn btn-primary w-100 font-prompt border-radius-8px border-0">{{ translate('Subscribe') }}</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
         </div>
     </div>
 
@@ -333,7 +411,7 @@
             <div class="aiz-accordion-heading container bg-black">
                 <button class="aiz-accordion fs-14 text-white bg-transparent">{{ get_setting('widget_one',null,App::getLocale()) }}</button>
             </div>
-            <div class="aiz-accordion-panel bg-transparent" style="background-color: #212129 !important;">
+            <div class="aiz-accordion-panel bg-transparent" style="background-color: #3D3D3B !important;">
                 <div class="container">
                     <ul class="list-unstyled mt-3">
                         @if ( get_setting('widget_one_labels',null,App::getLocale()) !=  null )
@@ -361,7 +439,7 @@
             <div class="aiz-accordion-heading container bg-black">
                 <button class="aiz-accordion fs-14 text-white bg-transparent">{{ translate('Contacts') }}</button>
             </div>
-            <div class="aiz-accordion-panel bg-transparent" style="background-color: #212129 !important;">
+            <div class="aiz-accordion-panel bg-transparent" style="background-color: #3D3D3B !important;">
                 <div class="container">
                     <ul class="list-unstyled mt-3">
                         <li class="mb-2">
@@ -388,7 +466,7 @@
             <div class="aiz-accordion-heading container bg-black">
                 <button class="aiz-accordion fs-14 text-white bg-transparent">{{ translate('My Account') }}</button>
             </div>
-            <div class="aiz-accordion-panel bg-transparent" style="background-color: #212129 !important;">
+            <div class="aiz-accordion-panel bg-transparent" style="background-color: #3D3D3B !important;">
                 <div class="container">
                     <ul class="list-unstyled mt-3">
                         @auth
@@ -435,9 +513,9 @@
         @if (get_setting('vendor_system_activation') == 1)
         <div class="aiz-accordion-wrap bg-black">
             <div class="aiz-accordion-heading container bg-black">
-                <button class="aiz-accordion fs-14 text-white bg-transparent">{{ translate('Seller Zone') }}</button>
+                <button class="aiz-accordion fs-14 text-white bg-transparent">{{ translate('Vendor Zone') }}</button>
             </div>
-            <div class="aiz-accordion-panel bg-transparent" style="background-color: #212129 !important;">
+            <div class="aiz-accordion-panel bg-transparent" style="background-color: #3D3D3B !important;">
                 <div class="container">
                     <ul class="list-unstyled mt-3">
                         <li class="mb-2 pb-2 {{ areActiveRoutes(['shops.create'],' active')}}">
@@ -449,7 +527,7 @@
                         @guest
                             <li class="mb-2 pb-2 {{ areActiveRoutes(['deliveryboy.login'],' active')}}">
                                 <a class="fs-13 text-soft-light text-sm-secondary animate-underline-white" href="{{ route('seller.login') }}">
-                                    {{ translate('Login to Seller Panel') }}
+                                    {{ translate('Login to Vendor Center') }}
                                 </a>
                             </li>
                         @endguest
@@ -472,7 +550,7 @@
             <div class="aiz-accordion-heading container bg-black">
                 <button class="aiz-accordion fs-14 text-white bg-transparent">{{ translate('Delivery Boy') }}</button>
             </div>
-            <div class="aiz-accordion-panel bg-transparent" style="background-color: #212129 !important;">
+            <div class="aiz-accordion-panel bg-transparent" style="background-color: #3D3D3B !important;">
                 <div class="container">
                     <ul class="list-unstyled mt-3">
                         @guest
@@ -515,17 +593,38 @@
 @endphp
 
 <!-- FOOTER -->
-<footer class="pt-3 pb-7 pb-xl-3 bg-black text-soft-light">
+<footer class="pt-3 pb-7 pb-xl-3 text-soft-light" style="background-color:#3D3D3B;">
     <div class="container">
         <div class="row align-items-center py-3">
             <!-- Copyright -->
             <div class="col-lg-6 order-1 order-lg-0">
-                <div class="text-center text-lg-left fs-14" current-verison="{{get_setting("current_version")}}">
+                <div class="text-center text-lg-left fs-16 font-prompt" style="font-weight:thin;" current-verison="{{get_setting("current_version")}}">
                     {!! get_setting('frontend_copyright_text', null, App::getLocale()) !!}
                 </div>
             </div>
-
-            <!-- Payment Method Images -->
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <span class="fs-14 font-prompt" style="color: #7E808A;">
+                    <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12.5 13.6968C14.2231 13.6968 15.62 12.2999 15.62 10.5768C15.62 8.85366 14.2231 7.45679 12.5 7.45679C10.7769 7.45679 9.38 8.85366 9.38 10.5768C9.38 12.2999 10.7769 13.6968 12.5 13.6968Z" stroke="#F3F4F5" stroke-width="1.5"/>
+                        <path d="M4.12 8.75685C6.09 0.096848 18.92 0.106848 20.88 8.76685C22.03 13.8468 18.87 18.1468 16.1 20.8068C14.09 22.7468 10.91 22.7468 8.89 20.8068C6.13 18.1468 2.97 13.8368 4.12 8.75685Z" stroke="#F3F4F5" stroke-width="1.5"/>
+                        </svg>
+                        MBZ City, Abu Dhabi, UAE
+                </span>
+                <span class="fs-14 font-prompt ml-2" style="color: #7E808A;">
+                    <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22.47 18.5968C22.47 18.9568 22.39 19.3268 22.22 19.6868C22.05 20.0468 21.83 20.3868 21.54 20.7068C21.05 21.2468 20.51 21.6368 19.9 21.8868C19.3 22.1368 18.65 22.2668 17.95 22.2668C16.93 22.2668 15.84 22.0268 14.69 21.5368C13.54 21.0468 12.39 20.3868 11.25 19.5568C10.1 18.7168 9.01 17.7868 7.97 16.7568C6.94 15.7168 6.01 14.6268 5.18 13.4868C4.36 12.3468 3.7 11.2068 3.22 10.0768C2.74 8.93685 2.5 7.84685 2.5 6.80685C2.5 6.12685 2.62 5.47685 2.86 4.87685C3.1 4.26685 3.48 3.70685 4.01 3.20685C4.65 2.57685 5.35 2.26685 6.09 2.26685C6.37 2.26685 6.65 2.32685 6.9 2.44685C7.16 2.56685 7.39 2.74685 7.57 3.00685L9.89 6.27685C10.07 6.52685 10.2 6.75685 10.29 6.97685C10.38 7.18685 10.43 7.39685 10.43 7.58685C10.43 7.82685 10.36 8.06685 10.22 8.29685C10.09 8.52685 9.9 8.76685 9.66 9.00685L8.9 9.79685C8.79 9.90685 8.74 10.0368 8.74 10.1968C8.74 10.2768 8.75 10.3468 8.77 10.4268C8.8 10.5068 8.83 10.5668 8.85 10.6268C9.03 10.9568 9.34 11.3868 9.78 11.9068C10.23 12.4268 10.71 12.9568 11.23 13.4868C11.77 14.0168 12.29 14.5068 12.82 14.9568C13.34 15.3968 13.77 15.6968 14.11 15.8768C14.16 15.8968 14.22 15.9268 14.29 15.9568C14.37 15.9868 14.45 15.9968 14.54 15.9968C14.71 15.9968 14.84 15.9368 14.95 15.8268L15.71 15.0768C15.96 14.8268 16.2 14.6368 16.43 14.5168C16.66 14.3768 16.89 14.3068 17.14 14.3068C17.33 14.3068 17.53 14.3468 17.75 14.4368C17.97 14.5268 18.2 14.6568 18.45 14.8268L21.76 17.1768C22.02 17.3568 22.2 17.5668 22.31 17.8168C22.41 18.0668 22.47 18.3168 22.47 18.5968Z" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10"/>
+                        </svg>
+                        +971555626232
+                </span>
+                <span class="fs-14 font-prompt ml-2" style="color: #7E808A;">
+                    <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17.5 20.7668H7.5C4.5 20.7668 2.5 19.2668 2.5 15.7668V8.76685C2.5 5.26685 4.5 3.76685 7.5 3.76685H17.5C20.5 3.76685 22.5 5.26685 22.5 8.76685V15.7668C22.5 19.2668 20.5 20.7668 17.5 20.7668Z" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M17.5 9.26685L14.37 11.7668C13.34 12.5868 11.65 12.5868 10.62 11.7668L7.5 9.26685" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        hello@mawadonline.com
+                </span>
+            </div>
+            <!-- Payment Method Images
             <div class="col-lg-6 mb-4 mb-lg-0">
                 <div class="text-center text-lg-right">
                     <ul class="list-inline mb-0">
@@ -538,13 +637,13 @@
                         @endif
                     </ul>
                 </div>
-            </div>
+            </div>-->
         </div>
     </div>
 </footer>
 
 <!-- Mobile bottom nav -->
-<div class="aiz-mobile-bottom-nav d-xl-none fixed-bottom border-top border-sm-bottom border-sm-left border-sm-right mx-auto mb-sm-2" style="background-color: rgb(255 255 255 / 90%)!important;">
+<div class="aiz-mobile-bottom-nav d-xl-none fixed-bottom border-top border-sm-bottom border-sm-left border-sm-right mx-auto mb-sm-2" style="background-color:#3D3D3B !important;">
     <div class="row align-items-center gutters-5">
         <!-- Home -->
         <div class="col">

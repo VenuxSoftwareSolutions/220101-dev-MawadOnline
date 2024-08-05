@@ -1,8 +1,8 @@
 @php
     $cart_added = [];
 @endphp
-<div class="aiz-card-box h-auto bg-white py-2 hov-scale-img">
-    <div class="position-relative h-140px h-md-200px img-fit overflow-hidden">
+<div class="aiz-card-box h-auto bg-white" style="margin:6px 0px;">
+    <div class="position-relative h-264px img-fit overflow-hidden">
         @php
             $product_url = route('product', $product->slug);
             if ($product->auction_product == 1) {
@@ -35,22 +35,24 @@
                 <a href="javascript:void(0)" class="hov-svg-white border-radius-8px" onclick="addToWishList({{ $product->id }})"
                     data-toggle="tooltip" data-title="{{ translate('Add to wishlist') }}" data-placement="left">
 
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512">
-                        <path d="M225.8 468.2l-2.5-2.3L48.1 303.2C17.4 274.7 0 234.7 0 192.8l0-3.3c0-70.4 50-130.8 119.2-144C158.6 37.9 198.9 47 231 69.6c9 6.4 17.4 13.8 25 22.3c4.2-4.8 8.7-9.2 13.5-13.3c3.7-3.2 7.5-6.2 11.5-9c0 0 0 0 0 0C313.1 47 353.4 37.9 392.8 45.4C462 58.6 512 119.1 512 189.5l0 3.3c0 41.9-17.4 81.9-48.1 110.4L288.7 465.9l-2.5 2.3c-8.2 7.6-19 11.9-30.2 11.9s-22-4.2-30.2-11.9zM239.1 145c-.4-.3-.7-.7-1-1.1l-17.8-20-.1-.1s0 0 0 0c-23.1-25.9-58-37.7-92-31.2C81.6 101.5 48 142.1 48 189.5l0 3.3c0 28.5 11.9 55.8 32.8 75.2L256 430.7 431.2 268c20.9-19.4 32.8-46.7 32.8-75.2l0-3.3c0-47.3-33.6-88-80.1-96.9c-34-6.5-69 5.4-92 31.2c0 0 0 0-.1 .1s0 0-.1 .1l-17.8 20c-.3 .4-.7 .7-1 1.1c-4.5 4.5-10.6 7-16.9 7s-12.4-2.5-16.9-7z"
-                        fill="#333"/>
+                    <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10.5167 17.8417C10.2333 17.9417 9.76666 17.9417 9.48332 17.8417C7.06666 17.0167 1.66666 13.5751 1.66666 7.74174C1.66666 5.16674 3.74166 3.0834 6.29999 3.0834C7.81666 3.0834 9.15832 3.81674 9.99999 4.95007C10.8417 3.81674 12.1917 3.0834 13.7 3.0834C16.2583 3.0834 18.3333 5.16674 18.3333 7.74174C18.3333 13.5751 12.9333 17.0167 10.5167 17.8417Z" stroke="#3A3B40" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
+
                 </a>
                 <a href="javascript:void(0)" class="hov-svg-white border-radius-8px" onclick="addToCompare({{ $product->id }})"
                     data-toggle="tooltip" data-title="{{ translate('Add to compare') }}" data-placement="left">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 448 512">
-                    <path d="M438.6 150.6c12.5-12.5 12.5-32.8 0-45.3l-96-96c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.7 96 32 96C14.3 96 0 110.3 0 128s14.3 32 32 32l306.7 0-41.4 41.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l96-96zm-333.3 352c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 416 416 416c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0 41.4-41.4c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-96 96c-12.5 12.5-12.5 32.8 0 45.3l96 96z"
-                    fill="#555"/>
-                    </svg>
+                    <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M14.4 9.2083L17.5 6.10828L14.4 3.0083" stroke="#3A3B40" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2.5 6.10828H17.5" stroke="#3A3B40" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M5.59998 11.7916L2.5 14.8917L5.59998 17.9916" stroke="#292D32" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M17.5 14.8917H2.5" stroke="#292D32" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+
                 </a>
             </div>
-            <div class="absolute-top-left aiz-p-hov-span @if($product->discount !== Null) aiz-p-hov-span-bg-orange @else aiz-p-hov-span-bg-dark @endif">
-                <a href="javascript:void(0)" class="hov-svg-white border-radius-8px" "
-                    data-toggle="tooltip" data-placement="left">
+            <div class="absolute-top-left aiz-p-hov-span font-prompt @if($product->discount !== Null) aiz-p-hov-span-bg-orange @else aiz-p-hov-span-bg-dark @endif">
+                <a href="javascript:void(0)" class="hov-svg-white border-radius-8px" data-toggle="tooltip" data-placement="left">
                     <span>
                         @if($product->discount !== Null)
                             -{{ $product->discount }}%
@@ -60,15 +62,15 @@
                     </span>
                 </a>
             </div>
-            <div class="absolute-bottom-left-rating aiz-p-hov-span-rating @if($product->discount !== Null) aiz-p-hov-span-bg-white @else aiz-p-hov-span-bg-dark @endif">
+            <div class="absolute-bottom-left-rating aiz-p-hov-span-rating font-prompt">
                 <a href="javascript:void(0)" class="hov-svg-white border-radius-8px" "
                     data-toggle="tooltip" data-placement="left">
                     <span>
                         4.0
-                        <svg xmlns="http://www.w3.org/2000/svg" class="rating-star" width="16" height="16" viewBox="0 0 620 620">
-                             <path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"
-                             transform="translate(-2.037 -2.038)" fill="#FFB800"/>
-                        </svg>
+                        <svg width="17" height="17" class="rating-star" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18.3334 8.41623C18.4167 7.99956 18.0834 7.49956 17.6667 7.49956L12.9167 6.8329L10.7501 2.49956C10.6667 2.3329 10.5834 2.24956 10.4167 2.16623C10.0001 1.91623 9.50008 2.0829 9.25008 2.49956L7.16675 6.8329L2.41675 7.49956C2.16675 7.49956 2.00008 7.5829 1.91675 7.74956C1.58341 8.0829 1.58341 8.58289 1.91675 8.91623L5.33341 12.2496L4.50008 16.9996C4.50008 17.1662 4.50008 17.3329 4.58341 17.4996C4.83341 17.9162 5.33341 18.0829 5.75008 17.8329L10.0001 15.5829L14.2501 17.8329C14.3334 17.9162 14.5001 17.9162 14.6667 17.9162C14.7501 17.9162 14.7501 17.9162 14.8334 17.9162C15.2501 17.8329 15.5834 17.4162 15.5001 16.9162L14.6667 12.1662L18.0834 8.8329C18.2501 8.74956 18.3334 8.5829 18.3334 8.41623Z" fill="#FFB800"/>
+                            </svg>
+
                         <span class="rating-content">(1.5k)</span>
                     </span>
                 </a>
@@ -108,11 +110,11 @@
 
     <div class="p-1 pt-2 text-left">
         <!-- Product name -->
-        <h3 class="fw-600 fs-14 text-truncate-2 lh-1-4 mb-0 h-25px text-center">
-            <a href="{{ $product_url }}" class="d-block text-reset"
+        <h3 class="fw-600 fs-14 text-truncate-2 lh-1-4 mb-0 h-25px text-left">
+            <a href="{{ $product_url }}" class="d-block text-reset product-title-card"
                 title="{{ $product->getTranslation('name') }}">{{ $product->getTranslation('name') }}</a>
         </h3>
-        <div class="fs-14 d-flex justify-content-center">
+        <div class="fs-14 d-flex justify-content-start">
             @if ($product->auction_product == 0)
                 <!-- price -->
                 <div class="">
@@ -132,5 +134,18 @@
                 </div>
             @endif
         </div>
+    </div>
+    <div class="stock-quantity">
+            <div class="stock-quantity-content">
+                <svg width="20" height="20" class="stock-quantity-icon mr-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9.62 16L11.12 17.5L14.37 14.5" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M8.81 2L5.19 5.63" stroke="#3A3B40" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M15.19 2L18.81 5.63" stroke="#3A3B40" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 7.84998C2 5.99998 2.99 5.84998 4.22 5.84998H19.78C21.01 5.84998 22 5.99998 22 7.84998C22 9.99998 21.01 9.84998 19.78 9.84998H4.22C2.99 9.84998 2 9.99998 2 7.84998Z" stroke="#3A3B40" stroke-width="1.5"/>
+                    <path d="M3.5 10L4.91 18.64C5.23 20.58 6 22 8.86 22H14.89C18 22 18.46 20.64 18.82 18.76L20.5 10" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+
+                <span class="fs-14 stock-quantity-text">Only 1 left in stock</span>
+            </div>
     </div>
 </div>

@@ -203,10 +203,11 @@
     @php
         $todays_deal_section_bg = get_setting('todays_deal_section_bg_color');
     @endphp
+    <!--
     <div id="todays_deal" class="mb-2rem mt-2 mt-md-3" @if(get_setting('todays_deal_section_bg') == 1) style="background: {{ $todays_deal_section_bg }};" @endif>
 
     </div>
-
+-->
     <!-- Featured Categories -->
     @if (count($featured_categories) > 0)
         <section class="mb-2 mb-md-3 mt-2 mt-md-3">
@@ -222,16 +223,16 @@
                 </div>
                 <!-- Categories -->
                 <div class="bg-white px-sm-3">
-                    <div class="aiz-carousel sm-gutters-17" data-items="7" data-xxl-items="7" data-xl-items="6"
-                        data-lg-items="4" data-md-items="5" data-sm-items="5" data-xs-items="2" data-arrows="true"
-                        data-dots="false" data-autoplay="false" data-infinite="true"  style="height:250px;">
+                    <div class="aiz-carousel sm-gutters-17" id="product-carousel" data-items="6" data-xxl-items="7" data-xl-items="6"
+                        data-lg-items="4" data-md-items="4" data-sm-items="3" data-xs-items="2" data-arrows="true"
+                        data-dots="false" data-autoplay="false" data-infinite="true"  style="min-height:250px;">
                         @foreach ($featured_categories as $key => $category)
                             @php
                                 $category_name = $category->getTranslation('name');
                             @endphp
-                            <div class="carousel-box position-relative p-0 has-transition @if ($key == 0) @endif" style="height:250px;">
+                            <div class="carousel-box position-relative p-0 has-transition">
                                 <div class="h-200px p-4">
-                                    <div class="h-100 w-100 w-xl-auto position-relative hov-scale-img overflow-hidden radius-category">
+                                    <div class="h-100 w-100 w-xl-auto position-relative overflow-hidden radius-category">
                                         <div class="position-absolute h-100 w-100 overflow-hidden">
                                             <img src="{{ isset($category->thumbnail_image) ? my_asset($category->thumbnail_image) : static_asset('assets/img/placeholder.jpg') }}"
                                                 alt="{{ $category_name }}"
@@ -241,7 +242,6 @@
 
                                     </div>
                                     <div style="top:180px;" class="px-4 absolute-bottom-left has-transition h-50 w-100 d-flex flex-column align-items-center justify-content-start align-center">
-                                            <div>
                                                 <a class="d-flex flex-wrap overflow-hidden fs-15 text-dark home-category-name align-items-center hov-column-gap-1"
                                                     href="{{ route('products.category', $category->slug) }}"
                                                     >
@@ -256,7 +256,6 @@
                                                     @endforeach
                                                 </div>
                                             -->
-                                            </div>
                                         </div>
                                 </div>
                             </div>
@@ -269,7 +268,7 @@
 
     <!-- Banner section 1 -->
     @if (get_setting('home_banner1_images') != null)
-        <div class="pb-2 pb-md-3 pt-2 pt-md-3" style="background: #f5f5fa;">
+        <div class="pb-2 pb-md-3 pt-2 pt-md-3">
             <div class="container mb-2 mb-md-3">
                 @php
                     $banner_1_imags = json_decode(get_setting('home_banner1_images', null, $lang));
@@ -299,7 +298,7 @@
     @endif
 
     <!-- Featured Products -->
-    <div id="section_featured" class="pt-2 pt-md-3" style="background: #f5f5fa;">
+    <div id="section_featured" class="pt-2 pt-md-3">
 
     </div>
 
@@ -461,7 +460,7 @@
     @endif
 
     <!-- Category wise Products -->
-    <div id="section_home_categories" style="background: #f5f5fa;">
+    <div id="section_home_categories">
 
     </div>
 
@@ -615,13 +614,8 @@
                                         <span class="button-text">{{ translate('Visit Store') }}</span>
                                     </a>
                                     @if ($seller->verification_status == 1)
-                                        <span class="absolute-top-right mr-2rem">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="31.999" height="48.001" viewBox="0 0 31.999 48.001">
-                                                <g id="Group_25062" data-name="Group 25062" transform="translate(-532 -1033.999)">
-                                                <path id="Union_3" data-name="Union 3" d="M1937,12304h16v14Zm-16,0h16l-16,14Zm0,0v-34h32v34Z" transform="translate(-1389 -11236)" fill="#85b567"/>
-                                                <path id="Union_5" data-name="Union 5" d="M1921,12280a10,10,0,1,1,10,10A10,10,0,0,1,1921,12280Zm1,0a9,9,0,1,0,9-9A9.011,9.011,0,0,0,1922,12280Zm1,0a8,8,0,1,1,8,8A8.009,8.009,0,0,1,1923,12280Zm4.26-1.033a.891.891,0,0,0-.262.636.877.877,0,0,0,.262.632l2.551,2.551a.9.9,0,0,0,.635.266.894.894,0,0,0,.639-.266l4.247-4.244a.9.9,0,0,0-.639-1.542.893.893,0,0,0-.635.266l-3.612,3.608-1.912-1.906a.89.89,0,0,0-1.274,0Z" transform="translate(-1383 -11226)" fill="#fff"/>
-                                                </g>
-                                            </svg>
+                                        <span class="absolute-top-right mr-05rem mt-05rem">
+                                            <img class="International-eShops-img" src="{{ static_asset('assets/img/International-eShops.png') }}">
                                         </span>
                                     @endif
                                 </div>

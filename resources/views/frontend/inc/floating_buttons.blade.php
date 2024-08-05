@@ -1,8 +1,9 @@
+<!--
 <div class="floating-buttons-section">
     <a class="floating-buttons-section-control d-lg-none" onclick="showFloatingButtons()">
         <i class="las la-2x la-angle-double-right"></i>
     </a>
-    <!-- All Categories -->
+    <!-- All Categories
     <div class="aiz-floating-button">
         <a href="{{ route('categories.all') }}">
             <span class="circle">
@@ -24,7 +25,7 @@
             </span>
         </a>
     </div>
-    <!-- Flash Sale -->
+    <!-- Flash Sale
     <div class="aiz-floating-button">
         <a href="{{ route('flash-deals') }}">
             <span class="circle">
@@ -42,7 +43,7 @@
             </span>
         </a>
     </div>
-    <!-- Today's Deal -->
+    <!-- Today's Deal
     <div class="aiz-floating-button">
         <a href="{{ route('todays-deal') }}">
             <span class="circle">
@@ -96,3 +97,4 @@
     @endif
 </div>
 
+-->
