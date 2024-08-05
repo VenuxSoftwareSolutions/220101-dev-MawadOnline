@@ -77,6 +77,13 @@
         line-height: 24px;
         margin: 0; /* Reset margin */
     }
+
+    .btn-primary {
+        background-color: #2e294e !important;
+        border-color: #2e294e !important;
+    }
+
+
 </style>
 @endpush
 @section('panel_content')
