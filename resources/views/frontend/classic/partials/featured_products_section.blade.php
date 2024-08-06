@@ -26,5 +26,5 @@
                 </div>
             </div>
         </div>
-    </section>   
+    </section>
 @endif
