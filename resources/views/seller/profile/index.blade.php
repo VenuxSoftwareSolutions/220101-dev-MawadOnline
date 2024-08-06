@@ -52,8 +52,8 @@
     }
 
     .btn-primary {
-        background-color: #a2b8c6 !important; /* Use the global variable */
-        border-color: #a2b8c6 !important;
+        background-color: #212529 !important; /* Use the global variable */
+        border-color: #212529 !important;
 
     }
     .swal2-confirm {
