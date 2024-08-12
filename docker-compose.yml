@@ -12,7 +12,7 @@ services:
       - .:/var/www
       - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     ports:
-      - "80:80"
+      - "8000:80"
     networks:
       - laravel
     extra_hosts:
