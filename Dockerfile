@@ -7,15 +7,9 @@ WORKDIR /var/www
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
-    git \
-    curl \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
-    libjpeg62-turbo-dev \
-    libmcrypt-dev \
-    libgd-dev \
-    libxml2-dev \
     locales \
     zip \
     jpegoptim optipng pngquant gifsicle \
@@ -27,13 +21,18 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     iputils-ping \
     net-tools \
-    telnet
+    telnet \
+    libwebp-dev
     
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Configure and install GD extension
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install gd
+
 # Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath
 
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
