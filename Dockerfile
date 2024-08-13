@@ -41,7 +41,7 @@ COPY . /var/www
 COPY --chown=www-data:www-data . /var/www
 
 # Run php artisan optimize
-RUN composer update --ignore-platform-reqs
+#RUN composer update --ignore-platform-reqs
 
 
 # Copy Apache configuration file
