@@ -53,9 +53,3 @@ EXPOSE 80
 # Start Apache
 CMD ["apache2-foreground"]
 
-# Copy .env.production as .env
-COPY .env.production /var/www/.env
-
-RUN php artisan optimize || true
-RUN php artisan config:clear
-RUN php artisan cache:clear
