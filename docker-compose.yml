@@ -15,24 +15,10 @@ services:
       - ./letsencrypt:/etc/letsencrypt
     ports:
       - "80:80"
-      - "443:443"
     networks:
       - laravel
     extra_hosts:
       - "host.docker.internal:host-gateway"
-  
-  certbot:
-    image: certbot/certbot
-    container_name: certbot
-    volumes:
-      - ./letsencrypt:/etc/letsencrypt
-      - ./letsencrypt/lib:/var/lib/letsencrypt
-      - ./letsencrypt/log:/var/log/letsencrypt
-      - ./docker/apache/000-default.conf:/etc/apache2/sites-available/000-default.conf
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-    networks:
-      - laravel
-  
 networks:
   laravel:
     driver: bridge
