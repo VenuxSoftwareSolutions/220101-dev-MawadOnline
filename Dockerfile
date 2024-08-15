@@ -38,7 +38,11 @@ RUN apt-get update && apt-get install -y certbot python3-certbot-apache
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath
 
 # Enable Apache mod_rewrite
-RUN a2enmod rewrite
+RUN a2enmod rewrite ssl
+
+
+# Obtain SSL certificates using Certbot
+RUN certbot certonly --apache --non-interactive --agree-tos --email guesmibedis@gmail.com -d mawadonline.com -d www.mawadonline.com
 
 # Install composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
