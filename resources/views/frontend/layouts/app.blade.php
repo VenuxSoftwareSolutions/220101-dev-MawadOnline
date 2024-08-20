@@ -259,20 +259,23 @@
 
     <!-- cookies agreement -->
     @if (get_setting('show_cookies_agreement') == 'on')
+
         <div class="aiz-cookie-alert shadow-xl">
-            <div class="p-3 bg-dark rounded">
-                <div class="text-white mb-3">
+            <div class="p-3 bg-dark cookie-in-style">
+                <div class="text-white mb-3 col-md-8 col-12 float-left">
                     @php
                         echo get_setting('cookies_agreement_text');
                     @endphp
+
                 </div>
-                <button class="btn btn-primary aiz-cookie-accept">
+                <div class="col-md-2 col-12 float-right">
+                <button class="btn btn-primary aiz-cookie-accept mt-md-3 mt-0">
                     {{ translate('Ok. I Understood') }}
                 </button>
+                </div>
             </div>
         </div>
-    @endif
-
+@endif
     <!-- website popup -->
     @if (get_setting('show_website_popup') == 'on')
         <div class="modal website-popup removable-session d-none" data-key="website-popup" data-value="removed">
