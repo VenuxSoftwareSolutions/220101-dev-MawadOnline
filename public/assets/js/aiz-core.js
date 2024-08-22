@@ -2018,6 +2018,7 @@ $.fn.toggleAttr = function (attr, attr1, attr2) {
                 AIZ.extra.setCookie("acceptCookies", true, 60);
                 $(".aiz-cookie-alert").removeClass("show");
             });
+            $(".aiz-cookie-alert").addClass("show");
         },
         setSession: function(){
             $('.set-session').each(function() {
