@@ -191,22 +191,13 @@
         </div>
         <hr class="hr-style"/>
     </div>
-    <!--
-    <div class="col-md-12 p-0 pb-2" style="height: 45px;">
-        <span class="fs-16 font-prompt-md float-left mr-5" style="height: 45px;line-height:32px;">Color:</span>
-        <div class="product-color-style float-left mr-2" style="background: #E00000;"></div>
-        <div class="product-color-style float-left mr-2" style="background: #40C800;"></div>
-        <div class="product-color-style float-left mr-2" style="background: #00B0E8;"></div>
-        <div class="product-color-style float-left mr-2" style="background: #000000;"></div>
-    </div>
-    -->
     @if ($detailedProduct->colors != null && count(json_decode($detailedProduct->colors)) > 0)
     <div class="row no-gutters mb-3">
         <div class="col-2">
             <div class="fs-16 font-prompt-md mt-2">{{ translate('Color') }}:</div>
         </div>
         <div class="col-10 pl-2">
-            <div class="aiz-radio-inline">
+            <div class="aiz-radio-inline"><!--
                 @foreach (json_decode($detailedProduct->colors) as $key => $color)
                     <label class="aiz-megabox pl-0 mr-1 mb-0" data-toggle="tooltip"
                         data-title="{{ get_single_color_name($color) }}">
@@ -225,6 +216,30 @@
                             </span>
                         </span>
                     </label>
+                @endforeach-->
+                @foreach ($previewData['detailedProduct']['general_attributes'] as $key => $general_attribute)
+                @php
+                    $attribue_general = App\Models\Attribute::find($key) ;
+                @endphp
+                 @if (preg_match('/^#[0-9A-F]{6}$/i', $general_attribute))
+                    <label class="aiz-megabox pl-0 mr-1 mb-0" data-toggle="tooltip"
+                        data-title="{{ get_single_color_name($color) }}">
+                        <input type="radio" name="color"
+                            value="{{ get_single_color_name($color) }}"
+                            @if ($key == 0) checked @endif>
+                        <span
+                            class="aiz-megabox-elem d-flex align-items-center justify-content-center p-1">
+                            <span class="d-inline-block product-color-style"
+                                style="background: {{$general_attribute}};">
+                                <svg width="24" height="24" class="m-1 checked-color" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M7.75 11.9999L10.58 14.8299L16.25 9.16992" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+
+                            </span>
+                        </span>
+                    </label>
+                    @endif
                 @endforeach
             </div>
         </div>
