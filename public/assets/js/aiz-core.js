@@ -1422,6 +1422,35 @@ $.fn.toggleAttr = function (attr, attr1, attr2) {
                     });
                 });
             }
+            if ($(".aiz-range-slider-attribute")[0]) {
+                $(".aiz-range-slider-attribute").each(function () {
+                    var c = $(this).find(".attribute-input-slider-range")[0],
+                        d = $(this).find(".attribute-input-slider-range-value-low")[0],
+                        e = $(this).find(".attribute-input-slider-range-value-high")[0],
+                        id_attribute = $(this).data("id"),
+                        f = [d, e];
+            
+                    noUiSlider.create(c, {
+                        start: [
+                            parseInt(d.getAttribute("data-range-value-low")),
+                            parseInt(e.getAttribute("data-range-value-high")),
+                        ],
+                        connect: true,
+                        range: {
+                            min: parseInt(c.getAttribute("data-range-value-min")),
+                            max: parseInt(c.getAttribute("data-range-value-max")),
+                        },
+                    });
+            
+                    c.noUiSlider.on("update", function (a, b) {
+                        f[b].textContent = a[b];
+                    });
+            
+                    c.noUiSlider.on("change", function (a, b) {
+                        rangefilter_attribute(a, id_attribute);
+                    });
+                });
+            }
         },
         zoom: function(){
             if($('.img-zoom')[0]){

@@ -9,9 +9,9 @@ class CategoryUtility
     /*when with trashed is true id will get even the deleted items*/
     public static function get_immediate_children($id, $with_trashed = false, $as_array = false)
     {
+
         $children = $with_trashed ? Category::where('parent_id', $id)->orderBy('order_level', 'desc')->get() : Category::where('parent_id', $id)->orderBy('order_level', 'desc')->get();
         $children = $as_array && !is_null($children) ? $children->toArray() : $children;
-
         return $children;
     }
 
@@ -32,15 +32,15 @@ class CategoryUtility
     public static function flat_children($id, $with_trashed = false, $container = array())
     {
         $children = CategoryUtility::get_immediate_children($id, $with_trashed, true);
-
         if (!empty($children)) {
             foreach ($children as $child) {
 
                 $container[] = $child;
                 $container = CategoryUtility::flat_children($child['id'], $with_trashed, $container);
             }
+            
         }
-
+        // dd($container);
         return $container;
     }
 

@@ -43,6 +43,7 @@ use App\Models\AffiliateOption;
 use App\Models\BusinessSetting;
 use App\Models\CustomerPackage;
 use App\Models\CustomerProduct;
+use App\Models\PricingConfiguration;
 use App\Utility\SendSMSUtility;
 use App\Models\FlashDealProduct;
 use App\Utility\CategoryUtility;
@@ -1711,6 +1712,37 @@ if (!function_exists('get_products_count')) {
             $products_query = $products_query->where('user_id', $user_id);
         }
         return $products_query->isApprovedPublished()->count();
+    }
+}
+
+// get minimum max price of products
+if (!function_exists('get_products_filter_price')) {
+    function get_products_filter_price($id_products = null)
+    {
+        $min = 0;
+        $max = 99999999;
+        $PricingConfiguration = PricingConfiguration::query();
+        if($id_products){
+            $PricingConfiguration = $PricingConfiguration->whereIn('id_products', $id_products);
+            if($PricingConfiguration->first()){
+                $min = $PricingConfiguration->min('unit_price');
+                $max = $PricingConfiguration->max('unit_price');
+            }
+            
+        }
+        // dd($id_products,$min,$max);
+        if($min == $max){
+            return [
+                'min' => $min,
+                'max' => $max+1,
+            ];
+        }else{
+            return [
+                'min' => $min,
+                'max' => $max,
+            ];
+        }
+        
     }
 }
 
