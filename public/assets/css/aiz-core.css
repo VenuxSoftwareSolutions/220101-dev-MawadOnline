@@ -1978,13 +1978,13 @@ hr {
 .gutters-16 > [class*="col-"] {
     padding-right: 16px;
     padding-left: 16px;
-}
+}/*
 .aiz-carousel.sm-gutters-16 .slick-list .slick-track .slick-slide{
     width: 190px !important;
     height: 356px !important;
     margin-right: 16px;
 
-}
+}*/
 .aiz-carousel.sm-gutters-16 .slick-list .slick-track{
     height: 385px !important;
 
