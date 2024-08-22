@@ -59,7 +59,7 @@
     .btn-secondary-base:hover {
         background-color: #CB774B !important;
         border-color: #CB774B !important;
-        cursor: default !important; /* Inherit cursor style from the parent element on hover */
+        cursor: pointer !important; /* Inherit cursor style from the parent element on hover */
     }
     a.disabled {
         pointer-events: none ;
@@ -326,12 +326,16 @@
                                     <div class="col-md-8 mb-3">
                                         @if($previewData['detailedProduct']['variationId'] || $previewData['detailedProduct']['product_id'] )
                                         @php
-                                        if($previewData['detailedProduct']['variationId'])
-                                            $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['variationId']);
-                                        else {
-                                            $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['product_id']);
-                                        }
-                                        $totalRating = $detailedProduct->reviews->count();
+                                            if($previewData['detailedProduct']['variationId'])
+                                                $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['variationId']);
+                                            else {
+                                                $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['product_id']);
+                                            }
+                                            if($detailedProduct == null){
+                                                $totalRating = 0;
+                                            }else{
+                                                $totalRating = $detailedProduct->reviews->count();
+                                            }
                                         @endphp
                                         <div
                                             class="d-flex align-items-center justify-content-between justify-content-md-start">

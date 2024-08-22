@@ -10,6 +10,9 @@
 /public/iban_certificates
 /public/vat_certificates
 /public/trade_license_doc
+/public/upload_products
+/public/assets/myText.txt
+
 /storage/*.key
 /storage/debugbar
 vendor

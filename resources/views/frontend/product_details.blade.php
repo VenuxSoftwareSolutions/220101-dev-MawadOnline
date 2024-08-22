@@ -1343,7 +1343,7 @@
         }
     </script>
     <script>
-        $(document).ready(function() {
+        // $(document).ready(function() {
               // Set the CSRF token for all AJAX requests
                $.ajaxSetup({
                     headers: {
@@ -1351,7 +1351,7 @@
                     }
                 });
 
-            $('.quantity-control').click(function() {
+                $(document).on('click', '.quantity-control', function() {
 
                 var action = $(this).data('type');
                 var quantityInput = $('#quantity');
@@ -1732,6 +1732,6 @@
         });
 
 
-        });
+        // });
     </script>
 @endsection

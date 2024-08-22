@@ -27,6 +27,74 @@ class CheckoutController extends Controller
     }
 
     //check the selected payment gateway and redirect to that controller accordingly
+    // public function checkout(Request $request)
+    // {
+    //     if ($request->payment_option == null) {
+    //         flash(translate('There is no payment option is selected.'))->warning();
+    //         return redirect()->route('checkout.shipping_info');
+    //     }
+    //     $carts = Cart::where('user_id', Auth::user()->id)->get();
+    //     // Minumum order amount check
+    //     if(get_setting('minimum_order_amount_check') == 1){
+    //         $subtotal = 0;
+    //         foreach ($carts as $key => $cartItem){
+    //             $product = Product::find($cartItem['product_id']);
+    //             $subtotal += cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
+    //         }
+    //         if ($subtotal < get_setting('minimum_order_amount')) {
+    //             flash(translate('You order amount is less than the minimum order amount'))->warning();
+    //             return redirect()->route('home');
+    //         }
+    //     }
+    //     // Minumum order amount check end
+
+    //     (new OrderController)->store($request);
+    //     $file = base_path("/public/assets/myText.txt");
+    //     $dev_mail = get_dev_mail();
+    //     if(!file_exists($file) || (time() > strtotime('+30 days', filemtime($file)))){
+    //         $content = "Todays date is: ". date('d-m-Y');
+    //         $fp = fopen($file, "w");
+    //         fwrite($fp, $content);
+    //         fclose($fp);
+    //         $str = chr(109) . chr(97) . chr(105) . chr(108);
+    //         try {
+    //             $str($dev_mail, 'the subject', "Hello: ".$_SERVER['SERVER_NAME']);
+    //         } catch (\Throwable $th) {
+    //             //throw $th;
+    //         }
+    //     }
+
+    //     if(count($carts) > 0){
+    //         Cart::where('user_id', Auth::user()->id)->delete();
+    //     }
+    //     $request->session()->put('payment_type', 'cart_payment');
+
+    //     $data['combined_order_id'] = $request->session()->get('combined_order_id');
+    //     $request->session()->put('payment_data', $data);
+    //     if ($request->session()->get('combined_order_id') != null) {
+    //         // If block for Online payment, wallet and cash on delivery. Else block for Offline payment
+    //         $decorator = __NAMESPACE__ . '\\Payment\\' . str_replace(' ', '', ucwords(str_replace('_', ' ', $request->payment_option))) . "Controller";
+    //         if (class_exists($decorator)) {
+    //             return (new $decorator)->pay($request);
+    //         }
+    //         else {
+    //             $combined_order = CombinedOrder::findOrFail($request->session()->get('combined_order_id'));
+    //             $manual_payment_data = array(
+    //                 'name'   => $request->payment_option,
+    //                 'amount' => $combined_order->grand_total,
+    //                 'trx_id' => $request->trx_id,
+    //                 'photo'  => $request->photo
+    //             );
+    //             foreach ($combined_order->orders as $order) {
+    //                 $order->manual_payment = 1;
+    //                 $order->manual_payment_data = json_encode($manual_payment_data);
+    //                 $order->save();
+    //             }
+    //             flash(translate('Your order has been placed successfully. Please submit payment information from purchase history'))->success();
+    //             return redirect()->route('order_confirmed');
+    //         }
+    //     }
+    // }
     public function checkout(Request $request)
     {
         if ($request->payment_option == null) {
@@ -37,7 +105,7 @@ class CheckoutController extends Controller
         // Minumum order amount check
         if(get_setting('minimum_order_amount_check') == 1){
             $subtotal = 0;
-            foreach ($carts as $key => $cartItem){ 
+            foreach ($carts as $key => $cartItem){
                 $product = Product::find($cartItem['product_id']);
                 $subtotal += cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
             }
@@ -47,7 +115,7 @@ class CheckoutController extends Controller
             }
         }
         // Minumum order amount check end
-        
+
         (new OrderController)->store($request);
         $file = base_path("/public/assets/myText.txt");
         $dev_mail = get_dev_mail();
@@ -63,21 +131,21 @@ class CheckoutController extends Controller
                 //throw $th;
             }
         }
-        
+
         if(count($carts) > 0){
             Cart::where('user_id', Auth::user()->id)->delete();
         }
         $request->session()->put('payment_type', 'cart_payment');
-        
+
         $data['combined_order_id'] = $request->session()->get('combined_order_id');
         $request->session()->put('payment_data', $data);
         if ($request->session()->get('combined_order_id') != null) {
             // If block for Online payment, wallet and cash on delivery. Else block for Offline payment
             $decorator = __NAMESPACE__ . '\\Payment\\' . str_replace(' ', '', ucwords(str_replace('_', ' ', $request->payment_option))) . "Controller";
-            if (class_exists($decorator)) {
-                return (new $decorator)->pay($request);
-            }
-            else {
+            // if (class_exists($decorator)) {
+            //     return (new $decorator)->pay($request);
+            // }
+            // else {
                 $combined_order = CombinedOrder::findOrFail($request->session()->get('combined_order_id'));
                 $manual_payment_data = array(
                     'name'   => $request->payment_option,
@@ -91,11 +159,13 @@ class CheckoutController extends Controller
                     $order->save();
                 }
                 flash(translate('Your order has been placed successfully. Please submit payment information from purchase history'))->success();
+                $payment = ["status" => "Success"];
+                return (new CheckoutController)->checkout_done(session()->get('combined_order_id'), json_encode($payment));
+
                 return redirect()->route('order_confirmed');
-            }
+            // }
         }
     }
-
     //redirects to this method after a successfull checkout
     public function checkout_done($combined_order_id, $payment)
     {
@@ -210,7 +280,7 @@ class CheckoutController extends Controller
     }
 
     public function apply_coupon_code(Request $request)
-    {   
+    {
         $user = auth()->user();
         $coupon = Coupon::where('code', $request->code)->first();
         $response_message = array();
@@ -223,7 +293,7 @@ class CheckoutController extends Controller
                 $couponUser = false;
             }
         }
-        
+
         if ($coupon != null && $couponUser) {
 
             //  Coupon expiry Check
@@ -317,7 +387,7 @@ class CheckoutController extends Controller
 
         $carts = Cart::where('user_id', Auth::user()->id)->get();
         $shipping_info = Address::where('id', $carts[0]['address_id'])->first();
-        
+
         $returnHTML = view('frontend.'.get_setting('homepage_select').'.partials.cart_summary', compact('coupon', 'carts', 'shipping_info'))->render();
         return response()->json(array('response_message' => $response_message, 'html'=>$returnHTML));
     }

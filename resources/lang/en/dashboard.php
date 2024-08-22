@@ -10,6 +10,8 @@ return [
     'this_month' => 'This Month',
     'new_order' => 'New Order',
     'cancelled' => 'Cancelled',
+    'Start Tour' => 'Start Tour',
+
 
 
 ];

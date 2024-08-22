@@ -939,10 +939,10 @@ $.fn.toggleAttr = function (attr, attr1, attr2) {
         },
         dateRange: function () {
             $("body .aiz-date-range").each(function () {
-                
+
                 var $this = $(this);
                 var today = moment().startOf("day");
-                
+
                 var value = $this.val();
                 var startDate = false;
                 var minDate = false;
@@ -1939,16 +1939,16 @@ $.fn.toggleAttr = function (attr, attr1, attr2) {
                         if (currentVal > input.attr("min")) {
                             input.val(currentVal - 1).change();
                         }
-                        if (parseInt(input.val()) == input.attr("min")) {
-                            $(this).attr("disabled", true);
-                        }
+                        // if (parseInt(input.val()) == input.attr("min")) {
+                        //     $(this).attr("disabled", true);
+                        // }
                     } else if (type == "plus") {
                         if (currentVal < input.attr("max")) {
                             input.val(currentVal + 1).change();
                         }
-                        if (parseInt(input.val()) == input.attr("max")) {
-                            $(this).attr("disabled", true);
-                        }
+                        // if (parseInt(input.val()) == input.attr("max")) {
+                        //     $(this).attr("disabled", true);
+                        // }
                     }
 
                 } else {
