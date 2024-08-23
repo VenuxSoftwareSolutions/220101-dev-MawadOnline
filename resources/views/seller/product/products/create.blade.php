@@ -4144,7 +4144,7 @@
 
                                 Swal.fire({
                                     title: "Product Inventory",
-                                    text: "{{ translate('You can create the inventory of the products and make it ready before admin approval. This is recommended if your product will be immediately published upon approval. Do you want to continue?') }}")}}',
+                                    text: "{{ translate('You can create the inventory of the products and make it ready before admin approval. This is recommended if your product will be immediately published upon approval. Do you want to continue?') }}",
                                     icon: "info",
                                     showCancelButton: true,
                                     confirmButtonText: "Yes",
