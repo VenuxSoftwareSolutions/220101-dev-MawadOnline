@@ -128,6 +128,21 @@ class Product extends Model
         return $this->hasMany(Review::class)->where('status', 1);
     }
 
+    public function pricingConfiguration()
+    {
+        return $this->hasMany(PricingConfiguration::class, 'id_products', 'id');
+    }
+
+    public function get_ratting()
+    {
+        if($this->reviews->count()>0){
+            return (int)($this->reviews->sum('rating') / $this->reviews->count());
+        }else{
+            return 0;
+        }
+        
+    }
+
     public function product_queries()
     {
         return $this->hasMany(ProductQuery::class);
@@ -147,6 +162,7 @@ class Product extends Model
     {
         return $this->hasMany(ProductTax::class);
     }
+
 
     public function flash_deal_product()
     {
@@ -304,7 +320,7 @@ class Product extends Model
     }
 
     public function productAttributeValues() {
-        return $this->hasMany(ProductAttributeValues::class,'id_products') ;
+        return $this->hasMany(ProductAttributeValues::class,'id_products','id') ;
     }
 
     public function productVariantDetails() {

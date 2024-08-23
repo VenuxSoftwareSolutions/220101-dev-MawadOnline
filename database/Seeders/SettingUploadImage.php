@@ -22,8 +22,7 @@ class SettingUploadImage extends Seeder
         );
         BusinessSetting::updateOrCreate(
             ['type' => 'image_img_quality'],
-            ['value' => 80
-            ]
+            ['value' => 80]
         );
     }
 }

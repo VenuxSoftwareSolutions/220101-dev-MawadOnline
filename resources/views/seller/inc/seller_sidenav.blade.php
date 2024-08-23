@@ -32,7 +32,7 @@
             </ul>
             <ul class="aiz-side-nav-list" id="main-menu" data-toggle="aiz-side-menu">
                 <li id="AddProduct" class="aiz-side-nav-item changes-button">
-                    <a href="{{ route('seller.dashboard') }}" class="btn btn-primary d-flex align-items-center">
+                    <a href="{{ route('seller.products.create')}}" class="btn btn-primary d-flex align-items-center">
                         <i class="las la-plus-square aiz-side-nav-icon"></i>
                         <span class="aiz-side-nav-text ml-2">{{ __('sidenav.Add_Product') }}</span>
                     </a>

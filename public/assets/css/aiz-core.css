@@ -10017,6 +10017,9 @@ div.footable-loader > span.fooicon:after {
 .aiz-range-slider .noUi-target {
     border-color: var(--soft-secondary);
 }
+.aiz-range-slider-attribute .noUi-connect {
+    background: var(--primary);
+}
 
 /*iti mobile number select*/
 .iti {

@@ -30,6 +30,20 @@ class Category extends Model
         return $parents;
     }
 
+    public function parents_ids()
+    {
+        $parents = collect([]);
+
+        $parent = $this->parent;
+
+        while (!is_null($parent)) {
+            $parents->prepend($parent->id);
+            $parent = $parent->parent;
+        }
+
+        return $parents;
+    }
+
     public function getTranslation($field = '', $lang = false)
     {
         $lang = $lang == false ? App::getLocale() : $lang;
@@ -96,4 +110,6 @@ class Category extends Model
     {
         return $this->belongsToMany(Attribute::class, 'categories_has_attributes', 'category_id', 'attribute_id');
     }
+
+    
 }
