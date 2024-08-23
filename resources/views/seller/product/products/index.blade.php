@@ -149,6 +149,8 @@ thead tr{
                                 </div>
                             </th>
                             <th width="30%" style="padding-left: 12px !important;">{{ translate('Name')}}</th>
+                            <th width="30%" style="padding-left: 12px !important;">{{ translate('SKU')}}</th>
+
                             {{-- <th data-breakpoints="md">{{ translate('Category')}}</th> --}}
                             <th data-breakpoints="md">{{ translate('QTY')}}</th>
                             <th>{{ translate('Base Price')}}</th>
@@ -172,8 +174,11 @@ thead tr{
                                 </td>
                                 <td>
                                     <a href="{{ route('product', $product->slug) }}" target="_blank" class="text-reset">
-                                        {{ $product->sku }}
+                                        {{ $product->name }}
                                     </a>
+                                </td>
+                                <td>
+                                    {{ $product->sku }}
                                 </td>
                                 {{-- <td>
                                     @if ($product->main_category != null)
@@ -257,8 +262,11 @@ thead tr{
                                         </td>
                                         <td >
                                             <a href="{{ route('product', $children->slug) }}" @if(app()->getLocale() == "ae") style="margin-right: 34px !important" @else style="margin-left: 34px !important" @endif target="_blank" class="text-reset">
-                                                {{ $children->sku }}
+                                                {{ $children->name }}
                                             </a>
+                                        </td>
+                                        <td>
+                                            {{ $children->sku }}
                                         </td>
                                         <td>
                                             @php
@@ -543,9 +551,16 @@ thead tr{
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            if ({{Auth::user()->tour}} == true | {{Auth::user()->id}} != {{Auth::user()->owner_id}}) {
+            document.getElementById('startTourButton').addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent the default anchor click behavior
+        localStorage.setItem('guide_tour', '0'); // Set local storage as required
+        window.location.href = '{{ route("seller.dashboard") }}'; // Redirect to the dashboard
+    });
+    if (localStorage.getItem('guide_tour') != '0') {
+        if ({{Auth::user()->tour}} == true | {{Auth::user()->id}} != {{Auth::user()->owner_id}} ) {
             return;
         }
+    }
         var tour_steps = [
             @foreach($tour_steps as $key => $step)
             {
@@ -586,6 +601,7 @@ thead tr{
                     console.error('Error updating user tour status:', error);
                 }
             });
+            localStorage.setItem('guide_tour', '1'); // Set local storage as required
             setTimeout(function() {
                 window.location.href = '{{ route("seller.dashboard") }}';
             }, 500);

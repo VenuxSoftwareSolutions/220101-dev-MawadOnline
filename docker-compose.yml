@@ -1,24 +1,22 @@
+version: '3.8'
 services:
-
-  backend:
+  app:
     build:
       context: .
       dockerfile: Dockerfile
+    image: laravel-app
+    container_name: laravel-app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     ports:
-      - 8000:8000
-    volumes:
-      - .:/app
-    depends_on:
-      - db
-
-  db:
-    image: mysql:5.7.22
-    environment:
-      MYSQL_DATABASE: mawadonline
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
-      MYSQL_ROOT_PASSWORD: root
-    volumes:
-      - ./storage/dbdata:/var/lib/mysql
-    ports: 
-      - 33066:3306
+      - "8000:80"
+    networks:
+      - laravel
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+networks:
+  laravel:
+    driver: bridge

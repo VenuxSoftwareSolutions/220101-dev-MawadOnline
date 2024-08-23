@@ -1028,24 +1028,25 @@ class ProductController extends Controller
                 $numeric_keys[] = $numeric_part;
             }
         }
-        $produitVariationImage=false ;
-        // dd($numeric_keys) ;
-        foreach ($numeric_keys as $numeric_key) {
-            // Access corresponding values
-            if (isset($data["photos_variant-$numeric_key"]) && is_array($data["photos_variant-$numeric_key"]) && !$produitVariationImage ) {
-                        // $storedFilePaths = $this->saveMainPhotos($data["photos_variant-$numeric_key"]);
-                        $produitVariationImage=true ;
+        // $produitVariationImage=false ;
+        // // dd($numeric_keys) ;
+        // foreach ($numeric_keys as $numeric_key) {
+        //     // Access corresponding values
+        //     if (isset($data["photos_variant-$numeric_key"]) && is_array($data["photos_variant-$numeric_key"]) && !$produitVariationImage ) {
+        //                 // $storedFilePaths = $this->saveMainPhotos($data["photos_variant-$numeric_key"]);
+        //                 $produitVariationImage=true ;
 
 
-            }
-        }
+        //     }
+        // }
         $storedFilePaths = [];
 
-        if(!$produitVariationImage) {
+        // if(!$produitVariationImage) {
             if (isset($data['main_photos']) && is_array($data['main_photos'])) {
                 // Process and save main photos
                 $storedFilePaths = $this->saveMainPhotos($data['main_photos']);
             }
+
             if (isset($data['product_id'])) {
                 $upload_products_db = UploadProducts::where('id_product',$data['product_id'])->pluck('path')->toArray() ;
                 $upload_products_db = array_filter($upload_products_db, function($path) {
@@ -1055,7 +1056,7 @@ class ProductController extends Controller
 
             }
 
-        }
+        // }
         // if (isset($variationId)) {
         //     if (isset($data["variant_pricing-from$variationId"]) && is_array($data["variant_pricing-from$variationId"])) {
         //         $firstValue = $data["variant_pricing-from$variationId"]['from'][0];
@@ -1155,6 +1156,13 @@ class ProductController extends Controller
                else {
                 $variations[$variationId]['storedFilePaths']= [] ;
                }
+               if (count($storedFilePaths) > 0) {
+                // If you want to merge main photo paths with variation photo paths
+                $variations[$variationId]['storedFilePaths'] = array_merge(
+                    $variations[$variationId]['storedFilePaths'],
+                    $storedFilePaths
+                 );
+                 }
                if (isset($data["variant_pricing-from$variationId"]) && is_array($data["variant_pricing-from$variationId"])) {
                 $variations[$variationId]['variant_pricing-from']['from'] =$data["variant_pricing-from$variationId"]['from'] ?? [] ;
                 $variations[$variationId]['variant_pricing-from']['to'] =$data["variant_pricing-from$variationId"]['to'] ?? [] ;
@@ -1224,6 +1232,14 @@ class ProductController extends Controller
                     'date' => $data['variant']['date_range_pricing'][$variationId]?? null,
                 ] ;
                 $variations[$variationId]['storedFilePaths'] = $upload_products_db ;
+
+                if (count($storedFilePaths) > 0) {
+                    // If you want to merge main photo paths with variation photo paths
+                    $variations[$variationId]['storedFilePaths'] = array_merge(
+                        $variations[$variationId]['storedFilePaths'],
+                        $storedFilePaths
+                     );
+                     }
                 // if (isset($variations[$variationId]['variant_pricing-from'])) {
                 //     // Sorting each array if it's not empty
                 //     foreach ($variations[$variationId]['variant_pricing-from'] as &$subArray) {
@@ -1328,7 +1344,7 @@ class ProductController extends Controller
 
         $total = isset($data['from'][0]) && isset($data['unit_price'][0]) ? $data['from'][0] * $data['unit_price'][0] : "";
         // return response()->json(['status', $attributesArray]);
-        if( isset($lastItem['variant_pricing-from']['discount']['date']) && is_array($lastItem['variant_pricing-from']['discount']['date']) && !empty($lastItem['variant_pricing-from']['discount']['date']) && $lastItem['variant_pricing-from']['discount']['date'][0] !== null){
+        if( isset($lastItem['variant_pricing-from']['discount']['date']) && is_array($lastItem['variant_pricing-from']['discount']['date']) && !empty($lastItem['variant_pricing-from']['discount']['date']) && isset($lastItem['variant_pricing-from']['discount']['date'][0]) && $lastItem['variant_pricing-from']['discount']['date'][0] !== null){
         // Extract start and end dates from the first date interval
 
         $dateRange = $lastItem['variant_pricing-from']['discount']['date'][0];
@@ -1378,7 +1394,7 @@ class ProductController extends Controller
             $totalDiscount=$lastItem['variant_pricing-from']['from'][0]*$discountedPrice;
         }
         if (count($variations) == 0) {
-            if( isset($data['date_range_pricing']) && is_array($data['date_range_pricing']) && !empty($data['date_range_pricing']) && $data['date_range_pricing'][0] !== null){
+            if( isset($data['date_range_pricing']) && is_array($data['date_range_pricing']) && !empty($data['date_range_pricing']) && isset($data['date_range_pricing'][0]) && $data['date_range_pricing'][0] !== null){
                 // Extract start and end dates from the first date interval
 
                 $dateRange = $data['date_range_pricing'][0];

@@ -294,6 +294,7 @@ class HomeController extends Controller
 
     public function product(Request $request, $slug)
     {
+
         if (!Auth::check()) {
             session(['link' => url()->current()]);
         }
@@ -434,6 +435,27 @@ class HomeController extends Controller
 
             $variations = [];
             $pricing_children = [];
+            $storedFilePaths = [];
+            if($parent->last_version == 1){
+                $images_parent = UploadProducts::where('id_product', $parent->id)->where('type', 'images')->get();
+                if(count($images_parent) > 0){
+                    $path = [];
+                    foreach($images_parent as $image){
+                        $revision_parent_image = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\UploadProducts')->where('revisionable_id', $image->id)->latest()->first();
+                        if($revision_parent_image == null){
+                            array_push($path, $image->path);
+                        }
+                    }
+                    $storedFilePaths = $path;
+                }
+            }else{
+                $storedFilePaths = UploadProducts::where('id_product', $parent->id)->where('type', 'images')->pluck('path')->toArray();
+            }
+
+            if(count($storedFilePaths) == 0){
+                $url = public_path().'/assets/img/placeholder.jpg';
+                array_push($storedFilePaths, $url);
+            }
             if($parent->is_parent == 1){
                 $childrens_ids = Product::where('parent_id', $parent->id)->pluck('id')->toArray();
 
@@ -509,30 +531,17 @@ class HomeController extends Controller
                     }else{
                         $variations[$children_id]['storedFilePaths'] = UploadProducts::where('id_product', $children_id)->where('type', 'images')->pluck('path')->toArray();
                     }
+                    if (count($storedFilePaths) > 0) {
+                        // If you want to merge main photo paths with variation photo paths
+                        $variations[$children_id]['storedFilePaths'] = array_merge(
+                            $variations[$children_id]['storedFilePaths'],
+                            $storedFilePaths
+                         );
+                         }
 
                 }
             }
-            $storedFilePaths = [];
-            if($parent->last_version == 1){
-                $images_parent = UploadProducts::where('id_product', $parent->id)->where('type', 'images')->get();
-                if(count($images_parent) > 0){
-                    $path = [];
-                    foreach($images_parent as $image){
-                        $revision_parent_image = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\UploadProducts')->where('revisionable_id', $image->id)->latest()->first();
-                        if($revision_parent_image == null){
-                            array_push($path, $image->path);
-                        }
-                    }
-                    $storedFilePaths = $path;
-                }
-            }else{
-                $storedFilePaths = UploadProducts::where('id_product', $parent->id)->where('type', 'images')->pluck('path')->toArray();
-            }
 
-            if(count($storedFilePaths) == 0){
-                $url = public_path().'/assets/img/placeholder.jpg';
-                array_push($storedFilePaths, $url);
-            }
 
 
             $attributes_general = ProductAttributeValues::where('id_products', $parent->id)->where('is_general', 1)->get();
@@ -638,7 +647,8 @@ class HomeController extends Controller
             }
 
             $total = isset($pricing['from'][0]) && isset($pricing['unit_price'][0]) ? $pricing['from'][0] * $pricing['unit_price'][0] : "";
-            if( isset($lastItem['variant_pricing-from']['discount']['date']) && is_array($lastItem['variant_pricing-from']['discount']['date']) && !empty($lastItem['variant_pricing-from']['discount']['date']) && $lastItem['variant_pricing-from']['discount']['date'][0] !== null){
+
+            if( isset($lastItem['variant_pricing-from']['discount']['date']) && is_array($lastItem['variant_pricing-from']['discount']['date']) && !empty($lastItem['variant_pricing-from']['discount']['date']) && isset($lastItem['variant_pricing-from']['discount']['date'][0]) && $lastItem['variant_pricing-from']['discount']['date'][0] !== null){
                 // Extract start and end dates from the first date interval
 
                 $dateRange = $lastItem['variant_pricing-from']['discount']['date'][0];
@@ -688,7 +698,7 @@ class HomeController extends Controller
                     $totalDiscount=$lastItem['variant_pricing-from']['from'][0]*$discountedPrice;
                 }
                 if (count($variations) == 0) {
-                    if( isset($pricing['date_range_pricing']) && is_array($pricing['date_range_pricing']) && !empty($pricing['date_range_pricing']) && $pricing['date_range_pricing'][0] !== null){
+                    if( isset($pricing['date_range_pricing']) && is_array($pricing['date_range_pricing']) && !empty($pricing['date_range_pricing']) && isset($pricing['date_range_pricing'][0]) && $pricing['date_range_pricing'][0] !== null){
                         // Extract start and end dates from the first date interval
 
                         $dateRange = $pricing['date_range_pricing'][0];

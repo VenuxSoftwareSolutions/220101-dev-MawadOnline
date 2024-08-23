@@ -3,7 +3,7 @@
 return [
 
     'Orders Management' => 'إدارة الطلبات',
-    'Packages' => 'الحزم',
+    'Packages' => 'إيجار المتجر الإلكتروني',
     'Billing' => 'الفواتير',
     'product_management' => 'إدارة المنتجات',
     'mawad_catalogue' => 'كتالوج مواد',
@@ -12,7 +12,7 @@ return [
     'digital_products' => 'المنتجات الرقمية',
     'customer_support' => 'دعم العملاء',
     'followed_vendors' => 'البائعين المتابعين',
-
+'orders_overview_management'=> 'البائعين المتابعين',
 
 
 
