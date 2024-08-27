@@ -33,8 +33,8 @@
             @endforeach --}}
             @foreach ($previewData['detailedProduct']['main_photos'] as $key => $photo)
 
-            <div class="carousel-box img-zoom rounded-0">
-                <img class="img-fluid h-auto lazyload mx-auto"
+            <div class="carousel-box img-zoom border-radius-16">
+                <img class="img-fluid h-auto lazyload mx-auto border-radius-16"
                     src="{{ static_asset('assets/img/placeholder.jpg') }}" data-src="{{ asset('/public/'.$photo) }}"
                     onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
             </div>
@@ -43,8 +43,8 @@
         </div>
     </div>
     <!-- Thumbnail Images -->
-    <div class="col-12 mt-3 d-none d-lg-block">
-        <div class="aiz-carousel half-outside-arrow product-gallery-thumb" data-items='7' data-nav-for='.product-gallery'
+    <div class="col-12 mt-2 d-none d-lg-block">
+        <div class="aiz-carousel half-outside-arrow product-gallery-thumb" id="carousel-prod-imgs" data-items='7' data-nav-for='.product-gallery'
             data-focus-select='true' data-arrows='true' data-vertical='false' data-auto-height='true'>
 
             {{-- @if ($detailedProduct->digital == 0)
@@ -62,7 +62,7 @@
 
             @foreach ($previewData['detailedProduct']['main_photos'] as $key => $photo)
                 <div class="carousel-box c-pointer rounded-0">
-                    <img class="lazyload mw-100 size-60px mx-auto border p-1"
+                    <img class="lazyload mw-100 size-60px mx-auto border border-radius-8px"
                         src="{{ static_asset('assets/img/placeholder.jpg') }}" data-src="{{ asset('/public/'.$photo) }}"
                         onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
                 </div>

@@ -702,7 +702,7 @@
                         @endif
                     </span>
                     <!-- Name -->
-                    <h4 class="h5 fs-14 fw-700 text-dark ml-2 mb-0">{{ $user->name }}</h4>
+                    <h4 class="h5 fs-14 fw-700 text-white ml-2 mb-0 ">{{ $user->name }}</h4>
                 </span>
             @else
                 <!--Login & Registration -->

@@ -61,14 +61,15 @@
             <div class="bg-white py-3">
                 <div class="row">
                     <!-- Product Image Gallery -->
-                    <div class="col-xl-5 col-lg-6 mb-4">
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-12 mb-4">
                         @include('frontend.product_details.image_gallery_preview')
                     </div>
 
                     <!-- Product Details -->
-                    <div class="col-xl-7 col-lg-6">
+                    <div class="col-xl-8 col-lg-8 col-md-8 col-12">
                         @include('frontend.details')
                     </div>
+
                 </div>
             </div>
         </div>
@@ -76,11 +77,11 @@
     <section class="mb-4">
         <div class="container">
             <div class="row gutters-16">
-                <!-- Left side -->
+                <!-- Left side
                 <div class="col-lg-3">
-                    <!-- Seller Info -->
+                    <!-- Seller Info
 
-                    <!-- Top Selling Products -->
+                    <!-- Top Selling Products
                     <div class="d-none d-lg-block">
                         <div class="bg-white border mb-4">
                             <div class="p-3 p-sm-4 fs-16 fw-600">
@@ -296,16 +297,16 @@
                 </div>
 
                 <!-- Right side -->
-                <div class="col-lg-9">
+                <div class="col-lg-12">
 
                     <!-- Reviews & Ratings -->
-                    <div class="bg-white border mb-4">
-                        <div class="p-3 p-sm-4">
+                    <div class="bg-white mb-4">
+                        <!--<div class="p-3 p-sm-4">
                             <h3 class="fs-16 fw-700 mb-0">
                                 <span class="mr-4">Reviews &amp; Ratings</span>
                             </h3>
                         </div>
-                        <!-- Ratting -->
+                        <!-- Ratting
                         {{-- <div class="px-3 px-sm-4 mb-4">
                             <div class="border border-secondary-base bg-soft-secondary-base p-3 p-sm-4">
                                 <div class="row align-items-center">
@@ -336,7 +337,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div> --}}
+                        </div> --}} <!--
                         <div class="px-3 px-sm-4 mb-4">
                             <div class="border border-secondary-base bg-soft-secondary-base p-3 p-sm-4">
                                 <div class="row align-items-center">
@@ -362,7 +363,7 @@
                                                     @if($totalRating > 0)
                                                     {{ renderStarRating($detailedProduct->reviews->sum('rating') / $totalRating) }}
                                                 @else
-                                                    {{ renderStarRating(0) }} <!-- Assuming 0 stars when there are no reviews -->
+                                                    {{ renderStarRating(0) }} <!-- Assuming 0 stars when there are no reviews
                                                 @endif
                                                 </span>
                                                 <span class="total-var-rating ml-1 fs-14">({{$totalRating}}
@@ -398,7 +399,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Reviews -->
+                        <!-- Reviews
                         <div class="py-3 reviews-area">
                             <ul class="list-group list-group-flush">
                             </ul>
@@ -407,19 +408,20 @@
                                 There have been no reviews for this product yet.
                             </div>
 
-                            <!-- Pagination -->
+                            <!-- Pagination
                             <div class="aiz-pagination product-reviews-pagination py-2 px-4 d-flex justify-content-end">
 
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                     <!-- Description, Video, Downloads -->
-                    <div class="bg-white mb-4 border p-3 p-sm-4">
+                    <div class="bg-white mb-4 p-3 p-sm-4 col-12 col-md-6 float-left">
                         <!-- Tabs -->
                         <div class="nav aiz-nav-tabs">
                             <a href="#tab_default_1" data-toggle="tab"
                                 class="mr-5 pb-2 fs-16 fw-700 text-reset active show">Description</a>
-                            <a href="#tab_default_2" data-toggle="tab" class="mr-5 pb-2 fs-16 fw-700 text-reset">Video</a>
+                            <a href="#tab_default_2" data-toggle="tab" class="mr-5 pb-2 fs-16 fw-700 text-reset">Downloadable</a>
+                            <a href="#tab_default_2" data-toggle="tab" class="mr-5 pb-2 fs-16 fw-700 text-reset">Reviews</a>
                         </div>
 
                         <!-- Description -->
@@ -428,8 +430,9 @@
                             <div class="tab-pane fade active show" id="tab_default_1">
 
                                 <div class="py-5">
+                                    <span class="fs-20 font-prompt-md pb-2">Product information</span>
                                     @if(!empty($previewData['detailedProduct']['description']))
-                                    <div class="mw-100 overflow-hidden text-left aiz-editor-data">
+                                    <div class="mw-100 overflow-hidden text-left aiz-editor-data fs-16 font-prompt">
                                         {!! $previewData['detailedProduct']['description'] !!}
                                     </div>
                                     @else
@@ -461,6 +464,7 @@
                                             </div>
                                         </div>
                                         <p></p>
+                                        <!--
                                         <div id="featurebullets_feature_div" class="celwidget"
                                             data-feature-name="featurebullets" data-csa-c-id="reqzvc-d8zszu-2bgmto-k7o74x"
                                             data-cel-widget="featurebullets_feature_div"
@@ -516,7 +520,7 @@
                                                     </li>
                                                 </ul>
                                             </div>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             </div>
@@ -547,6 +551,26 @@
                             </div>
                         </div>
                     </div>
+                    <div class="bg-white mb-4 p-3 p-sm-4 col-12 col-md-6 float-left">
+                        <span class="fs-20 font-prompt-md pb-2">Product Specification</span>
+                        <table class="table prod-details-table border">
+                            <tbody>
+                              <tr>
+                                <td class="background-green">Model</td>
+                                <td>Skysuite 320</td>
+                              </tr>
+                              <tr>
+                                <td class="background-green">Brand</td>
+                                <td>Philips</td>
+                              </tr>
+                              <tr>
+                                <td class="background-green">Material</td>
+                                <td>Stainless Steel</td>
+                              </tr>
+                            </tbody>
+
+                          </table>
+                    </div>
                     <!-- Related products -->
                     {{-- <div class="bg-white border">
                         <div class="p-3 p-sm-4">
@@ -565,7 +589,7 @@
                             </div>
                         </div>
                     </div> --}}
-                    <!-- Product Query -->
+                    <!-- Product Query
                     <div class="bg-white border mt-4 mb-4" id="product_query">
                         <div class="p-3 p-sm-4">
                             <h3 class="fs-16 fw-700 mb-0">
@@ -573,7 +597,7 @@
                             </h3>
                         </div>
 
-                        <!-- Login & Register -->
+                        <!-- Login & Register
                         <p class="fs-14 fw-400 mb-0 px-3 px-sm-4 mt-3"><a
                                 href="https://demo.activeitzone.com/ecommerce/users/login">Login</a> Or <a class="mr-1"
                                 href="https://demo.activeitzone.com/ecommerce/users/registration">Register</a>to submit
@@ -582,7 +606,7 @@
 
                         <!-- Query Submit -->
 
-                        <!-- Others Queries -->
+                        <!-- Others Queries
                         <div class="queries-area my-4 mb-0 px-3 px-sm-4">
                             <div class="py-3">
                                 <h3 class="fs-16 fw-700 mb-0">
@@ -801,8 +825,8 @@
                                 </nav>
 
                             </div> --}}
-                        </div>
-                    </div>
+                        <!--</div>
+                    </div>-->
 
                     <!-- Top Selling Products -->
                     <div class="d-lg-none">
