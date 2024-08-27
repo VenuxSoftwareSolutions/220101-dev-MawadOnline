@@ -1911,7 +1911,13 @@
                             if ($(child_element).attr("name") == undefined) {
                                 var id_attribute = $(child_element).data('id_attributes');
                                 var name = 'attributes-'+ id_attribute + '-' + id_variant
-                                $(child_element).attr('name', name);
+                                if ($(child_element).data('type') == 'color') {
+                                    var name = 'attributes-'+ id_attribute + '-' + id_variant + '[]'
+                                    $(child_element).attr('name', name);
+                                }else{
+                                    var name = 'attributes-'+ id_attribute + '-' + id_variant
+                                    $(child_element).attr('name', name);
+                                }
                             }
 
                         });
@@ -1931,8 +1937,15 @@
                             // Change the attribute name of the current input
                             if ($(child_element).attr("name") == undefined) {
                                 var id_attribute = $(child_element).data('id_attributes');
-                                var name = 'attribute_generale-'+ id_attribute
-                                $(child_element).attr('name', name);
+                                
+                                if ($(child_element).data('type') == 'color') {
+                                    var name = 'attribute_generale-'+ id_attribute + '[]'
+                                    $(child_element).attr('name', name);
+                                }else{
+                                    var name = 'attribute_generale-'+ id_attribute
+                                    $(child_element).attr('name', name);
+                                }
+                                
                             }
 
                         });
@@ -2122,10 +2135,13 @@
                     // Retrieve the data-id_attributes value of the current input
                     var dataIdValue = $(element).data('id_attributes');
                     var value= 0;
+                    var check = false;
                     if($(element).attr('data-type')){
                         $('#variant_informations').find('.color').each(function(key, element_original) {
                             if($(element_original).data('id_attributes') == dataIdValue){
                                 value = $(element_original).val();
+                                $(element).attr('name', 'attributes-' + dataIdValue + '-' + numbers_variant + '[]');
+                                check = true;
                             }
                         })
 
@@ -2133,7 +2149,10 @@
                     }
 
                     // Change the attribute name of the current input
-                    $(element).attr('name', 'attributes-' + dataIdValue + '-' + numbers_variant);
+                    if(check == false){
+                        $(element).attr('name', 'attributes-' + dataIdValue + '-' + numbers_variant);
+                    }
+                    
                 });
 
                 clonedDiv.find('.attributes-units').each(function(index, element) {

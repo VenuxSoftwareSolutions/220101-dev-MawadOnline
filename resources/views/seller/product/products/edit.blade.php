@@ -2435,30 +2435,64 @@
                     });
 
                     $("#bloc_variants_created div").each(function(index, element) {
-                        console.log('not done yet')
-                        if($(element).data('id') != undefined){
-                            console.log('not done')
-                            id_variant = $(element).data('id');
-                            $(element).find('.attributes').each(function(index, element) {
-                                console.log('done')
-                                // Change the attribute name of the current input
-                                if ($(element).attr("name") == undefined) {
-                                    var id_attribute = $(element).data('id_attributes');
-                                    var name = 'variant[attributes]['+ id_variant +']['+ id_attribute +']'
-                                    $(element).attr('name', name);
-                                }
+                        if ($(element).hasClass('clonedDiv')) {
+                            if($(element).data('id') != undefined){
+                                id_variant = $(element).data('id');
+                                $(element).find('.attributes').each(function(index, element) {
+                                    // Change the attribute name of the current input
+                                    if ($(element).attr("name") == undefined) {
+                                        var id_attribute = $(element).data('id_attributes');
+                                        var name = 'attributes-'+ id_attribute + '-' + id_variant
+                                        if ($(element).data('type') == 'color') {
+                                            var name = 'attributes-'+ id_attribute + '-' + id_variant + '[]'
+                                            $(element).attr('name', name);
+                                        }else{
+                                            var name = 'attributes-'+ id_attribute + '-' + id_variant
+                                            $(element).attr('name', name);
+                                        }
+                                    }
 
-                            });
+                                });
 
-                            $(element).find('.attributes-units').each(function(index, element) {
-                                if ($(element).attr("name") == undefined) {
-                                    console.log('done done')
-                                    var id_attribute = $(element).data('id_attributes');
-                                    var name = 'unit_variant['+ id_variant +']['+ id_attribute +']'
-                                    $(element).attr('name', name);
-                                }
-                            });
+                                $(element).find('.attributes-units').each(function(index, element) {
+                                    if ($(element).attr("name") == undefined) {
+                                        console.log('done done')
+                                        var id_attribute = $(element).data('id_attributes');
+                                        var name = 'unit_variant['+ id_variant +']['+ id_attribute +']'
+                                        $(element).attr('name', name);
+                                    }
+                                });
+                            }
+                        }else{
+                            if($(element).data('id') != undefined){
+                                id_variant = $(element).data('id');
+                                $(element).find('.attributes').each(function(index, element) {
+                                    // Change the attribute name of the current input
+                                    if ($(element).attr("name") == undefined) {
+                                        var id_attribute = $(element).data('id_attributes');
+
+                                        if ($(element).data('type') == 'color') {
+                                            var name = 'variant[attributes]['+ id_variant +']['+ id_attribute +'][]'
+                                            $(element).attr('name', name);
+                                        }else{
+                                            var name = 'variant[attributes]['+ id_variant +']['+ id_attribute +']'
+                                            $(element).attr('name', name);
+                                        }
+                                    }
+
+                                });
+
+                                $(element).find('.attributes-units').each(function(index, element) {
+                                    if ($(element).attr("name") == undefined) {
+                                        console.log('done done')
+                                        var id_attribute = $(element).data('id_attributes');
+                                        var name = 'unit_variant['+ id_variant +']['+ id_attribute +']'
+                                        $(element).attr('name', name);
+                                    }
+                                });
+                            }
                         }
+                        
                     });
 
                     $("#general_attributes div").each(function(index, element) {
@@ -2466,8 +2500,13 @@
                             // Change the attribute name of the current input
                             if ($(child_element).attr("name") == undefined) {
                                 var id_attribute = $(child_element).data('id_attributes');
-                                var name = 'attribute_generale-'+ id_attribute
-                                $(child_element).attr('name', name);
+                                if ($(child_element).data('type') == 'color') {
+                                    var name = 'attribute_generale-'+ id_attribute + '[]'
+                                    $(child_element).attr('name', name);
+                                }else{
+                                    var name = 'attribute_generale-'+ id_attribute
+                                    $(child_element).attr('name', name);
+                                }
                             }
 
                         });
@@ -2657,10 +2696,13 @@
                     // Retrieve the data-id_attributes value of the current input
                     var dataIdValue = $(element).data('id_attributes');
                     var value= 0;
+                    var check = false;
                     if($(element).attr('data-type')){
                         $('#variant_informations').find('.color').each(function(key, element_original) {
                             if($(element_original).data('id_attributes') == dataIdValue){
                                 value = $(element_original).val();
+                                $(element).attr('name', 'attributes-' + dataIdValue + '-' + numbers_variant + '[]');
+                                check = true;
                             }
                         })
 
@@ -2668,7 +2710,10 @@
                     }
 
                     // Change the attribute name of the current input
-                    $(element).attr('name', 'attributes-' + dataIdValue + '-' + numbers_variant);
+                    if(check == false){
+                        $(element).attr('name', 'attributes-' + dataIdValue + '-' + numbers_variant);
+                    }
+                    
                 });
 
                 clonedDiv.find('.attributes-units').each(function(index, element) {
