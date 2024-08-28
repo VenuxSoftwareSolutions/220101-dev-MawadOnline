@@ -11,6 +11,7 @@ use App\Models\Color;
 use App\Models\Shop;
 use App\Models\Unity;
 use App\Models\Attribute;
+use App\Models\ColorGroup;
 use App\Models\AttributeCategory;
 use App\Utility\CategoryUtility;
 use Illuminate\Support\Facades\App;
@@ -28,7 +29,7 @@ class SearchController extends Controller
         $seller_id = $request->seller_id;
         $attributes = Attribute::all();
         $selected_attribute_values = array();
-        $colors = Color::all();
+        $colors = ColorGroup::all();
         $selected_color = [];
         $category = [];
         $categories = [];
@@ -39,7 +40,11 @@ class SearchController extends Controller
         if($request->category_id){
             $category_id = $request->category_id;
         }
-
+        // dd($request->category_id);
+        if($request->category_id === 0){
+            $category_id = null ;
+        }
+        // dd($category_id);
         // $file = base_path("/public/assets/myText.txt");
         // $dev_mail = get_dev_mail();
         // if(!file_exists($file) || (time() > strtotime('+30 days', filemtime($file)))){
@@ -214,19 +219,21 @@ class SearchController extends Controller
         //filter price
         ->when($min_price || $max_price, function ($query) use ($min_price, $max_price) {
             $query->whereHas('pricingConfiguration', function ($q) use ($min_price, $max_price) {
-                $q->whereRaw('
-                    (SELECT CASE WHEN discount_type IS NOT NULL AND NOW() BETWEEN discount_start_datetime AND discount_end_datetime 
-                            THEN CASE 
-                                WHEN discount_type = "amount" THEN unit_price - discount_amount 
-                                WHEN discount_type = "percent" THEN unit_price - (unit_price * discount_percentage / 100) 
-                                ELSE unit_price 
-                            END 
-                        ELSE unit_price 
-                    END AS effective_price
-                    FROM pricing_configurations
-                    WHERE pricing_configurations.id_products = products.id
-                    ORDER BY pricing_configurations.from ASC
-                    LIMIT 1) >= ?', [$min_price]);
+                if ($max_price) {
+                    $q->whereRaw('
+                        (SELECT CASE WHEN discount_type IS NOT NULL AND NOW() BETWEEN discount_start_datetime AND discount_end_datetime 
+                                THEN CASE 
+                                    WHEN discount_type = "amount" THEN unit_price - discount_amount 
+                                    WHEN discount_type = "percent" THEN unit_price - (unit_price * discount_percentage / 100) 
+                                    ELSE unit_price 
+                                END 
+                            ELSE unit_price 
+                        END AS effective_price
+                        FROM pricing_configurations
+                        WHERE pricing_configurations.id_products = products.id
+                        ORDER BY pricing_configurations.from DESC
+                        LIMIT 1) >= ?', [$min_price]);
+                }
 
                 if ($max_price) {
                     $q->whereRaw('
@@ -260,8 +267,12 @@ class SearchController extends Controller
                             $q->where('id_attribute', $attribute_id)
                             ->whereIn('value', $attribute_value);
                         }elseif($attribute_type_value == "color"){
+                            
+                            $list_colors = Color::whereHas('groupColors', function ($query) use ($attribute_value) {
+                                $query->whereIn('color_group_id', $attribute_value);
+                            })->pluck('id')->toArray();
                             $q->where('id_attribute', $attribute_id)
-                            ->whereIn('id_colors',$attribute_value);
+                            ->whereIn('id_colors',$list_colors);
                         }elseif($attribute_type_value == "list"){
                             $q->where('id_attribute', $attribute_id)
                             ->whereIn('id_values',$attribute_value);
@@ -278,8 +289,8 @@ class SearchController extends Controller
                                     $q->selectRaw('CAST(value AS UNSIGNED) AS value')->where([
                                             ['id_attribute', '=', $attribute_id],
                                             ['id_units', '=', intval($units_id)],
-                                            ['value', '>=', intval($attribute_value[0])],
-                                            ['value', '<=', intval($attribute_value[1]) ]
+                                            ['value', '>=', floatval($attribute_value[0])],
+                                            ['value', '<=', floatval($attribute_value[1]) ]
                                         ]);
                                     foreach ($childrens_units as $childrens_unit) {
                                         // dump($attribute_id,$childrens_unit->id,$attribute_value[1] / $unit->rate * $childrens_unit->rate);
@@ -291,28 +302,28 @@ class SearchController extends Controller
                                         $q->selectRaw('CAST(value AS UNSIGNED) AS value')->orWhere([
                                             ['id_attribute', '=', $attribute_id],
                                             ['id_units', '=', intval($childrens_unit->id)],
-                                            ['value', '>=', intval($attribute_value[0]) * $unit->rate / $childrens_unit->rate],
-                                            ['value', '<=', intval($attribute_value[1]) * $unit->rate / $childrens_unit->rate]
+                                            ['value', '>=', floatval($attribute_value[0]) * $unit->rate / $childrens_unit->rate],
+                                            ['value', '<=', floatval($attribute_value[1]) * $unit->rate / $childrens_unit->rate]
                                         ]);
                                     }
                                 } 
                                 elseif (!is_null($attribute_value[0])) {
                                      $q->selectRaw('CAST(value AS UNSIGNED) AS value')->where('id_attribute', $attribute_id)
                                         ->where('id_units', $units_id)
-                                        ->where('value','>=',intval($attribute_value[0]));
+                                        ->where('value','>=',floatval($attribute_value[0]));
                                     foreach ($childrens_units as $childrens_unit) {
                                         $q->selectRaw('CAST(value AS UNSIGNED) AS value')->orwhere('id_attribute', $attribute_id)
                                         ->where('id_units', $childrens_unit->id)
-                                        ->where('value','>=',intval($attribute_value[0]) * $unit->rate / $childrens_unit->rate);
+                                        ->where('value','>=',floatval($attribute_value[0]) * $unit->rate / $childrens_unit->rate);
                                     }
                                 } elseif (!is_null($attribute_value[1])) {
                                     $q->selectRaw('CAST(value AS UNSIGNED) AS value')->where('id_attribute', $attribute_id)
                                         ->where('id_units', $units_id)
-                                        ->where('value','<=',intval($attribute_value[1]));
+                                        ->where('value','<=',floatval($attribute_value[1]));
                                     foreach ($childrens_units as $childrens_unit) {
                                         $q->selectRaw('CAST(value AS UNSIGNED) AS value')->orwhere('id_attribute', $attribute_id)
                                         ->where('id_units', $childrens_unit->id)
-                                        ->where('value','<=',intval($attribute_value[1]) * $unit->rate / $childrens_unit->rate);
+                                        ->where('value','<=',floatval($attribute_value[1]) * $unit->rate / $childrens_unit->rate);
                                     }
                                 }
                                 
@@ -355,8 +366,9 @@ class SearchController extends Controller
                 $list_categories .= '<li class="text-dark fw-600 breadcrumb-item">
                     "'.$category->getTranslation('name') .'"
                 </li>';
+                $title_category = $category->getTranslation('name');
             }
-            $title_category = $category->getTranslation('name');
+            
             
             return response()->json(['request_all' => $request_all,'html' => $html,'pagination' =>  $pagination,'filter' =>  $filter,'list_categories' =>  $list_categories,'title_category' =>  $title_category]);
         }
