@@ -308,8 +308,8 @@
             var new_rate = $('select[name=units_'+id+']').val();
             console.log(id,rate,new_rate);
             filter();
-            $('#min_attribute_numeric_'+id).val(4);
-            $('#max_attribute_numeric_'+id).val(5);
+            // $('#min_attribute_numeric_'+id).val(4);
+            // $('#max_attribute_numeric_'+id).val(5);
         }
         function filter(){
             $("#spinner-div").show();
