@@ -155,7 +155,7 @@
             <div
                 id="input-slider-range"
                 data-range-value-min="{{ $min_max_price['min']}}"
-                data-range-value-max="{{ ceil($min_max_price['max'])}}"
+                data-range-value-max="{{ $min_max_price['max'] }}"
             ></div>
 
             <div class="row mt-2">
@@ -174,7 +174,7 @@
                         @if (isset($max_price) && $max_price && $min_price<$min_max_price['max'])
                             data-range-value-high="{{ $max_price }}"
                         @else
-                            data-range-value-high="{{ ceil($min_max_price['max'])}}"
+                            data-range-value-high="{{ $min_max_price['max'] }}"
                         @endif
                         id="input-slider-range-value-high"
                     ></span>
@@ -185,7 +185,7 @@
     <!-- Hidden Items -->
     <div class="min-max ">
         <input class="form-control" onchange="filter()" min="{{ $min_max_price['min']}}"  type="number" class="form-control" placeholder='{{ translate('min price')}}' name="min_price" value="@if(isset($min_price) && $min_price && $min_price>$min_max_price['min'] && $min_price<$min_max_price['max']){{ $min_price }}@else{{ $min_max_price['min']}}@endif">
-        <input class="form-control" onchange="filter()" max="{{ ceil($min_max_price['max'])}}" type="number" class="form-control" placeholder='{{ translate('max price')}}' name="max_price" value="@if(isset($max_price) && $max_price && $min_price<$min_max_price['max']){{ $max_price }}@else{{ ceil($min_max_price['max'])}}@endif">
+        <input class="form-control" onchange="filter()" max="{{ $min_max_price['max'] }}" type="number" class="form-control" placeholder='{{ translate('max price')}}' name="max_price" value="@if(isset($max_price) && $max_price && $min_price<$min_max_price['max']){{ $max_price }}@else{{ $min_max_price['max']}}@endif">
     </div>
 </div>
 
@@ -323,20 +323,27 @@
             @php
                 if(isset($request_all["units_".$attribute->id])){
                     $unit_active = $request_all["units_".$attribute->id];
+                    $unit_active_model = \App\Models\Unity::find($unit_active);
                 }elseif($attribute->get_units()->first()){
-                    $unit_active = $attribute->get_units()->first()->id;
+                    $unit_active_model = $attribute->get_units()->first();
+                    $unit_active = $unit_active_model->id;
                 }else{
                     $unit_active = null;
+                    $unit_active_model = null;
+                }
+                if($unit_active_model){
+                    $rate = $unit_active_model->rate;
                 }
                 // dd($attribute->max_min_value($id_products,$unit_active));
             @endphp
-            <select class="form-control units_fil" name="units_{{$attribute->id}}" id="" onchange="filter()">
+            <select class="form-control units_fil" name="units_{{$attribute->id}}" id="" onchange="filter_attribute({{$attribute->id}},{{$rate}})">
                 @foreach ($attribute->get_units() as $unit)
                     <option @if($unit_active == $unit->id) selected @endif value="{{$unit->id}}">{{$unit->name}}</option>
                 @endforeach
             </select>
         </div>
         @php
+            // dd($request_all[$attribute->id]);
             $show = '';
             if(isset($request_all[$attribute->id]) && $request_all[$attribute->id] > 0){
                 $show = 'show';

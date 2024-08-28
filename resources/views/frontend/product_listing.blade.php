@@ -274,10 +274,15 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+            console.log($('#search-form').attr('action'));
+            var data = {
+                category_id: category_id,
+            };
             $.ajax({
                 url: $('#search-form').attr('action'),
                 method: $('#search-form').attr('method'),
-                data: $('#search-form').serialize(),
+                data: data,
+                    
                 success: function(response) {
                     $('.all_product').html(response.html); 
                     $('.aiz-pagination').html(response.pagination); 
@@ -298,6 +303,13 @@
                     alert(errorMessage);
                 }
             });
+        }
+        function filter_attribute(id,rate){
+            var new_rate = $('select[name=units_'+id+']').val();
+            console.log(id,rate,new_rate);
+            filter();
+            $('#min_attribute_numeric_'+id).val(4);
+            $('#max_attribute_numeric_'+id).val(5);
         }
         function filter(){
             $("#spinner-div").show();
@@ -352,10 +364,11 @@
             $.ajax({
                 url: $(this).data('href'),
                 method: $('#search-form').attr('method'),
-                data: $('#search-form').serialize(),
                 success: function(response) {
                     $('.all_product').html(response.html); 
                     $('.aiz-pagination').html(response.pagination); 
+                    $('.title_category').html(response.title_category); 
+
                     $("#spinner-div").hide();
                 },
                 error: function(xhr) {
@@ -396,13 +409,13 @@
 
                     noUiSlider.create(c, {
                         start: [
-                            parseInt(d.getAttribute("data-range-value-low")),
-                            parseInt(e.getAttribute("data-range-value-high")),
+                            parseFloat(d.getAttribute("data-range-value-low")),
+                            parseFloat(e.getAttribute("data-range-value-high")),
                         ],
                         connect: !0,
                         range: {
-                            min: parseInt(c.getAttribute("data-range-value-min")),
-                            max: parseInt(c.getAttribute("data-range-value-max")),
+                            min: parseFloat(c.getAttribute("data-range-value-min")),
+                            max: parseFloat(c.getAttribute("data-range-value-max")),
                         },
                     }),
 
@@ -424,13 +437,13 @@
             
                     noUiSlider.create(c, {
                         start: [
-                            parseInt(d.getAttribute("data-range-value-low")),
-                            parseInt(e.getAttribute("data-range-value-high")),
+                            parseFloat(d.getAttribute("data-range-value-low")),
+                            parseFloat(e.getAttribute("data-range-value-high")),
                         ],
                         connect: true,
                         range: {
-                            min: parseInt(c.getAttribute("data-range-value-min")),
-                            max: parseInt(c.getAttribute("data-range-value-max")),
+                            min: parseFloat(c.getAttribute("data-range-value-min")),
+                            max: parseFloat(c.getAttribute("data-range-value-max")),
                         },
                     });
             
