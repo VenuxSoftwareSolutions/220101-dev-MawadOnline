@@ -80,5 +80,21 @@ return [
     'view_approved_iban_certificate' => 'عرض شهادة الآيبان المعتمدة',
     'view_iban_certificate' => 'عرض شهادة الآيبان',
     'strict_email' => 'البريد الإلكتروني غير صالح.',
+    'subscription status' => 'حالة الاشتراك',
+    'active' => 'نشط',
+    'paused' => 'مؤقت',
+    'canceled' => 'ملغي',
+    'unknown' => 'غير معروف',
+    'no_subscription' => 'لا يوجد اشتراك',
+    'Unsuspended' => 'إلغاء التعليق',
+    'unsuspend_modal_title' => 'إلغاء تعليق البائع',
+    'unsuspend_modal_body' => 'هل أنت متأكد أنك تريد إلغاء تعليق هذا البائع؟',
+    'unsuspend_modal_cancel_btn' => 'إلغاء',
+    'unsuspend_modal_confirm_btn' => 'إلغاء التعليق',
+    'vendor_unsuspended_success' => 'تم إلغاء تعليق البائع بنجاح.',
+    'vendor_unsuspended_error' => 'فشل في إلغاء تعليق البائع. يرجى المحاولة مرة أخرى لاحقًا.',
+    'toastr_vendor_unsuspended' => 'إلغاء التعليق ناجح',
+
+
 
 ];

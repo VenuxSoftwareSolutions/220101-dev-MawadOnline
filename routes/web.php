@@ -121,7 +121,7 @@ Route::controller(HomeController::class)->group(function () {
     Route::post('/users/login/cart', 'cart_login')->name('cart.login.submit')->middleware('handle-demo-login');
     // Route::get('/new-page', 'new_page')->name('new_page');
     Route::post('stripe/webhook', [WebhookController::class, 'handleWebhook']);
-    Route::get('checkout/{plan?}',  'checkout')->name('checkout');
+    // Route::get('checkout/{plan?}',  'checkout')->name('checkout');
     // Route::middleware(['auth', 'subscribed'])->group(function () {
         Route::get('/subscription/cancel',  'cancel')->name('subscription.cancel');
         // Route::get('/subscription/update',  'updatePaymentInformation')->name('subscription.update');

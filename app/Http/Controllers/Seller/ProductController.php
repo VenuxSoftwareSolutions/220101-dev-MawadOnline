@@ -396,9 +396,9 @@ class ProductController extends Controller
                     case "color":
                         $colors = Color::orderBy('name', 'asc')->get();
                         $html .= '<div class="col-md-10">
-                        <select class="form-control attributes color aiz-selectpicker" data-id_attributes="'.$attribute->id.'" data-type="color" data-live-search="true" data-selected-text-format="count">';
+                        <select multiple class="form-control attributes color aiz-selectpicker" data-id_attributes="'.$attribute->id.'" data-type="color" data-live-search="true" data-selected-text-format="count">';
                             foreach ($colors as $key => $color){
-                                $html .= '<option value="' . $color->code . '" data-content="<span><span class=\'size-15px d-inline-block mr-2 rounded border\' style=\'background:' . $color->code . '\'></span><span>' . $color->name . '</span></span>"></option>';
+                                $html .= '<option value="' . $color->code . '" data-content="<span><span class=\'size-15px d-inline-block mr-2 rounded border\' style=\'background:' . $color->code . '\'></span><span>' . $color->name . '<span style=\'display:none;\'>-tt</span>' . '</span></span>"></option>';
                             }
                         $html .= '</select></div>';
                         break;

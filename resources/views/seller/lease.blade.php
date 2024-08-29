@@ -84,9 +84,9 @@
                     <p class="mt-2 text-red-500">Your subscription information is not available. Please contact support.</p>
                 @endif
             @else
-                <a href="{{ route('checkout', ['plan' => 'price_1Pff8tRvNlBWfmPIJs3W3bLd']) }}" class="mt-5 py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-indigo-100 text-indigo-800 hover:bg-indigo-200 disabled:opacity-50 disabled:pointer-events-none dark:hover:bg-indigo-900 dark:text-indigo-400 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
+                {{-- <a href="{{ route('checkout', ['plan' => 'price_1Pff8tRvNlBWfmPIJs3W3bLd']) }}" class="mt-5 py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-indigo-100 text-indigo-800 hover:bg-indigo-200 disabled:opacity-50 disabled:pointer-events-none dark:hover:bg-indigo-900 dark:text-indigo-400 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
                     Sign up
-                </a>
+                </a> --}}
             @endif
         </div>
  {{-- <div class="max-w-lg mx-auto bg-white p-8 rounded shadow">

@@ -9,6 +9,7 @@ use App\Models\SellerLease;
 use Illuminate\Http\Request;
 use App\Models\SellerLeaseDetail;
 use App\Http\Controllers\Controller;
+use Stripe\Subscription;
 
 class SellerLeaseController extends Controller
 {
@@ -27,6 +28,12 @@ class SellerLeaseController extends Controller
     {
 
         $user = Auth::user();
+        $subscription = $user->subscription('default');
+        if($subscription){
+
+        }
+
+
         $planName = 'prod_QToCjFrgzq3KmV';
 
         $isSubscribedToDailyPlan = $user->subscriptions()->where('name', $planName)->exists();

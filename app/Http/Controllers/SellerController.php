@@ -11,6 +11,7 @@ use App\Models\Product;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\ProposedPayoutChange;
+use App\Models\SubscriptionPause;
 use App\Models\VendorStatusHistory;
 use App\Notifications\ChangesApprovedNotification;
 use App\Notifications\CustomStatusNotification;
@@ -24,6 +25,7 @@ use Cache;
 use Carbon\Carbon;
 use File;
 use Illuminate\Support\Facades\Notification;
+use Stripe\Stripe;
 
 class SellerController extends Controller
 {
@@ -389,27 +391,223 @@ class SellerController extends Controller
 
 
     }
+    // public function enable($id) {
+    //     $seller = User::findOrFail($id);
+    //     $oldStatus = $seller->status;
+    //     $seller->status = 'Enabled';
+    //     $seller->approved_at = Carbon::now(); // Set the approved_at timestamp to the current time
 
+    //     // Save the updated seller status
+    //     $seller->save();
+
+    //     // Log status change
+    //     $this->logStatusChange($seller, 'Enabled');
+    //     // Send email notifications to the seller with old and new status
+    //     $seller->notify(new VendorStatusChangedNotification($oldStatus, $seller->status, null, null, null, $seller->name));
+    //     Notification::send($seller, new CustomStatusNotification($oldStatus, $seller->status));
+    //     // Attempt to unpause subscription if it exists
+    //     $subscription = $seller->subscription('default'); // Or the name of your subscription plan
+    //     if ($subscription) {
+    //         Stripe::setApiKey(env('STRIPE_SECRET'));
+
+    //         try {
+    //             // Retrieve the subscription from Stripe
+    //             $stripeSubscription = \Stripe\Subscription::retrieve($subscription->stripe_id);
+
+    //             // Remove pause_collection settings to unpause the subscription
+    //             $stripeSubscription->pause_collection = null;
+    //             $stripeSubscription->save();
+
+    //             // Optionally update your database if you have a pause_collection column
+    //             $subscription->update([
+    //                 'pause_collection' => null,
+    //             ]);
+
+    //             // Log resume event
+    //             SubscriptionPause::where('user_id', $seller->id)
+    //                 ->whereNull('resumed_at')
+    //                 ->update(['resumed_at' => now()]);
+
+    //             // Calculate total pause duration in the current month
+    //             $currentMonthStart = now()->startOfMonth();
+    //             $totalPausedDays = SubscriptionPause::where('user_id', $seller->id)
+    //                 ->whereBetween('paused_at', [$currentMonthStart, now()])
+    //                 ->whereNotNull('resumed_at')
+    //                 ->get()
+    //                 ->map(function ($pause) {
+    //                     return $pause->paused_at->diffInDays($pause->resumed_at);
+    //                 })
+    //                 ->sum();
+
+    //             // Handle cases where the pause has no resume
+    //             $unresolvedPauses = SubscriptionPause::where('user_id', $seller->id)
+    //                 ->whereNull('resumed_at')
+    //                 ->get();
+
+    //             foreach ($unresolvedPauses as $pause) {
+    //                 $totalPausedDays += $pause->paused_at->diffInDays(now());
+    //             }
+
+    //             // Monthly lease cost in dollars
+    //             $featureMonthlyLease = 5;
+    //             $daysInMonth = now()->daysInMonth;
+
+    //             // Calculate prorated reduction amount
+    //             $proratedReduction = ($featureMonthlyLease / $daysInMonth) * $totalPausedDays;
+
+    //             // Convert the prorated amount to cents and round to the nearest whole number
+    //             $proratedReductionCents = round($proratedReduction * 100);
+
+    //             // Create an invoice item for the prorated reduction
+    //             \Stripe\InvoiceItem::create([
+    //                 'customer' => $stripeSubscription->customer,
+    //                 'amount' => -$proratedReductionCents, // Use negative amount to create a reduction
+    //                 'currency' => 'usd', // Replace with your currency
+    //                 'description' => 'Reduction for paused subscription period',
+    //             ]);
+
+    //             // Create and finalize an invoice
+    //             $invoice = \Stripe\Invoice::create([
+    //                 'customer' => $stripeSubscription->customer,
+    //                 'auto_advance' => true, // Automatically finalize the invoice
+    //             ]);
+
+    //             $invoice->finalizeInvoice();
+
+
+
+    //             // Redirect with success message
+    //             return redirect()->route('sellers.index')->with('success', 'Vendor approved successfully, subscription resumed, and reduction for paused period applied.');
+
+    //         } catch (\Exception $e) {
+    //             // Handle exception
+    //             return redirect()->route('sellers.index')->with('error', 'Failed to resume subscription: ' . $e->getMessage());
+    //         }
+    //     } else {
+    //         // Handle case where there is no subscription
+    //         return redirect()->route('sellers.index')->with('success', 'Vendor approved successfully, No subscription found to unpause.');
+    //     }
+    // }
     public function enable($id) {
         $seller = User::findOrFail($id);
         $oldStatus = $seller->status;
         $seller->status = 'Enabled';
-        $seller->approved_at = Carbon::now(); // Set the approved_at timestamp to the current time
+        $seller->approved_at = Carbon::now();
 
-
+        // Save the updated seller status
         $seller->save();
 
-
+        // Log status change
         $this->logStatusChange($seller, 'Enabled');
 
+        // Send email notifications to the seller with old and new status
+        $seller->notify(new VendorStatusChangedNotification($oldStatus, $seller->status, null, null, null, $seller->name));
+        Notification::send($seller, new CustomStatusNotification($oldStatus, $seller->status));
 
-    // Send an email notification to the seller with old and new status
-    $seller->notify(new VendorStatusChangedNotification($oldStatus, $seller->status,null,null,null,$seller->name));
-    Notification::send($seller, new CustomStatusNotification($oldStatus, $seller->status));
+        // Attempt to unpause subscription if it exists
+        $subscription = $seller->subscription('default');
+        if ($subscription) {
+            Stripe::setApiKey(env('STRIPE_SECRET'));
 
-    return redirect()->route('sellers.index')->with('success', 'Vendor approved successfully');
+            try {
+                $stripeSubscription = \Stripe\Subscription::retrieve($subscription->stripe_id);
+                $currentPeriodStart = Carbon::createFromTimestamp($stripeSubscription->current_period_start);
 
+                // Remove pause_collection settings to unpause the subscription
+                $stripeSubscription->pause_collection = null;
+                $stripeSubscription->save();
+
+                // Update your database
+                $subscription->update(['pause_collection' => null]);
+                // Check if reduction was already applied in this billing period
+                $pause = SubscriptionPause::where('user_id', $seller->id)
+                    ->whereNull('resumed_at')
+                    ->where('paused_at', '>=', $currentPeriodStart)
+                    ->first();
+
+                if ($pause && !$pause->reduction_applied_at) {
+
+                    $pause->update(['resumed_at' => now(), 'reduction_applied_at' => now()]);
+
+                    // Calculate total pause duration in the current period
+                    $totalPausedDays = $pause->paused_at->diffInDays(now());
+                    // $featureMonthlyLease = 5; // Monthly lease cost in dollars
+                    $price = $stripeSubscription->items->data[0]->price;
+
+                    // The amount is in cents, so divide by 100 to get dollars
+                    $featureMonthlyLease = $price->unit_amount / 100;
+
+                    $daysInMonth = now()->daysInMonth;
+                    $proratedReduction = ($featureMonthlyLease / $daysInMonth) * $totalPausedDays;
+                    $proratedReductionCents = round($proratedReduction * 100);
+
+                    // Create an invoice item for the prorated reduction
+                    \Stripe\InvoiceItem::create([
+                        'customer' => $stripeSubscription->customer,
+                        'amount' => -$proratedReductionCents,
+                        'currency' => 'usd',
+                        'description' => 'Reduction for paused subscription period',
+                    ]);
+
+                    // Create and finalize an invoice
+                    $invoice = \Stripe\Invoice::create([
+                        'customer' => $stripeSubscription->customer,
+                        'auto_advance' => true,
+                    ]);
+                    $invoice->finalizeInvoice();
+
+                    return redirect()->route('sellers.index')->with('success', 'Vendor approved successfully, subscription resumed, and reduction for paused period applied.');
+                } else {
+                    return redirect()->route('sellers.index')->with('success', 'Vendor approved successfully, but no reduction applied as it was already done.');
+                }
+            } catch (\Exception $e) {
+                return redirect()->route('sellers.index')->with('error', 'Failed to resume subscription: ' . $e->getMessage());
+            }
+        } else {
+            return redirect()->route('sellers.index')->with('success', 'Vendor approved successfully, No subscription found to unpause.');
+        }
     }
+
+    // public function enable($id) {
+    //     $seller = User::findOrFail($id);
+    //     Stripe::setApiKey(env('STRIPE_SECRET'));
+    //     $subscription = $seller->subscription('default');
+    //     $stripeSubscription = \Stripe\Subscription::retrieve($subscription->stripe_id);
+    //         // Calculate new billing date
+    //         $new_billing_date = strtotime('+30 days'); // Example: 30 days from now
+
+    //         // Update the subscription with a new billing cycle anchor
+    //         $subscription = Subscription::update(
+    //             $subscription->stripe_id,
+    //             [
+    //                 'billing_cycle_anchor' => 'now', // New billing start date
+    //                 'proration_behavior' => 'create_prorations' // Options: 'create_prorations', 'none', or 'always_invoice'
+    //             ]
+    //         );
+
+
+    // }
+
+    // public function enable($id) {
+    //     $seller = User::findOrFail($id);
+    //     $oldStatus = $seller->status;
+    //     $seller->status = 'Enabled';
+    //     $seller->approved_at = Carbon::now(); // Set the approved_at timestamp to the current time
+
+
+    //     $seller->save();
+
+
+    //     $this->logStatusChange($seller, 'Enabled');
+
+
+    // // Send an email notification to the seller with old and new status
+    // $seller->notify(new VendorStatusChangedNotification($oldStatus, $seller->status,null,null,null,$seller->name));
+    // Notification::send($seller, new CustomStatusNotification($oldStatus, $seller->status));
+
+    // return redirect()->route('sellers.index')->with('success', 'Vendor approved successfully');
+
+    // }
 
     public function upload(Request $request)
     {
@@ -553,8 +751,46 @@ class SellerController extends Controller
             // Send an email notification to the seller with old and new status
             $vendor->notify(new VendorStatusChangedNotification($oldStatus, $vendor->status,$request->input('reason_details'),null,$request->input('reason_title'),$vendor->name));
             Notification::send($vendor, new CustomStatusNotification($oldStatus, $vendor->status,$suspension->suspension_reason));
+            // Attempt to pause the user's subscription
+            Stripe::setApiKey(env('STRIPE_SECRET'));
 
-            return redirect()->route('sellers.index')->with('success', 'Vendor has been suspended successfully.');
+            try {
+                $subscription = $vendor->subscription('default'); // Or the name of your subscription plan
+
+                if ($subscription) {
+                    $stripeSubscription = \Stripe\Subscription::retrieve($subscription->stripe_id);
+
+                    // Update the subscription with pause_collection settings
+                    $stripeSubscription->pause_collection = [
+                        'behavior' => 'keep_as_draft', // Options: 'keep_as_draft', 'mark_uncollectible', or 'void'
+                    ];
+
+                    $stripeSubscription->save();
+
+                    // Optionally update your database if you have a pause_collection column
+                    $subscription->update([
+                        'pause_collection' => json_encode([
+                            'behavior' => 'keep_as_draft',
+                        ]),
+                    ]);
+
+                     // Log pause event
+                    \App\Models\SubscriptionPause::updateOrCreate(
+                        ['user_id' => $subscription->user_id, 'paused_at' => null],
+                        ['paused_at' => now(), 'resume_at' => null]
+                    );
+                }
+            } catch (\Exception $e) {
+                return redirect()->route('sellers.index')->with('error', 'Vendor has been suspended successfully but failed to pause subscription: ' . $e->getMessage());
+            }
+
+            if ($subscription) {
+                return redirect()->route('sellers.index')->with('success', 'Vendor has been suspended successfully and subscription paused.');
+            }
+            else {
+                return redirect()->route('sellers.index')->with('success', 'Vendor has been suspended successfully.');
+
+            }
 
         }
 
@@ -571,7 +807,23 @@ class SellerController extends Controller
             // Send an email notification to the seller with old and new status
             $vendor->notify(new VendorStatusChangedNotification($oldStatus, $vendor->status,null,null,'Your account is pending-closure',$vendor->name));
             Notification::send($vendor, new CustomStatusNotification($oldStatus, $vendor->status));
+            // Attempt to cancel the user's subscription
+            Stripe::setApiKey(env('STRIPE_SECRET'));
+            try {
+                $subscription = $vendor->subscription('default'); // Or the name of your subscription plan
 
+                if ($subscription) {
+                    $stripeSubscription = \Stripe\Subscription::retrieve($subscription->stripe_id);
+
+                    // Cancel the subscription
+                    $stripeSubscription->cancel();
+
+
+                }
+            } catch (\Exception $e) {
+                // Handle exception
+                // You may want to log this exception or notify the admin
+            }
             // Return success response
             return response()->json(['success' => true,'last_status_update' => $vendor->last_status_update->format('jS F Y, H:i')]);
         }

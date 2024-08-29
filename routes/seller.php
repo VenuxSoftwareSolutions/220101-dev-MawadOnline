@@ -237,8 +237,14 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
 
     Route::controller(SubscriptionController::class)->group(function () {
         Route::get('/subscription', 'index')->name('subscription.index');
-
-
+        Route::post('/checkout/session',  'createCheckoutSession')->name('createCheckoutSession');
+        Route::get('/subscription/pause', 'pause')->name('subscription.pause');
+        Route::get('/subscription/unpause', 'unpause')->name('subscription.unpause');
+        Route::get('/subscription/cancel', 'cancel')->name('subscription.cancel');
+        Route::get('/subscription/resume', 'resume')->name('subscription.resume');
+        Route::post('/update-payment-information',  'updatePaymentInformation')->name('updatePaymentInformation');
+        Route::get('/subscription/cancel-pause', 'cancelPause')
+        ->name('subscription.cancelPause') ;
     });
 
 

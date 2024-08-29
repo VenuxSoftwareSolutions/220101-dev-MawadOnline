@@ -1284,7 +1284,7 @@ use Carbon\Carbon;
                         @if ($user->status == "Pending Approval" || $user->status == "Suspended" || $user->status =="Pending Closure")
                         <!-- Approve Button -->
                         <a href="{{route('vendors.approve.registration', $user->id)}}" name="action" value="approve" class="btn btn-success fw-600 rounded-0">
-                            {{ __('messages.approve') }}
+                           @if($user->status == "Suspended") {{ __('messages.Unsuspended') }} @else {{ __('messages.approve') }} @endif
 
                         </a>
                         @endif

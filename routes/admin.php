@@ -51,6 +51,7 @@ use App\Http\Controllers\WebsiteController;
 use App\Http\Controllers\ZoneController;
 use App\Http\Controllers\UnityController;
 use App\Http\Controllers\Seller\CatalogController;
+use App\Http\Controllers\SubscriptionController;
 
 /*
   |--------------------------------------------------------------------------
@@ -377,6 +378,16 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::get('/subscribers/destroy/{id}', 'destroy')->name('subscriber.destroy');
     });
 
+    //Subscriptions
+    Route::controller(SubscriptionController::class)->group(function () {
+        Route::get('/subscriptions', 'index')->name('admin.subscriptions.index');
+        Route::post('subscriptions/{subscription}/pause', [SubscriptionController::class, 'pause'])->name('admin.subscriptions.pause');
+        Route::post('/admin/subscriptions/unpause/{id}', [SubscriptionController::class, 'unpause'])->name('admin.subscriptions.unpause');
+        Route::post('/admin/subscriptions/cancel/{id}', [SubscriptionController::class, 'cancel'])->name('admin.subscriptions.cancel');
+        Route::post('admin/subscriptions/retry/{subscription}', 'retryPayment')->name('admin.subscriptions.retry');
+        Route::post('admin/subscriptions/{subscription}/refund',  'refund')->name('admin.subscriptions.refund');
+
+    });
     // Order
     Route::resource('orders', OrderController::class);
     Route::controller(OrderController::class)->group(function () {

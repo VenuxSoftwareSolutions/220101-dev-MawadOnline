@@ -41,6 +41,8 @@ use App\Http\Requests\SellerRegistrationShopRequest;
 use App\Notifications\CustomStatusNotification;
 use App\Notifications\EmailVerificationNotification;
 use App\Notifications\VendorStatusChangedNotification;
+use Stripe\Stripe;
+use Stripe\Customer;
 
 class ShopController extends Controller
 {
@@ -819,6 +821,19 @@ class ShopController extends Controller
         $user->status = 'Pending Approval';
         $user->owner_id = $user->id ;
         $user->save();
+        if( !$user->stripe_id) {
+            // Create a Stripe customer
+            Stripe::setApiKey(env('STRIPE_SECRET'));
+
+            $stripeCustomer = Customer::create([
+                'email' => $user->email,
+                'name' => $user->name,
+            ]);
+            // Save the Stripe customer ID to the user's record
+            $user->stripe_id = $stripeCustomer->id;
+            $user->save();
+        }
+
 
         $role = Role::where('name','pro')->first();
         $user->assignRole($role) ;

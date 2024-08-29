@@ -197,6 +197,7 @@
                         <th>{{ __('messages.business_name') }}</th>
                         <th>{{ __('messages.vendor_name') }}</th>
                         <th>{{ __('messages.status') }}</th>
+                        <th>{{ __('messages.subscription status') }}</th>
                         <th>{{ __('messages.joining_datetime') }}</th>
                         <th>{{ __('messages.last_status_update') }}</th>
                         <th width="10%">{{__('messages.options')}}</th>
@@ -237,6 +238,29 @@
                                     <span class="badge bg-warning">{{ __('Pending Approval') }}</span>
                                 @endif --}}
                             </td>
+                       {{-- Check if the user has a subscription --}}
+                <td>
+                    @if ($seller->subscription('default')) {{-- Or use the appropriate subscription name --}}
+                        {{-- Display the status if the subscription exists --}}
+                        @php
+                            $subscription = $seller->subscription('default'); // Or the name of your subscription plan
+                            $status = $subscription->stripe_status; // Adjust according to your actual field name
+                        @endphp
+
+                        @if ($status == 'active')
+                            {{ __('messages.active') }} {{-- "Active" in English and Arabic --}}
+                        @elseif ($status == 'paused')
+                            {{ __('messages.paused') }} {{-- "Paused" in English and Arabic --}}
+                        @elseif ($status == 'canceled')
+                            {{ __('messages.canceled') }} {{-- "Canceled" in English and Arabic --}}
+                        @else
+                            {{$subscription->stripe_status }} {{-- "Unknown" in English and Arabic --}}
+                        @endif
+                    @else
+                        {{ __('messages.no_subscription') }} {{-- "No subscription" in English and Arabic --}}
+                    @endif
+                </td>
+
                             <td>{{ $seller->approved_at ? $seller->approved_at->format('jS F Y, H:i') : '' }}</td>
                             <td id="last-status-update-{{ $seller->id}}"> {{$seller->last_status_update ? $seller->last_status_update->format('jS F Y, H:i') : ''}}
                                 {{-- @if($seller->vendor_status_history->isNotEmpty())
@@ -273,6 +297,8 @@
                                         @endif
                                         {{-- Pending Closure --}}
                                         @if ($seller->status !="Pending Closure" )
+                                           {{-- <button type="button" class="dropdown-item  unsuspended-btn" data-vendor-id="{{ $seller->id }}">{{ __('messages.Unsuspended') }}</button> --}}
+
                                            <button type="button" class="dropdown-item {{-- btn btn-warning --}} pending-closure-btn" data-vendor-id="{{ $seller->id }}">{{ __('messages.pending_closure_op') }}</button>
                                         @endif
                                         @if ($seller->status != "Enabled" && $seller->status !="Suspended"  )
