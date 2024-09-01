@@ -30,12 +30,14 @@
             <div class="home-slider slider-full">
                 @if (get_setting('home_slider_images') != null)
                     <div class="aiz-carousel dots-inside-bottom mobile-img-auto-height" data-autoplay="true" data-infinite="true">
+
                         @php
                             $decoded_slider_images = json_decode(get_setting('home_slider_images', null, $lang), true);
                             $sliders = get_slider_images($decoded_slider_images);
                         @endphp
                         @foreach ($sliders as $key => $slider)
                             <div class="carousel-box">
+
                                 <a href="{{ json_decode(get_setting('home_slider_links'), true)[$key] }}">
                                     <!-- Image -->
                                     <div class="d-block mw-100 img-fit overflow-hidden h-180px h-md-320px h-lg-460px h-xl-553px overflow-hidden radius-banner">
@@ -223,16 +225,16 @@
                 </div>
                 <!-- Categories -->
                 <div class="bg-white px-sm-3">
-                    <div class="aiz-carousel sm-gutters-17" id="product-carousel" data-items="6" data-xxl-items="7" data-xl-items="6"
-                        data-lg-items="4" data-md-items="4" data-sm-items="3" data-xs-items="2" data-arrows="true"
+                    <div class="aiz-carousel sm-gutters-17" id="product-carousel" data-items="7" data-xxl-items="7" data-xl-items="6"
+                        data-lg-items="5" data-md-items="3" data-sm-items="3" data-xs-items="2" data-arrows="true"
                         data-dots="false" data-autoplay="false" data-infinite="true"  style="min-height:250px;">
                         @foreach ($featured_categories as $key => $category)
                             @php
                                 $category_name = $category->getTranslation('name');
                             @endphp
                             <div class="carousel-box position-relative p-0 has-transition">
-                                <div class="h-200px p-4">
-                                    <div class="h-100 w-100 w-xl-auto position-relative overflow-hidden radius-category">
+                                <div class="h-250px p-4">
+                                    <div class="h-150px w-150px w-xl-auto position-relative overflow-hidden radius-category">
                                         <div class="position-absolute h-100 w-100 overflow-hidden">
                                             <img src="{{ isset($category->cover_image) ? my_asset($category->cover_image) : static_asset('assets/img/placeholder.jpg') }}"
                                                 alt="{{ $category_name }}"
