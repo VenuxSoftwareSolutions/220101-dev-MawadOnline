@@ -25,7 +25,7 @@
                 $colors = \App\Models\Color::orderBy('name', 'asc')->get();
             @endphp
             <div class="col-md-10">
-                <select class="form-control attributes color aiz-selectpicker" data-id_attributes="{{ $attribute->id }}" data-type="color" data-live-search="true" data-selected-text-format="count">
+                <select class="form-control attributes color aiz-selectpicker" data-id_attributes="{{ $attribute->id }}" data-type="color" data-live-search="true" data-selected-text-format="count" multiple>
                     @foreach ($colors as $key => $color)
                         <option value="{{ $color->code }}" data-content="<span><span class='size-15px d-inline-block mr-2 rounded border' style='background:{{ $color->code }}'></span><span>{{ $color->name }}</span></span>"></option>
                     @endforeach

@@ -24,9 +24,9 @@
                 @break;
             @case ('color')
                 <div class="col-md-10 mb-3 attribute-variant-{{ $attribute->id }}">
-                    <select class="form-control attributes aiz-selectpicker" @if(request()->route()->getName() === 'products.approve') @if(isset($general_attributes[$attribute->id]->added)) data-added="true" style="border-color: green !important;" @endif @if(isset($general_attributes[$attribute->id]->old_value)) data-value="{{ $general_attributes[$attribute->id]->old_value }}" style="border-color: #FF3C50 !important;" @endif @endif name="attribute_generale-{{ $attribute->id }}" data-type="color" data-live-search="true" data-selected-text-format="count">
+                    <select class="form-control attributes aiz-selectpicker" @if(request()->route()->getName() === 'products.approve') @if(count(@$data_general_attributes_color_added) > 0) data-added="true" style="border-color: green !important;" @endif @if(isset($general_attributes[$attribute->id]->old_value)) data-value="{{ $general_attributes[$attribute->id]->old_value }}" style="border-color: #FF3C50 !important;" @endif @endif name="attribute_generale-{{ $attribute->id }}[]" data-type="color" data-live-search="true" data-selected-text-format="count" multiple>
                         @foreach ($colors as $key => $color)
-                            <option value="{{ $color->code }}" @if($general_attributes[$attribute->id]->id_colors == $color->id) selected @endif data-content="<span><span class='size-15px d-inline-block mr-2 rounded border' style='background:{{ $color->code }}'></span><span>{{ $color->name }}</span></span>"></option>'
+                            <option value="{{ $color->code }}" @if(in_array($color->id, $general_attributes[$attribute->id])) selected @endif data-content="<span><span class='size-15px d-inline-block mr-2 rounded border' style='background:{{ $color->code }}'></span><span>{{ $color->name }}</span></span>"></option>'
                         @endforeach
                     </select>
                 </div>

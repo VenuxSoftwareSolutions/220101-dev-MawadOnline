@@ -697,9 +697,21 @@ class ProductController extends Controller
 
             $historique_parent = DB::table('revisions')->whereNull('deleted_at')->whereIn('revisionable_id', $general_attributes_ids_values)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
             $data_general_attributes = [];
+            $data_general_attributes_color_added = [];
             if(count($general_attributes) > 0){
                 foreach ($general_attributes as $general_attribute){
-                    $data_general_attributes[$general_attribute->id_attribute] = $general_attribute;
+                    // $data_general_attributes[$general_attribute->id_attribute] = $general_attribute;
+
+                    if($general_attribute->id_colors != null){
+                        if (array_key_exists($general_attribute->id_attribute,$data_general_attributes)){
+                            array_push($data_general_attributes[$general_attribute->id_attribute], $general_attribute->id_colors);
+                        }else{
+                            $data_general_attributes[$general_attribute->id_attribute] = [$general_attribute->id_colors];
+                        }
+                    }else{
+                        $data_general_attributes[$general_attribute->id_attribute] = $general_attribute;
+                    }
+
                     if(count($historique_parent) > 0){
                         foreach($historique_parent as $historique){
                             if($general_attribute->id == $historique->revisionable_id){
@@ -707,6 +719,7 @@ class ProductController extends Controller
                                     $general_attribute->key = $historique->key;
                                     if($historique->key == "add_attribute"){
                                         $general_attribute->added = true;
+                                        array_push($data_general_attributes_color_added, $historique->new_value);
                                     }else{
                                         if($historique->key == 'id_units'){
                                             $unit = Unity::find($historique->old_value);
@@ -843,7 +856,7 @@ class ProductController extends Controller
                     $chargeable_weight *= 2.2;
                 }
             }
-
+            
             return view('backend.product.products.approve', [
                 'product' => $product,
                 'vat_user' => $vat_user,
@@ -860,7 +873,8 @@ class ProductController extends Controller
                 'general_informations' => $general_informations,
                 'data_historique_documents' => $data_historique_documents,
                 'historique_images' => $historique_images,
-                'chargeable_weight' => $chargeable_weight
+                'chargeable_weight' => $chargeable_weight,
+                'data_general_attributes_color_added' => $data_general_attributes_color_added,
             ]);
         }else{
             abort(404);

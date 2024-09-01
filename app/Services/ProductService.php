@@ -28,6 +28,7 @@ class ProductService
     public function store(array $data)
     {
         $collection = collect($data);
+        
 
         $vat_user = BusinessInformation::where('user_id', Auth::user()->owner_id)->first();
 
@@ -462,6 +463,8 @@ class ProductService
             }
         }
 
+        //dd($variants_data);
+
         if(isset($collection['product_sk'])){
             $collection['sku'] = $collection['product_sk'];
             unset($collection['product_sk']);
@@ -602,27 +605,47 @@ class ProductService
             if(count($general_attributes_data) > 0){
                 foreach ($general_attributes_data as $attr => $value) {
                     if($value != null){
-                        $attribute_product = new ProductAttributeValues();
-                        $attribute_product->id_products = $product->id;
-                        $attribute_product->id_attribute = $attr;
-                        $attribute_product->is_general = 1;
                         if(in_array($attr, $ids_attributes_list)){
+                            $attribute_product = new ProductAttributeValues();
+                            $attribute_product->id_products = $product->id;
+                            $attribute_product->id_attribute = $attr;
+                            $attribute_product->is_general = 1;
                             $value_attribute = AttributeValue::find($value);
                             $attribute_product->id_values = $value;
                             $attribute_product->value = $value_attribute->value;
+                            $attribute_product->save();
                         }elseif(in_array($attr, $ids_attributes_color)){
-                            $value = Color::where('code', $value)->first();
-                            $attribute_product->id_colors = $value->id;
-                            $attribute_product->value = $value->code;
+                            if(count($value) > 0){
+                                foreach($value as $value_color){
+                                    $attribute_product = new ProductAttributeValues();
+                                    $attribute_product->id_products = $product->id;
+                                    $attribute_product->id_attribute = $attr;
+                                    $attribute_product->is_general = 1;
+                                    $color = Color::where('code', $value_color)->first();
+                                    $attribute_product->id_colors = $color->id;
+                                    $attribute_product->value = $color->code;
+                                    $attribute_product->save();
+                                }
+                            }
                         }elseif(in_array($attr, $ids_attributes_numeric)){
+                            $attribute_product = new ProductAttributeValues();
+                            $attribute_product->id_products = $product->id;
+                            $attribute_product->id_attribute = $attr;
+                            $attribute_product->is_general = 1;
                             $attribute_product->id_units = $unit_general_attributes_data[$attr];
                             $attribute_product->value = $value;
+                            $attribute_product->save();
                         }
                         else{
+                            $attribute_product = new ProductAttributeValues();
+                            $attribute_product->id_products = $product->id;
+                            $attribute_product->id_attribute = $attr;
+                            $attribute_product->is_general = 1;
                             $attribute_product->value = $value;
+                            $attribute_product->save();
                         }
 
-                        $attribute_product->save();
+                        
                     }
                 }
             }
@@ -642,7 +665,6 @@ class ProductService
             // //Create Parent Product
             $data['is_parent'] = 1;
             $data['sku'] = $data['name'];
-
             $product_parent = Product::create($data);
             $all_data_to_insert_parent = [];
 
@@ -820,27 +842,46 @@ class ProductService
                     //attributes of variant
                     //$sku = "";
                     foreach($variant['attributes'] as $key => $value_attribute){
-                        if($value_attribute != null){
-                            // $attribute_name = Attribute::find($key)->name;
-                            // $sku .= "_".$attribute_name;
-                            $attribute_product = new ProductAttributeValues();
-                            $attribute_product->id_products = $product->id;
-                            $attribute_product->id_attribute = $key;
-                            $attribute_product->is_variant = 1;
+                        if($value_attribute != null){                            
                             if(in_array($key, $ids_attributes_list)){
+                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product->id_products = $product->id;
+                                $attribute_product->id_attribute = $key;
+                                $attribute_product->is_variant = 1;
                                 $value = AttributeValue::find($value_attribute);
                                 $attribute_product->id_values = $value_attribute;
                                 $attribute_product->value = $value->value;
+                                $attribute_product->save();
                             }elseif(in_array($key, $ids_attributes_color)){
-                                $value = Color::where('code', $value_attribute)->first();
-                                $attribute_product->id_colors = $value->id;
-                                $attribute_product->value = $value->code;
+                                if(count($value_attribute) > 0){
+                                    foreach($value_attribute as $value_color){
+                                        $attribute_product = new ProductAttributeValues();
+                                        $attribute_product->id_products = $product->id;
+                                        $attribute_product->id_attribute = $key;
+                                        $attribute_product->is_variant = 1;
+                                        $value = Color::where('code', $value_color)->first();
+                                        $attribute_product->id_colors = $value->id;
+                                        $attribute_product->value = $value->code;
+                                        $attribute_product->save();
+                                    }
+                                }
+                                
                             }elseif(in_array($key, $ids_attributes_numeric)){
+                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product->id_products = $product->id;
+                                $attribute_product->id_attribute = $key;
+                                $attribute_product->is_variant = 1;
                                 $attribute_product->id_units = $variant['units'][$key];
                                 $attribute_product->value = $value_attribute;
+                                $attribute_product->save();
                             }
                             else{
+                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product->id_products = $product->id;
+                                $attribute_product->id_attribute = $key;
+                                $attribute_product->is_variant = 1;
                                 $attribute_product->value = $value_attribute;
+                                $attribute_product->save();
                             }
 
                             $attribute_product->save();
@@ -1083,27 +1124,45 @@ class ProductService
                 if(count($general_attributes_data) > 0){
                     foreach ($general_attributes_data as $attr => $value) {
                         if($value != null){
-                            $attribute_product = new ProductAttributeValues();
-                            $attribute_product->id_products = $product_parent->id;
-                            $attribute_product->id_attribute = $attr;
-                            $attribute_product->is_general = 1;
                             if(in_array($attr, $ids_attributes_list)){
+                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product->id_products = $product_parent->id;
+                                $attribute_product->id_attribute = $attr;
+                                $attribute_product->is_general = 1;
                                 $value_attribute = AttributeValue::find($value);
                                 $attribute_product->id_values = $value;
                                 $attribute_product->value = $value_attribute->value;
+                                $attribute_product->save();
                             }elseif(in_array($attr, $ids_attributes_color)){
-                                $value = Color::where('code', $value)->first();
-                                $attribute_product->id_colors = $value->id;
-                                $attribute_product->value = $value->code;
+                                if(count($value) > 0){
+                                    foreach($value as $value_color){
+                                        $attribute_product = new ProductAttributeValues();
+                                        $attribute_product->id_products = $product_parent->id;
+                                        $attribute_product->id_attribute = $attr;
+                                        $attribute_product->is_general = 1;
+                                        $color = Color::where('code', $value_color)->first();
+                                        $attribute_product->id_colors = $color->id;
+                                        $attribute_product->value = $color->code;
+                                        $attribute_product->save();
+                                    }
+                                }
                             }elseif(in_array($attr, $ids_attributes_numeric)){
+                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product->id_products = $product_parent->id;
+                                $attribute_product->id_attribute = $attr;
+                                $attribute_product->is_general = 1;
                                 $attribute_product->id_units = $unit_general_attributes_data[$attr];
                                 $attribute_product->value = $value;
+                                $attribute_product->save();
                             }
                             else{
+                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product->id_products = $product_parent->id;
+                                $attribute_product->id_attribute = $attr;
+                                $attribute_product->is_general = 1;
                                 $attribute_product->value = $value;
+                                $attribute_product->save();
                             }
-
-                            $attribute_product->save();
                         }
                     }
                 }
@@ -1115,7 +1174,7 @@ class ProductService
     public function update(array $data, Product $product_update)
     {
         $collection = collect($data);
-
+        
         $collection['user_id'] = Auth::user()->owner_id;
 
         $collection['rejection_reason'] = null;
@@ -1829,48 +1888,97 @@ class ProductService
 
                 foreach ($general_attributes_data as $attr => $value) {
                     if($value != null){
-                        $attribute_product = ProductAttributeValues::where('id_products', $product_update->id)->where('id_attribute', $attr)->first();
-
-                        $check_add = false;
-                        if($attribute_product == null){
-                            $attribute_product = new ProductAttributeValues();
-                            $attribute_product->id_products = $product_update->id;
-                            $attribute_product->id_attribute = $attr;
-                            $attribute_product->is_general = 1;
-                            $check_add = true;
+                        if(in_array($attr, $ids_attributes_color)){
+                            ProductAttributeValues::where('id_products', $product_update->id)->where('id_attribute', $attr)->whereNotIn('value', $value)->delete();
+                        }else{
+                            $attribute_product = ProductAttributeValues::where('id_products', $product_update->id)->where('id_attribute', $attr)->first();
                         }
 
                         if(in_array($attr, $ids_attributes_list)){
+                            $check_add = false;
+                            if($attribute_product == null){
+                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product->id_products = $product_update->id;
+                                $attribute_product->id_attribute = $attr;
+                                $attribute_product->is_general = 1;
+                                $check_add = true;
+                            }
                             $value_attribute = AttributeValue::find($value);
                             $attribute_product->id_values = $value;
                             $attribute_product->value = $value_attribute->value;
+                            $attribute_product->save();
                         }elseif(in_array($attr, $ids_attributes_color)){
-                            $value = Color::where('code', $value)->first();
-                            $attribute_product->id_colors = $value->id;
-                            $attribute_product->value = $value->code;
+                            if(count($value) > 0){
+                                foreach($value as $value_color){
+                                    $attribute_product = ProductAttributeValues::where('id_products', $product_update->id)->where('id_attribute', $attr)->where('value', $value_color)->first();
+                                    $check_add = false;
+                                    if($attribute_product == null){
+                                        $attribute_product = new ProductAttributeValues();
+                                        $attribute_product->id_products = $product_update->id;
+                                        $attribute_product->id_attribute = $attr;
+                                        $attribute_product->is_general = 1;
+                                        $check_add = true;
+                                    }
+                                    $color = Color::where('code', $value_color)->first();
+                                    $attribute_product->id_colors = $color->id;
+                                    $attribute_product->value = $color->code;
+                                    $attribute_product->save();
+
+                                    if($check_add == true){
+                                        DB::table('revisions')->insert([
+                                            "revisionable_type" => "App\Models\ProductAttributeValues",
+                                            "revisionable_id" => $attribute_product->id,
+                                            "user_id" => Auth::user()->owner_id,
+                                            "key" => 'add_attribute',
+                                            "old_value" => NULL,
+                                            "new_value" => $value_color,
+                                            'created_at'            => new \DateTime(),
+                                            'updated_at'            => new \DateTime(),
+                                        ]);
+                                    }
+                                }
+                            }
+                            
                         }elseif(in_array($attr, $ids_attributes_numeric)){
+                            $check_add = false;
+                            if($attribute_product == null){
+                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product->id_products = $product_update->id;
+                                $attribute_product->id_attribute = $attr;
+                                $attribute_product->is_general = 1;
+                                $check_add = true;
+                            }
                             $attribute_product->id_units = $unit_general_attributes_data[$attr];
                             $attribute_product->value = $value;
+                            $attribute_product->save();
                         }
                         else{
+                            $check_add = false;
+                            if($attribute_product == null){
+                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product->id_products = $product_update->id;
+                                $attribute_product->id_attribute = $attr;
+                                $attribute_product->is_general = 1;
+                                $check_add = true;
+                            }
                             $attribute_product->value = $value;
+                            $attribute_product->save();
                         }
 
-                        $attribute_product->save();
-
                         array_push($ids_product_attribute_values, $attribute_product->id);
-
-                        if($check_add == true){
-                            DB::table('revisions')->insert([
-                                "revisionable_type" => "App\Models\ProductAttributeValues",
-                                "revisionable_id" => $attribute_product->id,
-                                "user_id" => Auth::user()->owner_id,
-                                "key" => 'add_attribute',
-                                "old_value" => NULL,
-                                "new_value" => $value,
-                                'created_at'            => new \DateTime(),
-                                'updated_at'            => new \DateTime(),
-                            ]);
+                        if(!in_array($attr, $ids_attributes_color)){
+                            if($check_add == true){
+                                DB::table('revisions')->insert([
+                                    "revisionable_type" => "App\Models\ProductAttributeValues",
+                                    "revisionable_id" => $attribute_product->id,
+                                    "user_id" => Auth::user()->owner_id,
+                                    "key" => 'add_attribute',
+                                    "old_value" => NULL,
+                                    "new_value" => $value,
+                                    'created_at'            => new \DateTime(),
+                                    'updated_at'            => new \DateTime(),
+                                ]);
+                            }
                         }
 
                         array_push($ids, $attr);
@@ -2093,49 +2201,101 @@ class ProductService
                         $ids_product_attribute_values = [];
                         foreach($variant['attributes'] as $key => $value_attribute){
                             if($value_attribute != null){
-                                $attribute_name = Attribute::find($key)->name;
-                                $sku .= "_".$attribute_name;
-                                $attribute_product = ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->first();
-                                $check_add_attribute = false;
-                                if($attribute_product == null){
-                                    $attribute_product = new ProductAttributeValues();
-                                    $attribute_product->id_products = $product->id;
-                                    $attribute_product->id_attribute = $key;
-                                    $attribute_product->is_variant = 1;
-                                    $check_add_attribute = true;
+                                // $attribute_name = Attribute::find($key)->name;
+                                // $sku .= "_".$attribute_name;
+                                // $attribute_product = ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->first();
+                                if(in_array($key, $ids_attributes_color)){
+                                    ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->whereNotIn('value', $value_attribute)->delete();
+                                }else{
+                                    $attribute_product = ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->first();
                                 }
+                                
                                 if(in_array($key, $ids_attributes_list)){
+                                    $check_add_attribute = false;
+                                    if($attribute_product == null){
+                                        $attribute_product = new ProductAttributeValues();
+                                        $attribute_product->id_products = $product->id;
+                                        $attribute_product->id_attribute = $key;
+                                        $attribute_product->is_variant = 1;
+                                        $check_add_attribute = true;
+                                    }
                                     $value = AttributeValue::find($value_attribute);
                                     $attribute_product->id_values = $value_attribute;
                                     $attribute_product->value = $value->value;
+                                    $attribute_product->save();
                                 }elseif(in_array($key, $ids_attributes_color)){
-                                    $value = Color::where('code', $value_attribute)->first();
-                                    $attribute_product->id_colors = $value->id;
-                                    $attribute_product->value = $value->code;
+                                    foreach($value_attribute as $value_color){
+                                        $attribute_product = ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->where('value', $value_color)->first();
+                                        $check_add_attribute = false;
+                                        if($attribute_product == null){
+                                            $attribute_product = new ProductAttributeValues();
+                                            $attribute_product->id_products = $product->id;
+                                            $attribute_product->id_attribute = $key;
+                                            $attribute_product->is_variant = 1;
+                                            $check_add_attribute = true;
+                                        }
+                                        $value = Color::where('code', $value_color)->first();
+                                        $attribute_product->id_colors = $value->id;
+                                        $attribute_product->value = $value->code;
+                                        $attribute_product->save();
+
+                                        if($check_add_attribute == true){
+                                            DB::table('revisions')->insert([
+                                                "revisionable_type" => "App\Models\ProductAttributeValues",
+                                                "revisionable_id" => $attribute_product->id,
+                                                "user_id" => Auth::user()->owner_id,
+                                                "key" => 'add_attribute',
+                                                "old_value" => NULL,
+                                                "new_value" => $value_color,
+                                                'created_at'            => new \DateTime(),
+                                                'updated_at'            => new \DateTime(),
+                                            ]);
+                                        }
+                                    }
                                 }elseif(in_array($key, $ids_attributes_numeric)){
+                                    $check_add_attribute = false;
+                                    if($attribute_product == null){
+                                        $attribute_product = new ProductAttributeValues();
+                                        $attribute_product->id_products = $product->id;
+                                        $attribute_product->id_attribute = $key;
+                                        $attribute_product->is_variant = 1;
+                                        $check_add_attribute = true;
+                                    }
                                     $attribute_product->id_units = $data['unit_variant'][$id][$key];
                                     $attribute_product->value = $value_attribute;
+                                    $attribute_product->save();
                                 }
                                 else{
+                                    $check_add_attribute = false;
+                                    if($attribute_product == null){
+                                        $attribute_product = new ProductAttributeValues();
+                                        $attribute_product->id_products = $product->id;
+                                        $attribute_product->id_attribute = $key;
+                                        $attribute_product->is_variant = 1;
+                                        $check_add_attribute = true;
+                                    }
                                     $attribute_product->value = $value_attribute;
+                                    $attribute_product->save();
                                 }
 
-                                $attribute_product->save();
+                                
 
                                 array_push($ids_product_attribute_values, $attribute_product->id);
-
-                                if($check_add_attribute == true){
-                                    DB::table('revisions')->insert([
-                                        "revisionable_type" => "App\Models\ProductAttributeValues",
-                                        "revisionable_id" => $attribute_product->id,
-                                        "user_id" => Auth::user()->owner_id,
-                                        "key" => 'add_attribute',
-                                        "old_value" => NULL,
-                                        "new_value" => $value_attribute,
-                                        'created_at'            => new \DateTime(),
-                                        'updated_at'            => new \DateTime(),
-                                    ]);
+                                if(!in_array($key, $ids_attributes_color)){
+                                    if($check_add_attribute == true){
+                                        DB::table('revisions')->insert([
+                                            "revisionable_type" => "App\Models\ProductAttributeValues",
+                                            "revisionable_id" => $attribute_product->id,
+                                            "user_id" => Auth::user()->owner_id,
+                                            "key" => 'add_attribute',
+                                            "old_value" => NULL,
+                                            "new_value" => $value_attribute,
+                                            'created_at'            => new \DateTime(),
+                                            'updated_at'            => new \DateTime(),
+                                        ]);
+                                    }
                                 }
+                                
                             }
                         }
 
@@ -2409,48 +2569,101 @@ class ProductService
                 $ids_general = [];
                 foreach ($general_attributes_data as $attr => $value) {
                     if($value != null){
-                        $attribute_product = ProductAttributeValues::where('id_products', $product_update->id)->where('id_attribute', $attr)->first();
-                        $check_add = false;
-                        if($attribute_product == null){
-                            $attribute_product = new ProductAttributeValues();
-                            $attribute_product->id_products = $product_update->id;
-                            $attribute_product->id_attribute = $attr;
-                            $attribute_product->is_general = 1;
-
-                            $check_add = true;
+                        if(in_array($attr, $ids_attributes_color)){
+                            ProductAttributeValues::where('id_products', $product_update->id)->where('id_attribute', $attr)->whereNotIn('value', $value)->delete();
+                        }else{
+                            $attribute_product = ProductAttributeValues::where('id_products', $product_update->id)->where('id_attribute', $attr)->first();
                         }
+                        
 
                         if(in_array($attr, $ids_attributes_list)){
+                            $check_add = false;
+                            if($attribute_product == null){
+                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product->id_products = $product_update->id;
+                                $attribute_product->id_attribute = $attr;
+                                $attribute_product->is_general = 1;
+
+                                $check_add = true;
+                            }
                             $value_attribute = AttributeValue::find($value);
                             $attribute_product->id_values = $value;
                             $attribute_product->value = $value_attribute->value;
+                            $attribute_product->save();
                         }elseif(in_array($attr, $ids_attributes_color)){
-                            $value = Color::where('code', $value)->first();
-                            $attribute_product->id_colors = $value->id;
-                            $attribute_product->value = $value->code;
+                            if(count($value) > 0){
+                                foreach($value as $value_color){
+                                    $attribute_product = ProductAttributeValues::where('id_products', $product_update->id)->where('id_attribute', $attr)->where('value', $value_color)->first();
+                                    $check_add = false;
+                                    if($attribute_product == null){
+                                        $attribute_product = new ProductAttributeValues();
+                                        $attribute_product->id_products = $product_update->id;
+                                        $attribute_product->id_attribute = $attr;
+                                        $attribute_product->is_general = 1;
+                                        $check_add = true;
+                                    }
+                                    $color = Color::where('code', $value_color)->first();
+                                    $attribute_product->id_colors = $color->id;
+                                    $attribute_product->value = $color->code;
+                                    $attribute_product->save();
+
+                                    if($check_add == true){
+                                        DB::table('revisions')->insert([
+                                            "revisionable_type" => "App\Models\ProductAttributeValues",
+                                            "revisionable_id" => $attribute_product->id,
+                                            "user_id" => Auth::user()->owner_id,
+                                            "key" => 'add_attribute',
+                                            "old_value" => NULL,
+                                            "new_value" => $value_color,
+                                            'created_at'            => new \DateTime(),
+                                            'updated_at'            => new \DateTime(),
+                                        ]);
+                                    }
+                                }
+                            }
                         }elseif(in_array($attr, $ids_attributes_numeric)){
+                            $check_add = false;
+                            if($attribute_product == null){
+                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product->id_products = $product_update->id;
+                                $attribute_product->id_attribute = $attr;
+                                $attribute_product->is_general = 1;
+
+                                $check_add = true;
+                            }
                             $attribute_product->id_units = $unit_general_attributes_data[$attr];
                             $attribute_product->value = $value;
+                            $attribute_product->save();
                         }
                         else{
-                            $attribute_product->value = $value;
-                        }
+                            $check_add = false;
+                            if($attribute_product == null){
+                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product->id_products = $product_update->id;
+                                $attribute_product->id_attribute = $attr;
+                                $attribute_product->is_general = 1;
 
-                        $attribute_product->save();
+                                $check_add = true;
+                            }
+                            $attribute_product->value = $value;
+                            $attribute_product->save();
+                        }
 
                         array_push($ids_general, $attribute_product->id);
 
-                        if($check_add == true){
-                            DB::table('revisions')->insert([
-                                "revisionable_type" => "App\Models\ProductAttributeValues",
-                                "revisionable_id" => $attribute_product->id,
-                                "user_id" => Auth::user()->owner_id,
-                                "key" => 'add_attribute',
-                                "old_value" => NULL,
-                                "new_value" => $value,
-                                'created_at'            => new \DateTime(),
-                                'updated_at'            => new \DateTime(),
-                            ]);
+                        if(!in_array($attr, $ids_attributes_color)){
+                            if($check_add == true){
+                                DB::table('revisions')->insert([
+                                    "revisionable_type" => "App\Models\ProductAttributeValues",
+                                    "revisionable_id" => $attribute_product->id,
+                                    "user_id" => Auth::user()->owner_id,
+                                    "key" => 'add_attribute',
+                                    "old_value" => NULL,
+                                    "new_value" => $value,
+                                    'created_at'            => new \DateTime(),
+                                    'updated_at'            => new \DateTime(),
+                                ]);
+                            }
                         }
                     }
                 }
@@ -2544,27 +2757,46 @@ class ProductService
                     //attributes of variant
                     foreach($variant['attributes'] as $key => $value_attribute){
                         if($value_attribute != null){
-                            $attribute_product = new ProductAttributeValues();
-                            $attribute_product->id_products = $new_product->id;
-                            $attribute_product->id_attribute = $key;
-                            $attribute_product->is_variant = 1;
+                            
                             if(in_array($key, $ids_attributes_list)){
+                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product->id_products = $new_product->id;
+                                $attribute_product->id_attribute = $key;
+                                $attribute_product->is_variant = 1;
                                 $value = AttributeValue::find($value_attribute);
                                 $attribute_product->id_values = $value_attribute;
                                 $attribute_product->value = $value->value;
+                                $attribute_product->save();
                             }elseif(in_array($key, $ids_attributes_color)){
-                                $value = Color::where('code', $value_attribute)->first();
-                                $attribute_product->id_colors = $value->id;
-                                $attribute_product->value = $value->code;
+                                if(count($value_attribute) > 0) {
+                                    foreach($value_attribute as $value_color){
+                                        $attribute_product = new ProductAttributeValues();
+                                        $attribute_product->id_products = $new_product->id;
+                                        $attribute_product->id_attribute = $key;
+                                        $attribute_product->is_variant = 1;
+                                        $value = Color::where('code', $value_color)->first();
+                                        $attribute_product->id_colors = $value->id;
+                                        $attribute_product->value = $value->code;
+                                        $attribute_product->save();
+                                    }
+                                }
                             }elseif(in_array($key, $ids_attributes_numeric)){
+                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product->id_products = $new_product->id;
+                                $attribute_product->id_attribute = $key;
+                                $attribute_product->is_variant = 1;
                                 $attribute_product->id_units = $variant['units'][$key];
                                 $attribute_product->value = $value_attribute;
+                                $attribute_product->save();
                             }
                             else{
+                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product->id_products = $new_product->id;
+                                $attribute_product->id_attribute = $key;
+                                $attribute_product->is_variant = 1;
                                 $attribute_product->value = $value_attribute;
+                                $attribute_product->save();
                             }
-
-                            $attribute_product->save();
                         }
                     }
 
@@ -2834,7 +3066,7 @@ class ProductService
     {
 
         $collection = collect($data);
-
+        
         $collection['user_id'] = Auth::user()->owner_id;
         $collection['approved'] = 0;
         $collection['rejection_reason'] = null;
@@ -3555,32 +3787,60 @@ class ProductService
             if(count($general_attributes_data) > 0){
                 foreach ($general_attributes_data as $attr => $value) {
                     if($value != null){
-                        $attribute_product = ProductAttributeValues::where('id_products', $product_draft->id)->where('id_attribute', $attr)->first();
-
-                        if($attribute_product == null){
-                            $attribute_product = new ProductAttributeValues();
-                            $attribute_product->id_products = $product_draft->id;
-                            $attribute_product->id_attribute = $attr;
-                            $attribute_product->is_general = 1;
+                        if(in_array($attr, $ids_attributes_color)){
+                            ProductAttributeValues::where('id_products', $product_draft->id)->where('id_attribute', $attr)->whereNotIn('value', $value)->delete();
+                        }else{
+                            $attribute_product = ProductAttributeValues::where('id_products', $product_draft->id)->where('id_attribute', $attr)->first();
                         }
 
                         if(in_array($attr, $ids_attributes_list)){
+                            if($attribute_product == null){
+                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product->id_products = $product_draft->id;
+                                $attribute_product->id_attribute = $attr;
+                                $attribute_product->is_general = 1;
+                            }
                             $value_attribute = AttributeValue::find($value);
                             $attribute_product->id_values = $value;
                             $attribute_product->value = $value_attribute->value;
+                            $attribute_product->save();
                         }elseif(in_array($attr, $ids_attributes_color)){
-                            $value = Color::where('code', $value)->first();
-                            $attribute_product->id_colors = $value->id;
-                            $attribute_product->value = $value->code;
+                            if(count($value) > 0){
+                                foreach($value as $value_color){
+                                    $attribute_product = ProductAttributeValues::where('id_products', $product_draft->id)->where('id_attribute', $attr)->where('value', $value_color)->first();
+                                    if($attribute_product == null){
+                                        $attribute_product = new ProductAttributeValues();
+                                        $attribute_product->id_products = $product_draft->id;
+                                        $attribute_product->id_attribute = $attr;
+                                        $attribute_product->is_general = 1;
+                                    }
+                                    $color = Color::where('code', $value_color)->first();
+                                    $attribute_product->id_colors = $color->id;
+                                    $attribute_product->value = $color->code;
+                                    $attribute_product->save();
+                                }
+                            }
                         }elseif(in_array($attr, $ids_attributes_numeric)){
+                            if($attribute_product == null){
+                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product->id_products = $product_draft->id;
+                                $attribute_product->id_attribute = $attr;
+                                $attribute_product->is_general = 1;
+                            }
                             $attribute_product->id_units = $unit_general_attributes_data[$attr];
                             $attribute_product->value = $value;
+                            $attribute_product->save();
                         }
                         else{
+                            if($attribute_product == null){
+                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product->id_products = $product_draft->id;
+                                $attribute_product->id_attribute = $attr;
+                                $attribute_product->is_general = 1;
+                            }
                             $attribute_product->value = $value;
+                            $attribute_product->save();
                         }
-
-                        $attribute_product->save();
                     }
                 }
             }
@@ -3779,33 +4039,65 @@ class ProductService
                         //$sku = "";
                         foreach($variant['attributes'] as $key => $value_attribute){
                             if($value_attribute != null){
-                                $attribute_name = Attribute::find($key)->name;
-                                $sku .= "_".$attribute_name;
-                                $attribute_product = ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->first();
+                                // $attribute_name = Attribute::find($key)->name;
+                                // $sku .= "_".$attribute_name;
+                                // $attribute_product = ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->first();
 
-                                if($attribute_product == null){
-                                    $attribute_product = new ProductAttributeValues();
-                                    $attribute_product->id_products = $product->id;
-                                    $attribute_product->id_attribute = $key;
-                                    $attribute_product->is_variant = 1;
+                                if(in_array($key, $ids_attributes_color)){
+                                    
+                                    ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->whereNotIn('value', $value_attribute)->delete();
+                                }else{
+                                    $attribute_product = ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->first();
                                 }
+
                                 if(in_array($key, $ids_attributes_list)){
+                                    if($attribute_product == null){
+                                        $attribute_product = new ProductAttributeValues();
+                                        $attribute_product->id_products = $product->id;
+                                        $attribute_product->id_attribute = $key;
+                                        $attribute_product->is_variant = 1;
+                                    }
                                     $value = AttributeValue::find($value_attribute);
                                     $attribute_product->id_values = $value_attribute;
                                     $attribute_product->value = $value->value;
+                                    $attribute_product->save();
                                 }elseif(in_array($key, $ids_attributes_color)){
-                                    $value = Color::where('code', $value_attribute)->first();
-                                    $attribute_product->id_colors = $value->id;
-                                    $attribute_product->value = $value->code;
+                                    if(count($value_attribute) > 0){
+                                        foreach($value_attribute as $value_color){
+                                            $attribute_product = ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->where('value', $value_color)->first();
+                                            if($attribute_product == null){
+                                                $attribute_product = new ProductAttributeValues();
+                                                $attribute_product->id_products = $product->id;
+                                                $attribute_product->id_attribute = $key;
+                                                $attribute_product->is_variant = 1;
+                                            }
+                                            $color = Color::where('code', $value_color)->first();
+                                            $attribute_product->id_colors = $color->id;
+                                            $attribute_product->value = $color->code;
+                                            $attribute_product->save();
+                                        }
+                                    }
                                 }elseif(in_array($key, $ids_attributes_numeric)){
+                                    if($attribute_product == null){
+                                        $attribute_product = new ProductAttributeValues();
+                                        $attribute_product->id_products = $product->id;
+                                        $attribute_product->id_attribute = $key;
+                                        $attribute_product->is_variant = 1;
+                                    }
                                     $attribute_product->id_units = $data['unit_variant'][$id][$key];
                                     $attribute_product->value = $value_attribute;
+                                    $attribute_product->save();
                                 }
                                 else{
+                                    if($attribute_product == null){
+                                        $attribute_product = new ProductAttributeValues();
+                                        $attribute_product->id_products = $product->id;
+                                        $attribute_product->id_attribute = $key;
+                                        $attribute_product->is_variant = 1;
+                                    }
                                     $attribute_product->value = $value_attribute;
+                                    $attribute_product->save();
                                 }
-
-                                $attribute_product->save();
                             }
                         }
 
@@ -4039,34 +4331,95 @@ class ProductService
             }
 
             if(count($general_attributes_data) > 0){
-                foreach ($general_attributes_data as $attr => $value) {
-                    if($value != null){
-                        $attribute_product = ProductAttributeValues::where('id_products', $product_draft->id)->where('id_attribute', $attr)->first();
+                // foreach ($general_attributes_data as $attr => $value) {
+                //     if($value != null){
+                //         $attribute_product = ProductAttributeValues::where('id_products', $product_draft->id)->where('id_attribute', $attr)->first();
 
-                        if($attribute_product == null){
-                            $attribute_product = new ProductAttributeValues();
-                            $attribute_product->id_products = $product_draft->id;
-                            $attribute_product->id_attribute = $attr;
-                            $attribute_product->is_general = 1;
-                        }
+                //         if($attribute_product == null){
+                //             $attribute_product = new ProductAttributeValues();
+                //             $attribute_product->id_products = $product_draft->id;
+                //             $attribute_product->id_attribute = $attr;
+                //             $attribute_product->is_general = 1;
+                //         }
 
-                        if(in_array($attr, $ids_attributes_list)){
-                            $value_attribute = AttributeValue::find($value);
-                            $attribute_product->id_values = $value;
-                            $attribute_product->value = $value_attribute->value;
-                        }elseif(in_array($attr, $ids_attributes_color)){
-                            $value = Color::where('code', $value)->first();
-                            $attribute_product->id_colors = $value->id;
-                            $attribute_product->value = $value->code;
-                        }elseif(in_array($attr, $ids_attributes_numeric)){
-                            $attribute_product->id_units = $unit_general_attributes_data[$attr];
-                            $attribute_product->value = $value;
-                        }
-                        else{
-                            $attribute_product->value = $value;
-                        }
+                //         if(in_array($attr, $ids_attributes_list)){
+                //             $value_attribute = AttributeValue::find($value);
+                //             $attribute_product->id_values = $value;
+                //             $attribute_product->value = $value_attribute->value;
+                //         }elseif(in_array($attr, $ids_attributes_color)){
+                //             $value = Color::where('code', $value)->first();
+                //             $attribute_product->id_colors = $value->id;
+                //             $attribute_product->value = $value->code;
+                //         }elseif(in_array($attr, $ids_attributes_numeric)){
+                //             $attribute_product->id_units = $unit_general_attributes_data[$attr];
+                //             $attribute_product->value = $value;
+                //         }
+                //         else{
+                //             $attribute_product->value = $value;
+                //         }
 
-                        $attribute_product->save();
+                //         $attribute_product->save();
+                //     }
+                // }
+
+                if(count($general_attributes_data) > 0){
+                    foreach ($general_attributes_data as $attr => $value) {
+                        if($value != null){
+                            if(in_array($attr, $ids_attributes_color)){
+                                ProductAttributeValues::where('id_products', $product_draft->id)->where('id_attribute', $attr)->whereNotIn('value', $value)->delete();
+                            }else{
+                                $attribute_product = ProductAttributeValues::where('id_products', $product_draft->id)->where('id_attribute', $attr)->first();
+                            }
+    
+                            if(in_array($attr, $ids_attributes_list)){
+                                if($attribute_product == null){
+                                    $attribute_product = new ProductAttributeValues();
+                                    $attribute_product->id_products = $product_draft->id;
+                                    $attribute_product->id_attribute = $attr;
+                                    $attribute_product->is_general = 1;
+                                }
+                                $value_attribute = AttributeValue::find($value);
+                                $attribute_product->id_values = $value;
+                                $attribute_product->value = $value_attribute->value;
+                                $attribute_product->save();
+                            }elseif(in_array($attr, $ids_attributes_color)){
+                                if(count($value) > 0){
+                                    foreach($value as $value_color){
+                                        $attribute_product = ProductAttributeValues::where('id_products', $product_draft->id)->where('id_attribute', $attr)->where('value', $value_color)->first();
+                                        if($attribute_product == null){
+                                            $attribute_product = new ProductAttributeValues();
+                                            $attribute_product->id_products = $product_draft->id;
+                                            $attribute_product->id_attribute = $attr;
+                                            $attribute_product->is_general = 1;
+                                        }
+                                        $color = Color::where('code', $value_color)->first();
+                                        $attribute_product->id_colors = $color->id;
+                                        $attribute_product->value = $color->code;
+                                        $attribute_product->save();
+                                    }
+                                }
+                            }elseif(in_array($attr, $ids_attributes_numeric)){
+                                if($attribute_product == null){
+                                    $attribute_product = new ProductAttributeValues();
+                                    $attribute_product->id_products = $product_draft->id;
+                                    $attribute_product->id_attribute = $attr;
+                                    $attribute_product->is_general = 1;
+                                }
+                                $attribute_product->id_units = $unit_general_attributes_data[$attr];
+                                $attribute_product->value = $value;
+                                $attribute_product->save();
+                            }
+                            else{
+                                if($attribute_product == null){
+                                    $attribute_product = new ProductAttributeValues();
+                                    $attribute_product->id_products = $product_draft->id;
+                                    $attribute_product->id_attribute = $attr;
+                                    $attribute_product->is_general = 1;
+                                }
+                                $attribute_product->value = $value;
+                                $attribute_product->save();
+                            }
+                        }
                     }
                 }
             }
@@ -4106,27 +4459,45 @@ class ProductService
                     //attributes of variant
                     foreach($variant['attributes'] as $key => $value_attribute){
                         if($value_attribute != null){
-                            $attribute_product = new ProductAttributeValues();
-                            $attribute_product->id_products = $new_product->id;
-                            $attribute_product->id_attribute = $key;
-                            $attribute_product->is_variant = 1;
                             if(in_array($key, $ids_attributes_list)){
+                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product->id_products = $new_product->id;
+                                $attribute_product->id_attribute = $key;
+                                $attribute_product->is_variant = 1;
                                 $value = AttributeValue::find($value_attribute);
                                 $attribute_product->id_values = $value_attribute;
                                 $attribute_product->value = $value->value;
+                                $attribute_product->save();
                             }elseif(in_array($key, $ids_attributes_color)){
-                                $value = Color::where('code', $value_attribute)->first();
-                                $attribute_product->id_colors = $value->id;
-                                $attribute_product->value = $value->code;
+                                if(count($value_attribute) > 0){
+                                    foreach ($value_attribute as $value_color) {
+                                        $attribute_product = new ProductAttributeValues();
+                                        $attribute_product->id_products = $new_product->id;
+                                        $attribute_product->id_attribute = $key;
+                                        $attribute_product->is_variant = 1;
+                                        $color = Color::where('code', $value_color)->first();
+                                        $attribute_product->id_colors = $color->id;
+                                        $attribute_product->value = $color->code;
+                                        $attribute_product->save();
+                                    }
+                                }
                             }elseif(in_array($key, $ids_attributes_numeric)){
+                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product->id_products = $new_product->id;
+                                $attribute_product->id_attribute = $key;
+                                $attribute_product->is_variant = 1;
                                 $attribute_product->id_units = $variant['units'][$key];
                                 $attribute_product->value = $value_attribute;
+                                $attribute_product->save();
                             }
                             else{
+                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product->id_products = $new_product->id;
+                                $attribute_product->id_attribute = $key;
+                                $attribute_product->is_variant = 1;
                                 $attribute_product->value = $value_attribute;
+                                $attribute_product->save();
                             }
-
-                            $attribute_product->save();
                         }
                     }
 

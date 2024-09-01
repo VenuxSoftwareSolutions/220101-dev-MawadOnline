@@ -1,3 +1,4 @@
+
 @foreach ($attributes as $attribute)
     @if (in_array($attribute->id, $variants_attributes_ids_attributes))
     <div class="row attribute-variant-{{ $attribute->id }}">
@@ -38,16 +39,16 @@
             @case ('color')
                 <div class="col-md-10 mb-3">
                     <select class="form-control attributes aiz-selectpicker" @if(request()->route()->getName() === 'products.approve') 
-                                                                                @if(isset($variants_attributes[$attribute->id]->added)) 
+                                                                                @if(in_array('yes', $variants_attributes[$attribute->id])) 
                                                                                     data-added="true" style="border-color: green !important;" 
                                                                                 @endif 
                                                                                 @if(isset($variants_attributes[$attribute->id]->old_value)) 
                                                                                     data-value="{{ $variants_attributes[$attribute->id]->old_value }}" style="border-color: #FF3C50 !important;" 
                                                                                 @endif 
-                                                                            @endif data-id_attributes="{{ $attribute->id }}" name="variant[attributes][{{ $children->id }}][{{ $attribute->id }}]" data-type="color" data-live-search="true" data-selected-text-format="count">
+                                                                            @endif data-id_attributes="{{ $attribute->id }}" name="variant[attributes][{{ $children->id }}][{{ $attribute->id }}][]" data-type="color" data-live-search="true" data-selected-text-format="count" multiple>
                         @foreach ($colors as $key => $color)
                             <option value="{{ $color->code }}"  
-                                @if($variants_attributes[$attribute->id]->id_colors == $color->id) 
+                                @if(in_array($color->id, $variants_attributes[$attribute->id])) 
                                     selected 
                                 @endif 
                                 data-content="<span><span class='size-15px d-inline-block mr-2 rounded border' style='background:{{ $color->code }}'></span><span>{{ $color->name }}</span></span>"></option>

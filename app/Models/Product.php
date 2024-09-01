@@ -128,6 +128,21 @@ class Product extends Model
         return $this->hasMany(Review::class)->where('status', 1);
     }
 
+    public function pricingConfiguration()
+    {
+        return $this->hasMany(PricingConfiguration::class, 'id_products', 'id');
+    }
+
+    public function get_ratting()
+    {
+        if($this->reviews->count()>0){
+            return (int)($this->reviews->sum('rating') / $this->reviews->count());
+        }else{
+            return 0;
+        }
+        
+    }
+
     public function product_queries()
     {
         return $this->hasMany(ProductQuery::class);
@@ -147,6 +162,7 @@ class Product extends Model
     {
         return $this->hasMany(ProductTax::class);
     }
+
 
     public function flash_deal_product()
     {
@@ -222,6 +238,7 @@ class Product extends Model
         $attributes = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->get();
         $variants_id = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->pluck('id')->toArray();
         $historique_children = DB::table('revisions')->whereNull('deleted_at')->whereIn('revisionable_id', $variants_id)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
+        
         if(count($historique_children) > 0){
             foreach($historique_children as $historique_child){
                 foreach($attributes as $variant){
@@ -249,9 +266,26 @@ class Product extends Model
         $data = [];
         if(count($attributes) > 0){
             foreach ($attributes as $attribute){
-                $data[$attribute->id_attribute] = $attribute;
+                if($attribute->id_colors != null){
+                    if(isset($attribute->added)){
+                        if (array_key_exists($attribute->id_attribute,$data)){
+                            array_push($data[$attribute->id_attribute], 'yes');
+                        }else{
+                            $data[$attribute->id_attribute] = ['yes'];
+                        }
+                    }
+                    if (array_key_exists($attribute->id_attribute,$data)){
+                        array_push($data[$attribute->id_attribute], $attribute->id_colors);
+                    }else{
+                        $data[$attribute->id_attribute] = [$attribute->id_colors];
+                    }
+                }else{
+                    $data[$attribute->id_attribute] = $attribute;
+                }
+                
             }
         }
+        
         return $data;
     }
 
@@ -304,7 +338,7 @@ class Product extends Model
     }
 
     public function productAttributeValues() {
-        return $this->hasMany(ProductAttributeValues::class,'id_products') ;
+        return $this->hasMany(ProductAttributeValues::class,'id_products','id') ;
     }
 
     public function productVariantDetails() {

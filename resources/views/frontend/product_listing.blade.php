@@ -12,7 +12,7 @@
     @endphp
 @else
     @php
-        $meta_title         = get_setting('meta_title');
+        $meta_title  = get_setting('meta_title');
         $meta_description   = get_setting('meta_description');
     @endphp
 @endif
@@ -32,10 +32,110 @@
     <!-- Open Graph data -->
     <meta property="og:title" content="{{ $meta_title }}" />
     <meta property="og:description" content="{{ $meta_description }}" />
+    <link rel="stylesheet" href="{{asset('public/assets/css/preloader.css')}}">
+    <style>
+        .min-max {
+            display: flex;
+            justify-content: center;
+        }
+        .min-max input{
+            width: 120px;
+            margin: 5px;
+        }
+                .fs-16.fw-700.p-3.width {
+            display: flex;
+            justify-content: space-between;
+        }
+        .display_none{
+            display: none !important;
+        }
+        #spinner-div {
+            position: fixed;
+            display: none;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.8);
+            z-index: 2;
+        }
+        .spinner-border-search {
+            left: 50% !important;
+            top: 50% !important;
+            position: absolute !important;
+            border-right-color: var(--primary) !important;
+        }
+        /* SVG spinner icon animation */
+        .spinner {
+        -webkit-animation: rotate 2s linear infinite;
+                animation: rotate 2s linear infinite;
+        z-index: 2;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: -25px 0 0 -25px;
+        width: 50px;
+        height: 50px;
+        }
+        .spinner .path {
+        stroke: #cccccc;
+        stroke-linecap: round;
+        -webkit-animation: dash 1.5s ease-in-out infinite;
+                animation: dash 1.5s ease-in-out infinite;
+        }
+
+        @-webkit-keyframes rotate {
+        100% {
+            -webkit-transform: rotate(360deg);
+                    transform: rotate(360deg);
+        }
+        }
+
+        @keyframes rotate {
+        100% {
+            -webkit-transform: rotate(360deg);
+                    transform: rotate(360deg);
+        }
+        }
+        @-webkit-keyframes dash {
+        0% {
+            stroke-dasharray: 1, 150;
+            stroke-dashoffset: 0;
+        }
+        50% {
+            stroke-dasharray: 90, 150;
+            stroke-dashoffset: -35;
+        }
+        100% {
+            stroke-dasharray: 90, 150;
+            stroke-dashoffset: -124;
+        }
+        }
+        @keyframes dash {
+        0% {
+            stroke-dasharray: 1, 150;
+            stroke-dashoffset: 0;
+        }
+        50% {
+            stroke-dasharray: 90, 150;
+            stroke-dashoffset: -35;
+        }
+        100% {
+            stroke-dasharray: 90, 150;
+            stroke-dashoffset: -124;
+        }
+        }
+
+    </style>
 @endsection
 
 @section('content')
-
+    <div id="spinner-div" class="pt-5">
+        <div class="spinner-border-search text-primary" role="status">
+            <svg class="spinner" viewBox="0 0 50 50"><circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle></svg>
+        </div>
+    </div>
     <section class="mb-4 pt-4">
         <div class="container sm-px-0 pt-2">
             <form class="" id="search-form" action="" method="GET">
@@ -51,189 +151,17 @@
                                     <button type="button" class="btn btn-sm p-2 filter-sidebar-thumb" data-toggle="class-toggle" data-target=".aiz-filter-sidebar" >
                                         <i class="las la-times la-2x"></i>
                                     </button>
-                                </div>
-
-                                <!-- Categories -->
-                                <div class="bg-white border mb-3">
-                                    <div class="fs-16 fw-700 p-3">
-                                        <a href="#collapse_1" class="dropdown-toggle filter-section text-dark d-flex align-items-center justify-content-between" data-toggle="collapse">
-                                            {{ translate('Categories')}}
-                                        </a>
-                                    </div>
-                                    <div class="collapse show" id="collapse_1">
-                                        <ul class="p-3 mb-0 list-unstyled">
-                                            @if (!isset($category_id))
-                                                @foreach ($categories as $category)
-                                                    <li class="mb-3 text-dark">
-                                                        <a class="text-reset fs-14 hov-text-primary" href="{{ route('products.category', $category->slug) }}">
-                                                            {{ $category->getTranslation('name') }}
-                                                        </a>
-                                                    </li>
-                                                @endforeach
-                                            @else
-                                                <li class="mb-3">
-                                                    <a class="text-reset fs-14 fw-600 hov-text-primary" href="{{ route('search') }}">
-                                                        <i class="las la-angle-left"></i>
-                                                        {{ translate('All Categories')}}
-                                                    </a>
-                                                </li>
-                                                
-                                                @if ($category->parent_id != 0)
-                                                    <li class="mb-3">
-                                                        <a class="text-reset fs-14 fw-600 hov-text-primary" href="{{ route('products.category', get_single_category($category->parent_id)->slug) }}">
-                                                            <i class="las la-angle-left"></i>
-                                                            {{ get_single_category($category->parent_id)->getTranslation('name') }}
-                                                        </a>
-                                                    </li>
-                                                @endif
-                                                <li class="mb-3">
-                                                    <a class="text-reset fs-14 fw-600 hov-text-primary" href="{{ route('products.category', $category->slug) }}">
-                                                        <i class="las la-angle-left"></i>
-                                                        {{ $category->getTranslation('name') }}
-                                                    </a>
-                                                </li>
-                                                @foreach ($category->childrenCategories as $key => $immediate_children_category)
-                                                    <li class="ml-4 mb-3">
-                                                        <a class="text-reset fs-14 hov-text-primary" href="{{ route('products.category', $immediate_children_category->slug) }}">
-                                                            {{ $immediate_children_category->getTranslation('name') }}
-                                                        </a>
-                                                    </li>
-                                                @endforeach
-                                            @endif
-                                        </ul>
-                                    </div>
-                                </div>
-
-                                <!-- Price range -->
-                                <div class="bg-white border mb-3">
-                                    <div class="fs-16 fw-700 p-3">
-                                        {{ translate('Price range')}}
-                                    </div>
-                                    <div class="p-3 mr-3">
-                                        @php
-                                            $product_count = get_products_count()
-                                        @endphp
-                                        <div class="aiz-range-slider">
-                                            <div
-                                                id="input-slider-range"
-                                                data-range-value-min="@if($product_count < 1) 0 @else {{ get_product_min_unit_price() }} @endif"
-                                                data-range-value-max="@if($product_count < 1) 0 @else {{ get_product_max_unit_price() }} @endif"
-                                            ></div>
-
-                                            <div class="row mt-2">
-                                                <div class="col-6">
-                                                    <span class="range-slider-value value-low fs-14 fw-600 opacity-70"
-                                                        @if (isset($min_price))
-                                                            data-range-value-low="{{ $min_price }}"
-                                                        @elseif($products->min('unit_price') > 0)
-                                                            data-range-value-low="{{ $products->min('unit_price') }}"
-                                                        @else
-                                                            data-range-value-low="0"
-                                                        @endif
-                                                        id="input-slider-range-value-low"
-                                                    ></span>
-                                                </div>
-                                                <div class="col-6 text-right">
-                                                    <span class="range-slider-value value-high fs-14 fw-600 opacity-70"
-                                                        @if (isset($max_price))
-                                                            data-range-value-high="{{ $max_price }}"
-                                                        @elseif($products->max('unit_price') > 0)
-                                                            data-range-value-high="{{ $products->max('unit_price') }}"
-                                                        @else
-                                                            data-range-value-high="0"
-                                                        @endif
-                                                        id="input-slider-range-value-high"
-                                                    ></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Hidden Items -->
-                                    <input type="hidden" name="min_price" value="">
-                                    <input type="hidden" name="max_price" value="">
-                                </div>
-                                
-                                <!-- Attributes -->
-                                @foreach ($attributes as $attribute)
-                                    <div class="bg-white border mb-3">
-                                        <div class="fs-16 fw-700 p-3">
-                                            <a href="#" class="dropdown-toggle text-dark filter-section collapsed d-flex align-items-center justify-content-between" 
-                                                data-toggle="collapse" data-target="#collapse_{{ str_replace(' ', '_', $attribute->name) }}" style="white-space: normal;">
-                                                {{ $attribute->getTranslation('name') }}
-                                            </a>
-                                        </div>
-                                        @php
-                                            $show = '';
-                                            foreach ($attribute->attribute_values as $attribute_value){
-                                                if(in_array($attribute_value->value, $selected_attribute_values)){
-                                                    $show = 'show';
-                                                }
-                                            }
-                                        @endphp
-                                        <div class="collapse {{ $show }}" id="collapse_{{ str_replace(' ', '_', $attribute->name) }}">
-                                            <div class="p-3 aiz-checkbox-list">
-                                                @foreach ($attribute->attribute_values as $attribute_value)
-                                                    <label class="aiz-checkbox mb-3">
-                                                        <input
-                                                            type="checkbox"
-                                                            name="selected_attribute_values[]"
-                                                            value="{{ $attribute_value->value }}" @if (in_array($attribute_value->value, $selected_attribute_values)) checked @endif
-                                                            onchange="filter()"
-                                                        >
-                                                        <span class="aiz-square-check"></span>
-                                                        <span class="fs-14 fw-400 text-dark">{{ $attribute_value->value }}</span>
-                                                    </label>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                                    
-                                <!-- Color -->
-                                @if (get_setting('color_filter_activation'))
-                                    <div class="bg-white border mb-3">
-                                        <div class="fs-16 fw-700 p-3">
-                                            <a href="#" class="dropdown-toggle text-dark filter-section collapsed d-flex align-items-center justify-content-between" data-toggle="collapse" data-target="#collapse_color">
-                                                {{ translate('Filter by color')}}
-                                            </a>
-                                        </div>
-                                        @php
-                                            $show = '';
-                                            foreach ($colors as $key => $color){
-                                                if(isset($selected_color) && $selected_color == $color->code){
-                                                    $show = 'show';
-                                                }
-                                            }
-                                        @endphp
-                                        <div class="collapse {{ $show }}" id="collapse_color">
-                                            <div class="p-3 aiz-radio-inline">
-                                                @foreach ($colors as $key => $color)
-                                                <label class="aiz-megabox pl-0 mr-2" data-toggle="tooltip" data-title="{{ $color->name }}">
-                                                    <input
-                                                        type="radio"
-                                                        name="color"
-                                                        value="{{ $color->code }}"
-                                                        onchange="filter()"
-                                                        @if(isset($selected_color) && $selected_color == $color->code) checked @endif
-                                                    >
-                                                    <span class="aiz-megabox-elem rounded d-flex align-items-center justify-content-center p-1 mb-2">
-                                                        <span class="size-30px d-inline-block rounded" style="background: {{ $color->code }};"></span>
-                                                    </span>
-                                                </label>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
+                                </div>                                
+                                @include('frontend.product_listing_filter')
                             </div>
                         </div>
                     </div>
                     
                     <!-- Contents -->
-                    <div class="col-xl-9">
+                    <div class="col-xl-9" >
                         
                         <!-- Breadcrumb -->
-                        <ul class="breadcrumb bg-transparent py-0 px-1">
+                        <ul class="breadcrumb bg-transparent py-0 px-1" id="list_categories">
                             <li class="breadcrumb-item has-transition opacity-50 hov-opacity-100">
                                 <a class="text-reset" href="{{ route('home') }}">{{ translate('Home')}}</a>
                             </li>
@@ -246,18 +174,36 @@
                                     <a class="text-reset" href="{{ route('search') }}">{{ translate('All Categories')}}</a>
                                 </li>
                             @endif
-                            @if(isset($category_id))
-                                <li class="text-dark fw-600 breadcrumb-item">
-                                    "{{ $category->getTranslation('name') }}"
-                                </li>
+                            @if(isset($category_parent_parent))
+                                @if($category_parent_parent->level != 0)
+                                    <li class="text-dark fw-600 breadcrumb-item">
+                                        "{{ $category_parent_parent->getTranslation('name') }}"
+                                    </li>
+                                @endif
                             @endif
+                            @if(isset($category_parent))
+                                @if($category_parent->level != 0)
+                                    <li class="text-dark fw-600 breadcrumb-item">
+                                        "{{ $category_parent->getTranslation('name') }}"
+                                    </li>
+                                @endif
+                            @endif
+                            @if(isset($category_id))
+                                @if($category->level != 0)
+                                    <li class="text-dark fw-600 breadcrumb-item">
+                                        "{{ $category->getTranslation('name') }}"
+                                    </li>
+                                @endif
+                            @endif
+                            
+                            
                         </ul>
                         
                         <!-- Top Filters -->
                         <div class="text-left">
                             <div class="row gutters-5 flex-wrap align-items-center">
                                 <div class="col-lg col-10">
-                                    <h1 class="fs-20 fs-md-24 fw-700 text-dark">
+                                    <h1 class="fs-20 fs-md-24 fw-700 text-dark title_category">
                                         @if(isset($category_id))
                                             {{ $category->getTranslation('name') }}
                                         @elseif(isset($query))
@@ -297,7 +243,7 @@
                         
                         <!-- Products -->
                         <div class="px-3">
-                            <div class="row gutters-16 row-cols-xxl-4 row-cols-xl-3 row-cols-lg-4 row-cols-md-3 row-cols-2 border-top border-left">
+                            <div class="all_product row gutters-16 row-cols-xxl-4 row-cols-xl-3 row-cols-lg-4 row-cols-md-3 row-cols-2 border-top border-left">
                                 @foreach ($products as $key => $product)
                                     <div class="col border-right border-bottom has-transition hov-shadow-out z-1">
                                         @include('frontend.'.get_setting('homepage_select').'.partials.product_box_1',['product' => $product])
@@ -306,7 +252,7 @@
                             </div>
                         </div>
                         <div class="aiz-pagination mt-4">
-                            {{ $products->appends(request()->input())->links() }}
+                            {!! str_replace("href","data-href",$products->appends(request()->input())->links()) !!}
                         </div>
                     </div>
                 </div>
@@ -317,14 +263,238 @@
 @endsection
 
 @section('script')
+    
+    <script src="{{asset('public/assets/js/jquery.preloader.min.js')}}"></script>
     <script type="text/javascript">
+        function filter_category(category_id){
+            $("#spinner-div").show();
+            $('#category_id').val(category_id);
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            console.log($('#search-form').attr('action'));
+            var data = {
+                category_id: category_id,
+            };
+            $.ajax({
+                url: $('#search-form').attr('action'),
+                method: $('#search-form').attr('method'),
+                data: data,
+                    
+                success: function(response) {
+                    $('.all_product').html(response.html); 
+                    $('.aiz-pagination').html(response.pagination); 
+                    $('#filter').html(response.filter); 
+                    $('#list_categories').html(response.list_categories); 
+                    $('.title_category').html(response.title_category); 
+
+                    slide_refresh();
+                    rating_refresh();
+                    $("#spinner-div").hide();
+                },
+                error: function(xhr) {
+                    let errors = xhr.responseJSON.errors;
+                    let errorMessage = '';
+                    $.each(errors, function(key, value) {
+                        errorMessage += value[0] + '\n';
+                    });
+                    alert(errorMessage);
+                }
+            });
+        }
+        function filter_attribute(id,rate){
+            var new_rate = $('select[name=units_'+id+']').val();
+            console.log(id,rate,new_rate);
+            filter();
+            // $('#min_attribute_numeric_'+id).val(4);
+            // $('#max_attribute_numeric_'+id).val(5);
+        }
         function filter(){
-            $('#search-form').submit();
+            $("#spinner-div").show();
+            // $('#search-form').submit();
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                url: $('#search-form').attr('action'),
+                method: $('#search-form').attr('method'),
+                data: $('#search-form').serialize(),
+                success: function(response) {
+                    $('.all_product').html(response.html); 
+                    $('.aiz-pagination').html(response.pagination); 
+                    $('#filter').html(response.filter); 
+                    slide_refresh();
+                    rating_refresh();
+                    $("#spinner-div").hide();
+                },
+                error: function(xhr) {
+                    let errors = xhr.responseJSON.errors;
+                    let errorMessage = '';
+                    $.each(errors, function(key, value) {
+                        errorMessage += value[0] + '\n';
+                    });
+                    alert(errorMessage);
+                }
+            });
         }
         function rangefilter(arg){
             $('input[name=min_price]').val(arg[0]);
             $('input[name=max_price]').val(arg[1]);
             filter();
+        }
+        function rangefilter_attribute(arg,id){
+            $('#min_attribute_numeric_'+id).val(arg[0]);
+            $('#max_attribute_numeric_'+id).val(arg[1]);
+            filter();
+        }
+    </script>
+    
+    <script>
+        $('body').on('click', '.pagination li a', function() {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $("#spinner-div").show();
+            $.ajax({
+                url: $(this).data('href'),
+                method: $('#search-form').attr('method'),
+                success: function(response) {
+                    $('.all_product').html(response.html); 
+                    $('.aiz-pagination').html(response.pagination); 
+                    $('.title_category').html(response.title_category); 
+
+                    $("#spinner-div").hide();
+                },
+                error: function(xhr) {
+                    let errors = xhr.responseJSON.errors;
+                    let errorMessage = '';
+                    $.each(errors, function(key, value) {
+                        errorMessage += value[0] + '\n';
+                    });
+                    alert(errorMessage);
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $('.show-hide-attribute').on('click', function() {
+            
+            if ($(this).find('i').hasClass('la-angle-down')) {
+                $(this).parent().find('.hide_attribute').removeClass('display_none');
+                $(this).html('{{ translate('Less') }} <i class="las la-angle-up"></i>');
+            } else {
+                
+                $(this).parent().find('.hide_attribute').addClass('display_none');
+                $(this).html('{{ translate('More') }} <i class="las la-angle-down"></i>');
+            }
+        });
+    </script>
+    <script>
+    </script>
+    <script>
+        function slide_refresh(){
+            if ($(".aiz-range-slider")[0]) {
+                $(".aiz-range-slider").each(function () {
+                    var c = document.getElementById("input-slider-range"),
+                    d = document.getElementById("input-slider-range-value-low"),
+                    e = document.getElementById("input-slider-range-value-high"),
+                    f = [d, e];
+
+                    noUiSlider.create(c, {
+                        start: [
+                            parseFloat(d.getAttribute("data-range-value-low")),
+                            parseFloat(e.getAttribute("data-range-value-high")),
+                        ],
+                        connect: !0,
+                        range: {
+                            min: parseFloat(c.getAttribute("data-range-value-min")),
+                            max: parseFloat(c.getAttribute("data-range-value-max")),
+                        },
+                    }),
+
+                    c.noUiSlider.on("update", function (a, b) {
+                        f[b].textContent = a[b];
+                    }),
+                    c.noUiSlider.on("change", function (a, b) {
+                        rangefilter(a);
+                    });
+                });
+            }
+            if ($(".aiz-range-slider-attribute")[0]) {
+                $(".aiz-range-slider-attribute").each(function () {
+                    var c = $(this).find(".attribute-input-slider-range")[0],
+                        d = $(this).find(".attribute-input-slider-range-value-low")[0],
+                        e = $(this).find(".attribute-input-slider-range-value-high")[0],
+                        id_attribute = $(this).data("id"),
+                        f = [d, e];
+            
+                    noUiSlider.create(c, {
+                        start: [
+                            parseFloat(d.getAttribute("data-range-value-low")),
+                            parseFloat(e.getAttribute("data-range-value-high")),
+                        ],
+                        connect: true,
+                        range: {
+                            min: parseFloat(c.getAttribute("data-range-value-min")),
+                            max: parseFloat(c.getAttribute("data-range-value-max")),
+                        },
+                    });
+            
+                    c.noUiSlider.on("update", function (a, b) {
+                        f[b].textContent = a[b];
+                    });
+            
+                    c.noUiSlider.on("change", function (a, b) {
+                        rangefilter_attribute(a, id_attribute);
+                    });
+                });
+            }
+        }
+        function rating_refresh(){
+            $(".rating-input").each(function () {
+                $(this)
+                    .find("label")
+                    .on({
+                        mouseover: function (event) {
+                            $(this).find("i").addClass("hover");
+                            $(this).prevAll().find("i").addClass("hover");
+                        },
+                        mouseleave: function (event) {
+                            $(this).find("i").removeClass("hover");
+                            $(this).prevAll().find("i").removeClass("hover");
+                        },
+                        click: function (event) {
+                            $(this).siblings().find("i").removeClass("active");
+                            $(this).find("i").addClass("active");
+                            $(this).prevAll().find("i").addClass("active");
+                        },
+                    });
+                if ($(this).find("input").is(":checked")) {
+                    $(this)
+                        .find("label")
+                        .siblings()
+                        .find("i")
+                        .removeClass("active");
+                    $(this)
+                        .find("input:checked")
+                        .closest("label")
+                        .find("i")
+                        .addClass("active");
+                    $(this)
+                        .find("input:checked")
+                        .closest("label")
+                        .prevAll()
+                        .find("i")
+                        .addClass("active");
+                }
+            });
         }
     </script>
 @endsection
