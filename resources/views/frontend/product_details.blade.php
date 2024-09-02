@@ -418,10 +418,9 @@
                     <div class="bg-white mb-4 p-3 p-sm-4 col-12 col-md-6 float-left">
                         <!-- Tabs -->
                         <div class="nav aiz-nav-tabs">
-                            <a href="#tab_default_1" data-toggle="tab"
-                                class="mr-5 pb-2 fs-16 fw-700 text-reset active show">Description</a>
+                            <a href="#tab_default_1" data-toggle="tab" class="mr-5 pb-2 fs-16 fw-700 text-reset active show">Description</a>
                             <a href="#tab_default_2" data-toggle="tab" class="mr-5 pb-2 fs-16 fw-700 text-reset">Downloadable</a>
-                            <a href="#tab_default_2" data-toggle="tab" class="mr-5 pb-2 fs-16 fw-700 text-reset">Reviews</a>
+                            <a href="#tab_default_3" data-toggle="tab" class="mr-5 pb-2 fs-16 fw-700 text-reset">Reviews ( {{$totalRating}} )</a>
                         </div>
 
                         <!-- Description -->
@@ -525,7 +524,7 @@
                                 </div>
                             </div>
 
-                            <!-- Video -->
+                            <!-- Video
                             <div class="tab-pane fade" id="tab_default_2">
                                 <div class="py-5">
                                     <div class="embed-responsive embed-responsive-16by9">
@@ -540,15 +539,99 @@
                                         {{-- @endif --}}
                                     </div>
                                 </div>
-                            </div>
+                            </div>-->
 
                             <!-- Download -->
-                            <div class="tab-pane fade" id="tab_default_3">
+                            <div class="tab-pane fade" id="tab_default_2">
                                 <div class="py-5 text-center ">
-                                    <a href="https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg"
+                                    <a href=""
                                         class="btn btn-primary">Download</a>
                                 </div>
                             </div>
+                            <div class="tab-pane fade" id="tab_default_3">
+
+                            <!-- Ratting -->
+                            <div class="px-3 px-sm-4 mb-4 mt-4">
+                                <div class="border border-secondary-base border-radius-16 p-3 p-sm-4">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-8 mb-3 font-prompt">
+                                            @if($previewData['detailedProduct']['variationId'] || $previewData['detailedProduct']['product_id'] )
+                                            @php
+                                            if($previewData['detailedProduct']['variationId'])
+                                                $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['variationId']);
+                                            else {
+                                                $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['product_id']);
+                                            }
+                                            $totalRating = $detailedProduct->reviews->count();
+                                            @endphp
+                                            <div
+                                                class="d-flex align-items-center justify-content-between justify-content-md-start">
+                                                <div class="w-100 w-sm-auto">
+                                                    <span class="avgRating fs-36 mr-3">{{$totalRating > 0 ? $detailedProduct->reviews->sum('rating') / $totalRating : 0 }}</span>
+                                                    <span class="fs-14 mr-3">out of 5.0</span>
+                                                </div>
+                                                <div
+                                                    class="mt-sm-3 w-100 w-sm-auto d-flex flex-wrap justify-content-end justify-content-md-start">
+                                                    <span class="rating rating-mr-1 rating-var">
+                                                        @if($totalRating > 0)
+                                                        {{ renderStarRating($detailedProduct->reviews->sum('rating') / $totalRating) }}
+                                                    @else
+                                                        {{ renderStarRating(0) }} <!-- Assuming 0 stars when there are no reviews -->
+                                                    @endif
+                                                    </span>
+                                                    <span class="total-var-rating ml-1 fs-14">({{$totalRating}}
+                                                        reviews)</span>
+                                                </div>
+                                            </div>
+                                            @else
+                                            <div
+                                            class="d-flex align-items-center justify-content-between justify-content-md-start">
+                                            <div class="w-100 w-sm-auto">
+                                                <span class="fs-36 mr-3">0</span>
+                                                <span class="fs-14 mr-3">out of 5.0</span>
+                                            </div>
+                                            <div
+                                                class="mt-sm-3 w-100 w-sm-auto d-flex flex-wrap justify-content-end justify-content-md-start">
+                                                <span class="rating rating-mr-1 rating-var">
+                                                    <i class="las la-star"></i><i class="las la-star"></i><i
+                                                        class="las la-star"></i><i class="las la-star"></i><i
+                                                        class="las la-star"></i>
+                                                </span>
+                                                <span class="total-var-rating ml-1 fs-14">(0
+                                                    reviews)</span>
+                                            </div>
+                                            </div>
+                                            @endif
+                                        </div>
+                                        <div class="col-md-4 text-right">
+                                            <a href="javascript:void(0);" onclick="product_review('3')"
+                                                class="btn btn-secondary-base fw-400 text-white border-radius-16 font-prompt-md">
+                                                <span class="d-md-inline-block"> Rate this Product</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Reviews -->
+                            <div class="py-3 reviews-area">
+                                <ul class="list-group list-group-flush">
+                                </ul>
+
+                                <div class="text-center fs-18 opacity-70 font-prompt">
+                                    There have been no reviews for this product yet.
+                                </div>
+
+                                <!-- Pagination -->
+                                <div class="aiz-pagination product-reviews-pagination py-2 px-4 d-flex justify-content-end">
+
+                                </div>
+                            </div>
+                        </div>
+
+                            </div>
+
+
+
                         </div>
                     </div>
                     <div class="bg-white mb-4 p-3 p-sm-4 col-12 col-md-6 float-left">
