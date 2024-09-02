@@ -12973,3 +12973,12 @@ border:none !important;
 .background-green{
     background-color: #ececec !important;
 }
+
+.badge-counter{
+    background: #e8362c;
+    color: #ffffff;
+    position: absolute;
+    left: 35px;
+    bottom: 22px;
+    border-radius: 25px;
+}

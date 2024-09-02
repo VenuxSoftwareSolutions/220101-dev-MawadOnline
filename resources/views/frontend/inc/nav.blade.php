@@ -124,7 +124,7 @@
         </div>
     </div>
 
-    <header class="@if (get_setting('header_stikcy') == 'on') sticky-top @endif z-1020 bg-white">
+    <header class="z-1020 bg-white">
         <!-- Search Bar -->
         <div class="position-relative logo-bar-area border-md-nonea z-1025 border-header background-header">
             <div class="container">
@@ -234,21 +234,27 @@
                             @include('frontend.'.get_setting('homepage_select').'.partials.wishlist')
                         </div>
                     </div>
+                    <div class="dd-none d-lg-block"
+                        data-hover="dropdown">
+                        <div class="nav-cart-box dropdown h-100" id="cart_items" style="width: max-content;">
+                            @include('frontend.'.get_setting('homepage_select').'.partials.cart')
+                        </div>
+                    </div>
                     @if (!isAdmin())
                         <!-- Notifications -->
                         <ul class="list-inline mb-0 h-100 d-none d-xl-flex justify-content-end align-items-center">
-                            <li class="list-inline-item ml-3 mr-3 pr-3 pl-0 dropdown">
+                            <li class="list-inline-item ml-2 mr-3 pr-3 pl-0 dropdown">
                                 <a class="dropdown-toggle no-arrow text-secondary fs-12" data-toggle="dropdown"
                                     href="javascript:void(0);" role="button" aria-haspopup="false"
                                     aria-expanded="false">
                                     <span class="">
-                                        <span class="position-relative d-inline-block">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14.668" height="16"
-                                                viewBox="0 0 14.668 16">
-                                                <path id="_26._Notification" data-name="26. Notification"
-                                                    d="M8.333,16A3.34,3.34,0,0,0,11,14.667H5.666A3.34,3.34,0,0,0,8.333,16ZM15.06,9.78a2.457,2.457,0,0,1-.727-1.747V6a6,6,0,1,0-12,0V8.033A2.457,2.457,0,0,1,1.606,9.78,2.083,2.083,0,0,0,3.08,13.333H13.586A2.083,2.083,0,0,0,15.06,9.78Z"
-                                                    transform="translate(-0.999)" fill="#91919b" />
-                                            </svg>
+                                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12.0201 2.91003C8.71009 2.91003 6.02009 5.60003 6.02009 8.91003V11.8C6.02009 12.41 5.76009 13.34 5.45009 13.86L4.30009 15.77C3.59009 16.95 4.08009 18.26 5.38009 18.7C9.69009 20.14 14.3401 20.14 18.6501 18.7C19.8601 18.3 20.3901 16.87 19.7301 15.77L18.5801 13.86C18.2801 13.34 18.0201 12.41 18.0201 11.8V8.91003C18.0201 5.61003 15.3201 2.91003 12.0201 2.91003Z" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"/>
+                                                <path d="M13.8699 3.19994C13.5599 3.10994 13.2399 3.03994 12.9099 2.99994C11.9499 2.87994 11.0299 2.94994 10.1699 3.19994C10.4599 2.45994 11.1799 1.93994 12.0199 1.93994C12.8599 1.93994 13.5799 2.45994 13.8699 3.19994Z" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M15.02 19.0601C15.02 20.7101 13.67 22.0601 12.02 22.0601C11.2 22.0601 10.44 21.7201 9.90002 21.1801C9.36002 20.6401 9.02002 19.8801 9.02002 19.0601" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10"/>
+                                                </svg>
+
+
                                             @if (Auth::check() && count($user->unreadNotifications) > 0)
                                                 <span
                                                     class="badge badge-primary badge-inline badge-pill absolute-top-right--10px">{{ count($user->unreadNotifications) }}</span>
@@ -350,7 +356,7 @@
                                     @endif
                                 </span>
                                 <!-- Name -->
-                                <h4 class="h5 fs-14 fw-700 text-dark ml-2 mb-0">{{ $user->name }}</h4>
+                                <h4 class="h5 fs-14 fw-700 text-white ml-2 mb-0">{{ $user->name }}</h4>
                             </span>
                         @else
                             <!--Login & Registration -->
@@ -610,13 +616,6 @@
                                     @endforeach
                                 @endif
                             </ul>
-                        </div>
-                    </div>
-                    <!-- Cart -->
-                    <div class="d-none d-xl-block align-self-stretch ml-5 mr-0 has-transition bg-black-10"
-                        data-hover="dropdown">
-                        <div class="nav-cart-box dropdown h-100" id="cart_items" style="width: max-content;">
-                            @include('frontend.'.get_setting('homepage_select').'.partials.cart')
                         </div>
                     </div>
                 </div>
