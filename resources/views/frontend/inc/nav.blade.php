@@ -255,9 +255,9 @@
                                                 </svg>
 
 
-                                            @if (Auth::check() && count($user->unreadNotifications) > 0)
-                                                <span
-                                                    class="badge badge-primary badge-inline badge-pill absolute-top-right--10px">{{ count($user->unreadNotifications) }}</span>
+                                           {{-- @if (Auth::check() && count($user->unreadNotifications) > 0) --}}
+                                           @if (Auth::check())
+                                                <span class="badge badge-counter-notification font-prompt">{{ count($user->unreadNotifications) }}</span>
                                             @endif
                                         </span>
                                 </a>

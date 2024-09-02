@@ -12982,3 +12982,12 @@ border:none !important;
     bottom: 22px;
     border-radius: 25px;
 }
+
+.badge-counter-notification{
+    background: #e8362c;
+    color: #ffffff;
+    position: absolute;
+    left: 18px;
+    bottom: 22px;
+    border-radius: 25px;
+}
