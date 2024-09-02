@@ -246,13 +246,14 @@
     </div>
 @endif
 
-
+    <!--
     <div class="col-md-12 p-0 pb-2 pt-1" style="height: 45px;">
         <span class="fs-16 font-prompt-md float-left mr-5" style="height: 45px;line-height:38px;">Size:</span>
         <div class="border border-radius-8px font-prompt-md fs-14 float-left size-style mr-2">Small</div>
         <div class="border border-radius-8px font-prompt-md fs-14 float-left size-style mr-2">Medium</div>
         <div class="border border-radius-8px font-prompt-md fs-14 float-left size-style mr-2">Large</div>
     </div>
+    -->
     <hr class="hr-style"/>
     <!-- new commented
     <div class="row align-items-center">

@@ -41,7 +41,7 @@ class Attribute extends Model
 
         if($this->type_value == "text" || $this->type_value == "numeric"){
             // dd(productAttributeValues::whereIn('id_products', $id_products)->where('id_attribute',$this->id)->first()->value);
-            return productAttributeValues::whereIn('id_products', $id_products)->where('id_attribute',$this->id)->get()->unique('value');
+            return ProductAttributeValues::whereIn('id_products', $id_products)->where('id_attribute',$this->id)->get()->unique('value');
         }elseif($this->type_value == "color"){
             // $ids_attribute_value = AttributeValue::where('attribute_id', $this->id)->pluck('color_code')->toArray();
             // return Color::whereIn('id', $ids_attribute_value)->get();
