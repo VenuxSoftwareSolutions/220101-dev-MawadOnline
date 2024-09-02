@@ -544,7 +544,7 @@
                             <!-- Download -->
                             <div class="tab-pane fade" id="tab_default_2">
                                 <div class="py-5 text-center ">
-                                    <a href="https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg"
+                                    <a href=""
                                         class="btn btn-primary">Download</a>
                                 </div>
                             </div>
