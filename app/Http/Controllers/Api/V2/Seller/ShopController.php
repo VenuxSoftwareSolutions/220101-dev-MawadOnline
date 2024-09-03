@@ -144,21 +144,33 @@ class ShopController extends Controller
     }
 
     public function category_wise_products()
-    {
-        $category_wise_product = [];
-        $new_array = [];
-        foreach (Category::all() as $key => $category) {
-            if (count($category->products->where('user_id', auth()->user()->owner_id)) > 0) {
-                $category_wise_product['name'] = $category->getTranslation('name');
-                $category_wise_product['banner'] = uploaded_asset($category->banner);
-                $category_wise_product['cnt_product'] = count($category->products->where('user_id', auth()->user()->owner_id));
+{
+    $ownerId = auth()->user()->owner_id;
 
-                $new_array[] = $category_wise_product;
+    // Define a cache key unique to the user and this method
+    $cacheKey = "category_wise_products_{$ownerId}";
+
+    // Cache the result for a specific duration (e.g., 60 minutes)
+    $new_array = Cache::remember($cacheKey, 60 * 60, function () use ($ownerId) {
+        $categories = Category::with(['products' => function ($query) use ($ownerId) {
+            $query->where('user_id', $ownerId);
+        }])->get();
+        
+        return $categories->map(function ($category) {
+            $productCount = $category->products->count();
+            if ($productCount > 0) {
+                return [
+                    'name' => $category->getTranslation('name'),
+                    'banner' => uploaded_asset($category->banner),
+                    'cnt_product' => $productCount,
+                ];
             }
-        }
+            return null;
+        })->filter()->values();
+    });
 
-        return Response()->json($new_array);
-    }
+    return response()->json($new_array);
+}
 
     public function top_12_products()
     {
