@@ -144,23 +144,20 @@ class ShopController extends Controller
     }
 
     public function category_wise_products(Request $request)
-{
-    $ownerId = auth()->user()->owner_id;
-    
-    // Get the current page number from the request (default to 1)
-    $page = $request->input('page', 1);
-    $perPage = 10; // Define how many items per page
-    
-    // Define a cache key unique to the user, this method, and the current page
-    $cacheKey = "category_wise_products_{$ownerId}_page_{$page}";
-    
-    // Cache the result for a specific duration (e.g., 60 minutes)
-    $new_array = Cache::remember($cacheKey, 60 * 60, function () use ($ownerId, $perPage) {
+    {
+        $ownerId = auth()->user()->owner_id;
+        
+        // Get the current page number from the request (default to 1)
+        $page = $request->input('page', 1);
+        $perPage = 10; // Define how many items per page
+        
+        // Fetch paginated categories with their products
         $categories = Category::with(['products' => function ($query) use ($ownerId) {
             $query->where('user_id', $ownerId);
         }])->paginate($perPage);
 
-        return $categories->map(function ($category) {
+        // Transform the categories and calculate product count
+        $data = $categories->map(function ($category) {
             $productCount = $category->products->count();
             if ($productCount > 0) {
                 return [
@@ -171,11 +168,18 @@ class ShopController extends Controller
             }
             return null;
         })->filter()->values();
-    });
-    
-    return response()->json($new_array);
-}
 
+        // Prepare the response with pagination metadata
+        $result = [
+            'data' => $data,
+            'total' => $categories->total(),
+            'next_page_url' => $categories->nextPageUrl(),
+        ];
+        
+        return response()->json($result);
+    }
+
+    
 
     public function top_12_products()
     {
