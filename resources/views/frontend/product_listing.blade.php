@@ -304,12 +304,8 @@
                 }
             });
         }
-        function filter_attribute(id,rate){
-            var new_rate = $('select[name=units_'+id+']').val();
-            console.log(id,rate,new_rate);
+        function filter_attribute(){
             filter();
-            // $('#min_attribute_numeric_'+id).val(4);
-            // $('#max_attribute_numeric_'+id).val(5);
         }
         function filter(){
             $("#spinner-div").show();
@@ -384,7 +380,7 @@
     </script>
 
     <script>
-        $('.show-hide-attribute').on('click', function() {
+        $('body').on('click', '.show-hide-attribute').on('click', function() {
             
             if ($(this).find('i').hasClass('la-angle-down')) {
                 $(this).parent().find('.hide_attribute').removeClass('display_none');

@@ -759,7 +759,6 @@ if (!function_exists('home_discounted_base_price')) {
     function home_discounted_base_price($product, $formatted = true)
     {
         $product_price = $product->getPricingConfiguration();
-
         if ($product_price !== null && $product_price->isNotEmpty()) {
             $price = $product_price->first()->unit_price;
         } else {
