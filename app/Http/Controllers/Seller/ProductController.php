@@ -314,7 +314,7 @@ class ProductController extends Controller
                             case "color":
                                 $colors = Color::orderBy('name', 'asc')->get();
                                 $html_attributes_generale .= '<div class="col-md-10">
-                                <select class="form-control attributes aiz-selectpicker" name="attribute_generale-'.$attribute->id.'" data-type="color" data-live-search="true" data-selected-text-format="count" multiple>';
+                                <select class="form-control attributes aiz-selectpicker" name="attribute_generale-'.$attribute->id.'[]" data-type="color" data-live-search="true" data-selected-text-format="count" multiple>';
                                     foreach ($colors as $key => $color){
                                         $groups_ids = ColorGroupColor::where('color_id', $color->id)->pluck('color_group_id')->toArray();
                                         $groups = [];
@@ -609,7 +609,16 @@ class ProductController extends Controller
             $data_general_attributes = [];
             if(count($general_attributes) > 0){
                 foreach ($general_attributes as $general_attribute){
-                    $data_general_attributes[$general_attribute->id_attribute] = $general_attribute;
+                    // $data_general_attributes[$general_attribute->id_attribute] = $general_attribute;
+                    if($general_attribute->id_colors != null){
+                        if (array_key_exists($general_attribute->id_attribute,$data_general_attributes)){
+                            array_push($data_general_attributes[$general_attribute->id_attribute], $general_attribute->id_colors);
+                        }else{
+                            $data_general_attributes[$general_attribute->id_attribute] = [$general_attribute->id_colors];
+                        }
+                    }else{
+                        $data_general_attributes[$general_attribute->id_attribute] = $general_attribute;
+                    }
                 }
             }
             if($product_category != null){

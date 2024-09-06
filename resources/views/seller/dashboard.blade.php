@@ -264,23 +264,27 @@
                     </div>
                     <hr>
                     <ul class="list-group">
-                    @php
-                        $categories = \App\Models\Category::without('category_translations')->with(['products' => function ($query) {
-                            $query->where('user_id', auth()->user()->owner_id);
-                        }])->get();
+                        @php
+                        $categories = \App\Models\Category::without('category_translations')
+                            ->with(['products' => function ($query) {
+                                $query->where('user_id', auth()->user()->owner_id);
+                            }])
+                            ->limit(12)
+                            ->get()
+                            ->filter(function ($category) {
+                                return $category->products->isNotEmpty();
+                            });
                     @endphp
-
+                    
                     @foreach ($categories as $category)
-                        @if ($category->products->isNotEmpty())
-                            <li class="d-flex justify-content-between align-items-center my-2 text-primary fs-13">
-                                {{ $category->getTranslation('name') }}
-                                <span class="">
-                                    {{ $category->products->count() }}
-                                </span>
-                            </li>
-                        @endif
+                        <li class="d-flex justify-content-between align-items-center my-2 text-primary fs-13">
+                            {{ $category->getTranslation('name') }}
+                            <span class="">
+                                {{ $category->products->count() }}
+                            </span>
+                        </li>
                     @endforeach
-
+                    
                     </ul>
                 </div>
             </div>

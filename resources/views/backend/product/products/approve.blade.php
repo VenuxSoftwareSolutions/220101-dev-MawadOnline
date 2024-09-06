@@ -455,7 +455,7 @@
                                             <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id=""></td>
                                             <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id=""></td>
                                             <td>
-                                                <select class="shipper" name="shipper[]">
+                                                <select class="shipper" name="shipper[]" multiple>
                                                     <option value="" selected>{{translate('Choose shipper')}}</option>
                                                     <option value="vendor" @selected(old('shipper') == 'vendor')>{{translate('vendor')}}</option>
                                                     <option value="third_party" @selected(old('shipper') == 'third_party')>{{translate('MawadOnline 3rd Party Shippers')}}</option>
@@ -643,10 +643,6 @@
                                     <span></span>
                                 </label>
                             </div> --}}
-                        </div>
-                        <div>
-                            <p>{{ translate('Choose the attributes of this product and then input values of each attribute') }}</p>
-                            <br>
                         </div>
                         <div id="bloc_variants_created" style="margin-top: 42px;">
                             @if(count($product->getChildrenProductsDesc()) > 0)
@@ -976,7 +972,7 @@
                             <div id="general_attributes">
                                 @if (count($general_attributes_ids_attributes) > 0)
                                     <div class="row" style="padding-left: 16px !important;">
-                                        @include('seller.product.products.general_attributes', ['attributes' => $attributes, 'general_attributes_ids_attributes' => $general_attributes_ids_attributes, 'general_attributes' => $general_attributes])
+                                        @include('seller.product.products.general_attributes', ['data_general_attributes_color_added' => $data_general_attributes_color_added, 'attributes' => $attributes, 'general_attributes_ids_attributes' => $general_attributes_ids_attributes, 'general_attributes' => $general_attributes])
                                     </div>
                                 @endif
                             </div>
@@ -1206,10 +1202,17 @@
                 $(this).parent().find('button.btn.dropdown-toggle.btn-light').tooltip();
                 var value = $(this).attr('data-value');
                 var added = $(this).attr('data-added');
+                var type = $(this).attr('data-type');
 
                 if(added != undefined){
-                    $(this).parent().find('button.btn.dropdown-toggle.btn-light').attr('style', 'border: 1px solid green !important');
-                    $(this).parent().find('button.btn.dropdown-toggle.btn-light').attr('data-original-title', 'Attribute added');
+                    if(type === 'color'){
+                        $(this).parent().find('button.btn.dropdown-toggle.btn-light').attr('style', 'border: 1px solid green !important');
+                        $(this).parent().find('button.btn.dropdown-toggle.btn-light').attr('data-original-title', 'Color added');
+                    }else{
+                        $(this).parent().find('button.btn.dropdown-toggle.btn-light').attr('style', 'border: 1px solid green !important');
+                        $(this).parent().find('button.btn.dropdown-toggle.btn-light').attr('data-original-title', 'Attribute added');
+                    }
+                    
                 }else{
                     $(this).parent().find('button.btn.dropdown-toggle.btn-light').attr('style', 'border: 1px solid #FF3C50 !important');
                     $(this).parent().find('button.btn.dropdown-toggle.btn-light').attr('data-original-title', 'Modified and old value is: ' + value);
