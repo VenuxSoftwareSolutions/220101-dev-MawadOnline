@@ -37,11 +37,21 @@ class Attribute extends Model
         return $values_list;
     }
 
-    public function attribute_values_filter($id_products = null) {
+    public function attribute_values_filter($conditions = null) {
 
         if($this->type_value == "text" || $this->type_value == "numeric"){
-            // dd(productAttributeValues::whereIn('id_products', $id_products)->where('id_attribute',$this->id)->first()->value);
-            return ProductAttributeValues::whereIn('id_products', $id_products)->where('id_attribute',$this->id)->get()->unique('value');
+
+            $products = Product::where('published', '1')->where('auction_product', 0)->where('approved', '1');
+            // dd($conditions['categories']);
+            if(isset($conditions['categories']) && $conditions['categories']){
+                $products->whereIn('category_id',$conditions['categories']);
+            }
+
+            if(isset($conditions['query']) && $conditions['query']){
+                $products->where("name",'like',"%".$conditions['query']."%");
+            }
+            $products->join('product_attribute_values','products.id','product_attribute_values.id_products')->where('id_attribute',$this->id)->distinct('product_attribute_values.value');
+            return $products->get();
         }elseif($this->type_value == "color"){
             // $ids_attribute_value = AttributeValue::where('attribute_id', $this->id)->pluck('color_code')->toArray();
             // return Color::whereIn('id', $ids_attribute_value)->get();
@@ -69,11 +79,10 @@ class Attribute extends Model
         return $units;
     }
 
-    public function max_min_value($id_products = null,$unit= null){
-        if(!$id_products){
-            $id_products = [];
-        }
-        $productAttributeValues = ProductAttributeValues::whereIn('id_products', $id_products)->where('id_attribute',$this->id)->get();
+    public function max_min_value($conditions = null,$unit= null){
+        
+
+        $productAttributeValues =  $this->attribute_values_filter($conditions);
         
         $attribute_max = 1;
         $attribute_min = 0;
