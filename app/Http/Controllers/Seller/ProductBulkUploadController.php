@@ -391,6 +391,8 @@ class ProductBulkUploadController extends Controller
     
                 if ($data['success']) {
                     $fileName = $data['fileName'];
+                    $fileName = basename($fileName);
+
                     $filePath = public_path('buxl/' . $fileName);
                     Log::info($fileName);
                     Log::info($filePath);
