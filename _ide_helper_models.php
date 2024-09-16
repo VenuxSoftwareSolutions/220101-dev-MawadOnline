@@ -629,6 +629,17 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\BulkUploadFile
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|BulkUploadFile newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|BulkUploadFile newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|BulkUploadFile query()
+ */
+	class BulkUploadFile extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\BusinessInformation
  *
  * @property int $id
@@ -2401,6 +2412,7 @@ namespace App\Models{
  * @property string|null $unit_third_party_sample
  * @property int|null $min_third_party_sample
  * @property int|null $max_third_party_sample
+ * @property int|null $product_catalog_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AuctionProductBid> $bids
  * @property-read int|null $bids_count
  * @property-read \App\Models\Brand|null $brand
@@ -2505,6 +2517,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Product wherePdf($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product wherePhotos($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereProductAddedFromCatalog($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereProductCatalogId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product wherePublished($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product wherePurchasePrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereRating($value)
@@ -2734,6 +2747,7 @@ namespace App\Models{
  * @property string|null $unit_third_party_sample
  * @property int|null $min_third_party_sample
  * @property int|null $max_third_party_sample
+ * @property int|null $product_catalog_id
  * @property-read \App\Models\Brand|null $brand
  * @method static \Illuminate\Database\Eloquent\Builder|ProductCatalog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ProductCatalog newQuery()
@@ -2800,6 +2814,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ProductCatalog wherePdf($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ProductCatalog wherePhotos($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ProductCatalog whereProductAddedFromCatalog($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductCatalog whereProductCatalogId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ProductCatalog whereProductId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ProductCatalog wherePublished($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ProductCatalog wherePurchasePrice($value)
@@ -4152,17 +4167,21 @@ namespace App\Models{
  * @property array $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int|null $default_unit
+ * @property float $rate
  * @property-read mixed $translations
  * @method static \Illuminate\Database\Eloquent\Builder|Unity newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Unity newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Unity query()
  * @method static \Illuminate\Database\Eloquent\Builder|Unity whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Unity whereDefaultUnit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Unity whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Unity whereJsonContainsLocale(string $column, string $locale, ?mixed $value)
  * @method static \Illuminate\Database\Eloquent\Builder|Unity whereJsonContainsLocales(string $column, array $locales, ?mixed $value)
  * @method static \Illuminate\Database\Eloquent\Builder|Unity whereLocale(string $column, string $locale)
  * @method static \Illuminate\Database\Eloquent\Builder|Unity whereLocales(string $column, array $locales)
  * @method static \Illuminate\Database\Eloquent\Builder|Unity whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Unity whereRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Unity whereUpdatedAt($value)
  */
 	class Unity extends \Eloquent {}
@@ -4496,27 +4515,9 @@ namespace App\Models{
 /**
  * App\Models\Waitlist
  *
- * @property int $id
- * @property string $name
- * @property string $email
- * @property string $phone
- * @property string|null $work
- * @property string|null $info
- * @property int $subscribe_newsletter
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|Waitlist newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Waitlist newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Waitlist query()
- * @method static \Illuminate\Database\Eloquent\Builder|Waitlist whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Waitlist whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Waitlist whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Waitlist whereInfo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Waitlist whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Waitlist wherePhone($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Waitlist whereSubscribeNewsletter($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Waitlist whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Waitlist whereWork($value)
  */
 	class Waitlist extends \Eloquent {}
 }

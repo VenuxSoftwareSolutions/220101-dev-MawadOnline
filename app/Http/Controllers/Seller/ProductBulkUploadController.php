@@ -385,6 +385,7 @@ class ProductBulkUploadController extends Controller
             // Send the POST request    
             $response = Http::post('http://localhost:9115/bu/xlgen', $payload);
 
+            Log::info($response->json());
             if ($response->successful()) {
                 $data = $response->json();
     
