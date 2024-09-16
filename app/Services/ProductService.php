@@ -3069,10 +3069,6 @@ class ProductService
 
         $collection = collect($data);
         
-<<<<<<< HEAD
-=======
-
->>>>>>> 88d92c2ee6722748743cce9ccd6156d684022a1f
         $collection['user_id'] = Auth::user()->owner_id;
         $collection['approved'] = 0;
         $collection['rejection_reason'] = null;
