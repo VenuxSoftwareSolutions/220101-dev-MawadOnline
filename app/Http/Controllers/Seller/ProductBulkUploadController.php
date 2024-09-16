@@ -390,8 +390,9 @@ class ProductBulkUploadController extends Controller
                 $data = $response->json();
     
                 if ($data['success']) {
-                    $filePath = $data['fileName'];
-    
+                    $fileName = $data['fileName'];
+                    $filePath = public_path('buxl/' . $fileName);
+
                     // Check if the file exists and is readable
                     if (file_exists($filePath) && is_readable($filePath)) {
                         // Return the file for download
