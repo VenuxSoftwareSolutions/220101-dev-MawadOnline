@@ -73,7 +73,7 @@ class VendorStatusChangedNotification extends Notification implements ShouldQueu
     // }
     public function toMail($notifiable)
     {
-        $logo = asset('public/uploads/all/CxeI3PF3NMzjzHp6Ct3xf8dPS1q2pFYmwAwbHQii.png'); // Path to your custom logo
+        $logo = asset('public/uploads/all/ldsr2INdMhRZ2Xq5vaEqX4YQsqJrzRxqVYl4R3MV.png'); // Path to your custom logo
         $admins = User::where('user_type', 'admin')->get(); // Fetch all admins
 
         $subject = $this->reasonTitle;

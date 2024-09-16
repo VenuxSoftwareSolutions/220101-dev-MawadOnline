@@ -16,18 +16,19 @@ class SellerLoginController extends Controller
 
     public function login(SellerLoginRequestValidation $request)
     {
-        if (session('temp_user_id') != null) {
-            Cart::where('temp_user_id', session('temp_user_id'))
-                ->update([
-                    'user_id' => auth()->user()->id,
-                    'temp_user_id' => null
-                ]);
 
-            Session::forget('temp_user_id');
-        }
 
         // Attempt to log the user in
         if ($this->attemptLogin($request, 'seller')) {
+            if (session('temp_user_id') != null) {
+                Cart::where('temp_user_id', session('temp_user_id'))
+                    ->update([
+                        'user_id' => auth()->user()->id,
+                        'temp_user_id' => null
+                    ]);
+
+                Session::forget('temp_user_id');
+            }
             // Redirect to admin dashboard
             return redirect()->route('seller.dashboard');
         }

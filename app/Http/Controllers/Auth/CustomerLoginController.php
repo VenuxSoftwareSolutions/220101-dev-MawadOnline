@@ -19,6 +19,13 @@ class CustomerLoginController extends Controller
 
         $this->validateLogin($request);
 
+        // if(EmailAllowedClient::where('email', $request->email)->first() == null){
+        //     return redirect()->route('business');
+        // }
+        // Attempt to log the user in
+        if ($this->attemptLogin($request, 'customer') && EmailAllowedClient::where('email', $request->email)->exists()) {
+            // Redirect to admin dashboard
+
         if (session('temp_user_id') != null) {
             Cart::where('temp_user_id', session('temp_user_id'))
                 ->update([
@@ -27,13 +34,27 @@ class CustomerLoginController extends Controller
                 ]);
 
             Session::forget('temp_user_id');
+            // Check for duplicate products in the cart for the logged-in user
+            $cartItems = Cart::where('user_id', auth()->user()->id)
+            ->select('product_id')
+            ->groupBy('product_id')
+            ->havingRaw('COUNT(product_id) > 1')
+            ->get();
+             // Delete duplicate products from the cart
+             foreach ($cartItems as $item) {
+                // Get all cart entries for this product, except the first one
+                $duplicates = Cart::where('user_id', auth()->user()->id)
+                    ->where('product_id', $item->product_id)
+                    ->orderBy('id') // Assuming you want to keep the first added product
+                    ->skip(1)
+                    ->take(PHP_INT_MAX)
+                    ->get();
+
+                foreach ($duplicates as $duplicate) {
+                    $duplicate->delete();
+                }
+            }
         }
-        // if(EmailAllowedClient::where('email', $request->email)->first() == null){
-        //     return redirect()->route('business');
-        // }
-        // Attempt to log the user in
-        if ($this->attemptLogin($request, 'customer') && EmailAllowedClient::where('email', $request->email)->exists()) {
-            // Redirect to admin dashboard
             return redirect()->intended('dashboard');
         }
 

@@ -12,7 +12,9 @@ use App\Models\CouponUsage;
 use App\Models\Address;
 use App\Models\Carrier;
 use App\Models\CombinedOrder;
+use App\Models\Emirate;
 use App\Models\Product;
+use App\Models\ShippersArea;
 use App\Utility\PayhereUtility;
 use App\Utility\NotificationUtility;
 use Session;
@@ -185,11 +187,13 @@ class CheckoutController extends Controller
 
     public function get_shipping_info(Request $request)
     {
+        $emirates=Emirate::all() ;
+
         $carts = Cart::where('user_id', Auth::user()->id)->get();
         //        if (Session::has('cart') && count(Session::get('cart')) > 0) {
         if ($carts && count($carts) > 0) {
             $categories = Category::all();
-            return view('frontend.shipping_info', compact('categories', 'carts'));
+            return view('frontend.shipping_info', compact('categories', 'carts','emirates'));
         }
         flash(translate('Your cart is empty'))->success();
         return back();
@@ -225,7 +229,11 @@ class CheckoutController extends Controller
             $carrier_list = $carrier_query->get();
         }
 
-        return view('frontend.delivery_info', compact('carts', 'carrier_list'));
+        $addresse = Address::find($request->address_id) ;
+        $shippers_areas = ShippersArea::where('emirate_id',$addresse->state_id)->where('area_id',$addresse->city_id)->get() ;
+
+
+        return view('frontend.delivery_info', compact('carts', 'carrier_list','shippers_areas'));
     }
 
     public function store_delivery_info(Request $request)

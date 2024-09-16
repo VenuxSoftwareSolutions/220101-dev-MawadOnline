@@ -31,30 +31,12 @@
             <div class="row">
                 <div class="col-lg-6 col">
                     <ul class="list-inline d-flex justify-content-between justify-content-lg-start mb-0">
-                        <!-- Language switcher -->
-                        @if (get_setting('show_language_switcher') == 'on')
-                            <li class="list-inline-item dropdown mr-4" id="lang-change">
-
-                                <a href="javascript:void(0)" class="dropdown-toggle text-secondary fs-12 py-2"
-                                    data-toggle="dropdown" data-display="static">
-                                    <span class="">{{ $system_language->name }}</span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-left">
-                                    @foreach (get_all_active_language() as $key => $language)
-                                        <li>
-                                            <a href="javascript:void(0)" data-flag="{{ $language->code }}"
-                                                class="dropdown-item @if ($system_language->code == $language->code) active @endif">
-                                                <img src="{{ static_asset('assets/img/placeholder.jpg') }}"
-                                                    data-src="{{ static_asset('assets/img/flags/' . $language->code . '.png') }}"
-                                                    class="mr-1 lazyload" alt="{{ $language->name }}" height="11">
-                                                <span class="language">{{ $language->name }}</span>
-                                            </a>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            </li>
-                        @endif
-
+                        <!-- Welcome -->
+                        <li class="list-inline-item mr-0 pl-0 py-2">
+                            <div class="text-dark fs-12 pr-3 d-inline-block border-width-2">
+                                Welcome To MawadOnline's Marketpalce
+                            </div>
+                        </li>
                         <!-- Currency Switcher -->
                         @if (get_setting('show_currency_switcher') == 'on')
                             <li class="list-inline-item dropdown ml-auto ml-lg-0 mr-0" id="currency-change">
@@ -84,6 +66,29 @@
 
                 <div class="col-6 text-right d-none d-lg-block">
                     <ul class="list-inline mb-0 h-100 d-flex justify-content-end align-items-center">
+                        <!-- Language switcher -->
+                        @if (get_setting('show_language_switcher') == 'on')
+                            <li class="list-inline-item dropdown mr-4" id="lang-change">
+
+                                <a href="javascript:void(0)" class="dropdown-toggle text-secondary fs-12 py-2"
+                                    data-toggle="dropdown" data-display="static">
+                                    <span class="">{{ $system_language->name }}</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-left">
+                                    @foreach (get_all_active_language() as $key => $language)
+                                        <li>
+                                            <a href="javascript:void(0)" data-flag="{{ $language->code }}"
+                                                class="dropdown-item @if ($system_language->code == $language->code) active @endif">
+                                                <img src="{{ static_asset('assets/img/placeholder.jpg') }}"
+                                                    data-src="{{ static_asset('assets/img/flags/' . $language->code . '.png') }}"
+                                                    class="mr-1 lazyload" alt="{{ $language->name }}" height="11">
+                                                <span class="language">{{ $language->name }}</span>
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </li>
+                        @endif
                         @if (get_setting('vendor_system_activation') == 1)
                         @unless(Auth::check() && Auth::user()->user_type == 'seller')
 
@@ -116,9 +121,10 @@
         </div>
     </div>
 
-    <header class="@if (get_setting('header_stikcy') == 'on') sticky-top @endif z-1020 bg-white">
+    <!--<header class="@if (get_setting('header_stikcy') == 'on') sticky-top @endif z-1035 bg-white">-->
+        <header class="z-1035 bg-white">
         <!-- Search Bar -->
-        <div class="position-relative logo-bar-area border-bottom border-md-nonea z-1025">
+        <div class="position-relative logo-bar-area border-md-nonea z-1025 border-header background-header">
             <div class="container">
                 <div class="d-flex align-items-center">
                     <!-- top menu sidebar button -->
@@ -169,7 +175,7 @@
                                     </div>
                                     <div class="search-input-box">
                                         <input type="text"
-                                            class="border border-soft-light form-control fs-14 hov-animate-outline"
+                                            class="border border-soft-light form-control fs-14 hov-animate-outline radius-search"
                                             id="search" name="keyword"
                                             @isset($query)
                                             value="{{ $query }}"
@@ -220,8 +226,24 @@
                             @include('frontend.'.get_setting('homepage_select').'.partials.compare')
                         </div>
                     </div> --}}
-                    <!-- Wishlist -->
+                    <!-- arrow swap -->
                     <div class="d-none d-lg-block mr-3" style="margin-left: 36px;">
+                        <div class="" id="wishlist">
+                            <a href="#" class="d-flex align-items-center text-dark" data-toggle="tooltip" data-title="{{ translate('Wishlist') }}" data-placement="top">
+                                <span class="position-relative d-inline-block">
+                                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M27.3333 19.9866L20.6533 26.6799" stroke="#F3F4F5" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M4.66666 19.9866H27.3333" stroke="#F3F4F5" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M4.66666 12.0134L11.3467 5.32007" stroke="#F3F4F5" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M27.3333 12.0134H4.66666" stroke="#F3F4F5" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Wishlist -->
+                    <div class="d-none d-lg-block ml-3 mr-3">
                         <div class="" id="wishlist">
                             @include('frontend.'.get_setting('homepage_select').'.partials.wishlist')
                         </div>
@@ -235,12 +257,11 @@
                                     aria-expanded="false">
                                     <span class="">
                                         <span class="position-relative d-inline-block">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14.668" height="16"
-                                                viewBox="0 0 14.668 16">
-                                                <path id="_26._Notification" data-name="26. Notification"
-                                                    d="M8.333,16A3.34,3.34,0,0,0,11,14.667H5.666A3.34,3.34,0,0,0,8.333,16ZM15.06,9.78a2.457,2.457,0,0,1-.727-1.747V6a6,6,0,1,0-12,0V8.033A2.457,2.457,0,0,1,1.606,9.78,2.083,2.083,0,0,0,3.08,13.333H13.586A2.083,2.083,0,0,0,15.06,9.78Z"
-                                                    transform="translate(-0.999)" fill="#91919b" />
-                                            </svg>
+                                            <svg width="29" height="32" viewBox="0 0 29 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M5.048 19.728C3.63032 19.9956 2.35043 20.7495 1.42893 21.8596C0.507443 22.9696 0.00209494 24.3664 0 25.8091C0.001815 27.4505 0.654647 29.0241 1.81526 30.1847C2.97588 31.3454 4.5495 31.9982 6.19086 32C7.63166 31.9976 9.02663 31.4934 10.136 30.574C11.2454 29.6547 11.9998 28.3776 12.2697 26.9623L26.9554 26.952C27.2585 26.952 27.5492 26.8316 27.7635 26.6173C27.9779 26.4029 28.0983 26.1122 28.0983 25.8091C28.0983 25.506 27.9779 25.2153 27.7635 25.001C27.5492 24.7867 27.2585 24.6663 26.9554 24.6663H23.9509V11.4869C23.9509 9.59657 22.4126 8.05829 20.5223 8.05829H7.33371V5.61714C7.3322 4.12765 6.73975 2.69961 5.68642 1.64649C4.63308 0.593367 3.20492 0.0012102 1.71543 0C1.41232 0 1.12163 0.120408 0.907306 0.334735C0.692979 0.549062 0.572572 0.839753 0.572572 1.14286C0.572572 1.44596 0.692979 1.73665 0.907306 1.95098C1.12163 2.16531 1.41232 2.28571 1.71543 2.28571C2.5989 2.28632 3.44603 2.63747 4.07084 3.26207C4.69565 3.88667 5.04709 4.73367 5.048 5.61714V19.728ZM6.19086 29.7143C4.03657 29.7143 2.28571 27.9623 2.28571 25.8091C2.28571 23.656 4.03657 21.904 6.19086 21.904C8.34514 21.904 10.096 23.656 10.096 25.8091C10.096 27.9623 8.344 29.7143 6.19086 29.7143ZM13.1931 10.344V13.4754C13.1931 13.7785 13.3135 14.0692 13.5279 14.2836C13.7422 14.4979 14.0329 14.6183 14.336 14.6183C14.6391 14.6183 14.9298 14.4979 15.1441 14.2836C15.3584 14.0692 15.4789 13.7785 15.4789 13.4754V10.344H20.5223C21.152 10.344 21.6651 10.8571 21.6651 11.4869V24.6663H12.2709C12.0387 23.4428 11.4436 22.3176 10.563 21.437C9.68244 20.5564 8.55719 19.9613 7.33371 19.7291V10.3429L13.1931 10.344Z" fill="#F3F4F5"/>
+                                                <path d="M7.35658 25.8194C7.35658 25.5163 7.23618 25.2256 7.02185 25.0113C6.80752 24.7969 6.51683 24.6765 6.21373 24.6765H6.2023C5.5703 24.6765 5.06516 25.1885 5.06516 25.8194C5.06516 26.4502 5.58173 26.9622 6.21373 26.9622C6.84573 26.9622 7.35658 26.4502 7.35658 25.8194Z" fill="#F3F4F5"/>
+                                                </svg>
+
                                             @if (Auth::check() && count($user->unreadNotifications) > 0)
                                                 <span
                                                     class="badge badge-primary badge-inline badge-pill absolute-top-right--10px">{{ count($user->unreadNotifications) }}</span>
@@ -349,7 +370,7 @@
                             <span class="d-flex align-items-center nav-user-info ml-3">
                                 <!-- Image -->
                                 <span
-                                    class="size-40px rounded-circle overflow-hidden border d-flex align-items-center justify-content-center nav-user-img">
+                                    class="size-40px rounded-circle overflow-hidden border d-flex align-items-center justify-content-center nav-user-img bg-white">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="19.902" height="20.012"
                                         viewBox="0 0 19.902 20.012">
                                         <path id="fe2df171891038b33e9624c27e96e367"
@@ -358,9 +379,9 @@
                                     </svg>
                                 </span>
                                 <a href="{{ route('user.login') }}"
-                                    class="text-reset opacity-60 hov-opacity-100 hov-text-primary fs-12 d-inline-block border-right border-soft-light border-width-2 pr-2 ml-3">{{ translate('Login') }}</a>
+                                    class="opacity-60 hov-opacity-100 hov-text-white text-white fs-12 d-inline-block border-right border-soft-light border-width-2 pr-2 ml-3">{{ translate('Login') }}</a>
                                 <a href="{{ route('business') }}"
-                                    class="text-reset opacity-60 hov-opacity-100 hov-text-primary fs-12 d-inline-block py-2 pl-2">{{ translate('Registration') }}</a>
+                                    class="opacity-60 hov-opacity-100 hov-text-white text-white fs-12 d-inline-block py-2 pl-2">{{ translate('Registration') }}</a>
                             </span>
                         @endauth
                     </div>
@@ -563,19 +584,23 @@
         </div>
 
         <!-- Menu Bar -->
-        <div class="d-none d-lg-block position-relative bg-primary h-50px">
+        <div class="d-none d-lg-block position-relative background-header h-50px">
             <div class="container h-100">
                 <div class="d-flex h-100">
                     <!-- Categoty Menu Button -->
                     <div class="d-none d-xl-block all-category has-transition bg-black-10" id="category-menu-bar">
                         <div class="px-3 h-100"
-                            style="padding-top: 12px;padding-bottom: 12px; width:270px; cursor: pointer;">
+                            style="padding-top: 12px;padding-bottom: 12px; width:180px; cursor: pointer;">
                             <div class="d-flex align-items-center justify-content-between">
                                 <div>
-                                    <span class="fw-700 fs-16 text-white mr-3">{{ translate('Categories') }}</span>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3 7H21" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round"/>
+                                        <path d="M3 12H21" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round"/>
+                                        <path d="M3 17H21" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round"/>
+                                        </svg>
+
+                                    <span class="fs-16 text-white mr-3 font-prompt position-5-2">{{ translate('Categories') }}</span>
                                     <a href="{{ route('categories.all') }}" class="text-reset">
-                                        <span
-                                            class="d-none d-lg-inline-block text-white hov-opacity-80">({{ translate('See All') }})</span>
                                     </a>
                                 </div>
                                 <i class="las la-angle-down text-white has-transition" id="category-menu-bar-icon"
@@ -585,7 +610,7 @@
                     </div>
                     <!-- Header Menus -->
                     @php
-                        $nav_txt_color = ((get_setting('header_nav_menu_text') == 'light') ||  (get_setting('header_nav_menu_text') == null)) ? 'text-white' : 'text-dark';
+                        $nav_txt_color = ((get_setting('header_nav_menu_text') == 'light') ||  (get_setting('header_nav_menu_text') == null)) ? 'text-white' : 'text-white';
                     @endphp
                     <div class="ml-xl-4 w-100 overflow-hidden">
                         <div class="d-flex align-items-center justify-content-center justify-content-xl-start h-100">
@@ -594,13 +619,41 @@
                                     @foreach (json_decode(get_setting('header_menu_labels'), true) as $key => $value)
                                         <li class="list-inline-item mr-0 animate-underline-white">
                                             <a href="{{ json_decode(get_setting('header_menu_links'), true)[$key] }}"
-                                                class="fs-13 px-3 py-3 d-inline-block fw-700 {{ $nav_txt_color }} header_menu_links hov-bg-black-10
+                                                class="fs-16 px-3 py-3 d-inline-block font-prompt {{ $nav_txt_color }} header_menu_links hov-bg-black-10
                                             @if (url()->current() == json_decode(get_setting('header_menu_links'), true)[$key]) active @endif">
-                                                {{ translate($value) }}
+                                            @if ($value == "Brands")
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M2 15.29V5.71002C2 4.38002 2.77 4.06002 3.71 5.00002L6.3 7.59002C6.69 7.98002 7.33 7.98002 7.71 7.59002L11.29 4.00002C11.68 3.61002 12.32 3.61002 12.7 4.00002L16.29 7.59002C16.68 7.98002 17.32 7.98002 17.7 7.59002L20.29 5.00002C21.23 4.06002 22 4.38002 22 5.71002V15.3C22 18.3 20 20.3 17 20.3H7C4.24 20.29 2 18.05 2 15.29Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                            @elseif ($value == "Vendors")
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M3.01001 11.22V15.71C3.01001 20.2 4.81001 22 9.30001 22H14.69C19.18 22 20.98 20.2 20.98 15.71V11.22" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M12 12C13.83 12 15.18 10.51 15 8.68L14.34 2H9.66999L8.99999 8.68C8.81999 10.51 10.17 12 12 12Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M18.31 12C20.33 12 21.81 10.36 21.61 8.35L21.33 5.6C20.97 3 19.97 2 17.35 2H14.3L15 9.01C15.17 10.66 16.66 12 18.31 12Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M5.64 12C7.29 12 8.78 10.66 8.94 9.01L9.16 6.8L9.64001 2H6.59C3.97001 2 2.97 3 2.61 5.6L2.34 8.35C2.14 10.36 3.62 12 5.64 12Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M12 17C10.33 17 9.5 17.83 9.5 19.5V22H14.5V19.5C14.5 17.83 13.67 17 12 17Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                            @endif
+                                            {{ translate($value) }}
                                             </a>
                                         </li>
                                     @endforeach
                                 @endif
+                                <li class="list-inline-item mr-0 animate-underline-white">
+                                    <a href="#"
+                                        class="fs-16 px-3 py-3 d-inline-block font-prompt {{ $nav_txt_color }} header_menu_links hov-bg-black-10">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M2 22H22" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M9.75 4V22H14.25V4C14.25 2.9 13.8 2 12.45 2H11.55C10.2 2 9.75 2.9 9.75 4Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M3 10V22H7V10C7 8.9 6.6 8 5.4 8H4.6C3.4 8 3 8.9 3 10Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M17 15V22H21V15C21 13.9 20.6 13 19.4 13H18.6C17.4 13 17 13.9 17 15Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+
+                                        MawadOnline Index
+                                        <i class="las la-angle-down text-white has-transition" id="category-menu-bar-icon"
+                                        style="font-size: 1.2rem !important"></i>
+                                        </a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -649,7 +702,7 @@
                         @endif
                     </span>
                     <!-- Name -->
-                    <h4 class="h5 fs-14 fw-700 text-dark ml-2 mb-0">{{ $user->name }}</h4>
+                    <h4 class="h5 fs-14 fw-700 text-white ml-2 mb-0 ">{{ $user->name }}</h4>
                 </span>
             @else
                 <!--Login & Registration -->

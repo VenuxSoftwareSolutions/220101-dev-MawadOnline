@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'e_shop_profile' => 'e-Shop Profile',
+    'e_shop_profile' => 'eShop Profile',
     'profile_management' => 'Profile Management',
     'update_profile_details' => 'Easily update your profile details in one place. Keep your personal info and contact details current with our Profile Management screen.',
     'email_cannot_be_changed' => 'Email cannot be changed',

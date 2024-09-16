@@ -77,6 +77,13 @@
         line-height: 24px;
         margin: 0; /* Reset margin */
     }
+
+    .btn-primary {
+        background-color: #2e294e !important;
+        border-color: #2e294e !important;
+    }
+
+
 </style>
 @endpush
 @section('panel_content')
@@ -109,7 +116,7 @@
                                 <ul class="list-group list-group-raw fs-13 mb-5">
                                     <li class="list-group-item py-2 fw-700">
                                         <img src="{{ asset('public/images/tick-circle.png') }}" alt="Tick">
-                                        <p>{{ __('package.Full access to all e-Shop essentials') }}</p>
+                                        <p>{{ __('package.Full access to all eShop essentials') }}</p>
                                     </li>
                                     <li class="list-group-item py-2 fw-700">
                                         <img src="{{ asset('public/images/tick-circle.png') }}" alt="Tick">
@@ -117,12 +124,12 @@
                                     </li>
                                     <li class="list-group-item py-2 fw-700">
                                         <img src="{{ asset('public/images/tick-circle.png') }}" alt="Tick">
-                                        <p>{{ __('package.Free e-Shop administrator + 4 positions') }}</p>
+                                        <p>{{ __('package.Free eShop administrator + 4 positions') }}</p>
                                     </li>
-                                    <li class="list-group-item py-2 fw-700">
+                                    {{-- <li class="list-group-item py-2 fw-700">
                                         <img src="{{ asset('public/images/tick-circle.png') }}" alt="Tick">
                                         <p>{{ __('package.Additional staff position just for AED 10/month') }}</p>
-                                    </li>
+                                    </li> --}}
                                 </ul>
 
 
@@ -140,12 +147,12 @@
                                         @endif
                                     @endif --}}
                                     <button class="btn btn-light fw-600 col-10"
-                                                onclick="select_package({{ $seller_packages[0]->id }})">{{ __('package.E-Shop Already Registered') }}</button>
+                                                onclick="select_package({{ $seller_packages[0]->id }})">{{ __('package.EShop Already Registered') }}</button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    {{-- <div class="col-md-3">
                         <div class="card overflow-hidden custom-card">
                             <div class="card-body">
                                 <div class="text-center mb-4 mt-3">
@@ -158,8 +165,8 @@
                                         <span
                                             class="fs-32 fw-700 lh-1 mb-0">{{  __('package.AED') }} {{ $seller_packages[1]->amount }} / {{  __('package.month') }}</span>
                                     @endif
-                                    {{-- <span
-                                        class="text-secondary border-left ml-2 pl-2">{{ $seller_packages->duration }}<br>{{ translate('Days') }}</span> --}}
+                                    <span
+                                        class="text-secondary border-left ml-2 pl-2">{{ $seller_packages->duration }}<br>{{ translate('Days') }}</span>
                                 </div>
                                 <ul class="list-group list-group-raw fs-13 mb-5">
                                     <li class="list-group-item py-2 fw-700">
@@ -181,7 +188,7 @@
                                 </ul>
 
                                 <div class=" text-center">
-                                    {{-- @if ($seller_packages->amount == 0)
+                                    @if ($seller_packages->amount == 0)
                                         <button class="btn btn-primary fw-600"
                                             onclick="get_free_package({{ $seller_packages->id }})">{{ translate('Free Package') }}</button>
                                     @else
@@ -192,12 +199,12 @@
                                             <button class="btn btn-primary fw-600"
                                                 onclick="show_price_modal({{ $seller_packages->id }})">{{ translate('Purchase Package') }}</button>
                                         @endif
-                                    @endif --}}
+                                    @endif
                                     <button class="btn btn-primary fw-600 col-10" disabled>{{  __('package.Coming Soon') }}</button>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
         </div>
         </div>
     </section>

@@ -33,6 +33,8 @@ use Illuminate\Support\Facades\DB;
 use App\Models\BusinessInformation;
 use App\Services\ProductTaxService;
 use App\Models\PricingConfiguration;
+use App\Models\ColorGroupColor;
+use App\Models\ColorGroup;
 use Illuminate\Support\Facades\File;
 use App\Http\Requests\ProductRequest;
 
@@ -312,9 +314,20 @@ class ProductController extends Controller
                             case "color":
                                 $colors = Color::orderBy('name', 'asc')->get();
                                 $html_attributes_generale .= '<div class="col-md-10">
-                                <select class="form-control attributes aiz-selectpicker" name="attribute_generale-'.$attribute->id.'" data-type="color" data-live-search="true" data-selected-text-format="count">';
+                                <select class="form-control attributes aiz-selectpicker" name="attribute_generale-'.$attribute->id.'[]" data-type="color" data-live-search="true" data-selected-text-format="count" multiple>';
                                     foreach ($colors as $key => $color){
-                                        $html_attributes_generale .= '<option value="' . $color->code . '" data-content="<span><span class=\'size-15px d-inline-block mr-2 rounded border\' style=\'background:' . $color->code . '\'></span><span>' . $color->name . '</span></span>"></option>';
+                                        $groups_ids = ColorGroupColor::where('color_id', $color->id)->pluck('color_group_id')->toArray();
+                                        $groups = [];
+                                        if(count($groups_ids) > 0){
+                                            $groups = ColorGroup::whereIn('id', $groups_ids)->pluck('name')->toArray();
+                                        }
+                                        if(count($groups) > 0){
+                                            $names = implode(' ', $groups);
+                                            $html_attributes_generale .= '<option value="' . $color->code . '" data-content="<span><span class=\'size-15px d-inline-block mr-2 rounded border\' style=\'background:' . $color->code . '\'></span><span>' . $color->name  . '<span style=\'display:none;\'>'. $names .'</span>' . '</span></span>"></option>';
+                                        }else{
+                                            $html_attributes_generale .= '<option value="' . $color->code . '" data-content="<span><span class=\'size-15px d-inline-block mr-2 rounded border\' style=\'background:' . $color->code . '\'></span><span>' . $color->name . '</span></span>"></option>';
+                                        }
+
                                     }
                                 $html_attributes_generale .= '</select></div>';
                                 break;
@@ -396,9 +409,23 @@ class ProductController extends Controller
                     case "color":
                         $colors = Color::orderBy('name', 'asc')->get();
                         $html .= '<div class="col-md-10">
-                        <select multiple class="form-control attributes color aiz-selectpicker" data-id_attributes="'.$attribute->id.'" data-type="color" data-live-search="true" data-selected-text-format="count">';
+                        <select class="form-control attributes color aiz-selectpicker" data-id_attributes="'.$attribute->id.'" data-type="color" data-live-search="true" data-selected-text-format="count" multiple>';
                             foreach ($colors as $key => $color){
-                                $html .= '<option value="' . $color->code . '" data-content="<span><span class=\'size-15px d-inline-block mr-2 rounded border\' style=\'background:' . $color->code . '\'></span><span>' . $color->name . '<span style=\'display:none;\'>-tt</span>' . '</span></span>"></option>';
+                                $groups_ids = ColorGroupColor::where('color_id', $color->id)->pluck('color_group_id')->toArray();
+                                $groups = [];
+
+                                if(count($groups_ids) > 0){
+                                    $groups = ColorGroup::whereIn('id', $groups_ids)->pluck('name')->toArray();
+                                }
+
+                                if(count($groups) > 0){
+                                    $names = implode(' ', $groups);
+                                    $html .= '<option value="' . $color->code . '" data-content="<span><span class=\'size-15px d-inline-block mr-2 rounded border\' style=\'background:' . $color->code . '\'></span><span>' . $color->name  . '<span style=\'display:none;\'>'. $names .'</span>' . '</span></span>"></option>';
+                                }else{
+                                    $html .= '<option value="' . $color->code . '" data-content="<span><span class=\'size-15px d-inline-block mr-2 rounded border\' style=\'background:' . $color->code . '\'></span><span>' . $color->name . '</span></span>"></option>';
+                                }
+
+
                             }
                         $html .= '</select></div>';
                         break;
@@ -582,7 +609,16 @@ class ProductController extends Controller
             $data_general_attributes = [];
             if(count($general_attributes) > 0){
                 foreach ($general_attributes as $general_attribute){
-                    $data_general_attributes[$general_attribute->id_attribute] = $general_attribute;
+                    // $data_general_attributes[$general_attribute->id_attribute] = $general_attribute;
+                    if($general_attribute->id_colors != null){
+                        if (array_key_exists($general_attribute->id_attribute,$data_general_attributes)){
+                            array_push($data_general_attributes[$general_attribute->id_attribute], $general_attribute->id_colors);
+                        }else{
+                            $data_general_attributes[$general_attribute->id_attribute] = [$general_attribute->id_colors];
+                        }
+                    }else{
+                        $data_general_attributes[$general_attribute->id_attribute] = $general_attribute;
+                    }
                 }
             }
             if($product_category != null){

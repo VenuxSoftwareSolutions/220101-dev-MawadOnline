@@ -58,11 +58,20 @@
                             @php
                                 $admin_products = array();
                                 $seller_products = array();
+                                $productQtyPanier =  array() ;
                                 $admin_product_variation = array();
                                 $seller_product_variation = array();
                                 foreach ($carts as $key => $cartItem){
-                                    $product = get_single_product($cartItem['product_id']);
 
+                                    $product = get_single_product($cartItem['product_id']);
+                                    $productId = $cartItem['product_id'];
+                                    $quantity = $cartItem['quantity'];
+
+                                    if (isset($productQtyPanier[$productId])) {
+                                        $productQtyPanier[$productId] += $quantity;
+                                    } else {
+                                        $productQtyPanier[$productId] = $quantity;
+                                    }
                                     if($product->added_by == 'admin'){
                                         array_push($admin_products, $cartItem['product_id']);
                                         $admin_product_variation[] = $cartItem['variation'];
@@ -77,7 +86,7 @@
                                         $seller_product_variation[] = $cartItem['variation'];
                                     }
                                 }
-                                
+
                                 $pickup_point_list = array();
                                 if (get_setting('pickup_point') == 1) {
                                     $pickup_point_list = get_all_pickup_points();
@@ -102,6 +111,7 @@
                                                 if ($product->digital == 0) {
                                                     $physical = true;
                                                 }
+
                                             @endphp
                                             <li class="list-group-item">
                                                 <div class="d-flex align-items-center">
@@ -119,6 +129,82 @@
                                                         @endif
                                                     </span>
                                                 </div>
+                                                <div class="mt-3">
+                                                    <h6 class="fs-14 fw-500">{{ translate('Shipping Options') }}</h6>
+                                                    {{-- @foreach ($product->shippingOptions( $productQtyPanier[$product->id]) as $option) --}}
+                                                        <div class="border p-2 mb-2">
+                                                            <div class="row">
+                                                                @php
+                                                                    $shippers = [];
+                                                                    $shippingOptions = $product->shippingOptions( $productQtyPanier[$product->id]) ;
+                                                                    if ($shippingOptions) {
+                                                                        $shippers = explode(',', $shippingOptions->shipper);
+                                                                        $duration = $shippingOptions->estimated_shipping ;
+                                                                    }
+                                                                @endphp
+                                                                <div class="col-md-6">
+                                                                    <label for="shipping_method" class="fs-14 text-secondary">{{ translate('Shipping Method') }}:</label>
+                                                                    <select data-prod="{{$product->id}}" name="shipping_method" id="shipping_method" class="form-control fs-14 text-dark fw-500" onchange="toggleShippersArea(this, '{{ $product->id }}')">
+                                                                        <option value="">{{ translate('Please choose shipper') }}</option>
+                                                                        @foreach ($shippers as $option)
+                                                                            <option value="{{ $option }}">{{ $option }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                                <!-- Checkbox for Shippers Area -->
+                                                                <div class="col-md-6" id="shippers_area_container_{{ $product->id }}" style="display: none;">
+                                                                    <label class="fs-14 text-secondary">{{ translate('Shippers') }}:</label>
+
+                                                                    @foreach ($shippers_areas as $area)
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="radio" name="shippers_area" id="shippers_area_{{ $product->id }}" value="{{ $area->id }}">
+                                                                        <label class="form-check-label fs-14 text-dark fw-500" for="shippers_area_{{ $area->id }}">
+                                                                            {{ $area->shipper->name }}
+                                                                        </label>
+                                                                    </div>
+                                                                    @endforeach
+                                                                </div>
+
+                                                                    <div class="col-md-12">
+                                                                        <span class="fs-14 text-secondary">{{ translate('Paid By') }}:</span>
+                                                                        <span class="fs-14 text-dark fw-500">{{$shippingOptions->paid ?? ""}}</span>
+                                                                    </div>
+
+
+                                                                <div class="col-md-6">
+                                                                    <span class="fs-14 text-secondary">{{ translate('Cost') }}:</span>
+                                                                    <span class="fs-14 text-dark fw-500">
+
+                                                                        @if(in_array('vendor',$shippers) && $shippingOptions->paid == "buyer" )
+
+                                                                            @if ($shippingOptions->shipping_charge == "flat")
+                                                                                    {{$shippingOptions->flat_rate_shipping}}
+                                                                            @elseif ($shippingOptions->shipping_charge == "charging")
+                                                                                {{$shippingOptions->charge_per_unit_shipping}}
+                                                                            @endif
+                                                                        @endif
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <span class="fs-14 text-secondary">{{ translate('Duration') }}:</span>
+                                                                    <span class="fs-14 text-dark fw-500">{{$duration ?? ""}}</span>
+                                                                </div>
+                                                            </div>
+
+                                                            {{--
+                                                            <!-- Radio button for selection -->
+                                                            <div class="form-check mt-2">
+                                                                <input class="form-check-input" type="radio" name="shipping_option_{{ $product->id }}" id="shipping_option_{{ $option->id }}" value="{{ $option->id }}">
+                                                                <label class="form-check-label" for="shipping_option_{{ $option->id }}">
+                                                                    {{ translate('Select this option') }}
+                                                                </label>
+                                                            </div> --}}
+                                                        </div>
+                                                    {{-- @endforeach --}}
+                                                </div>
+
                                             </li>
                                         @endforeach
                                     </ul>
@@ -373,7 +459,7 @@
                                                         @endif
                                                     </div>
                                                 </div>
-                                                
+
                                                 <!-- Carrier Wise Shipping -->
                                                 @if (get_setting('shipping_type') == 'carrier_wise_shipping')
                                                     <div class="row pt-3 carrier_id_{{ $key }}">
@@ -460,6 +546,22 @@
         		$(target).removeClass('d-none');
         		$('.carrier_id_'+type).addClass('d-none');
         	}
+        }
+    </script>
+    <script>
+        function toggleShippersArea(selectElement, productId) {
+            // Get selected value
+            var selectedValue = selectElement.value;
+
+            // Get the shippers area container
+            var shippersAreaContainer = document.getElementById('shippers_area_container_' + productId);
+
+            // Show or hide the shippers area based on the selected value
+            if (selectedValue === 'third_party') {
+                shippersAreaContainer.style.display = 'block';
+            } else {
+                shippersAreaContainer.style.display = 'none';
+            }
         }
     </script>
 @endsection

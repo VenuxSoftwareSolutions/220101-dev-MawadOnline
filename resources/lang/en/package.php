@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'Subscription Packages' => 'Subscription Packages',
+    'Subscription Packages' => 'EShop Lease Plans',
     'Full access to all eShop essentials' =>  'Full access to all eShop essentials',
     'Unlimited products' => 'Unlimited products',
     'Free eShop administrator + 4 positions' =>'Free eShop administrator + 4 positions',
     'Additional staff position just for AED 10/month' => 'Additional staff position just for AED 10/month' ,
     'AED' => 'AED',
-    'eShop Already Registered' =>'eShop Already Registered',
+    'EShop Already Registered' =>'EShop Already Registered',
     'month' =>'month',
     'Everything in the Pro Plan' => 'Everything in the Pro Plan',
     'Customized eShop roles' => 'Customized eShop roles',

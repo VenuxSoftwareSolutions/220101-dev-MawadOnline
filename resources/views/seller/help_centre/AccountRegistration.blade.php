@@ -338,6 +338,8 @@
     .text-nav {
         font-size: 14px;
     }
+
+
 </style>
 
 @section('panel_content')

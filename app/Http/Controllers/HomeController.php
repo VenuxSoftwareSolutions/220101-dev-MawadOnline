@@ -41,6 +41,7 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Validator;
 use App\Mail\SecondEmailVerifyMailManager;
+use App\Models\Emirate;
 use DateTime;
 use Illuminate\Support\Facades\DB;
 use Stripe\Exception\ApiErrorException;
@@ -177,6 +178,28 @@ class HomeController extends Controller
                 } else {
                     auth()->login($user, false);
                 }
+
+                       // Check for duplicate products in the cart for the logged-in user
+            $cartItems = Cart::where('user_id', auth()->user()->id)
+            ->select('product_id')
+            ->groupBy('product_id')
+            ->havingRaw('COUNT(product_id) > 1')
+            ->get();
+
+             // Delete duplicate products from the cart
+             foreach ($cartItems as $item) {
+                // Get all cart entries for this product, except the first one
+                $duplicates = Cart::where('user_id', auth()->user()->id)
+                    ->where('product_id', $item->product_id)
+                    ->orderBy('id') // Assuming you want to keep the first added product
+                    ->skip(1)
+                    ->take(PHP_INT_MAX)
+                    ->get();
+
+                foreach ($duplicates as $duplicate) {
+                    $duplicate->delete();
+                }
+            }
             } else {
                 flash(translate('Invalid email or password!'))->warning();
             }
@@ -203,6 +226,7 @@ class HomeController extends Controller
      */
     public function dashboard()
     {
+        $emirates = Emirate::all() ;
         if (Auth::user()->user_type == 'seller') {
             return redirect()->route('seller.dashboard');
         } elseif (Auth::user()->user_type == 'customer') {
@@ -210,7 +234,7 @@ class HomeController extends Controller
             if($users_cart) {
                 flash(translate('You had placed your items in the shopping cart. Try to order before the product quantity runs out.'))->warning();
             }
-            return view('frontend.user.customer.dashboard');
+            return view('frontend.user.customer.dashboard',compact('emirates'));
         } elseif (Auth::user()->user_type == 'delivery_boy') {
             return view('delivery_boys.dashboard');
         } else {

@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class ShippersArea extends Model
 {
     use HasFactory;
+
+    public function shipper() {
+        return $this->belongsTo(Shipper::class) ;
+    }
 }

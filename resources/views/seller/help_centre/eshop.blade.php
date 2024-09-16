@@ -67,8 +67,8 @@
     }
 
     .btn-primary {
-        background-color: #a2b8c6 !important;
-        border-color: #a2b8c6 !important;
+        background-color: #2e294e !important;
+        border-color: ##2e294e !important;
     }
 
     .swal2-confirm {
@@ -348,7 +348,7 @@
             <div class="col-md-12 mt-2">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('seller.help-center.index') }}">{{ __('Home') }}</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('seller.help-center.index') }}">{{ __('help.Home') }}</a></li>
                         <span class="arrow-icon">
                             <img src="{{ asset('public/arrowIcon.png') }}" alt="arrow icon" style="width: 17px; height: 17px;">
                         </span>

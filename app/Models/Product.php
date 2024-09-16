@@ -128,6 +128,21 @@ class Product extends Model
         return $this->hasMany(Review::class)->where('status', 1);
     }
 
+    public function pricingConfiguration()
+    {
+        return $this->hasMany(PricingConfiguration::class, 'id_products', 'id');
+    }
+
+    public function get_ratting()
+    {
+        if($this->reviews->count()>0){
+            return (int)($this->reviews->sum('rating') / $this->reviews->count());
+        }else{
+            return 0;
+        }
+
+    }
+
     public function product_queries()
     {
         return $this->hasMany(ProductQuery::class);
@@ -147,6 +162,7 @@ class Product extends Model
     {
         return $this->hasMany(ProductTax::class);
     }
+
 
     public function flash_deal_product()
     {
@@ -222,6 +238,7 @@ class Product extends Model
         $attributes = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->get();
         $variants_id = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->pluck('id')->toArray();
         $historique_children = DB::table('revisions')->whereNull('deleted_at')->whereIn('revisionable_id', $variants_id)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
+
         if(count($historique_children) > 0){
             foreach($historique_children as $historique_child){
                 foreach($attributes as $variant){
@@ -249,9 +266,26 @@ class Product extends Model
         $data = [];
         if(count($attributes) > 0){
             foreach ($attributes as $attribute){
-                $data[$attribute->id_attribute] = $attribute;
+                if($attribute->id_colors != null){
+                    if(isset($attribute->added)){
+                        if (array_key_exists($attribute->id_attribute,$data)){
+                            array_push($data[$attribute->id_attribute], 'yes');
+                        }else{
+                            $data[$attribute->id_attribute] = ['yes'];
+                        }
+                    }
+                    if (array_key_exists($attribute->id_attribute,$data)){
+                        array_push($data[$attribute->id_attribute], $attribute->id_colors);
+                    }else{
+                        $data[$attribute->id_attribute] = [$attribute->id_colors];
+                    }
+                }else{
+                    $data[$attribute->id_attribute] = $attribute;
+                }
+
             }
         }
+
         return $data;
     }
 
@@ -304,7 +338,7 @@ class Product extends Model
     }
 
     public function productAttributeValues() {
-        return $this->hasMany(ProductAttributeValues::class,'id_products') ;
+        return $this->hasMany(ProductAttributeValues::class,'id_products','id') ;
     }
 
     public function productVariantDetails() {
@@ -407,5 +441,58 @@ class Product extends Model
     public function getPrice(){
         // dd($this->getPricingConfiguration()) ;
     }
+
+    // public function shippingOptions($qty){
+
+    //     // Fetch the shipping options based on quantity range
+    //     $shippingOptions = Shipping::where('product_id',$this->id)->where('from_shipping', '<=', $qty)
+    //     ->where('to_shipping', '>=', $qty)
+    //     ->get();
+    //     // Initialize an array to store unique shippers
+    //     $shippers = [];
+
+    //     // Loop through each shipping option to gather shippers
+    //     foreach ($shippingOptions as $option) {
+    //         // Check if the shipper field contains multiple values (like "vendor,third_party")
+    //         $shipperList = explode(',', $option->shipper);
+
+    //         // Merge new shippers into the array and make sure they are unique
+    //         $shippers = array_merge($shippers, $shipperList);
+    //     }
+
+    //     // Remove duplicate shippers
+    //     $shippers = array_unique($shippers);
+
+    //     return  $shippers ;
+
+    // }
+
+    public function shippingOptions($qty){
+
+        // Fetch the shipping options based on quantity range
+        $shippingOptions = Shipping::where('product_id',$this->id)->where('from_shipping', '<=', $qty)
+        ->where('to_shipping', '>=', $qty)
+        ->first();
+
+        return  $shippingOptions ;
+
+    }
+    public function minMaxQuantity() {
+        // Get the minimum and maximum 'from' values for the given product
+        $minFrom = PricingConfiguration::where('id_products', $this->id)->min('from');
+        // $maxFrom = PricingConfiguration::where('id_products', $this->id)->max('from');
+
+        // Get the minimum and maximum 'to' values for the given product
+        // $minTo = PricingConfiguration::where('id_products', $this->id)->min('to');
+        $maxTo = PricingConfiguration::where('id_products', $this->id)->max('to');
+
+        return [
+            'minFrom' => $minFrom ?? 1,
+
+            'maxTo' => $maxTo ?? 1,
+        ];
+    }
+
+
 
 }
