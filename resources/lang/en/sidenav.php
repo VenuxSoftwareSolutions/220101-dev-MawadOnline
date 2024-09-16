@@ -29,8 +29,7 @@ return [
     'Products_list'=>'Products List',
     'Product_Reviews'=>'Product Reviews',
     'Contact_us'=>'Contact Us',
-
-
+    'bulk_upload' => 'Bulk Upload',
 
 
 

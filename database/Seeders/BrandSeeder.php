@@ -61,7 +61,7 @@ class BrandSeeder extends Seeder
     
             // Create a brand translation
             $brandTranslation = BrandTranslation::firstOrNew([
-                'lang' => env('DEFAULT_LANGUAGE'), 
+                'lang' => 'en', 
                 'brand_id' => $brand->id
             ]);
     

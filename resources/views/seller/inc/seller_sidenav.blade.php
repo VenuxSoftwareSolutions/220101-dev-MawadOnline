@@ -68,6 +68,13 @@
                                     <span class="aiz-side-nav-text">{{ __('sidenav.mawad_catalogue') }}</span>
                                 </a>
                             </li>
+
+                            <li id="catalog" class="aiz-side-nav-item">
+                                <a href="{{ route('seller.product_bulk_upload.index') }}"
+                                    class="aiz-side-nav-link {{ areActiveRoutes([ 'seller.product_bulk_upload.index']) }}">
+                                    <span class="aiz-side-nav-text">{{ __('sidenav.bulk_upload') }}</span>
+                                </a>
+                            </li>
                             {{-- @can('seller_product_bulk_import')
                             <li class="aiz-side-nav-item">
                                 <a href="{{ route('seller.product_bulk_upload.index') }}"

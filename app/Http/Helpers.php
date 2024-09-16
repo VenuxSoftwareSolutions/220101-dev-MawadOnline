@@ -58,6 +58,15 @@ use App\Http\Controllers\ClubPointController;
 use App\Http\Controllers\CommissionController;
 use AizPackages\ColorCodeConverter\Services\ColorCodeConverter;
 
+if (!function_exists('humanFileSize')) {
+    function humanFileSize($bytes, $decimals = 2)
+    {
+        $size = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        $factor = floor((strlen($bytes) - 1) / 3);
+        return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . ' ' . $size[$factor];
+    }
+}
+
 //sensSMS function for OTP
 if (!function_exists('sendSMS')) {
     function sendSMS($to, $from, $text, $template_id)

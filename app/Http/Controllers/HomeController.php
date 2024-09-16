@@ -41,6 +41,7 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Validator;
 use App\Mail\SecondEmailVerifyMailManager;
+use App\Models\Waitlist;
 use DateTime;
 use Illuminate\Support\Facades\DB;
 
@@ -1262,7 +1263,8 @@ class HomeController extends Controller
             'name' => 'required|regex:/^[\pL\s]+$/u',
             'email' => 'required|email',
             // Updated phone validation rule to match the specified formats
-            'phone' => ['required', 'regex:/^(?:(?:\+9715|009715)\d{2}\s?\d{2}\s?\d{2}\s?\d{2}|05\d\s?\d{3}\s?\d{2}\s?\d{2})$/'],
+            'phone' => ['required'],
+           //'regex:/^(?:(?:\+9715|009715)\d{2}\s?\d{2}\s?\d{2}\s?\d{2}|05\d\s?\d{3}\s?\d{2}\s?\d{2})$/'
             'work' => 'nullable|regex:/^[\pL\s]+$/u',
             'info' => 'nullable|string',
         ]);
@@ -1279,6 +1281,18 @@ class HomeController extends Controller
         $work = $request->work;
         $info = $request->info;
         $subscribeNewsletter = $request->has('subscribeNewsletter') ? "yes" : "no";
+
+        
+        $waitlistData = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'work' => $request->work,
+            'info' => $request->info,
+            'subscribe_newsletter' => $request->has('subscribeNewsletter') ? true : false,
+        ];
+
+        Waitlist::create($waitlistData);
 
         Mail::to('email@example.com')->send(new WaitlistApplication($name, $email, $phone, $work, $info, $subscribeNewsletter));
 
