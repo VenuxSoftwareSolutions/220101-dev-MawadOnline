@@ -60,7 +60,7 @@
                     {{ translate('All Categories')}}
                 </a>
             </li>
-            <input type="hidden" name="category_id" id="category_id">
+            <input type="hidden" name="category_id" id="category_id" @if(isset($request_all['category_id'])) value="{{$request_all['category_id']}}"  @endif>
             @foreach(get_level_zero_categories() as $category_level_zero)
                 
                 <li class="mb-3 ml-1 @if(in_array($category_level_zero->id,$category_parents_ids)) fw-600 @endif">
@@ -149,7 +149,8 @@
     <div class="p-3 mr-3">
         @php
             $product_count = get_products_count();
-            $min_max_price = get_products_filter_price($id_products);
+            $min_max_price['min'] = $min_all_price;
+            $min_max_price['max'] = $max_all_price;
         @endphp
         <div class="aiz-range-slider">
             <div
@@ -208,7 +209,7 @@
         <div class="p-3 aiz-checkbox-list">
             @foreach ($brands as $key => $brand)
 
-                <label class="aiz-checkbox mb-3" @if($key>4 && count($shops)>7) hide_attribute display_none @endif>
+                <label class="aiz-checkbox mb-3 @if($key>4 && count($brands)>7) hide_attribute display_none @endif">
                     <input
                         type="checkbox"
                         name="brand[]"
@@ -296,7 +297,7 @@
                         type="checkbox"
                         name="shops[]"
                         value="{{ $shop->slug }}" 
-                        @if(in_array($shop->user->id, $vender_user_ids)) checked @endif
+                        @if($shop->user && in_array($shop->user->id, $vender_user_ids)) checked @endif
                         onchange="filter()"
                     >
                     <span class="aiz-square-check"></span>
@@ -334,11 +335,12 @@
                 if($unit_active_model){
                     $rate = $unit_active_model->rate;
                 }
-                // dd($attribute->max_min_value($id_products,$unit_active));
+                // dd($attribute->max_min_value($conditions,$unit_active));
             @endphp
-            <select class="form-control units_fil" name="units_{{$attribute->id}}" id="" onchange="filter_attribute({{$attribute->id}},{{$rate}})">
+            <input type="hidden" name="units_old_{{$attribute->id}}" value="{{$rate}}">
+            <select class="form-control units_fil" name="units_{{$attribute->id}}" id="" onchange="filter_attribute()">
                 @foreach ($attribute->get_units() as $unit)
-                    <option @if($unit_active == $unit->id) selected @endif value="{{$unit->id}}">{{$unit->name}}</option>
+                    <option @if($unit_active == $unit->id) selected @endif data-rate="{{$unit->rate}}"  value="{{$unit->id}}">{{$unit->name}}</option>
                 @endforeach
             </select>
         </div>
@@ -348,16 +350,20 @@
             if(isset($request_all[$attribute->id]) && $request_all[$attribute->id] > 0){
                 $show = 'show';
             }
-            $min_attribute_value = $attribute->max_min_value($id_products,$unit_active)["min"];
-            $max_attribute_value = $attribute->max_min_value($id_products,$unit_active)["max"];
+            $min_attribute_value = $attribute->max_min_value($conditions,$unit_active)["min"];
+            $max_attribute_value = $attribute->max_min_value($conditions,$unit_active)["max"];
 
-            if(isset($request_all[$attribute->id][0])){
-                $min_value = $request_all[$attribute->id][0];
+            
+            
+            if(isset($request_all['new_min_value_'.$attribute->id])){
+                $min_value = $request_all['new_min_value_'.$attribute->id];
             }else{
                 $min_value = $min_attribute_value;
             }
-            if(isset($request_all[$attribute->id][1])){
-                $max_value = $request_all[$attribute->id][1];
+
+
+            if(isset($request_all['new_max_value_'.$attribute->id])){
+                $max_value = $request_all['new_max_value_'.$attribute->id];
             }else{
                 $max_value = $max_attribute_value;
             }
@@ -365,7 +371,7 @@
         @endphp
         <div class="collapse {{ $show }}" id="collapse_{{ str_replace(' ', '_', $attribute->name) }}">
             <div class="p-3 mr-3">
-                <div class="aiz-range-slider-attribute" data-id="{{$attribute->id}}">
+                <div class="aiz-range-slider-attribute aiz-range-slider-attribute-{{$attribute->id}}" data-id="{{$attribute->id}}">
                     <div
                         class="attribute-input-slider-range"
                         id="attribute-input-slider-range"
@@ -419,7 +425,7 @@
         <div class="collapse {{ $show }}" id="collapse_color">
             <div class="p-3 aiz-radio-inline">
                 @foreach ($colors as $key => $color)
-                <label class="aiz-megabox pl-0 mr-2" data-toggle="tooltip" data-title="{{ $color->name }}">
+                <label class="aiz-megabox " data-toggle="tooltip" data-title="{{ $color->name }}">
                     <input
                         type="checkbox"
                         name="{{$attribute->id}}[]"
@@ -452,14 +458,14 @@
         @endphp
         <div class="collapse {{ $show }}" id="collapse_{{ str_replace(' ', '_', $attribute->name) }}">
             <div class="p-3 aiz-checkbox-list">
-                @foreach ($attribute->attribute_values_filter($id_products) as $key => $attribute_value)
+                @foreach ($attribute->attribute_values_filter($conditions) as $key => $attribute_value)
                     @php
                         $value_attribute = $attribute_value->value;
                         if($attribute->type_value == "list"){
                             $value_attribute = $attribute_value->id;
                         }
                     @endphp
-                    <label class="aiz-checkbox mb-3" @if($key>4 && count($attribute->attribute_values_filter($id_products))>7) hide_attribute display_none @endif>
+                    <label class="aiz-checkbox mb-3" @if($key>4 && count($attribute->attribute_values_filter($conditions))>7) hide_attribute display_none @endif>
                         <input
                             type="checkbox"
                             name="{{$attribute->id}}[]"
@@ -472,7 +478,7 @@
                     </label>
                     
                 @endforeach
-                @if(count($attribute->attribute_values_filter($id_products))>7)
+                @if(count($attribute->attribute_values_filter($conditions))>7)
                     <a href="javascript:void(1)"
                     class="show-hide-attribute text-primary hov-text-primary fs-12 fw-700">{{ translate('More') }}
                     <i class="las la-angle-down"></i></a>

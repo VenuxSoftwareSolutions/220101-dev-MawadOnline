@@ -143,22 +143,43 @@ class ShopController extends Controller
         return Response()->json($sales_array);
     }
 
-    public function category_wise_products()
+    public function category_wise_products(Request $request)
     {
-        $category_wise_product = [];
-        $new_array = [];
-        foreach (Category::all() as $key => $category) {
-            if (count($category->products->where('user_id', auth()->user()->owner_id)) > 0) {
-                $category_wise_product['name'] = $category->getTranslation('name');
-                $category_wise_product['banner'] = uploaded_asset($category->banner);
-                $category_wise_product['cnt_product'] = count($category->products->where('user_id', auth()->user()->owner_id));
+        $ownerId = auth()->user()->owner_id;
+        
+        // Get the current page number from the request (default to 1)
+        $page = $request->input('page', 1);
+        $perPage = 10; // Define how many items per page
+        
+        // Fetch paginated categories with their products
+        $categories = Category::with(['products' => function ($query) use ($ownerId) {
+            $query->where('user_id', $ownerId);
+        }])->paginate($perPage);
 
-                $new_array[] = $category_wise_product;
+        // Transform the categories and calculate product count
+        $data = $categories->map(function ($category) {
+            $productCount = $category->products->count();
+            if ($productCount > 0) {
+                return [
+                    'name' => $category->getTranslation('name'),
+                    'banner' => uploaded_asset($category->banner),
+                    'cnt_product' => $productCount,
+                ];
             }
-        }
+            return null;
+        })->filter()->values();
 
-        return Response()->json($new_array);
+        // Prepare the response with pagination metadata
+        $result = [
+            'data' => $data,
+            'total' => $categories->total(),
+            'next_page_url' => $categories->nextPageUrl(),
+        ];
+        
+        return response()->json($result);
     }
+
+    
 
     public function top_12_products()
     {

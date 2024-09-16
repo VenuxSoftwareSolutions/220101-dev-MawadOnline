@@ -56,26 +56,27 @@ class ProductController extends Controller
 
     public function index()
     {
-        // $products = Product::where('user_id', auth()->user()->id)->where('digital', 0)->where('auction_product', 0)->where('wholesale_product', 0)->orderBy('created_at', 'desc');
-        // $products = $products->paginate(10);
-        // return new ProductCollection($products);
-
-        $products = Product::where('user_id', auth()->user()->owner_id)->with(['medias', 'variants', 'variants.medias'])->where(function ($query) {
-            $query->where('is_draft', '=', 1)
-            ->where('parent_id', 0)
-            ->orWhere(function ($query) {
-                $query->where('is_draft',0)
+        $products = Product::where('user_id', auth()->user()->owner_id)
+            ->with(['medias', 'variants', 'variants.medias'])
+            ->where(function ($query) {
+                $query->where('is_draft', '=', 1)
                     ->where('parent_id', 0)
-                    ->where('is_parent', 0);
+                    ->orWhere(function ($query) {
+                        $query->where('is_draft', 0)
+                            ->where('parent_id', 0)
+                            ->where('is_parent', 0);
+                    })
+                    ->orWhere(function ($query) {
+                        $query->where('is_draft', 0)
+                            ->where('is_parent', 1);
+                    });
             })
-            ->orWhere(function ($query) {
-                $query->where('is_draft',0)
-                    ->where('is_parent', 1);
-            });
-        })->orderBy('id','desc')->get();
-
+            ->orderBy('id', 'desc')
+            ->paginate(10);  // Change this number to control the number of items per page
+    
         return $products;
     }
+    
 
     public function getCategory()
     {
