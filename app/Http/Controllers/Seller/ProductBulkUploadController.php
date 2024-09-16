@@ -392,6 +392,8 @@ class ProductBulkUploadController extends Controller
                 if ($data['success']) {
                     $fileName = $data['fileName'];
                     $filePath = public_path('buxl/' . $fileName);
+                    Log::info($fileName);
+                    Log::info($filePath);
 
                     // Check if the file exists and is readable
                     if (file_exists($filePath) && is_readable($filePath)) {
