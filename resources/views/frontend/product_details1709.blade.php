@@ -1,12 +1,4 @@
 @extends('frontend.layouts.app')
-<style>
-    /* This will apply a style to the label when its associated input is checked */
-.attribute_value input[type="radio"]:checked + .aiz-megabox-elem {
-    border: 1px solid #D42D2A; /* Change the border color or any other style */
-
-}
-
-</style>
 {{--
 @section('meta_title'){{ $detailedProduct->meta_title }}@stop
 
@@ -552,16 +544,8 @@
                             <!-- Download -->
                             <div class="tab-pane fade" id="tab_default_2">
                                 <div class="py-5 text-center ">
-                                    {{-- <a href=""
-                                        class="btn btn-primary">Download</a> --}}
-                                        @foreach($previewData['detailedProduct']['documents'] as $document)
-                                        <div class="mb-3">
-                                            <p>{{ $document->document_name }} ({{ strtoupper($document->extension) }})</p>
-                                            <a href="{{ asset($document->path) }}" class="btn btn-primary" download>
-                                                Download {{ $document->document_name }}
-                                            </a>
-                                        </div>
-                                    @endforeach
+                                    <a href=""
+                                        class="btn btn-primary">Download</a>
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="tab_default_3">
@@ -652,7 +636,7 @@
                     </div>
                     <div class="bg-white mb-4 p-3 p-sm-4 col-12 col-md-6 float-left">
                         <span class="fs-20 font-prompt-md pb-2">Product Specification</span>
-                        {{-- <table class="table prod-details-table border">
+                        <table class="table prod-details-table border">
                             <tbody>
                               <tr>
                                 <td class="background-green">Model</td>
@@ -666,34 +650,6 @@
                                 <td class="background-green">Material</td>
                                 <td>Stainless Steel</td>
                               </tr>
-                            </tbody>
-
-                          </table> --}}
-                          <table class="table prod-details-table border">
-                            <tbody>
-                                @foreach ($previewData['detailedProduct']['general_attributes'] as $key => $general_attribute)
-                                @php
-                                $attribue_general = App\Models\Attribute::find($key) ;
-
-                                @endphp
-                                 @if (preg_match('/^#[0-9A-F]{6}$/i', $general_attribute))
-                                 <tr>
-                                    <td class="background-green">Color</td>
-                                    <td>
-                                        <div style="display: flex; align-items: center;">
-                                            <span style="display: inline-block; width: 20px; height: 20px; background-color: {{ $general_attribute }}; border: 1px solid #ccc; border-radius: 50%;"></span>
-                                            <span style="margin-left: 10px;">{{ $general_attribute }}</span>
-                                        </div>
-                                    </td>
-                                  </tr>
-                                 @else
-                                 <tr>
-                                    <td class="background-green">{{$attribue_general ? $attribue_general->getTranslation('name') : ""}}</td>
-                                    <td>{{$general_attribute}}</td>
-                                  </tr>
-                                 @endif
-
-                              @endforeach
                             </tbody>
 
                           </table>
@@ -1613,13 +1569,12 @@
 
                     if (response.anyMatched == false) {
 
-
                         // Uncheck radio buttons for the current attribute
                         // $('.attribute_value input[type=radio]').filter(':checked').prop('checked', false);
                         $('.attribute_value input[type=radio]').not($currentRadio).prop('checked', false);
 
                         $('label.attribute_value').each(function() {
-                            $(this).find('span').css('color', 'black');
+                            $(this).find('span').css('border-bottom-color', '');
                         });
                         sendCheckedAttributes($currentRadio) ;
 
@@ -1835,7 +1790,7 @@
                         // Iterate over each available attribute
                         for (var attributeId in response.availableAttributes) {
                             if (response.availableAttributes.hasOwnProperty(attributeId)) {
-                                var availableValues = response.availableAttributes[attributeId][0];
+                                var availableValues = response.availableAttributes[attributeId];
                                 console.log(availableValues );
                                 // Iterate over each radio button for this attribute
                                 $('.attribute_value input[type=radio][attributeId="' + attributeId + '"]').each(function () {
@@ -1846,11 +1801,11 @@
                                     if (availableValues.indexOf(radioValue) === -1) {
                                         // If not in available values, disable the radio button
                                         // $(this).prop('disabled', true);
-                                        label.find('span').css('color', 'red'); // Change to the desired color
+                                        label.find('span').css('border-bottom-color', 'red'); // Change to the desired color
                                     } else {
                                         // Otherwise, enable the radio button
                                         // $(this).prop('disabled', false);
-                                        label.find('span').css('color', 'mediumseagreen'); // Change to the desired color
+                                        label.find('span').css('border-bottom-color', 'green'); // Change to the desired color
 
                                     }
                                 });
