@@ -1,4 +1,12 @@
 @extends('frontend.layouts.app')
+<style>
+    /* This will apply a style to the label when its associated input is checked */
+.attribute_value input[type="radio"]:checked + .aiz-megabox-elem {
+    border: 1px solid #D42D2A; /* Change the border color or any other style */
+
+}
+
+</style>
 {{--
 @section('meta_title'){{ $detailedProduct->meta_title }}@stop
 
@@ -478,9 +486,18 @@
                                                                     @foreach ($previewData['detailedProduct']['general_attributes'] as $key => $general_attribute)
                                                                     @php
                                                                     $attribue_general = App\Models\Attribute::find($key) ;
-
                                                                     @endphp
-                                                                      @if (preg_match('/^#[0-9A-F]{6}$/i', $general_attribute))
+
+                                                                      @if (is_array($general_attribute))
+                                                                      @foreach ( $general_attribute as $color )
+                                                                        @if ((preg_match('/^#[0-9A-F]{6}$/i', $color)))
+                                                                        <li style="list-style: none; overflow-wrap: break-word; margin: 0px 0px 5.5px;">
+                                                                            <span  style="font-weight: 700 !important;" class="a-list-item ">Color :</span>
+                                                                            <span class="color-preview" style="display: inline-block; width: 20px; height: 20px; background-color: {{$color}};"></span>
+                                                                        </li>
+                                                                        @endif
+                                                                      @endforeach
+                                                                      @elseif (preg_match('/^#[0-9A-F]{6}$/i', $general_attribute))
                                                                       <li style="list-style: none; overflow-wrap: break-word; margin: 0px 0px 5.5px;">
                                                                         <span  style="font-weight: 700 !important;" class="a-list-item ">Color :</span>
                                                                         <span class="color-preview" style="display: inline-block; width: 20px; height: 20px; background-color: {{$general_attribute}};"></span>

@@ -171,14 +171,14 @@
     <div class="col-md-12 p-0 pb-2">
         <div class="product-desc-each">
             <span class="fs-16 font-prompt-md">Category:</span>
-            <span class="fs-16 font-prompt">Electronics</span>
+            <span class="fs-16 font-prompt">{{ $previewData['detailedProduct']['category'] }}</span>
         </div>
     </div>
     <!-- Category -->
     <div class="col-md-12 p-0 pb-2">
         <div class="product-desc-each">
             <span class="fs-16 font-prompt-md">SKU:</span>
-            <span class="fs-16 font-prompt">8718696821404</span>
+            <span class="fs-16 font-prompt">{{ $previewData['detailedProduct']['sku'] }}</span>
         </div>
     </div>
     <!-- Category -->
@@ -186,7 +186,7 @@
         <div class="product-desc-each">
             <span class="fs-16 font-prompt-md">Tags:</span>
             <span class="fs-16 font-prompt">
-                3 Columns, 4 Columns, 5 Columns, 6 Columns, 7 Columns, 8 Columns, Both Sidebar, Boxed, Full Width, Horizontal, Infinite, Off Canvas, Right Sidebar
+                {{ $previewData['detailedProduct']['tags'] }}
             </span>
         </div>
         <hr class="hr-style"/>
@@ -221,7 +221,17 @@
                 @php
                     $attribue_general = App\Models\Attribute::find($key) ;
                 @endphp
-                 @if (preg_match('/^#[0-9A-F]{6}$/i', $general_attribute))
+                 @if (is_array($general_attribute))
+                 @foreach ( $general_attribute as $color )
+                   @if ((preg_match('/^#[0-9A-F]{6}$/i', $color)))
+                   <li style="list-style: none; overflow-wrap: break-word; margin: 0px 0px 5.5px;">
+                       <span  style="font-weight: 700 !important;" class="a-list-item ">Color :</span>
+                       <span class="color-preview" style="display: inline-block; width: 20px; height: 20px; background-color: {{$color}};"></span>
+                   </li>
+                   @endif
+                 @endforeach
+
+                 @elseif (preg_match('/^#[0-9A-F]{6}$/i', $general_attribute))
                     <label class="aiz-megabox pl-0 mr-1 mb-0" data-toggle="tooltip"
                         data-title="{{ get_single_color_name($color) }}">
                         <input type="radio" name="color"

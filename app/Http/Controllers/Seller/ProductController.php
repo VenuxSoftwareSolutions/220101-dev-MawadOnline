@@ -1741,6 +1741,7 @@ class ProductController extends Controller
         $data=$request->session()->get('productPreviewData', null) ;
         $variations = $data['detailedProduct']['variations'] ;
         $checkedAttributes = $request->checkedAttributes ; // Checked attribute and its value
+
         // dd($variations,$checkedAttributes) ;
         $matchedImages = [];
         $availableAttributes = [];
@@ -1863,9 +1864,24 @@ class ProductController extends Controller
                             $availableAttributes[$attributeId][] = $value;
                         }
                     }
+
                 }
+                // foreach ($checkedAttributes as $checked) {
+                //     foreach ($variation as $attributeId => $value) {
+                //         if (!isset($availableAttributes[$attributeId])) {
+                //                     $availableAttributes[$attributeId] = [];
+                //                 }
+                //                 if (!in_array($value, $availableAttributes[$attributeId])) {
+                //                     $availableAttributes[$attributeId][] = $value;
+                //                 }
+                //     }
+                // }
             }
         }
+
+
+
+
 
         // Add matchesCheckedAttributes to the response
         $response = [
