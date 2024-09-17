@@ -398,7 +398,7 @@ class ProductBulkUploadController extends Controller
                     Log::info($filePath);
 
                     // Check if the file exists and is readable
-                    if (file_exists($filePath) && is_readable($filePath)) {
+                    if (file_exists($filePath)) {
                         // Return the file for download
                         return response()->download($filePath);
                     } else {
