@@ -11,11 +11,8 @@
 /public/vat_certificates
 /public/trade_license_doc
 /public/upload_products
-<<<<<<< HEAD
 /public/assets/myText.txt
-
-=======
->>>>>>> 88d92c2ee6722748743cce9ccd6156d684022a1f
+/public
 /storage/*.key
 /storage/debugbar
 vendor
