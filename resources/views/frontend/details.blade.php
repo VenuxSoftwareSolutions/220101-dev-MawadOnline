@@ -21,6 +21,10 @@
             </div>
             @endif
     </div>
+    <!-- Short Description -->
+    <div class="row col-md-12 fs-13 font-prompt">
+        {{ $previewData['detailedProduct']['description'] }}
+    </div>
     <!-- Price -->
     <div class="row no-gutters mb-2">
         <div class="col-sm-10">
@@ -489,6 +493,7 @@
                 {{-- @endif --}}
             </div>
         </div>
+        <!--
         <div class="row no-gutters mb-3 col-md-12 p-0">
         <a href="javascript:void(0)"
             class="col-md-12 opacity-60 has-transitiuon hov-opacity-100 border-radius-16 Compare-btn-style">
@@ -502,6 +507,7 @@
             <span class="fs-20 font-prompt-md compare-btn-txt">{{ translate('Compare') }}</span></center>
         </a>
         </div>
+        -->
         <!-- Total Price
         <div class="row no-gutters pb-3" id="chosen_price_div">
             <div class="col-sm-2">
@@ -636,14 +642,16 @@
     <div class="col-md-6 float-left">
         <div class="col-md-12 product-rightbox-seller border-radius-8px float-left">
             <div class="col-md-12 product-rightbox-seller-info float-left">
+                <!--
                 <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="avatar-seller mr-2 overflow-hidden border float-left">
                     <img class="lazyload"
                         src="{{ static_asset('assets/img/placeholder.jpg') }}"
                         data-src="{{ uploaded_asset($detailedProduct->user->shop->logo) }}"
                         onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
                 </a>
+            -->
                 <div class="product-rightbox-seller-details float-left">
-                    <div class="float-left">
+                    <div class="float-left col-md-12 p-0">
                     <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="link-style-none">
                     <span class="fs-16 font-prompt-md float-left product-rightbox-seller-name">
                         {{ $detailedProduct->user->shop->name }}
@@ -665,22 +673,26 @@
                             </span>
                         @endif
                     </div>
-                    <div class="float-left">
-                        <div class="rating rating-mr-1">
-                            {{ renderStarRatingSmall($detailedProduct->user->shop->rating) }}
+                    <div class="float-left col-md-12 p-0">
+                        <div class="float-left">
+                            <div class="rating rating-mr-1">
+                                {{ renderStarRatingSmall($detailedProduct->user->shop->rating) }}
+                            </div>
+                            <div class="opacity-60 fs-16">
+                                ({{ $detailedProduct->user->shop->num_of_reviews }}
+                                {{ translate('reviews') }})
+                            </div>
+
                         </div>
-                        <div class="opacity-60 fs-16">
-                            ({{ $detailedProduct->user->shop->num_of_reviews }}
-                            {{ translate('reviews') }})
+                        <div class="float-right">
+                            <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="link-style-none">
+                                <button class="fs-16 font-prompt border-radius-8px view-store-btn">View Store</button>
+                            </a>
                         </div>
                     </div>
                 </div>
-                <div class="float-right py-3">
-                    <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="link-style-none">
-                        <button class="fs-16 font-prompt border-radius-8px view-store-btn">View Store</button>
-                    </a>
-                </div>
             </div>
+      <!--
             <div class="col-md-12 p-0 pt-2 float-left">
                 <span class="col-md-12 fs-16 font-prompt float-left p-0 pt-2">
                     <font color="#4C4E54"> Address : <span class="opacity-70">{{ $detailedProduct->user->shop->address }}</span></font>
@@ -689,8 +701,10 @@
                     <font color="#4C4E54"> Phone : <span class="opacity-70">{{ $detailedProduct->user->shop->phone }}</span></font>
                 </span>
             </div>
+        -->
         </div>
     </div>
+    <!--
     <div class="col-md-6 float-left mt-3">
         <div class="col-md-12 product-rightbox-seller border-radius-8px float-left">
             <span class="fs-16 font-prompt">
@@ -716,7 +730,7 @@
 
                     <span class="float-left fs-16 font-prompt">1 Year Warranty</span>
                 </div>
-                <!-- ---------------- -->
+
                 <div class="col-12 col-md-7 float-left p-0 pt-2">
                     <svg class="float-left mr-1" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M14.55 21.67C18.84 20.54 22 16.64 22 12C22 6.48 17.56 2 12 2C5.33 2 2 7.56 2 7.56M2 7.56V3M2 7.56H4.01H6.44" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -740,10 +754,10 @@
 
                     <span class="float-left fs-16 font-prompt">1 Day Delivery</span>
                 </div>
-                <!-- ---------------- -->
+
             </div>
         </div>
-    </div>
+    </div>-->
     {{-- <!-- For auction product -->
     @if ($detailedProduct->auction_product)
         <div class="row no-gutters mb-3">

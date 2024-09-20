@@ -9,6 +9,7 @@
     }
 @endphp
 <!-- Cart button with cart count -->
+
 <a href="javascript:void(0)" class="d-flex align-items-center text-dark px-3 h-100" data-toggle="dropdown" data-display="static" title="{{translate('Cart')}}">
     <span class="mr-2">
         <span class="badge badge-counter font-prompt">{{count($carts) > 0 ? count($carts) : 0 }}</span>

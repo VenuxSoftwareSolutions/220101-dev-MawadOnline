@@ -328,7 +328,9 @@
                             <li class="mb-2">
                                 <p class="fs-13 text-secondary mb-0">
                                     {{ translate('Become A Seller') }}
-                                    <a href="{{ route('shops.packages') }}" class="fs-13 fw-700 text-secondary-base ml-2">{{ translate('Apply Now') }}</a>
+                                    <a href="{{ route('shops.packages') }}" class="fs-13 fw-700 text-secondary-base ml-2">
+                                        <br/>{{ translate('Apply Now') }}
+                                    </a>
                                 </p>
                             </li>
                             @guest
@@ -392,10 +394,10 @@
                     <form method="POST" action="{{ route('subscribers.store') }}">
                         @csrf
                         <div class="row gutters-10">
-                            <div class="col-10">
+                            <div class="col-lg-9 col-md-7 col-6">
                                 <input type="email" class="form-control border-secondary text-white w-100 bg-white font-prompt border-radius-8px border-0" placeholder="{{ translate('Your Email Address') }}" name="email" required>
                             </div>
-                            <div class="col-2">
+                            <div class="col-lg-3 col-md-5 col-6">
                                 <button type="submit" class="btn btn-primary w-100 font-prompt border-radius-8px border-0">{{ translate('Subscribe') }}</button>
                             </div>
                         </div>

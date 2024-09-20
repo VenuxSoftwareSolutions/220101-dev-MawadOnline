@@ -258,7 +258,7 @@
     @endif
 
     <!-- cookies agreement -->
-    @if (get_setting('show_cookies_agreement') == 'on')
+    @if (get_setting('show_cookies_agreement') == 'off')
 
         <div class="aiz-cookie-alert shadow-xl">
             <div class="p-3 bg-dark cookie-in-style">
