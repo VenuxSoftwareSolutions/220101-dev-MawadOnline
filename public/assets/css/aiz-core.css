@@ -13126,3 +13126,7 @@ border:none !important;
     color: #ffffff;
     border-radius: 8px;
 }
+.mt-logo-download{
+    position: relative;
+    top: 7px;
+}
