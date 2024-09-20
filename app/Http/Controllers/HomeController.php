@@ -533,11 +533,12 @@ class HomeController extends Controller
                         $variations[$children_id]['storedFilePaths'] = UploadProducts::where('id_product', $children_id)->where('type', 'images')->pluck('path')->toArray();
                     }
                     if (count($storedFilePaths) > 0) {
-                        // If you want to merge main photo paths with variation photo paths
-                        $variations[$children_id]['storedFilePaths'] = array_merge(
-                            $variations[$children_id]['storedFilePaths'],
-                            $storedFilePaths
-                         );
+                        if(isset( $variations[$children_id]['storedFilePaths'] ))
+                            // If you want to merge main photo paths with variation photo paths
+                            $variations[$children_id]['storedFilePaths'] = array_merge(
+                                $variations[$children_id]['storedFilePaths'],
+                                $storedFilePaths
+                            );
                          }
 
                 }
@@ -782,6 +783,11 @@ class HomeController extends Controller
                     'discount_amount'=> $pricing['discount_amount'],
                     'percent'=> $percent ?? null,
                     'product_id' => $parent->id ?? null ,
+                    'sku'=>$parent->sku ?? null ,
+                    'tags'=>$parent->tags ?? null ,
+                    'category' => optional(Category::find($parent->category_id))->name,
+                    'documents' => UploadProducts::where('id_product', $parent->id)->where('type', 'documents')->get(),
+
 
                 ];
 
@@ -1282,7 +1288,7 @@ class HomeController extends Controller
         $info = $request->info;
         $subscribeNewsletter = $request->has('subscribeNewsletter') ? "yes" : "no";
 
-        
+
         $waitlistData = [
             'name' => $request->name,
             'email' => $request->email,
