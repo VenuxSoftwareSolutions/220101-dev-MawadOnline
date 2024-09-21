@@ -1,4 +1,12 @@
 @extends('frontend.layouts.app')
+<style>
+    /* This will apply a style to the label when its associated input is checked */
+.attribute_value input[type="radio"]:checked + .aiz-megabox-elem {
+    border: 1px solid #D42D2A; /* Change the border color or any other style */
+
+}
+
+</style>
 {{--
 @section('meta_title'){{ $detailedProduct->meta_title }}@stop
 
@@ -54,7 +62,6 @@
         content="{{ get_system_default_currency()->code }}" />
     <meta property="fb:app_id" content="{{ env('FACEBOOK_PIXEL_ID') }}">
 @endsection --}}
-
 @section('content')
     <section class="mb-4 pt-3">
         <div class="container">
@@ -464,703 +471,39 @@
                                         </div>
                                         <p></p>
                                         <!--
-                                        <div id="featurebullets_feature_div" class="celwidget"
-                                            data-feature-name="featurebullets" data-csa-c-id="reqzvc-d8zszu-2bgmto-k7o74x"
-                                            data-cel-widget="featurebullets_feature_div"
-                                            style="box-sizing: border-box; color: rgb(15, 17, 17); font-family: &quot;Amazon Ember&quot;, Arial, sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;">
-                                            <div id="feature-bullets"
-                                                class="a-section a-spacing-medium a-spacing-top-small"
-                                                style="box-sizing: border-box; margin-top: 8px !important; margin-bottom: 0px;">
-                                                <ul class="a-unordered-list a-vertical a-spacing-mini"
-                                                    style="box-sizing: border-box; margin: 0px 0px 0px 18px; color: rgb(15, 17, 17); padding: 0px;">
-                                                    <li
-                                                        style="box-sizing: border-box; list-style: disc; overflow-wrap: break-word; margin: 0px;">
-                                                        <span class="a-list-item"
-                                                            style="box-sizing: border-box; color: rgb(15, 17, 17); overflow-wrap: break-word; display: block;">
-                                                            <h2
-                                                                style="padding: 0px 0px 4px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; text-rendering: optimizelegibility; font-weight: 700; font-size: 24px; line-height: 32px;">
-                                                                Product details</h2>
-                                                            <div id="detailBullets_feature_div">
-                                                                <ul class="a-unordered-list a-nostyle a-vertical a-spacing-none detail-bullet-list"
-                                                                    style="margin-right: 0px; margin-bottom: 1px; margin-left: 18px; padding: 0px;">
-                                                                    {{-- <li
-                                                                        style="list-style: none; overflow-wrap: break-word; margin: 0px 0px 5.5px;">
-                                                                        <span class="a-list-item"><span
-                                                                                class="a-text-bold"
-                                                                                style="font-weight: 700 !important;">Is
-                                                                                Discontinued By Manufacturer ‏ :
-                                                                                ‎&nbsp;</span>No</span>
-                                                                    </li> --}}
-                                                                    @foreach ($previewData['detailedProduct']['general_attributes'] as $key => $general_attribute)
-                                                                    @php
-                                                                    $attribue_general = App\Models\Attribute::find($key) ;
-
-                                                                    @endphp
-                                                                      @if (preg_match('/^#[0-9A-F]{6}$/i', $general_attribute))
-                                                                      <li style="list-style: none; overflow-wrap: break-word; margin: 0px 0px 5.5px;">
-                                                                        <span  style="font-weight: 700 !important;" class="a-list-item ">Color :</span>
-                                                                        <span class="color-preview" style="display: inline-block; width: 20px; height: 20px; background-color: {{$general_attribute}};"></span>
-                                                                    </li>
-
-                                                                      @else
-                                                                     <li
-                                                                     style="list-style: none; overflow-wrap: break-word; margin: 0px 0px 5.5px;">
-                                                                     <span class="a-list-item"><span
-                                                                             class="a-text-bold"
-                                                                             style="font-weight: 700 !important;"> {{$attribue_general ? $attribue_general->getTranslation('name') : ""}} :
-                                                                             ‎&nbsp;</span>{{$general_attribute}}</span></li>
-                                                                     @endif
-
-                                                                    @endforeach
-
-                                                                </ul>
-                                                            </div>
-                                                        </span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div> -->
+                                        general -->
                                     </div>
                                 </div>
                                 <div class="bg-white p-sm-4 col-12 col-md-6 float-left mt-4 product-table-style">
                                     <span class="fs-20 font-prompt-md">Product Specification</span>
                                     <table class="table prod-details-table border">
                                         <tbody>
-                                            @foreach ($previewData['detailedProduct']['general_attributes'] as $key => $general_attribute)
-                                                @php
-                                                    $attribue_general = App\Models\Attribute::find($key) ;
-                                                @endphp
-
-                                                @if (preg_match('/^#[0-9A-F]{6}$/i', $general_attribute))
-                                                    <tr>
-                                                        <td class="background-green">Color</td>
-                                                        <td><span class="color-preview" style="display: inline-block; width: 20px; height: 20px; background-color: {{$general_attribute}};"></span></td>
-                                                    </tr>
-                                                @else
-                                                    <tr>
-                                                        <td class="background-green">{{$attribue_general ? $attribue_general->getTranslation('name') : ""}}</td>
-                                                        <td>{{$general_attribute}}</td>
-                                                    </tr>
-                                                @endif
-                                            @endforeach
+                                          <tr>
+                                            <td class="background-green">Model</td>
+                                            <td>Skysuite 320</td>
+                                          </tr>
+                                          <tr>
+                                            <td class="background-green">Brand</td>
+                                            <td>Philips</td>
+                                          </tr>
+                                          <tr>
+                                            <td class="background-green">Material</td>
+                                            <td>Stainless Steel</td>
+                                          </tr>
                                         </tbody>
-                                    </table>
+
+                                      </table>
                                 </div>
                             </div>
 
-                            <!-- Video
-                            <div class="tab-pane fade" id="tab_default_2">
-                                <div class="py-5">
-                                    <div class="embed-responsive embed-responsive-16by9">
-                                        @if(isset($previewData['detailedProduct']['video_provider']) && $previewData['detailedProduct']['video_provider'] == "youtube")
-                                        <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/{{ $previewData['detailedProduct']['getYoutubeVideoId'] }}" allowfullscreen></iframe>
-                                        @elseif(isset($previewData['detailedProduct']['video_provider']) && $previewData['detailedProduct']['video_provider'] == "vimeo")
-                                          <iframe class="embed-responsive-item" src="https://player.vimeo.com/video/{{ $previewData['detailedProduct']['getVimeoVideoId'] }}" allowfullscreen></iframe>
-
-                                        @endif
-                                        {{-- @if ($videoData['video_provider'] === 'youtube') --}}
-                                        {{-- <iframe class="embed-responsive-item" src="https://www.youtube.com/watch?v=nk1n4wYSGAs&t=2245s" allowfullscreen></iframe> --}}
-                                        {{-- @endif --}}
-                                    </div>
-                                </div>
-                            </div>-->
+                            <!-- Video -->
 
                             <!-- Download -->
                             <div class="tab-pane fade" id="tab_default_2">
                                 <div class="py-3 col-12 p-0 float-left">
                                     <div class="download-title fs-20 font-prompt-md text-left col-md-12">BIM/CAD</div>
                                     <div class="col-md-12 my-2 float-left">
-                                        @if(count($previewData['detailedProduct']['documents']) > 0)
-                                            @foreach($previewData['detailedProduct']['documents'] as $document)
-                                                @switch($document->extension)
-                                                    @case('pdf')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                    <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <g clip-path="url(#clip0_3326_35086)">
-                                                                        <path d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z" fill="#E85984"/>
-                                                                        <path d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z" fill="#E51050"/>
-                                                                        <path d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z" fill="#E51050"/>
-                                                                        <path d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z" fill="white"/>
-                                                                        <path d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z" fill="#770829"/>
-                                                                        </g>
-                                                                        <defs>
-                                                                        <clipPath id="clip0_3326_35086">
-                                                                        <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                        </clipPath>
-                                                                        </defs>
-                                                                        </svg>
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('jpg')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                    <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <g clip-path="url(#clip0_3326_35086)">
-                                                                        <path d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z" fill="#E85984"/>
-                                                                        <path d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z" fill="#E51050"/>
-                                                                        <path d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z" fill="#E51050"/>
-                                                                        <path d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z" fill="white"/>
-                                                                        <path d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z" fill="#770829"/>
-                                                                        </g>
-                                                                        <defs>
-                                                                        <clipPath id="clip0_3326_35086">
-                                                                        <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                        </clipPath>
-                                                                        </defs>
-                                                                        </svg>
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('png')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                    <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <g clip-path="url(#clip0_3326_35086)">
-                                                                        <path d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z" fill="#E85984"/>
-                                                                        <path d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z" fill="#E51050"/>
-                                                                        <path d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z" fill="#E51050"/>
-                                                                        <path d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z" fill="white"/>
-                                                                        <path d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z" fill="#770829"/>
-                                                                        </g>
-                                                                        <defs>
-                                                                        <clipPath id="clip0_3326_35086">
-                                                                        <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                        </clipPath>
-                                                                        </defs>
-                                                                        </svg>
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('pln')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                    <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <g clip-path="url(#clip0_3326_35086)">
-                                                                        <path d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z" fill="#E85984"/>
-                                                                        <path d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z" fill="#E51050"/>
-                                                                        <path d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z" fill="#E51050"/>
-                                                                        <path d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z" fill="white"/>
-                                                                        <path d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z" fill="#770829"/>
-                                                                        </g>
-                                                                        <defs>
-                                                                        <clipPath id="clip0_3326_35086">
-                                                                        <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                        </clipPath>
-                                                                        </defs>
-                                                                        </svg>
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('dwg')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                    <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <g clip-path="url(#clip0_3326_35086)">
-                                                                        <path d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z" fill="#E85984"/>
-                                                                        <path d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z" fill="#E51050"/>
-                                                                        <path d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z" fill="#E51050"/>
-                                                                        <path d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z" fill="white"/>
-                                                                        <path d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z" fill="#770829"/>
-                                                                        </g>
-                                                                        <defs>
-                                                                        <clipPath id="clip0_3326_35086">
-                                                                        <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                        </clipPath>
-                                                                        </defs>
-                                                                        </svg>
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('dxf')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                    <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <g clip-path="url(#clip0_3326_35086)">
-                                                                        <path d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z" fill="#E85984"/>
-                                                                        <path d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z" fill="#E51050"/>
-                                                                        <path d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z" fill="#E51050"/>
-                                                                        <path d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z" fill="white"/>
-                                                                        <path d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z" fill="#770829"/>
-                                                                        </g>
-                                                                        <defs>
-                                                                        <clipPath id="clip0_3326_35086">
-                                                                        <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                        </clipPath>
-                                                                        </defs>
-                                                                        </svg>
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('gsm')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                    <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <g clip-path="url(#clip0_3326_35086)">
-                                                                        <path d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z" fill="#E85984"/>
-                                                                        <path d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z" fill="#E51050"/>
-                                                                        <path d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z" fill="#E51050"/>
-                                                                        <path d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z" fill="white"/>
-                                                                        <path d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z" fill="#770829"/>
-                                                                        </g>
-                                                                        <defs>
-                                                                        <clipPath id="clip0_3326_35086">
-                                                                        <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                        </clipPath>
-                                                                        </defs>
-                                                                        </svg>
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('stl')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                    <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <g clip-path="url(#clip0_3326_35086)">
-                                                                        <path d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z" fill="#E85984"/>
-                                                                        <path d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z" fill="#E51050"/>
-                                                                        <path d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z" fill="#E51050"/>
-                                                                        <path d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z" fill="white"/>
-                                                                        <path d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z" fill="#770829"/>
-                                                                        </g>
-                                                                        <defs>
-                                                                        <clipPath id="clip0_3326_35086">
-                                                                        <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                        </clipPath>
-                                                                        </defs>
-                                                                        </svg>
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('rfa')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                    <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <g clip-path="url(#clip0_3326_35086)">
-                                                                        <path d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z" fill="#E85984"/>
-                                                                        <path d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z" fill="#E51050"/>
-                                                                        <path d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z" fill="#E51050"/>
-                                                                        <path d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z" fill="white"/>
-                                                                        <path d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z" fill="#770829"/>
-                                                                        </g>
-                                                                        <defs>
-                                                                        <clipPath id="clip0_3326_35086">
-                                                                        <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                        </clipPath>
-                                                                        </defs>
-                                                                        </svg>
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('rvt')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                    <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <g clip-path="url(#clip0_3326_35086)">
-                                                                        <path d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z" fill="#E85984"/>
-                                                                        <path d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z" fill="#E51050"/>
-                                                                        <path d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z" fill="#E51050"/>
-                                                                        <path d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z" fill="white"/>
-                                                                        <path d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z" fill="#770829"/>
-                                                                        </g>
-                                                                        <defs>
-                                                                        <clipPath id="clip0_3326_35086">
-                                                                        <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                        </clipPath>
-                                                                        </defs>
-                                                                        </svg>
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('ifc')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                    <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <g clip-path="url(#clip0_3326_35086)">
-                                                                        <path d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z" fill="#E85984"/>
-                                                                        <path d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z" fill="#E51050"/>
-                                                                        <path d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z" fill="#E51050"/>
-                                                                        <path d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z" fill="white"/>
-                                                                        <path d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z" fill="#770829"/>
-                                                                        </g>
-                                                                        <defs>
-                                                                        <clipPath id="clip0_3326_35086">
-                                                                        <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                        </clipPath>
-                                                                        </defs>
-                                                                        </svg>
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('3ds')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                        <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                            <g clip-path="url(#clip0_3326_35104)">
-                                                                            <path opacity="0.75" d="M23.5474 19.5151L24.6967 15.8119L18.5283 18.3982L23.5474 19.5151ZM36.9317 12.5202C32.2327 7.7296 20.8415 8.626 16.3607 9.74283C11.1233 11.0948 9.72671 15.1212 9.87219 21.6458C9.93039 25.3931 11.5452 28.7142 14.6731 29.8457C21.0452 32.0793 26.5152 31.7707 32.2618 26.216C29.323 23.0125 26.879 21.8957 22.8637 22.1896C18.9648 22.3806 16.7535 21.7634 13.9893 18.7068C17.3645 15.4298 19.4303 13.8428 23.5038 13.4166C28.0574 12.9464 32.1163 14.8861 33.8766 16.6936C35.5205 18.3982 36.3498 22.2924 35.957 27.0095C35.6515 30.8303 34.444 33.0786 31.6653 33.8868C28.0864 35.0037 22.8928 35.5474 18.0919 35.3563C12.4327 35.1212 9.46485 33.9603 8.6356 33.0786C6.88983 31.1095 5.60959 26.9361 5.31863 22.1455C5.02767 17.3549 5.76962 12.8288 7.23898 10.36C8.69379 7.89125 14.0766 6.14253 22.0053 5.6429C28.6247 5.26083 34.764 5.76046 34.8368 5.76046L34.4294 0.426147C34.4294 0.426147 20.2741 2.08669 18.1064 2.27773C12.8546 2.79205 5.78417 3.93827 3.41283 7.96472C-0.820679 15.1506 0.255882 30.4482 5.37682 36.1793C9.94493 41.3225 25.8315 40.4702 32.9455 38.3101C36.1461 37.3402 39.7686 34.6804 40.3942 27.4063C40.8015 22.6157 40.1468 15.8413 36.9317 12.5202ZM22.7036 25.349L27.7227 26.4658L21.5543 29.0522L22.7036 25.349Z" fill="black"/>
-                                                                            <path d="M23.2574 19.0889L24.4067 15.3857L18.2383 17.9721L23.2574 19.0889ZM36.6417 12.094C31.9426 7.30345 20.5514 8.18516 16.0706 9.31668C10.8333 10.6686 9.43667 14.6951 9.58215 21.2197C9.64035 24.9669 11.2552 28.288 14.383 29.4195C20.7551 31.6532 26.2252 31.3446 31.9717 25.7899C29.033 22.5863 26.5889 21.4695 22.5736 21.7634C18.6747 21.9544 16.4634 21.3373 13.6993 18.2807C17.0744 15.0037 19.1403 13.4166 23.2137 12.9904C27.7673 12.5202 31.8262 14.46 33.5866 16.2675C35.2305 17.9721 36.0597 21.8663 35.6669 26.5834C35.3614 30.4041 34.1539 32.6525 31.3752 33.4607C27.7964 34.5775 22.5882 35.1212 17.8018 34.9302C12.1426 34.6951 9.17481 33.5342 8.34556 32.6525C6.59979 30.6833 5.31955 26.5099 5.02859 21.7193C4.73763 16.9287 5.47958 12.4026 6.94894 9.93387C8.40376 7.4651 13.7866 5.71638 21.7153 5.21675C28.3347 4.83468 34.474 5.33431 34.5467 5.33431L34.1394 0C34.1394 0 19.9841 1.66054 17.8164 1.85158C12.5645 2.35121 5.47958 3.51212 3.12279 7.53857C-1.11072 14.7245 -0.0341572 30.0367 5.08678 35.7531C9.65489 40.8964 25.5414 40.0441 32.6555 37.8839C35.8561 36.914 39.4786 34.2542 40.1041 26.9802C40.5115 22.1896 39.8568 15.4151 36.6417 12.094ZM22.4136 24.9229L27.4327 26.0397L21.2643 28.626L22.4136 24.9229Z" fill="#016B6B"/>
-                                                                            </g>
-                                                                            <defs>
-                                                                            <clipPath id="clip0_3326_35104">
-                                                                            <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                            </clipPath>
-                                                                            </defs>
-                                                                            </svg>
-
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">3D Studio MAX</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('max')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                        <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                            <g clip-path="url(#clip0_3326_35104)">
-                                                                            <path opacity="0.75" d="M23.5474 19.5151L24.6967 15.8119L18.5283 18.3982L23.5474 19.5151ZM36.9317 12.5202C32.2327 7.7296 20.8415 8.626 16.3607 9.74283C11.1233 11.0948 9.72671 15.1212 9.87219 21.6458C9.93039 25.3931 11.5452 28.7142 14.6731 29.8457C21.0452 32.0793 26.5152 31.7707 32.2618 26.216C29.323 23.0125 26.879 21.8957 22.8637 22.1896C18.9648 22.3806 16.7535 21.7634 13.9893 18.7068C17.3645 15.4298 19.4303 13.8428 23.5038 13.4166C28.0574 12.9464 32.1163 14.8861 33.8766 16.6936C35.5205 18.3982 36.3498 22.2924 35.957 27.0095C35.6515 30.8303 34.444 33.0786 31.6653 33.8868C28.0864 35.0037 22.8928 35.5474 18.0919 35.3563C12.4327 35.1212 9.46485 33.9603 8.6356 33.0786C6.88983 31.1095 5.60959 26.9361 5.31863 22.1455C5.02767 17.3549 5.76962 12.8288 7.23898 10.36C8.69379 7.89125 14.0766 6.14253 22.0053 5.6429C28.6247 5.26083 34.764 5.76046 34.8368 5.76046L34.4294 0.426147C34.4294 0.426147 20.2741 2.08669 18.1064 2.27773C12.8546 2.79205 5.78417 3.93827 3.41283 7.96472C-0.820679 15.1506 0.255882 30.4482 5.37682 36.1793C9.94493 41.3225 25.8315 40.4702 32.9455 38.3101C36.1461 37.3402 39.7686 34.6804 40.3942 27.4063C40.8015 22.6157 40.1468 15.8413 36.9317 12.5202ZM22.7036 25.349L27.7227 26.4658L21.5543 29.0522L22.7036 25.349Z" fill="black"/>
-                                                                            <path d="M23.2574 19.0889L24.4067 15.3857L18.2383 17.9721L23.2574 19.0889ZM36.6417 12.094C31.9426 7.30345 20.5514 8.18516 16.0706 9.31668C10.8333 10.6686 9.43667 14.6951 9.58215 21.2197C9.64035 24.9669 11.2552 28.288 14.383 29.4195C20.7551 31.6532 26.2252 31.3446 31.9717 25.7899C29.033 22.5863 26.5889 21.4695 22.5736 21.7634C18.6747 21.9544 16.4634 21.3373 13.6993 18.2807C17.0744 15.0037 19.1403 13.4166 23.2137 12.9904C27.7673 12.5202 31.8262 14.46 33.5866 16.2675C35.2305 17.9721 36.0597 21.8663 35.6669 26.5834C35.3614 30.4041 34.1539 32.6525 31.3752 33.4607C27.7964 34.5775 22.5882 35.1212 17.8018 34.9302C12.1426 34.6951 9.17481 33.5342 8.34556 32.6525C6.59979 30.6833 5.31955 26.5099 5.02859 21.7193C4.73763 16.9287 5.47958 12.4026 6.94894 9.93387C8.40376 7.4651 13.7866 5.71638 21.7153 5.21675C28.3347 4.83468 34.474 5.33431 34.5467 5.33431L34.1394 0C34.1394 0 19.9841 1.66054 17.8164 1.85158C12.5645 2.35121 5.47958 3.51212 3.12279 7.53857C-1.11072 14.7245 -0.0341572 30.0367 5.08678 35.7531C9.65489 40.8964 25.5414 40.0441 32.6555 37.8839C35.8561 36.914 39.4786 34.2542 40.1041 26.9802C40.5115 22.1896 39.8568 15.4151 36.6417 12.094ZM22.4136 24.9229L27.4327 26.0397L21.2643 28.626L22.4136 24.9229Z" fill="#016B6B"/>
-                                                                            </g>
-                                                                            <defs>
-                                                                            <clipPath id="clip0_3326_35104">
-                                                                            <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                            </clipPath>
-                                                                            </defs>
-                                                                            </svg>
-
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">3D Studio MAX</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('obj')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                        <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                            <g clip-path="url(#clip0_3326_35104)">
-                                                                            <path opacity="0.75" d="M23.5474 19.5151L24.6967 15.8119L18.5283 18.3982L23.5474 19.5151ZM36.9317 12.5202C32.2327 7.7296 20.8415 8.626 16.3607 9.74283C11.1233 11.0948 9.72671 15.1212 9.87219 21.6458C9.93039 25.3931 11.5452 28.7142 14.6731 29.8457C21.0452 32.0793 26.5152 31.7707 32.2618 26.216C29.323 23.0125 26.879 21.8957 22.8637 22.1896C18.9648 22.3806 16.7535 21.7634 13.9893 18.7068C17.3645 15.4298 19.4303 13.8428 23.5038 13.4166C28.0574 12.9464 32.1163 14.8861 33.8766 16.6936C35.5205 18.3982 36.3498 22.2924 35.957 27.0095C35.6515 30.8303 34.444 33.0786 31.6653 33.8868C28.0864 35.0037 22.8928 35.5474 18.0919 35.3563C12.4327 35.1212 9.46485 33.9603 8.6356 33.0786C6.88983 31.1095 5.60959 26.9361 5.31863 22.1455C5.02767 17.3549 5.76962 12.8288 7.23898 10.36C8.69379 7.89125 14.0766 6.14253 22.0053 5.6429C28.6247 5.26083 34.764 5.76046 34.8368 5.76046L34.4294 0.426147C34.4294 0.426147 20.2741 2.08669 18.1064 2.27773C12.8546 2.79205 5.78417 3.93827 3.41283 7.96472C-0.820679 15.1506 0.255882 30.4482 5.37682 36.1793C9.94493 41.3225 25.8315 40.4702 32.9455 38.3101C36.1461 37.3402 39.7686 34.6804 40.3942 27.4063C40.8015 22.6157 40.1468 15.8413 36.9317 12.5202ZM22.7036 25.349L27.7227 26.4658L21.5543 29.0522L22.7036 25.349Z" fill="black"/>
-                                                                            <path d="M23.2574 19.0889L24.4067 15.3857L18.2383 17.9721L23.2574 19.0889ZM36.6417 12.094C31.9426 7.30345 20.5514 8.18516 16.0706 9.31668C10.8333 10.6686 9.43667 14.6951 9.58215 21.2197C9.64035 24.9669 11.2552 28.288 14.383 29.4195C20.7551 31.6532 26.2252 31.3446 31.9717 25.7899C29.033 22.5863 26.5889 21.4695 22.5736 21.7634C18.6747 21.9544 16.4634 21.3373 13.6993 18.2807C17.0744 15.0037 19.1403 13.4166 23.2137 12.9904C27.7673 12.5202 31.8262 14.46 33.5866 16.2675C35.2305 17.9721 36.0597 21.8663 35.6669 26.5834C35.3614 30.4041 34.1539 32.6525 31.3752 33.4607C27.7964 34.5775 22.5882 35.1212 17.8018 34.9302C12.1426 34.6951 9.17481 33.5342 8.34556 32.6525C6.59979 30.6833 5.31955 26.5099 5.02859 21.7193C4.73763 16.9287 5.47958 12.4026 6.94894 9.93387C8.40376 7.4651 13.7866 5.71638 21.7153 5.21675C28.3347 4.83468 34.474 5.33431 34.5467 5.33431L34.1394 0C34.1394 0 19.9841 1.66054 17.8164 1.85158C12.5645 2.35121 5.47958 3.51212 3.12279 7.53857C-1.11072 14.7245 -0.0341572 30.0367 5.08678 35.7531C9.65489 40.8964 25.5414 40.0441 32.6555 37.8839C35.8561 36.914 39.4786 34.2542 40.1041 26.9802C40.5115 22.1896 39.8568 15.4151 36.6417 12.094ZM22.4136 24.9229L27.4327 26.0397L21.2643 28.626L22.4136 24.9229Z" fill="#016B6B"/>
-                                                                            </g>
-                                                                            <defs>
-                                                                            <clipPath id="clip0_3326_35104">
-                                                                            <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                            </clipPath>
-                                                                            </defs>
-                                                                            </svg>
-
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">3D Studio MAX</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('fbx')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                        <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                            <g clip-path="url(#clip0_3326_35104)">
-                                                                            <path opacity="0.75" d="M23.5474 19.5151L24.6967 15.8119L18.5283 18.3982L23.5474 19.5151ZM36.9317 12.5202C32.2327 7.7296 20.8415 8.626 16.3607 9.74283C11.1233 11.0948 9.72671 15.1212 9.87219 21.6458C9.93039 25.3931 11.5452 28.7142 14.6731 29.8457C21.0452 32.0793 26.5152 31.7707 32.2618 26.216C29.323 23.0125 26.879 21.8957 22.8637 22.1896C18.9648 22.3806 16.7535 21.7634 13.9893 18.7068C17.3645 15.4298 19.4303 13.8428 23.5038 13.4166C28.0574 12.9464 32.1163 14.8861 33.8766 16.6936C35.5205 18.3982 36.3498 22.2924 35.957 27.0095C35.6515 30.8303 34.444 33.0786 31.6653 33.8868C28.0864 35.0037 22.8928 35.5474 18.0919 35.3563C12.4327 35.1212 9.46485 33.9603 8.6356 33.0786C6.88983 31.1095 5.60959 26.9361 5.31863 22.1455C5.02767 17.3549 5.76962 12.8288 7.23898 10.36C8.69379 7.89125 14.0766 6.14253 22.0053 5.6429C28.6247 5.26083 34.764 5.76046 34.8368 5.76046L34.4294 0.426147C34.4294 0.426147 20.2741 2.08669 18.1064 2.27773C12.8546 2.79205 5.78417 3.93827 3.41283 7.96472C-0.820679 15.1506 0.255882 30.4482 5.37682 36.1793C9.94493 41.3225 25.8315 40.4702 32.9455 38.3101C36.1461 37.3402 39.7686 34.6804 40.3942 27.4063C40.8015 22.6157 40.1468 15.8413 36.9317 12.5202ZM22.7036 25.349L27.7227 26.4658L21.5543 29.0522L22.7036 25.349Z" fill="black"/>
-                                                                            <path d="M23.2574 19.0889L24.4067 15.3857L18.2383 17.9721L23.2574 19.0889ZM36.6417 12.094C31.9426 7.30345 20.5514 8.18516 16.0706 9.31668C10.8333 10.6686 9.43667 14.6951 9.58215 21.2197C9.64035 24.9669 11.2552 28.288 14.383 29.4195C20.7551 31.6532 26.2252 31.3446 31.9717 25.7899C29.033 22.5863 26.5889 21.4695 22.5736 21.7634C18.6747 21.9544 16.4634 21.3373 13.6993 18.2807C17.0744 15.0037 19.1403 13.4166 23.2137 12.9904C27.7673 12.5202 31.8262 14.46 33.5866 16.2675C35.2305 17.9721 36.0597 21.8663 35.6669 26.5834C35.3614 30.4041 34.1539 32.6525 31.3752 33.4607C27.7964 34.5775 22.5882 35.1212 17.8018 34.9302C12.1426 34.6951 9.17481 33.5342 8.34556 32.6525C6.59979 30.6833 5.31955 26.5099 5.02859 21.7193C4.73763 16.9287 5.47958 12.4026 6.94894 9.93387C8.40376 7.4651 13.7866 5.71638 21.7153 5.21675C28.3347 4.83468 34.474 5.33431 34.5467 5.33431L34.1394 0C34.1394 0 19.9841 1.66054 17.8164 1.85158C12.5645 2.35121 5.47958 3.51212 3.12279 7.53857C-1.11072 14.7245 -0.0341572 30.0367 5.08678 35.7531C9.65489 40.8964 25.5414 40.0441 32.6555 37.8839C35.8561 36.914 39.4786 34.2542 40.1041 26.9802C40.5115 22.1896 39.8568 15.4151 36.6417 12.094ZM22.4136 24.9229L27.4327 26.0397L21.2643 28.626L22.4136 24.9229Z" fill="#016B6B"/>
-                                                                            </g>
-                                                                            <defs>
-                                                                            <clipPath id="clip0_3326_35104">
-                                                                            <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                            </clipPath>
-                                                                            </defs>
-                                                                            </svg>
-
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">3D Studio MAX</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('skp')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                        <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                            <g clip-path="url(#clip0_3326_35104)">
-                                                                            <path opacity="0.75" d="M23.5474 19.5151L24.6967 15.8119L18.5283 18.3982L23.5474 19.5151ZM36.9317 12.5202C32.2327 7.7296 20.8415 8.626 16.3607 9.74283C11.1233 11.0948 9.72671 15.1212 9.87219 21.6458C9.93039 25.3931 11.5452 28.7142 14.6731 29.8457C21.0452 32.0793 26.5152 31.7707 32.2618 26.216C29.323 23.0125 26.879 21.8957 22.8637 22.1896C18.9648 22.3806 16.7535 21.7634 13.9893 18.7068C17.3645 15.4298 19.4303 13.8428 23.5038 13.4166C28.0574 12.9464 32.1163 14.8861 33.8766 16.6936C35.5205 18.3982 36.3498 22.2924 35.957 27.0095C35.6515 30.8303 34.444 33.0786 31.6653 33.8868C28.0864 35.0037 22.8928 35.5474 18.0919 35.3563C12.4327 35.1212 9.46485 33.9603 8.6356 33.0786C6.88983 31.1095 5.60959 26.9361 5.31863 22.1455C5.02767 17.3549 5.76962 12.8288 7.23898 10.36C8.69379 7.89125 14.0766 6.14253 22.0053 5.6429C28.6247 5.26083 34.764 5.76046 34.8368 5.76046L34.4294 0.426147C34.4294 0.426147 20.2741 2.08669 18.1064 2.27773C12.8546 2.79205 5.78417 3.93827 3.41283 7.96472C-0.820679 15.1506 0.255882 30.4482 5.37682 36.1793C9.94493 41.3225 25.8315 40.4702 32.9455 38.3101C36.1461 37.3402 39.7686 34.6804 40.3942 27.4063C40.8015 22.6157 40.1468 15.8413 36.9317 12.5202ZM22.7036 25.349L27.7227 26.4658L21.5543 29.0522L22.7036 25.349Z" fill="black"/>
-                                                                            <path d="M23.2574 19.0889L24.4067 15.3857L18.2383 17.9721L23.2574 19.0889ZM36.6417 12.094C31.9426 7.30345 20.5514 8.18516 16.0706 9.31668C10.8333 10.6686 9.43667 14.6951 9.58215 21.2197C9.64035 24.9669 11.2552 28.288 14.383 29.4195C20.7551 31.6532 26.2252 31.3446 31.9717 25.7899C29.033 22.5863 26.5889 21.4695 22.5736 21.7634C18.6747 21.9544 16.4634 21.3373 13.6993 18.2807C17.0744 15.0037 19.1403 13.4166 23.2137 12.9904C27.7673 12.5202 31.8262 14.46 33.5866 16.2675C35.2305 17.9721 36.0597 21.8663 35.6669 26.5834C35.3614 30.4041 34.1539 32.6525 31.3752 33.4607C27.7964 34.5775 22.5882 35.1212 17.8018 34.9302C12.1426 34.6951 9.17481 33.5342 8.34556 32.6525C6.59979 30.6833 5.31955 26.5099 5.02859 21.7193C4.73763 16.9287 5.47958 12.4026 6.94894 9.93387C8.40376 7.4651 13.7866 5.71638 21.7153 5.21675C28.3347 4.83468 34.474 5.33431 34.5467 5.33431L34.1394 0C34.1394 0 19.9841 1.66054 17.8164 1.85158C12.5645 2.35121 5.47958 3.51212 3.12279 7.53857C-1.11072 14.7245 -0.0341572 30.0367 5.08678 35.7531C9.65489 40.8964 25.5414 40.0441 32.6555 37.8839C35.8561 36.914 39.4786 34.2542 40.1041 26.9802C40.5115 22.1896 39.8568 15.4151 36.6417 12.094ZM22.4136 24.9229L27.4327 26.0397L21.2643 28.626L22.4136 24.9229Z" fill="#016B6B"/>
-                                                                            </g>
-                                                                            <defs>
-                                                                            <clipPath id="clip0_3326_35104">
-                                                                            <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                            </clipPath>
-                                                                            </defs>
-                                                                            </svg>
-                
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">3D Studio MAX</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                @endswitch
-                                            @endforeach
-                                        @else
-                                            No document exist
-                                        @endif
-                                        {{-- <!-- AutoCAD -->
+                                        <!-- AutoCAD -->
                                         <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
                                             <div class="py-5 px-4">
                                                 <div class="my-4 mx-0">
@@ -1184,9 +527,7 @@
                                                 </div>
                                             </div>
                                             <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
+                                                <button class="download-box-btm-l p-0">Download</button>
                                                 <span class="download-box-btm-r">
                                                     2
                                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1218,9 +559,7 @@
                                                 </div>
                                             </div>
                                             <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
+                                                <button class="download-box-btm-l p-0">Download</button>
                                                 <span class="download-box-btm-r">
                                                     2
                                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1247,9 +586,7 @@
                                                 </div>
                                             </div>
                                             <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
+                                                <button class="download-box-btm-l p-0">Download</button>
                                                 <span class="download-box-btm-r">
                                                     2
                                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1273,9 +610,7 @@
                                                 </div>
                                             </div>
                                             <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
+                                                <button class="download-box-btm-l p-0">Download</button>
                                                 <span class="download-box-btm-r">
                                                     2
                                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1284,7 +619,7 @@
                                                     </svg>
                                                 </span>
                                             </div>
-                                        </div> --}}
+                                        </div>
                                     <div>
                                 </div>
                             </div>
@@ -1295,11 +630,19 @@
                             <div class="col-12 float-left my-2">
                                 <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
                                     <div class="video-img">
-                                        <img class="col-12 p-0 h-100" data-toggle="modal" data-target="#videoModal" src="https://images.squarespace-cdn.com/content/v1/5ba5e044b10f25cb908c506f/1612465370111-8X2AQHP6F8YNW25WGWVQ/Screen%2BShot%2B2021-02-04%2Bat%2B11.00.17%2BAM.jpg">
+                                        <img class="col-12 p-0 h-100" src="https://images.squarespace-cdn.com/content/v1/5ba5e044b10f25cb908c506f/1612465370111-8X2AQHP6F8YNW25WGWVQ/Screen%2BShot%2B2021-02-04%2Bat%2B11.00.17%2BAM.jpg">
                                     </div>
-                                    
                                     <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-start px-3 py-2">
-                                        <span class="download-box-btm-l">View </span>
+                                        <span class="download-box-btm-l">View 1</span>
+                                    </div>
+                                </div>
+                                <!-- ------------- -->
+                                <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
+                                    <div class="video-img">
+                                        <img class="col-12 p-0 h-100" src="https://images.squarespace-cdn.com/content/v1/5ba5e044b10f25cb908c506f/1612465370111-8X2AQHP6F8YNW25WGWVQ/Screen%2BShot%2B2021-02-04%2Bat%2B11.00.17%2BAM.jpg">
+                                    </div>
+                                    <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-start px-3 py-2">
+                                        <span class="download-box-btm-l">View 1</span>
                                     </div>
                                 </div>
                             <div>
@@ -1436,7 +779,6 @@
                             </div>
                         </div>
                     </div>
-
                     <!-- Related products -->
                     {{-- <div class="bg-white border">
                         <div class="p-3 p-sm-4">
@@ -2086,28 +1428,6 @@
         </div>
     </div>
 
-    <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="videoModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="videoModalLabel">Video</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span>&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="embed-responsive embed-responsive-16by9">
-                        @if(isset($previewData['detailedProduct']['video_provider']) && $previewData['detailedProduct']['video_provider'] == "youtube")
-                            <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/{{ $previewData['detailedProduct']['getYoutubeVideoId'] }}" allowfullscreen></iframe>
-                        @elseif(isset($previewData['detailedProduct']['video_provider']) && $previewData['detailedProduct']['video_provider'] == "vimeo")
-                            <iframe class="embed-responsive-item" src="https://player.vimeo.com/video/{{ $previewData['detailedProduct']['getVimeoVideoId'] }}" allowfullscreen></iframe>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
 
     <!-- Size chart show Modal -->
     @include('modals.size_chart_show_modal')
@@ -2376,12 +1696,13 @@
 
                     if (response.anyMatched == false) {
 
+
                         // Uncheck radio buttons for the current attribute
                         // $('.attribute_value input[type=radio]').filter(':checked').prop('checked', false);
                         $('.attribute_value input[type=radio]').not($currentRadio).prop('checked', false);
 
                         $('label.attribute_value').each(function() {
-                            $(this).find('span').css('border-bottom-color', '');
+                            $(this).find('span').css('color', 'black');
                         });
                         sendCheckedAttributes($currentRadio) ;
 
@@ -2597,7 +1918,7 @@
                         // Iterate over each available attribute
                         for (var attributeId in response.availableAttributes) {
                             if (response.availableAttributes.hasOwnProperty(attributeId)) {
-                                var availableValues = response.availableAttributes[attributeId];
+                                var availableValues = response.availableAttributes[attributeId][0];
                                 console.log(availableValues );
                                 // Iterate over each radio button for this attribute
                                 $('.attribute_value input[type=radio][attributeId="' + attributeId + '"]').each(function () {
@@ -2608,11 +1929,11 @@
                                     if (availableValues.indexOf(radioValue) === -1) {
                                         // If not in available values, disable the radio button
                                         // $(this).prop('disabled', true);
-                                        label.find('span').css('border-bottom-color', 'red'); // Change to the desired color
+                                        label.find('span').css('color', 'red'); // Change to the desired color
                                     } else {
                                         // Otherwise, enable the radio button
                                         // $(this).prop('disabled', false);
-                                        label.find('span').css('border-bottom-color', 'green'); // Change to the desired color
+                                        label.find('span').css('color', 'mediumseagreen'); // Change to the desired color
 
                                     }
                                 });
@@ -2648,33 +1969,4 @@
 
         // });
     </script>
-
-<script>
-    // Get the modal
-    var modal = document.getElementById("myModal");
-
-    // Get the button that opens the modal
-    var btn = document.getElementById("openModalBtn");
-
-    // Get the <span> element that closes the modal
-    var span = document.getElementById("closeModalBtn");
-
-    // When the user clicks the button, open the modal 
-    btn.onclick = function() {
-        modal.style.display = "block";
-    }
-
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function() {
-        modal.style.display = "none";
-    }
-
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
-</script>
-
 @endsection
