@@ -9,12 +9,12 @@ use Auth;
 
 class ReviewController extends Controller
 {
-    public function __construct()
-    {
-        // Staff Permission Check
-        $this->middleware(['permission:view_product_reviews'])->only('index');
-        $this->middleware(['permission:publish_product_review'])->only('updatePublished');
-    }
+    // public function __construct()
+    // {
+    //     // Staff Permission Check
+    //     $this->middleware(['permission:view_product_reviews'])->only('index');
+    //     $this->middleware(['permission:publish_product_review'])->only('updatePublished');
+    // }
 
     /**
      * Display a listing of the resource.
@@ -54,7 +54,7 @@ class ReviewController extends Controller
         $review->user_id = Auth::user()->id;
         $review->rating = $request->rating;
         $review->comment = $request->comment;
-        $review->photos = implode(',', $request->photos);
+        $review->name = $request->name;
         $review->viewed = '0';
         $review->save();
         $product = Product::findOrFail($request->product_id);

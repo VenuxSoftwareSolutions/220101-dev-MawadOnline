@@ -1306,607 +1306,679 @@
                         </div>
                     </div>
                 </div>
-                    </div>
-                            <div class="tab-pane fade" id="tab_default_3">
-
-                            <!-- Ratting -->
-                            <div class="px-3 px-sm-4 mb-4 mt-4">
-                                            @if($previewData['detailedProduct']['variationId'] || $previewData['detailedProduct']['product_id'] )
-                                            @php
-                                            if($previewData['detailedProduct']['variationId'])
-                                                $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['variationId']);
-                                            else {
-                                                $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['product_id']);
-                                            }
-                                            $totalRating = $detailedProduct->reviews->count();
-                                            @endphp
-                                            <div class="review-title fs-20 font-prompt-md text-left col-md-12">Total Reviews</div>
-                                            <div class="review-subtitle fs-16 font-prompt-md text-left col-md-12">This shows the average of reviews</div>
-                                            <div class="row">
-                                                <div class="col-lg-4 col-md-6 col-12 mt-4 review-box p-4">
-                                                    <div class="col-12 fs-48 font-prompt-md text-center">
-                                                        {{ $totalRating > 0 ? number_format($detailedProduct->reviews->sum('rating') / $totalRating, 1) : number_format(0, 1) }}
-                                                    </div>
-                                                    <div class="rating rating-mr-1 rating-var text-center">
-                                                        @if($totalRating > 0)
-                                                        {{ renderStarRating($detailedProduct->reviews->sum('rating') / $totalRating) }}
-                                                    @else
-                                                        {{ renderStarRating(0) }}
-                                                    @endif
-                                                    </div>
-                                                    <div class="total-var-rating ml-1 fs-16 text-center mt-2">
-                                                        Average of <b>{{$totalRating}} reviews</b>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-8 col-md-6 col-12 mt-4 review-lines p-3">
-                                                    <div class="col-12 p-0 float-left mb-2">
-                                                        <span class="float-left rating-txt-style fs-16">5 Stars</span>
-                                                        <div class="progress float-left mx-2">
-                                                            <div class="progress-bar custom-progress" role="progressbar" style="width: 80%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                                        </div>
-                                                        <span class="float-left rating-txt-color fs-16">80%</span>
-                                                    </div>
-                                                    <div class="col-12 p-0 float-left mb-2">
-                                                        <span class="float-left rating-txt-style fs-16">4 Stars</span>
-                                                        <div class="progress float-left mx-2">
-                                                            <div class="progress-bar custom-progress" role="progressbar" style="width: 0%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                                        </div>
-                                                        <span class="float-left rating-txt-color fs-16">0%</span>
-                                                    </div>
-                                                    <div class="col-12 p-0 float-left mb-2">
-                                                        <span class="float-left rating-txt-style fs-16">3 Stars</span>
-                                                        <div class="progress float-left mx-2">
-                                                            <div class="progress-bar custom-progress" role="progressbar" style="width: 0%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                                        </div>
-                                                        <span class="float-left rating-txt-color fs-16">0%</span>
-                                                    </div>
-                                                    <div class="col-12 p-0 float-left mb-2">
-                                                        <span class="float-left rating-txt-style fs-16">2 Stars</span>
-                                                        <div class="progress float-left mx-2">
-                                                            <div class="progress-bar custom-progress" role="progressbar" style="width: 0%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                                        </div>
-                                                        <span class="float-left rating-txt-color fs-16">0%</span>
-                                                    </div>
-                                                    <div class="col-12 p-0 float-left mb-2">
-                                                        <span class="float-left rating-txt-style fs-16">1 Stars</span>
-                                                        <div class="progress float-left mx-2">
-                                                            <div class="progress-bar custom-progress" role="progressbar" style="width: 0%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                                        </div>
-                                                        <span class="float-left rating-txt-color fs-16">0%</span>
-                                                    </div>
-                                                </div>
+                </div>
+                    <div class="tab-pane fade" id="tab_default_3">
+                                <!-- Ratting -->
+                                <div class="px-3 px-sm-4 mb-4 mt-4">
+                                    @if($previewData['detailedProduct']['variationId'] || $previewData['detailedProduct']['product_id'] )
+                                    @php
+                                    if($previewData['detailedProduct']['variationId'])
+                                        $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['variationId']);
+                                    else {
+                                        $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['product_id']);
+                                    }
+                                    $totalRating = $detailedProduct->reviews->count();
+                                    @endphp
+                                    <div class="review-title fs-20 font-prompt-md text-left col-md-12">Total Reviews</div>
+                                    <div class="review-subtitle fs-16 font-prompt-md text-left col-md-12">This shows the average of reviews</div>
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-6 col-12 mt-4 review-box p-4">
+                                            <div class="col-12 fs-48 font-prompt-md text-center">
+                                                {{ $totalRating > 0 ? number_format($detailedProduct->reviews->sum('rating') / $totalRating, 1) : number_format(0, 1) }}
                                             </div>
+                                            <div class="rating rating-mr-1 rating-var text-center">
+                                                @if($totalRating > 0)
+                                                {{ renderStarRating($detailedProduct->reviews->sum('rating') / $totalRating) }}
+                                            @else
+                                                {{ renderStarRating(0) }}
                                             @endif
-                                            <div class="row">
-                                                <div class="col-12 fs-20 font-prompt-md pb-3 pt-5 px-1 comment-style">
-                                                    {{$totalcomm = $detailedProduct->reviews->where('comment', '!=', null)->count() }}
-                                                     Total Reviews
+                                            </div>
+                                            <div class="total-var-rating ml-1 fs-16 text-center mt-2">
+                                                Average of <b>{{$totalRating}} reviews</b>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-8 col-md-6 col-12 mt-4 review-lines p-3">
+                                            <div class="col-12 p-0 float-left mb-2">
+                                                <span class="float-left rating-txt-style fs-16">5 Stars</span>
+                                                <div class="progress float-left mx-2">
+                                                    <div class="progress-bar custom-progress" role="progressbar" style="width: {{ $previewData['detailedProduct']['ratingPercentages'][0]['percentage'] }}%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                                                 </div>
-                                                <div class="col-12 fs-20 font-prompt-md py-4 px-1 comment-style">
-                                                    <div class="comment-img-porter p-0 float-left">
-                                                        <img src="https://img.freepik.com/free-photo/portrait-man-laughing_23-2148859448.jpg" class="comment-img">
-                                                    </div>
-                                                    <div class="col-lg-11 col-md-10 col-9 p-0 float-left">
-                                                        <div class="col-12 float-left p-0">
-                                                            <div class="col-6 float-left p-0">
-                                                                <span class="col-12 float-left fs-16 font-prompt-md comment-name text-left">Michel Knaby</span>
-                                                                <span class="col-12 float-left fs-14 font-prompt comment-date text-left">Dec 30, 2019 05:18</span>
-                                                            </div>
-                                                            <div class="col-6 float-right p-0">
-                                                                <div class="rating rating-mr-1 rating-var text-right">
-                                                                @if($totalRating > 0)
-                                                                    {{ renderStarRating($detailedProduct->reviews->sum('rating') / $totalRating) }}
-                                                                @else
-                                                                    {{ renderStarRating(0) }}
-                                                                @endif
+                                                <span class="float-left rating-txt-color fs-16">{{ $previewData['detailedProduct']['ratingPercentages'][0]['percentage'] }}%</span>
+                                            </div>
+                                            <div class="col-12 p-0 float-left mb-2">
+                                                <span class="float-left rating-txt-style fs-16">4 Stars</span>
+                                                <div class="progress float-left mx-2">
+                                                    <div class="progress-bar custom-progress" role="progressbar" style="width: {{ $previewData['detailedProduct']['ratingPercentages'][1]['percentage'] }}%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <span class="float-left rating-txt-color fs-16">{{ $previewData['detailedProduct']['ratingPercentages'][1]['percentage'] }}%</span>
+                                            </div>
+                                            <div class="col-12 p-0 float-left mb-2">
+                                                <span class="float-left rating-txt-style fs-16">3 Stars</span>
+                                                <div class="progress float-left mx-2">
+                                                    <div class="progress-bar custom-progress" role="progressbar" style="width: {{ $previewData['detailedProduct']['ratingPercentages'][2]['percentage'] }}%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <span class="float-left rating-txt-color fs-16">{{ $previewData['detailedProduct']['ratingPercentages'][2]['percentage'] }}%</span>
+                                            </div>
+                                            <div class="col-12 p-0 float-left mb-2">
+                                                <span class="float-left rating-txt-style fs-16">2 Stars</span>
+                                                <div class="progress float-left mx-2">
+                                                    <div class="progress-bar custom-progress" role="progressbar" style="width: {{ $previewData['detailedProduct']['ratingPercentages'][3]['percentage'] }}%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <span class="float-left rating-txt-color fs-16">{{ $previewData['detailedProduct']['ratingPercentages'][3]['percentage'] }}%</span>
+                                            </div>
+                                            <div class="col-12 p-0 float-left mb-2">
+                                                <span class="float-left rating-txt-style fs-16">1 Star</span>
+                                                <div class="progress float-left mx-2">
+                                                    <div class="progress-bar custom-progress" role="progressbar" style="width: {{ $previewData['detailedProduct']['ratingPercentages'][4]['percentage'] }}%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <span class="float-left rating-txt-color fs-16">{{ $previewData['detailedProduct']['ratingPercentages'][4]['percentage'] }}%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
+                                    <div class="row">
+                                        <div class="col-12 fs-20 font-prompt-md pb-3 pt-5 px-1 comment-style">
+                                            {{App\Models\Review::where('product_id', $previewData['detailedProduct']['product_id'])->where('status', 1)->count() }}
+                                                Total Reviews
+                                        </div>
+                                            
+                                            @php 
+                                                $comments = App\Models\Review::where('product_id', $previewData['detailedProduct']['product_id'])->where('status', 1)->take(3)->get();
+                                            @endphp
+                                            @if(count($comments) > 0)
+                                                @foreach ($comments as $comment)
+                                                    <div class="col-12 fs-20 font-prompt-md py-4 px-1 comment-style">
+                                                        <div class="comment-img-porter p-0 float-left">
+                                                            @if($comment->user->avatar_original != null)
+                                                                <img src="{{ uploaded_asset($comment->user->avatar_original) }}" alt="{{ translate('avatar') }}" class="comment-img">
+                                                            @else
+                                                                <img src="{{ static_asset('assets/img/avatar-place.png') }}" alt="{{ translate('avatar') }}" class="comment-img">
+                                                            @endif
+                                                        </div>
+                                                        <div class="col-lg-11 col-md-10 col-9 p-0 float-left">
+                                                            <div class="col-12 float-left p-0">
+                                                                <div class="col-6 float-left p-0">
+                                                                    <span class="col-12 float-left fs-16 font-prompt-md comment-name text-left">{{ $comment->name }}</span>
+                                                                    <span class="col-12 float-left fs-14 font-prompt comment-date text-left">{{ \Carbon\Carbon::parse($comment->created_at)->format('M d, Y H:i'); }}</span>
+                                                                </div>
+                                                                <div class="col-6 float-right p-0">
+                                                                    <div class="rating rating-mr-1 rating-var text-right">
+                                                                    @if($totalRating > 0)
+                                                                        {{ renderStarRating($detailedProduct->reviews->sum('rating') / $totalRating) }}
+                                                                    @else
+                                                                        {{ renderStarRating(0) }}
+                                                                    @endif
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="col-12 float-left fs-16 font-prompt comment-content">
-                                                            I bought materials from Mawad Online, and I'm very happy. The order was easy, and delivery was fast. The quality is excellent, and prices are good. Highly recommend!
+                                                            <div class="col-12 float-left fs-16 font-prompt comment-content">
+                                                                {{ $comment->comment }}
+                                                            </div>
                                                         </div>
                                                     </div>
+                                                @endforeach
+                                            @else
+                                                No comments yet
+                                            @endif
+                                            {{-- <div class="col-12 fs-20 font-prompt-md py-4 px-1 comment-style">
+                                                <div class="comment-img-porter p-0 float-left">
+                                                    <img src="https://img.freepik.com/free-photo/portrait-man-laughing_23-2148859448.jpg" class="comment-img">
                                                 </div>
-                                                <!-- end comments -->
-                                                <div class="col-12 py-3">
-                                                    <center>
-                                                        <button class="comment-button-more fs-20 font-prompt-md">View More</button>
-                                                    </center>
-                                                </div>
-                                            </div>
-                                            <!-- end comment and button -->
-                                            <div class="row pt-5">
-                                                <div class="review-title fs-20 font-prompt-md text-left col-md-12">Submit Your Review</div>
-                                                <div class="review-subtitle fs-16 font-prompt-md text-left col-md-12">Your email address will not be published.</div>
-                                                <div class="col-12">
-                                                    <form>
-                                                        <div class="form-group m-0">
-                                                            <textarea class="form-control text-a-review-f fs-16 mt-3" id="exampleFormControlTextarea3" placeholder="Write your review here" rows="5"></textarea>
+                                                <div class="col-lg-11 col-md-10 col-9 p-0 float-left">
+                                                    <div class="col-12 float-left p-0">
+                                                        <div class="col-6 float-left p-0">
+                                                            <span class="col-12 float-left fs-16 font-prompt-md comment-name text-left">Michel Knaby</span>
+                                                            <span class="col-12 float-left fs-14 font-prompt comment-date text-left">Dec 30, 2019 05:18</span>
                                                         </div>
-                                                        <div class="form-group m-0">
-                                                            <input type="text" class="form-control text-input-review-f fs-16 mt-2" placeholder="Name" aria-label="name" aria-describedby="basic-addon1">
+                                                        <div class="col-6 float-right p-0">
+                                                            <div class="rating rating-mr-1 rating-var text-right">
+                                                            @if($totalRating > 0)
+                                                                {{ renderStarRating($detailedProduct->reviews->sum('rating') / $totalRating) }}
+                                                            @else
+                                                                {{ renderStarRating(0) }}
+                                                            @endif
+                                                            </div>
                                                         </div>
-                                                        <button class="btn-review-f fs-16 mt-2 font-prompt py-2 col-6 col-md-3 col-lg-2">Submit Review</button>
-                                                    </form>
+                                                    </div>
+                                                    <div class="col-12 float-left fs-16 font-prompt comment-content">
+                                                        I bought materials from Mawad Online, and I'm very happy. The order was easy, and delivery was fast. The quality is excellent, and prices are good. Highly recommend!
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <!-- end form comment -->
+                                            </div> --}}
+                                        
+                                        <!-- end comments -->
+                                        <div class="col-12 py-3">
+                                            <center>
+                                                <button class="comment-button-more fs-20 font-prompt-md" id="load-more" data-product-id="{{ $previewData['detailedProduct']['product_id'] }}" @if(count($comments) > 0) data-offset="{{ $comment->id }}" @endif>View More</button>
+                                            </center>
                                         </div>
                                     </div>
+                                    <!-- end comment and button -->
+                                    <div class="row pt-5">
+                                        <div class="review-title fs-20 font-prompt-md text-left col-md-12">Submit Your Review</div>
+                                        <div class="review-subtitle fs-16 font-prompt-md text-left col-md-12">Your email address will not be published.</div>
+                                        <div class="col-12">
+                                            <form method="POST" action="{{ route('reviews.store') }}">
+                                                @csrf
+                                                <input type="hidden" name="product_id" value="{{ $previewData['detailedProduct']['product_id'] }}">
+                                                <div class="form-group">
+                                                    <label class="opacity-60">{{ translate('Rating')}}</label>
+                                                    <div class="rating rating-input">
+                                                        <label>
+                                                            <input type="radio" name="rating" value="1" required>
+                                                            <i class="las la-star"></i>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="rating" value="2">
+                                                            <i class="las la-star"></i>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="rating" value="3">
+                                                            <i class="las la-star"></i>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="rating" value="4">
+                                                            <i class="las la-star"></i>
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="rating" value="5">
+                                                            <i class="las la-star"></i>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group m-0">
+                                                    <textarea class="form-control text-a-review-f fs-16 mt-3" id="exampleFormControlTextarea3" placeholder="Write your review here" name="comment" rows="5"></textarea>
+                                                </div>
+                                                <div class="form-group m-0">
+                                                    <input type="text" class="form-control text-input-review-f fs-16 mt-2" placeholder="Name" aria-label="name" name="name" aria-describedby="basic-addon1">
+                                                </div>
+                                                @if(Auth::check())
+                                                    <button class="btn-review-f fs-16 mt-2 font-prompt py-2 col-6 col-md-3 col-lg-2">Submit Review</button>
+                                                @else
+                                                    <div class="alert alert-danger mt-3" role="alert">
+                                                        You must be <a href="{{ route('user.login') }}" class="alert-link">logged in</a> to write a comment on this product.
+                                                    </div>
+                                                @endif
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <!-- end form comment -->
+                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Related products -->
-                    {{-- <div class="bg-white border">
-                        <div class="p-3 p-sm-4">
+                <!-- Related products -->
+                {{-- <div class="bg-white border">
+                    <div class="p-3 p-sm-4">
+                        <h3 class="fs-16 fw-700 mb-0">
+                            <span class="mr-4">Frequently Brought Products</span>
+                        </h3>
+                    </div>
+                    <div class="px-4">
+                        <div class="aiz-carousel gutters-5 half-outside-arrow slick-initialized slick-slider"
+                            data-items="5" data-xl-items="3" data-lg-items="4" data-md-items="3" data-sm-items="2"
+                            data-xs-items="2" data-arrows="true" data-infinite="true">
+                            <div class="slick-list draggable">
+                                <div class="slick-track"
+                                    style="opacity: 1; width: 0px; transform: translate3d(0px, 0px, 0px);"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div> --}}
+                <!-- Product Query
+                <div class="bg-white border mt-4 mb-4" id="product_query">
+                    <div class="p-3 p-sm-4">
+                        <h3 class="fs-16 fw-700 mb-0">
+                            <span>Product Queries (4)</span>
+                        </h3>
+                    </div>
+
+                    <!-- Login & Register
+                    <p class="fs-14 fw-400 mb-0 px-3 px-sm-4 mt-3"><a
+                            href="https://demo.activeitzone.com/ecommerce/users/login">Login</a> Or <a class="mr-1"
+                            href="https://demo.activeitzone.com/ecommerce/users/registration">Register</a>to submit
+                        your questions to seller
+                    </p>
+
+                    <!-- Query Submit -->
+
+                    <!-- Others Queries
+                    <div class="queries-area my-4 mb-0 px-3 px-sm-4">
+                        <div class="py-3">
                             <h3 class="fs-16 fw-700 mb-0">
-                                <span class="mr-4">Frequently Brought Products</span>
+                                <span>Other Questions</span>
                             </h3>
                         </div>
-                        <div class="px-4">
-                            <div class="aiz-carousel gutters-5 half-outside-arrow slick-initialized slick-slider"
-                                data-items="5" data-xl-items="3" data-lg-items="4" data-md-items="3" data-sm-items="2"
-                                data-xs-items="2" data-arrows="true" data-infinite="true">
-                                <div class="slick-list draggable">
-                                    <div class="slick-track"
-                                        style="opacity: 1; width: 0px; transform: translate3d(0px, 0px, 0px);"></div>
+
+                        <!-- Product queries -->
+                        {{-- <div class="produc-queries mb-4">
+                            <div class="query d-flex  my-2">
+                                <span class="mt-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="36"
+                                        viewBox="0 0 24 36">
+                                        <g id="Group_23928" data-name="Group 23928"
+                                            transform="translate(-654 -2397)">
+                                            <path id="Path_28707" data-name="Path 28707" d="M0,0H24V24H0Z"
+                                                transform="translate(654 2397)" fill="#d43533"></path>
+                                            <text id="Q" transform="translate(666 2414)" fill="#fff"
+                                                font-size="14" font-family="Roboto-Bold, Roboto" font-weight="700">
+                                                <tspan x="-4.833" y="0">Q</tspan>
+                                            </text>
+                                            <path id="Path_28708" data-name="Path 28708" d="M0,0H12L0,12Z"
+                                                transform="translate(666 2421)" fill="#d43533"></path>
+                                            <path id="Path_28711" data-name="Path 28711" d="M0,0H12L0,12Z"
+                                                transform="translate(666 2421)" fill="#1b1b28" opacity="0.2"></path>
+                                        </g>
+                                    </svg>
+                                </span>
+                                <div class="ml-3 mt-0 p-0">
+                                    <div class="fs-14">Im 5'4, 112lb, 32C, 26 waist. What size please?</div>
+                                    <span class="text-secondary">
+                                        Arnulfo T. Lucky
+                                        <span class="fs-10 ml-3">06-09-2022 00:28am</span></span>
+                                </div>
+                            </div>
+                            <div class="answer d-flex my-2">
+                                <span class="mt-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="36"
+                                        viewBox="0 0 24 36">
+                                        <g id="Group_23929" data-name="Group 23929"
+                                            transform="translate(-654 -2453)">
+                                            <path id="Path_28709" data-name="Path 28709" d="M0,0H24V24H0Z"
+                                                transform="translate(654 2453)" fill="#f3af3d"></path>
+                                            <text id="A" transform="translate(666 2470)" fill="#fff"
+                                                font-size="14" font-family="Roboto-Bold, Roboto" font-weight="700">
+                                                <tspan x="-4.71" y="0">A</tspan>
+                                            </text>
+                                            <path id="Path_28710" data-name="Path 28710" d="M0,0H12L0,12Z"
+                                                transform="translate(666 2477)" fill="#f3af3d"></path>
+                                            <path id="Path_28712" data-name="Path 28712" d="M0,0H12L0,12Z"
+                                                transform="translate(666 2477)" fill="#1b1b28" opacity="0.1"></path>
+                                        </g>
+                                    </svg>
+                                </span>
+                                <div class="ml-3 mt-0 p-0">
+                                    <div class="fs-14">
+                                        I suggest a small. I had to size down as bodice was a bit generous.
+                                    </div>
+                                    <span class=" text-secondary">
+                                        William C. Schroyer
+                                        <span class="fs-10 ml-3">06-09-2022 00:28am</span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
-                    </div> --}}
-                    <!-- Product Query
-                    <div class="bg-white border mt-4 mb-4" id="product_query">
-                        <div class="p-3 p-sm-4">
-                            <h3 class="fs-16 fw-700 mb-0">
-                                <span>Product Queries (4)</span>
-                            </h3>
+                        <div class="produc-queries mb-4">
+                            <div class="query d-flex  my-2">
+                                <span class="mt-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="36"
+                                        viewBox="0 0 24 36">
+                                        <g id="Group_23928" data-name="Group 23928"
+                                            transform="translate(-654 -2397)">
+                                            <path id="Path_28707" data-name="Path 28707" d="M0,0H24V24H0Z"
+                                                transform="translate(654 2397)" fill="#d43533"></path>
+                                            <text id="Q" transform="translate(666 2414)" fill="#fff"
+                                                font-size="14" font-family="Roboto-Bold, Roboto" font-weight="700">
+                                                <tspan x="-4.833" y="0">Q</tspan>
+                                            </text>
+                                            <path id="Path_28708" data-name="Path 28708" d="M0,0H12L0,12Z"
+                                                transform="translate(666 2421)" fill="#d43533"></path>
+                                            <path id="Path_28711" data-name="Path 28711" d="M0,0H12L0,12Z"
+                                                transform="translate(666 2421)" fill="#1b1b28" opacity="0.2"></path>
+                                        </g>
+                                    </svg>
+                                </span>
+                                <div class="ml-3 mt-0 p-0">
+                                    <div class="fs-14">How would this look/wear in winter with a shirt underneath?
+                                    </div>
+                                    <span class="text-secondary">
+                                        Arnulfo T. Lucky
+                                        <span class="fs-10 ml-3">06-09-2022 00:27am</span></span>
+                                </div>
+                            </div>
+                            <div class="answer d-flex my-2">
+                                <span class="mt-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="36"
+                                        viewBox="0 0 24 36">
+                                        <g id="Group_23929" data-name="Group 23929"
+                                            transform="translate(-654 -2453)">
+                                            <path id="Path_28709" data-name="Path 28709" d="M0,0H24V24H0Z"
+                                                transform="translate(654 2453)" fill="#f3af3d"></path>
+                                            <text id="A" transform="translate(666 2470)" fill="#fff"
+                                                font-size="14" font-family="Roboto-Bold, Roboto" font-weight="700">
+                                                <tspan x="-4.71" y="0">A</tspan>
+                                            </text>
+                                            <path id="Path_28710" data-name="Path 28710" d="M0,0H12L0,12Z"
+                                                transform="translate(666 2477)" fill="#f3af3d"></path>
+                                            <path id="Path_28712" data-name="Path 28712" d="M0,0H12L0,12Z"
+                                                transform="translate(666 2477)" fill="#1b1b28" opacity="0.1"></path>
+                                        </g>
+                                    </svg>
+                                </span>
+                                <div class="ml-3 mt-0 p-0">
+                                    <div class="fs-14">
+                                        Depends on the shirt, I wear one over it open looks great and the material is
+                                        heavy enough for winter but light enough for summer.
+                                    </div>
+                                    <span class=" text-secondary">
+                                        William C. Schroyer
+                                        <span class="fs-10 ml-3">06-09-2022 00:27am</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="produc-queries mb-4">
+                            <div class="query d-flex  my-2">
+                                <span class="mt-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="36"
+                                        viewBox="0 0 24 36">
+                                        <g id="Group_23928" data-name="Group 23928"
+                                            transform="translate(-654 -2397)">
+                                            <path id="Path_28707" data-name="Path 28707" d="M0,0H24V24H0Z"
+                                                transform="translate(654 2397)" fill="#d43533"></path>
+                                            <text id="Q" transform="translate(666 2414)" fill="#fff"
+                                                font-size="14" font-family="Roboto-Bold, Roboto" font-weight="700">
+                                                <tspan x="-4.833" y="0">Q</tspan>
+                                            </text>
+                                            <path id="Path_28708" data-name="Path 28708" d="M0,0H12L0,12Z"
+                                                transform="translate(666 2421)" fill="#d43533"></path>
+                                            <path id="Path_28711" data-name="Path 28711" d="M0,0H12L0,12Z"
+                                                transform="translate(666 2421)" fill="#1b1b28" opacity="0.2"></path>
+                                        </g>
+                                    </svg>
+                                </span>
+                                <div class="ml-3 mt-0 p-0">
+                                    <div class="fs-14">Im 59 206 .lbs usually xxl any sixe recommendations?</div>
+                                    <span class="text-secondary">
+                                        Paul K. Jensen
+                                        <span class="fs-10 ml-3">06-09-2022 00:23am</span></span>
+                                </div>
+                            </div>
+                            <div class="answer d-flex my-2">
+                                <span class="mt-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="36"
+                                        viewBox="0 0 24 36">
+                                        <g id="Group_23929" data-name="Group 23929"
+                                            transform="translate(-654 -2453)">
+                                            <path id="Path_28709" data-name="Path 28709" d="M0,0H24V24H0Z"
+                                                transform="translate(654 2453)" fill="#f3af3d"></path>
+                                            <text id="A" transform="translate(666 2470)" fill="#fff"
+                                                font-size="14" font-family="Roboto-Bold, Roboto" font-weight="700">
+                                                <tspan x="-4.71" y="0">A</tspan>
+                                            </text>
+                                            <path id="Path_28710" data-name="Path 28710" d="M0,0H12L0,12Z"
+                                                transform="translate(666 2477)" fill="#f3af3d"></path>
+                                            <path id="Path_28712" data-name="Path 28712" d="M0,0H12L0,12Z"
+                                                transform="translate(666 2477)" fill="#1b1b28" opacity="0.1"></path>
+                                        </g>
+                                    </svg>
+                                </span>
+                                <div class="ml-3 mt-0 p-0">
+                                    <div class="fs-14">
+                                        Same size here and XXL is perfect.
+                                        By Amazon Customer on September 25, 2021
+                                        I would suggest using a tape measure and going by the size chart. We dont know
+                                        how your weight is distributed and you could wear anything between a 10(if you
+                                        have low body fat) to an 18 (if you dont have low body fat) at your height and
+                                        weight. Its all about the measurements.
+                                        By A person on August 29, 2021
+                                        That size should be just fine for you!
+                                    </div>
+                                    <span class=" text-secondary">
+                                        William C. Schroyer
+                                        <span class="fs-10 ml-3">06-09-2022 00:23am</span>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Login & Register
-                        <p class="fs-14 fw-400 mb-0 px-3 px-sm-4 mt-3"><a
-                                href="https://demo.activeitzone.com/ecommerce/users/login">Login</a> Or <a class="mr-1"
-                                href="https://demo.activeitzone.com/ecommerce/users/registration">Register</a>to submit
-                            your questions to seller
-                        </p>
+                        <!-- Pagination -->
+                        <div class="aiz-pagination product-queries-pagination py-2 d-flex justify-content-end">
+                            <nav>
+                                <ul class="pagination">
 
-                        <!-- Query Submit -->
-
-                        <!-- Others Queries
-                        <div class="queries-area my-4 mb-0 px-3 px-sm-4">
-                            <div class="py-3">
-                                <h3 class="fs-16 fw-700 mb-0">
-                                    <span>Other Questions</span>
-                                </h3>
-                            </div>
-
-                            <!-- Product queries -->
-                            {{-- <div class="produc-queries mb-4">
-                                <div class="query d-flex  my-2">
-                                    <span class="mt-1">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="36"
-                                            viewBox="0 0 24 36">
-                                            <g id="Group_23928" data-name="Group 23928"
-                                                transform="translate(-654 -2397)">
-                                                <path id="Path_28707" data-name="Path 28707" d="M0,0H24V24H0Z"
-                                                    transform="translate(654 2397)" fill="#d43533"></path>
-                                                <text id="Q" transform="translate(666 2414)" fill="#fff"
-                                                    font-size="14" font-family="Roboto-Bold, Roboto" font-weight="700">
-                                                    <tspan x="-4.833" y="0">Q</tspan>
-                                                </text>
-                                                <path id="Path_28708" data-name="Path 28708" d="M0,0H12L0,12Z"
-                                                    transform="translate(666 2421)" fill="#d43533"></path>
-                                                <path id="Path_28711" data-name="Path 28711" d="M0,0H12L0,12Z"
-                                                    transform="translate(666 2421)" fill="#1b1b28" opacity="0.2"></path>
-                                            </g>
-                                        </svg>
-                                    </span>
-                                    <div class="ml-3 mt-0 p-0">
-                                        <div class="fs-14">Im 5'4, 112lb, 32C, 26 waist. What size please?</div>
-                                        <span class="text-secondary">
-                                            Arnulfo T. Lucky
-                                            <span class="fs-10 ml-3">06-09-2022 00:28am</span></span>
-                                    </div>
-                                </div>
-                                <div class="answer d-flex my-2">
-                                    <span class="mt-1">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="36"
-                                            viewBox="0 0 24 36">
-                                            <g id="Group_23929" data-name="Group 23929"
-                                                transform="translate(-654 -2453)">
-                                                <path id="Path_28709" data-name="Path 28709" d="M0,0H24V24H0Z"
-                                                    transform="translate(654 2453)" fill="#f3af3d"></path>
-                                                <text id="A" transform="translate(666 2470)" fill="#fff"
-                                                    font-size="14" font-family="Roboto-Bold, Roboto" font-weight="700">
-                                                    <tspan x="-4.71" y="0">A</tspan>
-                                                </text>
-                                                <path id="Path_28710" data-name="Path 28710" d="M0,0H12L0,12Z"
-                                                    transform="translate(666 2477)" fill="#f3af3d"></path>
-                                                <path id="Path_28712" data-name="Path 28712" d="M0,0H12L0,12Z"
-                                                    transform="translate(666 2477)" fill="#1b1b28" opacity="0.1"></path>
-                                            </g>
-                                        </svg>
-                                    </span>
-                                    <div class="ml-3 mt-0 p-0">
-                                        <div class="fs-14">
-                                            I suggest a small. I had to size down as bodice was a bit generous.
-                                        </div>
-                                        <span class=" text-secondary">
-                                            William C. Schroyer
-                                            <span class="fs-10 ml-3">06-09-2022 00:28am</span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="produc-queries mb-4">
-                                <div class="query d-flex  my-2">
-                                    <span class="mt-1">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="36"
-                                            viewBox="0 0 24 36">
-                                            <g id="Group_23928" data-name="Group 23928"
-                                                transform="translate(-654 -2397)">
-                                                <path id="Path_28707" data-name="Path 28707" d="M0,0H24V24H0Z"
-                                                    transform="translate(654 2397)" fill="#d43533"></path>
-                                                <text id="Q" transform="translate(666 2414)" fill="#fff"
-                                                    font-size="14" font-family="Roboto-Bold, Roboto" font-weight="700">
-                                                    <tspan x="-4.833" y="0">Q</tspan>
-                                                </text>
-                                                <path id="Path_28708" data-name="Path 28708" d="M0,0H12L0,12Z"
-                                                    transform="translate(666 2421)" fill="#d43533"></path>
-                                                <path id="Path_28711" data-name="Path 28711" d="M0,0H12L0,12Z"
-                                                    transform="translate(666 2421)" fill="#1b1b28" opacity="0.2"></path>
-                                            </g>
-                                        </svg>
-                                    </span>
-                                    <div class="ml-3 mt-0 p-0">
-                                        <div class="fs-14">How would this look/wear in winter with a shirt underneath?
-                                        </div>
-                                        <span class="text-secondary">
-                                            Arnulfo T. Lucky
-                                            <span class="fs-10 ml-3">06-09-2022 00:27am</span></span>
-                                    </div>
-                                </div>
-                                <div class="answer d-flex my-2">
-                                    <span class="mt-1">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="36"
-                                            viewBox="0 0 24 36">
-                                            <g id="Group_23929" data-name="Group 23929"
-                                                transform="translate(-654 -2453)">
-                                                <path id="Path_28709" data-name="Path 28709" d="M0,0H24V24H0Z"
-                                                    transform="translate(654 2453)" fill="#f3af3d"></path>
-                                                <text id="A" transform="translate(666 2470)" fill="#fff"
-                                                    font-size="14" font-family="Roboto-Bold, Roboto" font-weight="700">
-                                                    <tspan x="-4.71" y="0">A</tspan>
-                                                </text>
-                                                <path id="Path_28710" data-name="Path 28710" d="M0,0H12L0,12Z"
-                                                    transform="translate(666 2477)" fill="#f3af3d"></path>
-                                                <path id="Path_28712" data-name="Path 28712" d="M0,0H12L0,12Z"
-                                                    transform="translate(666 2477)" fill="#1b1b28" opacity="0.1"></path>
-                                            </g>
-                                        </svg>
-                                    </span>
-                                    <div class="ml-3 mt-0 p-0">
-                                        <div class="fs-14">
-                                            Depends on the shirt, I wear one over it open looks great and the material is
-                                            heavy enough for winter but light enough for summer.
-                                        </div>
-                                        <span class=" text-secondary">
-                                            William C. Schroyer
-                                            <span class="fs-10 ml-3">06-09-2022 00:27am</span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="produc-queries mb-4">
-                                <div class="query d-flex  my-2">
-                                    <span class="mt-1">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="36"
-                                            viewBox="0 0 24 36">
-                                            <g id="Group_23928" data-name="Group 23928"
-                                                transform="translate(-654 -2397)">
-                                                <path id="Path_28707" data-name="Path 28707" d="M0,0H24V24H0Z"
-                                                    transform="translate(654 2397)" fill="#d43533"></path>
-                                                <text id="Q" transform="translate(666 2414)" fill="#fff"
-                                                    font-size="14" font-family="Roboto-Bold, Roboto" font-weight="700">
-                                                    <tspan x="-4.833" y="0">Q</tspan>
-                                                </text>
-                                                <path id="Path_28708" data-name="Path 28708" d="M0,0H12L0,12Z"
-                                                    transform="translate(666 2421)" fill="#d43533"></path>
-                                                <path id="Path_28711" data-name="Path 28711" d="M0,0H12L0,12Z"
-                                                    transform="translate(666 2421)" fill="#1b1b28" opacity="0.2"></path>
-                                            </g>
-                                        </svg>
-                                    </span>
-                                    <div class="ml-3 mt-0 p-0">
-                                        <div class="fs-14">Im 59 206 .lbs usually xxl any sixe recommendations?</div>
-                                        <span class="text-secondary">
-                                            Paul K. Jensen
-                                            <span class="fs-10 ml-3">06-09-2022 00:23am</span></span>
-                                    </div>
-                                </div>
-                                <div class="answer d-flex my-2">
-                                    <span class="mt-1">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="36"
-                                            viewBox="0 0 24 36">
-                                            <g id="Group_23929" data-name="Group 23929"
-                                                transform="translate(-654 -2453)">
-                                                <path id="Path_28709" data-name="Path 28709" d="M0,0H24V24H0Z"
-                                                    transform="translate(654 2453)" fill="#f3af3d"></path>
-                                                <text id="A" transform="translate(666 2470)" fill="#fff"
-                                                    font-size="14" font-family="Roboto-Bold, Roboto" font-weight="700">
-                                                    <tspan x="-4.71" y="0">A</tspan>
-                                                </text>
-                                                <path id="Path_28710" data-name="Path 28710" d="M0,0H12L0,12Z"
-                                                    transform="translate(666 2477)" fill="#f3af3d"></path>
-                                                <path id="Path_28712" data-name="Path 28712" d="M0,0H12L0,12Z"
-                                                    transform="translate(666 2477)" fill="#1b1b28" opacity="0.1"></path>
-                                            </g>
-                                        </svg>
-                                    </span>
-                                    <div class="ml-3 mt-0 p-0">
-                                        <div class="fs-14">
-                                            Same size here and XXL is perfect.
-                                            By Amazon Customer on September 25, 2021
-                                            I would suggest using a tape measure and going by the size chart. We dont know
-                                            how your weight is distributed and you could wear anything between a 10(if you
-                                            have low body fat) to an 18 (if you dont have low body fat) at your height and
-                                            weight. Its all about the measurements.
-                                            By A person on August 29, 2021
-                                            That size should be just fine for you!
-                                        </div>
-                                        <span class=" text-secondary">
-                                            William C. Schroyer
-                                            <span class="fs-10 ml-3">06-09-2022 00:23am</span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Pagination -->
-                            <div class="aiz-pagination product-queries-pagination py-2 d-flex justify-content-end">
-                                <nav>
-                                    <ul class="pagination">
-
-                                        <li class="page-item disabled" aria-disabled="true" aria-label="« Previous">
-                                            <span class="page-link" aria-hidden="true">‹</span>
-                                        </li>
-
-
-
-
-
-                                        <li class="page-item active" aria-current="page"><span class="page-link">1</span>
-                                        </li>
-                                        <li class="page-item"><a class="page-link"
-                                                href="https://demo.activeitzone.com/ecommerce/product/bracelet-o0ru1952-rose-gold?page=2">2</a>
-                                        </li>
-
-
-                                        <li class="page-item">
-                                            <a class="page-link"
-                                                href="https://demo.activeitzone.com/ecommerce/product/bracelet-o0ru1952-rose-gold?page=2"
-                                                rel="next" aria-label="Next »">›</a>
-                                        </li>
-                                    </ul>
-                                </nav>
-
-                            </div> --}}
-                        <!--</div>
-                    </div>-->
-
-                    <!-- Top Selling Products -->
-                    <div class="d-lg-none">
-                        {{-- <div class="bg-white border mb-4">
-                            <div class="p-3 p-sm-4 fs-16 fw-600">
-                                Top Selling Products
-                            </div>
-                            <div class="px-3 px-sm-4 pb-4">
-                                <ul class="list-group list-group-flush">
-                                    <li class="py-3 px-0 list-group-item border-0">
-                                        <div
-                                            class="row gutters-10 align-items-center hov-scale-img hov-shadow-md overflow-hidden has-transition">
-                                            <div class="col-xl-4 col-lg-6 col-4">
-                                                <!-- Image -->
-                                                <a href="https://demo.activeitzone.com/ecommerce/product/analog-black-dial-mens-watch-32-bk-ck"
-                                                    class="d-block text-reset">
-                                                    <img class="img-fit lazyload h-80px h-md-150px h-lg-80px has-transition"
-                                                        src="https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg"
-                                                        data-src="https://demo.activeitzone.com/ecommerce/public/uploads/all/70TVd2OrhelP4B9bqY9SIK3TnUpCtXkSLntYP5O4.webp"
-                                                        alt="Disney Men's Mickey and Friends Button Down Shirt"
-                                                        onerror="this.onerror=null;this.src='https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg';">
-                                                </a>
-                                            </div>
-                                            <div class="col text-left">
-                                                <!-- Product name -->
-                                                <div class="d-lg-none d-xl-block mb-3">
-                                                    <h4 class="fs-14 fw-400 text-truncate-2">
-                                                        <a href="https://demo.activeitzone.com/ecommerce/product/analog-black-dial-mens-watch-32-bk-ck"
-                                                            class="d-block text-reset hov-text-primary">Disney Men's Mickey
-                                                            and Friends Button Down Shirt</a>
-                                                    </h4>
-                                                </div>
-                                                <div class="">
-                                                    <!-- Price -->
-                                                    <span class="fs-14 fw-700 text-primary">$450.000</span>
-                                                    <!-- Home Price -->
-                                                    <del class="fs-14 fw-700 opacity-60 ml-1 ml-lg-0 ml-xl-1">
-                                                        $600.000
-                                                    </del>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <li class="page-item disabled" aria-disabled="true" aria-label="« Previous">
+                                        <span class="page-link" aria-hidden="true">‹</span>
                                     </li>
-                                    <li class="py-3 px-0 list-group-item border-0">
-                                        <div
-                                            class="row gutters-10 align-items-center hov-scale-img hov-shadow-md overflow-hidden has-transition">
-                                            <div class="col-xl-4 col-lg-6 col-4">
-                                                <!-- Image -->
-                                                <a href="https://demo.activeitzone.com/ecommerce/product/bracelet-o0ru1952-rose-gold"
-                                                    class="d-block text-reset">
-                                                    <img class="img-fit lazyload h-80px h-md-150px h-lg-80px has-transition"
-                                                        src="https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg"
-                                                        data-src="https://demo.activeitzone.com/ecommerce/public/uploads/all/7vRqfDlqK8EgqbFznmSfu3PP0Y1GCaAtJNEwAelo.webp"
-                                                        alt="Kate Spade New York Lady Marmalade Bracelet O0RU1952 Rose Gold"
-                                                        onerror="this.onerror=null;this.src='https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg';">
-                                                </a>
-                                            </div>
-                                            <div class="col text-left">
-                                                <!-- Product name -->
-                                                <div class="d-lg-none d-xl-block mb-3">
-                                                    <h4 class="fs-14 fw-400 text-truncate-2">
-                                                        <a href="https://demo.activeitzone.com/ecommerce/product/bracelet-o0ru1952-rose-gold"
-                                                            class="d-block text-reset hov-text-primary">Kate Spade New York
-                                                            Lady Marmalade Bracelet O0RU1952 Rose Gold</a>
-                                                    </h4>
-                                                </div>
-                                                <div class="">
-                                                    <!-- Price -->
-                                                    <span class="fs-14 fw-700 text-primary">$72.000</span>
-                                                    <!-- Home Price -->
-                                                    <del class="fs-14 fw-700 opacity-60 ml-1 ml-lg-0 ml-xl-1">
-                                                        $90.000
-                                                    </del>
-                                                </div>
-                                            </div>
-                                        </div>
+
+
+
+
+
+                                    <li class="page-item active" aria-current="page"><span class="page-link">1</span>
                                     </li>
-                                    <li class="py-3 px-0 list-group-item border-0">
-                                        <div
-                                            class="row gutters-10 align-items-center hov-scale-img hov-shadow-md overflow-hidden has-transition">
-                                            <div class="col-xl-4 col-lg-6 col-4">
-                                                <!-- Image -->
-                                                <a href="https://demo.activeitzone.com/ecommerce/product/hp-stream-14-inch-laptop-intel-celeron-n4000-4-gb-ram-64-gb-emmc-windows-10-home-in-s-mode-with-office-365-personal-gtre8"
-                                                    class="d-block text-reset">
-                                                    <img class="img-fit lazyload h-80px h-md-150px h-lg-80px has-transition"
-                                                        src="https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg"
-                                                        data-src="https://demo.activeitzone.com/ecommerce/public/uploads/all/4tq17O5lc0hXSnlVqnyYjbI8Fjs0v9Ppl1TtrRoi.webp"
-                                                        alt="Anivia Computer Headsets Over Ear Headphones Wired Gaming Headset with Mic for PC Mac PS4 PS5 Xbox One, Stereo Surround Sound, Purple"
-                                                        onerror="this.onerror=null;this.src='https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg';">
-                                                </a>
-                                            </div>
-                                            <div class="col text-left">
-                                                <!-- Product name -->
-                                                <div class="d-lg-none d-xl-block mb-3">
-                                                    <h4 class="fs-14 fw-400 text-truncate-2">
-                                                        <a href="https://demo.activeitzone.com/ecommerce/product/hp-stream-14-inch-laptop-intel-celeron-n4000-4-gb-ram-64-gb-emmc-windows-10-home-in-s-mode-with-office-365-personal-gtre8"
-                                                            class="d-block text-reset hov-text-primary">Anivia Computer
-                                                            Headsets Over Ear Headphones Wired Gaming Headset with Mic for
-                                                            PC Mac PS4 PS5 Xbox One, Stereo Surround Sound, Purple</a>
-                                                    </h4>
-                                                </div>
-                                                <div class="">
-                                                    <!-- Price -->
-                                                    <span class="fs-14 fw-700 text-primary">$1,222.000</span>
-                                                    <!-- Home Price -->
-                                                    <del class="fs-14 fw-700 opacity-60 ml-1 ml-lg-0 ml-xl-1">
-                                                        $1,300.000
-                                                    </del>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <li class="page-item"><a class="page-link"
+                                            href="https://demo.activeitzone.com/ecommerce/product/bracelet-o0ru1952-rose-gold?page=2">2</a>
                                     </li>
-                                    <li class="py-3 px-0 list-group-item border-0">
-                                        <div
-                                            class="row gutters-10 align-items-center hov-scale-img hov-shadow-md overflow-hidden has-transition">
-                                            <div class="col-xl-4 col-lg-6 col-4">
-                                                <!-- Image -->
-                                                <a href="https://demo.activeitzone.com/ecommerce/product/mens-machine-stainless-steel-quartz-chronograph-watch-2gns4"
-                                                    class="d-block text-reset">
-                                                    <img class="img-fit lazyload h-80px h-md-150px h-lg-80px has-transition"
-                                                        src="https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg"
-                                                        data-src="https://demo.activeitzone.com/ecommerce/public/uploads/all/GQTEvStCif0VCOgtjERfuvsMowSHybRWFuS7GxlE.webp"
-                                                        alt="SWAROVSKI Lifelong Heart Necklace, Earrings, and Bracelet Crystal Jewelry Collection, Rose Gold &amp; Rhodium Tone Finish"
-                                                        onerror="this.onerror=null;this.src='https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg';">
-                                                </a>
-                                            </div>
-                                            <div class="col text-left">
-                                                <!-- Product name -->
-                                                <div class="d-lg-none d-xl-block mb-3">
-                                                    <h4 class="fs-14 fw-400 text-truncate-2">
-                                                        <a href="https://demo.activeitzone.com/ecommerce/product/mens-machine-stainless-steel-quartz-chronograph-watch-2gns4"
-                                                            class="d-block text-reset hov-text-primary">SWAROVSKI Lifelong
-                                                            Heart Necklace, Earrings, and Bracelet Crystal Jewelry
-                                                            Collection, Rose Gold &amp; Rhodium Tone Finish</a>
-                                                    </h4>
-                                                </div>
-                                                <div class="">
-                                                    <!-- Price -->
-                                                    <span class="fs-14 fw-700 text-primary">$190.000</span>
-                                                    <!-- Home Price -->
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="py-3 px-0 list-group-item border-0">
-                                        <div
-                                            class="row gutters-10 align-items-center hov-scale-img hov-shadow-md overflow-hidden has-transition">
-                                            <div class="col-xl-4 col-lg-6 col-4">
-                                                <!-- Image -->
-                                                <a href="https://demo.activeitzone.com/ecommerce/product/calvin-klein-womens-scuba-sleeveless-princess-seamed-sheath-dress-mnluo"
-                                                    class="d-block text-reset">
-                                                    <img class="img-fit lazyload h-80px h-md-150px h-lg-80px has-transition"
-                                                        src="https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg"
-                                                        data-src="https://demo.activeitzone.com/ecommerce/public/uploads/all/vmN7CrCxHvCDwLGzTnIBo0iDTjCI7CaxWvTqy5w2.webp"
-                                                        alt="Jessica Simpson Womens Cropped Crewneck Blouse"
-                                                        onerror="this.onerror=null;this.src='https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg';">
-                                                </a>
-                                            </div>
-                                            <div class="col text-left">
-                                                <!-- Product name -->
-                                                <div class="d-lg-none d-xl-block mb-3">
-                                                    <h4 class="fs-14 fw-400 text-truncate-2">
-                                                        <a href="https://demo.activeitzone.com/ecommerce/product/calvin-klein-womens-scuba-sleeveless-princess-seamed-sheath-dress-mnluo"
-                                                            class="d-block text-reset hov-text-primary">Jessica Simpson
-                                                            Womens Cropped Crewneck Blouse</a>
-                                                    </h4>
-                                                </div>
-                                                <div class="">
-                                                    <!-- Price -->
-                                                    <span class="fs-14 fw-700 text-primary">$145.000</span>
-                                                    <!-- Home Price -->
-                                                    <del class="fs-14 fw-700 opacity-60 ml-1 ml-lg-0 ml-xl-1">
-                                                        $150.000
-                                                    </del>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="py-3 px-0 list-group-item border-0">
-                                        <div
-                                            class="row gutters-10 align-items-center hov-scale-img hov-shadow-md overflow-hidden has-transition">
-                                            <div class="col-xl-4 col-lg-6 col-4">
-                                                <!-- Image -->
-                                                <a href="https://demo.activeitzone.com/ecommerce/product/adobe-photoshop-cc-68450"
-                                                    class="d-block text-reset">
-                                                    <img class="img-fit lazyload h-80px h-md-150px h-lg-80px has-transition"
-                                                        src="https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg"
-                                                        data-src="https://demo.activeitzone.com/ecommerce/public/uploads/all/d6zJ0hqqTczvV4AgXJX3cFyu1TIFi6kNcHRh1L5I.webp"
-                                                        alt="Adobe Illustrator | Vector graphic design software | 12-month Subscription with auto-renewal, PC/Mac"
-                                                        onerror="this.onerror=null;this.src='https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg';">
-                                                </a>
-                                            </div>
-                                            <div class="col text-left">
-                                                <!-- Product name -->
-                                                <div class="d-lg-none d-xl-block mb-3">
-                                                    <h4 class="fs-14 fw-400 text-truncate-2">
-                                                        <a href="https://demo.activeitzone.com/ecommerce/product/adobe-photoshop-cc-68450"
-                                                            class="d-block text-reset hov-text-primary">Adobe Illustrator |
-                                                            Vector graphic design software | 12-month Subscription with
-                                                            auto-renewal, PC/Mac</a>
-                                                    </h4>
-                                                </div>
-                                                <div class="">
-                                                    <!-- Price -->
-                                                    <span class="fs-14 fw-700 text-primary">$32.000</span>
-                                                    <!-- Home Price -->
-                                                </div>
-                                            </div>
-                                        </div>
+
+
+                                    <li class="page-item">
+                                        <a class="page-link"
+                                            href="https://demo.activeitzone.com/ecommerce/product/bracelet-o0ru1952-rose-gold?page=2"
+                                            rel="next" aria-label="Next »">›</a>
                                     </li>
                                 </ul>
-                            </div>
+                            </nav>
+
                         </div> --}}
-                    </div>
+                    <!--</div>
+                </div>-->
+
+                <!-- Top Selling Products -->
+                <div class="d-lg-none">
+                    {{-- <div class="bg-white border mb-4">
+                        <div class="p-3 p-sm-4 fs-16 fw-600">
+                            Top Selling Products
+                        </div>
+                        <div class="px-3 px-sm-4 pb-4">
+                            <ul class="list-group list-group-flush">
+                                <li class="py-3 px-0 list-group-item border-0">
+                                    <div
+                                        class="row gutters-10 align-items-center hov-scale-img hov-shadow-md overflow-hidden has-transition">
+                                        <div class="col-xl-4 col-lg-6 col-4">
+                                            <!-- Image -->
+                                            <a href="https://demo.activeitzone.com/ecommerce/product/analog-black-dial-mens-watch-32-bk-ck"
+                                                class="d-block text-reset">
+                                                <img class="img-fit lazyload h-80px h-md-150px h-lg-80px has-transition"
+                                                    src="https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg"
+                                                    data-src="https://demo.activeitzone.com/ecommerce/public/uploads/all/70TVd2OrhelP4B9bqY9SIK3TnUpCtXkSLntYP5O4.webp"
+                                                    alt="Disney Men's Mickey and Friends Button Down Shirt"
+                                                    onerror="this.onerror=null;this.src='https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg';">
+                                            </a>
+                                        </div>
+                                        <div class="col text-left">
+                                            <!-- Product name -->
+                                            <div class="d-lg-none d-xl-block mb-3">
+                                                <h4 class="fs-14 fw-400 text-truncate-2">
+                                                    <a href="https://demo.activeitzone.com/ecommerce/product/analog-black-dial-mens-watch-32-bk-ck"
+                                                        class="d-block text-reset hov-text-primary">Disney Men's Mickey
+                                                        and Friends Button Down Shirt</a>
+                                                </h4>
+                                            </div>
+                                            <div class="">
+                                                <!-- Price -->
+                                                <span class="fs-14 fw-700 text-primary">$450.000</span>
+                                                <!-- Home Price -->
+                                                <del class="fs-14 fw-700 opacity-60 ml-1 ml-lg-0 ml-xl-1">
+                                                    $600.000
+                                                </del>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="py-3 px-0 list-group-item border-0">
+                                    <div
+                                        class="row gutters-10 align-items-center hov-scale-img hov-shadow-md overflow-hidden has-transition">
+                                        <div class="col-xl-4 col-lg-6 col-4">
+                                            <!-- Image -->
+                                            <a href="https://demo.activeitzone.com/ecommerce/product/bracelet-o0ru1952-rose-gold"
+                                                class="d-block text-reset">
+                                                <img class="img-fit lazyload h-80px h-md-150px h-lg-80px has-transition"
+                                                    src="https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg"
+                                                    data-src="https://demo.activeitzone.com/ecommerce/public/uploads/all/7vRqfDlqK8EgqbFznmSfu3PP0Y1GCaAtJNEwAelo.webp"
+                                                    alt="Kate Spade New York Lady Marmalade Bracelet O0RU1952 Rose Gold"
+                                                    onerror="this.onerror=null;this.src='https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg';">
+                                            </a>
+                                        </div>
+                                        <div class="col text-left">
+                                            <!-- Product name -->
+                                            <div class="d-lg-none d-xl-block mb-3">
+                                                <h4 class="fs-14 fw-400 text-truncate-2">
+                                                    <a href="https://demo.activeitzone.com/ecommerce/product/bracelet-o0ru1952-rose-gold"
+                                                        class="d-block text-reset hov-text-primary">Kate Spade New York
+                                                        Lady Marmalade Bracelet O0RU1952 Rose Gold</a>
+                                                </h4>
+                                            </div>
+                                            <div class="">
+                                                <!-- Price -->
+                                                <span class="fs-14 fw-700 text-primary">$72.000</span>
+                                                <!-- Home Price -->
+                                                <del class="fs-14 fw-700 opacity-60 ml-1 ml-lg-0 ml-xl-1">
+                                                    $90.000
+                                                </del>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="py-3 px-0 list-group-item border-0">
+                                    <div
+                                        class="row gutters-10 align-items-center hov-scale-img hov-shadow-md overflow-hidden has-transition">
+                                        <div class="col-xl-4 col-lg-6 col-4">
+                                            <!-- Image -->
+                                            <a href="https://demo.activeitzone.com/ecommerce/product/hp-stream-14-inch-laptop-intel-celeron-n4000-4-gb-ram-64-gb-emmc-windows-10-home-in-s-mode-with-office-365-personal-gtre8"
+                                                class="d-block text-reset">
+                                                <img class="img-fit lazyload h-80px h-md-150px h-lg-80px has-transition"
+                                                    src="https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg"
+                                                    data-src="https://demo.activeitzone.com/ecommerce/public/uploads/all/4tq17O5lc0hXSnlVqnyYjbI8Fjs0v9Ppl1TtrRoi.webp"
+                                                    alt="Anivia Computer Headsets Over Ear Headphones Wired Gaming Headset with Mic for PC Mac PS4 PS5 Xbox One, Stereo Surround Sound, Purple"
+                                                    onerror="this.onerror=null;this.src='https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg';">
+                                            </a>
+                                        </div>
+                                        <div class="col text-left">
+                                            <!-- Product name -->
+                                            <div class="d-lg-none d-xl-block mb-3">
+                                                <h4 class="fs-14 fw-400 text-truncate-2">
+                                                    <a href="https://demo.activeitzone.com/ecommerce/product/hp-stream-14-inch-laptop-intel-celeron-n4000-4-gb-ram-64-gb-emmc-windows-10-home-in-s-mode-with-office-365-personal-gtre8"
+                                                        class="d-block text-reset hov-text-primary">Anivia Computer
+                                                        Headsets Over Ear Headphones Wired Gaming Headset with Mic for
+                                                        PC Mac PS4 PS5 Xbox One, Stereo Surround Sound, Purple</a>
+                                                </h4>
+                                            </div>
+                                            <div class="">
+                                                <!-- Price -->
+                                                <span class="fs-14 fw-700 text-primary">$1,222.000</span>
+                                                <!-- Home Price -->
+                                                <del class="fs-14 fw-700 opacity-60 ml-1 ml-lg-0 ml-xl-1">
+                                                    $1,300.000
+                                                </del>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="py-3 px-0 list-group-item border-0">
+                                    <div
+                                        class="row gutters-10 align-items-center hov-scale-img hov-shadow-md overflow-hidden has-transition">
+                                        <div class="col-xl-4 col-lg-6 col-4">
+                                            <!-- Image -->
+                                            <a href="https://demo.activeitzone.com/ecommerce/product/mens-machine-stainless-steel-quartz-chronograph-watch-2gns4"
+                                                class="d-block text-reset">
+                                                <img class="img-fit lazyload h-80px h-md-150px h-lg-80px has-transition"
+                                                    src="https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg"
+                                                    data-src="https://demo.activeitzone.com/ecommerce/public/uploads/all/GQTEvStCif0VCOgtjERfuvsMowSHybRWFuS7GxlE.webp"
+                                                    alt="SWAROVSKI Lifelong Heart Necklace, Earrings, and Bracelet Crystal Jewelry Collection, Rose Gold &amp; Rhodium Tone Finish"
+                                                    onerror="this.onerror=null;this.src='https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg';">
+                                            </a>
+                                        </div>
+                                        <div class="col text-left">
+                                            <!-- Product name -->
+                                            <div class="d-lg-none d-xl-block mb-3">
+                                                <h4 class="fs-14 fw-400 text-truncate-2">
+                                                    <a href="https://demo.activeitzone.com/ecommerce/product/mens-machine-stainless-steel-quartz-chronograph-watch-2gns4"
+                                                        class="d-block text-reset hov-text-primary">SWAROVSKI Lifelong
+                                                        Heart Necklace, Earrings, and Bracelet Crystal Jewelry
+                                                        Collection, Rose Gold &amp; Rhodium Tone Finish</a>
+                                                </h4>
+                                            </div>
+                                            <div class="">
+                                                <!-- Price -->
+                                                <span class="fs-14 fw-700 text-primary">$190.000</span>
+                                                <!-- Home Price -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="py-3 px-0 list-group-item border-0">
+                                    <div
+                                        class="row gutters-10 align-items-center hov-scale-img hov-shadow-md overflow-hidden has-transition">
+                                        <div class="col-xl-4 col-lg-6 col-4">
+                                            <!-- Image -->
+                                            <a href="https://demo.activeitzone.com/ecommerce/product/calvin-klein-womens-scuba-sleeveless-princess-seamed-sheath-dress-mnluo"
+                                                class="d-block text-reset">
+                                                <img class="img-fit lazyload h-80px h-md-150px h-lg-80px has-transition"
+                                                    src="https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg"
+                                                    data-src="https://demo.activeitzone.com/ecommerce/public/uploads/all/vmN7CrCxHvCDwLGzTnIBo0iDTjCI7CaxWvTqy5w2.webp"
+                                                    alt="Jessica Simpson Womens Cropped Crewneck Blouse"
+                                                    onerror="this.onerror=null;this.src='https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg';">
+                                            </a>
+                                        </div>
+                                        <div class="col text-left">
+                                            <!-- Product name -->
+                                            <div class="d-lg-none d-xl-block mb-3">
+                                                <h4 class="fs-14 fw-400 text-truncate-2">
+                                                    <a href="https://demo.activeitzone.com/ecommerce/product/calvin-klein-womens-scuba-sleeveless-princess-seamed-sheath-dress-mnluo"
+                                                        class="d-block text-reset hov-text-primary">Jessica Simpson
+                                                        Womens Cropped Crewneck Blouse</a>
+                                                </h4>
+                                            </div>
+                                            <div class="">
+                                                <!-- Price -->
+                                                <span class="fs-14 fw-700 text-primary">$145.000</span>
+                                                <!-- Home Price -->
+                                                <del class="fs-14 fw-700 opacity-60 ml-1 ml-lg-0 ml-xl-1">
+                                                    $150.000
+                                                </del>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="py-3 px-0 list-group-item border-0">
+                                    <div
+                                        class="row gutters-10 align-items-center hov-scale-img hov-shadow-md overflow-hidden has-transition">
+                                        <div class="col-xl-4 col-lg-6 col-4">
+                                            <!-- Image -->
+                                            <a href="https://demo.activeitzone.com/ecommerce/product/adobe-photoshop-cc-68450"
+                                                class="d-block text-reset">
+                                                <img class="img-fit lazyload h-80px h-md-150px h-lg-80px has-transition"
+                                                    src="https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg"
+                                                    data-src="https://demo.activeitzone.com/ecommerce/public/uploads/all/d6zJ0hqqTczvV4AgXJX3cFyu1TIFi6kNcHRh1L5I.webp"
+                                                    alt="Adobe Illustrator | Vector graphic design software | 12-month Subscription with auto-renewal, PC/Mac"
+                                                    onerror="this.onerror=null;this.src='https://demo.activeitzone.com/ecommerce/public/assets/img/placeholder.jpg';">
+                                            </a>
+                                        </div>
+                                        <div class="col text-left">
+                                            <!-- Product name -->
+                                            <div class="d-lg-none d-xl-block mb-3">
+                                                <h4 class="fs-14 fw-400 text-truncate-2">
+                                                    <a href="https://demo.activeitzone.com/ecommerce/product/adobe-photoshop-cc-68450"
+                                                        class="d-block text-reset hov-text-primary">Adobe Illustrator |
+                                                        Vector graphic design software | 12-month Subscription with
+                                                        auto-renewal, PC/Mac</a>
+                                                </h4>
+                                            </div>
+                                            <div class="">
+                                                <!-- Price -->
+                                                <span class="fs-14 fw-700 text-primary">$32.000</span>
+                                                <!-- Home Price -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div> --}}
+                </div>
 
                 </div>
             </div>
@@ -2114,6 +2186,36 @@
 @endsection
 
 @section('script')
+<script>
+    $(document).ready(function() {
+        $('#load-more').on('click', function() {
+            var productId = $(this).data('product-id');
+            var offset = $(this).data('offset');
+
+            $.ajax({
+                url: "{{ route('comments.loadMore') }}",
+                type: "GET",
+                data: {
+                    productId: productId,
+                    offset: offset
+                },
+                cache: false,
+                dataType: 'JSON',
+                success: function(dataResult) {
+                    $('.comment-style').last().after(dataResult.html);
+                    $('#load-more').data('offset', dataResult.lastId);
+                    // Hide button if no more comments
+                    if(dataResult.lastId == null){
+                        $('#load-more').hide();
+                    }
+                },
+                error: function() {
+                    alert('Error loading messages.');
+                }
+            })
+        });
+    });
+</script>
     <script type="text/javascript">
         $(document).ready(function() {
             getVariantPrice();
@@ -2648,6 +2750,7 @@
 
         // });
     </script>
+    
 
 <script>
     // Get the modal
@@ -2676,5 +2779,7 @@
         }
     }
 </script>
+
+
 
 @endsection
