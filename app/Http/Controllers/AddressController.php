@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Address;
+use App\Models\Area;
 use App\Models\City;
+use App\Models\Emirate;
 use App\Models\State;
 use Auth;
 
@@ -36,25 +38,65 @@ class AddressController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
+    // public function store(Request $request)
+    // {
+    //     $address = new Address;
+    //     if ($request->has('customer_id')) {
+    //         $address->user_id   = $request->customer_id;
+    //     } else {
+    //         $address->user_id   = Auth::user()->id;
+    //     }
+    //     $address->address       = $request->address;
+    //     $address->country_id    = $request->country_id;
+    //     $address->state_id      = $request->state_id;
+    //     $address->city_id       = $request->city_id;
+    //     $address->longitude     = $request->longitude;
+    //     $address->latitude      = $request->latitude;
+    //     $address->postal_code   = $request->postal_code;
+    //     $address->phone         = $request->phone;
+    //     $address->save();
+
+    //     flash(translate('Address info Stored successfully'))->success();
+    //     return back();
+    // }
     public function store(Request $request)
     {
+        // Validate the incoming request data
+        $request->validate([
+            'full_name'        => 'required|string|max:255',
+            'phone'    => 'required|string',
+            'country'       => 'required|exists:countries,id',
+            'address'      => 'required|string|max:255',
+            'building_name'    => 'required|string|max:255',
+            'state'          => 'required|exists:states,id',
+            'area_id'             => 'nullable|string|max:255',
+            'landmark'         => 'nullable|string|max:255',
+            'address_type'     => 'nullable|string|in:home,work,site,other',
+            'delivery_instructions' => 'nullable|string|max:500',
+        ]);
+
+        // Create a new Address instance
         $address = new Address;
-        if ($request->has('customer_id')) {
-            $address->user_id   = $request->customer_id;
-        } else {
-            $address->user_id   = Auth::user()->id;
-        }
-        $address->address       = $request->address;
-        $address->country_id    = $request->country_id;
-        $address->state_id      = $request->state_id;
-        $address->city_id       = $request->city_id;
-        $address->longitude     = $request->longitude;
-        $address->latitude      = $request->latitude;
-        $address->postal_code   = $request->postal_code;
-        $address->phone         = $request->phone;
+
+        // Assign values to the Address model fields
+        $address->user_id             =  Auth::user()->id;
+        $address->full_name           = $request->full_name;
+        $address->phone               = $request->phone;
+        $address->country_id          = $request->country;
+        $address->address         = $request->address;
+        $address->building_name       = $request->building_name;
+         $address->state_id      = $request->state;
+        $address->city_id       = $request->area_id;
+        $address->landmark            = $request->landmark;
+        $address->address_type        = $request->address_type;
+        $address->delivery_instructions = $request->delivery_instructions;
+
+        // Save the Address model
         $address->save();
 
-        flash(translate('Address info Stored successfully'))->success();
+        // Flash success message
+        flash(translate('Address info stored successfully'))->success();
         return back();
     }
 
@@ -78,8 +120,10 @@ class AddressController extends Controller
     public function edit($id)
     {
         $data['address_data'] = Address::findOrFail($id);
-        $data['states'] = State::where('status', 1)->where('country_id', $data['address_data']->country_id)->get();
-        $data['cities'] = City::where('status', 1)->where('state_id', $data['address_data']->state_id)->get();
+        // $data['states'] = State::where('status', 1)->where('country_id', $data['address_data']->country_id)->get();
+        // $data['cities'] = City::where('status', 1)->where('state_id', $data['address_data']->state_id)->get();
+        $data['states'] = Emirate::all();
+        $data['cities'] = Area::where('emirate_id', $data['address_data']->state_id)->get();
 
         $returnHTML = view('frontend.'.get_setting('homepage_select').'.partials.address_edit_modal', $data)->render();
         return response()->json(array('data' => $data, 'html' => $returnHTML));
@@ -93,24 +137,65 @@ class AddressController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+    // public function update(Request $request, $id)
+    // {
+    //     $address = Address::findOrFail($id);
+
+    //     $address->address       = $request->address;
+    //     $address->country_id    = $request->country_id;
+    //     $address->state_id      = $request->state_id;
+    //     $address->city_id       = $request->city_id;
+    //     $address->longitude     = $request->longitude;
+    //     $address->latitude      = $request->latitude;
+    //     $address->postal_code   = $request->postal_code;
+    //     $address->phone         = $request->phone;
+
+    //     $address->save();
+
+    //     flash(translate('Address info updated successfully'))->success();
+    //     return back();
+    // }
+
     public function update(Request $request, $id)
-    {
-        $address = Address::findOrFail($id);
+{
+    // Retrieve the address by ID
+    $address = Address::findOrFail($id);
 
-        $address->address       = $request->address;
-        $address->country_id    = $request->country_id;
-        $address->state_id      = $request->state_id;
-        $address->city_id       = $request->city_id;
-        $address->longitude     = $request->longitude;
-        $address->latitude      = $request->latitude;
-        $address->postal_code   = $request->postal_code;
-        $address->phone         = $request->phone;
+    // Validate the incoming request data
+    $validatedData = $request->validate([
+        'full_name'        => 'required|string|max:255',
+        'phone'    => 'required|string',
+        'country' => 'required|exists:countries,id',
+        'state' => 'required|exists:states,id',
+        'area_id' => 'nullable|exists:cities,id',
+        'address' => 'required|string|max:255',
+        'building_name' => 'required|string|max:255',
+        'landmark' => 'nullable|string|max:255',
+        'address_type' => 'nullable|in:home,work,site,other',
+        'delivery_instructions' => 'nullable|string|max:500',
+    ]);
 
+    // Update the address data
+    // $address->update($validatedData);
+        $address->full_name           = $request->full_name;
+        $address->phone               = $request->phone;
+        $address->country_id          = $request->country;
+        $address->address         = $request->address;
+        $address->building_name       = $request->building_name;
+         $address->state_id      = $request->state;
+        $address->city_id       = $request->area_id;
+        $address->landmark            = $request->landmark;
+        $address->address_type        = $request->address_type;
+        $address->delivery_instructions = $request->delivery_instructions;
+
+        // Save the Address model
         $address->save();
 
-        flash(translate('Address info updated successfully'))->success();
-        return back();
-    }
+    flash(translate('Address info updated successfully'))->success();
+    return back();
+}
+
 
     /**
      * Remove the specified resource from storage.
