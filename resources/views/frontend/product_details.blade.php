@@ -1,4 +1,14 @@
 @extends('frontend.layouts.app')
+
+<style>
+    /* This will apply a style to the label when its associated input is checked */
+.attribute_value input[type="radio"]:checked + .aiz-megabox-elem {
+    border: 1px solid #D42D2A; /* Change the border color or any other style */
+
+}
+
+</style>
+
 {{--
 @section('meta_title'){{ $detailedProduct->meta_title }}@stop
 
@@ -1136,7 +1146,7 @@
                                                                             </clipPath>
                                                                             </defs>
                                                                             </svg>
-                
+
                                                                         <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">3D Studio MAX</span>
                                                                     </center>
                                                                 </div>
@@ -1310,7 +1320,7 @@
                                                 </div>
                                             @endif
                                         @endif
-                                        
+
                                     </div>
                                 </div>
                             <div>
@@ -1392,8 +1402,8 @@
                                             {{App\Models\Review::where('product_id', $previewData['detailedProduct']['product_id'])->where('status', 1)->count() }}
                                                 Total Reviews
                                         </div>
-                                            
-                                            @php 
+
+                                            @php
                                                 $comments = App\Models\Review::where('product_id', $previewData['detailedProduct']['product_id'])->where('status', 1)->take(3)->get();
                                             @endphp
                                             @if(count($comments) > 0)
@@ -1456,7 +1466,7 @@
                                                     </div>
                                                 </div>
                                             </div> --}}
-                                        
+
                                         <!-- end comments -->
                                         @if(count($comments) > 2)
                                             <div class="col-12 py-3">
@@ -2420,8 +2430,8 @@
                 });
             });
 
-    // Function to gather checked attributes and values and send them via AJAX
-    function sendCheckedAttributes($currentRadio) {
+     // Function to gather checked attributes and values and send them via AJAX
+     function sendCheckedAttributes($currentRadio) {
                 var checkedAttributes = {};
                 $('.attribute_value input[type=radio]:checked').each(function () {
                     var attributeId = $(this).attr('attributeId');
@@ -2441,12 +2451,13 @@
 
                     if (response.anyMatched == false) {
 
+
                         // Uncheck radio buttons for the current attribute
                         // $('.attribute_value input[type=radio]').filter(':checked').prop('checked', false);
                         $('.attribute_value input[type=radio]').not($currentRadio).prop('checked', false);
 
                         $('label.attribute_value').each(function() {
-                            $(this).find('span').css('border-bottom-color', '');
+                            $(this).find('span').css('color', 'black');
                         });
                         sendCheckedAttributes($currentRadio) ;
 
@@ -2662,7 +2673,7 @@
                         // Iterate over each available attribute
                         for (var attributeId in response.availableAttributes) {
                             if (response.availableAttributes.hasOwnProperty(attributeId)) {
-                                var availableValues = response.availableAttributes[attributeId];
+                                var availableValues = response.availableAttributes[attributeId][0];
                                 console.log(availableValues );
                                 // Iterate over each radio button for this attribute
                                 $('.attribute_value input[type=radio][attributeId="' + attributeId + '"]').each(function () {
@@ -2673,11 +2684,11 @@
                                     if (availableValues.indexOf(radioValue) === -1) {
                                         // If not in available values, disable the radio button
                                         // $(this).prop('disabled', true);
-                                        label.find('span').css('border-bottom-color', 'red'); // Change to the desired color
+                                        label.find('span').css('color', 'red'); // Change to the desired color
                                     } else {
                                         // Otherwise, enable the radio button
                                         // $(this).prop('disabled', false);
-                                        label.find('span').css('border-bottom-color', 'green'); // Change to the desired color
+                                        label.find('span').css('color', 'mediumseagreen'); // Change to the desired color
 
                                     }
                                 });

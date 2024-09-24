@@ -90,10 +90,10 @@
                                                             <span class="fs-14 text-secondary col-3">{{ translate('Address') }}</span>
                                                             <span class="fs-14 text-dark fw-500 ml-2 col">{{ $address->address }}</span>
                                                         </div>
-                                                        <div class="row">
+                                                        {{-- <div class="row">
                                                             <span class="fs-14 text-secondary col-3">{{ translate('Postal Code') }}</span>
                                                             <span class="fs-14 text-dark fw-500 ml-2 col">{{ $address->postal_code }}</span>
-                                                        </div>
+                                                        </div> --}}
                                                         <div class="row">
                                                             <span class="fs-14 text-secondary col-3">{{ translate('City') }}</span>
                                                             <span class="fs-14 text-dark fw-500 ml-2 col">{{ optional($address->city)->name }}</span>
@@ -121,7 +121,7 @@
                                     </div>
                                 </div>
                                 @endforeach
-                                
+
                                 <input type="hidden" name="checkout_type" value="logged">
                                 <!-- Add New Address -->
                                 <div class="mb-5" >
