@@ -31,6 +31,7 @@ use App\Mail\WaitlistApplication;
 use App\Models\PricingConfiguration;
 use App\Models\ProductAttributeValues;
 use App\Models\UploadProducts;
+use App\Models\Review;
 use App\Models\Unity;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
@@ -533,11 +534,12 @@ class HomeController extends Controller
                         $variations[$children_id]['storedFilePaths'] = UploadProducts::where('id_product', $children_id)->where('type', 'images')->pluck('path')->toArray();
                     }
                     if (count($storedFilePaths) > 0) {
-                        // If you want to merge main photo paths with variation photo paths
-                        $variations[$children_id]['storedFilePaths'] = array_merge(
-                            $variations[$children_id]['storedFilePaths'],
-                            $storedFilePaths
-                         );
+                        if(isset( $variations[$children_id]['storedFilePaths'] ))
+                            // If you want to merge main photo paths with variation photo paths
+                            $variations[$children_id]['storedFilePaths'] = array_merge(
+                                $variations[$children_id]['storedFilePaths'],
+                                $storedFilePaths
+                            );
                          }
 
                 }
@@ -749,6 +751,33 @@ class HomeController extends Controller
                             $totalDiscount=$pricing['from'][0]*$discountedPrice;
                         }
                 }
+
+                // Get all reviews for the specified product
+                $reviews = Review::where('product_id', $parent->id)->where('status', 1)->get();
+
+                // Total number of reviews
+                $totalReviews = $reviews->count();
+
+                // Initialize rating counts
+                $ratingCounts = array_fill(0, 6, 0); // Index 0-5
+
+                // Count each rating
+                foreach ($reviews as $review) {
+                    $ratingCounts[$review->rating]++;
+                }
+
+                // Calculate percentage
+                $ratingPercentages = [];
+                for ($i = 0; $i <= 5; $i++) {
+                    $percentage = $totalReviews > 0 ? ($ratingCounts[$i] / $totalReviews) * 100 : 0;
+                    $ratingPercentages[$i] = [
+                        'rating' => $i,
+                        'percentage' => round($percentage, 2), // Round to 2 decimal places
+                        'count' => $ratingCounts[$i]
+                    ];
+                }
+
+
             $detailedProduct = [
                     'name' => $name,
                     'brand' => $brand ? $brand->name : "",
@@ -782,6 +811,12 @@ class HomeController extends Controller
                     'discount_amount'=> $pricing['discount_amount'],
                     'percent'=> $percent ?? null,
                     'product_id' => $parent->id ?? null ,
+                    'sku'=>$parent->sku ?? null ,
+                    'tags'=>$parent->tags ?? null ,
+                    'category' => optional(Category::find($parent->category_id))->name,
+                    'documents' => UploadProducts::where('id_product', $parent->id)->where('type', 'documents')->get(),
+                    'ratingPercentages' => $ratingPercentages
+
 
                 ];
 
@@ -792,6 +827,106 @@ class HomeController extends Controller
         }
         abort(404);
 
+    }
+
+    public function loadMore(Request $request)
+    {
+        $comments = Review::where('product_id', $request->productId)
+                    ->where('id', '>', $request->offset)
+                    ->take(3)
+                    ->get();
+        
+        $html = '';
+        
+        if(count($comments) > 0){
+            
+            foreach ($comments as $key => $comment) {
+                if($comment->user->avatar_original != null){
+                    $avatar = uploaded_asset($comment->user->avatar_original);
+                }else{
+                    $avatar = static_asset('assets/img/avatar-place.png');
+                }
+
+                $rating = $this->renderStarRatingController($comment->rating);
+
+                $time = \Carbon\Carbon::parse($comment->created_at)->format('M d, Y H:i');
+                    
+                $html .=  '<div class="col-12 fs-20 font-prompt-md py-4 px-1 comment-style">
+                                                        <div class="comment-img-porter p-0 float-left">
+                                                            <img src="'.$avatar.'" alt="avatar" class="comment-img">
+                                                        </div>
+                                                        <div class="col-lg-11 col-md-10 col-9 p-0 float-left">
+                                                            <div class="col-12 float-left p-0">
+                                                                <div class="col-6 float-left p-0">
+                                                                    <span class="col-12 float-left fs-16 font-prompt-md comment-name text-left">'.$comment->name.' </span>
+                                                                    <span class="col-12 float-left fs-14 font-prompt comment-date text-left">'.$time.'</span>
+                                                                </div>
+                                                                <div class="col-6 float-right p-0">
+                                                                    <div class="rating rating-mr-1 rating-var text-right">
+                                                                    '.$rating.'
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-12 float-left fs-16 font-prompt comment-content">
+                                                                '.$comment->comment .'
+                                                            </div>
+                                                        </div>
+                                                    </div>';
+            }
+        }
+
+        // Check if messages were found
+        $lastId = $comments->isNotEmpty() ? $comments->last()->id : null;
+        
+        return response()->json([
+            'html' => $html,
+            'lastId' => $lastId,
+        ]);
+    }
+
+    function renderStarRatingController($rating, $maxRating = 5)
+    {
+     /*   $fullStar = "<i class = 'las la-star active'></i>";
+        $halfStar = "<i class = 'las la-star half'></i>";
+        $emptyStar = "<i class = 'las la-star'></i>";
+        $rating = $rating <= $maxRating ? $rating : $maxRating;
+
+        $fullStarCount = (int)$rating;
+        $halfStarCount = ceil($rating) - $fullStarCount;
+        $emptyStarCount = $maxRating - $fullStarCount - $halfStarCount;
+
+        $html = str_repeat($fullStar, $fullStarCount);
+        $html .= str_repeat($halfStar, $halfStarCount);
+        $html .= str_repeat($emptyStar, $emptyStarCount);
+        echo $html;*/
+
+        $fullStar = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="24" height="24" fill="white"/>
+                    <path d="M5.73998 16C5.84998 15.51 5.64998 14.81 5.29998 14.46L2.86998 12.03C2.10998 11.27 1.80998 10.46 2.02998 9.76C2.25998 9.06 2.96998 8.58 4.02998 8.4L7.14998 7.88C7.59998 7.8 8.14998 7.4 8.35998 6.99L10.08 3.54C10.58 2.55 11.26 2 12 2C12.74 2 13.42 2.55 13.92 3.54L15.64 6.99C15.77 7.25 16.04 7.5 16.33 7.67L5.55998 18.44C5.41998 18.58 5.17998 18.45 5.21998 18.25L5.73998 16Z" fill="#FFC700"/>
+                    <path d="M18.7 14.4599C18.34 14.8199 18.14 15.5099 18.26 15.9999L18.95 19.0099C19.24 20.2599 19.06 21.1999 18.44 21.6499C18.19 21.8299 17.89 21.9199 17.54 21.9199C17.03 21.9199 16.43 21.7299 15.77 21.3399L12.84 19.5999C12.38 19.3299 11.62 19.3299 11.16 19.5999L8.23005 21.3399C7.12005 21.9899 6.17005 22.0999 5.56005 21.6499C5.33005 21.4799 5.16005 21.2499 5.05005 20.9499L17.21 8.7899C17.67 8.3299 18.32 8.1199 18.95 8.2299L19.96 8.3999C21.02 8.5799 21.73 9.0599 21.96 9.7599C22.18 10.4599 21.88 11.2699 21.12 12.0299L18.7 14.4599Z" fill="#FFC700"/>
+                    </svg>
+                    ';
+        $halfStar = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path opacity="0.4" d="M5.73986 16C5.84986 15.51 5.64986 14.81 5.29986 14.46L2.86986 12.03C2.10986 11.27 1.80986 10.46 2.02986 9.76C2.25986 9.06 2.96986 8.58 4.02986 8.4L7.14986 7.88C7.59986 7.8 8.14986 7.4 8.35986 6.99L10.0799 3.54C10.5799 2.55 11.2599 2 11.9999 2C12.7399 2 13.4199 2.55 13.9199 3.54L15.6399 6.99C15.7699 7.25 16.0399 7.5 16.3299 7.67L5.55986 18.44C5.41986 18.58 5.17986 18.45 5.21986 18.25L5.73986 16Z" fill="#FFC700"/>
+                    <path d="M18.6998 14.4599C18.3398 14.8199 18.1398 15.5099 18.2598 15.9999L18.9498 19.0099C19.2398 20.2599 19.0598 21.1999 18.4398 21.6499C18.1898 21.8299 17.8898 21.9199 17.5398 21.9199C17.0298 21.9199 16.4298 21.7299 15.7698 21.3399L12.8398 19.5999C12.3798 19.3299 11.6198 19.3299 11.1598 19.5999L8.2298 21.3399C7.1198 21.9899 6.1698 22.0999 5.5598 21.6499C5.3298 21.4799 5.1598 21.2499 5.0498 20.9499L17.2098 8.7899C17.6698 8.3299 18.3198 8.1199 18.9498 8.2299L19.9598 8.3999C21.0198 8.5799 21.7298 9.0599 21.9598 9.7599C22.1798 10.4599 21.8798 11.2699 21.1198 12.0299L18.6998 14.4599Z" fill="#FFC700"/>
+                    </svg>
+                    ';
+        $emptyStar = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="24" height="24" fill="white"/>
+                    <path d="M5.73998 16C5.84998 15.51 5.64998 14.81 5.29998 14.46L2.86998 12.03C2.10998 11.27 1.80998 10.46 2.02998 9.76C2.25998 9.06 2.96998 8.58 4.02998 8.4L7.14998 7.88C7.59998 7.8 8.14998 7.4 8.35998 6.99L10.08 3.54C10.58 2.55 11.26 2 12 2C12.74 2 13.42 2.55 13.92 3.54L15.64 6.99C15.77 7.25 16.04 7.5 16.33 7.67L5.55998 18.44C5.41998 18.58 5.17998 18.45 5.21998 18.25L5.73998 16Z" fill="#CFCFCF"/>
+                    <path d="M18.7 14.4599C18.34 14.8199 18.14 15.5099 18.26 15.9999L18.95 19.0099C19.24 20.2599 19.06 21.1999 18.44 21.6499C18.19 21.8299 17.89 21.9199 17.54 21.9199C17.03 21.9199 16.43 21.7299 15.77 21.3399L12.84 19.5999C12.38 19.3299 11.62 19.3299 11.16 19.5999L8.23005 21.3399C7.12005 21.9899 6.17005 22.0999 5.56005 21.6499C5.33005 21.4799 5.16005 21.2499 5.05005 20.9499L17.21 8.7899C17.67 8.3299 18.32 8.1199 18.95 8.2299L19.96 8.3999C21.02 8.5799 21.73 9.0599 21.96 9.7599C22.18 10.4599 21.88 11.2699 21.12 12.0299L18.7 14.4599Z" fill="#CFCFCF"/>
+                    </svg>
+                    ';
+        $rating = $rating <= $maxRating ? $rating : $maxRating;
+
+        $fullStarCount = (int)$rating;
+        $halfStarCount = ceil($rating) - $fullStarCount;
+        $emptyStarCount = $maxRating - $fullStarCount - $halfStarCount;
+
+        $html = str_repeat($fullStar, $fullStarCount);
+        $html .= str_repeat($halfStar, $halfStarCount);
+        $html .= str_repeat($emptyStar, $emptyStarCount);
+        return $html;
     }
 
     public function shop($slug)
@@ -1282,7 +1417,7 @@ class HomeController extends Controller
         $info = $request->info;
         $subscribeNewsletter = $request->has('subscribeNewsletter') ? "yes" : "no";
 
-        
+
         $waitlistData = [
             'name' => $request->name,
             'email' => $request->email,
