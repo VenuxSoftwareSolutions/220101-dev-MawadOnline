@@ -10539,6 +10539,19 @@ ul.apps i {
 ul.apps a:hover i{
     color: #171727;
 }
+
+.aiz-cookie-alert {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    max-width: 300px;
+    z-index: 1070;
+    display: none;
+}
+.aiz-cookie-alert.show {
+    display: block;
+}
 /*
 .aiz-cookie-alert {
     position: fixed;
@@ -10549,7 +10562,7 @@ ul.apps a:hover i{
     z-index: 1070;
     display: none;
 }*/
-.aiz-cookie-alert {
+/*.aiz-cookie-alert {
     position: fixed;
     bottom: 0;
   width: 100%;
@@ -10560,7 +10573,7 @@ ul.apps a:hover i{
 }
 .aiz-cookie-alert.show {
     display: block;
-}
+}*/
 .cookie-in-style{
     min-height: 260px;
     padding-bottom: 10px;

@@ -1300,28 +1300,32 @@
                             </div>
                         </div>
                         <!-- ----------------- -->
-                        <div class="py-2 float-left">
+                        <div class="p-0 py-2 col-12 float-left">
                             <div class="download-title fs-20 font-prompt-md text-left col-md-12">Videos</div>
                             <div class="col-12 float-left my-2">
                                 <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
                                     <div class="video-img">
-                                        @if(isset($previewData['detailedProduct']['video_provider']) && $previewData['detailedProduct']['video_provider'] == "youtube")
-                                            @if($previewData['detailedProduct']['getYoutubeVideoId'] != "")
-                                                <img class="col-12 p-0 h-100" data-toggle="modal" data-target="#videoModal" src="https://images.squarespace-cdn.com/content/v1/5ba5e044b10f25cb908c506f/1612465370111-8X2AQHP6F8YNW25WGWVQ/Screen%2BShot%2B2021-02-04%2Bat%2B11.00.17%2BAM.jpg">
+                                        @if(isset($previewData['detailedProduct']['video_provider']))
+                                            {{-- YouTube Video Thumbnail --}}
+                                            @if($previewData['detailedProduct']['video_provider'] == "youtube" && $previewData['detailedProduct']['getYoutubeVideoId'] != "")
+                                                <img class="col-12 p-0" data-toggle="modal" data-target="#videoModal"
+                                                     src="https://img.youtube.com/vi/{{ $previewData['detailedProduct']['getYoutubeVideoId'] }}/hqdefault.jpg">
                                                 <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-start px-3 py-2">
-                                                    <span class="download-box-btm-l">View </span>
+                                                    <span class="download-box-btm-l">View</span>
                                                 </div>
-                                            @endif
-                                        @elseif(isset($previewData['detailedProduct']['video_provider']) && $previewData['detailedProduct']['video_provider'] == "vimeo")
-                                            @if($previewData['detailedProduct']['getVimeoVideoId'] != "")
-                                                <img class="col-12 p-0 h-100" data-toggle="modal" data-target="#videoModal" src="https://images.squarespace-cdn.com/content/v1/5ba5e044b10f25cb908c506f/1612465370111-8X2AQHP6F8YNW25WGWVQ/Screen%2BShot%2B2021-02-04%2Bat%2B11.00.17%2BAM.jpg">
+
+                                            {{-- Vimeo Video Placeholder --}}
+                                            @elseif($previewData['detailedProduct']['video_provider'] == "vimeo" )
+                                                <img class="col-12 p-0" data-toggle="modal" data-target="#videoModal"
+                                                     src="https://via.placeholder.com/640x360.png?text=Vimeo+Video">
                                                 <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-start px-3 py-2">
-                                                    <span class="download-box-btm-l">View </span>
+                                                    <span class="download-box-btm-l">View</span>
                                                 </div>
                                             @endif
                                         @endif
-
                                     </div>
+
+
                                 </div>
                             <div>
                         </div>

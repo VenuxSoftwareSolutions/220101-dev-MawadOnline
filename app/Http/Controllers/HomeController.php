@@ -404,6 +404,13 @@ class HomeController extends Controller
                 $description = $parent->description;
             }
 
+            $short_description = '';
+            if($revision_parent_description != null && $parent->last_version == 1){
+                $short_description = $revision_parent_description->old_value;
+            }else{
+                $short_description = $parent->short_description;
+            }
+
             $revision_parent_unit = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'unit')->latest()->first();
             $unit = '';
             if($revision_parent_unit != null && $parent->last_version == 1){
@@ -783,6 +790,7 @@ class HomeController extends Controller
                     'brand' => $brand ? $brand->name : "",
                     'unit' => $unit,
                     'description' => $description,
+                    'short_description' => $short_description,
                     'main_photos' => $lastItem['storedFilePaths'] ?? $storedFilePaths, // Add stored file paths to the detailed product data
                     'quantity' => $lastItem['variant_pricing-from']['from'][0] ?? $pricing['from'][0] ?? '',
                     'price' => $lastItem['variant_pricing-from']['unit_price'][0] ?? $pricing['unit_price'][0] ?? '',
@@ -835,11 +843,11 @@ class HomeController extends Controller
                     ->where('id', '>', $request->offset)
                     ->take(3)
                     ->get();
-        
+
         $html = '';
-        
+
         if(count($comments) > 0){
-            
+
             foreach ($comments as $key => $comment) {
                 if($comment->user->avatar_original != null){
                     $avatar = uploaded_asset($comment->user->avatar_original);
@@ -850,7 +858,7 @@ class HomeController extends Controller
                 $rating = $this->renderStarRatingController($comment->rating);
 
                 $time = \Carbon\Carbon::parse($comment->created_at)->format('M d, Y H:i');
-                    
+
                 $html .=  '<div class="col-12 fs-20 font-prompt-md py-4 px-1 comment-style">
                                                         <div class="comment-img-porter p-0 float-left">
                                                             <img src="'.$avatar.'" alt="avatar" class="comment-img">
@@ -877,7 +885,7 @@ class HomeController extends Controller
 
         // Check if messages were found
         $lastId = $comments->isNotEmpty() ? $comments->last()->id : null;
-        
+
         return response()->json([
             'html' => $html,
             'lastId' => $lastId,

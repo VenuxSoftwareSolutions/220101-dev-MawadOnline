@@ -23,7 +23,7 @@
     </div>
     <!-- Short Description -->
     <div class="row col-md-12 fs-13 font-prompt">
-        {!! $previewData['detailedProduct']['description'] !!}
+        {!! $previewData['detailedProduct']['short_description'] !!}
     </div>
     <!-- Price -->
     <div class="row no-gutters mb-2">
