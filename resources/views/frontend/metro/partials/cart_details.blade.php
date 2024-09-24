@@ -8,6 +8,7 @@
                         <div class="row gutters-5 d-none d-lg-flex border-bottom mb-3 pb-3 text-secondary fs-12">
                             <div class="col col-md-1 fw-600">{{ translate('Qty')}}</div>
                             <div class="col-md-5 fw-600">{{ translate('Product')}}</div>
+                            <div class="col fw-600">{{ translate('Stock Status')}}</div>
                             <div class="col fw-600">{{ translate('Price')}}</div>
                             <div class="col fw-600">{{ translate('Tax')}}</div>
                             <div class="col fw-600">{{ translate('Total')}}</div>
@@ -21,13 +22,29 @@
                             @foreach ($carts as $key => $cartItem)
                                 @php
                                     $product = get_single_product($cartItem['product_id']);
-                                    $product_stock = $product->stocks->where('variant', $cartItem['variation'])->first();
+
+                                    // $product_stock = $product->stocks->where('variant', $cartItem['variation'])->first();
+                                    $product_stock = App\Models\StockSummary::where('variant_id', $cartItem['product_id'])->sum('current_total_quantity');
+
                                     // $total = $total + ($cartItem['price']  + $cartItem['tax']) * $cartItem['quantity'];
                                     $total = $total + cart_product_price($cartItem, $product, false) * $cartItem['quantity'];
                                     $product_name_with_choice = $product->getTranslation('name');
+                                    $stockStatus = 'In Stock';
+                                    $stockAlert = '';
+                                    $outOfStockItems = [] ;
                                     if ($cartItem['variation'] != null) {
+
                                         $product_name_with_choice = $product->getTranslation('name').' - '.$cartItem['variation'];
                                     }
+                                // Check stock status
+
+                                    if ($product_stock<= 0) {
+                                        $stockStatus = 'Out of Stock';
+                                        $outOfStockItems[] = $cartItem['id']; // Collect out-of-stock items
+                                    } elseif ($product_stock<= 5) { // Example threshold for low stock
+                                        $stockAlert = 'Running Low';
+                                    }
+
                                 @endphp
                                 <li class="list-group-item px-0">
                                     <div class="row gutters-5 align-items-center">
@@ -44,8 +61,8 @@
                                                     <input type="number" name="quantity[{{ $cartItem['id'] }}]"
                                                         class="col border-0 text-left px-0 flex-grow-1 fs-14 input-number"
                                                         placeholder="1" value="{{ $cartItem['quantity'] }}"
-                                                        {{-- min="{{ $product->min_qty }}" --}}
-                                                        {{-- max="{{ $product_stock->qty }}" --}}
+                                                        min="{{$product->minMaxQuantity()['minFrom']}}"
+                                                        max="{{$product->minMaxQuantity()['maxTo']}}"
                                                         onchange="updateQuantity({{ $cartItem['id'] }}, this)" style="padding-left:0.75rem !important;">
                                                     <button
                                                         class="btn col-auto btn-icon btn-sm btn-circle btn-light"
@@ -67,6 +84,14 @@
                                                     onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
                                             </span>
                                             <span class="fs-14">{{ $product_name_with_choice }}</span>
+                                        </div>
+                                        <!-- Stock Status -->
+                                        <div class="col-md col-4 order-2 order-md-0 my-3 my-md-0">
+                                            <span class="opacity-60 fs-12 d-block d-md-none">{{ translate('Stock Status')}}</span>
+                                            <span class="fw-700 fs-14 {{ $stockStatus == 'Out of Stock' ? 'text-danger' : 'text-success' }}">{{ $stockStatus }}</span>
+                                            @if($stockAlert)
+                                                <span class="badge badge-warning">{{ $stockAlert }}</span>
+                                            @endif
                                         </div>
                                         <!-- Price -->
                                         <div class="col-md col-4 order-2 order-md-0 my-3 my-md-0">
@@ -93,6 +118,12 @@
                                 </li>
                             @endforeach
                         </ul>
+                    <!-- Notification for Out of Stock Items Moved to Wishlist -->
+                        @if(count($outOfStockItems) > 0)
+                        <div class="alert alert-warning mt-3">
+                            {{ translate('Some products were out of stock and have been moved to your Wishlist.') }}
+                        </div>
+                    @endif
                     </div>
 
                     <!-- Subtotal -->
