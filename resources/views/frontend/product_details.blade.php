@@ -1414,11 +1414,7 @@
                                                                 </div>
                                                                 <div class="col-6 float-right p-0">
                                                                     <div class="rating rating-mr-1 rating-var text-right">
-                                                                    @if($totalRating > 0)
-                                                                        {{ renderStarRating($detailedProduct->reviews->sum('rating') / $totalRating) }}
-                                                                    @else
-                                                                        {{ renderStarRating(0) }}
-                                                                    @endif
+                                                                        {{ renderStarRating($comment->rating) }}
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -1471,6 +1467,24 @@
                                         <div class="review-title fs-20 font-prompt-md text-left col-md-12">Submit Your Review</div>
                                         <div class="review-subtitle fs-16 font-prompt-md text-left col-md-12">Your email address will not be published.</div>
                                         <div class="col-12">
+                                            @if ($errors->any())
+                                                <div class="alert alert-danger">
+                                                    <ul>
+                                                        @foreach ($errors->all() as $error)
+                                                            <li>{{ $error }}</li>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                            @endif
+                                            @if(session('errors'))
+                                                <div class="alert alert-danger">
+                                                    <ul>
+                                                        @foreach(session('errors') as $error)
+                                                            <li>{{ $error }}</li>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                            @endif
                                             <form method="POST" action="{{ route('reviews.store') }}">
                                                 @csrf
                                                 <input type="hidden" name="product_id" value="{{ $previewData['detailedProduct']['product_id'] }}">
@@ -1503,7 +1517,7 @@
                                                     <textarea class="form-control text-a-review-f fs-16 mt-3" id="exampleFormControlTextarea3" placeholder="Write your review here" name="comment" rows="5"></textarea>
                                                 </div>
                                                 <div class="form-group m-0">
-                                                    <input type="text" class="form-control text-input-review-f fs-16 mt-2" placeholder="Name" aria-label="name" name="name" aria-describedby="basic-addon1">
+                                                    <input type="text" class="form-control text-input-review-f fs-16 mt-2" placeholder="Name" @if(Auth::check()) value="{{ Auth::user()->name }}" @endif aria-label="name" name="name" aria-describedby="basic-addon1">
                                                 </div>
                                                 @if(Auth::check())
                                                     <button class="btn-review-f fs-16 mt-2 font-prompt py-2 col-6 col-md-3 col-lg-2">Submit Review</button>
