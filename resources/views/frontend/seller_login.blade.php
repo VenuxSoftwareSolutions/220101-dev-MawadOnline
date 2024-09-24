@@ -29,7 +29,7 @@
                                     </span>
                                 @endif
                             </div>
-                                
+
                             <!-- password -->
                             <div class="form-group">
                                 <label for="password" class="fs-12 fw-500 text-secondary">{{  translate('Password') }}</label>

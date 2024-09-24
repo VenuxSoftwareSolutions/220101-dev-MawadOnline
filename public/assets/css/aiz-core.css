@@ -13146,3 +13146,26 @@ border:none !important;
     position: relative;
     top: 7px;
 }
+.btn-login-vendor{
+    background:#A2B8C6 ;
+    color: #ffffff;
+}
+.btn-login-vendor:hover{
+    background: #A2B8C6;
+}
+.btn-regiter-vendor{
+    color: #A2B8C6;
+}
+.btn-regiter-vendor:hover{
+    color: #A2B8C6;
+}
+.text-vendor{
+    color: #A2B8C6;
+}
+.text-vendor:hover{
+    color: #A2B8C6;
+}
+.hov-text-vendor{
+    color: #A2B8C6;
+}
+
