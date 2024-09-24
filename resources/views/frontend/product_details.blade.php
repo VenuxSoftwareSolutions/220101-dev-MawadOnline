@@ -1295,11 +1295,22 @@
                             <div class="col-12 float-left my-2">
                                 <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
                                     <div class="video-img">
-                                        <img class="col-12 p-0 h-100" data-toggle="modal" data-target="#videoModal" src="https://images.squarespace-cdn.com/content/v1/5ba5e044b10f25cb908c506f/1612465370111-8X2AQHP6F8YNW25WGWVQ/Screen%2BShot%2B2021-02-04%2Bat%2B11.00.17%2BAM.jpg">
-                                    </div>
-                                    
-                                    <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-start px-3 py-2">
-                                        <span class="download-box-btm-l">View </span>
+                                        @if(isset($previewData['detailedProduct']['video_provider']) && $previewData['detailedProduct']['video_provider'] == "youtube")
+                                            @if($previewData['detailedProduct']['getYoutubeVideoId'] != "")
+                                                <img class="col-12 p-0 h-100" data-toggle="modal" data-target="#videoModal" src="https://images.squarespace-cdn.com/content/v1/5ba5e044b10f25cb908c506f/1612465370111-8X2AQHP6F8YNW25WGWVQ/Screen%2BShot%2B2021-02-04%2Bat%2B11.00.17%2BAM.jpg">
+                                                <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-start px-3 py-2">
+                                                    <span class="download-box-btm-l">View </span>
+                                                </div>
+                                            @endif
+                                        @elseif(isset($previewData['detailedProduct']['video_provider']) && $previewData['detailedProduct']['video_provider'] == "vimeo")
+                                            @if($previewData['detailedProduct']['getVimeoVideoId'] != "")
+                                                <img class="col-12 p-0 h-100" data-toggle="modal" data-target="#videoModal" src="https://images.squarespace-cdn.com/content/v1/5ba5e044b10f25cb908c506f/1612465370111-8X2AQHP6F8YNW25WGWVQ/Screen%2BShot%2B2021-02-04%2Bat%2B11.00.17%2BAM.jpg">
+                                                <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-start px-3 py-2">
+                                                    <span class="download-box-btm-l">View </span>
+                                                </div>
+                                            @endif
+                                        @endif
+                                        
                                     </div>
                                 </div>
                             <div>
@@ -1447,11 +1458,13 @@
                                             </div> --}}
                                         
                                         <!-- end comments -->
-                                        <div class="col-12 py-3">
-                                            <center>
-                                                <button class="comment-button-more fs-20 font-prompt-md" id="load-more" data-product-id="{{ $previewData['detailedProduct']['product_id'] }}" @if(count($comments) > 0) data-offset="{{ $comment->id }}" @endif>View More</button>
-                                            </center>
-                                        </div>
+                                        @if(count($comments) > 2)
+                                            <div class="col-12 py-3">
+                                                <center>
+                                                    <button class="comment-button-more fs-20 font-prompt-md" id="load-more" data-product-id="{{ $previewData['detailedProduct']['product_id'] }}" @if(count($comments) > 0) data-offset="{{ $comment->id }}" @endif>View More</button>
+                                                </center>
+                                            </div>
+                                        @endif
                                     </div>
                                     <!-- end comment and button -->
                                     <div class="row pt-5">
@@ -1984,56 +1997,6 @@
             </div>
         </div>
     </section>
-    {{-- <section class="mb-4">
-        <div class="container">
-            @if ($detailedProduct->auction_product)
-                <!-- Reviews & Ratings -->
-                @include('frontend.product_details.review_section')
-
-                <!-- Description, Video, Downloads -->
-                @include('frontend.product_details.description')
-
-                <!-- Product Query -->
-                @include('frontend.product_details.product_queries')
-            @else
-                <div class="row gutters-16">
-                    <!-- Left side -->
-                    <div class="col-lg-3">
-                        <!-- Seller Info -->
-                        @include('frontend.product_details.seller_info')
-
-                        <!-- Top Selling Products -->
-                       <div class="d-none d-lg-block">
-                            @include('frontend.product_details.top_selling_products')
-                       </div>
-                    </div>
-
-                    <!-- Right side -->
-                    <div class="col-lg-9">
-
-                        <!-- Reviews & Ratings -->
-                        @include('frontend.product_details.review_section')
-
-                        <!-- Description, Video, Downloads -->
-                        @include('frontend.product_details.description')
-
-                        <!-- Related products -->
-                        @include('frontend.product_details.related_products')
-
-                        <!-- Product Query -->
-                        @include('frontend.product_details.product_queries')
-
-                        <!-- Top Selling Products -->
-                        <div class="d-lg-none">
-                             @include('frontend.product_details.top_selling_products')
-                        </div>
-
-                    </div>
-                </div>
-            @endif
-        </div>
-    </section> --}}
-
 
     @php
         $file = base_path('/public/assets/myText.txt');
@@ -2750,35 +2713,6 @@
 
         // });
     </script>
-    
-
-<script>
-    // Get the modal
-    var modal = document.getElementById("myModal");
-
-    // Get the button that opens the modal
-    var btn = document.getElementById("openModalBtn");
-
-    // Get the <span> element that closes the modal
-    var span = document.getElementById("closeModalBtn");
-
-    // When the user clicks the button, open the modal 
-    btn.onclick = function() {
-        modal.style.display = "block";
-    }
-
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function() {
-        modal.style.display = "none";
-    }
-
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
-</script>
 
 
 
