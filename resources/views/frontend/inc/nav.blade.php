@@ -259,7 +259,7 @@
                         </div>
                     </div>
                     @if (!isAdmin())
-                        <!-- Notifications -->
+                        <!-- Notifications
                         <ul class="list-inline mb-0 h-100 d-none d-xl-flex justify-content-end align-items-center">
                             <li class="list-inline-item ml-2 mr-3 pr-3 pl-0 dropdown">
                                 <a class="dropdown-toggle no-arrow text-secondary fs-12" data-toggle="dropdown"
@@ -326,11 +326,10 @@
                                                             @endif
                                                         </span>
                                                         @elseif ($notification->type == 'App\Notifications\ChangesApprovedNotification')
-                                                        <!-- Handle other notification types -->
 
                                                         <p>{{ $notification->data['message'] }}</p>
                                                         @elseif ($notification->type == 'App\Notifications\ModificationRejectedNotification')
-                                                        <!-- Handle other notification types -->
+
 
                                                         <p>{{ $notification->data['message'] }}</p>
                                                         @endif
@@ -355,7 +354,7 @@
                             </li>
                         </ul>
                     @endif
-
+                -->
                     <div class="d-none d-xl-block ml-auto mr-0">
                         @auth
                             <span
@@ -374,7 +373,15 @@
                                     @endif
                                 </span>
                                 <!-- Name -->
-                                <h4 class="h5 fs-14 fw-700 text-white ml-2 mb-0">{{ $user->name }}</h4>
+                                <div class="user-section-header">
+                                    <span class="user-s-h-account-dd font-prompt fs-16">
+                                        {{ translate('My Account') }}
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M20 9L13.4141 15.4304C12.6364 16.1899 11.3636 16.1899 10.5859 15.4304L4 9" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </span>
+                                    <span class="font-prompt fs-14 user-s-h-account-un">{{ $user->name }}</span>
+                                </div>
                             </span>
                         @else
                             <!--Login & Registration -->
@@ -389,11 +396,17 @@
                                             transform="translate(-2.064 -1.995)" fill="#91919b" />
                                     </svg>
                                 </span>
+                                <!--
                                 <a href="{{ route('user.login') }}"
                                     class="opacity-60 hov-opacity-100 hov-text-white text-white fs-12 d-inline-block border-right border-soft-light border-width-2 pr-2 ml-3">{{ translate('Login') }}</a>
                                 <a href="{{ route('business') }}"
                                     class="opacity-60 hov-opacity-100 hov-text-white text-white fs-12 d-inline-block py-2 pl-2">{{ translate('Registration') }}</a>
-                            </span>
+                                -->
+                                <div class="user-section-header">
+                                    <span class="user-s-h-account-dd font-prompt fs-16">{{ translate('My Account') }}</span>
+                                    <span class="user-s-h-account-dd font-prompt fs-14">Hello, <a class="user-s-h-account-dd" href="{{ route('user.login') }}">{{ translate('Sign in') }}</a></span>
+                                </div>
+                                </span>
                         @endauth
                     </div>
                 </div>
