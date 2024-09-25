@@ -911,24 +911,7 @@
                                             {{ __('profile.regulatory_information') }}
                                         </div>
                                     </div>
-                                    <div class="col-md-6" id="taxWaiverGroup" {{-- style="display: none;" --}}>
-                                        <div class="form-group">
-                                            <label><b>{{ translate('Tax Waiver Certificate') }}</b> <span
-                                                    class="text-primary">*</span>
-                                                    <small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small></label>
-                                            @if ($tax_waiver)
-                                                <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('tax_waiver') ? 'color-modified-file' : '' }}"
-                                                    href="{{ static_asset($tax_waiver) }}"
-                                                    target="_blank">{{ translate('View Tax Waiver Certificate') }}</a>
-                                                <input type="hidden" name="tax_waiver"
-                                                    value="{{ $tax_waiver }}">
-                                            @endif
-                                            <input type="file" class="form-control rounded-0" name="tax_waiver">
-                                            @error('tax_waiver')
-                                            <div class="text-danger">{{ $message }}</div>
-                                             @enderror
-                                        </div>
-                                    </div>
+
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label><b>{{ translate('Civil Defense Approval') }}</b> <span
@@ -958,7 +941,24 @@
                                         </div>
 
                                     </div>
-
+                                    <div class="col-md-6" id="taxWaiverGroup" {{-- style="display: none;" --}}>
+                                        {{-- <div class="form-group">
+                                            <label><b>{{ translate('Tax Waiver Certificate') }}</b> <span
+                                                    class="text-primary">*</span>
+                                                    <small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small></label>
+                                            @if ($tax_waiver)
+                                                <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('tax_waiver') ? 'color-modified-file' : '' }}"
+                                                    href="{{ static_asset($tax_waiver) }}"
+                                                    target="_blank">{{ translate('View Tax Waiver Certificate') }}</a>
+                                                <input type="hidden" name="tax_waiver"
+                                                    value="{{ $tax_waiver }}">
+                                            @endif
+                                            <input type="file" class="form-control rounded-0" name="tax_waiver">
+                                            @error('tax_waiver')
+                                            <div class="text-danger">{{ $message }}</div>
+                                             @enderror
+                                        </div> --}}
+                                    </div>
 
                                 </div>
                             </div>

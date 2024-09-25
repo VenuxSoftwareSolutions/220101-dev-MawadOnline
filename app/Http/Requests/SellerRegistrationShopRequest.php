@@ -63,7 +63,7 @@ class SellerRegistrationShopRequest extends FormRequest
             'vat_registered' => 'required|boolean',
             'vat_certificate' => $this->input('vat_registered') == 1 && (!$this->input('vat_certificate_old') || $this->hasFile('vat_certificate') ) ? 'required_if:vat_registered,1|file|mimes:pdf,jpeg,png|max:5120' : '',
             'trn' => $this->input('vat_registered') == 1 ? 'required_if:vat_registered,1|string|max:20' : '',
-            'tax_waiver' => $this->input('vat_registered') == 0 && (!$this->input('tax_waiver_old')  || $this->hasFile('tax_waiver'))  ? 'required_if:vat_registered,0|file|mimes:pdf,jpeg,png|max:5120' : '',
+            // 'tax_waiver' => $this->input('vat_registered') == 0 && (!$this->input('tax_waiver_old')  || $this->hasFile('tax_waiver'))  ? 'required_if:vat_registered,0|file|mimes:pdf,jpeg,png|max:5120' : '',
             'civil_defense_approval' => 'nullable|file|mimes:pdf,jpeg,png|max:5120',
             'first_name' => 'required|string|max:64|regex:/\D/',
             'last_name' => 'required|string|max:64|regex:/\D/',

@@ -516,16 +516,10 @@ use Carbon\Carbon;
                                 </div>
                             </div>
                             <div class="col-md-6" id="taxWaiverGroup" {{-- style="display: none;" --}}>
-                                <div class="form-group">
+                                {{-- <div class="form-group">
                                     <label>{{ translate('Tax Waiver Certificate') }} <span
                                             class="text-primary">*</span></label>
-                                    {{-- @if ($tax_waiver)
-                                        <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('tax_waiver') ? 'color-modified-file' : '' }}"
-                                            href="{{ static_asset($tax_waiver) }}"
-                                            target="_blank">{{ translate('View Tax Waiver Certificate') }}</a>
-                                        <input type="hidden" name="tax_waiver"
-                                            value="{{ $tax_waiver }}">
-                                    @endif --}}
+
                                     <div class="row">
                                         @if ($proposedPayoutChange && $proposedPayoutChange->getNewValue('tax_waiver'))
                                         <div class="col-6">
@@ -551,7 +545,7 @@ use Carbon\Carbon;
 
                                     </div>
 
-                                </div>
+                                </div> --}}
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">

@@ -683,8 +683,8 @@ button {
                                                                 placeholder="{{ __('profile.TRN') }} {{ __('profile.Tax Registration Number') }}" name="trn">
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6" id="taxWaiverGroup" {{-- style="display: none;" --}}>
-                                                        <div class="form-group">
+                                                    <div class="col-md-6" id="taxWaiverGroup">
+                                                        {{-- <div class="form-group">
                                                             <label>{{ translate('Tax Waiver Certificate') }} <span
                                                                     class="text-primary">*</span><small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small></label>
                                                             @if (isset($user) && isset($user->business_information) && $user->business_information->tax_waiver)
@@ -696,7 +696,7 @@ button {
                                                             @endif
                                                             <input type="file" class="form-control rounded-0"
                                                                 name="tax_waiver">
-                                                        </div>
+                                                        </div> --}}
                                                     </div>
                                                     <div class="fs-20 fw-600 p-3 orange-text">
 

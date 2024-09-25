@@ -224,21 +224,21 @@ class ProfileController extends Controller
                     }
                 },
             ] :'',
-            'tax_waiver' => $request->vat_registered == 0 ? [
-                'required',
-                function ($attribute, $value, $fail) {
-                    if (!empty($value) && $value instanceof UploadedFile) {
-                        // If the input value is a file (UploadedFile), validate file upload
-                        $allowedMimeTypes = ['application/pdf', 'image/jpeg', 'image/png'];
-                        if (!in_array($value->getMimeType(), $allowedMimeTypes)) {
-                            $fail('The '.$attribute.' must be a PDF, JPEG, or PNG file.');
-                        }
-                        if ($value->getSize() > 5120 * 1024) {
-                            $fail('The '.$attribute.' must be less than or equal to 5120 KB.');
-                        }
-                    }
-                },
-            ] :'',
+            // 'tax_waiver' => $request->vat_registered == 0 ? [
+            //     'required',
+            //     function ($attribute, $value, $fail) {
+            //         if (!empty($value) && $value instanceof UploadedFile) {
+            //             // If the input value is a file (UploadedFile), validate file upload
+            //             $allowedMimeTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+            //             if (!in_array($value->getMimeType(), $allowedMimeTypes)) {
+            //                 $fail('The '.$attribute.' must be a PDF, JPEG, or PNG file.');
+            //             }
+            //             if ($value->getSize() > 5120 * 1024) {
+            //                 $fail('The '.$attribute.' must be less than or equal to 5120 KB.');
+            //             }
+            //         }
+            //     },
+            // ] :'',
             'civil_defense_approval' => [
                 'nullable',
                 function ($attribute, $value, $fail) {
@@ -264,7 +264,7 @@ class ProfileController extends Controller
         $keysToCheckPayout = ['bank_name', 'account_name', 'account_number', 'iban', 'swift_code', 'iban_certificate'];
         $keysToCheckBusiness = [
             'trade_name_english', 'trade_name_arabic', 'trade_license_doc', 'eshop_name_english', 'eshop_name_arabic', 'eshop_desc_english', 'eshop_desc_arabic', 'license_issue_date',
-            'license_expiry_date', 'state', 'area_id', 'street', 'building', 'unit', 'po_box', 'landline', 'vat_registered', 'vat_certificate', 'trn', 'tax_waiver', 'civil_defense_approval'
+            'license_expiry_date', 'state', 'area_id', 'street', 'building', 'unit', 'po_box', 'landline', 'vat_registered', 'vat_certificate', 'trn'/* , 'tax_waiver' */, 'civil_defense_approval'
         ];
         $keysToCheckContact = ['first_name', 'last_name', 'email', 'mobile_phone', 'additional_mobile_phone', 'nationality','date_of_birth','emirates_id_number','emirates_id_expiry_date',
                                'emirates_id_file_path','business_owner','designation'];
