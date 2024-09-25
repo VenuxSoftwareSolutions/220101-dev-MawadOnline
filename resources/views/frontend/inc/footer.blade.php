@@ -1,4 +1,4 @@
-<!-- footer Description -->
+<!-- footer Description
 @if (get_setting('footer_title') != null || get_setting('footer_description') != null)
     <section class="bg-light border-top border-bottom mt-auto">
         <div class="container py-4">
@@ -9,12 +9,13 @@
         </div>
     </section>
 @endif
-
+ -->
 <!-- footer top Bar -->
+<!--
 <section class="bg-light border-top mt-auto">
     <div class="container px-xs-0">
         <div class="row no-gutters border-left border-soft-light">
-            <!-- Terms & conditions -->
+
             <div class="col-lg-3 col-6 policy-file">
                 <a class="text-reset h-100  border-right border-bottom border-soft-light text-center p-2 p-md-4 d-block hov-ls-1" href="{{ route('terms') }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="26.004" height="32" viewBox="0 0 26.004 32">
@@ -24,7 +25,7 @@
                 </a>
             </div>
 
-            <!-- Return Policy -->
+
             <div class="col-lg-3 col-6 policy-file">
                 <a class="text-reset h-100  border-right border-bottom border-soft-light text-center p-2 p-md-4 d-block hov-ls-1" href="{{ route('returnpolicy') }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="32.001" height="23.971" viewBox="0 0 32.001 23.971">
@@ -34,7 +35,7 @@
                 </a>
             </div>
 
-            <!-- Support Policy -->
+
             <div class="col-lg-3 col-6 policy-file">
                 <a class="text-reset h-100  border-right border-bottom border-soft-light text-center p-2 p-md-4 d-block hov-ls-1" href="{{ route('supportpolicy') }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="32.002" height="32.002" viewBox="0 0 32.002 32.002">
@@ -51,7 +52,7 @@
                 </a>
             </div>
 
-            <!-- Privacy Policy -->
+
             <div class="col-lg-3 col-6 policy-file">
                 <a class="text-reset h-100 border-right border-bottom border-soft-light text-center p-2 p-md-4 d-block hov-ls-1" href="{{ route('privacypolicy') }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
@@ -69,7 +70,7 @@
         </div>
     </div>
 </section>
-
+-->
 <!-- footer subscription & icons -->
 <section class="py-3 text-light footer-widget border-bottom" style="border-color: #3d3d46 !important; background-color: #3D3D3B !important;">
     <div class="container">

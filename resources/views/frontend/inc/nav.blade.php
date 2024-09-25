@@ -166,7 +166,7 @@
                         </a>
                     </div>
                     <!-- Search field -->
-                    <div class="flex-grow-1 front-header-search d-flex align-items-center bg-white mx-2 mx-xl-5">
+                    <div class="flex-grow-1 front-header-search d-flex align-items-center bg-white mx-2 mx-xl-4">
                         <div class="position-relative flex-grow-1 px-3 px-lg-0">
                             <form action="{{ route('search') }}" method="GET" class="stop-propagation">
                                 <div class="d-flex position-relative align-items-center">
@@ -404,7 +404,7 @@
                                 -->
                                 <div class="user-section-header">
                                     <span class="user-s-h-account-dd font-prompt fs-16">{{ translate('My Account') }}</span>
-                                    <span class="user-s-h-account-dd font-prompt fs-14">Hello, <a class="user-s-h-account-dd" href="{{ route('user.login') }}">{{ translate('Sign in') }}</a></span>
+                                    <a class="user-s-h-account-dd" href="{{ route('user.login') }}"><span class="user-s-h-account-dd font-prompt fs-14">Hello, {{ translate('Sign in') }}</span></a>
                                 </div>
                                 </span>
                         @endauth
