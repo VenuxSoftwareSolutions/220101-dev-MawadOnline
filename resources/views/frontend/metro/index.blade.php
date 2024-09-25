@@ -24,6 +24,7 @@
     @php $lang = get_system_language()->code;  @endphp
 
     <!-- Sliders -->
+    <div class="container">
     <div class="home-banner-area mb-3">
         <div class="banner-inner">
             <!-- Sliders -->
@@ -54,7 +55,7 @@
             </div>
         </div>
     </div>
-
+</div>
     <!-- Flash Deal -->
     @php
         $flash_deal = get_featured_flash_deal();

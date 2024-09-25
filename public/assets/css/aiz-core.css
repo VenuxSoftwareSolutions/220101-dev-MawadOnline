@@ -10392,7 +10392,7 @@ div.footable-loader > span.fooicon:after {
     }
 }
 .banner-inner{
-    padding:40px 55px;
+    padding:40px 0px;
 }
 .radius-banner{
     border-radius:15px !important;
@@ -13168,4 +13168,22 @@ border:none !important;
 .hov-text-vendor{
     color: #A2B8C6;
 }
-
+.user-section-header{
+    height: 48px;
+    width: 138px;
+    padding: 1px 7px;
+}
+.user-s-h-account-dd{
+    color: #F3F4F5;
+}
+.user-s-h-account-dd:hover{
+    color: #F3F4F5;
+}
+.user-s-h-account-un{
+    display: block;
+    width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #F3F4F5;
+}
