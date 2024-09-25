@@ -214,7 +214,7 @@ class AizUploadController extends Controller
                 // }
 
                 $upload->extension = $extension;
-                $upload->file_name = $path;
+                $upload->file_name = 'public/'.$path;
                 $upload->user_id = Auth::user()->id;
                 $upload->type = $type[$upload->extension];
                 $upload->file_size = $size;

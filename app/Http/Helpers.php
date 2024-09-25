@@ -1308,7 +1308,7 @@ if (!function_exists('my_asset')) {
             return Storage::disk(config('filesystems.default'))->url($path);
         }
 
-        return app('url')->asset('public/' . $path, $secure);
+        return app('url')->asset($path, $secure);
     }
 }
 
