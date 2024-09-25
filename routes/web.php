@@ -151,6 +151,7 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/todays-deal', 'todays_deal')->name('todays-deal');
 
     Route::get('/product/{slug}', 'product')->name('product');
+    Route::get('/comments', 'loadMore')->name('comments.loadMore');
     Route::post('/product/variant-price', 'variant_price')->name('products.variant_price');
     Route::get('/shop/{slug}', 'shop')->name('shop.visit');
     Route::get('/shop/{slug}/{type}', 'filter_shop')->name('shop.visit.type');

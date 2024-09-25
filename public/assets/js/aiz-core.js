@@ -1429,7 +1429,7 @@ $.fn.toggleAttr = function (attr, attr1, attr2) {
                         e = $(this).find(".attribute-input-slider-range-value-high")[0],
                         id_attribute = $(this).data("id"),
                         f = [d, e];
-            
+
                     noUiSlider.create(c, {
                         start: [
                             parseInt(d.getAttribute("data-range-value-low")),
@@ -1441,11 +1441,11 @@ $.fn.toggleAttr = function (attr, attr1, attr2) {
                             max: parseInt(c.getAttribute("data-range-value-max")),
                         },
                     });
-            
+
                     c.noUiSlider.on("update", function (a, b) {
                         f[b].textContent = a[b];
                     });
-            
+
                     c.noUiSlider.on("change", function (a, b) {
                         rangefilter_attribute(a, id_attribute);
                     });
@@ -1939,16 +1939,16 @@ $.fn.toggleAttr = function (attr, attr1, attr2) {
                         if (currentVal > input.attr("min")) {
                             input.val(currentVal - 1).change();
                         }
-                        // if (parseInt(input.val()) == input.attr("min")) {
-                        //     $(this).attr("disabled", true);
-                        // }
+                        if (parseInt(input.val()) == input.attr("min")) {
+                            $(this).attr("disabled", true);
+                        }
                     } else if (type == "plus") {
                         if (currentVal < input.attr("max")) {
                             input.val(currentVal + 1).change();
                         }
-                        // if (parseInt(input.val()) == input.attr("max")) {
-                        //     $(this).attr("disabled", true);
-                        // }
+                        if (parseInt(input.val()) == input.attr("max")) {
+                            $(this).attr("disabled", true);
+                        }
                     }
 
                 } else {

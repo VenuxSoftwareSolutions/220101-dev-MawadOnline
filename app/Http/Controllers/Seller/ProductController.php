@@ -183,11 +183,11 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        //dd($request->all());
+       // dd($request->all());
         $product = $this->productService->store($request->except([
             'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
         ]));
-
+       // dd($product);
         $request->merge(['product_id' => $product->id]);
 
         //Product categories
@@ -327,7 +327,7 @@ class ProductController extends Controller
                                         }else{
                                             $html_attributes_generale .= '<option value="' . $color->code . '" data-content="<span><span class=\'size-15px d-inline-block mr-2 rounded border\' style=\'background:' . $color->code . '\'></span><span>' . $color->name . '</span></span>"></option>';
                                         }
-                                        
+
                                     }
                                 $html_attributes_generale .= '</select></div>';
                                 break;
@@ -425,7 +425,7 @@ class ProductController extends Controller
                                     $html .= '<option value="' . $color->code . '" data-content="<span><span class=\'size-15px d-inline-block mr-2 rounded border\' style=\'background:' . $color->code . '\'></span><span>' . $color->name . '</span></span>"></option>';
                                 }
 
-                                
+
                             }
                         $html .= '</select></div>';
                         break;

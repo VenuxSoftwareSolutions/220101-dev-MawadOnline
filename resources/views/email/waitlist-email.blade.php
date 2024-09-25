@@ -18,8 +18,9 @@
 
 
 <body>
+    <div style="background: url(public/home_page/images/Header-bg.png); background-repeat:no-repeat; background-size: cover;">
     <header>
-        <nav class="navbar top-nav navbar-expand-lg">
+        <nav class="navbar top-nav navbar-expand-lg bg-top-business">
             <div class="header-top">
                 <div class="logo">
                     <a class="logo-brand" href="{{ route('home') }}"><img class="logo-image"
@@ -51,9 +52,8 @@
         </nav>
     </header>
 
-    <main>
-        <section class="slider"
-            style="background: url(public/home_page/images/img-slide.jpg); background-repeat:no-repeat; background-size: cover;">
+    <!-- <main> -->
+        <section class="slider bg-top-business">
             <div class="content-slider">
                 <div class="descriptif-slider">
                     <h1>Shaping The <br />Future of Construction</h1>
@@ -70,7 +70,7 @@
                 </div>
             </div>
         </section>
-        <section id="why-mawad" class="why-MawadOnline">
+        <section id="why-mawad" class="why-MawadOnline bg-top-business">
             <h2 class="titre-section2">Why MawadOnline</h2>
             <div class="blocs-section2">
                 <div class="bloc1">
@@ -136,11 +136,8 @@
                     </div>
                 </div>
             </div>
-            <div class="btn-section2">
-                <a href="#waitlist">Join our waitlist</a>
-            </div>
         </section>
-
+        <div/>
         <section id="how-it-works" class="How-It-Works">
             <div class="container-fluid">
                 <div class="title-section3">How It Works</div>
@@ -347,7 +344,7 @@
         </form>
 
 
-    </main>
+  <!--  </main> -->
 
     <footer>
     </footer>

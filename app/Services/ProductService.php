@@ -29,7 +29,6 @@ class ProductService
     {
         $collection = collect($data);
         
-
         $vat_user = BusinessInformation::where('user_id', Auth::user()->owner_id)->first();
 
         $approved = 1;
@@ -97,7 +96,6 @@ class ProductService
         //     $collection['meta_img'] = $collection['thumbnail_img'];
         // }
 
-
         $shipping_cost = 0;
         if (isset($collection['shipping_type'])) {
             if ($collection['shipping_type'] == 'free') {
@@ -109,6 +107,7 @@ class ProductService
         unset($collection['flat_shipping_cost']);
 
         $slug = Str::slug($collection['name']);
+
         $same_slug_count = Product::where('slug', 'LIKE', $slug . '%')->count();
         $slug_suffix = $same_slug_count ? '-' . $same_slug_count + 1 : '';
         $slug .= $slug_suffix;
@@ -526,6 +525,7 @@ class ProductService
 
 
         if(!isset($data['activate_attributes'])){
+
             $product = Product::create($data);
             $ids_attributes_color = Attribute::where('type_value', 'color')->pluck('id')->toArray();
             if(count($pricing) > 0){
@@ -602,6 +602,7 @@ class ProductService
                 }
             }
 
+        
             if(count($general_attributes_data) > 0){
                 foreach ($general_attributes_data as $attr => $value) {
                     if($value != null){
@@ -662,6 +663,7 @@ class ProductService
 
             return $product;
         }else{
+
             // //Create Parent Product
             $data['is_parent'] = 1;
             $data['sku'] = $data['name'];

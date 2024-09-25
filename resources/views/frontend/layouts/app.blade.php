@@ -257,7 +257,21 @@
         @include('frontend.inc.demo_nav')
     @endif
 
-    <!-- cookies agreement -->
+    @if (get_setting('show_cookies_agreement') == 'on')
+        <div class="aiz-cookie-alert shadow-xl">
+            <div class="p-3 bg-dark rounded">
+                <div class="text-white mb-3">
+                    @php
+                        echo get_setting('cookies_agreement_text');
+                    @endphp
+                </div>
+                <button class="btn btn-primary aiz-cookie-accept">
+                    {{ translate('Ok. I Understood') }}
+                </button>
+            </div>
+        </div>
+    @endif
+    <!-- cookies agreement
     @if (get_setting('show_cookies_agreement') == 'on')
 
         <div class="aiz-cookie-alert shadow-xl">
@@ -275,7 +289,7 @@
                 </div>
             </div>
         </div>
-@endif
+@endif-->
     <!-- website popup -->
     @if (get_setting('show_website_popup') == 'on')
         <div class="modal website-popup removable-session d-none" data-key="website-popup" data-value="removed">
