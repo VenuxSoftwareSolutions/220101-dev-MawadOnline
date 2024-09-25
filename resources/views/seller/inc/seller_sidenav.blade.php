@@ -69,12 +69,12 @@
                                 </a>
                             </li>
 
-                            <li id="catalog" class="aiz-side-nav-item">
+                            {{-- <li id="catalog" class="aiz-side-nav-item">
                                 <a href="{{ route('seller.product_bulk_upload.index') }}"
                                     class="aiz-side-nav-link {{ areActiveRoutes([ 'seller.product_bulk_upload.index']) }}">
                                     <span class="aiz-side-nav-text">{{ __('sidenav.bulk_upload') }}</span>
                                 </a>
-                            </li>
+                            </li> --}}
                             {{-- @can('seller_product_bulk_import')
                             <li class="aiz-side-nav-item">
                                 <a href="{{ route('seller.product_bulk_upload.index') }}"
@@ -188,7 +188,7 @@
                     @endcanany --}}
                 @endif
 
-                @can('seller_view_all_staffs')
+                {{-- @can('seller_view_all_staffs')
                     <li id="staff" class="aiz-side-nav-item">
                         <a href="{{ route('seller.staffs.index') }}"
                             class="aiz-side-nav-link {{ areActiveRoutes(['seller.staffs.index', 'seller.staffs.create', 'seller.staffs.edit']) }}">
@@ -196,7 +196,7 @@
                             <span class="aiz-side-nav-text">{{ translate('Staffs') }}</span>
                         </a>
                     </li>
-                @endcan
+                @endcan --}}
 
                 {{-- @canany(['seller_view_staff_roles', 'seller_view_all_staffs'])
                     <li class="aiz-side-nav-item">

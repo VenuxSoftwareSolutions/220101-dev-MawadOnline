@@ -4,7 +4,7 @@ return [
     'Subscription Packages' => 'EShop Lease Plans',
     'Full access to all eShop essentials' =>  'Full access to all eShop essentials',
     'Unlimited products' => 'Unlimited products',
-    'Free eShop administrator + 4 positions' =>'Free eShop administrator + 4 positions',
+    'Free eShop administrator + 4 positions' =>'Free eShop administrator',
     'Additional staff position just for AED 10/month' => 'Additional staff position just for AED 10/month' ,
     'AED' => 'AED',
     'EShop Already Registered' =>'EShop Already Registered',
