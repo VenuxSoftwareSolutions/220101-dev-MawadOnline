@@ -324,7 +324,7 @@
                 <div class="text-center text-sm-left mt-4">
                     <!-- Seller -->
                     @if (get_setting('vendor_system_activation') == 1)
-                        <h4 class="fs-14 text-white fw-700 mb-3 letter-spacing-1">{{ translate('Vendor Zone') }}</h4>
+                        <h4 class="fs-14 text-white fw-700 mb-3 letter-spacing-1">{{ translate('Vendor Center') }}</h4>
                         <ul class="list-unstyled">
                             <li class="mb-2">
                                 <p class="fs-13 text-secondary mb-0">
@@ -516,7 +516,7 @@
         @if (get_setting('vendor_system_activation') == 1)
         <div class="aiz-accordion-wrap bg-black">
             <div class="aiz-accordion-heading container bg-black">
-                <button class="aiz-accordion fs-14 text-white bg-transparent">{{ translate('Vendor Zone') }}</button>
+                <button class="aiz-accordion fs-14 text-white bg-transparent">{{ translate('Vendor Center') }}</button>
             </div>
             <div class="aiz-accordion-panel bg-transparent" style="background-color: #3D3D3B !important;">
                 <div class="container">
