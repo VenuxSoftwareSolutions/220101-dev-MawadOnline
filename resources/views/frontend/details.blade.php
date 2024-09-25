@@ -31,11 +31,11 @@
             <div class="d-flex align-items-center">
 
                 <!-- Discount Price -->
-                <strong id="qty-interval" class="fs-24 fw-700 text-primary font-prompt-sb">
+                <strong id="qty-interval" class="fs-24 fw-700 text-dark font-prompt-sb">
                     @if (isset($previewData['detailedProduct']['discountedPrice']))
                     AED {{ $previewData['detailedProduct']['discountedPrice'] }}
                     @else
-                    AED {{ $previewData['detailedProduct']['price'] }}
+                    AED {{ $previewData['detailedProduct']['price'] }} / {{ @$previewData['detailedProduct']['unit'] }}
                     @endif
 
                 </strong>
