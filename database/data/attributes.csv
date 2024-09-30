@@ -1,0 +1,456 @@
+display_name,system_name,Description,value_data_type
+Adhesive Backing,AdhesiveBacking_LED_Light_Bars,Adhesive Backing,text
+Adhesive Backing,AdhesiveBacking_LED_Panel_Lights,Adhesive Backing,text
+Adhesive Backing,AdhesiveBacking_LED_Strip_Lights,Adhesive Backing,text
+Adhesive Backing,AdhesiveBacking_RGB_LED_Strips,Adhesive Backing,text
+Adhesive Backing,AdhesiveBacking_Waterproof_LED_Strips,Adhesive Backing,text
+Adjustability,Adjustability_Flexible_Track_Lighting,Adjustability,boolean
+Adjustability,Adjustability_Linear_Track_Lighting,Adjustability,boolean
+Adjustability,Adjustability_Spotlight_Tracks,Adjustability,boolean
+Adjustability,Adjustability_Track_Lighting,Adjustability,boolean
+Adjustability,Adjustability_Track_Lighting_Systems,Adjustability,boolean
+Base Material,BaseMaterial_Arc_Lamps,Base Material,text
+Base Material,BaseMaterial_Bedside_Lamps,Base Material,text
+Base Material,BaseMaterial_Buffet_Lamps,Base Material,text
+Base Material,BaseMaterial_Desk_Lamps,Base Material,text
+Base Material,BaseMaterial_Floor_Lamps,Base Material,text
+Base Material,BaseMaterial_Table_Lamps,Base Material,text
+Battery Life,BatteryLife_Backup_Lights,Battery Life,numeric
+Battery Life,BatteryLife_Emergency_Floodlights,Battery Life,numeric
+Battery Life,BatteryLife_Emergency_Lights,Battery Life,numeric
+Battery Life,BatteryLife_Exit_Signs,Battery Life,numeric
+Beam Angle,BeamAngle_Cabinet_Spotlights,Beam Angle,numeric
+Beam Angle,BeamAngle_Ceiling_Lights,Beam Angle,list
+Beam Angle,BeamAngle_Chandeliers,Beam Angle,list
+Beam Angle,BeamAngle_Flush_Mount_Lights,Beam Angle,list
+Beam Angle,BeamAngle_LED_Puck_Lights,Beam Angle,list
+Beam Angle,BeamAngle_Pendant_Lights,Beam Angle,list
+Beam Angle,BeamAngle_Recessed_Lighting,Beam Angle,list
+Beam Angle,BeamAngle_Strip_Lights,Beam Angle,list
+Beam Angle,BeamAngle_Task_Lamps,Beam Angle,list
+Beam Angle,BeamAngle_Under-Cabinet_Lighting,Beam Angle,list
+Beam Angle,BeamAngle_Wall_Sconces,Beam Angle,list
+Beam Spread,BeamSpread_Deck_Lights,Beam Spread,numeric
+Beam Spread,BeamSpread_Flexible_Track_Lighting,Beam Spread,numeric
+Beam Spread,BeamSpread_Floodlights,Beam Spread,numeric
+Beam Spread,BeamSpread_Landscape_Lighting,Beam Spread,numeric
+Beam Spread,BeamSpread_Linear_Track_Lighting,Beam Spread,numeric
+Beam Spread,BeamSpread_Pathway_Lights,Beam Spread,numeric
+Beam Spread,BeamSpread_Post_Lights,Beam Spread,numeric
+Beam Spread,BeamSpread_Security_Lights,Beam Spread,numeric
+Beam Spread,BeamSpread_Spotlight_Tracks,Beam Spread,numeric
+Beam Spread,BeamSpread_Track_Lighting,Beam Spread,numeric
+Beam Spread,BeamSpread_Track_Lighting_Systems,Beam Spread,numeric
+Bulb Type,BulbType_Arc_Lamps,Bulb Type,text
+Bulb Type,BulbType_Bedside_Lamps,Bulb Type,text
+Bulb Type,BulbType_Buffet_Lamps,Bulb Type,text
+Bulb Type,BulbType_Cabinet_Spotlights,Bulb Type,text
+Bulb Type,BulbType_Desk_Lamps,Bulb Type,text
+Bulb Type,BulbType_Floor_Lamps,Bulb Type,text
+Bulb Type,BulbType_LED_Puck_Lights,Bulb Type,text
+Bulb Type,BulbType_Strip_Lights,Bulb Type,text
+Bulb Type,BulbType_Table_Lamps,Bulb Type,text
+Bulb Type,BulbType_Task_Lamps,Bulb Type,text
+Bulb Type,BulbType_Under-Cabinet_Lighting,Bulb Type,text
+Bulb Type Compatibility,BulbTypeCompatibility_Ceiling_Lights,Bulb Type Compatibility,list
+Bulb Type Compatibility,BulbTypeCompatibility_Chandeliers,Bulb Type Compatibility,list
+Bulb Type Compatibility,BulbTypeCompatibility_Flush_Mount_Lights,Bulb Type Compatibility,list
+Bulb Type Compatibility,BulbTypeCompatibility_Pendant_Lights,Bulb Type Compatibility,list
+Bulb Type Compatibility,BulbTypeCompatibility_Recessed_Lighting,Bulb Type Compatibility,list
+Bulb Type Compatibility,BulbTypeCompatibility_Wall_Sconces,Bulb Type Compatibility,list
+Color Coding,ColorCoding_Electrical_Tape,Color Coding,text
+Color Coding,ColorCoding_Wire_Connectors,Color Coding,text
+Color Options,ColorOptions_LED_Light_Bars,Color Options,text
+Color Options,ColorOptions_LED_Panel_Lights,Color Options,text
+Color Options,ColorOptions_LED_Strip_Lights,Color Options,text
+Color Options,ColorOptions_RGB_LED_Strips,Color Options,text
+Color Options,ColorOptions_Waterproof_LED_Strips,Color Options,text
+Color Temperature,ColorTemperature_Arc_Lamps,Color Temperature,list
+Color Temperature,ColorTemperature_Bedside_Lamps,Color Temperature,list
+Color Temperature,ColorTemperature_Buffet_Lamps,Color Temperature,list
+Color Temperature,ColorTemperature_Cabinet_Spotlights,Color Temperature,list
+Color Temperature,ColorTemperature_Ceiling_Lights,Color Temperature,list
+Color Temperature,ColorTemperature_Chandeliers,Color Temperature,list
+Color Temperature,ColorTemperature_Deck_Lights,Color Temperature,list
+Color Temperature,ColorTemperature_Desk_Lamps,Color Temperature,list
+Color Temperature,ColorTemperature_Flexible_Track_Lighting,Color Temperature,list
+Color Temperature,ColorTemperature_Floodlights,Color Temperature,list
+Color Temperature,ColorTemperature_Floor_Lamps,Color Temperature,list
+Color Temperature,ColorTemperature_Flush_Mount_Lights,Color Temperature,list
+Color Temperature,ColorTemperature_Landscape_Lighting,Color Temperature,list
+Color Temperature,ColorTemperature_LED_Puck_Lights,Color Temperature,list
+Color Temperature,ColorTemperature_Linear_Track_Lighting,Color Temperature,list
+Color Temperature,ColorTemperature_Pathway_Lights,Color Temperature,list
+Color Temperature,ColorTemperature_Pendant_Lights,Color Temperature,list
+Color Temperature,ColorTemperature_Post_Lights,Color Temperature,list
+Color Temperature,ColorTemperature_Recessed_Lighting,Color Temperature,list
+Color Temperature,ColorTemperature_Security_Lights,Color Temperature,list
+Color Temperature,ColorTemperature_Spotlight_Tracks,Color Temperature,list
+Color Temperature,ColorTemperature_Strip_Lights,Color Temperature,list
+Color Temperature,ColorTemperature_Table_Lamps,Color Temperature,list
+Color Temperature,ColorTemperature_Task_Lamps,Color Temperature,list
+Color Temperature,ColorTemperature_Track_Lighting,Color Temperature,list
+Color Temperature,ColorTemperature_Track_Lighting_Systems,Color Temperature,list
+Color Temperature,ColorTemperature_Under-Cabinet_Lighting,Color Temperature,list
+Color Temperature,ColorTemperature_Wall_Sconces,Color Temperature,list
+Color/Finish,Color/Finish_GFCI_Outlets,Color/Finish,text
+Color/Finish,Color/Finish_Power_Outlets,Color/Finish,text
+Color/Finish,Color/Finish_USB_Outlets,Color/Finish,text
+Color/Finish,Color/Finish_Weatherproof_Outlets,Color/Finish,text
+Compatibility,Compatibility_Dimmer_Switches,Compatibility,text
+Compatibility,Compatibility_Light_Switches,Compatibility,text
+Compatibility,Compatibility_Smart_Switches,Compatibility,text
+Compliance,Compliance_Backup_Lights,Compliance,text
+Compliance,Compliance_Emergency_Floodlights,Compliance,text
+Compliance,Compliance_Emergency_Lights,Compliance,text
+Compliance,Compliance_Exit_Signs,Compliance,text
+Conduit Type,ConduitType_Electrical_Conduits,Conduit Type,text
+Connectivity,Connectivity_Cabinet_Spotlights,Connectivity,text
+Connectivity,Connectivity_LED_Puck_Lights,Connectivity,text
+Connectivity,Connectivity_Strip_Lights,Connectivity,text
+Connectivity,Connectivity_Task_Lamps,Connectivity,text
+Connectivity,Connectivity_Under-Cabinet_Lighting,Connectivity,text
+Control Method,ControlMethod_LED_Light_Bars,Control Method,text
+Control Method,ControlMethod_LED_Panel_Lights,Control Method,text
+Control Method,ControlMethod_LED_Strip_Lights,Control Method,text
+Control Method,ControlMethod_RGB_LED_Strips,Control Method,text
+Control Method,ControlMethod_Waterproof_LED_Strips,Control Method,text
+Cord Length,CordLength_Arc_Lamps,Cord Length,numeric
+Cord Length,CordLength_Bedside_Lamps,Cord Length,numeric
+Cord Length,CordLength_Buffet_Lamps,Cord Length,numeric
+Cord Length,CordLength_Desk_Lamps,Cord Length,numeric
+Cord Length,CordLength_Floor_Lamps,Cord Length,numeric
+Cord Length,CordLength_Table_Lamps,Cord Length,numeric
+Current Rating,CurrentRating_GFCI_Outlets,Current Rating,numeric
+Current Rating,CurrentRating_Power_Outlets,Current Rating,numeric
+Current Rating,CurrentRating_USB_Outlets,Current Rating,numeric
+Current Rating,CurrentRating_Weatherproof_Outlets,Current Rating,numeric
+Dimmability,Dimmability_Cabinet_Spotlights,Dimmability,boolean
+Dimmability,Dimmability_Ceiling_Lights,Dimmability,boolean
+Dimmability,Dimmability_Chandeliers,Dimmability,boolean
+Dimmability,Dimmability_Flush_Mount_Lights,Dimmability,boolean
+Dimmability,Dimmability_LED_Puck_Lights,Dimmability,boolean
+Dimmability,Dimmability_Pendant_Lights,Dimmability,boolean
+Dimmability,Dimmability_Recessed_Lighting,Dimmability,boolean
+Dimmability,Dimmability_Strip_Lights,Dimmability,boolean
+Dimmability,Dimmability_Task_Lamps,Dimmability,boolean
+Dimmability,Dimmability_Under-Cabinet_Lighting,Dimmability,boolean
+Dimmability,Dimmability_Wall_Sconces,Dimmability,boolean
+Dimming Capability,DimmingCapability_LED_Light_Bars,Dimming Capability,boolean
+Dimming Capability,DimmingCapability_LED_Panel_Lights,Dimming Capability,boolean
+Dimming Capability,DimmingCapability_LED_Strip_Lights,Dimming Capability,boolean
+Dimming Capability,DimmingCapability_RGB_LED_Strips,Dimming Capability,boolean
+Dimming Capability,DimmingCapability_Waterproof_LED_Strips,Dimming Capability,boolean
+Dimming Compatibility,DimmingCompatibility_Flexible_Track_Lighting,Dimming Compatibility,boolean
+Dimming Compatibility,DimmingCompatibility_Linear_Track_Lighting,Dimming Compatibility,boolean
+Dimming Compatibility,DimmingCompatibility_Spotlight_Tracks,Dimming Compatibility,boolean
+Dimming Compatibility,DimmingCompatibility_Track_Lighting,Dimming Compatibility,boolean
+Dimming Compatibility,DimmingCompatibility_Track_Lighting_Systems,Dimming Compatibility,boolean
+Dimming Functionality,DimmingFunctionality_Arc_Lamps,Dimming Functionality,boolean
+Dimming Functionality,DimmingFunctionality_Bedside_Lamps,Dimming Functionality,boolean
+Dimming Functionality,DimmingFunctionality_Buffet_Lamps,Dimming Functionality,boolean
+Dimming Functionality,DimmingFunctionality_Desk_Lamps,Dimming Functionality,boolean
+Dimming Functionality,DimmingFunctionality_Floor_Lamps,Dimming Functionality,boolean
+Dimming Functionality,DimmingFunctionality_Table_Lamps,Dimming Functionality,boolean
+Dimming Range,DimmingRange_Dimmer_Switches,Dimming Range,numeric
+Energy Efficiency,EnergyEfficiency_Cabinet_Spotlights,Energy Efficiency,text
+Energy Efficiency,EnergyEfficiency_LED_Puck_Lights,Energy Efficiency,text
+Energy Efficiency,EnergyEfficiency_Strip_Lights,Energy Efficiency,text
+Energy Efficiency,EnergyEfficiency_Task_Lamps,Energy Efficiency,text
+Energy Efficiency,EnergyEfficiency_Under-Cabinet_Lighting,Energy Efficiency,text
+Fire Rating,FireRating_Junction_Boxes,Fire Rating,text
+Fixture Material,FixtureMaterial_Ceiling_Lights,Fixture Material,list
+Fixture Material,FixtureMaterial_Chandeliers,Fixture Material,list
+Fixture Material,FixtureMaterial_Flush_Mount_Lights,Fixture Material,list
+Fixture Material,FixtureMaterial_Pendant_Lights,Fixture Material,list
+Fixture Material,FixtureMaterial_Recessed_Lighting,Fixture Material,list
+Fixture Material,FixtureMaterial_Wall_Sconces,Fixture Material,list
+GFCI Protection,GFCIProtection_GFCI_Outlets,GFCI Protection,text
+Heat Resistance,HeatResistance_Electrical_Conduits,Heat Resistance,text
+Heat Resistance,HeatResistance_Electrical_Tape,Heat Resistance,text
+Heat Resistance,HeatResistance_Junction_Boxes,Heat Resistance,text
+Heat Resistance,HeatResistance_Mounting_Hardware,Heat Resistance,text
+Heat Resistance,HeatResistance_Wire_Connectors,Heat Resistance,text
+Housing Material,HousingMaterial_Cabinet_Spotlights,Housing Material,text
+Housing Material,HousingMaterial_LED_Puck_Lights,Housing Material,text
+Housing Material,HousingMaterial_Strip_Lights,Housing Material,text
+Housing Material,HousingMaterial_Task_Lamps,Housing Material,text
+Housing Material,HousingMaterial_Under-Cabinet_Lighting,Housing Material,text
+Installation Type,InstallationType_Cabinet_Spotlights,Installation Type,text
+Installation Type,InstallationType_LED_Puck_Lights,Installation Type,text
+Installation Type,InstallationType_Strip_Lights,Installation Type,text
+Installation Type,InstallationType_Task_Lamps,Installation Type,text
+Installation Type,InstallationType_Under-Cabinet_Lighting,Installation Type,text
+IP Rating,IPRating_Ceiling_Lights,IP Rating,list
+IP Rating,IPRating_Chandeliers,IP Rating,list
+IP Rating,IPRating_Flush_Mount_Lights,IP Rating,list
+IP Rating,IPRating_Pendant_Lights,IP Rating,list
+IP Rating,IPRating_Recessed_Lighting,IP Rating,list
+IP Rating,IPRating_Wall_Sconces,IP Rating,list
+Lamp Height,LampHeight_Arc_Lamps,Lamp Height,numeric
+Lamp Height,LampHeight_Bedside_Lamps,Lamp Height,numeric
+Lamp Height,LampHeight_Buffet_Lamps,Lamp Height,numeric
+Lamp Height,LampHeight_Desk_Lamps,Lamp Height,numeric
+Lamp Height,LampHeight_Floor_Lamps,Lamp Height,numeric
+Lamp Height,LampHeight_Table_Lamps,Lamp Height,numeric
+LED Indicator,LEDIndicator_Backup_Lights,LED Indicator,text
+LED Indicator,LEDIndicator_Emergency_Floodlights,LED Indicator,text
+LED Indicator,LEDIndicator_Emergency_Lights,LED Indicator,text
+LED Indicator,LEDIndicator_Exit_Signs,LED Indicator,text
+Length,Length_LED_Light_Bars,Length,numeric
+Length,Length_LED_Panel_Lights,Length,numeric
+Length,Length_LED_Strip_Lights,Length,numeric
+Length,Length_RGB_LED_Strips,Length,numeric
+Length,Length_Waterproof_LED_Strips,Length,numeric
+Light Output,LightOutput_Backup_Lights,Light Output,numeric
+Light Output,LightOutput_Cabinet_Spotlights,Light Output,numeric
+Light Output,LightOutput_Emergency_Floodlights,Light Output,numeric
+Light Output,LightOutput_Emergency_Lights,Light Output,numeric
+Light Output,LightOutput_Exit_Signs,Light Output,numeric
+Light Output,LightOutput_LED_Puck_Lights,Light Output,numeric
+Light Output,LightOutput_Strip_Lights,Light Output,numeric
+Light Output,LightOutput_Task_Lamps,Light Output,numeric
+Light Output,LightOutput_Under-Cabinet_Lighting,Light Output,numeric
+Light Type,LightType_Flexible_Track_Lighting,Light Type,text
+Light Type,LightType_Linear_Track_Lighting,Light Type,text
+Light Type,LightType_Spotlight_Tracks,Light Type,text
+Light Type,LightType_Track_Lighting,Light Type,text
+Light Type,LightType_Track_Lighting_Systems,Light Type,text
+Load Capacity,LoadCapacity_Dimmer_Switches,Load Capacity,numeric
+Load Capacity,LoadCapacity_Light_Switches,Load Capacity,numeric
+Load Capacity,LoadCapacity_Motion_Sensor_Switches,Load Capacity,numeric
+Load Capacity,LoadCapacity_Smart_Switches,Load Capacity,numeric
+Lumen Output,LumenOutput_Ceiling_Lights,Lumen Output,numeric
+Lumen Output,LumenOutput_Chandeliers,Lumen Output,numeric
+Lumen Output,LumenOutput_Deck_Lights,Lumen Output,numeric
+Lumen Output,LumenOutput_Floodlights,Lumen Output,numeric
+Lumen Output,LumenOutput_Flush_Mount_Lights,Lumen Output,numeric
+Lumen Output,LumenOutput_Landscape_Lighting,Lumen Output,numeric
+Lumen Output,LumenOutput_LED_Light_Bars,Lumen Output,numeric
+Lumen Output,LumenOutput_LED_Panel_Lights,Lumen Output,numeric
+Lumen Output,LumenOutput_LED_Strip_Lights,Lumen Output,numeric
+Lumen Output,LumenOutput_Pathway_Lights,Lumen Output,numeric
+Lumen Output,LumenOutput_Pendant_Lights,Lumen Output,numeric
+Lumen Output,LumenOutput_Post_Lights,Lumen Output,numeric
+Lumen Output,LumenOutput_Recessed_Lighting,Lumen Output,numeric
+Lumen Output,LumenOutput_RGB_LED_Strips,Lumen Output,numeric
+Lumen Output,LumenOutput_Security_Lights,Lumen Output,numeric
+Lumen Output,LumenOutput_Wall_Sconces,Lumen Output,numeric
+Lumen Output,LumenOutput_Waterproof_LED_Strips,Lumen Output,numeric
+Material,Material_Backup_Lights,Material,text
+Material,Material_Deck_Lights,Material,text
+Material,Material_Dimmer_Switches,Material,text
+Material,Material_Electrical_Conduits,Material,text
+Material,Material_Electrical_Tape,Material,text
+Material,Material_Emergency_Floodlights,Material,text
+Material,Material_Emergency_Lights,Material,text
+Material,Material_Exit_Signs,Material,text
+Material,Material_Floodlights,Material,text
+Material,Material_Junction_Boxes,Material,text
+Material,Material_Landscape_Lighting,Material,text
+Material,Material_Light_Switches,Material,text
+Material,Material_Motion_Sensor_Switches,Material,text
+Material,Material_Mounting_Hardware,Material,text
+Material,Material_Pathway_Lights,Material,text
+Material,Material_Post_Lights,Material,text
+Material,Material_Security_Lights,Material,text
+Material,Material_Smart_Switches,Material,text
+Material,Material_Wire_Connectors,Material,text
+Motion Sensor,MotionSensor_Deck_Lights,Motion Sensor,boolean
+Motion Sensor,MotionSensor_Floodlights,Motion Sensor,boolean
+Motion Sensor,MotionSensor_Landscape_Lighting,Motion Sensor,boolean
+Motion Sensor,MotionSensor_Pathway_Lights,Motion Sensor,boolean
+Motion Sensor,MotionSensor_Post_Lights,Motion Sensor,boolean
+Motion Sensor,MotionSensor_Security_Lights,Motion Sensor,boolean
+Mounting Type,MountingType_Backup_Lights,Mounting Type,list
+Mounting Type,MountingType_Ceiling_Lights,Mounting Type,list
+Mounting Type,MountingType_Chandeliers,Mounting Type,list
+Mounting Type,MountingType_Deck_Lights,Mounting Type,list
+Mounting Type,MountingType_Dimmer_Switches,Mounting Type,list
+Mounting Type,MountingType_Emergency_Floodlights,Mounting Type,list
+Mounting Type,MountingType_Emergency_Lights,Mounting Type,list
+Mounting Type,MountingType_Exit_Signs,Mounting Type,list
+Mounting Type,MountingType_Flexible_Track_Lighting,Mounting Type,list
+Mounting Type,MountingType_Floodlights,Mounting Type,list
+Mounting Type,MountingType_Flush_Mount_Lights,Mounting Type,list
+Mounting Type,MountingType_GFCI_Outlets,Mounting Type,list
+Mounting Type,MountingType_Junction_Boxes,Mounting Type,list
+Mounting Type,MountingType_Landscape_Lighting,Mounting Type,list
+Mounting Type,MountingType_Light_Switches,Mounting Type,list
+Mounting Type,MountingType_Linear_Track_Lighting,Mounting Type,list
+Mounting Type,MountingType_Motion_Sensor_Switches,Mounting Type,list
+Mounting Type,MountingType_Mounting_Hardware,Mounting Type,list
+Mounting Type,MountingType_Pathway_Lights,Mounting Type,list
+Mounting Type,MountingType_Pendant_Lights,Mounting Type,list
+Mounting Type,MountingType_Post_Lights,Mounting Type,list
+Mounting Type,MountingType_Power_Outlets,Mounting Type,list
+Mounting Type,MountingType_Recessed_Lighting,Mounting Type,list
+Mounting Type,MountingType_Security_Lights,Mounting Type,list
+Mounting Type,MountingType_Smart_Switches,Mounting Type,list
+Mounting Type,MountingType_Spotlight_Tracks,Mounting Type,list
+Mounting Type,MountingType_Track_Lighting,Mounting Type,list
+Mounting Type,MountingType_Track_Lighting_Systems,Mounting Type,list
+Mounting Type,MountingType_USB_Outlets,Mounting Type,list
+Mounting Type,MountingType_Wall_Sconces,Mounting Type,list
+Mounting Type,MountingType_Weatherproof_Outlets,Mounting Type,list
+Number of Ports,NumberofPorts_USB_Outlets,Number of Ports,numeric
+Number of Track Heads,NumberofTrackHeads_Flexible_Track_Lighting,Number of Track Heads,alphanumeric
+Number of Track Heads,NumberofTrackHeads_Linear_Track_Lighting,Number of Track Heads,alphanumeric
+Number of Track Heads,NumberofTrackHeads_Spotlight_Tracks,Number of Track Heads,alphanumeric
+Number of Track Heads,NumberofTrackHeads_Track_Lighting,Number of Track Heads,alphanumeric
+Number of Track Heads,NumberofTrackHeads_Track_Lighting_Systems,Number of Track Heads,alphanumeric
+Operating Voltage,OperatingVoltage_Deck_Lights,Operating Voltage,numeric
+Operating Voltage,OperatingVoltage_Floodlights,Operating Voltage,numeric
+Operating Voltage,OperatingVoltage_Landscape_Lighting,Operating Voltage,numeric
+Operating Voltage,OperatingVoltage_Pathway_Lights,Operating Voltage,numeric
+Operating Voltage,OperatingVoltage_Post_Lights,Operating Voltage,numeric
+Operating Voltage,OperatingVoltage_Security_Lights,Operating Voltage,numeric
+Portability,Portability_Arc_Lamps,Portability,boolean
+Portability,Portability_Bedside_Lamps,Portability,boolean
+Portability,Portability_Buffet_Lamps,Portability,boolean
+Portability,Portability_Desk_Lamps,Portability,boolean
+Portability,Portability_Floor_Lamps,Portability,boolean
+Portability,Portability_Table_Lamps,Portability,boolean
+Power Source,PowerSource_Backup_Lights,Power Source,text
+Power Source,PowerSource_Deck_Lights,Power Source,text
+Power Source,PowerSource_Emergency_Floodlights,Power Source,text
+Power Source,PowerSource_Emergency_Lights,Power Source,text
+Power Source,PowerSource_Exit_Signs,Power Source,text
+Power Source,PowerSource_Floodlights,Power Source,text
+Power Source,PowerSource_Landscape_Lighting,Power Source,text
+Power Source,PowerSource_Pathway_Lights,Power Source,text
+Power Source,PowerSource_Post_Lights,Power Source,text
+Power Source,PowerSource_Security_Lights,Power Source,text
+Power Supply,PowerSupply_LED_Light_Bars,Power Supply,text
+Power Supply,PowerSupply_LED_Panel_Lights,Power Supply,text
+Power Supply,PowerSupply_LED_Strip_Lights,Power Supply,text
+Power Supply,PowerSupply_RGB_LED_Strips,Power Supply,text
+Power Supply,PowerSupply_Waterproof_LED_Strips,Power Supply,text
+Recharge Time,RechargeTime_Backup_Lights,Recharge Time,numeric
+Recharge Time,RechargeTime_Emergency_Floodlights,Recharge Time,numeric
+Recharge Time,RechargeTime_Emergency_Lights,Recharge Time,numeric
+Recharge Time,RechargeTime_Exit_Signs,Recharge Time,numeric
+Remote Control,RemoteControl_Dimmer_Switches,Remote Control,text
+Remote Control,RemoteControl_Smart_Switches,Remote Control,text
+Running Time,RunningTime_Backup_Lights,Running Time,numeric
+Running Time,RunningTime_Emergency_Floodlights,Running Time,numeric
+Running Time,RunningTime_Emergency_Lights,Running Time,numeric
+Running Time,RunningTime_Exit_Signs,Running Time,numeric
+Self-Diagnostic Features,Self-DiagnosticFeatures_Backup_Lights,Self-Diagnostic Features,text
+Self-Diagnostic Features,Self-DiagnosticFeatures_Emergency_Floodlights,Self-Diagnostic Features,text
+Self-Diagnostic Features,Self-DiagnosticFeatures_Emergency_Lights,Self-Diagnostic Features,text
+Self-Diagnostic Features,Self-DiagnosticFeatures_Exit_Signs,Self-Diagnostic Features,text
+Shade Material,ShadeMaterial_Arc_Lamps,Shade Material,text
+Shade Material,ShadeMaterial_Bedside_Lamps,Shade Material,text
+Shade Material,ShadeMaterial_Buffet_Lamps,Shade Material,text
+Shade Material,ShadeMaterial_Desk_Lamps,Shade Material,text
+Shade Material,ShadeMaterial_Floor_Lamps,Shade Material,text
+Shade Material,ShadeMaterial_Table_Lamps,Shade Material,text
+Size,Size_Electrical_Conduits,Size,numeric
+Size,Size_Electrical_Tape,Size,numeric
+Size,Size_Junction_Boxes,Size,numeric
+Size,Size_Mounting_Hardware,Size,numeric
+Size,Size_Wire_Connectors,Size,numeric
+Smart Compatibility,SmartCompatibility_LED_Light_Bars,Smart Compatibility,boolean
+Smart Compatibility,SmartCompatibility_LED_Panel_Lights,Smart Compatibility,boolean
+Smart Compatibility,SmartCompatibility_LED_Strip_Lights,Smart Compatibility,boolean
+Smart Compatibility,SmartCompatibility_RGB_LED_Strips,Smart Compatibility,boolean
+Smart Compatibility,SmartCompatibility_Waterproof_LED_Strips,Smart Compatibility,boolean
+Smart Control,SmartControl_Dimmer_Switches,Smart Control,text
+Smart Control,SmartControl_Smart_Switches,Smart Control,text
+Smart Features,SmartFeatures_Power_Outlets,Smart Features,text
+Smart Features,SmartFeatures_USB_Outlets,Smart Features,text
+Smart Features,SmartFeatures_Weatherproof_Outlets,Smart Features,text
+Style/Design,Style/Design_Ceiling_Lights,Style/Design,list
+Style/Design,Style/Design_Chandeliers,Style/Design,list
+Style/Design,Style/Design_Flush_Mount_Lights,Style/Design,list
+Style/Design,Style/Design_Pendant_Lights,Style/Design,list
+Style/Design,Style/Design_Recessed_Lighting,Style/Design,list
+Style/Design,Style/Design_Wall_Sconces,Style/Design,list
+Surge Protection,SurgeProtection_Power_Outlets,Surge Protection,text
+Surge Protection,SurgeProtection_USB_Outlets,Surge Protection,text
+Switch Type,SwitchType_Arc_Lamps,Switch Type,text
+Switch Type,SwitchType_Bedside_Lamps,Switch Type,text
+Switch Type,SwitchType_Buffet_Lamps,Switch Type,text
+Switch Type,SwitchType_Desk_Lamps,Switch Type,text
+Switch Type,SwitchType_Dimmer_Switches,Switch Type,text
+Switch Type,SwitchType_Floor_Lamps,Switch Type,text
+Switch Type,SwitchType_Light_Switches,Switch Type,text
+Switch Type,SwitchType_Motion_Sensor_Switches,Switch Type,text
+Switch Type,SwitchType_Smart_Switches,Switch Type,text
+Switch Type,SwitchType_Table_Lamps,Switch Type,text
+Tamper-Resistance,Tamper-Resistance_GFCI_Outlets,Tamper-Resistance,text
+Tamper-Resistance,Tamper-Resistance_Power_Outlets,Tamper-Resistance,text
+Tamper-Resistance,Tamper-Resistance_USB_Outlets,Tamper-Resistance,text
+Tamper-Resistance,Tamper-Resistance_Weatherproof_Outlets,Tamper-Resistance,text
+Touch Sensitivity,TouchSensitivity_Dimmer_Switches,Touch Sensitivity,boolean
+Touch Sensitivity,TouchSensitivity_Smart_Switches,Touch Sensitivity,boolean
+Track Length,TrackLength_Flexible_Track_Lighting,Track Length,numeric
+Track Length,TrackLength_Linear_Track_Lighting,Track Length,numeric
+Track Length,TrackLength_Spotlight_Tracks,Track Length,numeric
+Track Length,TrackLength_Track_Lighting,Track Length,numeric
+Track Length,TrackLength_Track_Lighting_Systems,Track Length,numeric
+Voltage,Voltage_Flexible_Track_Lighting,Voltage,numeric
+Voltage,Voltage_Linear_Track_Lighting,Voltage,numeric
+Voltage,Voltage_Spotlight_Tracks,Voltage,numeric
+Voltage,Voltage_Track_Lighting,Voltage,numeric
+Voltage,Voltage_Track_Lighting_Systems,Voltage,numeric
+Voltage Rating,VoltageRating_Dimmer_Switches,Voltage Rating,numeric
+Voltage Rating,VoltageRating_Electrical_Conduits,Voltage Rating,numeric
+Voltage Rating,VoltageRating_Electrical_Tape,Voltage Rating,numeric
+Voltage Rating,VoltageRating_GFCI_Outlets,Voltage Rating,numeric
+Voltage Rating,VoltageRating_Junction_Boxes,Voltage Rating,numeric
+Voltage Rating,VoltageRating_Light_Switches,Voltage Rating,numeric
+Voltage Rating,VoltageRating_Motion_Sensor_Switches,Voltage Rating,numeric
+Voltage Rating,VoltageRating_Power_Outlets,Voltage Rating,numeric
+Voltage Rating,VoltageRating_Smart_Switches,Voltage Rating,numeric
+Voltage Rating,VoltageRating_USB_Outlets,Voltage Rating,numeric
+Voltage Rating,VoltageRating_Weatherproof_Outlets,Voltage Rating,numeric
+Voltage Rating,VoltageRating_Wire_Connectors,Voltage Rating,numeric
+Waterproof Rating,WaterproofRating_Junction_Boxes,Waterproof Rating,text
+Waterproof Rating,WaterproofRating_LED_Light_Bars,Waterproof Rating,text
+Waterproof Rating,WaterproofRating_LED_Panel_Lights,Waterproof Rating,text
+Waterproof Rating,WaterproofRating_LED_Strip_Lights,Waterproof Rating,text
+Waterproof Rating,WaterproofRating_RGB_LED_Strips,Waterproof Rating,text
+Waterproof Rating,WaterproofRating_Waterproof_LED_Strips,Waterproof Rating,text
+Wattage,Wattage_Arc_Lamps,Wattage,numeric
+Wattage,Wattage_Bedside_Lamps,Wattage,numeric
+Wattage,Wattage_Buffet_Lamps,Wattage,numeric
+Wattage,Wattage_Cabinet_Spotlights,Wattage,numeric
+Wattage,Wattage_Ceiling_Lights,Wattage,numeric
+Wattage,Wattage_Chandeliers,Wattage,numeric
+Wattage,Wattage_Deck_Lights,Wattage,numeric
+Wattage,Wattage_Desk_Lamps,Wattage,numeric
+Wattage,Wattage_Flexible_Track_Lighting,Wattage,numeric
+Wattage,Wattage_Floodlights,Wattage,numeric
+Wattage,Wattage_Floor_Lamps,Wattage,numeric
+Wattage,Wattage_Flush_Mount_Lights,Wattage,numeric
+Wattage,Wattage_Landscape_Lighting,Wattage,numeric
+Wattage,Wattage_LED_Light_Bars,Wattage,numeric
+Wattage,Wattage_LED_Panel_Lights,Wattage,numeric
+Wattage,Wattage_LED_Puck_Lights,Wattage,numeric
+Wattage,Wattage_LED_Strip_Lights,Wattage,numeric
+Wattage,Wattage_Linear_Track_Lighting,Wattage,numeric
+Wattage,Wattage_Pathway_Lights,Wattage,numeric
+Wattage,Wattage_Pendant_Lights,Wattage,numeric
+Wattage,Wattage_Post_Lights,Wattage,numeric
+Wattage,Wattage_Recessed_Lighting,Wattage,numeric
+Wattage,Wattage_RGB_LED_Strips,Wattage,numeric
+Wattage,Wattage_Security_Lights,Wattage,numeric
+Wattage,Wattage_Spotlight_Tracks,Wattage,numeric
+Wattage,Wattage_Strip_Lights,Wattage,numeric
+Wattage,Wattage_Table_Lamps,Wattage,numeric
+Wattage,Wattage_Task_Lamps,Wattage,numeric
+Wattage,Wattage_Track_Lighting,Wattage,numeric
+Wattage,Wattage_Track_Lighting_Systems,Wattage,numeric
+Wattage,Wattage_Under-Cabinet_Lighting,Wattage,numeric
+Wattage,Wattage_Wall_Sconces,Wattage,numeric
+Wattage,Wattage_Waterproof_LED_Strips,Wattage,numeric
+Weatherproofing,Weatherproofing_Deck_Lights,Weatherproofing,text
+Weatherproofing,Weatherproofing_Floodlights,Weatherproofing,text
+Weatherproofing,Weatherproofing_Landscape_Lighting,Weatherproofing,text
+Weatherproofing,Weatherproofing_Pathway_Lights,Weatherproofing,text
+Weatherproofing,Weatherproofing_Post_Lights,Weatherproofing,text
+Weatherproofing,Weatherproofing_Security_Lights,Weatherproofing,text
+Weatherproofing,Weatherproofing_Weatherproof_Outlets,Weatherproofing,text
+Wire Gauge Compatibility,WireGaugeCompatibility_Wire_Connectors,Wire Gauge Compatibility,text
