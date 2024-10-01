@@ -14,6 +14,7 @@ use App\Http\Requests\AttributeRequest;
 use App\Services\AttributeService;
 use Illuminate\Support\Facades\Auth;
 use Str;
+use Yajra\DataTables\Facades\DataTables;
 
 class AttributeController extends Controller
 {
@@ -44,8 +45,73 @@ class AttributeController extends Controller
     {
         // CoreComponentRepository::instantiateShopRepository();
         // CoreComponentRepository::initializeCache();
-        $attributes = Attribute::with('attribute_values')->orderBy('created_at', 'desc')->paginate(15);
-        return view('backend.product.attribute.index', compact('attributes'));
+        //$attributes = Attribute::with('attribute_values')->orderBy('name', 'asc')->get();
+        return view('backend.product.attribute.index');
+    }
+
+
+    public function getAttributesData(Request $request)
+    {
+        // Query to fetch attributes along with their values
+        $query = Attribute::with('attribute_values')->select('attributes.*');
+
+        return DataTables::of($query)
+            ->addColumn('attribute_values', function($attribute) {
+                $values_en = [];
+                $values_ar = [];
+                $values = [];
+
+                foreach ($attribute->attribute_values as $value) {
+                    switch ($value->lang) {
+                        case 'en':
+                            array_push($values_en, $value->value);
+                            break;
+                        case 'ar':
+                            array_push($values_ar, $value->value);
+                            break;
+                        default:
+                            array_push($values, $value->value);
+                    }
+                }
+
+                $valueOutput = '';
+                if (count($values_en) > 0) {
+                    $valueOutput .= 'English: ';
+                    foreach ($values_en as $key => $value) {
+                        $valueOutput .= '<span class="badge badge-inline badge-md bg-soft-dark">' . $value . '</span>';
+                    }
+                }
+
+                if (count($values_ar) > 0) {
+                    $valueOutput .= '<br><br> Arabic: ';
+                    foreach ($values_ar as $key => $value) {
+                        $valueOutput .= '<span class="badge badge-inline badge-md bg-soft-dark">' . $value . '</span>';
+                    }
+                }
+
+                if (count($values) > 0) {
+                    foreach ($values as $key => $value) {
+                        $valueOutput .= '<span class="badge badge-inline badge-md bg-soft-dark">' . $value . '</span>';
+                    }
+                }
+
+                return $valueOutput;
+            })
+            ->addColumn('is_activated', function ($attribute) {
+                return '<label class="aiz-switch aiz-switch-success mb-0">
+                            <input class="activated" data-id="' . $attribute->id . '" id="' . $attribute->id . '" type="checkbox" '.($attribute->is_activated == 1 ? "checked" : "").'>
+                            <span class="slider round"></span>
+                        </label>';
+            })
+            ->addColumn('options', function ($attribute) {
+                return '<a class="btn btn-soft-primary btn-icon btn-circle btn-sm"
+                            href="'.route('attributes.edit', ['id' => $attribute->id, 'lang' => env('DEFAULT_LANGUAGE')]).'"
+                            title="Edit">
+                            <i class="las la-edit"></i>
+                        </a>';
+            })
+            ->rawColumns(['attribute_values', 'is_activated', 'options'])  // Allow HTML content for certain columns
+            ->make(true);
     }
 
     /**
