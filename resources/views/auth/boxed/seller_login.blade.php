@@ -75,9 +75,9 @@
                         <!-- Right Side -->
                         <div class="col-lg-6 p-4 p-lg-5 d-flex flex-column justify-content-center border right-content" style="height: auto;">
                             <!-- Site Icon -->
-                            <div class="size-48px mb-3 mx-auto mx-lg-0">
+                            {{-- <div class="size-48px mb-3 mx-auto mx-lg-0">
                                 <img src="{{ uploaded_asset(get_setting('site_icon')) }}" alt="{{ translate('Site Icon')}}" class="img-fit h-100">
-                            </div>
+                            </div> --}}
 
                             <!-- Titles -->
                             <div class="text-center text-lg-left">
