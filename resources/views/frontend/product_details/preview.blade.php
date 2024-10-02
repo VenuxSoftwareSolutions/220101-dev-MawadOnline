@@ -475,9 +475,10 @@
                                                                                 Discontinued By Manufacturer ‏ :
                                                                                 ‎&nbsp;</span>No</span>
                                                                     </li> --}}
-                                                                    @foreach ($previewData['detailedProduct']['general_attributes'] as $key => $general_attribute)
+                                                                    {{-- @foreach ($previewData['detailedProduct']['general_attributes'] as $key => $general_attribute)
                                                                     @php
                                                                     $attribue_general = App\Models\Attribute::find($key) ;
+                                                                    
 
                                                                     @endphp
                                                                       @if (preg_match('/^#[0-9A-F]{6}$/i', $general_attribute))
@@ -495,8 +496,35 @@
                                                                              ‎&nbsp;</span>{{$general_attribute}}</span></li>
                                                                      @endif
 
-                                                                    @endforeach
-
+                                                                    @endforeach --}}
+                                                                    @foreach ($previewData['detailedProduct']['general_attributes'] as $key => $general_attribute)
+                                                                    @php
+                                                                        $attribue_general = App\Models\Attribute::find($key);
+                                                                    @endphp
+                                                                
+                                                                    @if (is_string($general_attribute) && preg_match('/^#[0-9A-F]{6}$/i', $general_attribute))
+                                                                        <li style="list-style: none; overflow-wrap: break-word; margin: 0px 0px 5.5px;">
+                                                                            <span style="font-weight: 700 !important;" class="a-list-item">Color :</span>
+                                                                            <span class="color-preview" style="display: inline-block; width: 20px; height: 20px; background-color: {{$general_attribute}};"></span>
+                                                                        </li>
+                                                                    @else
+                                                                        <li style="list-style: none; overflow-wrap: break-word; margin: 0px 0px 5.5px;">
+                                                                            <span class="a-list-item">
+                                                                                <span class="a-text-bold" style="font-weight: 700 !important;">
+                                                                                    {{$attribue_general ? $attribue_general->getTranslation('name') : ""}} : ‎&nbsp;
+                                                                                </span>
+                                                                                @if (is_array($general_attribute))
+                                                                                    {{ implode(', ', $general_attribute) }} <!-- Convert array to string -->
+                                                                                @else
+                                                                                    
+                                                                                    {{$general_attribute}} <!-- Directly output if it's a string -->
+                                                                                @endif
+                                                                            </span>
+                                                                        </li>
+                                                                    @endif
+                                                                @endforeach
+                                                                
+                                                                
                                                                 </ul>
                                                             </div>
                                                         </span>
