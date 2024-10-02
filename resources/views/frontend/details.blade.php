@@ -35,7 +35,7 @@
                     @if (isset($previewData['detailedProduct']['discountedPrice']))
                     AED {{ $previewData['detailedProduct']['discountedPrice'] }}
                     @else
-                    AED {{ $previewData['detailedProduct']['price'] }} / {{ @$previewData['detailedProduct']['unit']['name'] }}
+                    AED {{ $previewData['detailedProduct']['price'] }} / {{ @$previewData['detailedProduct']['unit'] }}
                     @endif
 
                 </strong>
@@ -652,14 +652,14 @@
     <div class="col-md-6 float-left">
         <div class="col-md-12 product-rightbox-seller border-radius-8px float-left">
             <div class="col-md-12 product-rightbox-seller-info float-left">
-                <!--
-                <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="avatar-seller mr-2 overflow-hidden border float-left">
+                
+                {{-- <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="avatar-seller mr-2 overflow-hidden border float-left">
                     <img class="lazyload"
                         src="{{ static_asset('assets/img/placeholder.jpg') }}"
                         data-src="{{ uploaded_asset($detailedProduct->user->shop->logo) }}"
                         onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
-                </a>
-            -->
+                </a> --}}
+            
                 <div class="product-rightbox-seller-details float-left">
                     <div class="float-left col-md-12 p-0">
                     <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="link-style-none">
