@@ -34,7 +34,7 @@
                         <!-- Welcome -->
                         <li class="list-inline-item mr-0 pl-0 py-2">
                             <div class="text-dark fs-12 pr-3 d-inline-block border-width-2">
-                                Welcome To MawadOnline's Marketpalce
+                                Welcome To MawadOnline's Marketplace
                             </div>
                         </li>
                         <!-- Currency Switcher -->

@@ -257,20 +257,28 @@
         @include('frontend.inc.demo_nav')
     @endif
 
-    @if (get_setting('show_cookies_agreement') == 'on')
-        <div class="aiz-cookie-alert shadow-xl">
+    @if (get_setting('show_cookies_agreement') == 'on' && !isset($_COOKIE['cookie_accepted']))
+        <div class="aiz-cookie-alert shadow-xl" id="cookieAlert">
             <div class="p-3 bg-dark rounded">
                 <div class="text-white mb-3">
-                    @php
-                        echo get_setting('cookies_agreement_text');
-                    @endphp
+                    {!! get_setting('cookies_agreement_text') !!}
                 </div>
-                <button class="btn btn-primary aiz-cookie-accept">
+                <button class="btn btn-primary aiz-cookie-accept" id="cookieAcceptBtn">
                     {{ translate('Ok. I Understood') }}
                 </button>
             </div>
         </div>
     @endif
+
+    <script>
+        document.getElementById('cookieAcceptBtn').addEventListener('click', function() {
+            // Set a cookie that expires in 1 year
+            document.cookie = "cookie_accepted=true; path=/; max-age=" + 60 * 60 * 24 * 365;
+
+            // Hide the cookie alert
+            document.getElementById('cookieAlert').style.display = 'none';
+        });
+    </script>
     <!-- cookies agreement
     @if (get_setting('show_cookies_agreement') == 'on')
 

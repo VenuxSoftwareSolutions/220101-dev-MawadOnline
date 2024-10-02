@@ -21,7 +21,7 @@
                     <h5 class="mb-0 h6">{{ translate('Attributes') }}</h5>
                 </div>
                 <div class="card-body">
-                    <table class="table aiz-table mb-0">
+                    <table id="attributesTable" class="table  mb-0">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -36,84 +36,8 @@
                                 <th class="text-right">{{ translate('Options') }}</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @foreach ($attributes as $key => $attribute)
-                                <tr>
-                                    <td>{{ $key + 1 }}</td>
-                                    <td>{{ $attribute->name }}</td>
-                                    <td>{{ ucfirst($attribute->type_value) }}</td>
-                                    <td>
-                                        @php
-                                            $values_en = [];
-                                            $values_ar = [];
-                                            $values = [];
-                                            foreach ($attribute->attribute_values as $key => $value) {
-                                                switch ($value->lang) {
-                                                    case 'en':
-                                                        array_push($values_en, $value->value);
-                                                        break;
-                                                    case 'ar':
-                                                        array_push($values_ar, $value->value);
-                                                        break;
-                                                    default:
-                                                        array_push($values, $value->value);
-                                                }
-                                            }
-                                        @endphp
-
-                                        @if (count($values_en) > 0)
-                                            @foreach ($values_en as $key => $value)
-                                                @if ($key == 0)
-                                                    English: <span class="badge badge-inline badge-md bg-soft-dark">{{ $value }}</span>
-                                                @else
-                                                    <span class="badge badge-inline badge-md bg-soft-dark">{{ $value }}</span>
-                                                @endif
-
-                                            @endforeach
-                                        @endif
-
-                                        @if (count($values_ar) > 0)
-                                            @foreach ($values_ar as $key => $value)
-                                                @if ($key == 0)
-                                                    <br><br> Arabic: <span class="badge badge-inline badge-md bg-soft-dark">{{ $value }}</span>
-                                                @else
-                                                    <span class="badge badge-inline badge-md bg-soft-dark">{{ $value }}</span>
-                                                @endif
-
-                                            @endforeach
-                                        @endif
-
-                                        @if (count($values) > 0)
-                                            @foreach ($values as $key => $value)
-                                                <span class="badge badge-inline badge-md bg-soft-dark">{{ $value }}</span>
-                                            @endforeach
-                                        @endif
-
-                                    </td>
-                                    @can('enabling_product_attribute')
-                                        <td>
-                                            <label class="aiz-switch aiz-switch-success mb-0">
-                                                <input class="activated" data-id="{{ $attribute->id }}" id="{{ $attribute->id }}" type="checkbox" @if($attribute->is_activated == 1) {{ "checked" }} @endif >
-                                                <span class="slider round"></span>
-                                            </label>
-                                        </td>
-                                    @endcan
-                                    <td class="text-right">
-                                        @can('edit_product_attribute')
-                                            <a class="btn btn-soft-primary btn-icon btn-circle btn-sm"
-                                                href="{{ route('attributes.edit', ['id' => $attribute->id, 'lang' => env('DEFAULT_LANGUAGE')]) }}"
-                                                title="{{ translate('Edit') }}">
-                                                <i class="las la-edit"></i>
-                                            </a>
-                                        @endcan
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
+                        
                     </table>
-                    <div class="aiz-pagination">
-                        {{ $attributes->links() }}
-                    </div>
                 </div>
             </div>
         </div>
@@ -157,9 +81,36 @@
 @endsection
 
 @section('script')
-    <script>
-        $( document ).ready(function() {
-            $(document).on('change', '.activated', function(){
+
+@section('script')
+<script>
+    $(document).ready(function() {
+        // Initialize DataTable with server-side processing
+        $('#attributesTable').DataTable({
+            "processing": true,  // Show processing indicator
+            "serverSide": true,   // Enable server-side processing
+            "paging": true,       // Enable pagination
+            "ordering": true,     // Enable column ordering
+            "info": true,         // Show table information
+            "autoWidth": false,   // Disable auto width for better responsiveness
+            "pageLength": 10,     // Number of entries per page
+            "ajax": {
+                "url": "{{ route('attributes.data') }}", // URL to fetch data
+                "type": "POST",                         // Use POST for server-side request
+                "data": function (d) {
+                    d._token = "{{ csrf_token() }}";    // Pass the CSRF token with each request
+                }
+            },
+            "columns": [
+                { "data": "id" },
+                { "data": "name" },
+                { "data": "type_value" },
+                { "data": "attribute_values" },
+                { "data": "is_activated", "orderable": false },
+                { "data": "options", "orderable": false, "searchable": false }
+            ]
+        });
+        $(document).on('change', '.activated', function(){
                 var message_confirm = '';
                 var message_success = '';
                 var message_btn = '';
@@ -245,6 +196,9 @@
                     })
                 }
             });
-        });
-    </script>
+    });
+</script>
+
 @endsection
+
+    
