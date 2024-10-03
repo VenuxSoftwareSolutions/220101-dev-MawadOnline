@@ -607,6 +607,7 @@ class ProductController extends Controller
             $general_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->get();
             $general_attributes_ids_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->pluck('id_attribute')->toArray();
             $data_general_attributes = [];
+            
             if(count($general_attributes) > 0){
                 foreach ($general_attributes as $general_attribute){
                     // $data_general_attributes[$general_attribute->id_attribute] = $general_attribute;
@@ -621,6 +622,7 @@ class ProductController extends Controller
                     }
                 }
             }
+            
             if($product_category != null){
                 $categorie = Category::find($product_category->category_id);
                 $current_categorie = $categorie;
@@ -645,15 +647,26 @@ class ProductController extends Controller
                         if(count($all_general_attributes) > 0){
                             foreach($all_general_attributes as $attribute){
                                 $data_general_attributes[$attribute->id] = $attribute;
+                                if($attribute->type_value == 'color'){
+                                    if (array_key_exists($attribute->id,$data_general_attributes)){
+                                        $data_general_attributes[$attribute->id] = [null];
+                                    }else{
+                                        $data_general_attributes[$attribute->id] = [null];
+                                    }
+                                }else{
+                                    $data_general_attributes[$attribute->id] = $attribute;
+                                }
+
                                 if (!in_array($attribute->id, $general_attributes_ids_attributes)) {
                                     array_push($general_attributes_ids_attributes, $attribute->id);
                                 }
                             }
                         }
+                        
                     }
                 }
             }
-
+            
             if($product->is_draft == 1){
                 return view('seller.product.products.draft', [
                     'product' => $product,
