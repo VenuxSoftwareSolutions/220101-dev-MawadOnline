@@ -75,12 +75,12 @@
                                     <span class="aiz-side-nav-text">{{ __('sidenav.bulk_upload') }}</span>
                                 </a>
                             </li> --}}
-                            <li class="aiz-side-nav-item">
+                            {{-- <li class="aiz-side-nav-item">
                                 <a href="{{ route('seller.product_bulk_upload.index') }}"
                                     class="aiz-side-nav-link {{ areActiveRoutes(['product_bulk_upload.index']) }}">
                                     <span class="aiz-side-nav-text">{{ translate('Product Bulk Upload') }}</span>
                                 </a>
-                            </li>
+                            </li> --}}
                             {{-- @can('seller_show_digital_products')
                             <li class="aiz-side-nav-item">
                                 <a href="{{ route('seller.digitalproducts') }}"
