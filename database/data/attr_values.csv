@@ -1,0 +1,162 @@
+id;name;name_display_english;type_value;new_type_value;possible_values
+118;Base Material;BaseMaterial_Arc_Lamps;text;list;Wood, Metal, Plastic
+119;Base Material;BaseMaterial_Bedside_Lamps;text;list;Wood, Metal, Plastic
+120;Base Material;BaseMaterial_Buffet_Lamps;text;list;Wood, Metal, Plastic
+121;Base Material;BaseMaterial_Desk_Lamps;text;list;Wood, Metal, Plastic
+122;Base Material;BaseMaterial_Floor_Lamps;text;list;Wood, Metal, Plastic
+123;Base Material;BaseMaterial_Table_Lamps;text;list;Wood, Metal, Plastic
+128;Beam Angle;BeamAngle_Cabinet_Spotlights;numeric;numeric;
+129;Beam Angle;BeamAngle_Ceiling_Lights;list;numeric;
+130;Beam Angle;BeamAngle_Chandeliers;list;numeric;
+131;Beam Angle;BeamAngle_Flush_Mount_Lights;list;numeric;
+132;Beam Angle;BeamAngle_LED_Puck_Lights;list;numeric;
+133;Beam Angle;BeamAngle_Pendant_Lights;list;numeric;
+134;Beam Angle;BeamAngle_Recessed_Lighting;list;numeric;
+135;Beam Angle;BeamAngle_Strip_Lights;list;numeric;
+136;Beam Angle;BeamAngle_Task_Lamps;list;numeric;
+137;Beam Angle;BeamAngle_Under-Cabinet_Lighting;list;numeric;
+138;Beam Angle;BeamAngle_Wall_Sconces;list;numeric;
+139;Beam Spread;BeamSpread_Deck_Lights;numeric;list;narrow, wide
+140;Beam Spread;BeamSpread_Flexible_Track_Lighting;numeric;list;narrow, wide
+141;Beam Spread;BeamSpread_Floodlights;numeric;list;narrow, wide
+142;Beam Spread;BeamSpread_Landscape_Lighting;numeric;list;narrow, wide
+143;Beam Spread;BeamSpread_Linear_Track_Lighting;numeric;list;narrow, wide
+144;Beam Spread;BeamSpread_Pathway_Lights;numeric;list;narrow, wide
+145;Beam Spread;BeamSpread_Post_Lights;numeric;list;narrow, wide
+146;Beam Spread;BeamSpread_Security_Lights;numeric;list;narrow, wide
+147;Beam Spread;BeamSpread_Spotlight_Tracks;numeric;list;narrow, wide
+148;Beam Spread;BeamSpread_Track_Lighting;numeric;list;narrow, wide
+149;Beam Spread;BeamSpread_Track_Lighting_Systems;numeric;list;narrow, wide
+150;Bulb Type;BulbType_Arc_Lamps;text;list;Incandescent, CFL, LED, Halogen, Fluorescent, HID, Smart Bulbs
+151;Bulb Type;BulbType_Bedside_Lamps;text;list;Incandescent, CFL, LED, Halogen, Fluorescent, HID, Smart Bulbs
+152;Bulb Type;BulbType_Buffet_Lamps;text;list;Incandescent, CFL, LED, Halogen, Fluorescent, HID, Smart Bulbs
+153;Bulb Type;BulbType_Cabinet_Spotlights;text;list;Incandescent, CFL, LED, Halogen, Fluorescent, HID, Smart Bulbs
+154;Bulb Type;BulbType_Desk_Lamps;text;list;Incandescent, CFL, LED, Halogen, Fluorescent, HID, Smart Bulbs
+155;Bulb Type;BulbType_Floor_Lamps;text;list;Incandescent, CFL, LED, Halogen, Fluorescent, HID, Smart Bulbs
+156;Bulb Type;BulbType_LED_Puck_Lights;text;list;Incandescent, CFL, LED, Halogen, Fluorescent, HID, Smart Bulbs
+157;Bulb Type;BulbType_Strip_Lights;text;list;Incandescent, CFL, LED, Halogen, Fluorescent, HID, Smart Bulbs
+158;Bulb Type;BulbType_Table_Lamps;text;list;Incandescent, CFL, LED, Halogen, Fluorescent, HID, Smart Bulbs
+159;Bulb Type;BulbType_Task_Lamps;text;list;Incandescent, CFL, LED, Halogen, Fluorescent, HID, Smart Bulbs
+160;Bulb Type;BulbType_Under-Cabinet_Lighting;text;list;Incandescent, CFL, LED, Halogen, Fluorescent, HID, Smart Bulbs
+161;Bulb Type Compatibility;BulbTypeCompatibility_Ceiling_Lights;list;;E26, E27, GU10, MR16, B22, G4, G9, T5/T8, PAR
+162;Bulb Type Compatibility;BulbTypeCompatibility_Chandeliers;list;;E26, E27, GU10, MR16, B22, G4, G9, T5/T8, PAR
+163;Bulb Type Compatibility;BulbTypeCompatibility_Flush_Mount_Lights;list;;E26, E27, GU10, MR16, B22, G4, G9, T5/T8, PAR
+164;Bulb Type Compatibility;BulbTypeCompatibility_Pendant_Lights;list;;E26, E27, GU10, MR16, B22, G4, G9, T5/T8, PAR
+165;Bulb Type Compatibility;BulbTypeCompatibility_Recessed_Lighting;list;;E26, E27, GU10, MR16, B22, G4, G9, T5/T8, PAR
+166;Bulb Type Compatibility;BulbTypeCompatibility_Wall_Sconces;list;;E26, E27, GU10, MR16, B22, G4, G9, T5/T8, PAR
+202;Color/Finish;Color/Finish_GFCI_Outlets;text;list;White, Black, Ivory, Almond, Gray, Stainless Steel, Bronze, Brown
+203;Color/Finish;Color/Finish_Power_Outlets;text;list;White, Black, Ivory, Almond, Gray, Stainless Steel, Bronze, Brown
+204;Color/Finish;Color/Finish_USB_Outlets;text;list;White, Black, Ivory, Almond, Gray, Stainless Steel, Bronze, Brown
+205;Color/Finish;Color/Finish_Weatherproof_Outlets;text;list;White, Black, Ivory, Almond, Gray, Stainless Steel, Bronze, Brown
+167;Color Coding;ColorCoding_Electrical_Tape;text;list;Red, Blue, Yellow, Green, Black, White, Brown, Orange, Gray
+168;Color Coding;ColorCoding_Wire_Connectors;text;list;Red, Blue, Yellow, Green, Black, White, Brown, Orange, Gray
+169;Color Options;ColorOptions_LED_Light_Bars;text;list;Warm White, Cool White, Daylight, Neutral White, RGB, RGBW, Single Color, Multi-color
+170;Color Options;ColorOptions_LED_Panel_Lights;text;list;Warm White, Cool White, Daylight, Neutral White, RGB, RGBW, Single Color, Multi-color
+171;Color Options;ColorOptions_LED_Strip_Lights;text;list;Warm White, Cool White, Daylight, Neutral White, RGB, RGBW, Single Color, Multi-color
+172;Color Options;ColorOptions_RGB_LED_Strips;text;list;Warm White, Cool White, Daylight, Neutral White, RGB, RGBW, Single Color, Multi-color
+173;Color Options;ColorOptions_Waterproof_LED_Strips;text;list;Warm White, Cool White, Daylight, Neutral White, RGB, RGBW, Single Color, Multi-color
+174;Color Temperature;ColorTemperature_Arc_Lamps;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+175;Color Temperature;ColorTemperature_Bedside_Lamps;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+176;Color Temperature;ColorTemperature_Buffet_Lamps;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+177;Color Temperature;ColorTemperature_Cabinet_Spotlights;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+178;Color Temperature;ColorTemperature_Ceiling_Lights;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+179;Color Temperature;ColorTemperature_Chandeliers;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+180;Color Temperature;ColorTemperature_Deck_Lights;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+181;Color Temperature;ColorTemperature_Desk_Lamps;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+182;Color Temperature;ColorTemperature_Flexible_Track_Lighting;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+183;Color Temperature;ColorTemperature_Floodlights;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+184;Color Temperature;ColorTemperature_Floor_Lamps;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+185;Color Temperature;ColorTemperature_Flush_Mount_Lights;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+186;Color Temperature;ColorTemperature_Landscape_Lighting;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+187;Color Temperature;ColorTemperature_LED_Puck_Lights;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+188;Color Temperature;ColorTemperature_Linear_Track_Lighting;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+189;Color Temperature;ColorTemperature_Pathway_Lights;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+190;Color Temperature;ColorTemperature_Pendant_Lights;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+191;Color Temperature;ColorTemperature_Post_Lights;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+192;Color Temperature;ColorTemperature_Recessed_Lighting;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+193;Color Temperature;ColorTemperature_Security_Lights;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+194;Color Temperature;ColorTemperature_Spotlight_Tracks;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+195;Color Temperature;ColorTemperature_Strip_Lights;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+196;Color Temperature;ColorTemperature_Table_Lamps;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+197;Color Temperature;ColorTemperature_Task_Lamps;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+198;Color Temperature;ColorTemperature_Track_Lighting;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+199;Color Temperature;ColorTemperature_Track_Lighting_Systems;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+200;Color Temperature;ColorTemperature_Under-Cabinet_Lighting;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+201;Color Temperature;ColorTemperature_Wall_Sconces;list;;2700K (Warm White), 3000K (Warm White), 3500K (Neutral White), 4000K (Cool White), 5000K (Daylight), 6500K (Daylight)
+206;Compatibility;Compatibility_Dimmer_Switches;text;;Incandescent, CFL, LED, Halogen, Fluorescent, HID, Smart Bulbs, Dimmable LED Bulbs, Fluorescent Tubes, Smart Home Systems
+207;Compatibility;Compatibility_Light_Switches;text;;Incandescent, CFL, LED, Halogen, Fluorescent, HID, Smart Bulbs, Dimmable LED Bulbs, Fluorescent Tubes, Smart Home Systems
+208;Compatibility;Compatibility_Smart_Switches;text;;Incandescent, CFL, LED, Halogen, Fluorescent, HID, Smart Bulbs, Dimmable LED Bulbs, Fluorescent Tubes, Smart Home Systems
+209;Compliance;Compliance_Backup_Lights;text;;UL certified,  UL 924, OSHA Compliant, NFPA 101 NFPA, IEC Compliant, RoHS Compliant, CE Marked, ADA Compliant
+210;Compliance;Compliance_Emergency_Floodlights;text;;UL certified,  UL 924, OSHA Compliant, NFPA 101 NFPA, IEC Compliant, RoHS Compliant, CE Marked, ADA Compliant
+211;Compliance;Compliance_Emergency_Lights;text;;UL certified,  UL 924, OSHA Compliant, NFPA 101 NFPA, IEC Compliant, RoHS Compliant, CE Marked, ADA Compliant
+212;Compliance;Compliance_Exit_Signs;text;;UL certified,  UL 924, OSHA Compliant, NFPA 101 NFPA, IEC Compliant, RoHS Compliant, CE Marked, ADA Compliant
+213;Conduit Type;ConduitType_Electrical_Conduits;text;;Rigid Metal Conduit (RMC), Intermediate Metal Conduit (IMC), Electrical Metallic Tubing (EMT), Flexible Metal Conduit (FMC), Liquid-Tight Flexible Metal Conduit (LFMC), Polyvinyl Chloride (PVC) Conduit, Rigid Non-Metallic Conduit (RNC), Electrical Non-Metallic Tubing (ENT)
+214;Connectivity;Connectivity_Cabinet_Spotlights;text;;Hardwired, Plug-in, USB Powered, Battery Operated, Wi-Fi Enabled, Bluetooth, Zigbee, Z-Wave
+215;Connectivity;Connectivity_LED_Puck_Lights;text;;Hardwired, Plug-in, USB Powered, Battery Operated, Wi-Fi Enabled, Bluetooth, Zigbee, Z-Wave
+216;Connectivity;Connectivity_Strip_Lights;text;;Hardwired, Plug-in, USB Powered, Battery Operated, Wi-Fi Enabled, Bluetooth, Zigbee, Z-Wave
+217;Connectivity;Connectivity_Task_Lamps;text;;Hardwired, Plug-in, USB Powered, Battery Operated, Wi-Fi Enabled, Bluetooth, Zigbee, Z-Wave
+218;Connectivity;Connectivity_Under-Cabinet_Lighting;text;;Hardwired, Plug-in, USB Powered, Battery Operated, Wi-Fi Enabled, Bluetooth, Zigbee, Z-Wave
+219;Control Method;ControlMethod_LED_Light_Bars;text;;On/Off Switch, Remote Control, App-Based Control, Dimming Switch, Voice Control, Motion Sensor, Music Sync, Timer Function
+220;Control Method;ControlMethod_LED_Panel_Lights;text;;On/Off Switch, Remote Control, App-Based Control, Dimming Switch, Voice Control, Motion Sensor, Music Sync, Timer Function
+221;Control Method;ControlMethod_LED_Strip_Lights;text;;On/Off Switch, Remote Control, App-Based Control, Dimming Switch, Voice Control, Motion Sensor, Music Sync, Timer Function
+222;Control Method;ControlMethod_RGB_LED_Strips;text;;On/Off Switch, Remote Control, App-Based Control, Dimming Switch, Voice Control, Motion Sensor, Music Sync, Timer Function
+223;Control Method;ControlMethod_Waterproof_LED_Strips;text;;On/Off Switch, Remote Control, App-Based Control, Dimming Switch, Voice Control, Motion Sensor, Music Sync, Timer Function
+245;Dimming Capability;DimmingCapability_LED_Light_Bars;boolean;list;0-100% Brightness Adjustment, 10-90% Adjustment, Fixed Percentage Adjustment
+246;Dimming Capability;DimmingCapability_LED_Panel_Lights;boolean;list;0-100% Brightness Adjustment, 10-90% Adjustment, Fixed Percentage Adjustment
+247;Dimming Capability;DimmingCapability_LED_Strip_Lights;boolean;list;0-100% Brightness Adjustment, 10-90% Adjustment, Fixed Percentage Adjustment
+248;Dimming Capability;DimmingCapability_RGB_LED_Strips;boolean;list;0-100% Brightness Adjustment, 10-90% Adjustment, Fixed Percentage Adjustment
+249;Dimming Capability;DimmingCapability_Waterproof_LED_Strips;boolean;list;0-100% Brightness Adjustment, 10-90% Adjustment, Fixed Percentage Adjustment
+250;Dimming Compatibility;DimmingCompatibility_Flexible_Track_Lighting;boolean;list;Standard Dimmer Switches, LED-Compatible Dimmer Required
+251;Dimming Compatibility;DimmingCompatibility_Linear_Track_Lighting;boolean;list;Standard Dimmer Switches, LED-Compatible Dimmer Required
+252;Dimming Compatibility;DimmingCompatibility_Spotlight_Tracks;boolean;list;Standard Dimmer Switches, LED-Compatible Dimmer Required
+253;Dimming Compatibility;DimmingCompatibility_Track_Lighting;boolean;list;Standard Dimmer Switches, LED-Compatible Dimmer Required
+254;Dimming Compatibility;DimmingCompatibility_Track_Lighting_Systems;boolean;list;Standard Dimmer Switches, LED-Compatible Dimmer Required
+255;Dimming Functionality;DimmingFunctionality_Arc_Lamps;boolean;list;Smooth Dimming, Stepped Dimming, Flicker-Free Dimming, Low-Level Dimming
+256;Dimming Functionality;DimmingFunctionality_Bedside_Lamps;boolean;list;Smooth Dimming, Stepped Dimming, Flicker-Free Dimming, Low-Level Dimming
+257;Dimming Functionality;DimmingFunctionality_Buffet_Lamps;boolean;list;Smooth Dimming, Stepped Dimming, Flicker-Free Dimming, Low-Level Dimming
+258;Dimming Functionality;DimmingFunctionality_Desk_Lamps;boolean;list;Smooth Dimming, Stepped Dimming, Flicker-Free Dimming, Low-Level Dimming
+259;Dimming Functionality;DimmingFunctionality_Floor_Lamps;boolean;list;Smooth Dimming, Stepped Dimming, Flicker-Free Dimming, Low-Level Dimming
+260;Dimming Functionality;DimmingFunctionality_Table_Lamps;boolean;list;Smooth Dimming, Stepped Dimming, Flicker-Free Dimming, Low-Level Dimming
+268;Fixture Material;FixtureMaterial_Ceiling_Lights;list;;Metal, Brass, Iron, Stainless Steel, Bronze, Aluminum, Glass, Plastic, Wood, Crystal, Ceramic, Fabric, Acrylic, Resin, Rattan.
+269;Fixture Material;FixtureMaterial_Chandeliers;list;;Metal, Brass, Iron, Stainless Steel, Bronze, Aluminum, Glass, Plastic, Wood, Crystal, Ceramic, Fabric, Acrylic, Resin, Rattan.
+270;Fixture Material;FixtureMaterial_Flush_Mount_Lights;list;;Metal, Brass, Iron, Stainless Steel, Bronze, Aluminum, Glass, Plastic, Wood, Crystal, Ceramic, Fabric, Acrylic, Resin, Rattan.
+271;Fixture Material;FixtureMaterial_Pendant_Lights;list;;Metal, Brass, Iron, Stainless Steel, Bronze, Aluminum, Glass, Plastic, Wood, Crystal, Ceramic, Fabric, Acrylic, Resin, Rattan.
+272;Fixture Material;FixtureMaterial_Recessed_Lighting;list;;Metal, Brass, Iron, Stainless Steel, Bronze, Aluminum, Glass, Plastic, Wood, Crystal, Ceramic, Fabric, Acrylic, Resin, Rattan.
+273;Fixture Material;FixtureMaterial_Wall_Sconces;list;;Metal, Brass, Iron, Stainless Steel, Bronze, Aluminum, Glass, Plastic, Wood, Crystal, Ceramic, Fabric, Acrylic, Resin, Rattan.
+290;IP Rating;IPRating_Ceiling_Lights;list;;IP20, IP44, IP65
+291;IP Rating;IPRating_Chandeliers;list;;IP20, IP44, IP65
+292;IP Rating;IPRating_Flush_Mount_Lights;list;;IP20, IP44, IP65
+293;IP Rating;IPRating_Pendant_Lights;list;;IP20, IP44, IP65
+294;IP Rating;IPRating_Recessed_Lighting;list;;IP20, IP44, IP65
+295;IP Rating;IPRating_Wall_Sconces;list;;IP20, IP44, IP65
+371;Mounting Type;MountingType_Backup_Lights;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+372;Mounting Type;MountingType_Ceiling_Lights;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+373;Mounting Type;MountingType_Chandeliers;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+374;Mounting Type;MountingType_Deck_Lights;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+375;Mounting Type;MountingType_Dimmer_Switches;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+376;Mounting Type;MountingType_Emergency_Floodlights;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+377;Mounting Type;MountingType_Emergency_Lights;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+378;Mounting Type;MountingType_Exit_Signs;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+379;Mounting Type;MountingType_Flexible_Track_Lighting;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+380;Mounting Type;MountingType_Floodlights;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+381;Mounting Type;MountingType_Flush_Mount_Lights;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+382;Mounting Type;MountingType_GFCI_Outlets;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+383;Mounting Type;MountingType_Junction_Boxes;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+384;Mounting Type;MountingType_Landscape_Lighting;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+385;Mounting Type;MountingType_Light_Switches;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+386;Mounting Type;MountingType_Linear_Track_Lighting;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+387;Mounting Type;MountingType_Motion_Sensor_Switches;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+388;Mounting Type;MountingType_Mounting_Hardware;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+389;Mounting Type;MountingType_Pathway_Lights;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+390;Mounting Type;MountingType_Pendant_Lights;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+391;Mounting Type;MountingType_Post_Lights;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+392;Mounting Type;MountingType_Power_Outlets;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+393;Mounting Type;MountingType_Recessed_Lighting;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+394;Mounting Type;MountingType_Security_Lights;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+395;Mounting Type;MountingType_Smart_Switches;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+396;Mounting Type;MountingType_Spotlight_Tracks;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+397;Mounting Type;MountingType_Track_Lighting;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+398;Mounting Type;MountingType_Track_Lighting_Systems;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+399;Mounting Type;MountingType_USB_Outlets;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+400;Mounting Type;MountingType_Wall_Sconces;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
+401;Mounting Type;MountingType_Weatherproof_Outlets;list;;Ceiling Mounted, Wall Mounted, Surface Mounted, Recessed Mounted, Semi-Flush Mounted, Flush Mounted, Chain or Rod Suspended, Ground Mounted, Pole Mounted, Stake Mounted, Suspended Mounted, Post Mounted.
