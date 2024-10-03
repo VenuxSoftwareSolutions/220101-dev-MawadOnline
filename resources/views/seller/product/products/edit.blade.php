@@ -195,7 +195,7 @@
     <style>
         .multi-select-menuitem input {
             position: relative !important;
-            margin-left: 0 !important; 
+            margin-left: 0 !important;
         }
     </style>
 @endif
@@ -2492,7 +2492,7 @@
                                 });
                             }
                         }
-                        
+
                     });
 
                     $("#general_attributes div").each(function(index, element) {
@@ -2713,7 +2713,7 @@
                     if(check == false){
                         $(element).attr('name', 'attributes-' + dataIdValue + '-' + numbers_variant);
                     }
-                    
+
                 });
 
                 clonedDiv.find('.attributes-units').each(function(index, element) {

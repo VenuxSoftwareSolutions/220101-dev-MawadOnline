@@ -756,7 +756,12 @@
             return false;
         }
 
-        function addToCart(){
+        function addToCart(isPreview = null){
+            if (isPreview == true) {
+                AIZ.plugins.notify('warning', "{{ __('messages.preview_mode_warning') }}");
+                return false;
+            }
+
             @if (Auth::check() && Auth::user()->user_type != 'customer')
                 AIZ.plugins.notify('warning', "{{ translate('Please Login as a customer to add products to the Cart.') }}");
                 return false;

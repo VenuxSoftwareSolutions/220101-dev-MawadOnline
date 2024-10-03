@@ -478,7 +478,7 @@
                                                                     {{-- @foreach ($previewData['detailedProduct']['general_attributes'] as $key => $general_attribute)
                                                                     @php
                                                                     $attribue_general = App\Models\Attribute::find($key) ;
-                                                                    
+
 
                                                                     @endphp
                                                                       @if (preg_match('/^#[0-9A-F]{6}$/i', $general_attribute))
@@ -501,7 +501,7 @@
                                                                     @php
                                                                         $attribue_general = App\Models\Attribute::find($key);
                                                                     @endphp
-                                                                
+
                                                                     @if (is_string($general_attribute) && preg_match('/^#[0-9A-F]{6}$/i', $general_attribute))
                                                                         <li style="list-style: none; overflow-wrap: break-word; margin: 0px 0px 5.5px;">
                                                                             <span style="font-weight: 700 !important;" class="a-list-item">Color :</span>
@@ -516,15 +516,15 @@
                                                                                 @if (is_array($general_attribute))
                                                                                     {{ implode(', ', $general_attribute) }} <!-- Convert array to string -->
                                                                                 @else
-                                                                                    
+
                                                                                     {{$general_attribute}} <!-- Directly output if it's a string -->
                                                                                 @endif
                                                                             </span>
                                                                         </li>
                                                                     @endif
                                                                 @endforeach
-                                                                
-                                                                
+
+
                                                                 </ul>
                                                             </div>
                                                         </span>

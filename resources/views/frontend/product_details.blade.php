@@ -501,7 +501,7 @@
                                                                                 Discontinued By Manufacturer ‏ :
                                                                                 ‎&nbsp;</span>No</span>
                                                                     </li> --}}
-                                                                    @foreach ($previewData['detailedProduct']['general_attributes'] as $key => $general_attribute)
+                                                                    {{-- @foreach ($previewData['detailedProduct']['general_attributes'] as $key => $general_attribute)
                                                                     @php
                                                                     $attribue_general = App\Models\Attribute::find($key) ;
 
@@ -521,7 +521,7 @@
                                                                              ‎&nbsp;</span>{{$general_attribute}}</span></li>
                                                                      @endif
 
-                                                                    @endforeach
+                                                                    @endforeach --}}
 
                                                                 </ul>
                                                             </div>
@@ -536,9 +536,10 @@
                                     <span class="fs-20 font-prompt-md">Product Specification</span>
                                     <table class="table prod-details-table border">
                                         <tbody>
-                                            @foreach ($previewData['detailedProduct']['general_attributes'] as $key => $general_attribute)
+                                            {{-- @foreach ($previewData['detailedProduct']['general_attributes'] as $key => $general_attribute)
                                                 @php
                                                     $attribue_general = App\Models\Attribute::find($key) ;
+
                                                 @endphp
 
                                                 @if (preg_match('/^#[0-9A-F]{6}$/i', $general_attribute))
@@ -552,7 +553,46 @@
                                                         <td>{{$general_attribute}}</td>
                                                     </tr>
                                                 @endif
+                                            @endforeach --}}
+                                            @foreach ($previewData['detailedProduct']['general_attributes'] as $key => $general_attribute)
+                                                @php
+                                                    $attribue_general = App\Models\Attribute::find($key);
+                                                @endphp
+
+                                                @if (is_array($general_attribute))
+                                                    {{-- If $general_attribute is an array, loop through each element --}}
+                                                    <tr>
+                                                        <td class="background-green">{{ $attribue_general ? $attribue_general->getTranslation('name') : "" }}</td>
+                                                        <td>
+                                                            @foreach ($general_attribute as $attribute)
+                                                                @if (preg_match('/^#[0-9A-F]{6}$/i', $attribute))
+                                                                    {{-- Display the color --}}
+                                                                    <span class="color-preview" style="display: inline-block; width: 20px; height: 20px; background-color: {{ $attribute }};"></span>
+                                                                @else
+                                                                    {{-- Display the value --}}
+                                                                    <span>{{ $attribute }}</span>
+                                                                @endif
+                                                            @endforeach
+                                                        </td>
+                                                    </tr>
+                                                @else
+                                                    {{-- Single attribute handling --}}
+                                                    @if (preg_match('/^#[0-9A-F]{6}$/i', $general_attribute))
+                                                        {{-- If it is a color --}}
+                                                        <tr>
+                                                            <td class="background-green">Color</td>
+                                                            <td><span class="color-preview" style="display: inline-block; width: 20px; height: 20px; background-color: {{ $general_attribute }};"></span></td>
+                                                        </tr>
+                                                    @else
+                                                        {{-- Non-color attribute --}}
+                                                        <tr>
+                                                            <td class="background-green">{{ $attribue_general ? $attribue_general->getTranslation('name') : "" }}</td>
+                                                            <td>{{ $general_attribute }}</td>
+                                                        </tr>
+                                                    @endif
+                                                @endif
                                             @endforeach
+
                                         </tbody>
                                     </table>
                                 </div>
@@ -582,7 +622,8 @@
                                     <div class="col-md-12 my-2 float-left">
                                         @if(count($previewData['detailedProduct']['documents']) > 0)
                                             @foreach($previewData['detailedProduct']['documents'] as $document)
-                                                @switch($document->extension)
+
+                                                @switch($document['extension'])
                                                     @case('pdf')
                                                         <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
                                                             <div class="py-5 px-4">
@@ -607,7 +648,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
+                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
                                                                     Download
                                                                 </a>
                                                                 <span class="download-box-btm-r">
@@ -644,7 +685,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
+                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
                                                                     Download
                                                                 </a>
                                                                 <span class="download-box-btm-r">
@@ -681,7 +722,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
+                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
                                                                     Download
                                                                 </a>
                                                                 <span class="download-box-btm-r">
@@ -718,7 +759,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
+                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
                                                                     Download
                                                                 </a>
                                                                 <span class="download-box-btm-r">
@@ -755,7 +796,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
+                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
                                                                     Download
                                                                 </a>
                                                                 <span class="download-box-btm-r">
@@ -792,7 +833,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
+                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
                                                                     Download
                                                                 </a>
                                                                 <span class="download-box-btm-r">
@@ -829,7 +870,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
+                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
                                                                     Download
                                                                 </a>
                                                                 <span class="download-box-btm-r">
@@ -866,7 +907,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
+                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
                                                                     Download
                                                                 </a>
                                                                 <span class="download-box-btm-r">
@@ -903,7 +944,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
+                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
                                                                     Download
                                                                 </a>
                                                                 <span class="download-box-btm-r">
@@ -940,7 +981,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
+                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
                                                                     Download
                                                                 </a>
                                                                 <span class="download-box-btm-r">
@@ -977,7 +1018,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
+                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
                                                                     Download
                                                                 </a>
                                                                 <span class="download-box-btm-r">
@@ -1012,7 +1053,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
+                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
                                                                     Download
                                                                 </a>
                                                                 <span class="download-box-btm-r">
@@ -1047,7 +1088,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
+                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
                                                                     Download
                                                                 </a>
                                                                 <span class="download-box-btm-r">
@@ -1082,7 +1123,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
+                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
                                                                     Download
                                                                 </a>
                                                                 <span class="download-box-btm-r">
@@ -1117,7 +1158,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
+                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
                                                                     Download
                                                                 </a>
                                                                 <span class="download-box-btm-r">
@@ -1152,7 +1193,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document->path) }}" class="download-box-btm-l p-0" download>
+                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
                                                                     Download
                                                                 </a>
                                                                 <span class="download-box-btm-r">
@@ -1362,6 +1403,7 @@
                                                 Average of <b>{{$totalRating}} reviews</b>
                                             </div>
                                         </div>
+                                        @if (!isset($isPreview))
                                         <div class="col-lg-8 col-md-6 col-12 mt-4 review-lines p-3">
                                             <div class="col-12 p-0 float-left mb-2">
                                                 <span class="float-left rating-txt-style fs-16">5 Stars</span>
@@ -1399,6 +1441,7 @@
                                                 <span class="float-left rating-txt-color fs-16">{{ $previewData['detailedProduct']['ratingPercentages'][4]['percentage'] }}%</span>
                                             </div>
                                         </div>
+                                        @endif
                                     </div>
                                     @endif
                                     <div class="row">
@@ -1499,6 +1542,11 @@
                                                     </ul>
                                                 </div>
                                             @endif
+                                            @if(isset($isPreview) && $isPreview)
+                                            <div class="alert alert-warning mt-3" role="alert">
+                                                You are in preview mode. You cannot submit a review.
+                                            </div>
+                                        @else
                                             <form method="POST" action="{{ route('reviews.store') }}">
                                                 @csrf
                                                 <input type="hidden" name="product_id" value="{{ $previewData['detailedProduct']['product_id'] }}">
@@ -1541,6 +1589,7 @@
                                                     </div>
                                                 @endif
                                             </form>
+                                            @endif
                                         </div>
                                     </div>
                                     <!-- end form comment -->

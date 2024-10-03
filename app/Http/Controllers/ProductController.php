@@ -1712,6 +1712,8 @@ class ProductController extends Controller
             'brand' => $brand ? $brand->name : "",
             'unit' => $data['unit'],
             'description' => $data['description'],
+            'short_description' => $data['short_description'],
+
             'main_photos' => $lastItem['storedFilePaths'] ?? $storedFilePaths, // Add stored file paths to the detailed product data
             // 'quantity' => isset($data['from'][0]) ? $data['from'][0] : "" ,
             // 'price' => isset($data['unit_price'][0]) ? $data['unit_price'][0] : "",
@@ -1742,6 +1744,7 @@ class ProductController extends Controller
             'discount_type' => $data['discount_type'] ?? null ,
             'discount_percentage' => $data['discount_percentage'],
             'discount_amount'=> $data['discount_amount'],
+
         ];
 
 
