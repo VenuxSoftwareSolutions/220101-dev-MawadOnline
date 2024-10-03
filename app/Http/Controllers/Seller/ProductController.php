@@ -1030,9 +1030,18 @@ class ProductController extends Controller
         return $videoId;
     }
 
+    function generateSku($name) {
+        // Convert the name to a slug (lowercase and hyphenated)
+        $sku = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $name)));
+
+        // Optionally, you can add a unique identifier, like a timestamp or an incrementing number
+        return  $sku;
+    }
+
 
     public function prepareDetailedProductData($data){
-        // dd($data) ;
+
+
         // Check if main_photos has files
         // if (isset($data['photos_variant-0']) && is_array($data['photos_variant-0'])) {
         //     // Process and save main photos
@@ -1488,7 +1497,43 @@ class ProductController extends Controller
             $shop_name = null;
         }
 
+        if (isset($data['product_id']) && !empty($data['product_id'])) {
+            // Retrieve existing documents for the given product ID
+            $existingDocuments = UploadProducts::where('id_product', $data['product_id'])
+                ->where('type', 'documents')
+                ->get();
+        } else {
+            // If product_id is not set or is empty, return an empty collection
+            $existingDocuments = collect();
+        }
 
+        $newDocuments= [] ;
+         // Check if the documents were uploaded
+    if (isset($data['documents'])) {
+        foreach ($data['documents'] as $document) {
+
+          // Generate a unique name for the file using the current timestamp
+            $fileName = time() . '_' . $document->getClientOriginalExtension();
+
+            // Create a path for storing the document
+            $path = $document->storeAs('/upload_products/Product-temp/documents', $fileName);
+
+            // Add document info to the newDocuments array
+            $newDocuments[] = [
+
+                'path' => '/'.$path,
+                'extension' => $document->extension(),
+                'document_name' => $document->getClientOriginalName(),
+                'type' => 'documents',
+                // You can add created_at and updated_at if needed
+            ];
+        }
+    }
+
+
+    // Combine existing documents with new ones
+        $existingDocumentsArray = $existingDocuments->toArray();
+        $allDocuments = collect($existingDocumentsArray)->merge($newDocuments);
 
         // Prepare detailed product data
         $detailedProduct = [
@@ -1497,6 +1542,8 @@ class ProductController extends Controller
             'brand' => $brand ? $brand->name : "",
             'unit' => $data['unit'],
             'description' => $data['description'],
+            'short_description' => $data['short_description'],
+
             'main_photos' => $lastItem['storedFilePaths'] ?? $storedFilePaths, // Add stored file paths to the detailed product data
             // 'quantity' => isset($data['from'][0]) ? $data['from'][0] : "" ,
             // 'price' => isset($data['unit_price'][0]) ? $data['unit_price'][0] : "",
@@ -1529,6 +1576,14 @@ class ProductController extends Controller
             'discount_amount'=> $data['discount_amount'],
             'percent'=> $percent ?? null,
             'product_id' => $data['product_id'] ?? null ,
+            'category' => isset($data['parent_id']) && !empty($data['parent_id']) ? optional(Category::find($data['parent_id']))->name : null,
+            'sku'=>  isset($data['name']) && !empty($data['name']) ? $this->generateSku($data['name']) : null ,
+            'tags'=> $data['tags'] ,
+
+            'ratingPercentages' => 0,
+            'documents' => $allDocuments,
+
+
 
         ];
 
@@ -1558,6 +1613,7 @@ class ProductController extends Controller
 
     public function preview(Request $request)
     {
+
         $previewData = $request->session()->get('productPreviewData', null);
 
         // dd($previewData);
@@ -1568,7 +1624,13 @@ class ProductController extends Controller
         // Extract all variables required for the view
         extract($previewData);
 
-        return view('frontend.product_details.preview', compact('previewData'));
+
+        // Add a flag to indicate that this is a preview
+        $isPreview = true;
+
+
+        return view('frontend.product_details', compact('previewData','isPreview'));
+        // return view('frontend.product_details.preview', compact('previewData'));
     }
 
     public function updatePricePreview(Request $request) {

@@ -82,5 +82,7 @@ return [
     'view_approved_iban_certificate' => 'View Approved IBAN Certificate',
     'view_iban_certificate' => 'View IBAN Certificate',
     'strict_email' => 'The email address is not valid.',
+    'preview_mode_warning' => 'You are in preview mode. You cannot add products to the cart.',
+    'preview_mode_warning_form' => 'You are in preview mode. You cannot submit a review.',
 
 ];
