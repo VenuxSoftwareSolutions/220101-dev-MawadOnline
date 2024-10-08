@@ -23,7 +23,45 @@
     </div>
     <!-- Short Description -->
     <div class="row col-md-12 fs-16 font-prompt">
-        {!! $previewData['detailedProduct']['short_description'] !!}
+        <!--{!! $previewData['detailedProduct']['short_description'] !!}-->
+
+        <div>
+            @php
+                // Get the first 140 characters of the description
+                $shortDescription = Str::limit($previewData['detailedProduct']['short_description'], 85);
+            @endphp
+
+            <!-- Short description -->
+            <p id="shortDescription">
+                {!! $shortDescription !!}<span class="seemorebtn" onclick="toggleDescription()">View more</span>
+            </p>
+
+            <!-- Full description (hidden initially) -->
+            <p id="fullDescription" style="display: none;">
+                {!! $previewData['detailedProduct']['short_description'] !!} <span class="seemorebtn" onclick="toggleDescription()">View less</span>
+            </p>
+
+            <!-- Toggle button
+            <div style="margin-top: 10px;">
+                <button id="seeMoreBtn" onclick="toggleDescription()">See More</button>
+            </div>-->
+        </div>
+
+        <script>
+            function toggleDescription() {
+                var shortDesc = document.getElementById("shortDescription");
+                var fullDesc = document.getElementById("fullDescription");
+                if (shortDesc.style.display === "none") {
+                    shortDesc.style.display = "block";
+                    fullDesc.style.display = "none";
+                } else {
+                    shortDesc.style.display = "none";
+                    fullDesc.style.display = "block";
+                }
+            }
+        </script>
+
+
     </div>
     <!-- Price -->
     <div class="row no-gutters mb-2">
