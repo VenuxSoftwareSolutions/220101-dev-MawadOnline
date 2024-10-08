@@ -22,7 +22,7 @@
             @endif
     </div>
     <!-- Short Description -->
-    <div class="row col-md-12 fs-13 font-prompt">
+    <div class="row col-md-12 fs-16 font-prompt">
         {!! $previewData['detailedProduct']['short_description'] !!}
     </div>
     <!-- Price -->
@@ -652,14 +652,14 @@
     <div class="col-md-6 float-left">
         <div class="col-md-12 product-rightbox-seller border-radius-8px float-left">
             <div class="col-md-12 product-rightbox-seller-info float-left">
-                
+
                 {{-- <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="avatar-seller mr-2 overflow-hidden border float-left">
                     <img class="lazyload"
                         src="{{ static_asset('assets/img/placeholder.jpg') }}"
                         data-src="{{ uploaded_asset($detailedProduct->user->shop->logo) }}"
                         onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
                 </a> --}}
-            
+
                 <div class="product-rightbox-seller-details float-left">
                     <div class="float-left col-md-12 p-0">
                     <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="link-style-none">
@@ -696,7 +696,7 @@
                         </div>
                         <div class="float-right">
                             <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="link-style-none">
-                                <button class="fs-16 font-prompt border-radius-8px view-store-btn">View Store</button>
+                                <button class="fs-14 font-prompt border-radius-8px view-store-btn">View Store</button>
                             </a>
                         </div>
                     </div>
