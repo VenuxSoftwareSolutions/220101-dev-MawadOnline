@@ -51,7 +51,7 @@
 
                 </a>
             </div>
-            <div class="absolute-top-left aiz-p-hov-span font-prompt @if($product->discount !== Null) aiz-p-hov-span-bg-orange @else aiz-p-hov-span-bg-dark @endif">
+            {{-- <div class="absolute-top-left aiz-p-hov-span font-prompt @if($product->discount !== Null) aiz-p-hov-span-bg-orange @else aiz-p-hov-span-bg-dark @endif">
                 <a href="javascript:void(0)" class="hov-svg-white border-radius-8px" data-toggle="tooltip" data-placement="left">
                     <span>
                         @if($product->discount !== Null)
@@ -61,7 +61,19 @@
                         @endif
                     </span>
                 </a>
+            </div> --}}
+
+            @if($product->featured)
+            <div class="absolute-top-left aiz-p-hov-span font-prompt @if($product->discount !== Null) aiz-p-hov-span-bg-orange @else aiz-p-hov-span-bg-dark @endif">
+                <a href="javascript:void(0)" class="hov-svg-white border-radius-8px" data-toggle="tooltip" data-placement="left">
+                    <span>
+                            Featured
+                    </span>
+                </a>
             </div>
+            @endif
+
+            
             <div class="absolute-bottom-left-rating aiz-p-hov-span-rating font-prompt">
                 <a href="javascript:void(0)" class="hov-svg-white border-radius-8px" "
                     data-toggle="tooltip" data-placement="left">
