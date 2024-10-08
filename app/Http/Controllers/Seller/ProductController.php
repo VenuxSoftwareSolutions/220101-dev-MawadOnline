@@ -1582,6 +1582,8 @@ class ProductController extends Controller
 
             'ratingPercentages' => 0,
             'documents' => $allDocuments,
+            'previewCreate'=>true,
+            "unit_of_sale" => $data['unit'] ?? null ,
 
 
 

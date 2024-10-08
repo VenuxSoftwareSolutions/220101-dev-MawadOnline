@@ -823,7 +823,8 @@ class HomeController extends Controller
                     'tags'=>$parent->tags ?? null ,
                     'category' => optional(Category::find($parent->category_id))->name,
                     'documents' => UploadProducts::where('id_product', $parent->id)->where('type', 'documents')->get(),
-                    'ratingPercentages' => $ratingPercentages
+                    'ratingPercentages' => $ratingPercentages,
+                    "unit_of_sale" => $parent->unit ?? null ,
 
 
                 ];
