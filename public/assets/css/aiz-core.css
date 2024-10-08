@@ -12965,7 +12965,8 @@ border:none !important;
 }
 .view-store-btn{
     width: 105px;
-    padding: 8px 8px 8px 8px;
+    height: 32px;
+    padding: 6px 8px;
     color: var(--primary);
     border:solid 1px var(--primary) !important;
     background: none;

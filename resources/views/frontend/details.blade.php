@@ -22,7 +22,7 @@
             @endif
     </div>
     <!-- Short Description -->
-    <div class="row col-md-12 fs-13 font-prompt">
+    <div class="row col-md-12 fs-16 font-prompt">
         {!! $previewData['detailedProduct']['short_description'] !!}
     </div>
     <!-- Price -->
@@ -715,7 +715,7 @@
                         </div>
                         <div class="float-right">
                             <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="link-style-none">
-                                <button class="fs-16 font-prompt border-radius-8px view-store-btn">View Store</button>
+                                <button class="fs-14 font-prompt border-radius-8px view-store-btn">View Store</button>
                             </a>
                         </div>
                     </div>
