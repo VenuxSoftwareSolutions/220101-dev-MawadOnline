@@ -466,13 +466,13 @@
                                 <div class="row mb-3">
                                     <label class="col-md-2 col-from-label">{{translate('Sample description')}}</label>
                                     <div class="col-md-10">
-                                        <textarea class="form-control" name="sample_description"></textarea>
+                                        <textarea class="form-control" name="sample_description" id="sample_description_parent"></textarea>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label class="col-md-2 col-from-label">{{translate('Sample price')}}</label>
                                     <div class="col-md-10">
-                                        <input type="number" step="0.01" min="1" class="form-control" name="sample_price">
+                                        <input type="number" step="0.01" class="form-control" name="sample_price" id="sample_price_parent">
                                     </div>
                                 </div>
 
@@ -4228,7 +4228,32 @@
                                         }
 
                                         if(check == true){
-                                            document.getElementById('choice_form').submit();
+                                            if($('#sample_description_parent').val() != ''){
+                                                var sample_price_parent = parseFloat($('#sample_price_parent').val());
+                                                if(!isNaN(sample_price_parent)){
+                                                    if(sample_price_parent <= 0){
+                                                        var title = "{{ translate('Sample price') }}";
+                                                        var message = "{{ translate('The sample price must be greater than or equal to 0.1 AED.')}}";
+
+                                                        $('#title-modal').text(title);
+                                                        $('#text-modal').text(message);
+
+                                                        $('#modal-info').modal('show');
+                                                    }else{
+                                                        document.getElementById('choice_form').submit();
+                                                    }
+                                                }else{
+                                                    var title = "{{ translate('Sample price') }}";
+                                                    var message = "{{ translate('The sample price is required and must be greater than or equal to 0.1 AED.')}}";
+
+                                                    $('#title-modal').text(title);
+                                                    $('#text-modal').text(message);
+
+                                                    $('#modal-info').modal('show');
+                                                }
+                                            }else{
+                                                document.getElementById('choice_form').submit();
+                                            }
                                         }else{
                                             Swal.fire({
                                                 title: '{{ translate("Pricing Configuration Check")}}',
@@ -4237,12 +4262,63 @@
                                             });
                                         }
                                     }else{
-                                        document.getElementById('choice_form').submit();
+                                        if($('#sample_description_parent').val() != ''){
+                                            var sample_price_parent = parseFloat($('#sample_price_parent').val());
+                                            if(!isNaN(sample_price_parent)){
+                                                if(sample_price_parent <= 0){
+                                                    var title = "{{ translate('Sample price') }}";
+                                                    var message = "{{ translate('The sample price must be greater than or equal to 0.1 AED.')}}";
+
+                                                    $('#title-modal').text(title);
+                                                    $('#text-modal').text(message);
+
+                                                    $('#modal-info').modal('show');
+                                                }else{
+                                                    document.getElementById('choice_form').submit();
+                                                }
+                                            }else{
+                                                var title = "{{ translate('Sample price') }}";
+                                                var message = "{{ translate('The sample price is required and must be greater than or equal to 0.1 AED.')}}";
+
+                                                $('#title-modal').text(title);
+                                                $('#text-modal').text(message);
+
+                                                $('#modal-info').modal('show');
+                                            }
+                                        }else{
+                                            document.getElementById('choice_form').submit();
+                                        }
                                     }
                                 });
                         });
                     }else{
-                        document.getElementById('choice_form').submit();
+                        if($('#sample_description_parent').val() != ''){
+                            var sample_price_parent = parseFloat($('#sample_price_parent').val());
+                            if(!isNaN(sample_price_parent)){
+                                if(sample_price_parent <= 0){
+                                    var title = "{{ translate('Sample price') }}";
+                                    var message = "{{ translate('The sample price must be greater than or equal to 0.1 AED.')}}";
+
+                                    $('#title-modal').text(title);
+                                    $('#text-modal').text(message);
+
+                                    $('#modal-info').modal('show');
+                                }else{
+                                    document.getElementById('choice_form').submit();
+                                }
+                            }else{
+                                var title = "{{ translate('Sample price') }}";
+                                var message = "{{ translate('The sample price is required and must be greater than or equal to 0.1 AED.')}}";
+
+                                $('#title-modal').text(title);
+                                $('#text-modal').text(message);
+
+                                $('#modal-info').modal('show');
+                            }
+                        }else{
+                            document.getElementById('choice_form').submit();
+                        }
+                        
                     }
                 }else{
                     Swal.fire({

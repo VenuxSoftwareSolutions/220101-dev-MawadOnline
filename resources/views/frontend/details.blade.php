@@ -42,7 +42,7 @@
                     @if (isset($previewData['detailedProduct']['discountedPrice']))
                     AED {{ $previewData['detailedProduct']['discountedPrice'] }}
                     @else
-                    AED {{ $previewData['detailedProduct']['price'] }} / {{ @$previewData['detailedProduct']['unit'] }}
+                    AED {{ $previewData['detailedProduct']['price'] }} / {{ @$previewData['detailedProduct']['unit']->name }}
                     @endif
 
                 </strong>
