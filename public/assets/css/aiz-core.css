@@ -13188,3 +13188,10 @@ border:none !important;
     white-space: nowrap;
     color: #F3F4F5;
 }
+.seemorebtn{
+    color: #cb774b;
+    cursor: pointer;
+}
+.seemorebtn:hover{
+    text-decoration: underline;
+}
