@@ -17,7 +17,11 @@
             @endphp
             @if ($detailedProduct->digital == 1)
             <div class="col-6 d-flex justify-content-end align-items-center">
-                <span class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ translate('In stock') }}</span>
+                <span class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ translate('In Stock') }}</span>
+            </div>
+            @else
+            <div class="col-6 d-flex justify-content-end align-items-center">
+                <span class="badge badge-md badge-inline badge-pill badge-danger-light fs-14 font-prompt-md border-radius-8px outof-stock-style">{{ translate('Out Of Stock') }}</span>
             </div>
             @endif
     </div>
@@ -29,17 +33,24 @@
             @php
                 // Get the first 140 characters of the description
                 $shortDescription = Str::limit($previewData['detailedProduct']['short_description'], 85);
+                $descriptionLength = strlen($previewData['detailedProduct']['short_description']);
             @endphp
 
             <!-- Short description -->
             <p id="shortDescription">
-                {!! $shortDescription !!}<span class="seemorebtn" onclick="toggleDescription()">View more</span>
+                {!! $shortDescription !!}
+                @if($descriptionLength > 85)
+                    <span class="seemorebtn" onclick="toggleDescription()">View more</span>
+                @endif
             </p>
 
             <!-- Full description (hidden initially) -->
-            <p id="fullDescription" style="display: none;">
-                {!! $previewData['detailedProduct']['short_description'] !!} <span class="seemorebtn" onclick="toggleDescription()">View less</span>
-            </p>
+            @if($descriptionLength > 85)
+                <p id="fullDescription" style="display: none;">
+                    {!! $previewData['detailedProduct']['short_description'] !!}
+                    <span class="seemorebtn" onclick="toggleDescription()">View less</span>
+                </p>
+            @endif
 
             <!-- Toggle button
             <div style="margin-top: 10px;">

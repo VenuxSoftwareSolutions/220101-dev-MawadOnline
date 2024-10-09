@@ -12847,8 +12847,15 @@ border-radius: 8px;
 .badge-success-light{
     background-color: #DAFFD4;
 }
+.badge-danger-light{
+    background-color:#FFD4D4;
+}
 .in-stock-style{
     color: #138C00;
+    padding: 4px 8px 4px 8px;
+}
+.outof-stock-style{
+    color: #8C0000;
     padding: 4px 8px 4px 8px;
 }
 .rating-style{
