@@ -57,6 +57,9 @@ use App\Http\Controllers\AffiliateController;
 use App\Http\Controllers\ClubPointController;
 use App\Http\Controllers\CommissionController;
 use AizPackages\ColorCodeConverter\Services\ColorCodeConverter;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+
 
 if (!function_exists('humanFileSize')) {
     function humanFileSize($bytes, $decimals = 2)
@@ -1813,7 +1816,7 @@ if (!function_exists('get_products_filter_price')) {
                 $min = $PricingConfiguration->min('unit_price');
                 $max = $PricingConfiguration->max('unit_price');
             }
-            
+
         }
         // dd($id_products,$min,$max);
         if($min == $max){
@@ -1827,7 +1830,7 @@ if (!function_exists('get_products_filter_price')) {
                 'max' => $max,
             ];
         }
-        
+
     }
 }
 
@@ -2644,3 +2647,25 @@ if (!function_exists('seller_lease_creation')) {
         return true;
     }
 }
+
+
+if (!function_exists('generateUniqueSlug')) {
+    function generateUniqueSlug($model, $title, $column = 'slug')
+    {
+        // Generate the initial slug
+        $slug = Str::slug($title);
+
+        // Check if slug exists in the specified model
+        $existingSlugCount = DB::table((new $model)->getTable())
+            ->where($column, 'LIKE', "{$slug}%")
+            ->count();
+
+        // If slug exists, append a number
+        if ($existingSlugCount > 0) {
+            $slug = "{$slug}-" . ($existingSlugCount + 1);
+        }
+
+        return $slug;
+    }
+}
+

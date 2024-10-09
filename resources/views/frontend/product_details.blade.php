@@ -430,7 +430,7 @@
                         <div class="nav aiz-nav-tabs">
                             <a href="#tab_default_1" data-toggle="tab" class="mr-5 pb-2 fs-16 fw-700 text-reset active show">Description</a>
                             <a href="#tab_default_2" data-toggle="tab" class="mr-5 pb-2 fs-16 fw-700 text-reset">Downloadable</a>
-                            <a href="#tab_default_3" data-toggle="tab" class="mr-5 pb-2 fs-16 fw-700 text-reset">Reviews ( {{$totalRating}} )</a>
+                            <a href="#tab_default_3" data-toggle="tab" class="mr-5 pb-2 fs-16 fw-700 text-reset">Reviews ( {{$totalRating ?? "0"}} )</a>
                         </div>
 
                         <!-- Description -->
@@ -1376,6 +1376,10 @@
                     <div class="tab-pane fade" id="tab_default_3">
                                 <!-- Ratting -->
                                 <div class="px-3 px-sm-4 mb-4 mt-4">
+                                    {{-- @php
+                                    $detailedProduct = App\Models\Product::find(5) ;
+                                    @endphp --}}
+
                                     @if($previewData['detailedProduct']['variationId'] || $previewData['detailedProduct']['product_id'] )
                                     @php
                                     if($previewData['detailedProduct']['variationId'])
@@ -2127,6 +2131,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
+                @if(isset($detailedProduct))
                 <form class="" action="{{ route('conversations.store') }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf
@@ -2148,12 +2153,13 @@
                         <button type="submit" class="btn btn-primary fw-600 rounded-0 w-100px">{{ translate('Send') }}</button>
                     </div>
                 </form>
+                @endif
             </div>
         </div>
     </div>
 
     <!-- Bid Modal -->
-    @if ($detailedProduct->auction_product == 1)
+    @if (isset($detailedProduct) && $detailedProduct->auction_product == 1)
         @php
             $highest_bid = $detailedProduct->bids->max('amount');
             $min_bid_amount = $highest_bid != null ? $highest_bid+1 : $detailedProduct->starting_bid;

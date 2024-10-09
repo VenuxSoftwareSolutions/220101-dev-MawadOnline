@@ -6,16 +6,23 @@
                 {{ $previewData['detailedProduct']['name'] }}
             </h2>
         </div>
-        @if($previewData['detailedProduct']['variationId'] || $previewData['detailedProduct']['product_id'])
+        {{-- @php
+        $detailedProduct = App\Models\Product::find(5) ;
+        @endphp --}}
+
+        @if($previewData['detailedProduct']['variationId'] || $previewData['detailedProduct']['product_id'] || isset($previewData['detailedProduct']['previewCreate']))
             @php
-                if($previewData['detailedProduct']['variationId'])
-                    $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['variationId']);
-                else {
-                    $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['product_id']);
+                if(!isset($previewData['detailedProduct']['previewCreate'])) {
+                    if($previewData['detailedProduct']['variationId'])
+                        $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['variationId']);
+                    else {
+                        $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['product_id']);
+                    }
+                    $totalRating = $detailedProduct->reviews->count();
                 }
-                $totalRating = $detailedProduct->reviews->count();
+
             @endphp
-            @if ($detailedProduct->digital == 1)
+            @if (isset($detailedProduct) && $detailedProduct->digital == 1)
             <div class="col-6 d-flex justify-content-end align-items-center">
                 <span class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ translate('In stock') }}</span>
             </div>
@@ -135,13 +142,13 @@
 
 
             <span class="rating rating-mr-1 rating-var">
-                @if($totalRating > 0)
+                @if(isset($totalRating) && $totalRating > 0)
                     {{ renderStarRating($detailedProduct->reviews->sum('rating') / $totalRating) }}
                 @else
                     {{ renderStarRating(0) }} <!-- Assuming 0 stars when there are no reviews -->
                 @endif
             </span>
-            <span class="total-var-rating ml-1 fs-16 font-prompt-md rating-style">({{ $totalRating }} {{ translate('reviews') }})</span>
+            <span class="total-var-rating ml-1 fs-16 font-prompt-md rating-style">({{ $totalRating ?? "0" }} {{ translate('reviews') }})</span>
          @else
             <span class="rating rating-mr-1 rating-var fs-16 font-prompt-md rating-style">
                 {{ renderStarRating(0) }}
@@ -223,6 +230,14 @@
             <span class="fs-16 font-prompt">{{ $previewData['detailedProduct']['sku'] }}</span>
         </div>
     </div>
+    <!-- Unit of Sale -->
+    <div class="col-md-12 p-0 pb-2">
+        <div class="product-desc-each">
+            <span class="fs-16 font-prompt-md">Unit of Sale:</span>
+            <span class="fs-16 font-prompt">{{ $previewData['detailedProduct']['unit_of_sale'] }}</span>
+        </div>
+    </div>
+
     <!-- Category -->
     <div class="col-md-12 p-0 pb-2">
         <div class="product-desc-each">
@@ -252,7 +267,7 @@
         </div>
         <hr class="hr-style"/>
     </div>
-    @if ($detailedProduct->colors != null && count(json_decode($detailedProduct->colors)) > 0)
+    @if (isset($detailedProduct) &&  $detailedProduct->colors != null && count(json_decode($detailedProduct->colors)) > 0)
     <div class="row no-gutters mb-3">
         <div class="col-2">
             <div class="fs-16 font-prompt-md mt-2">{{ translate('Color') }}:</div>
@@ -716,59 +731,112 @@
                         data-src="{{ uploaded_asset($detailedProduct->user->shop->logo) }}"
                         onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
                 </a> --}}
-
-                <div class="product-rightbox-seller-details float-left">
-                    <div class="float-left col-md-12 p-0">
-                    <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="link-style-none">
-                    <span class="fs-16 font-prompt-md float-left product-rightbox-seller-name">
-                        {{ $detailedProduct->user->shop->name }}
-                    </span>
-                    </a>
-                        @if ($detailedProduct->user->shop->verification_status == 1)
-                            <span class="ml-2 float-left">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <g clip-path="url(#clip0_3402_10941)">
-                                    <path d="M23.2181 13.1502L13.1237 23.2446C12.4949 23.8734 11.4725 23.8734 10.8389 23.2446L0.754071 13.1502C0.125271 12.5214 0.125271 11.499 0.754071 10.8702L10.8437 0.775799C11.4725 0.146999 12.4949 0.146999 13.1285 0.775799L17.0165 4.6638L11.6885 10.5102L9.10607 7.9518L5.54447 11.5518L11.8805 17.8206L20.6021 8.2494L22.1189 9.7662L23.2229 10.8702C23.8469 11.499 23.8469 12.5214 23.2181 13.1502Z" fill="#1E78C1"/>
-                                    <path d="M11.8373 16.4476L6.88367 11.542L9.10607 9.29563L11.7221 11.8828L21.3509 1.31323L23.6885 3.44443L11.8373 16.4476Z" fill="#1E78C1"/>
-                                    </g>
-                                    <defs>
-                                    <clipPath id="clip0_3402_10941">
-                                    <rect width="24" height="24" fill="white"/>
-                                    </clipPath>
-                                    </defs>
-                                    </svg>
-                            </span>
-                        @endif
-                    </div>
-                    <div class="float-left col-md-12 p-0">
-                        <div class="float-left">
-                            <div class="rating rating-mr-1">
-                                {{ renderStarRatingSmall($detailedProduct->user->shop->rating) }}
-                            </div>
-                            <div class="opacity-60 fs-16">
-                                ({{ $detailedProduct->user->shop->num_of_reviews }}
-                                {{ translate('reviews') }})
-                            </div>
-
+                @if(isset($detailedProduct))
+                    <div class="product-rightbox-seller-details float-left">
+                        <div class="float-left col-md-12 p-0">
+                        <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="link-style-none">
+                        <span class="fs-16 font-prompt-md float-left product-rightbox-seller-name">
+                            {{ $detailedProduct->user->shop->name }}
+                        </span>
+                        </a>
+                            @if ($detailedProduct->user->shop->verification_status == 1)
+                                <span class="ml-2 float-left">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <g clip-path="url(#clip0_3402_10941)">
+                                        <path d="M23.2181 13.1502L13.1237 23.2446C12.4949 23.8734 11.4725 23.8734 10.8389 23.2446L0.754071 13.1502C0.125271 12.5214 0.125271 11.499 0.754071 10.8702L10.8437 0.775799C11.4725 0.146999 12.4949 0.146999 13.1285 0.775799L17.0165 4.6638L11.6885 10.5102L9.10607 7.9518L5.54447 11.5518L11.8805 17.8206L20.6021 8.2494L22.1189 9.7662L23.2229 10.8702C23.8469 11.499 23.8469 12.5214 23.2181 13.1502Z" fill="#1E78C1"/>
+                                        <path d="M11.8373 16.4476L6.88367 11.542L9.10607 9.29563L11.7221 11.8828L21.3509 1.31323L23.6885 3.44443L11.8373 16.4476Z" fill="#1E78C1"/>
+                                        </g>
+                                        <defs>
+                                        <clipPath id="clip0_3402_10941">
+                                        <rect width="24" height="24" fill="white"/>
+                                        </clipPath>
+                                        </defs>
+                                        </svg>
+                                </span>
+                            @endif
                         </div>
+<<<<<<< HEAD
                         <div class="float-right">
                             <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="link-style-none">
                                 <button class="fs-14 font-prompt border-radius-8px view-store-btn">View Store</button>
                             </a>
+=======
+                        <div class="float-left col-md-12 p-0">
+                            <div class="float-left">
+                                <div class="rating rating-mr-1">
+                                    {{ renderStarRatingSmall($detailedProduct->user->shop->rating) }}
+                                </div>
+                                <div class="opacity-60 fs-16">
+                                    ({{ $detailedProduct->user->shop->num_of_reviews }}
+                                    {{ translate('reviews') }})
+                                </div>
+
+                            </div>
+                            <div class="float-right">
+                                <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="link-style-none">
+                                    <button class="fs-16 font-prompt border-radius-8px view-store-btn">View Store</button>
+                                </a>
+                            </div>
+>>>>>>> 50170af9802c72b393843729e872fd5799da2a60
                         </div>
                     </div>
-                </div>
+                @else
+                    @php
+                        $user = Auth::user() ;
+                    @endphp
+                       <div class="product-rightbox-seller-details float-left">
+                        <div class="float-left col-md-12 p-0">
+                        <a href="{{ route('shop.visit', $user->shop->slug) }}" class="link-style-none">
+                        <span class="fs-16 font-prompt-md float-left product-rightbox-seller-name">
+                            {{ $user->shop->name }}
+                        </span>
+                        </a>
+                            @if ($user->shop->verification_status == 1)
+                                <span class="ml-2 float-left">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <g clip-path="url(#clip0_3402_10941)">
+                                        <path d="M23.2181 13.1502L13.1237 23.2446C12.4949 23.8734 11.4725 23.8734 10.8389 23.2446L0.754071 13.1502C0.125271 12.5214 0.125271 11.499 0.754071 10.8702L10.8437 0.775799C11.4725 0.146999 12.4949 0.146999 13.1285 0.775799L17.0165 4.6638L11.6885 10.5102L9.10607 7.9518L5.54447 11.5518L11.8805 17.8206L20.6021 8.2494L22.1189 9.7662L23.2229 10.8702C23.8469 11.499 23.8469 12.5214 23.2181 13.1502Z" fill="#1E78C1"/>
+                                        <path d="M11.8373 16.4476L6.88367 11.542L9.10607 9.29563L11.7221 11.8828L21.3509 1.31323L23.6885 3.44443L11.8373 16.4476Z" fill="#1E78C1"/>
+                                        </g>
+                                        <defs>
+                                        <clipPath id="clip0_3402_10941">
+                                        <rect width="24" height="24" fill="white"/>
+                                        </clipPath>
+                                        </defs>
+                                        </svg>
+                                </span>
+                            @endif
+                        </div>
+                        <div class="float-left col-md-12 p-0">
+                            <div class="float-left">
+                                <div class="rating rating-mr-1">
+                                    {{ renderStarRatingSmall($user->shop->rating) }}
+                                </div>
+                                <div class="opacity-60 fs-16">
+                                    ({{ $user->shop->num_of_reviews }}
+                                    {{ translate('reviews') }})
+                                </div>
+
+                            </div>
+                            <div class="float-right">
+                                <a href="{{ route('shop.visit', $user->shop->slug) }}" class="link-style-none">
+                                    <button class="fs-16 font-prompt border-radius-8px view-store-btn">View Store</button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                @endif
             </div>
-      <!--
-            <div class="col-md-12 p-0 pt-2 float-left">
+
+            {{-- <div class="col-md-12 p-0 pt-2 float-left">
                 <span class="col-md-12 fs-16 font-prompt float-left p-0 pt-2">
                     <font color="#4C4E54"> Address : <span class="opacity-70">{{ $detailedProduct->user->shop->address }}</span></font>
                 </span>
                 <span class="col-md-12 fs-16 font-prompt float-left p-0 pt-2">
                     <font color="#4C4E54"> Phone : <span class="opacity-70">{{ $detailedProduct->user->shop->phone }}</span></font>
                 </span>
-            </div>
-        -->
+            </div> --}}
+
         </div>
     </div>
     <!--
