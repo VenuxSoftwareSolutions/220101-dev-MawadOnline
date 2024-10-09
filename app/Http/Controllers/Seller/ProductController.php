@@ -1598,11 +1598,13 @@ class ProductController extends Controller
             'percent'=> $percent ?? null,
             'product_id' => $data['product_id'] ?? null ,
             'category' => isset($data['parent_id']) && !empty($data['parent_id']) ? optional(Category::find($data['parent_id']))->name : null,
-            'sku'=>  isset($data['name']) && !empty($data['name']) ? $this->generateSku($data['name']) : null ,
+            'sku'=>  $data['product_sk'] ?? null ,
             'tags'=> $data['tags'] ,
 
             'ratingPercentages' => 0,
             'documents' => $allDocuments,
+            'previewCreate'=>true,
+            "unit_of_sale" => $data['unit'] ?? null ,
 
 
 
