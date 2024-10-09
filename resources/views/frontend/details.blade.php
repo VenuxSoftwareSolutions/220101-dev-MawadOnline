@@ -29,8 +29,46 @@
             @endif
     </div>
     <!-- Short Description -->
-    <div class="row col-md-12 fs-13 font-prompt">
-        {!! $previewData['detailedProduct']['short_description'] !!}
+    <div class="row col-md-12 fs-16 font-prompt">
+        <!--{!! $previewData['detailedProduct']['short_description'] !!}-->
+
+        <div>
+            @php
+                // Get the first 140 characters of the description
+                $shortDescription = Str::limit($previewData['detailedProduct']['short_description'], 85);
+            @endphp
+
+            <!-- Short description -->
+            <p id="shortDescription">
+                {!! $shortDescription !!}<span class="seemorebtn" onclick="toggleDescription()">View more</span>
+            </p>
+
+            <!-- Full description (hidden initially) -->
+            <p id="fullDescription" style="display: none;">
+                {!! $previewData['detailedProduct']['short_description'] !!} <span class="seemorebtn" onclick="toggleDescription()">View less</span>
+            </p>
+
+            <!-- Toggle button
+            <div style="margin-top: 10px;">
+                <button id="seeMoreBtn" onclick="toggleDescription()">See More</button>
+            </div>-->
+        </div>
+
+        <script>
+            function toggleDescription() {
+                var shortDesc = document.getElementById("shortDescription");
+                var fullDesc = document.getElementById("fullDescription");
+                if (shortDesc.style.display === "none") {
+                    shortDesc.style.display = "block";
+                    fullDesc.style.display = "none";
+                } else {
+                    shortDesc.style.display = "none";
+                    fullDesc.style.display = "block";
+                }
+            }
+        </script>
+
+
     </div>
     <!-- Price -->
     <div class="row no-gutters mb-2">
@@ -717,22 +755,10 @@
                                 </span>
                             @endif
                         </div>
-                        <div class="float-left col-md-12 p-0">
-                            <div class="float-left">
-                                <div class="rating rating-mr-1">
-                                    {{ renderStarRatingSmall($detailedProduct->user->shop->rating) }}
-                                </div>
-                                <div class="opacity-60 fs-16">
-                                    ({{ $detailedProduct->user->shop->num_of_reviews }}
-                                    {{ translate('reviews') }})
-                                </div>
-
-                            </div>
-                            <div class="float-right">
-                                <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="link-style-none">
-                                    <button class="fs-16 font-prompt border-radius-8px view-store-btn">View Store</button>
-                                </a>
-                            </div>
+                        <div class="float-right">
+                            <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="link-style-none">
+                                <button class="fs-14 font-prompt border-radius-8px view-store-btn">View Store</button>
+                            </a>
                         </div>
                     </div>
                 @else

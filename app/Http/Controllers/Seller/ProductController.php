@@ -217,11 +217,16 @@ class ProductController extends Controller
         Artisan::call('view:clear');
         Artisan::call('cache:clear');
 
-        if($product->stock_after_create){
-            return redirect()->route('seller.stocks.index');
+        if($product->is_draft == 1){
+            return redirect()->route('seller.products.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')]);
         }else{
-            return redirect()->route('seller.products');
+            if($product->stock_after_create){
+                return redirect()->route('seller.stocks.index');
+            }else{
+                return redirect()->route('seller.products');
+            }
         }
+        
     }
 
     public function store_draft(Request $request){
@@ -258,8 +263,11 @@ class ProductController extends Controller
 
             Artisan::call('view:clear');
             Artisan::call('cache:clear');
-
-            return redirect()->route('seller.products');
+            if($product->is_draft == 1){
+                return redirect()->route('seller.products.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')]);
+            }else{
+                return redirect()->route('seller.products');
+            }
 
         }else{
             return redirect()->back();
@@ -727,7 +735,6 @@ class ProductController extends Controller
 
     public function update(Request $request)
     {
-        //dd($request->all());
         $parent = Product::find($request->product_id);
         if($parent != null){
             $product = $this->productService->update($request->except([
@@ -761,8 +768,9 @@ class ProductController extends Controller
 
             Artisan::call('view:clear');
             Artisan::call('cache:clear');
-
+            
             return redirect()->route('seller.products');
+            
 
         }else{
             return redirect()->back();
