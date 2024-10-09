@@ -517,13 +517,13 @@
                                     <div class="row mb-3">
                                         <label class="col-md-2 col-from-label">{{translate('Sample description')}}</label>
                                         <div class="col-md-10">
-                                            <textarea class="form-control sample_description_parent" name="sample_description">{{ $product->sample_description }}</textarea>
+                                            <textarea class="form-control sample_description_parent" id="sample_description_parent" name="sample_description">{{ $product->sample_description }}</textarea>
                                         </div>
                                     </div>
                                     <div class="row mb-3">
                                         <label class="col-md-2 col-from-label">{{translate('Sample price')}}</label>
                                         <div class="col-md-10">
-                                            <input type="number" min="1" step="0.01" class="form-control sample_price_parent" name="sample_price" value="{{ $product->sample_price }}">
+                                            <input type="number" min="1" step="0.01" class="form-control sample_price_parent" id="sample_price_parent" name="sample_price" value="{{ $product->sample_price }}">
                                         </div>
                                     </div>
                                 </div>
@@ -814,15 +814,15 @@
                                             <tr>
                                                 <td>
                                                     @php $shippers_sample = explode(",", $product->shipper_sample); @endphp
-                                                    <select class="form-control shipper_sample" name="shipper_sample[]" multiple>
+                                                    <select class="form-control shipper_sample" name="shipper_sample[]" id="shipper_sample_parent" multiple>
                                                         <option value="vendor" @if(in_array("vendor", $shippers_sample)) {{ 'selected' }} @endif>{{translate('vendor')}}</option>
                                                         <option value="third_party" @if(in_array("third_party", $shippers_sample)) {{ 'selected' }} @endif>{{translate('MawadOnline 3rd Party Shippers')}}</option>
                                                     </select>
                                                 </td>
-                                                <td><input type="number" class="form-control estimated_sample" name="estimated_sample" @if($product->estimated_sample != null) value="{{ $product->estimated_sample }}" @endif></td>
-                                                <td><input type="number" @if(!in_array("vendor", $shippers_sample)) {{ 'disabled' }} @endif class="form-control estimated_shipping_sample" name="estimated_shipping_sample" @if($product->estimated_shipping_sample != null) value="{{ $product->estimated_shipping_sample }}" @endif></td>
+                                                <td><input type="number" class="form-control estimated_sample" id="estimated_sample_parent" name="estimated_sample" @if($product->estimated_sample != null) value="{{ $product->estimated_sample }}" @endif></td>
+                                                <td><input type="number" @if(!in_array("vendor", $shippers_sample)) {{ 'disabled' }} @endif id="estimated_shipping_sample_parent" class="form-control estimated_shipping_sample" name="estimated_shipping_sample" @if($product->estimated_shipping_sample != null) value="{{ $product->estimated_shipping_sample }}" @endif></td>
                                                 <td>
-                                                    <select class="form-control paid_sample" name="paid_sample" @if(!in_array("vendor", $shippers_sample)) {{ 'disabled' }} @endif>
+                                                    <select class="form-control paid_sample" name="paid_sample" id="paid_sample_parent" @if(!in_array("vendor", $shippers_sample)) {{ 'disabled' }} @endif>
                                                         <option value="" selected>{{translate('Choose paid by')}}</option>
                                                         <option value="vendor"@if($product->paid_sample == 'vendor') {{ 'selected' }} @endif>{{translate('vendor')}}</option>
                                                         <option value="buyer" @if($product->paid_sample == 'buyer') {{ 'selected' }} @endif>{{translate('Buyer')}}</option>
@@ -1350,7 +1350,7 @@
                                 <div class="row">
                                     <label class="col-md-2 col-from-label">{{translate('SKU')}}</label>
                                     <div class="col-md-10 mb-3" style="padding-right: 0">
-                                        <input type="text" name="product_sk" class="form-control" value="{{ $product->sku }}" id="product_sk">
+                                        <input type="text" name="product_sk" class="form-control" id="sku_product_parent" value="{{ $product->sku }}" id="product_sk">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -1390,7 +1390,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{translate('Description')}}</label>
                             <div class="col-md-8">
-                                <textarea class="aiz-text-editor" name="description">{{ $product->description }}</textarea>
+                                <textarea class="aiz-text-editor" name="description" id="long_description">{{ $product->description }}</textarea>
                                 <input type="hidden" id="hidden_value" value="">
                             </div>
                         </div>
@@ -2784,18 +2784,62 @@
                 clonedDiv.find('.btn-add-pricing').attr('data-newvariant-id', numbers_variant);
                 clonedDiv.find('.delete_pricing_canfiguration').attr('data-newvariant-id', numbers_variant);
 
-                $('#bloc_variants_created').prepend(clonedDiv);
-                var divId = "#bloc_variants_created";
+                // $('#bloc_variants_created').prepend(clonedDiv);
+                // var divId = "#bloc_variants_created";
 
-                // Get the length of all h3 tags under the specific div
-                var h3Count = $(divId + " h3").length;
+                // // Get the length of all h3 tags under the specific div
+                // var h3Count = $(divId + " h3").length;
 
-                // Loop through each h3 tag and display its order
-                $(divId + " h3").each(function(index) {
-                    var order = h3Count - index; // Number in descending order
-                    $(this).text("{{translate('Variant Information')}}" + ' ' + order);
-                });
-                numbers_variant++;
+                // // Loop through each h3 tag and display its order
+                // $(divId + " h3").each(function(index) {
+                //     var order = h3Count - index; // Number in descending order
+                //     $(this).text("{{translate('Variant Information')}}" + ' ' + order);
+                // });
+                // numbers_variant++;
+
+                if(clonedDiv.find('.sku').val() == ''){
+                    var title = "{{ translate('Form validation') }}";
+                    var message = '{{ translate("The SKU field must be filled before creating the variant.")}}';
+                    $('#title-modal').text(title);
+                    $('#text-modal').text(message);
+
+                    $('#modal-info').modal('show')
+                }else{
+                    $('#bloc_variants_created').show();
+                    $('#bloc_variants_created').prepend(clonedDiv);
+                    var divId = "#bloc_variants_created";
+
+                    // Get the length of all h3 tags under the specific div
+                    var h3Count = $(divId + " h3").length;
+
+
+                    // Loop through each h3 tag and display its order
+                    $(divId + " h3").each(function(index) {
+                        var order = h3Count - index; // Number in descending order
+                        $(this).text("{{translate('Variant Information')}}" + ' ' + order);
+                    });
+                    numbers_variant++;
+                    //AIZ.plugins.bootstrapSelect('refresh');
+
+                    $('#variant_informations').find('input[type="text"], input[type="number"], input[type="checkbox"], input[type="radio"], select').each(function() {
+                        // Reset text and number inputs
+                        if ($(this).is('input[type="text"]') || $(this).is('input[type="number"]')) {
+                            $(this).val(''); // Clear the value for text and number inputs
+                        }
+                        // Reset checkboxes and radio buttons
+                        else if ($(this).is('input[type="radio"]')) {
+                            $(this).prop('checked', false); // Uncheck checkboxes and radio buttons
+                        }
+                        // Reset select options
+                        else if ($(this).is('select')) {
+                            $(this).val(''); // Reset to the first option (index 0)
+                        }
+                    }); 
+
+                    $('#variant_informations').find('.filter-option-inner-inner').each(function() {
+                        $(this).text('Nothing selected')
+                    });
+                }
             }else{
                 var title = "{{ translate('Create variant') }}";
                 var message = '{{ translate("A minimum of one attribute must be selected in order to create a variant.")}}';
@@ -5465,64 +5509,534 @@
                     var max_qty = $('#max-qty-parent').val();
                     var unit_price = $('#unit-price-parent').val();
                     if(clickedButtonValue === "edit"){
-                        if ($('body input[name="activate_attributes"]').is(':checked')) {
-                            $('body #bloc_variants_created .variant-pricing').each(function () {
-                                if ($(this).is(':checked')) {
-                                    if ((min_qty == "") || (max_qty == "") || (unit_price == "")) {
-                                        check = false;
-                                    }
-                                } else {
-                                    var min_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.min-qty-variant').val();
-                                    var max_qty_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.max-qty-variant').val();
-                                    var unit_price_variant = $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('tr:first').find('.unit-price-variant').val();
+                        //Validation of price
+                        var check_price = true;
+                        var check_attributes = true;
+                        var min_qty = $('#min-qty-parent').val();
+                        var max_qty = $('#max-qty-parent').val();
+                        var unit_price = $('#unit-price-parent').val();
 
-                                    if ((min_qty_variant == "") || (max_qty_variant == "") || (unit_price_variant == "")) {
-                                        check = false;
+                        if($('body input[name="activate_attributes"]').is(':checked')){
+                            var attributes_selected = $('body #attributes').val();
+                            if(attributes_selected.length != 0){
+                                $('body #bloc_variants_created .variant-pricing').each(function() {
+                                    if($(this).is(':checked')){
+                                        if((min_qty == "") || (max_qty == "") || (unit_price == "")){
+                                            check_price = false;
+                                        }
+                                    }else{
+                                        $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('.min-qty-variant').each(function() {
+                                            if($(this).val() == ''){
+                                                check_price = false;
+                                            }
+                                        });
+
+                                        $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('.max-qty-variant').each(function() {
+                                            if($(this).val() == ''){
+                                                check_price = false;
+                                            }
+                                        });
+
+                                        $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('.unit-price-variant').each(function() {
+                                            if($(this).val() == ''){
+                                                check_price = false;
+                                            }
+                                        });
                                     }
-                                }
+                                });
+
+                                $('body #bloc-pricing-parent tr').each(function() {
+                                    $(this).find('.min-qty').each(function() {
+                                        if($(this).val() == ''){
+                                            check_price = false;
+                                        }
+                                    });
+
+                                    $(this).find('.max-qty').each(function() {
+                                        if($(this).val() == ''){
+                                            check_price = false;
+                                        }
+                                    });
+
+                                    $(this).find('.unit-price-variant').each(function() {
+                                        if($(this).val() == ''){
+                                            check_price = false;
+                                        }
+                                    });
+                                });
+                            }else{
+                                check_attributes = false;
+                                check_price = false;
+                            }
+
+                        }else{
+                            $('#bloc-pricing-parent tr').each(function() {
+                                $(this).find('.min-qty').each(function() {
+                                    if($(this).val() == ''){
+                                        check_price = false;
+                                    }
+                                });
+
+                                $(this).find('.max-qty').each(function() {
+                                    if($(this).val() == ''){
+                                        check_price = false;
+                                    }
+                                });
+
+                                $(this).find('.unit-price-variant').each(function() {
+                                    if($(this).val() == ''){
+                                        check_price = false;
+                                    }
+                                });
                             });
-                        } else {
-                            if ((min_qty == "") || (max_qty == "") || (unit_price == "")) {
-                                check = false;
+                        }
+
+                        //Validation of sample description
+                        var check_sample_description = true;
+                        if($('#sample_description_parent').val().trim() === ''){
+                            check_sample_description = false
+                        }
+
+                        //Validation of short description
+                        var check_short_description = true;
+                        if($('#short_description').val().trim() === ''){
+                            check_short_description = false
+                        }
+
+                        //Validation of long description
+                        var check_long_description = true;
+                        if($('#long_description').val().trim() === ''){
+                            check_long_description = false
+                        }
+
+                        //Validation of sample price
+                        var sample_price_parent = parseFloat($('#sample_price_parent').val());
+                        var check_sample_price = true;
+                        var check_sample_price_undefined = true;
+                        if(!isNaN(sample_price_parent)){
+                            if(sample_price_parent <= 0){
+                                check_sample_price = false;
+                            }
+                        }else{
+                            check_sample_price_undefined = false;
+                        }
+
+                        //Validation of shipping
+                        var check_shipping = true;
+                        var min_qty_shipping = $('#min-qty-shipping').val();
+                        var max_qty_shipping = $('#max-qty-shipping').val();
+                        var shipper_shipping = $('shipper_shipping').val();
+
+                        if($('body input[name="activate_attributes"]').is(':checked')){
+                            var attributes_selected = $('body #attributes').val();
+                            if(attributes_selected.length != 0){
+                                $('body #bloc_variants_created .variant-shipping').each(function() {
+                                    if($(this).is(':checked')){
+                                        $('#shipping_configuration_box tr').each(function() {
+                                            $(this).find('.min-qty-shipping').each(function() {
+                                                if($(this).val() == ''){
+                                                    check_shipping = false;
+                                                }
+                                            });
+
+                                            $(this).find('.max-qty-shipping').each(function() {
+                                                if($(this).val() == ''){
+                                                    check_shipping = false;
+                                                }
+                                            });
+
+                                            $(this).find('.shipper').each(function() {
+                                                if($(this).val() == ''){
+                                                    check_shipping = false;
+                                                }
+                                            });
+                                        });
+                                    }else{
+                                        $(this).parent().parent().parent().find('#bloc_default_shipping').find('.min-qty-shipping').each(function() {
+                                            if($(this).val() == ''){
+                                                check_shipping = false;
+                                            }
+                                        });
+
+                                        $(this).parent().parent().parent().find('#bloc_default_shipping').find('.max-qty-shipping').each(function() {
+                                            if($(this).val() == ''){
+                                                check_shipping = false;
+                                            }
+                                        });
+
+                                        $(this).parent().parent().parent().find('#bloc_default_shipping').find('.shipper').each(function() {
+                                            if($(this).val() == ''){
+                                                check_shipping = false;
+                                            }
+                                        });
+
+                                        $('#shipping_configuration_box tr').each(function() {
+                                            $(this).find('.min-qty-shipping').each(function() {
+                                                if($(this).val() == ''){
+                                                    check_shipping = false;
+                                                }
+                                            });
+
+                                            $(this).find('.max-qty-shipping').each(function() {
+                                                if($(this).val() == ''){
+                                                    check_shipping = false;
+                                                }
+                                            });
+
+                                            $(this).find('.shipper').each(function() {
+                                                if($(this).val() == ''){
+                                                    check_shipping = false;
+                                                }
+                                            });
+                                        });
+                                    }
+                                });
+                            }else{
+                                check_attributes = false;
+                                check_shipping = false;
+                            }
+
+                        }else{
+                            $('#shipping_configuration_box tr').each(function() {
+                                $(this).find('.min-qty-shipping').each(function() {
+                                    if($(this).val() == ''){
+                                        check_shipping = false;
+                                    }
+                                });
+
+                                $(this).find('.max-qty-shipping').each(function() {
+                                    if($(this).val() == ''){
+                                        check_shipping = false;
+                                    }
+                                });
+
+                                $(this).find('.shipper').each(function() {
+                                    if($(this).val() == ''){
+                                        check_shipping = false;
+                                    }
+                                });
+                            });
+                        }
+
+                        //Validation of sku
+                        var check_sku = true;
+                        if($('body input[name="activate_attributes"]').is(':checked')){
+                            var attributes_selected = $('body #attributes').val();
+                            if(attributes_selected.length != 0){
+                                $('body #bloc_variants_created .sku').each(function() {
+                                    if($(this).val() == ''){
+                                        check_sku = false;
+                                    }
+                                });
+                            }else{
+                                check_attributes = false;
+                                check_sku = false;
+                            }
+
+                        }else{
+                            if(($('body #sku_product_parent').val() == '') || ($('body #sku_product_parent').val() == undefined)){
+                                check_sku = false
                             }
                         }
 
-                        if (check == true) {
-                            document.getElementById('choice_form').submit();
+                        //Validation of images
+                        var check_images = true;
+                        if($('body input[name="activate_attributes"]').is(':checked')){
+                            var attributes_selected = $('body #attributes').val();
+                            if(attributes_selected.length != 0){
+                                $('body #bloc_variants_created .photos_variant').each(function() {
+                                    if($(this).parent().parent().find('.uploaded_images').children('div').length == 0){
+                                        check_images = false;
+                                        console.log('false')
+                                    }
+
+                                    if($(this)[0].files.length === 0){
+                                        if(check_images != true){
+                                            check_images = false;
+                                        }
+                                    }else{
+                                        check_images = true;
+                                    }
+                                });
+                            }else{
+                                check_attributes = false;
+                                check_images = false;
+                            }
+                        }
+
+                        //Validation of attributes
+                        var check_attributes_empty = true;
+                        var check_units_empty = true;
+                        if($('body input[name="activate_attributes"]').is(':checked')){
+                            $("#bloc_variants_created div").each(function(index, element) {
+                                $(element).find('.attributes').each(function(index, child_element) {
+                                    // Change the attribute name of the current input
+                                    if ($(child_element).attr('type') == 'radio') {
+                                        var name = $(child_element).attr('name');
+                                        if ($(`body input[name="${name}"]:checked`).length === 0) {
+                                            check_attributes_empty = false;
+                                        }
+                                    }else{
+                                        var specificString = 'attributes-undefined-';
+                                        if($(child_element).attr('name') != undefined){
+                                            if (!$(child_element).attr('name').includes(specificString)){
+                                                if($(child_element).val() == ''){
+                                                    check_attributes_empty = false;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                });
+
+                                $(element).find('.attributes-units').each(function(index, child_element_units) {
+                                    if($(child_element_units).val() == ''){
+                                        check_units_empty = false;
+                                    }
+                                });
+
+                            });
+                        }
+
+                        var check_attributes_generale_empty = true;
+                        var check_units_generale_empty = true;
+                        $("#general_attributes div").each(function(index, element) {
+                            $(element).find('.attributes').each(function(index, child_element) {
+                                // Change the attribute name of the current input
+                                if ($(child_element).attr('type') == 'radio') {
+                                    var name = $(child_element).attr('name');
+                                    if ($(`body input[name="${name}"]:checked`).length === 0) {
+                                        check_attributes_generale_empty = false;
+                                    }
+                                }else{
+                                    if($(child_element).attr('name') != undefined){
+                                        if(($(child_element).attr('name') != "attribute_generale-undefined")){
+                                            if($(child_element).val() == ''){
+                                                check_attributes_generale_empty = false;
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+
+                            $(element).find('.attributes-units').each(function(index, child_element_units) {
+                                if($(child_element_units).val() == ''){
+                                    check_units_generale_empty = false;
+                                }
+                            });
+
+                        });
+
+                        var check_main_images = true;
+                        if ($('#image-preview').children('div').length > 0) {
+                            var check_main_images = true;
                         } else {
-                            // Swal.fire({
-                            //     title: 'Pricing Configuration Check',
-                            //     text: 'Please check your pricing configuration',
-                            //     icon: 'error'
-                            // });
+                            var check_main_images = false;
+                        }
 
-                            var title = "{{ translate('Pricing Configuration') }}";
-                            var message = "{{ translate('Please check your pricing configuration.')}}";
+                        var check_sample_shipping_variant = true;
+                        if($('body input[name="activate_attributes"]').is(':checked')){
+                            var attributes_selected = $('body #attributes').val();
+                            if(attributes_selected.length != 0){
+                                $('#bloc_variants_created .shipper_sample').each(function() {
+                                    if($(this).val() == ''){
+                                        check_sample_shipping_variant = false;
+                                    }
+                                });
 
-                            $('#title-modal').text(title);
-                            $('#text-modal').text(message);
+                                $('#bloc_variants_created .estimated_sample').each(function() {
+                                    if($(this).val() == ''){
+                                        check_sample_shipping_variant = false;
+                                    }
+                                });
+
+                                $('#bloc_variants_created .estimated_shipping_sample').each(function() {
+                                    if($(this).val() == ''){
+                                        check_sample_shipping_variant = false;
+                                    }
+                                });
+
+                                $('#bloc_variants_created .paid_sample').each(function() {
+                                    if($(this).val() == ''){
+                                        check_sample_shipping_variant = false;
+                                    }
+                                });
+
+                            }
+                        }
+
+                        if($('body #photoUploadcustom')[0].files.length == 0){
+                            if(check_main_images != true){
+                                check_main_images = false;
+                            }
+                        }
+
+                        var check_thumbnail_images = true;
+                        // if ($('#image-preview-Thumbnail').children('div').length > 0) {
+                        //     var check_thumbnail_images = true;
+                        // } else {
+                        //     var check_thumbnail_images = false;
+                        // }
+
+                        if($('body #photoUploadThumbnailSeconde')[0].files.length == 0){
+                            if(check_thumbnail_images != true){
+                                check_thumbnail_images = false;
+                            }
+                        }
+
+                        var check_sample_price_variant = true;
+                        if($('body input[name="activate_attributes"]').is(':checked')){
+                            $("#bloc_variants_created div").each(function(index, element) {
+                                $(element).find('.sample_description').each(function(index, child_element) {
+                                    if($(this).val() != ''){
+                                        var sample_price_variant = $(this).parent().parent().parent().find('.sample_price').val();
+                                        if(!isNaN(sample_price_variant)){
+                                            if(sample_price_variant <= 0){
+                                                check_sample_price_variant = false;
+                                            }
+                                        }else{
+                                            check_sample_price_variant = false;
+                                        }
+                                    }
+                                    
+                                });
+                            });
+                        }
+                        
+                        if(check_sample_price_variant == false){
+                            var message = "{{ translate('The sample price variant is required and must be greater than or equal to 0.1 AED.')}}";
+                            remarks.push(message);
+                        }
+
+                        var check_attributes_selected = true;
+                        if($('body input[name="activate_attributes"]').is(':checked')){
+                            if ($('#attributes option:selected').length == 0) {
+                                check_attributes_selected = false;
+                            }
+                        }
+
+                        var remarks = [];
+                        if(check_attributes_selected != false){
+                            if(check_attributes == false){
+                                //console.log('ok');
+                                var message = "{{ translate('You need to choose at least one attribute.')}}";
+                                remarks.push(message);
+                            }
+                            
+                            if(check_price == false){
+                                //console.log('ok1');
+                                var message = "{{ translate('Please check your pricing configuration.')}}";
+                                remarks.push(message);
+                            }
+                            if($('#sample_description_parent').val() != ''){
+                                if(check_sample_price == false){
+                                    var message = "{{ translate('The sample price must be greater than or equal to 0.1 AED.')}}";
+                                    remarks.push(message);
+                                }
+
+                                if(check_sample_price_undefined == false){
+                                    var message = "{{ translate('The sample price is required and must be greater than or equal to 0.1 AED.')}}";
+                                    remarks.push(message);
+                                }
+
+                                if($('#shipper_sample_parent').val() == '' || $('#estimated_sample_parent').val() == '' || $('#estimated_shipping_sample_parent').val() == '' || $('#paid_sample_parent').val() == ''){
+                                    var message = "{{ translate('There is a problem with the configuration of your shipping sample.')}}";
+                                    remarks.push(message);
+                                }
+                            }
+
+                            if(check_sample_shipping_variant == false){
+                                var message = "{{ translate('There is a problem with the configuration of your shipping variant sample.')}}";
+                                remarks.push(message);
+                            }
+                            if(check_shipping == false){
+                                //console.log('ok4');
+                                var message = "{{ translate('There is an issue with your shipping configuration.')}}";
+                                remarks.push(message);
+                            }
+                            if(check_sku == false){
+                                //console.log('ok5');
+                                var message = "{{ translate('There is an empty SKU.')}}";
+                                remarks.push(message);
+                            }
+                            if(check_images == false){
+                                //console.log('ok6');
+                                var message = "{{ translate('All file inputs in the variant section must contain at least one photo.')}}";
+                                remarks.push(message);
+                            }
+                            if(check_main_images == false){
+                                //console.log('ok7');
+                                var message = "{{ translate('The main image must include at least one picture.')}}";
+                                remarks.push(message);
+                            }
+                            if(check_thumbnail_images == false){
+                                //console.log('ok8');
+                                var message = "{{ translate('The thumbnail image must include at least one picture.')}}";
+                                remarks.push(message);
+                            }
+
+                            if(check_short_description == false){
+                                //console.log('ok9');
+                                var message = "{{ translate('The short description is required.')}}";
+                                remarks.push(message); 
+                            }
+
+                            if(check_long_description == false){
+                                //console.log('ok10');
+                                var message = "{{ translate('The description is required.')}}";
+                                remarks.push(message); 
+                            }
+
+                            if(check_attributes_empty == false){
+                                var message = "{{ translate('All attributes must have values.')}}";
+                                remarks.push(message); 
+                            }
+
+                            if(check_units_empty == false){
+                                var message = "{{ translate('All units must have values.')}}";
+                                remarks.push(message); 
+                            }
+
+                            if(check_attributes_generale_empty == false){
+                                var message = "{{ translate('All attributes in section General Attributes must have values.')}}";
+                                remarks.push(message); 
+                            }
+
+                            if(check_units_generale_empty == false){
+                                var message = "{{ translate('All units in section General Attributes must have values.')}}";
+                                remarks.push(message); 
+                            }
+                        }else{
+                            var message = '{{ translate("A minimum of one attribute must be selected in order to create your product.")}}';
+                            remarks.push(message);
+                        }
+                        if (remarks.length != 0) {
+                            var html = '<ol>';
+                            remarks.forEach(function(item) {
+                                html = html + '<li>' + item + '</li>'
+                            });
+
+                            html = html + '</ol>';
+
+                            $('#title-modal').text('Form validation');
+                            $('#text-modal').html(html);
 
                             $('#modal-info').modal('show');
+                            $('#modal-info').find('.modal-body').removeClass('text-center');
+                        }else{
+                            document.getElementById('choice_form').submit();
                         }
                     }else{
                         document.getElementById('choice_form').submit();
                     }
                 }else{
-                    // Swal.fire({
-                    //     title: 'Cancelled',
-                    //     text: 'Please select a category without subcategories.',
-                    //     icon: 'error',
-                    //     scrollbarPadding: false,
-                    //     backdrop:false,
-                    // })
-
                     var title = "{{ translate('Product Category') }}";
-                            var message = "{{ translate('Please select a category without subcategories.')}}";
+                    var message = "{{ translate('Please select a category without subcategories.')}}";
 
-                            $('#title-modal').text(title);
-                            $('#text-modal').text(message);
+                    $('#title-modal').text(title);
+                    $('#text-modal').text(message);
 
-                            $('#modal-info').modal('show');
+                    $('#modal-info').modal('show');
                 }
             }else{
                 var inputTopPosition = $("#tags").offset().top;

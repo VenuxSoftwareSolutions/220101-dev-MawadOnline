@@ -830,7 +830,7 @@ $.fn.toggleAttr = function (attr, attr1, attr2) {
             $('[data-toggle="aiz-side-menu"]').metisMenu();
         },
         bootstrapSelect: function (refresh = "") {
-            $(".aiz-selectpicker").each(function (el) {
+            $("body .aiz-selectpicker").each(function (el) {
                 var $this = $(this);
                 if(!$this.parent().hasClass('bootstrap-select')){
                     var selected = $this.data('selected');

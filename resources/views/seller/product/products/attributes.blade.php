@@ -49,6 +49,7 @@
                             @endforeach
                         </select>
                     </div>
+                </div>
             </div>
             @break;
         @case ("boolean")
