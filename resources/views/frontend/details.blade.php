@@ -293,7 +293,69 @@
         </div>
     </div>
 @endif
+<div class="row no-gutters mb-3">
+    @php
+        $niveau = 0 ;
+    @endphp
+    @foreach ($previewData['detailedProduct']['attributes'] as  $attributeId=>$attributeValues)
+    @php
+        $niveau++ ;
+    @endphp
+    <div class="col-sm-2 mb-2">
+        <div class="text-secondary fs-14 fw-400 mt-2 ">
+            @php
+                $attribue = App\Models\Attribute::find($attributeId) ;
 
+            @endphp
+            {{$attribue ? $attribue->getTranslation('name') : ""}}
+        </div>
+    </div>
+    <div class="col-sm-10">
+
+        <div class="aiz-radio-inline">
+            {{-- @foreach ( $attributeValues as $key=>$value)
+            <label class="aiz-megabox pl-0 mr-2 mb-0">
+                <input  type="radio" data-attributeId="{{$attributeId}}" name="attribute_id_{{$attributeId}}"   checked >
+                @if (preg_match('/^#[0-9A-F]{6}$/i', $value))
+                <span
+                class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center p-1">
+                <span class="size-25px d-inline-block rounded"
+                    style="background: {{ $value }};"></span>
+                 </span>
+                @else
+                <span
+                    class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center py-1 px-3">
+                     {{$value}}
+                </span>
+                @endif
+            </label>
+            @endforeach --}}
+            @foreach ($attributeValues as $key => $value)
+            @php
+                $lastItem = $previewData['detailedProduct']['lastItem'] ?? null ;
+            @endphp
+            <label class="attribute_value aiz-megabox pl-0 mr-2 mb-0">
+                <input @if (($lastItem) && isset($lastItem[$attributeId]) && $lastItem[$attributeId] == $value  )
+                    checked
+                @endif niveau={{$niveau}} id="attribute_id_{{$attributeId}}_{{$value}}" type="radio" attributeId="{{$attributeId}}"  name="attribute_id_{{$attributeId}}" value="{{$value}}" >
+                @if (preg_match('/^#[0-9A-F]{6}$/i', $value))
+                    <span class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center p-1">
+                        <span class="size-25px d-inline-block rounded" style="background: {{ $value }};"></span>
+                    </span>
+                @else
+                    <span class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center py-1 px-3">
+                        {{$value}}
+                    </span>
+                @endif
+            </label>
+        @endforeach
+        </div>
+
+
+    </div>
+    @endforeach
+
+</div>
     <!--
     <div class="col-md-12 p-0 pb-2 pt-1" style="height: 45px;">
         <span class="fs-16 font-prompt-md float-left mr-5" style="height: 45px;line-height:38px;">Size:</span>
@@ -564,69 +626,7 @@
                 </div>
             </div>
         </div>-->
-        <div class="row no-gutters mb-3">
-            @php
-                $niveau = 0 ;
-            @endphp
-            @foreach ($previewData['detailedProduct']['attributes'] as  $attributeId=>$attributeValues)
-            @php
-                $niveau++ ;
-            @endphp
-            <div class="col-sm-2 mb-2">
-                <div class="text-secondary fs-14 fw-400 mt-2 ">
-                    @php
-                        $attribue = App\Models\Attribute::find($attributeId) ;
 
-                    @endphp
-                    {{$attribue ? $attribue->getTranslation('name') : ""}}
-                </div>
-            </div>
-            <div class="col-sm-10">
-
-                <div class="aiz-radio-inline">
-                    {{-- @foreach ( $attributeValues as $key=>$value)
-                    <label class="aiz-megabox pl-0 mr-2 mb-0">
-                        <input  type="radio" data-attributeId="{{$attributeId}}" name="attribute_id_{{$attributeId}}"   checked >
-                        @if (preg_match('/^#[0-9A-F]{6}$/i', $value))
-                        <span
-                        class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center p-1">
-                        <span class="size-25px d-inline-block rounded"
-                            style="background: {{ $value }};"></span>
-                         </span>
-                        @else
-                        <span
-                            class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center py-1 px-3">
-                             {{$value}}
-                        </span>
-                        @endif
-                    </label>
-                    @endforeach --}}
-                    @foreach ($attributeValues as $key => $value)
-                    @php
-                        $lastItem = $previewData['detailedProduct']['lastItem'] ?? null ;
-                    @endphp
-                    <label class="attribute_value aiz-megabox pl-0 mr-2 mb-0">
-                        <input @if (($lastItem) && isset($lastItem[$attributeId]) && $lastItem[$attributeId] == $value  )
-                            checked
-                        @endif niveau={{$niveau}} id="attribute_id_{{$attributeId}}_{{$value}}" type="radio" attributeId="{{$attributeId}}"  name="attribute_id_{{$attributeId}}" value="{{$value}}" >
-                        @if (preg_match('/^#[0-9A-F]{6}$/i', $value))
-                            <span class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center p-1">
-                                <span class="size-25px d-inline-block rounded" style="background: {{ $value }};"></span>
-                            </span>
-                        @else
-                            <span class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center py-1 px-3">
-                                {{$value}}
-                            </span>
-                        @endif
-                    </label>
-                @endforeach
-                </div>
-
-
-            </div>
-            @endforeach
-
-        </div>
     </form>
     <!--
     <div class="mt-3">
