@@ -6,24 +6,69 @@
                 {{ $previewData['detailedProduct']['name'] }}
             </h2>
         </div>
-        @if($previewData['detailedProduct']['variationId'] || $previewData['detailedProduct']['product_id'])
+        {{-- @php
+        $detailedProduct = App\Models\Product::find(5) ;
+        @endphp --}}
+
+        @if($previewData['detailedProduct']['variationId'] || $previewData['detailedProduct']['product_id'] || isset($previewData['detailedProduct']['previewCreate']))
             @php
-                if($previewData['detailedProduct']['variationId'])
-                    $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['variationId']);
-                else {
-                    $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['product_id']);
+                if(!isset($previewData['detailedProduct']['previewCreate'])) {
+                    if($previewData['detailedProduct']['variationId'])
+                        $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['variationId']);
+                    else {
+                        $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['product_id']);
+                    }
+                    $totalRating = $detailedProduct->reviews->count();
                 }
-                $totalRating = $detailedProduct->reviews->count();
+
             @endphp
-            @if ($detailedProduct->digital == 1)
+            @if (isset($detailedProduct) && $detailedProduct->digital == 1)
             <div class="col-6 d-flex justify-content-end align-items-center">
                 <span class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ translate('In stock') }}</span>
             </div>
             @endif
     </div>
     <!-- Short Description -->
-    <div class="row col-md-12 fs-13 font-prompt">
-        {!! $previewData['detailedProduct']['short_description'] !!}
+    <div class="row col-md-12 fs-16 font-prompt">
+        <!--{!! $previewData['detailedProduct']['short_description'] !!}-->
+
+        <div>
+            @php
+                // Get the first 140 characters of the description
+                $shortDescription = Str::limit($previewData['detailedProduct']['short_description'], 85);
+            @endphp
+
+            <!-- Short description -->
+            <p id="shortDescription">
+                {!! $shortDescription !!}<span class="seemorebtn" onclick="toggleDescription()">View more</span>
+            </p>
+
+            <!-- Full description (hidden initially) -->
+            <p id="fullDescription" style="display: none;">
+                {!! $previewData['detailedProduct']['short_description'] !!} <span class="seemorebtn" onclick="toggleDescription()">View less</span>
+            </p>
+
+            <!-- Toggle button
+            <div style="margin-top: 10px;">
+                <button id="seeMoreBtn" onclick="toggleDescription()">See More</button>
+            </div>-->
+        </div>
+
+        <script>
+            function toggleDescription() {
+                var shortDesc = document.getElementById("shortDescription");
+                var fullDesc = document.getElementById("fullDescription");
+                if (shortDesc.style.display === "none") {
+                    shortDesc.style.display = "block";
+                    fullDesc.style.display = "none";
+                } else {
+                    shortDesc.style.display = "none";
+                    fullDesc.style.display = "block";
+                }
+            }
+        </script>
+
+
     </div>
     <!-- Price -->
     <div class="row no-gutters mb-2">
@@ -33,9 +78,9 @@
                 <!-- Discount Price -->
                 <strong id="qty-interval" class="fs-24 fw-700 text-dark font-prompt-sb">
                     @if (isset($previewData['detailedProduct']['discountedPrice']))
-                    AED {{ $previewData['detailedProduct']['discountedPrice'] }}
+                     {{ $previewData['detailedProduct']['discountedPrice'] }} AED
                     @else
-                    AED {{ $previewData['detailedProduct']['price'] }} / {{ @$previewData['detailedProduct']['unit']->name }}
+                     {{ $previewData['detailedProduct']['price'] }} AED / {{ @$previewData['detailedProduct']['unit_of_sale'] }}
                     @endif
 
                 </strong>
@@ -97,13 +142,13 @@
 
 
             <span class="rating rating-mr-1 rating-var">
-                @if($totalRating > 0)
+                @if(isset($totalRating) && $totalRating > 0)
                     {{ renderStarRating($detailedProduct->reviews->sum('rating') / $totalRating) }}
                 @else
                     {{ renderStarRating(0) }} <!-- Assuming 0 stars when there are no reviews -->
                 @endif
             </span>
-            <span class="total-var-rating ml-1 fs-16 font-prompt-md rating-style">({{ $totalRating }} {{ translate('reviews') }})</span>
+            <span class="total-var-rating ml-1 fs-16 font-prompt-md rating-style">({{ $totalRating ?? "0" }} {{ translate('reviews') }})</span>
          @else
             <span class="rating rating-mr-1 rating-var fs-16 font-prompt-md rating-style">
                 {{ renderStarRating(0) }}
@@ -185,17 +230,44 @@
             <span class="fs-16 font-prompt">{{ $previewData['detailedProduct']['sku'] }}</span>
         </div>
     </div>
+    <!-- Unit of Sale -->
+    <div class="col-md-12 p-0 pb-2">
+        <div class="product-desc-each">
+            <span class="fs-16 font-prompt-md">Unit of Sale:</span>
+            <span class="fs-16 font-prompt">{{ $previewData['detailedProduct']['unit_of_sale'] }}</span>
+        </div>
+    </div>
+
     <!-- Category -->
     <div class="col-md-12 p-0 pb-2">
         <div class="product-desc-each">
             <span class="fs-16 font-prompt-md">Tags:</span>
             <span class="fs-16 font-prompt">
+                @if(is_array($previewData['detailedProduct']['tags']))
+                @foreach($previewData['detailedProduct']['tags'] as $tag)
+                @php
+                    $decodedTag = json_decode($tag, true);
+                @endphp
+                @if(is_array($decodedTag))
+                    @foreach($decodedTag as $item)
+                        @if(isset($item['value']))
+                            {{ $item['value'] }}
+                        @endif
+                    @endforeach
+                @else
+                    --
+                @endif
+            @endforeach
+            @elseif(!empty($previewData['detailedProduct']['tags']))
                 {{ $previewData['detailedProduct']['tags'] }}
+            @else
+                {{ __('No tags available') }}
+            @endif
             </span>
         </div>
         <hr class="hr-style"/>
     </div>
-    @if ($detailedProduct->colors != null && count(json_decode($detailedProduct->colors)) > 0)
+    @if (isset($detailedProduct) &&  $detailedProduct->colors != null && count(json_decode($detailedProduct->colors)) > 0)
     <div class="row no-gutters mb-3">
         <div class="col-2">
             <div class="fs-16 font-prompt-md mt-2">{{ translate('Color') }}:</div>
@@ -259,7 +331,69 @@
         </div>
     </div>
 @endif
+<div class="row no-gutters mb-3">
+    @php
+        $niveau = 0 ;
+    @endphp
+    @foreach ($previewData['detailedProduct']['attributes'] as  $attributeId=>$attributeValues)
+    @php
+        $niveau++ ;
+    @endphp
+    <div class="col-sm-2 mb-2">
+        <div class="text-secondary fs-14 fw-400 mt-2 ">
+            @php
+                $attribue = App\Models\Attribute::find($attributeId) ;
 
+            @endphp
+            {{$attribue ? $attribue->getTranslation('name') : ""}}
+        </div>
+    </div>
+    <div class="col-sm-10">
+
+        <div class="aiz-radio-inline">
+            {{-- @foreach ( $attributeValues as $key=>$value)
+            <label class="aiz-megabox pl-0 mr-2 mb-0">
+                <input  type="radio" data-attributeId="{{$attributeId}}" name="attribute_id_{{$attributeId}}"   checked >
+                @if (preg_match('/^#[0-9A-F]{6}$/i', $value))
+                <span
+                class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center p-1">
+                <span class="size-25px d-inline-block rounded"
+                    style="background: {{ $value }};"></span>
+                 </span>
+                @else
+                <span
+                    class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center py-1 px-3">
+                     {{$value}}
+                </span>
+                @endif
+            </label>
+            @endforeach --}}
+            @foreach ($attributeValues as $key => $value)
+            @php
+                $lastItem = $previewData['detailedProduct']['lastItem'] ?? null ;
+            @endphp
+            <label class="attribute_value aiz-megabox pl-0 mr-2 mb-0">
+                <input @if (($lastItem) && isset($lastItem[$attributeId]) && $lastItem[$attributeId] == $value  )
+                    checked
+                @endif niveau={{$niveau}} id="attribute_id_{{$attributeId}}_{{$value}}" type="radio" attributeId="{{$attributeId}}"  name="attribute_id_{{$attributeId}}" value="{{$value}}" >
+                @if (preg_match('/^#[0-9A-F]{6}$/i', $value))
+                    <span class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center p-1">
+                        <span class="size-25px d-inline-block rounded" style="background: {{ $value }};"></span>
+                    </span>
+                @else
+                    <span class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center py-1 px-3">
+                        {{$value}}
+                    </span>
+                @endif
+            </label>
+        @endforeach
+        </div>
+
+
+    </div>
+    @endforeach
+
+</div>
     <!--
     <div class="col-md-12 p-0 pb-2 pt-1" style="height: 45px;">
         <span class="fs-16 font-prompt-md float-left mr-5" style="height: 45px;line-height:38px;">Size:</span>
@@ -478,7 +612,7 @@
                 </div>
             </div>
             <button type="button" class="btn btn-secondary-base add-to-cart col-10 col-md-6 text-white border-radius-16 fs-20 font-prompt py-2 mt-3 mt-md-0"
-          {{--   @if (Auth::check()) onclick="addToCart()" @else onclick="showLoginModal()" @endif --}} onclick="addToCart()">
+          {{--   @if (Auth::check()) onclick="addToCart()" @else onclick="showLoginModal()" @endif --}} @if (isset($isPreview) && $isPreview) onclick="addToCart({{ json_encode($isPreview) }})" @else onclick="addToCart()" @endif>
                 <svg width="29" height="32" viewBox="0 0 29 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <mask id="path-1-inside-1_5065_4531" fill="white">
                 <path d="M5.84805 19.728C4.43037 19.9956 3.15047 20.7495 2.22898 21.8596C1.30749 22.9696 0.802144 24.3664 0.800049 25.8091C0.801864 27.4505 1.4547 29.0241 2.61531 30.1847C3.77593 31.3454 5.34955 31.9982 6.99091 32C8.43171 31.9976 9.82668 31.4934 10.936 30.574C12.0454 29.6547 12.7999 28.3776 13.0698 26.9623L27.7555 26.952C28.0586 26.952 28.3493 26.8316 28.5636 26.6173C28.7779 26.4029 28.8983 26.1122 28.8983 25.8091C28.8983 25.506 28.7779 25.2153 28.5636 25.001C28.3493 24.7867 28.0586 24.6663 27.7555 24.6663H24.7509V11.4869C24.7509 9.59657 23.2126 8.05829 21.3223 8.05829H8.13376V5.61714C8.13225 4.12765 7.5398 2.69961 6.48646 1.64649C5.43313 0.593367 4.00497 0.0012102 2.51548 0C2.21237 0 1.92168 0.120408 1.70736 0.334735C1.49303 0.549062 1.37262 0.839753 1.37262 1.14286C1.37262 1.44596 1.49303 1.73665 1.70736 1.95098C1.92168 2.16531 2.21237 2.28571 2.51548 2.28571C3.39895 2.28632 4.24607 2.63747 4.87089 3.26207C5.4957 3.88667 5.84714 4.73367 5.84805 5.61714V19.728ZM6.99091 29.7143C4.83662 29.7143 3.08576 27.9623 3.08576 25.8091C3.08576 23.656 4.83662 21.904 6.99091 21.904C9.14519 21.904 10.896 23.656 10.896 25.8091C10.896 27.9623 9.14405 29.7143 6.99091 29.7143ZM13.9932 10.344V13.4754C13.9932 13.7785 14.1136 14.0692 14.3279 14.2836C14.5423 14.4979 14.8329 14.6183 15.136 14.6183C15.4392 14.6183 15.7298 14.4979 15.9442 14.2836C16.1585 14.0692 16.2789 13.7785 16.2789 13.4754V10.344H21.3223C21.952 10.344 22.4652 10.8571 22.4652 11.4869V24.6663H13.0709C12.8387 23.4428 12.2436 22.3176 11.3631 21.437C10.4825 20.5564 9.35724 19.9613 8.13376 19.7291V10.3429L13.9932 10.344Z"/>
@@ -530,69 +664,7 @@
                 </div>
             </div>
         </div>-->
-        <div class="row no-gutters mb-3">
-            @php
-                $niveau = 0 ;
-            @endphp
-            @foreach ($previewData['detailedProduct']['attributes'] as  $attributeId=>$attributeValues)
-            @php
-                $niveau++ ;
-            @endphp
-            <div class="col-sm-2 mb-2">
-                <div class="text-secondary fs-14 fw-400 mt-2 ">
-                    @php
-                        $attribue = App\Models\Attribute::find($attributeId) ;
 
-                    @endphp
-                    {{$attribue ? $attribue->getTranslation('name') : ""}}
-                </div>
-            </div>
-            <div class="col-sm-10">
-
-                <div class="aiz-radio-inline">
-                    {{-- @foreach ( $attributeValues as $key=>$value)
-                    <label class="aiz-megabox pl-0 mr-2 mb-0">
-                        <input  type="radio" data-attributeId="{{$attributeId}}" name="attribute_id_{{$attributeId}}"   checked >
-                        @if (preg_match('/^#[0-9A-F]{6}$/i', $value))
-                        <span
-                        class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center p-1">
-                        <span class="size-25px d-inline-block rounded"
-                            style="background: {{ $value }};"></span>
-                         </span>
-                        @else
-                        <span
-                            class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center py-1 px-3">
-                             {{$value}}
-                        </span>
-                        @endif
-                    </label>
-                    @endforeach --}}
-                    @foreach ($attributeValues as $key => $value)
-                    @php
-                        $lastItem = $previewData['detailedProduct']['lastItem'] ?? null ;
-                    @endphp
-                    <label class="attribute_value aiz-megabox pl-0 mr-2 mb-0">
-                        <input @if (($lastItem) && isset($lastItem[$attributeId]) && $lastItem[$attributeId] == $value  )
-                            checked
-                        @endif niveau={{$niveau}} id="attribute_id_{{$attributeId}}_{{$value}}" type="radio" attributeId="{{$attributeId}}"  name="attribute_id_{{$attributeId}}" value="{{$value}}" >
-                        @if (preg_match('/^#[0-9A-F]{6}$/i', $value))
-                            <span class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center p-1">
-                                <span class="size-25px d-inline-block rounded" style="background: {{ $value }};"></span>
-                            </span>
-                        @else
-                            <span class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center py-1 px-3">
-                                {{$value}}
-                            </span>
-                        @endif
-                    </label>
-                @endforeach
-                </div>
-
-
-            </div>
-            @endforeach
-
-        </div>
     </form>
     <!--
     <div class="mt-3">
@@ -652,66 +724,100 @@
     <div class="col-md-6 float-left">
         <div class="col-md-12 product-rightbox-seller border-radius-8px float-left">
             <div class="col-md-12 product-rightbox-seller-info float-left">
-                
+
                 {{-- <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="avatar-seller mr-2 overflow-hidden border float-left">
                     <img class="lazyload"
                         src="{{ static_asset('assets/img/placeholder.jpg') }}"
                         data-src="{{ uploaded_asset($detailedProduct->user->shop->logo) }}"
                         onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
                 </a> --}}
-            
-                <div class="product-rightbox-seller-details float-left">
-                    <div class="float-left col-md-12 p-0">
-                    <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="link-style-none">
-                    <span class="fs-16 font-prompt-md float-left product-rightbox-seller-name">
-                        {{ $detailedProduct->user->shop->name }}
-                    </span>
-                    </a>
-                        @if ($detailedProduct->user->shop->verification_status == 1)
-                            <span class="ml-2 float-left">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <g clip-path="url(#clip0_3402_10941)">
-                                    <path d="M23.2181 13.1502L13.1237 23.2446C12.4949 23.8734 11.4725 23.8734 10.8389 23.2446L0.754071 13.1502C0.125271 12.5214 0.125271 11.499 0.754071 10.8702L10.8437 0.775799C11.4725 0.146999 12.4949 0.146999 13.1285 0.775799L17.0165 4.6638L11.6885 10.5102L9.10607 7.9518L5.54447 11.5518L11.8805 17.8206L20.6021 8.2494L22.1189 9.7662L23.2229 10.8702C23.8469 11.499 23.8469 12.5214 23.2181 13.1502Z" fill="#1E78C1"/>
-                                    <path d="M11.8373 16.4476L6.88367 11.542L9.10607 9.29563L11.7221 11.8828L21.3509 1.31323L23.6885 3.44443L11.8373 16.4476Z" fill="#1E78C1"/>
-                                    </g>
-                                    <defs>
-                                    <clipPath id="clip0_3402_10941">
-                                    <rect width="24" height="24" fill="white"/>
-                                    </clipPath>
-                                    </defs>
-                                    </svg>
-                            </span>
-                        @endif
-                    </div>
-                    <div class="float-left col-md-12 p-0">
-                        <div class="float-left">
-                            <div class="rating rating-mr-1">
-                                {{ renderStarRatingSmall($detailedProduct->user->shop->rating) }}
-                            </div>
-                            <div class="opacity-60 fs-16">
-                                ({{ $detailedProduct->user->shop->num_of_reviews }}
-                                {{ translate('reviews') }})
-                            </div>
-
+                @if(isset($detailedProduct))
+                    <div class="product-rightbox-seller-details float-left">
+                        <div class="float-left col-md-12 p-0">
+                        <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="link-style-none">
+                        <span class="fs-16 font-prompt-md float-left product-rightbox-seller-name">
+                            {{ $detailedProduct->user->shop->name }}
+                        </span>
+                        </a>
+                            @if ($detailedProduct->user->shop->verification_status == 1)
+                                <span class="ml-2 float-left">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <g clip-path="url(#clip0_3402_10941)">
+                                        <path d="M23.2181 13.1502L13.1237 23.2446C12.4949 23.8734 11.4725 23.8734 10.8389 23.2446L0.754071 13.1502C0.125271 12.5214 0.125271 11.499 0.754071 10.8702L10.8437 0.775799C11.4725 0.146999 12.4949 0.146999 13.1285 0.775799L17.0165 4.6638L11.6885 10.5102L9.10607 7.9518L5.54447 11.5518L11.8805 17.8206L20.6021 8.2494L22.1189 9.7662L23.2229 10.8702C23.8469 11.499 23.8469 12.5214 23.2181 13.1502Z" fill="#1E78C1"/>
+                                        <path d="M11.8373 16.4476L6.88367 11.542L9.10607 9.29563L11.7221 11.8828L21.3509 1.31323L23.6885 3.44443L11.8373 16.4476Z" fill="#1E78C1"/>
+                                        </g>
+                                        <defs>
+                                        <clipPath id="clip0_3402_10941">
+                                        <rect width="24" height="24" fill="white"/>
+                                        </clipPath>
+                                        </defs>
+                                        </svg>
+                                </span>
+                            @endif
                         </div>
                         <div class="float-right">
                             <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="link-style-none">
-                                <button class="fs-16 font-prompt border-radius-8px view-store-btn">View Store</button>
+                                <button class="fs-14 font-prompt border-radius-8px view-store-btn">View Store</button>
                             </a>
                         </div>
                     </div>
-                </div>
+                @else
+                    @php
+                        $user = Auth::user() ;
+                    @endphp
+                       <div class="product-rightbox-seller-details float-left">
+                        <div class="float-left col-md-12 p-0">
+                        <a href="{{ route('shop.visit', $user->shop->slug) }}" class="link-style-none">
+                        <span class="fs-16 font-prompt-md float-left product-rightbox-seller-name">
+                            {{ $user->shop->name }}
+                        </span>
+                        </a>
+                            @if ($user->shop->verification_status == 1)
+                                <span class="ml-2 float-left">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <g clip-path="url(#clip0_3402_10941)">
+                                        <path d="M23.2181 13.1502L13.1237 23.2446C12.4949 23.8734 11.4725 23.8734 10.8389 23.2446L0.754071 13.1502C0.125271 12.5214 0.125271 11.499 0.754071 10.8702L10.8437 0.775799C11.4725 0.146999 12.4949 0.146999 13.1285 0.775799L17.0165 4.6638L11.6885 10.5102L9.10607 7.9518L5.54447 11.5518L11.8805 17.8206L20.6021 8.2494L22.1189 9.7662L23.2229 10.8702C23.8469 11.499 23.8469 12.5214 23.2181 13.1502Z" fill="#1E78C1"/>
+                                        <path d="M11.8373 16.4476L6.88367 11.542L9.10607 9.29563L11.7221 11.8828L21.3509 1.31323L23.6885 3.44443L11.8373 16.4476Z" fill="#1E78C1"/>
+                                        </g>
+                                        <defs>
+                                        <clipPath id="clip0_3402_10941">
+                                        <rect width="24" height="24" fill="white"/>
+                                        </clipPath>
+                                        </defs>
+                                        </svg>
+                                </span>
+                            @endif
+                        </div>
+                        <div class="float-left col-md-12 p-0">
+                            <div class="float-left">
+                                <div class="rating rating-mr-1">
+                                    {{ renderStarRatingSmall($user->shop->rating) }}
+                                </div>
+                                <div class="opacity-60 fs-16">
+                                    ({{ $user->shop->num_of_reviews }}
+                                    {{ translate('reviews') }})
+                                </div>
+
+                            </div>
+                            <div class="float-right">
+                                <a href="{{ route('shop.visit', $user->shop->slug) }}" class="link-style-none">
+                                    <button class="fs-16 font-prompt border-radius-8px view-store-btn">View Store</button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                @endif
             </div>
-      <!--
-            <div class="col-md-12 p-0 pt-2 float-left">
+
+            {{-- <div class="col-md-12 p-0 pt-2 float-left">
                 <span class="col-md-12 fs-16 font-prompt float-left p-0 pt-2">
                     <font color="#4C4E54"> Address : <span class="opacity-70">{{ $detailedProduct->user->shop->address }}</span></font>
                 </span>
                 <span class="col-md-12 fs-16 font-prompt float-left p-0 pt-2">
                     <font color="#4C4E54"> Phone : <span class="opacity-70">{{ $detailedProduct->user->shop->phone }}</span></font>
                 </span>
-            </div>
-        -->
+            </div> --}}
+
         </div>
     </div>
     <!--

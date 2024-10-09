@@ -80,5 +80,7 @@ return [
     'view_approved_iban_certificate' => 'عرض شهادة الآيبان المعتمدة',
     'view_iban_certificate' => 'عرض شهادة الآيبان',
     'strict_email' => 'البريد الإلكتروني غير صالح.',
+    'preview_mode_warning' => 'أنت في وضع المعاينة. لا يمكنك إضافة منتجات إلى السلة.',
+    'preview_mode_warning_form' => 'أنت في وضع المعاينة. لا يمكنك تقديم مراجعة.',
 
 ];

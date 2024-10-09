@@ -1730,13 +1730,24 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+                var slug = generateSlug(data.data.slug);
                 // Replace 'PLACEHOLDER' with the actual slug from the response
-                var previewUrl = previewUrlBase.replace('PLACEHOLDER', data.data.slug);
+                var previewUrl = previewUrlBase.replace('PLACEHOLDER', slug);
 
                 // Open the URL in a new tab
                 window.open(previewUrl, '_blank');
             }
         });
+    }
+
+    function generateSlug(text) {
+        return text
+            .toString()                          // Ensure it's a string
+            .trim()                              // Remove extra spaces
+            .toLowerCase()                       // Convert to lowercase
+            .replace(/[\s_]+/g, '-')             // Replace spaces and underscores with hyphens
+            .replace(/[^\w\-]+/g, '')            // Remove non-word characters (except hyphens)
+            .replace(/\-\-+/g, '-');             // Replace multiple hyphens with a single one
     }
 
     $(document).ready(function() {
