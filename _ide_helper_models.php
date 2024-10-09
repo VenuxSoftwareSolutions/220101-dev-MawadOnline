@@ -631,9 +631,27 @@ namespace App\Models{
 /**
  * App\Models\BulkUploadFile
  *
+ * @property int $id
+ * @property int $user_id
+ * @property string $filename
+ * @property string $path
+ * @property string $status
+ * @property string $extension
+ * @property string $size
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|BulkUploadFile newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|BulkUploadFile newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|BulkUploadFile query()
+ * @method static \Illuminate\Database\Eloquent\Builder|BulkUploadFile whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BulkUploadFile whereExtension($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BulkUploadFile whereFilename($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BulkUploadFile whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BulkUploadFile wherePath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BulkUploadFile whereSize($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BulkUploadFile whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BulkUploadFile whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BulkUploadFile whereUserId($value)
  */
 	class BulkUploadFile extends \Eloquent {}
 }
@@ -1098,6 +1116,8 @@ namespace App\Models{
  * @property string|null $code
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ColorGroup> $groupColors
+ * @property-read int|null $group_colors_count
  * @method static \Illuminate\Database\Eloquent\Builder|Color newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Color newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Color query()
@@ -1108,6 +1128,50 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Color whereUpdatedAt($value)
  */
 	class Color extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\ColorGroup
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $code
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Color> $colors
+ * @property-read int|null $colors_count
+ * @method static \Illuminate\Database\Eloquent\Builder|ColorGroup newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ColorGroup newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ColorGroup query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ColorGroup whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ColorGroup whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ColorGroup whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ColorGroup whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ColorGroup whereUpdatedAt($value)
+ */
+	class ColorGroup extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\ColorGroupColor
+ *
+ * @property int $id
+ * @property int $color_id
+ * @property int $color_group_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|ColorGroupColor newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ColorGroupColor newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ColorGroupColor query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ColorGroupColor whereColorGroupId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ColorGroupColor whereColorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ColorGroupColor whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ColorGroupColor whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ColorGroupColor whereUpdatedAt($value)
+ */
+	class ColorGroupColor extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -2285,6 +2349,7 @@ namespace App\Models{
  * @property float|null $discount_percentage
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Product $product
  * @method static \Illuminate\Database\Eloquent\Builder|PricingConfiguration newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PricingConfiguration newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|PricingConfiguration query()
@@ -2428,6 +2493,8 @@ namespace App\Models{
  * @property-read int|null $medias_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\OrderDetail> $orderDetails
  * @property-read int|null $order_details_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PricingConfiguration> $pricingConfiguration
+ * @property-read int|null $pricing_configuration_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ProductAttributeValues> $productAttributeValues
  * @property-read int|null $product_attribute_values_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ProductQuery> $product_queries
@@ -2999,7 +3066,7 @@ namespace App\Models{
  *
  * @property int $id
  * @property int $user_id
- * @property mixed $modified_fields
+ * @property string $modified_fields
  * @property string $status
  * @property int $admin_viewed
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -3105,6 +3172,7 @@ namespace App\Models{
  * @property int $viewed
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon $updated_at
+ * @property string|null $name
  * @property-read \App\Models\Product|null $product
  * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder|Review newModelQuery()
@@ -3113,6 +3181,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Review whereComment($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Review whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Review whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Review whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Review wherePhotos($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Review whereProductId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Review whereRating($value)
@@ -3583,7 +3652,7 @@ namespace App\Models{
  *
  * @property int $id
  * @property int $user_id
- * @property string|null $name
+ * @property array|null $name
  * @property string|null $logo
  * @property string|null $sliders
  * @property string|null $top_banner
@@ -3624,6 +3693,7 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\FollowSeller> $followers
  * @property-read int|null $followers_count
  * @property-read \App\Models\SellerPackage|null $seller_package
+ * @property-read mixed $translations
  * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder|Shop newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Shop newQuery()
@@ -3646,6 +3716,10 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Shop whereGoogle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Shop whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Shop whereInstagram($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Shop whereJsonContainsLocale(string $column, string $locale, ?mixed $value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Shop whereJsonContainsLocales(string $column, array $locales, ?mixed $value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Shop whereLocale(string $column, string $locale)
+ * @method static \Illuminate\Database\Eloquent\Builder|Shop whereLocales(string $column, array $locales)
  * @method static \Illuminate\Database\Eloquent\Builder|Shop whereLogo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Shop whereMetaDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Shop whereMetaTitle($value)
@@ -4515,9 +4589,27 @@ namespace App\Models{
 /**
  * App\Models\Waitlist
  *
+ * @property int $id
+ * @property string $name
+ * @property string $email
+ * @property string $phone
+ * @property string|null $work
+ * @property string|null $info
+ * @property int $subscribe_newsletter
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|Waitlist newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Waitlist newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Waitlist query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Waitlist whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Waitlist whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Waitlist whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Waitlist whereInfo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Waitlist whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Waitlist wherePhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Waitlist whereSubscribeNewsletter($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Waitlist whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Waitlist whereWork($value)
  */
 	class Waitlist extends \Eloquent {}
 }

@@ -78,9 +78,9 @@
                 <!-- Discount Price -->
                 <strong id="qty-interval" class="fs-24 fw-700 text-dark font-prompt-sb">
                     @if (isset($previewData['detailedProduct']['discountedPrice']))
-                    AED {{ $previewData['detailedProduct']['discountedPrice'] }}
+                     {{ $previewData['detailedProduct']['discountedPrice'] }} AED
                     @else
-                    AED {{ $previewData['detailedProduct']['price'] }} / {{ @$previewData['detailedProduct']['unit']->name }}
+                     {{ $previewData['detailedProduct']['price'] }} AED / {{ @$previewData['detailedProduct']['unit_of_sale'] }}
                     @endif
 
                 </strong>
@@ -255,7 +255,7 @@
                         @endif
                     @endforeach
                 @else
-                    {{ __('Invalid tag format') }}
+                    --
                 @endif
             @endforeach
             @elseif(!empty($previewData['detailedProduct']['tags']))
@@ -755,12 +755,6 @@
                                 </span>
                             @endif
                         </div>
-<<<<<<< HEAD
-                        <div class="float-right">
-                            <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="link-style-none">
-                                <button class="fs-14 font-prompt border-radius-8px view-store-btn">View Store</button>
-                            </a>
-=======
                         <div class="float-left col-md-12 p-0">
                             <div class="float-left">
                                 <div class="rating rating-mr-1">
@@ -777,7 +771,6 @@
                                     <button class="fs-16 font-prompt border-radius-8px view-store-btn">View Store</button>
                                 </a>
                             </div>
->>>>>>> 50170af9802c72b393843729e872fd5799da2a60
                         </div>
                     </div>
                 @else
