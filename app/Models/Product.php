@@ -438,6 +438,15 @@ class Product extends Model
         }
     }
 
+    public function CheckIfAddedToCatalog(){
+        $exist = ProductCatalog::where('product_id', $this->id)->first();
+        if($exist != null){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     public function getPrice(){
         // dd($this->getPricingConfiguration()) ;
     }

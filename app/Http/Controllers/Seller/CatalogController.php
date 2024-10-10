@@ -56,6 +56,7 @@ class CatalogController extends Controller
                                                     ->where('approved', 1);
                                         });
                                 })->take(1)->get();
+            
 
             if(count($products) == 0){
                 $catalogs = ProductCatalog::where(function ($query) use ($searchTerm) {
@@ -65,12 +66,13 @@ class CatalogController extends Controller
                         });
                 })->take(3)->get();
             }else{
+                
                 $catalogs = ProductCatalog::where(function ($query) use ($searchTerm) {
                     $query->where('name', 'like', "%{$searchTerm}%")
                         ->orWhereHas('brand', function ($query) use ($searchTerm) {
                             $query->where('name', 'like', "%{$searchTerm}%");
                         });
-                })->take(2)->get();
+                })->get();
             }
 
             //return response()->json($products, 200);
@@ -543,9 +545,8 @@ class CatalogController extends Controller
     }
 
     public function add_product_to_catalog(Request $request){
-
         $existingProduct = Product::find($request->id);
-
+        
         if (!$existingProduct) {
             // Handle the case where the product with the specific ID doesn't exist
             return redirect()->back()->with('error', 'Product not found');
@@ -557,6 +558,7 @@ class CatalogController extends Controller
         $data['product_id'] = $request->id;
         $newProduct = ProductCatalog::insertGetId($data);
 
+        
         $path = public_path('/upload_products/Product-'.$request->id);
         $destinationFolder = public_path('/upload_products_catalog/Product-'.$newProduct);
         if (!File::isDirectory($destinationFolder)) {
