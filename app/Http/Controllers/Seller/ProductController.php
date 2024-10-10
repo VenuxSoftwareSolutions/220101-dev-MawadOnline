@@ -226,7 +226,7 @@ class ProductController extends Controller
                 return redirect()->route('seller.products');
             }
         }
-        
+
     }
 
     public function store_draft(Request $request){
@@ -615,7 +615,7 @@ class ProductController extends Controller
             $general_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->get();
             $general_attributes_ids_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->pluck('id_attribute')->toArray();
             $data_general_attributes = [];
-            
+
             if(count($general_attributes) > 0){
                 foreach ($general_attributes as $general_attribute){
                     // $data_general_attributes[$general_attribute->id_attribute] = $general_attribute;
@@ -630,7 +630,7 @@ class ProductController extends Controller
                     }
                 }
             }
-            
+
             if($product_category != null){
                 $categorie = Category::find($product_category->category_id);
                 $current_categorie = $categorie;
@@ -670,11 +670,11 @@ class ProductController extends Controller
                                 }
                             }
                         }
-                        
+
                     }
                 }
             }
-            
+
             if($product->is_draft == 1){
                 return view('seller.product.products.draft', [
                     'product' => $product,
@@ -768,9 +768,9 @@ class ProductController extends Controller
 
             Artisan::call('view:clear');
             Artisan::call('cache:clear');
-            
+
             return redirect()->route('seller.products');
-            
+
 
         }else{
             return redirect()->back();
@@ -1556,6 +1556,8 @@ class ProductController extends Controller
         $existingDocumentsArray = $existingDocuments->toArray();
         $allDocuments = collect($existingDocumentsArray)->merge($newDocuments);
 
+
+
         // Prepare detailed product data
         $detailedProduct = [
             'shop_name' => $shop_name,
@@ -1840,12 +1842,31 @@ class ProductController extends Controller
             $matchesCheckedAttributes = true;
 
             // Check if the variation matches the checked attributes
+            // foreach ($checkedAttributes as $attributeId => $value) {
+            //     if (!isset($variation[$attributeId]) || $variation[$attributeId] !== $value) {
+            //         $matchesCheckedAttributes = false;
+            //         break;
+            //     }
+            // }
             foreach ($checkedAttributes as $attributeId => $value) {
-                if (!isset($variation[$attributeId]) || $variation[$attributeId] !== $value) {
+                $valueString = "" ;
+                if (isset($variation[$attributeId]) && is_array($variation[$attributeId])) {
+                    // Join array elements with a hyphen
+                    $valueString = implode('-', $variation[$attributeId]);
+
+
+                }
+
+                // If the attribute doesn't exist in variation or the values don't match
+                if (!isset($variation[$attributeId]) ||
+                    (is_array($variation[$attributeId]) && $valueString !== $value) ||
+                    (!is_array($variation[$attributeId]) && $variation[$attributeId] !== $value)) {
+
                     $matchesCheckedAttributes = false;
                     break;
                 }
             }
+
 
             // If the variation matches the checked attributes, collect other attributes
             if ($matchesCheckedAttributes) {
@@ -1939,18 +1960,39 @@ class ProductController extends Controller
                     $pickedAnyVariation = true ;
                  }
 
+                // foreach ($variation as $attributeId => $value) {
+                //     if (!isset($checkedAttributes[$attributeId])) {
+                //         if (!isset($availableAttributes[$attributeId])) {
+                //             $availableAttributes[$attributeId] = [];
+                //         }
+                //         if (!in_array($value, $availableAttributes[$attributeId])) {
+                //             $availableAttributes[$attributeId][] = $value;
+                //         }
+                //     }
+                // }
+                // dd($variation) ;
                 foreach ($variation as $attributeId => $value) {
                     if (!isset($checkedAttributes[$attributeId])) {
                         if (!isset($availableAttributes[$attributeId])) {
                             $availableAttributes[$attributeId] = [];
                         }
-                        if (!in_array($value, $availableAttributes[$attributeId])) {
-                            $availableAttributes[$attributeId][] = $value;
+                            // Check if $value is an array and does not contain any arrays inside it
+                            if (is_array($value) && !array_filter($value, 'is_array')) {
+                                // Join array elements with a hyphen
+                                $valueString = implode('-', $value);
+                            }
+                             else {
+                                $valueString = $value;  // Treat $value as a string if it's not an array
+                            }
+
+                        if (!in_array($valueString, $availableAttributes[$attributeId])) {
+                            $availableAttributes[$attributeId][] = $valueString;
                         }
                     }
                 }
             }
         }
+        // dd($availableAttributes) ;
 
         // Add matchesCheckedAttributes to the response
         $response = [

@@ -506,7 +506,15 @@ class HomeController extends Controller
                                 if ($unit){
                                     $variations[$children_id][$attribute->id_attribute] = $attribute->value.' '.$unit->name;
                                 }
-                            }else{
+                            }elseif($attribute->id_colors != null){
+                                // Check if the attribute does not exist, initialize it as an array
+                                 if (!isset($variations[$children_id][$attribute->id_attribute])) {
+                                     $variations[$children_id][$attribute->id_attribute] = [];
+                                 }
+
+                                 // Append the new value to the array
+                                 $variations[$children_id][$attribute->id_attribute][] = $revision_children_attribute->old_value;
+                         }else{
                                 if($revision_children_attribute->key != 'add_attribute'){
                                     $variations[$children_id][$attribute->id_attribute] = $revision_children_attribute->old_value;
                                 }
@@ -517,6 +525,14 @@ class HomeController extends Controller
                                 if ($unit){
                                     $variations[$children_id][$attribute->id_attribute] = $attribute->value.' '.$unit->name;
                                 }
+                            }elseif($attribute->id_colors != null){
+                                   // Check if the attribute does not exist, initialize it as an array
+                                    if (!isset($variations[$children_id][$attribute->id_attribute])) {
+                                        $variations[$children_id][$attribute->id_attribute] = [];
+                                    }
+
+                                    // Append the new value to the array
+                                    $variations[$children_id][$attribute->id_attribute][] = $attribute->value;
                             }else{
                                 $variations[$children_id][$attribute->id_attribute] = $attribute->value;
                             }

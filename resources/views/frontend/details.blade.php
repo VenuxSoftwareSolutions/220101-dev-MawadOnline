@@ -371,7 +371,35 @@
             @foreach ($attributeValues as $key => $value)
             @php
                 $lastItem = $previewData['detailedProduct']['lastItem'] ?? null ;
+
             @endphp
+                     @if (is_array($value))
+                     @php
+                        $valueStringLastItem = "" ;
+                        $valueString = implode('-', $value); // Join array elements with a hyphen
+                        if(($lastItem) && isset($lastItem[$attributeId]) && is_array($lastItem[$attributeId]))
+                             $valueStringLastItem =  implode('-', $lastItem[$attributeId]);
+                     @endphp
+                     <label class="attribute_value aiz-megabox pl-0 mr-2 mb-0">
+                        <input @if ($valueStringLastItem == $valueString  )
+                        checked
+                    @endif  niveau={{$niveau}} id="attribute_id_{{$attributeId}}_{{$valueString}}" type="radio" attributeId="{{$attributeId}}"  value="{{$valueString}}" name="attribute_id_{{$attributeId}}"  >
+                        <span class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center p-1">
+
+                        @foreach ($value as $color)
+
+                        @if (preg_match('/^#[0-9A-F]{6}$/i', $color))
+                                <span class="size-25px d-inline-block rounded" style="background: {{ $color }};"></span>
+                        @else
+                            {{$color}}
+                        @endif
+                        @endforeach
+                    </span>
+
+                    </label>
+
+                 @else
+
             <label class="attribute_value aiz-megabox pl-0 mr-2 mb-0">
                 <input @if (($lastItem) && isset($lastItem[$attributeId]) && $lastItem[$attributeId] == $value  )
                     checked
@@ -386,6 +414,7 @@
                     </span>
                 @endif
             </label>
+            @endif
         @endforeach
         </div>
 
