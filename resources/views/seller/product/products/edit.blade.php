@@ -3985,7 +3985,7 @@
                     }
                 })
             }else{
-                $(this).parent().parent().parent().remove();
+                $(this).parent().parent().remove();
             }
         })
 

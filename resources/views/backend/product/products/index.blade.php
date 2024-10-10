@@ -168,6 +168,11 @@
                                 <a class="btn btn-soft-info btn-icon btn-circle btn-sm" href="{{route('products.approve', $product->id)}}" title="{{ translate('Approve product') }}">
                                     <i class="las la-eye"></i>
                                 </a> 
+                                @if ($product->CheckIfAddedToCatalog() == false)
+                                    <button type="button" class="btn btn-soft-info btn-icon btn-circle btn-sm" data-id="{{ $product->id }}" title="{{ translate('Add to catalog') }}">
+                                        <i class="las la-plus" data-id="{{ $product->id }}"></i>
+                                    </button>   
+                                @endif
                                 {{-- <a href="{{route('seller.products.duplicate', $product->id)}}" class="btn btn-soft-success btn-icon btn-circle btn-sm"  title="{{ translate('Duplicate') }}">
                                     <i class="las la-copy"></i>
                                 </a> --}}
@@ -256,6 +261,21 @@
     </form>
 </div>
 
+<div id="modal-info-catalog" class="modal fade">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title h6" id="title-modal-catalog">{{translate('Delete Confirmation')}}</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+            </div>
+            <div class="modal-body-catalog text-center">
+                <p class="mt-1 fs-14" id="text-modal-catalog">{{translate('Are you sure to delete this?')}}</p>
+                <button type="button" class="btn btn-secondary rounded-0 mt-2" data-dismiss="modal">{{translate('OK')}}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('modal')
@@ -282,6 +302,36 @@
             }
           
         });
+
+        $(document).on('click', '.la-plus', function(){
+            var product_id = $(this).data('id');
+            var current = $(this);
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            $.ajax({
+                url: "{{route('catalog.add_product_to_catalog')}}",
+                type: "POST",
+                data: {
+                    id: product_id
+                },
+                cache: false,
+                dataType: 'JSON',
+                success: function(dataResult) {
+                    current.parent().remove();
+                    var html = '<p>{{translate("Product added to catalog successfully")}}</p>';
+
+                    $('#title-modal-catalog').text('MawadCatalog');
+                    $('#text-modal-catalog').html(html);
+
+                    $('#modal-info-catalog').modal('show');
+                }
+            })
+        })
 
         $(document).ready(function(){
             //$('#container').removeClass('mainnav-lg').addClass('mainnav-sm');
