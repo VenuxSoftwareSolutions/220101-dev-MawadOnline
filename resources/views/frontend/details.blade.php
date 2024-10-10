@@ -24,7 +24,11 @@
             @endphp
             @if (isset($detailedProduct) && $detailedProduct->digital == 1)
             <div class="col-6 d-flex justify-content-end align-items-center">
-                <span class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ translate('In stock') }}</span>
+                <span class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ translate('In Stock') }}</span>
+            </div>
+            @else
+            <div class="col-6 d-flex justify-content-end align-items-center">
+                <span class="badge badge-md badge-inline badge-pill badge-danger-light fs-14 font-prompt-md border-radius-8px outof-stock-style">{{ translate('Out Of Stock') }}</span>
             </div>
             @endif
     </div>
@@ -36,17 +40,24 @@
             @php
                 // Get the first 140 characters of the description
                 $shortDescription = Str::limit($previewData['detailedProduct']['short_description'], 85);
+                $descriptionLength = strlen($previewData['detailedProduct']['short_description']);
             @endphp
 
             <!-- Short description -->
             <p id="shortDescription">
-                {!! $shortDescription !!}<span class="seemorebtn" onclick="toggleDescription()">View more</span>
+                {!! $shortDescription !!}
+                @if($descriptionLength > 85)
+                    <span class="seemorebtn" onclick="toggleDescription()">View more</span>
+                @endif
             </p>
 
             <!-- Full description (hidden initially) -->
-            <p id="fullDescription" style="display: none;">
-                {!! $previewData['detailedProduct']['short_description'] !!} <span class="seemorebtn" onclick="toggleDescription()">View less</span>
-            </p>
+            @if($descriptionLength > 85)
+                <p id="fullDescription" style="display: none;">
+                    {!! $previewData['detailedProduct']['short_description'] !!}
+                    <span class="seemorebtn" onclick="toggleDescription()">View less</span>
+                </p>
+            @endif
 
             <!-- Toggle button
             <div style="margin-top: 10px;">
@@ -78,9 +89,9 @@
                 <!-- Discount Price -->
                 <strong id="qty-interval" class="fs-24 fw-700 text-dark font-prompt-sb">
                     @if (isset($previewData['detailedProduct']['discountedPrice']))
-                     {{ $previewData['detailedProduct']['discountedPrice'] }} AED
+                    AED {{ $previewData['detailedProduct']['discountedPrice'] }}
                     @else
-                     {{ $previewData['detailedProduct']['price'] }} AED / {{ @$previewData['detailedProduct']['unit_of_sale'] }}
+                    AED {{ $previewData['detailedProduct']['price'] }} / {{ @$previewData['detailedProduct']['unit_of_sale'] }}
                     @endif
 
                 </strong>
@@ -340,12 +351,12 @@
         $niveau++ ;
     @endphp
     <div class="col-sm-2 mb-2">
-        <div class="text-secondary fs-14 fw-400 mt-2 ">
+        <div class="fs-16 font-prompt-md attrib-name">
             @php
                 $attribue = App\Models\Attribute::find($attributeId) ;
 
             @endphp
-            {{$attribue ? $attribue->getTranslation('name') : ""}}
+            {{$attribue ? $attribue->getTranslation('name') : ""}}:
         </div>
     </div>
     <div class="col-sm-10">
@@ -409,7 +420,7 @@
                         <span class="size-25px d-inline-block rounded" style="background: {{ $value }};"></span>
                     </span>
                 @else
-                    <span class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center py-1 px-3">
+                    <span class="aiz-megabox-elem box-attrib font-prompt fs-14 d-flex align-items-center justify-content-center py-1 px-3">
                         {{$value}}
                     </span>
                 @endif
