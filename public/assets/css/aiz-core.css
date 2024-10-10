@@ -13202,3 +13202,17 @@ border:none !important;
 .seemorebtn:hover{
     text-decoration: underline;
 }
+.box-attrib{
+    border:solid 1px #DBDCDF;
+    border-radius: 8px;
+    color: #4C4E54;
+}
+.box-attrib:hover{
+    border:solid 1px #CB774B;
+    border-radius: 8px;
+    color: #CB774B;
+}
+.attrib-name{
+    height: 30px;
+    line-height: 30px;
+}

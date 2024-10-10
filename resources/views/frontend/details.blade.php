@@ -351,12 +351,12 @@
         $niveau++ ;
     @endphp
     <div class="col-sm-2 mb-2">
-        <div class="text-secondary fs-14 fw-400 mt-2 ">
+        <div class="fs-16 font-prompt-md attrib-name">
             @php
                 $attribue = App\Models\Attribute::find($attributeId) ;
 
             @endphp
-            {{$attribue ? $attribue->getTranslation('name') : ""}}
+            {{$attribue ? $attribue->getTranslation('name') : ""}}:
         </div>
     </div>
     <div class="col-sm-10">
@@ -392,7 +392,7 @@
                         <span class="size-25px d-inline-block rounded" style="background: {{ $value }};"></span>
                     </span>
                 @else
-                    <span class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center py-1 px-3">
+                    <span class="aiz-megabox-elem box-attrib font-prompt fs-14 d-flex align-items-center justify-content-center py-1 px-3">
                         {{$value}}
                     </span>
                 @endif
