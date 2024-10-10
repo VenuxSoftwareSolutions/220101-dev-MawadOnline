@@ -312,7 +312,7 @@ class ProductController extends Controller
                                 break;
                             case "list":
                                 $values = $attribute->attribute_values_list(app()->getLocale());
-                                $options = '<div class="col-md-10"><select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" name="attribute_generale-'.$attribute->id.'">';
+                                $options = '<div class="col-md-10"><select class="form-control" data-live-search="true" data-selected-text-format="count" name="attribute_generale-'.$attribute->id.'">';
                                 foreach ($values as $key=>$value){
                                     $options .= "<option  value='".$value->id."'>". $value->value ."</option>";
                                 }
@@ -342,7 +342,7 @@ class ProductController extends Controller
                             case "numeric":
                                 $units_id = $attribute->get_attribute_units();
                                 $units = Unity::whereIn('id', $units_id)->get();
-                                $options = '<select class="form-control attributes-units aiz-selectpicker" name="unit_attribute_generale-'.$attribute->id.'" data-live-search="true" data-selected-text-format="count">';
+                                $options = '<select class="form-control attributes-units" name="unit_attribute_generale-'.$attribute->id.'" data-live-search="true" data-selected-text-format="count">';
                                 foreach ($units as $key=>$unit){
                                     $options .= "<option  value='".$unit->id."'>". $unit->name ."</option>";
                                 }
@@ -407,7 +407,7 @@ class ProductController extends Controller
                         break;
                     case "list":
                         $values = $attribute->attribute_values_list(app()->getLocale());
-                        $options = '<div class="col-md-10"><select class="form-control attributes aiz-selectpicker" data-id_attributes="'.$attribute->id.'" data-live-search="true" data-selected-text-format="count" >';
+                        $options = '<div class="col-md-10"><select class="form-control attributes" data-id_attributes="'.$attribute->id.'" data-live-search="true" data-selected-text-format="count" >';
                         foreach ($values as $key=>$value){
                             $options .= "<option  value='".$value->id."'>". $value->value ."</option>";
                         }
@@ -440,7 +440,7 @@ class ProductController extends Controller
                     case "numeric":
                         $units_id = $attribute->get_attribute_units();
                         $units = Unity::whereIn('id', $units_id)->get();
-                        $options = '<select class="form-control attributes-units aiz-selectpicker" data-id_attributes="'.$attribute->id.'" data-live-search="true" data-selected-text-format="count">';
+                        $options = '<select class="form-control attributes-units" data-id_attributes="'.$attribute->id.'" data-live-search="true" data-selected-text-format="count">';
                         foreach ($units as $key=>$unit){
                             $options .= "<option  value='".$unit->id."'>". $unit->name ."</option>";
                         }
@@ -480,7 +480,7 @@ class ProductController extends Controller
                         break;
                     case "list":
                         $values = $attribute_generale->attribute_values_list(app()->getLocale());
-                        $options = '<div class="col-md-8 attribute-variant-'. $attribute_generale->id .'"><select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" name="attribute_generale-'.$attribute_generale->id.'">';
+                        $options = '<div class="col-md-8 attribute-variant-'. $attribute_generale->id .'"><select class="form-control" data-live-search="true" data-selected-text-format="count" name="attribute_generale-'.$attribute_generale->id.'">';
                         foreach ($values as $key=>$value){
                             $options .= "<option  value='".$value->id."'>". $value->value ."</option>";
                         }
@@ -499,7 +499,7 @@ class ProductController extends Controller
                     case "numeric":
                         $units_id = $attribute_generale->get_attribute_units();
                         $units = Unity::whereIn('id', $units_id)->get();
-                        $options = '<select class="form-control attributes-units aiz-selectpicker" name="unit_attribute_generale-'.$attribute_generale->id.'" data-live-search="true" data-selected-text-format="count">';
+                        $options = '<select class="form-control attributes-units" name="unit_attribute_generale-'.$attribute_generale->id.'" data-live-search="true" data-selected-text-format="count">';
                         foreach ($units as $key=>$unit){
                             $options .= "<option  value='".$unit->id."'>". $unit->name ."</option>";
                         }
