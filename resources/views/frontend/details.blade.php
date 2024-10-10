@@ -78,9 +78,9 @@
                 <!-- Discount Price -->
                 <strong id="qty-interval" class="fs-24 fw-700 text-dark font-prompt-sb">
                     @if (isset($previewData['detailedProduct']['discountedPrice']))
-                    AED {{ $previewData['detailedProduct']['discountedPrice'] }}
+                     {{ $previewData['detailedProduct']['discountedPrice'] }} AED
                     @else
-                    AED {{ $previewData['detailedProduct']['price'] }} / {{ @$previewData['detailedProduct']['unit']->name }}
+                     {{ $previewData['detailedProduct']['price'] }} AED / {{ @$previewData['detailedProduct']['unit_of_sale'] }}
                     @endif
 
                 </strong>
@@ -255,7 +255,7 @@
                         @endif
                     @endforeach
                 @else
-                    {{ __('Invalid tag format') }}
+                    --
                 @endif
             @endforeach
             @elseif(!empty($previewData['detailedProduct']['tags']))
