@@ -1,7 +1,7 @@
 <div class="text-left col-md-6 float-left">
     <!-- Product Name -->
     <div class="row">
-        <div class="col-6">
+        <div class="col-9">
             <h2 class="mt-1 fs-24 fw-700 text-dark font-prompt-sb">
                 {{ $previewData['detailedProduct']['name'] }}
             </h2>
@@ -23,11 +23,11 @@
 
             @endphp
             @if (isset($detailedProduct) && $detailedProduct->digital == 1)
-            <div class="col-6 d-flex justify-content-end align-items-center">
+            <div class="col-3 d-flex justify-content-end align-items-center">
                 <span class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ translate('In Stock') }}</span>
             </div>
             @else
-            <div class="col-6 d-flex justify-content-end align-items-center">
+            <div class="col-3 d-flex justify-content-end align-items-center">
                 <span class="badge badge-md badge-inline badge-pill badge-danger-light fs-14 font-prompt-md border-radius-8px outof-stock-style">{{ translate('Out Of Stock') }}</span>
             </div>
             @endif
@@ -442,7 +442,9 @@
         <div class="border border-radius-8px font-prompt-md fs-14 float-left size-style mr-2">Large</div>
     </div>
     -->
-    <hr class="hr-style"/>
+    @if (($niveau > 0) || (isset($detailedProduct) &&  $detailedProduct->colors != null && count(json_decode($detailedProduct->colors)) > 0))
+        <hr class="hr-style"/>
+    @endif
     <!-- new commented
     <div class="row align-items-center">
         {{-- @if (get_setting('product_query_activation') == 1) --}}
