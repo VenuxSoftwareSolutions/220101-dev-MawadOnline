@@ -34,7 +34,7 @@
                         <!-- Welcome -->
                         <li class="list-inline-item mr-0 pl-0 py-2">
                             <div class="text-dark fs-12 pr-3 d-inline-block border-width-2">
-                                Welcome To MawadOnline's Marketpalce
+                                Welcome To MawadOnline's Marketplace
                             </div>
                         </li>
                         <!-- Currency Switcher -->
@@ -50,7 +50,7 @@
                                 $system_currency = get_system_currency();
                             @endphp
 
-                            <a href="javascript:void(0)" class="dropdown-toggle text-secondary fs-12 py-2"
+                            <a href="javascript:void(0)" class="dropdown-toggle text-secondary fs-12 my-2 pr-3 border-right"
                                 data-toggle="dropdown" data-display="static">
                                 {{ $system_currency->name }}
                             </a>
@@ -70,7 +70,7 @@
                         @if (get_setting('show_language_switcher') == 'on')
                             <li class="list-inline-item dropdown mr-4" id="lang-change">
 
-                                <a href="javascript:void(0)" class="dropdown-toggle text-secondary fs-12 py-2"
+                                <a href="javascript:void(0)" class="dropdown-toggle text-secondary fs-12 my-2 pr-3 border-right"
                                     data-toggle="dropdown" data-display="static">
                                     <img src="{{ static_asset('assets/img/placeholder.jpg') }}"
                                     data-src="{{ static_asset('assets/img/flags/' . $system_language->code . '.png') }}"
@@ -166,7 +166,7 @@
                         </a>
                     </div>
                     <!-- Search field -->
-                    <div class="flex-grow-1 front-header-search d-flex align-items-center bg-white mx-xl-5">
+                    <div class="flex-grow-1 front-header-search d-flex align-items-center bg-white mx-2 mx-xl-4">
                         <div class="position-relative flex-grow-1 px-3 px-lg-0">
                             <form action="{{ route('search') }}" method="GET" class="stop-propagation">
                                 <div class="d-flex position-relative align-items-center">
@@ -229,7 +229,25 @@
                         </div>
                     </div> --}}
                     <!-- Wishlist -->
-                    <div class="d-none d-lg-block mr-3" style="margin-left: 36px;">
+                    <div class="dd-none d-lg-block mr-3"
+                        data-hover="dropdown">
+                        <div class="nav-cart-box dropdown h-100" id="cart_items" style="width: max-content;">
+                            <a href="{{ route('wishlists.index') }}" class="d-flex align-items-center text-dark" data-toggle="tooltip" data-title="{{ translate('Wishlist') }}" data-placement="top">
+                                <span class="position-relative d-inline-block">
+                                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M27.3333 19.9866L20.6533 26.6799" stroke="#F3F4F5" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M4.66666 19.9866H27.3333" stroke="#F3F4F5" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M4.66666 12.0134L11.3467 5.32007" stroke="#F3F4F5" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M27.3333 12.0134H4.66666" stroke="#F3F4F5" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+
+                                        <span class="badge badge-counter-compare font-prompt">0</span>
+                                </span>
+                            </a>
+
+                        </div>
+                    </div>
+                    <div class="d-none d-lg-block mr-3" style="margin-left: 20px;">
                         <div class="" id="wishlist">
                             @include('frontend.'.get_setting('homepage_select').'.partials.wishlist')
                         </div>
@@ -241,7 +259,7 @@
                         </div>
                     </div>
                     @if (!isAdmin())
-                        <!-- Notifications -->
+                        <!-- Notifications
                         <ul class="list-inline mb-0 h-100 d-none d-xl-flex justify-content-end align-items-center">
                             <li class="list-inline-item ml-2 mr-3 pr-3 pl-0 dropdown">
                                 <a class="dropdown-toggle no-arrow text-secondary fs-12" data-toggle="dropdown"
@@ -308,11 +326,10 @@
                                                             @endif
                                                         </span>
                                                         @elseif ($notification->type == 'App\Notifications\ChangesApprovedNotification')
-                                                        <!-- Handle other notification types -->
 
                                                         <p>{{ $notification->data['message'] }}</p>
                                                         @elseif ($notification->type == 'App\Notifications\ModificationRejectedNotification')
-                                                        <!-- Handle other notification types -->
+
 
                                                         <p>{{ $notification->data['message'] }}</p>
                                                         @endif
@@ -337,7 +354,7 @@
                             </li>
                         </ul>
                     @endif
-
+                -->
                     <div class="d-none d-xl-block ml-auto mr-0">
                         @auth
                             <span
@@ -356,10 +373,19 @@
                                     @endif
                                 </span>
                                 <!-- Name -->
-                                <h4 class="h5 fs-14 fw-700 text-white ml-2 mb-0">{{ $user->name }}</h4>
+                                <div class="user-section-header">
+                                    <span class="user-s-h-account-dd font-prompt fs-16">
+                                        {{ translate('My Account') }}
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M20 9L13.4141 15.4304C12.6364 16.1899 11.3636 16.1899 10.5859 15.4304L4 9" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </span>
+                                    <span class="font-prompt fs-14 user-s-h-account-un">{{ $user->name }}</span>
+                                </div>
                             </span>
                         @else
                             <!--Login & Registration -->
+                            <a class="user-s-h-account-dd" href="{{ route('user.login') }}">
                             <span class="d-flex align-items-center nav-user-info ml-3">
                                 <!-- Image -->
                                 <span
@@ -371,11 +397,18 @@
                                             transform="translate(-2.064 -1.995)" fill="#91919b" />
                                     </svg>
                                 </span>
+                                <!--
                                 <a href="{{ route('user.login') }}"
                                     class="opacity-60 hov-opacity-100 hov-text-white text-white fs-12 d-inline-block border-right border-soft-light border-width-2 pr-2 ml-3">{{ translate('Login') }}</a>
                                 <a href="{{ route('business') }}"
                                     class="opacity-60 hov-opacity-100 hov-text-white text-white fs-12 d-inline-block py-2 pl-2">{{ translate('Registration') }}</a>
-                            </span>
+                                -->
+                                <div class="user-section-header">
+                                    <span class="user-s-h-account-dd font-prompt fs-16">{{ translate('My Account') }}</span>
+                                    <span class="user-s-h-account-dd font-prompt fs-14">Hello, {{ translate('Sign in') }}</span>
+                                </div>
+                                </span>
+                            </a>
                         @endauth
                     </div>
                 </div>
@@ -586,11 +619,12 @@
                             style="padding-top: 12px;padding-bottom: 12px; width:270px; cursor: pointer;">
                             <div class="d-flex align-items-center justify-content-between">
                                 <div>
-                                    <span class="fw-700 fs-16 text-white mr-3">{{ translate('Categories') }}</span>
-                                    <a href="{{ route('categories.all') }}" class="text-reset">
-                                        <span
-                                            class="d-none d-lg-inline-block text-white hov-opacity-80">({{ translate('See All') }})</span>
-                                    </a>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3 7H21" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round"/>
+                                        <path d="M3 12H21" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round"/>
+                                        <path d="M3 17H21" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round"/>
+                                    </svg>
+                                    <span class="fw-700 fs-16 text-white ml-2 mr-3 category-menu-title">{{ translate('Categories') }}</span>
                                 </div>
                                 <i class="las la-angle-down text-white has-transition" id="category-menu-bar-icon"
                                     style="font-size: 1.2rem !important"></i>
@@ -608,13 +642,39 @@
                                     @foreach (json_decode(get_setting('header_menu_labels'), true) as $key => $value)
                                         <li class="list-inline-item mr-0 animate-underline-white">
                                             <a href="{{ json_decode(get_setting('header_menu_links'), true)[$key] }}"
-                                                class="fs-13 px-3 py-3 d-inline-block fw-700 {{ $nav_txt_color }} header_menu_links hov-bg-black-10
+                                                class="fs-16 px-3 py-3 d-inline-block fw-400 {{ $nav_txt_color }} header_menu_links hov-bg-black-10
                                             @if (url()->current() == json_decode(get_setting('header_menu_links'), true)[$key]) active @endif">
-                                                {{ translate($value) }}
+                                            @if ($value == "Brands")
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M2 15.29V5.71002C2 4.38002 2.77 4.06002 3.71 5.00002L6.3 7.59002C6.69 7.98002 7.33 7.98002 7.71 7.59002L11.29 4.00002C11.68 3.61002 12.32 3.61002 12.7 4.00002L16.29 7.59002C16.68 7.98002 17.32 7.98002 17.7 7.59002L20.29 5.00002C21.23 4.06002 22 4.38002 22 5.71002V15.3C22 18.3 20 20.3 17 20.3H7C4.24 20.29 2 18.05 2 15.29Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        @elseif ($value == "Vendors")
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M3.01001 11.22V15.71C3.01001 20.2 4.81001 22 9.30001 22H14.69C19.18 22 20.98 20.2 20.98 15.71V11.22" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M12 12C13.83 12 15.18 10.51 15 8.68L14.34 2H9.66999L8.99999 8.68C8.81999 10.51 10.17 12 12 12Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M18.31 12C20.33 12 21.81 10.36 21.61 8.35L21.33 5.6C20.97 3 19.97 2 17.35 2H14.3L15 9.01C15.17 10.66 16.66 12 18.31 12Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M5.64 12C7.29 12 8.78 10.66 8.94 9.01L9.16 6.8L9.64001 2H6.59C3.97001 2 2.97 3 2.61 5.6L2.34 8.35C2.14 10.36 3.62 12 5.64 12Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M12 17C10.33 17 9.5 17.83 9.5 19.5V22H14.5V19.5C14.5 17.83 13.67 17 12 17Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        @endif
+
+                                            {{ translate($value) }}
                                             </a>
                                         </li>
                                     @endforeach
                                 @endif
+                                <li class="list-inline-item mr-0 animate-underline-white" style="cursor:pointer;">
+                                    <a class="fs-16 px-3 py-3 d-inline-block fw-400 text-white header_menu_links hov-bg-black-10">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M2 22H22" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M9.75 4V22H14.25V4C14.25 2.9 13.8 2 12.45 2H11.55C10.2 2 9.75 2.9 9.75 4Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M3 10V22H7V10C7 8.9 6.6 8 5.4 8H4.6C3.4 8 3 8.9 3 10Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M17 15V22H21V15C21 13.9 20.6 13 19.4 13H18.6C17.4 13 17 13.9 17 15Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        <span class="ml-1 fs-16">MawadOnline Index</span>
+                                        <i class="las la-angle-down text-white has-transition ml-3" id="category-menu-bar-icon" style="font-size: 1.2rem !important; position:relative;top:3px;"></i>
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </div>

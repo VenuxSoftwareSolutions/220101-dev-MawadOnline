@@ -75,13 +75,13 @@
                         <!-- Right Side -->
                         <div class="col-lg-6 p-4 p-lg-5 d-flex flex-column justify-content-center border right-content" style="height: auto;">
                             <!-- Site Icon -->
-                            <div class="size-48px mb-3 mx-auto mx-lg-0">
+                            {{-- <div class="size-48px mb-3 mx-auto mx-lg-0">
                                 <img src="{{ uploaded_asset(get_setting('site_icon')) }}" alt="{{ translate('Site Icon')}}" class="img-fit h-100">
-                            </div>
+                            </div> --}}
 
                             <!-- Titles -->
                             <div class="text-center text-lg-left">
-                                <h1 class="fs-20 fs-md-24 fw-700 text-primary" style="text-transform: uppercase;">{{ translate('Welcome Back !')}}</h1>
+                                <h1 class="fs-20 fs-md-24 fw-700 text-vendor" style="text-transform: uppercase;">{{ translate('Welcome Back !')}}</h1>
                                 <h5 class="fs-14 fw-400 text-dark">{{ translate('Login To Your Seller Account')}}</h5>
                             </div>
                             <!-- Login form -->
@@ -149,7 +149,7 @@
 
                                         <!-- Submit Button -->
                                         <div class="mb-4 mt-4">
-                                            <button class="g-recaptcha btn btn-primary btn-block fw-700 fs-14 rounded-0" data-sitekey="{{ config('services.recaptcha_v3.siteKey') }}" data-callback="onSubmit" data-action="submitLoginForm">
+                                            <button class="g-recaptcha btn btn-login-vendor btn-block fw-700 fs-14 rounded-0" data-sitekey="{{ config('services.recaptcha_v3.siteKey') }}" data-callback="onSubmit" data-action="submitLoginForm">
                                                 <span class="login_btn">{{ translate('Login') }}</span>
                                                 <div class="loading_btn" style="display: none;">
                                                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -179,14 +179,14 @@
                                 <!-- Register Now -->
                                 <p class="fs-12 text-gray mb-0">
                                     {{ translate('Dont have an account?')}}
-                                    <a href="{{ route('shops.packages') }}" class="ml-2 fs-14 fw-700 animate-underline-primary">{{ translate('Register Now')}}</a>
+                                    <a href="{{ route('shops.packages') }}" class="ml-2 fs-14 fw-700 animate-underline-primary btn-regiter-vendor">{{ translate('Register Now')}}</a>
                                 </p>
                             </div>
                         </div>
                     </div>
                     <!-- Go Back -->
                     <div class="mt-3 mr-4 mr-md-0">
-                        <a href="{{ url()->previous() }}" class="ml-auto fs-14 fw-700 d-flex align-items-center text-primary" style="max-width: fit-content;">
+                        <a href="{{ url()->previous() }}" class="ml-auto fs-14 fw-700 d-flex align-items-center text-vendor" style="max-width: fit-content;">
                             <i class="las la-arrow-left fs-20 mr-1"></i>
                             {{ translate('Back to Previous Page')}}
                         </a>

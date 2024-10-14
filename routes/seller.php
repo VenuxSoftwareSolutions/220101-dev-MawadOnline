@@ -61,6 +61,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
         Route::get('/products/delete_image', 'delete_image')->name('products.delete_image');
         Route::get('/products/delete_pricing', 'delete_pricing')->name('products.delete_pricing');
         Route::post('/products/bulk-delete', 'bulk_product_delete')->name('products.bulk-delete');
+
+        
     });
          // categories
 
@@ -84,11 +86,15 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
     // Product Bulk Upload
     Route::controller(ProductBulkUploadController::class)->group(function () {
         Route::get('/product-bulk-upload/index', 'index')->name('product_bulk_upload.index');
+        Route::get('/product-bulk-upload/getFiles', 'getFiles')->name('product_bulk_upload.getFiles');
+
         Route::post('/product-bulk-upload/store', 'bulk_upload')->name('bulk_product_upload');
         Route::group(['prefix' => 'bulk-upload/download'], function() {
             Route::get('/category', 'pdf_download_category')->name('pdf.download_category');
             Route::get('/brand', 'pdf_download_brand')->name('pdf.download_brand');
         });
+        Route::post('/products/bulk-downlod', 'download_file')->name('products.bulk_upload.download_file');
+
     });
 
     // Digital Product

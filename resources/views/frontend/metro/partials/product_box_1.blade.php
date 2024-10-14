@@ -118,7 +118,7 @@
             @if ($product->auction_product == 0)
                 <!-- price -->
                 <div class="">
-                    <span class="fw-700 text-primary mr-1">{{ home_discounted_base_price($product) }}</span>
+                    <span class="fw-700 text-dark mr-1">{{ home_discounted_base_price($product) }}</span>
                 </div>
                 <!-- Previous price -->
                 @if (home_base_price($product) != home_discounted_base_price($product))

@@ -24,6 +24,7 @@
     @php $lang = get_system_language()->code;  @endphp
 
     <!-- Sliders -->
+    <div class="container">
     <div class="home-banner-area mb-3">
         <div class="banner-inner">
             <!-- Sliders -->
@@ -54,7 +55,7 @@
             </div>
         </div>
     </div>
-
+</div>
     <!-- Flash Deal -->
     @php
         $flash_deal = get_featured_flash_deal();
@@ -232,11 +233,12 @@
                             @php
                                 $category_name = $category->getTranslation('name');
                             @endphp
+
                             <div class="carousel-box position-relative p-0 has-transition">
                                 <div class="h-250px p-4">
                                     <div class="h-150px w-150px w-xl-auto position-relative overflow-hidden radius-category">
                                         <div class="position-absolute h-100 w-100 overflow-hidden">
-                                            <img src="{{ isset($category->cover_image) ? my_asset($category->cover_image) : static_asset('assets/img/placeholder.jpg') }}"
+                                            <img src="{{ isset($category->cover_image) ? my_asset('public/'.$category->cover_image) : static_asset('assets/img/placeholder.jpg') }}"
                                                 alt="{{ $category_name }}"
                                                 class="img-fit h-100 has-transition radius-category"
                                                 onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">

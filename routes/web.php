@@ -151,6 +151,7 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/todays-deal', 'todays_deal')->name('todays-deal');
 
     Route::get('/product/{slug}', 'product')->name('product');
+    Route::get('/comments', 'loadMore')->name('comments.loadMore');
     Route::post('/product/variant-price', 'variant_price')->name('products.variant_price');
     Route::get('/shop/{slug}', 'shop')->name('shop.visit');
     Route::get('/shop/{slug}/{type}', 'filter_shop')->name('shop.visit.type');
@@ -383,7 +384,7 @@ Route::resource('shops', ShopController::class)->middleware('handle-demo-login')
 //     return view('frontend.pending-approval');
 // })->name('pending_approval');
 Route::get('/status/{status}', [ShopController::class,"showStatus"])->name('seller.status');
-Route::get('/eshop-packages', [ShopController::class,"seller_packages"])->name('shops.packages');
+Route::get('/register-eshop', [ShopController::class,"seller_packages"])->name('shops.packages');
 
 
 Route::post('verify-code', [ShopController::class,"verifyCode"])->name('verify.code')->middleware('throttle:5,1');

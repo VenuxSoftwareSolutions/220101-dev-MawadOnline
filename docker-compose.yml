@@ -11,8 +11,11 @@ services:
     volumes:
       - .:/var/www
       - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./docker/apache/000-default.conf:/etc/apache2/sites-available/000-default.conf
+      - ./letsencrypt:/etc/letsencrypt
     ports:
-      - "8000:80"
+      - "80:80"
+      - "443:443"
     networks:
       - laravel
     extra_hosts:

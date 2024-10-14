@@ -51,9 +51,13 @@ thead tr{
                 @can('seller_create_product')
                 <div class="col-md-4">
                     <div class="text-md-right"> <!-- Added this div -->
+                        <a href="{{ route('seller.product_bulk_upload.index')}}" class="btn btn-secondary btn-lg">
+                        <i class="las la-plus la-1x text-white"></i> {{ translate('Bulk upload') }}</a> 
+
                         <a href="{{ route('seller.products.create')}}" class="btn btn-secondary btn-lg">
                         <i class="las la-plus la-1x text-white"></i> {{ translate('Add New Product') }}</a>
                     </div>
+                    
                 </div>
                 @endcan
             </div>

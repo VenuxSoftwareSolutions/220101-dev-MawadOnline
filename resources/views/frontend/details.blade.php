@@ -21,17 +21,21 @@
             </div>
             @endif
     </div>
+    <!-- Short Description -->
+    <div class="row col-md-12 fs-13 font-prompt">
+        {!! $previewData['detailedProduct']['short_description'] !!}
+    </div>
     <!-- Price -->
     <div class="row no-gutters mb-2">
         <div class="col-sm-10">
             <div class="d-flex align-items-center">
 
                 <!-- Discount Price -->
-                <strong id="qty-interval" class="fs-24 fw-700 text-primary font-prompt-sb">
+                <strong id="qty-interval" class="fs-24 fw-700 text-dark font-prompt-sb">
                     @if (isset($previewData['detailedProduct']['discountedPrice']))
                     AED {{ $previewData['detailedProduct']['discountedPrice'] }}
                     @else
-                    AED {{ $previewData['detailedProduct']['price'] }}
+                    AED {{ $previewData['detailedProduct']['price'] }} / {{ @$previewData['detailedProduct']['unit'] }}
                     @endif
 
                 </strong>
@@ -171,14 +175,14 @@
     <div class="col-md-12 p-0 pb-2">
         <div class="product-desc-each">
             <span class="fs-16 font-prompt-md">Category:</span>
-            <span class="fs-16 font-prompt">Electronics</span>
+            <span class="fs-16 font-prompt">{{ $previewData['detailedProduct']['category'] }}</span>
         </div>
     </div>
     <!-- Category -->
     <div class="col-md-12 p-0 pb-2">
         <div class="product-desc-each">
             <span class="fs-16 font-prompt-md">SKU:</span>
-            <span class="fs-16 font-prompt">8718696821404</span>
+            <span class="fs-16 font-prompt">{{ $previewData['detailedProduct']['sku'] }}</span>
         </div>
     </div>
     <!-- Category -->
@@ -186,7 +190,7 @@
         <div class="product-desc-each">
             <span class="fs-16 font-prompt-md">Tags:</span>
             <span class="fs-16 font-prompt">
-                3 Columns, 4 Columns, 5 Columns, 6 Columns, 7 Columns, 8 Columns, Both Sidebar, Boxed, Full Width, Horizontal, Infinite, Off Canvas, Right Sidebar
+                {{ $previewData['detailedProduct']['tags'] }}
             </span>
         </div>
         <hr class="hr-style"/>
@@ -221,7 +225,17 @@
                 @php
                     $attribue_general = App\Models\Attribute::find($key) ;
                 @endphp
-                 @if (preg_match('/^#[0-9A-F]{6}$/i', $general_attribute))
+                 @if (is_array($general_attribute))
+                 @foreach ( $general_attribute as $color )
+                   @if ((preg_match('/^#[0-9A-F]{6}$/i', $color)))
+                   <li style="list-style: none; overflow-wrap: break-word; margin: 0px 0px 5.5px;">
+                       <span  style="font-weight: 700 !important;" class="a-list-item ">Color :</span>
+                       <span class="color-preview" style="display: inline-block; width: 20px; height: 20px; background-color: {{$color}};"></span>
+                   </li>
+                   @endif
+                 @endforeach
+
+                 @elseif (preg_match('/^#[0-9A-F]{6}$/i', $general_attribute))
                     <label class="aiz-megabox pl-0 mr-1 mb-0" data-toggle="tooltip"
                         data-title="{{ get_single_color_name($color) }}">
                         <input type="radio" name="color"
@@ -464,7 +478,7 @@
                 </div>
             </div>
             <button type="button" class="btn btn-secondary-base add-to-cart col-10 col-md-6 text-white border-radius-16 fs-20 font-prompt py-2 mt-3 mt-md-0"
-            @if (Auth::check()) onclick="addToCart()" @else onclick="showLoginModal()" @endif>
+          {{--   @if (Auth::check()) onclick="addToCart()" @else onclick="showLoginModal()" @endif --}} onclick="addToCart()">
                 <svg width="29" height="32" viewBox="0 0 29 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <mask id="path-1-inside-1_5065_4531" fill="white">
                 <path d="M5.84805 19.728C4.43037 19.9956 3.15047 20.7495 2.22898 21.8596C1.30749 22.9696 0.802144 24.3664 0.800049 25.8091C0.801864 27.4505 1.4547 29.0241 2.61531 30.1847C3.77593 31.3454 5.34955 31.9982 6.99091 32C8.43171 31.9976 9.82668 31.4934 10.936 30.574C12.0454 29.6547 12.7999 28.3776 13.0698 26.9623L27.7555 26.952C28.0586 26.952 28.3493 26.8316 28.5636 26.6173C28.7779 26.4029 28.8983 26.1122 28.8983 25.8091C28.8983 25.506 28.7779 25.2153 28.5636 25.001C28.3493 24.7867 28.0586 24.6663 27.7555 24.6663H24.7509V11.4869C24.7509 9.59657 23.2126 8.05829 21.3223 8.05829H8.13376V5.61714C8.13225 4.12765 7.5398 2.69961 6.48646 1.64649C5.43313 0.593367 4.00497 0.0012102 2.51548 0C2.21237 0 1.92168 0.120408 1.70736 0.334735C1.49303 0.549062 1.37262 0.839753 1.37262 1.14286C1.37262 1.44596 1.49303 1.73665 1.70736 1.95098C1.92168 2.16531 2.21237 2.28571 2.51548 2.28571C3.39895 2.28632 4.24607 2.63747 4.87089 3.26207C5.4957 3.88667 5.84714 4.73367 5.84805 5.61714V19.728ZM6.99091 29.7143C4.83662 29.7143 3.08576 27.9623 3.08576 25.8091C3.08576 23.656 4.83662 21.904 6.99091 21.904C9.14519 21.904 10.896 23.656 10.896 25.8091C10.896 27.9623 9.14405 29.7143 6.99091 29.7143ZM13.9932 10.344V13.4754C13.9932 13.7785 14.1136 14.0692 14.3279 14.2836C14.5423 14.4979 14.8329 14.6183 15.136 14.6183C15.4392 14.6183 15.7298 14.4979 15.9442 14.2836C16.1585 14.0692 16.2789 13.7785 16.2789 13.4754V10.344H21.3223C21.952 10.344 22.4652 10.8571 22.4652 11.4869V24.6663H13.0709C12.8387 23.4428 12.2436 22.3176 11.3631 21.437C10.4825 20.5564 9.35724 19.9613 8.13376 19.7291V10.3429L13.9932 10.344Z"/>
@@ -489,6 +503,7 @@
                 {{-- @endif --}}
             </div>
         </div>
+        <!--
         <div class="row no-gutters mb-3 col-md-12 p-0">
         <a href="javascript:void(0)"
             class="col-md-12 opacity-60 has-transitiuon hov-opacity-100 border-radius-16 Compare-btn-style">
@@ -502,6 +517,7 @@
             <span class="fs-20 font-prompt-md compare-btn-txt">{{ translate('Compare') }}</span></center>
         </a>
         </div>
+        -->
         <!-- Total Price
         <div class="row no-gutters pb-3" id="chosen_price_div">
             <div class="col-sm-2">
@@ -636,14 +652,16 @@
     <div class="col-md-6 float-left">
         <div class="col-md-12 product-rightbox-seller border-radius-8px float-left">
             <div class="col-md-12 product-rightbox-seller-info float-left">
-                <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="avatar-seller mr-2 overflow-hidden border float-left">
+                
+                {{-- <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="avatar-seller mr-2 overflow-hidden border float-left">
                     <img class="lazyload"
                         src="{{ static_asset('assets/img/placeholder.jpg') }}"
                         data-src="{{ uploaded_asset($detailedProduct->user->shop->logo) }}"
                         onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
-                </a>
+                </a> --}}
+            
                 <div class="product-rightbox-seller-details float-left">
-                    <div class="float-left">
+                    <div class="float-left col-md-12 p-0">
                     <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="link-style-none">
                     <span class="fs-16 font-prompt-md float-left product-rightbox-seller-name">
                         {{ $detailedProduct->user->shop->name }}
@@ -665,22 +683,26 @@
                             </span>
                         @endif
                     </div>
-                    <div class="float-left">
-                        <div class="rating rating-mr-1">
-                            {{ renderStarRatingSmall($detailedProduct->user->shop->rating) }}
+                    <div class="float-left col-md-12 p-0">
+                        <div class="float-left">
+                            <div class="rating rating-mr-1">
+                                {{ renderStarRatingSmall($detailedProduct->user->shop->rating) }}
+                            </div>
+                            <div class="opacity-60 fs-16">
+                                ({{ $detailedProduct->user->shop->num_of_reviews }}
+                                {{ translate('reviews') }})
+                            </div>
+
                         </div>
-                        <div class="opacity-60 fs-16">
-                            ({{ $detailedProduct->user->shop->num_of_reviews }}
-                            {{ translate('reviews') }})
+                        <div class="float-right">
+                            <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="link-style-none">
+                                <button class="fs-16 font-prompt border-radius-8px view-store-btn">View Store</button>
+                            </a>
                         </div>
                     </div>
                 </div>
-                <div class="float-right py-3">
-                    <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="link-style-none">
-                        <button class="fs-16 font-prompt border-radius-8px view-store-btn">View Store</button>
-                    </a>
-                </div>
             </div>
+      <!--
             <div class="col-md-12 p-0 pt-2 float-left">
                 <span class="col-md-12 fs-16 font-prompt float-left p-0 pt-2">
                     <font color="#4C4E54"> Address : <span class="opacity-70">{{ $detailedProduct->user->shop->address }}</span></font>
@@ -689,8 +711,10 @@
                     <font color="#4C4E54"> Phone : <span class="opacity-70">{{ $detailedProduct->user->shop->phone }}</span></font>
                 </span>
             </div>
+        -->
         </div>
     </div>
+    <!--
     <div class="col-md-6 float-left mt-3">
         <div class="col-md-12 product-rightbox-seller border-radius-8px float-left">
             <span class="fs-16 font-prompt">
@@ -716,7 +740,7 @@
 
                     <span class="float-left fs-16 font-prompt">1 Year Warranty</span>
                 </div>
-                <!-- ---------------- -->
+
                 <div class="col-12 col-md-7 float-left p-0 pt-2">
                     <svg class="float-left mr-1" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M14.55 21.67C18.84 20.54 22 16.64 22 12C22 6.48 17.56 2 12 2C5.33 2 2 7.56 2 7.56M2 7.56V3M2 7.56H4.01H6.44" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -740,10 +764,10 @@
 
                     <span class="float-left fs-16 font-prompt">1 Day Delivery</span>
                 </div>
-                <!-- ---------------- -->
+
             </div>
         </div>
-    </div>
+    </div>-->
     {{-- <!-- For auction product -->
     @if ($detailedProduct->auction_product)
         <div class="row no-gutters mb-3">

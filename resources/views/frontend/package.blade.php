@@ -9,7 +9,7 @@
                     <h6 class="mb-4 fw-400">
                         {{ __('package.MawadOnline offers the best marketplace for contruction materials in UAE...') }}</h6>
                     <h6 class="mb-0 fw-700">
-                        {{ __('package.You will not pay now. Choose your package, registre your eShop, create your products and inventory.') }}
+                        {{ __('package.You will not pay now. Choose your package, register your eShop, create your products and inventory.') }}
                         <br>
                         {{ __('package.Make your eShop ready for MawadOnline launch') }}
                     </h6>
