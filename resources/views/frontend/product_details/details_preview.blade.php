@@ -52,7 +52,7 @@
                 }else{
                     $totalRating = $detailedProduct->reviews->count();
                 }
-                
+
             @endphp
 
             <span class="rating rating-mr-1 rating-var">

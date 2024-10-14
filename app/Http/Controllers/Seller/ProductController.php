@@ -217,11 +217,16 @@ class ProductController extends Controller
         Artisan::call('view:clear');
         Artisan::call('cache:clear');
 
-        if($product->stock_after_create){
-            return redirect()->route('seller.stocks.index');
+        if($product->is_draft == 1){
+            return redirect()->route('seller.products.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')]);
         }else{
-            return redirect()->route('seller.products');
+            if($product->stock_after_create){
+                return redirect()->route('seller.stocks.index');
+            }else{
+                return redirect()->route('seller.products');
+            }
         }
+
     }
 
     public function store_draft(Request $request){
@@ -258,8 +263,11 @@ class ProductController extends Controller
 
             Artisan::call('view:clear');
             Artisan::call('cache:clear');
-
-            return redirect()->route('seller.products');
+            if($product->is_draft == 1){
+                return redirect()->route('seller.products.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')]);
+            }else{
+                return redirect()->route('seller.products');
+            }
 
         }else{
             return redirect()->back();
@@ -304,7 +312,7 @@ class ProductController extends Controller
                                 break;
                             case "list":
                                 $values = $attribute->attribute_values_list(app()->getLocale());
-                                $options = '<div class="col-md-10"><select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" name="attribute_generale-'.$attribute->id.'">';
+                                $options = '<div class="col-md-10"><select class="form-control" data-live-search="true" data-selected-text-format="count" name="attribute_generale-'.$attribute->id.'">';
                                 foreach ($values as $key=>$value){
                                     $options .= "<option  value='".$value->id."'>". $value->value ."</option>";
                                 }
@@ -334,7 +342,7 @@ class ProductController extends Controller
                             case "numeric":
                                 $units_id = $attribute->get_attribute_units();
                                 $units = Unity::whereIn('id', $units_id)->get();
-                                $options = '<select class="form-control attributes-units aiz-selectpicker" name="unit_attribute_generale-'.$attribute->id.'" data-live-search="true" data-selected-text-format="count">';
+                                $options = '<select class="form-control attributes-units" name="unit_attribute_generale-'.$attribute->id.'" data-live-search="true" data-selected-text-format="count">';
                                 foreach ($units as $key=>$unit){
                                     $options .= "<option  value='".$unit->id."'>". $unit->name ."</option>";
                                 }
@@ -399,7 +407,7 @@ class ProductController extends Controller
                         break;
                     case "list":
                         $values = $attribute->attribute_values_list(app()->getLocale());
-                        $options = '<div class="col-md-10"><select class="form-control attributes aiz-selectpicker" data-id_attributes="'.$attribute->id.'" data-live-search="true" data-selected-text-format="count" >';
+                        $options = '<div class="col-md-10"><select class="form-control attributes" data-id_attributes="'.$attribute->id.'" data-live-search="true" data-selected-text-format="count" >';
                         foreach ($values as $key=>$value){
                             $options .= "<option  value='".$value->id."'>". $value->value ."</option>";
                         }
@@ -432,7 +440,7 @@ class ProductController extends Controller
                     case "numeric":
                         $units_id = $attribute->get_attribute_units();
                         $units = Unity::whereIn('id', $units_id)->get();
-                        $options = '<select class="form-control attributes-units aiz-selectpicker" data-id_attributes="'.$attribute->id.'" data-live-search="true" data-selected-text-format="count">';
+                        $options = '<select class="form-control attributes-units" data-id_attributes="'.$attribute->id.'" data-live-search="true" data-selected-text-format="count">';
                         foreach ($units as $key=>$unit){
                             $options .= "<option  value='".$unit->id."'>". $unit->name ."</option>";
                         }
@@ -472,7 +480,7 @@ class ProductController extends Controller
                         break;
                     case "list":
                         $values = $attribute_generale->attribute_values_list(app()->getLocale());
-                        $options = '<div class="col-md-8 attribute-variant-'. $attribute_generale->id .'"><select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" name="attribute_generale-'.$attribute_generale->id.'">';
+                        $options = '<div class="col-md-8 attribute-variant-'. $attribute_generale->id .'"><select class="form-control" data-live-search="true" data-selected-text-format="count" name="attribute_generale-'.$attribute_generale->id.'">';
                         foreach ($values as $key=>$value){
                             $options .= "<option  value='".$value->id."'>". $value->value ."</option>";
                         }
@@ -491,7 +499,7 @@ class ProductController extends Controller
                     case "numeric":
                         $units_id = $attribute_generale->get_attribute_units();
                         $units = Unity::whereIn('id', $units_id)->get();
-                        $options = '<select class="form-control attributes-units aiz-selectpicker" name="unit_attribute_generale-'.$attribute_generale->id.'" data-live-search="true" data-selected-text-format="count">';
+                        $options = '<select class="form-control attributes-units" name="unit_attribute_generale-'.$attribute_generale->id.'" data-live-search="true" data-selected-text-format="count">';
                         foreach ($units as $key=>$unit){
                             $options .= "<option  value='".$unit->id."'>". $unit->name ."</option>";
                         }
@@ -607,6 +615,7 @@ class ProductController extends Controller
             $general_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->get();
             $general_attributes_ids_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->pluck('id_attribute')->toArray();
             $data_general_attributes = [];
+
             if(count($general_attributes) > 0){
                 foreach ($general_attributes as $general_attribute){
                     // $data_general_attributes[$general_attribute->id_attribute] = $general_attribute;
@@ -621,6 +630,7 @@ class ProductController extends Controller
                     }
                 }
             }
+
             if($product_category != null){
                 $categorie = Category::find($product_category->category_id);
                 $current_categorie = $categorie;
@@ -645,11 +655,22 @@ class ProductController extends Controller
                         if(count($all_general_attributes) > 0){
                             foreach($all_general_attributes as $attribute){
                                 $data_general_attributes[$attribute->id] = $attribute;
+                                if($attribute->type_value == 'color'){
+                                    if (array_key_exists($attribute->id,$data_general_attributes)){
+                                        $data_general_attributes[$attribute->id] = [null];
+                                    }else{
+                                        $data_general_attributes[$attribute->id] = [null];
+                                    }
+                                }else{
+                                    $data_general_attributes[$attribute->id] = $attribute;
+                                }
+
                                 if (!in_array($attribute->id, $general_attributes_ids_attributes)) {
                                     array_push($general_attributes_ids_attributes, $attribute->id);
                                 }
                             }
                         }
+
                     }
                 }
             }
@@ -714,7 +735,6 @@ class ProductController extends Controller
 
     public function update(Request $request)
     {
-        //dd($request->all());
         $parent = Product::find($request->product_id);
         if($parent != null){
             $product = $this->productService->update($request->except([
@@ -750,6 +770,7 @@ class ProductController extends Controller
             Artisan::call('cache:clear');
 
             return redirect()->route('seller.products');
+
 
         }else{
             return redirect()->back();
@@ -1030,9 +1051,18 @@ class ProductController extends Controller
         return $videoId;
     }
 
+    function generateSku($name) {
+        // Convert the name to a slug (lowercase and hyphenated)
+        $sku = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $name)));
+
+        // Optionally, you can add a unique identifier, like a timestamp or an incrementing number
+        return  $sku;
+    }
+
 
     public function prepareDetailedProductData($data){
-        // dd($data) ;
+
+
         // Check if main_photos has files
         // if (isset($data['photos_variant-0']) && is_array($data['photos_variant-0'])) {
         //     // Process and save main photos
@@ -1488,6 +1518,44 @@ class ProductController extends Controller
             $shop_name = null;
         }
 
+        if (isset($data['product_id']) && !empty($data['product_id'])) {
+            // Retrieve existing documents for the given product ID
+            $existingDocuments = UploadProducts::where('id_product', $data['product_id'])
+                ->where('type', 'documents')
+                ->get();
+        } else {
+            // If product_id is not set or is empty, return an empty collection
+            $existingDocuments = collect();
+        }
+
+        $newDocuments= [] ;
+         // Check if the documents were uploaded
+    if (isset($data['documents'])) {
+        foreach ($data['documents'] as $document) {
+
+          // Generate a unique name for the file using the current timestamp
+            $fileName = time() . '_' . $document->getClientOriginalExtension();
+
+            // Create a path for storing the document
+            $path = $document->storeAs('/upload_products/Product-temp/documents', $fileName);
+
+            // Add document info to the newDocuments array
+            $newDocuments[] = [
+
+                'path' => '/'.$path,
+                'extension' => $document->extension(),
+                'document_name' => $document->getClientOriginalName(),
+                'type' => 'documents',
+                // You can add created_at and updated_at if needed
+            ];
+        }
+    }
+
+
+    // Combine existing documents with new ones
+        $existingDocumentsArray = $existingDocuments->toArray();
+        $allDocuments = collect($existingDocumentsArray)->merge($newDocuments);
+
 
 
         // Prepare detailed product data
@@ -1497,6 +1565,8 @@ class ProductController extends Controller
             'brand' => $brand ? $brand->name : "",
             'unit' => $data['unit'],
             'description' => $data['description'],
+            'short_description' => $data['short_description'],
+
             'main_photos' => $lastItem['storedFilePaths'] ?? $storedFilePaths, // Add stored file paths to the detailed product data
             // 'quantity' => isset($data['from'][0]) ? $data['from'][0] : "" ,
             // 'price' => isset($data['unit_price'][0]) ? $data['unit_price'][0] : "",
@@ -1529,6 +1599,16 @@ class ProductController extends Controller
             'discount_amount'=> $data['discount_amount'],
             'percent'=> $percent ?? null,
             'product_id' => $data['product_id'] ?? null ,
+            'category' => isset($data['parent_id']) && !empty($data['parent_id']) ? optional(Category::find($data['parent_id']))->name : null,
+            'sku'=>  $data['product_sk'] ?? null ,
+            'tags'=> $data['tags'] ,
+
+            'ratingPercentages' => 0,
+            'documents' => $allDocuments,
+            'previewCreate'=>true,
+            "unit_of_sale" => $data['unit'] ?? null ,
+
+
 
         ];
 
@@ -1558,6 +1638,7 @@ class ProductController extends Controller
 
     public function preview(Request $request)
     {
+
         $previewData = $request->session()->get('productPreviewData', null);
 
         // dd($previewData);
@@ -1568,7 +1649,13 @@ class ProductController extends Controller
         // Extract all variables required for the view
         extract($previewData);
 
-        return view('frontend.product_details.preview', compact('previewData'));
+
+        // Add a flag to indicate that this is a preview
+        $isPreview = true;
+
+
+        return view('frontend.product_details', compact('previewData','isPreview'));
+        // return view('frontend.product_details.preview', compact('previewData'));
     }
 
     public function updatePricePreview(Request $request) {
@@ -1755,12 +1842,31 @@ class ProductController extends Controller
             $matchesCheckedAttributes = true;
 
             // Check if the variation matches the checked attributes
+            // foreach ($checkedAttributes as $attributeId => $value) {
+            //     if (!isset($variation[$attributeId]) || $variation[$attributeId] !== $value) {
+            //         $matchesCheckedAttributes = false;
+            //         break;
+            //     }
+            // }
             foreach ($checkedAttributes as $attributeId => $value) {
-                if (!isset($variation[$attributeId]) || $variation[$attributeId] !== $value) {
+                $valueString = "" ;
+                if (isset($variation[$attributeId]) && is_array($variation[$attributeId])) {
+                    // Join array elements with a hyphen
+                    $valueString = implode('-', $variation[$attributeId]);
+
+
+                }
+
+                // If the attribute doesn't exist in variation or the values don't match
+                if (!isset($variation[$attributeId]) ||
+                    (is_array($variation[$attributeId]) && $valueString !== $value) ||
+                    (!is_array($variation[$attributeId]) && $variation[$attributeId] !== $value)) {
+
                     $matchesCheckedAttributes = false;
                     break;
                 }
             }
+
 
             // If the variation matches the checked attributes, collect other attributes
             if ($matchesCheckedAttributes) {
@@ -1854,18 +1960,39 @@ class ProductController extends Controller
                     $pickedAnyVariation = true ;
                  }
 
+                // foreach ($variation as $attributeId => $value) {
+                //     if (!isset($checkedAttributes[$attributeId])) {
+                //         if (!isset($availableAttributes[$attributeId])) {
+                //             $availableAttributes[$attributeId] = [];
+                //         }
+                //         if (!in_array($value, $availableAttributes[$attributeId])) {
+                //             $availableAttributes[$attributeId][] = $value;
+                //         }
+                //     }
+                // }
+                // dd($variation) ;
                 foreach ($variation as $attributeId => $value) {
                     if (!isset($checkedAttributes[$attributeId])) {
                         if (!isset($availableAttributes[$attributeId])) {
                             $availableAttributes[$attributeId] = [];
                         }
-                        if (!in_array($value, $availableAttributes[$attributeId])) {
-                            $availableAttributes[$attributeId][] = $value;
+                            // Check if $value is an array and does not contain any arrays inside it
+                            if (is_array($value) && !array_filter($value, 'is_array')) {
+                                // Join array elements with a hyphen
+                                $valueString = implode('-', $value);
+                            }
+                             else {
+                                $valueString = $value;  // Treat $value as a string if it's not an array
+                            }
+
+                        if (!in_array($valueString, $availableAttributes[$attributeId])) {
+                            $availableAttributes[$attributeId][] = $valueString;
                         }
                     }
                 }
             }
         }
+        // dd($availableAttributes) ;
 
         // Add matchesCheckedAttributes to the response
         $response = [

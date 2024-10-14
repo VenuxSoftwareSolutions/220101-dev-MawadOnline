@@ -802,9 +802,9 @@ class ShopController extends Controller
                 'user_id' => Auth::user()->id
             ],
             [
-                'name' => Auth::user()->name,
+                'name' => ['en' => $request->eshop_name_english, 'ar' => $request->eshop_name_arabic],
                 'verification_status' => 1,
-                'slug' => $request->trade_name_english,
+                'slug' => generateUniqueSlug(\App\Models\Shop::class,$request->eshop_name_english),
                 'meta_title' => $request->eshop_name_english,
                 'meta_description' => $request->eshop_desc_en,
                 'bank_name' => $request->bank_name,

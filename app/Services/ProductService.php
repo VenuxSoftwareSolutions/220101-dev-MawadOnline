@@ -830,7 +830,11 @@ class ProductService
                     }
 
                     if(isset($data['shipper_sample'])){
-                        $data['shipper_sample'] = implode(',', $data['shipper_sample']);
+                        if (is_array($data['shipper_sample'])) {
+                            $data['shipper_sample'] = implode(',', $data['shipper_sample']);
+                        }else{
+                            $data['shipper_sample'] = $data['shipper_sample'];
+                        }
                     }
 
 

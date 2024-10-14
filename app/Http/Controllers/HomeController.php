@@ -506,7 +506,15 @@ class HomeController extends Controller
                                 if ($unit){
                                     $variations[$children_id][$attribute->id_attribute] = $attribute->value.' '.$unit->name;
                                 }
-                            }else{
+                            }elseif($attribute->id_colors != null){
+                                // Check if the attribute does not exist, initialize it as an array
+                                 if (!isset($variations[$children_id][$attribute->id_attribute])) {
+                                     $variations[$children_id][$attribute->id_attribute] = [];
+                                 }
+
+                                 // Append the new value to the array
+                                 $variations[$children_id][$attribute->id_attribute][] = $revision_children_attribute->old_value;
+                         }else{
                                 if($revision_children_attribute->key != 'add_attribute'){
                                     $variations[$children_id][$attribute->id_attribute] = $revision_children_attribute->old_value;
                                 }
@@ -517,6 +525,14 @@ class HomeController extends Controller
                                 if ($unit){
                                     $variations[$children_id][$attribute->id_attribute] = $attribute->value.' '.$unit->name;
                                 }
+                            }elseif($attribute->id_colors != null){
+                                   // Check if the attribute does not exist, initialize it as an array
+                                    if (!isset($variations[$children_id][$attribute->id_attribute])) {
+                                        $variations[$children_id][$attribute->id_attribute] = [];
+                                    }
+
+                                    // Append the new value to the array
+                                    $variations[$children_id][$attribute->id_attribute][] = $attribute->value;
                             }else{
                                 $variations[$children_id][$attribute->id_attribute] = $attribute->value;
                             }
@@ -823,7 +839,8 @@ class HomeController extends Controller
                     'tags'=>$parent->tags ?? null ,
                     'category' => optional(Category::find($parent->category_id))->name,
                     'documents' => UploadProducts::where('id_product', $parent->id)->where('type', 'documents')->get(),
-                    'ratingPercentages' => $ratingPercentages
+                    'ratingPercentages' => $ratingPercentages,
+                    "unit_of_sale" => $parent->unit ?? null ,
 
 
                 ];
