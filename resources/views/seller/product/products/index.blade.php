@@ -233,7 +233,7 @@ thead tr{
                                 <td>
                                     @if(count($product->getChildrenProducts()) == 0)
                                         <label class="aiz-switch aiz-switch-success mb-0">
-                                            <input value="{{ $product->id }}" class="publsihed_product" type="checkbox" <?php if($product->published == 1) echo "checked";?> >
+                                            <input value="{{ $product->id }}" class="publsihed_product" @if($product->approved != 1) disabled @endif type="checkbox" <?php if($product->published == 1) echo "checked";?> >
                                             <span class=""></span>
                                         </label>
                                     @endif
@@ -313,7 +313,7 @@ thead tr{
                                         </td>
                                         <td>
                                             <label class="aiz-switch aiz-switch-success mb-0">
-                                                <input value="{{ $children->id }}" class="publsihed_product" id="{{ $children->id }}" type="checkbox" <?php if($children->published == 1) echo "checked";?> >
+                                                <input value="{{ $children->id }}" class="publsihed_product" @if($children->approved != 1) disabled @endif id="{{ $children->id }}" type="checkbox" <?php if($children->published == 1) echo "checked";?> >
                                                 <span class=""></span>
                                             </label>
                                         </td>
