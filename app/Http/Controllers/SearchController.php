@@ -77,6 +77,7 @@ class SearchController extends Controller
             $attributes = Attribute::whereIn('id', $attribute_ids)->get();
             
         } else {
+            $category_ids = [];
             $categories = Category::with('childrenCategories', 'coverImage')->where('level', 1)->orderBy('order_level', 'desc')->get();
             if ($query != null) {
                 // foreach (explode(' ', trim($query)) as $word) {
@@ -89,7 +90,8 @@ class SearchController extends Controller
                 //         }
                 //     }
                 // }
-                $products->where("name",'like',"%".$query."%");
+                // dd($query);
+                $products->where("products.name",'like',"%".$query."%");
                 
                 $category_parents_ids = [];
                 $attributes = Attribute::all();
@@ -98,7 +100,7 @@ class SearchController extends Controller
                 $attributes = Attribute::all();
             }
         }
-        
+        // dd($products->get());
         // list produit by categorie
         // $products = filter_products($products)->with('taxes');
 
@@ -132,6 +134,10 @@ class SearchController extends Controller
         $shops = $shops->select('shops.*')->distinct('shops.id')->get();
 
         $products = Product::where('published', '1')->where('auction_product', 0)->where('approved', '1');
+        if($query)
+        $products = $products->where("products.name",'like',"%".$query."%");
+        if ($category_id != null )
+        $products = $products->whereIn('category_id',$category_ids);
         $conditions = array_merge($conditions, ['categories' => $category_ids]);
         $conditions = array_merge($conditions, ['query' => $query]);
         // $shops  = Shop::whereIn('user_id',$shops)->where('verification_status','!=',0)->whereHas('user', function ($query) {
