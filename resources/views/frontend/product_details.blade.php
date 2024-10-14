@@ -2783,29 +2783,52 @@
                         });
 
                         // Iterate over each available attribute
+                        // for (var attributeId in response.availableAttributes) {
+                        //     if (response.availableAttributes.hasOwnProperty(attributeId)) {
+                        //         var availableValues = response.availableAttributes[attributeId][0];
+                        //         console.log("rrrrrrr",availableValues );
+                        //         // Iterate over each radio button for this attribute
+                        //         $('.attribute_value input[type=radio][attributeId="' + attributeId + '"]').each(function () {
+                        //             var radioValue = $(this).val();
+                        //             var label = $(this).closest('.attribute_value');
+
+                        //             // Check if the radio button value is in the available values
+                        //             // if (availableValues.indexOf(radioValue) === -1) {
+                        //             if (availableValues != radioValue ) {
+                        //                 // If not in available values, disable the radio button
+                        //                 // $(this).prop('disabled', true);
+                        //                 label.find('span').css('border-bottom', '1px solid red');
+                        //             } else {
+                        //                 // Otherwise, enable the radio button
+                        //                 // $(this).prop('disabled', false);
+                        //                 label.find('span').css('border-bottom', '1px solid mediumseagreen');
+
+                        //             }
+                        //         });
+                        //     }
+                        // }
                         for (var attributeId in response.availableAttributes) {
                             if (response.availableAttributes.hasOwnProperty(attributeId)) {
-                                var availableValues = response.availableAttributes[attributeId][0];
-                                console.log(availableValues );
+                                var availableValues = response.availableAttributes[attributeId]; // Get the entire array
+                                console.log("Available Values for Attribute ID:", attributeId, availableValues);
+
                                 // Iterate over each radio button for this attribute
                                 $('.attribute_value input[type=radio][attributeId="' + attributeId + '"]').each(function () {
                                     var radioValue = $(this).val();
                                     var label = $(this).closest('.attribute_value');
 
                                     // Check if the radio button value is in the available values
-                                    if (availableValues.indexOf(radioValue) === -1) {
-                                        // If not in available values, disable the radio button
-                                        // $(this).prop('disabled', true);
-                                        label.find('span').css('color', 'red'); // Change to the desired color
+                                    if (!availableValues.some(value => value === radioValue)) {
+                                        // If not in available values, style accordingly
+                                        label.find('span').css('border-bottom', '1px solid red'); // Change to red
                                     } else {
-                                        // Otherwise, enable the radio button
-                                        // $(this).prop('disabled', false);
-                                        label.find('span').css('color', 'mediumseagreen'); // Change to the desired color
-
+                                        // If it is in available values, style accordingly
+                                        label.find('span').css('border-bottom', '1px solid mediumseagreen'); // Change to green
                                     }
                                 });
                             }
                         }
+
                     }
 
                 },
