@@ -826,7 +826,7 @@
                             <br/><span class="opacity-60 fs-16">({{ $detailedProduct->user->shop->num_of_reviews }}
                                 {{ translate('Reviews') }})</span>
                         </div>
-                    </div>
+                    </div> 
                 @else
                     @php
                         $user = Auth::user() ;

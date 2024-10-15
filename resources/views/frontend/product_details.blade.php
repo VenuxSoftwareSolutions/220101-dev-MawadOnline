@@ -1383,7 +1383,7 @@
                         </div>
                         <!-- ----------------- -->
                         <div class="p-0 py-2 col-12 float-left">
-                            @if(isset($previewData['detailedProduct']['video_provider']))
+                            @if(!empty ($previewData['detailedProduct']['video_provider']) && $previewData['detailedProduct']['getYoutubeVideoId'] != "")
                             <div class="download-title fs-20 font-prompt-md text-left col-md-12">Videos</div>
                             <div class="col-12 float-left my-2">
                                 <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
