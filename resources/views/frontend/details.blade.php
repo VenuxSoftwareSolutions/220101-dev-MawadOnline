@@ -793,7 +793,7 @@
                         onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
                 </a> --}}
                 @if(isset($detailedProduct))
-                    <div class="product-rightbox-seller-details float-left">
+                    <div class="product-rightbox-seller-details float-left col-md-12">
                         <div class="float-left col-md-12 p-0">
                         <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="link-style-none">
                         <span class="fs-16 font-prompt-md float-left product-rightbox-seller-name">
@@ -820,6 +820,11 @@
                             <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="link-style-none">
                                 <button class="fs-14 font-prompt border-radius-8px view-store-btn">View Store</button>
                             </a>
+                        </div>
+                        <div class="rating rating-mr-1 text-dark float-left">
+                            {{ renderStarRatingSmall($detailedProduct->user->shop->rating) }}
+                            <br/><span class="opacity-60 fs-16">({{ $detailedProduct->user->shop->num_of_reviews }}
+                                {{ translate('Reviews') }})</span>
                         </div>
                     </div>
                 @else

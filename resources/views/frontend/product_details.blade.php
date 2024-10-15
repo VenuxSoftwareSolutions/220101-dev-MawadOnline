@@ -445,7 +445,7 @@
                                         {!! $previewData['detailedProduct']['description'] !!}
                                     </div>
                                     @else
-                                        <div class="mw-100 overflow-hidden text-left aiz-editor-data">
+                                        <div class="mw-100 overflow-hidden text-left aiz-editor-data font-prompt">
                                             No description available.
                                         </div>
                                     @endif
@@ -1383,11 +1383,12 @@
                         </div>
                         <!-- ----------------- -->
                         <div class="p-0 py-2 col-12 float-left">
+                            @if(isset($previewData['detailedProduct']['video_provider']))
                             <div class="download-title fs-20 font-prompt-md text-left col-md-12">Videos</div>
                             <div class="col-12 float-left my-2">
                                 <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
                                     <div class="video-img">
-                                        @if(isset($previewData['detailedProduct']['video_provider']))
+                                        @if(($previewData['detailedProduct']['video_provider']))
                                             {{-- YouTube Video Thumbnail --}}
                                             @if($previewData['detailedProduct']['video_provider'] == "youtube" && $previewData['detailedProduct']['getYoutubeVideoId'] != "")
                                                 <img class="col-12 p-0" data-toggle="modal" data-target="#videoModal"
@@ -1412,6 +1413,7 @@
                             <div>
                         </div>
                     </div>
+                    @endif
                 </div>
                 </div>
                     <div class="tab-pane fade" id="tab_default_3">

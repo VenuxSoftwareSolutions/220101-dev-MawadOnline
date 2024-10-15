@@ -13217,3 +13217,6 @@ border:none !important;
     height: 30px;
     line-height: 30px;
 }
+.font-prompt-force{
+    font-family: 'Prompt-Light' !important;
+}
