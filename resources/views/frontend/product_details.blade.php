@@ -2456,7 +2456,8 @@
                     }
                 });
 
-                $(document).on('click', '.quantity-control', function() {
+                //$(document).on('click', '.quantity-control', function() {
+                $(document).on('change', '#quantity', function() {
 
                 var action = $(this).data('type');
                 var quantityInput = $('#quantity');

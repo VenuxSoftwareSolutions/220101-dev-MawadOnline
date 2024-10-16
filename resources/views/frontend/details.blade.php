@@ -87,21 +87,23 @@
             <div class="d-flex align-items-center">
 
                 <!-- Discount Price -->
-                <strong id="qty-interval" class="fs-24 fw-700 text-dark font-prompt-sb">
+                <strong class="fs-24 fw-700 text-dark font-prompt-sb">
                     @if (isset($previewData['detailedProduct']['discountedPrice']))
-                    AED {{ $previewData['detailedProduct']['discountedPrice'] }}
+                    AED <span id="chosen_price">{{ $previewData['detailedProduct']['discountedPrice'] }}</span>
                     @else
-                    AED {{ $previewData['detailedProduct']['price'] }} / {{ @$previewData['detailedProduct']['unit_of_sale'] }}
+                    AED <span id="chosen_price">{{ $previewData['detailedProduct']['price'] }}</span> / {{ @$previewData['detailedProduct']['unit_of_sale'] }}
                     @endif
 
                 </strong>
 
                   <!-- Home Price -->
-                  <del id="previous-price" class="fs-24 opacity-60 ml-2 text-secondary">
                     @if (isset($previewData['detailedProduct']['discountedPrice']))
-                  {{$previewData['detailedProduct']['price']}} AED
-                  @endif
-                </del>
+                    <del id="previous-price" class="fs-24 opacity-60 ml-2 text-secondary">
+                        AED {{$previewData['detailedProduct']['price']}}
+                    </del>
+                    / {{ @$previewData['detailedProduct']['unit_of_sale'] }}
+                    @endif
+
                 <!-- Unit -->
                  <!-- Discount percentage
                 <span id="percent" class="@if ($previewData['detailedProduct']['percent']> 0) bg-primary @endif ml-2 fs-11 fw-700 text-white w-35px text-center p-1"
@@ -654,7 +656,7 @@
                             data-type="minus" data-field="quantity" disabled="disabled">
                             <i class="las la-minus"></i>
                         </button>
-                        <input readonly type="number" id="quantity" name="quantity"
+                        <input type="number" id="quantity" name="quantity"
                             class="col border-0 text-center flex-grow-1 fs-16 input-number fs-16 font-prompt-md" placeholder="1"
                             value="{{ $previewData['detailedProduct']['quantity'] }}" min="{{ $previewData['detailedProduct']['min'] }}" max="{{ $previewData['detailedProduct']['max'] }}"
                             lang="en">
@@ -826,7 +828,7 @@
                             <br/><span class="opacity-60 fs-16">({{ $detailedProduct->user->shop->num_of_reviews }}
                                 {{ translate('Reviews') }})</span>
                         </div>
-                    </div> 
+                    </div>
                 @else
                     @php
                         $user = Auth::user() ;
