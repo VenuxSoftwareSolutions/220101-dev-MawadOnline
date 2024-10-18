@@ -57,7 +57,7 @@ thead tr{
                         <a href="{{ route('seller.products.create')}}" class="btn btn-secondary btn-lg">
                         <i class="las la-plus la-1x text-white"></i> {{ translate('Add New Product') }}</a>
                     </div>
-                    
+
                 </div>
                 @endcan
             </div>
