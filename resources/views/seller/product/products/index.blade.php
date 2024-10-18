@@ -233,13 +233,12 @@ thead tr{
                                 <td>
                                     @if(count($product->getChildrenProducts()) == 0)
                                         <label class="aiz-switch aiz-switch-success mb-0">
-                                            <input value="{{ $product->id }}" class="publsihed_product" @if($product->approved != 1) disabled @endif type="checkbox" <?php if($product->published == 1) echo "checked";?> >
-                                            <span class=""></span>
+                                            <input value="{{ $product->id }}" class="publsihed_product" @if($product->approved != 1) disabled @endif type="checkbox" <?php if($product->published == 1 && $product->approved == 1) echo "checked";?> >
+                                            <span class=""> </span>
                                         </label>
                                     @endif
                                 </td>
                                 <td class="text-right remove-top-padding">
-                                    @if(($product->approved != 4) && ($product->approved != 3))
                                         <a class="btn btn-sm" href="{{route('seller.products.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')])}}" title="{{ translate('Edit') }}">
                                             <img src="{{asset('public/Edit.svg')}}">
                                         </a>
@@ -250,7 +249,6 @@ thead tr{
                                         <a href="#" class="btn btn-sm confirm-delete" data-href="{{route('seller.products.destroy', $product->id)}}" title="{{ translate('Delete') }}">
                                             <img src="{{asset('public/trash.svg')}}">
                                         </a>
-                                    @endif
                                 </td>
                             </tr>
                             @if(count($product->getChildrenProducts()) > 0)
