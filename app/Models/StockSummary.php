@@ -9,17 +9,19 @@ class StockSummary extends Model
         'variant_id',
         'warehouse_id',
         'current_total_quantity',
-        'seller_id'
+        'seller_id',
+        'current_total_quantity'
         // Add other fillable attributes as needed
     ];
 
 
+    
     public function warehouse()
     {
         return $this->belongsTo(Warehouse::class);
     }
         public function productVariant()
     {
-        return $this->belongsTo(Product::class, 'variant_id');
+        return $this->belongsTo(Product::class, 'variant_id','id');
     }
 }

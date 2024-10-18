@@ -2505,6 +2505,8 @@ namespace App\Models{
  * @property-read int|null $reviews_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Venturecraft\Revisionable\Revision> $revisionHistory
  * @property-read int|null $revision_history_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\StockSummary> $stockSummaries
+ * @property-read int|null $stock_summaries_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ProductStock> $stocks
  * @property-read int|null $stocks_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ProductTax> $taxes

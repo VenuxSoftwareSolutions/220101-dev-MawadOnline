@@ -190,13 +190,7 @@ thead tr{
                                     @endif
                                 </td> --}}
                                 <td>
-                                    @php
-                                        $qty = 0;
-                                        foreach ($product->stocks as $key => $stock) {
-                                            $qty += $stock->qty;
-                                        }
-                                        echo $qty;
-                                    @endphp
+                                    {{$product->getTotalQuantity()}}
                                 </td>
                                 <td>{{ count($product->getChildrenProducts()) > 0 ? '--' : $product->getPriceRange() }}</td>
                                 <td>

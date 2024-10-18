@@ -67,6 +67,16 @@ class Product extends Model
                                     'product_catalog_id',
                                 ];
 
+    public function stockSummaries()
+    {
+        return $this->hasMany(StockSummary::class, 'variant_id', 'id');
+    }
+
+    public function getTotalQuantity()
+    {
+        return $this->stockSummaries()->sum('current_total_quantity');
+    }
+
     protected function getLastActionNumber()
     {
         $lastRevision = $this->revisionHistory()->latest('id')->first();
