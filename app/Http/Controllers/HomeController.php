@@ -961,14 +961,18 @@ class HomeController extends Controller
         }
         $shop  = Shop::where('slug', $slug)->first();
         if ($shop != null) {
+
             if($shop->user->banned == 1){
                 abort(404);
             }
-            if ($shop->verification_status != 0) {
-                return view('frontend.seller_shop', compact('shop'));
-            } else {
-                return view('frontend.seller_shop_without_verification', compact('shop'));
-            }
+
+            // if ($shop->verification_status != 0) {
+            //     return view('frontend.seller_shop', compact('shop'));
+            // } else {
+                // return view('frontend.seller_shop_without_verification', compact('shop'));
+            // }
+
+            return view('frontend.seller_shop', compact('shop'));
         }
         abort(404);
     }
