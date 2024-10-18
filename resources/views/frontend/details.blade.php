@@ -22,7 +22,7 @@
                 }
 
             @endphp
-            @if (isset($detailedProduct) && $detailedProduct->digital == 1)
+            @if (isset($detailedProduct) && $detailedProduct->getTotalQuantity() != 0)
             <div class="col-3 d-flex justify-content-end align-items-center">
                 <span class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ translate('In Stock') }}</span>
             </div>
