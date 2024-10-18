@@ -95,7 +95,7 @@
                     <!--AED <span id="chosen_price">{{ $previewData['detailedProduct']['price'] }}</span> / {{ @$previewData['detailedProduct']['unit_of_sale'] }}-->
                     AED <span>{{ $previewData['detailedProduct']['price'] }}</span> / {{ @$previewData['detailedProduct']['unit_of_sale'] }}
                     @endif
-
+                        
                 </strong>
 
                   <!-- Home Price -->
