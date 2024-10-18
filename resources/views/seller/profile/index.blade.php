@@ -50,11 +50,11 @@
        .highlighted-tab {
         border-color: red !important;
     }
-
+/*
     .btn-primary {
-        background-color: #a2b8c6 !important; /* Use the global variable */
+        background-color: #a2b8c6 !important;
         border-color: #a2b8c6 !important;
-
+*/
     }
     .swal2-confirm {
         background-color: var(--success) !important; /* Use the global variable */
@@ -77,13 +77,14 @@
 
     .custom-file-input:lang(en)~.custom-file-label::after {
     content: "Browse";
-    background-color: #a2b8c6;
+   /* background-color: #a2b8c6;*/
+    background-color: #2e294e;
     color:#fff
 }
 .nav-link.active {
 
-    background-color: #a2b8c6 !important;
-
+    /*background-color: #a2b8c6 !important;*/
+    background-color: #2e294e !important;
 
 }
 
