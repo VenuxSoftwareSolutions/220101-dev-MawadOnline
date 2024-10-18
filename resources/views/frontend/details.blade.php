@@ -89,9 +89,11 @@
                 <!-- Discount Price -->
                 <strong class="fs-24 fw-700 text-dark font-prompt-sb">
                     @if (isset($previewData['detailedProduct']['discountedPrice']))
-                    AED <span id="chosen_price">{{ $previewData['detailedProduct']['discountedPrice'] }}</span>
+                    <!--AED <span id="chosen_price">{{ $previewData['detailedProduct']['discountedPrice'] }}</span>-->
+                    AED <span>{{ $previewData['detailedProduct']['discountedPrice'] }}</span>
                     @else
-                    AED <span id="chosen_price">{{ $previewData['detailedProduct']['price'] }}</span> / {{ @$previewData['detailedProduct']['unit_of_sale'] }}
+                    <!--AED <span id="chosen_price">{{ $previewData['detailedProduct']['price'] }}</span> / {{ @$previewData['detailedProduct']['unit_of_sale'] }}-->
+                    AED <span>{{ $previewData['detailedProduct']['price'] }}</span> / {{ @$previewData['detailedProduct']['unit_of_sale'] }}
                     @endif
 
                 </strong>
