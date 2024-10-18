@@ -149,10 +149,11 @@
 
                 @php
                     $disc = (home_discounted_base_price($product,false) - $pricing->discount_amount) ;
+                    $formattedDisc = "AED" . number_format($disc, 2, '.', ',');
                 @endphp
                     <!-- price -->
                     <div class="">
-                        <span class="fw-700 text-dark mr-1">{{ $disc }}</span>
+                        <span class="fw-700 text-dark mr-1">{{ $formattedDisc }}</span>
                     </div>
                     <!-- Previous price -->
                     <div class="">
