@@ -130,11 +130,7 @@
         </h3>
         <div class="fs-14 d-flex justify-content-start">
             @if ($product->auction_product == 0)
-                <!-- price -->
-                <div class="">
-                    <span class="fw-700 text-dark mr-1">{{ home_discounted_base_price($product) }}</span>
-                </div>
-                <!-- Previous price -->
+
                 @if(count($product->getPricingConfiguration()) > 0)
                 @foreach ($product->getPricingConfiguration() as $pricing)
                 @php
@@ -150,9 +146,22 @@
                 }
                 @endphp
                 @if ($pricing->discount_amount)
+
+                @php
+                    $disc = (home_discounted_base_price($product,false) - $pricing->discount_amount) ;
+                @endphp
+                    <!-- price -->
                     <div class="">
-                        <del class="fw-400 text-secondary">{{ "AED".$pricing->discount_amount }}</del>
+                        <span class="fw-700 text-dark mr-1">{{ $disc }}</span>
                     </div>
+                    <!-- Previous price -->
+                    <div class="">
+                        <del class="fw-400 text-secondary">{{ home_discounted_base_price($product) }}</del>
+                    </div>
+                @else
+                <div class="">
+                    <span class="fw-700 text-dark mr-1">{{ home_discounted_base_price($product) }}</span>
+                </div>
                 @endif
                 @endforeach
                 @endif
