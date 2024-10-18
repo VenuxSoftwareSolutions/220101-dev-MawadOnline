@@ -23,7 +23,6 @@
 
             @endphp
             @if (isset($detailedProduct) && $detailedProduct->digital == 1)
-
             <div class="col-3 d-flex justify-content-end align-items-center">
                 <span class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ translate('In Stock') }}</span>
             </div>
@@ -90,9 +89,11 @@
                 <!-- Discount Price -->
                 <strong class="fs-24 fw-700 text-dark font-prompt-sb">
                     @if (isset($previewData['detailedProduct']['discountedPrice']))
-                    AED <span id="chosen_price">{{ $previewData['detailedProduct']['discountedPrice'] }}</span>
+                    <!--AED <span id="chosen_price">{{ $previewData['detailedProduct']['discountedPrice'] }}</span>-->
+                    AED <span>{{ $previewData['detailedProduct']['discountedPrice'] }}</span>
                     @else
-                    AED <span id="chosen_price">{{ $previewData['detailedProduct']['price'] }}</span> / {{ @$previewData['detailedProduct']['unit_of_sale'] }}
+                    <!--AED <span id="chosen_price">{{ $previewData['detailedProduct']['price'] }}</span> / {{ @$previewData['detailedProduct']['unit_of_sale'] }}-->
+                    AED <span>{{ $previewData['detailedProduct']['price'] }}</span> / {{ @$previewData['detailedProduct']['unit_of_sale'] }}
                     @endif
 
                 </strong>
