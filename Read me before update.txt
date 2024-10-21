@@ -1,6 +1,6 @@
 Hello,
 
-If you're already using active ecommerce CMS please follow below Instructions.
+If you're already using mawadonline CMS please follow below Instructions.
 
 -- make sure backup your database from your phpmyadmin.
 -- after update make sure all of your add-on is updated

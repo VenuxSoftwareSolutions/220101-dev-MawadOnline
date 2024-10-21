@@ -67,6 +67,25 @@ class Product extends Model
                                     'product_catalog_id',
                                 ];
 
+    // Ensure cascading deletes at the model level
+    protected static function booted()
+    {
+        static::deleting(function ($product) {
+            // Automatically delete related stock summaries
+            $product->stockSummaries()->delete();
+        });
+    }
+    
+    public function stockSummaries()
+    {
+        return $this->hasMany(StockSummary::class, 'variant_id', 'id');
+    }
+
+    public function getTotalQuantity()
+    {
+        return $this->stockSummaries()->sum('current_total_quantity');
+    }
+
     protected function getLastActionNumber()
     {
         $lastRevision = $this->revisionHistory()->latest('id')->first();

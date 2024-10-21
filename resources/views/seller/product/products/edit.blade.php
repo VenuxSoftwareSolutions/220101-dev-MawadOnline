@@ -253,7 +253,7 @@
                                 <div class="form-group row" id="brand">
                                     <label class="col-md-3 col-from-label">{{translate('Brand')}}</label>
                                     <div class="col-md-8">
-                                        <select required class="form-control aiz-selectpicker" name="brand_id" id="brand_id" required data-live-search="true">
+                                        <select required class="form-control aiz-selectpicker" name="brand_id" id="brand_id" data-live-search="true">
                                             <option value="">{{ translate('Select Brand') }}</option>
                                             @foreach (\App\Models\Brand::all() as $brand)
                                             <option value="{{ $brand->id }}" @selected($product->brand_id == $brand->id)>{{ $brand->getTranslation('name') }}</option>
@@ -264,7 +264,7 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{translate('Unit of Sale')}} <span class="text-danger">*</span></label>
                                     <div class="col-md-8">
-                                        <input type="text" required class="form-control" name="unit" value="{{ $product->unit }}" placeholder="{{ translate('Unit (e.g. KG, Pc etc)') }}" >
+                                        <input type="text" class="form-control" name="unit" value="{{ $product->unit }}" placeholder="{{ translate('Unit (e.g. KG, Pc etc)') }}" >
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -283,7 +283,7 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{translate('Manufacturer')}} <span class="text-danger">*</span></label>
                                     <div class="col-md-8">
-                                        <input type="text" required class="form-control" name="manufacturer" value="{{ $product->manufacturer }}" placeholder="{{translate('Manufacturer')}}" >
+                                        <input type="text" class="form-control" name="manufacturer" value="{{ $product->manufacturer }}" placeholder="{{translate('Manufacturer')}}" >
                                     </div>
                                 </div>
                             </div>
@@ -291,7 +291,7 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{translate('Tags')}} <span class="text-danger">*</span></label>
                                     <div class="col-md-8">
-                                        <input type="text" required class="form-control aiz-tag-input" value="{{ $product->tags }}" id="tags" name="tags[]" placeholder="{{ translate('Type and hit enter to add a tag') }}">
+                                        <input type="text" class="form-control aiz-tag-input" value="{{ $product->tags }}" id="tags" name="tags[]" placeholder="{{ translate('Type and hit enter to add a tag') }}">
                                         <small class="text-muted">{{translate('This is used for search. Input those words by which cutomer can find this product.')}}</small>
                                         <div id="error-message" style="display:none; color: red">{{translate('tags input cannot be empty')}}</div>
                                     </div>
@@ -2849,7 +2849,7 @@
                 // numbers_variant++;
 
                 if(clonedDiv.find('.sku').val() == ''){
-                    var title = "{{ translate('Form validation') }}";
+                    var title = "{{ translate('Please fill the missing fields and/or correct the listed entries in order to submit your product for approval') }}";
                     var message = '{{ translate("The SKU field must be filled before creating the variant.")}}';
                     $('#title-modal').text(title);
                     $('#text-modal').text(message);
@@ -5244,84 +5244,46 @@
             event.preventDefault(); // Prevent default form submission
             var approved = "{{ $product->approved }}";
             var added_from_catalog = "{{ $product->product_added_from_catalog }}";
-            var isEmpty = false;
 
-            var tagifyInputs = $(".aiz-tag-input").not(".tagify");
+            var valid_category = $('#check_selected_parent_id').val();
+            if(valid_category == 1){
+                    //Validation of price
+                    var check_price = true;
+                    var check_attributes = true;
+                    var min_qty = $('#min-qty-parent').val();
+                    var max_qty = $('#max-qty-parent').val();
+                    var unit_price = $('#unit-price-parent').val();
 
-            tagifyInputs.each(function() {
-                var tagify = $(this).data('tagify');
-
-                if (tagify.value.length === 0) {
-                    isEmpty = true;
-                    return false; // Exit the loop early if an empty Tagify input is found
-                }
-            });
-            if (!isEmpty) {
-                $('#error-message').hide();
-                var valid_category = $('#check_selected_parent_id').val();
-                if(valid_category == 1){
-                        //Validation of price
-                        var check_price = true;
-                        var check_attributes = true;
-                        var min_qty = $('#min-qty-parent').val();
-                        var max_qty = $('#max-qty-parent').val();
-                        var unit_price = $('#unit-price-parent').val();
-
-                        if($('body input[name="activate_attributes"]').is(':checked')){
-                            var attributes_selected = $('body #attributes').val();
-                            if(attributes_selected.length != 0){
-                                $('body #bloc_variants_created .variant-pricing').each(function() {
-                                    if($(this).is(':checked')){
-                                        if((min_qty == "") || (max_qty == "") || (unit_price == "")){
-                                            check_price = false;
-                                        }
-                                    }else{
-                                        $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('.min-qty-variant').each(function() {
-                                            if($(this).val() == ''){
-                                                check_price = false;
-                                            }
-                                        });
-
-                                        $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('.max-qty-variant').each(function() {
-                                            if($(this).val() == ''){
-                                                check_price = false;
-                                            }
-                                        });
-
-                                        $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('.unit-price-variant').each(function() {
-                                            if($(this).val() == ''){
-                                                check_price = false;
-                                            }
-                                        });
+                    if($('body input[name="activate_attributes"]').is(':checked')){
+                        var attributes_selected = $('body #attributes').val();
+                        if(attributes_selected.length != 0){
+                            $('body #bloc_variants_created .variant-pricing').each(function() {
+                                if($(this).is(':checked')){
+                                    if((min_qty == "") || (max_qty == "") || (unit_price == "")){
+                                        check_price = false;
                                     }
-                                });
-
-                                $('body #bloc-pricing-parent tr').each(function() {
-                                    $(this).find('.min-qty').each(function() {
+                                }else{
+                                    $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('.min-qty-variant').each(function() {
                                         if($(this).val() == ''){
                                             check_price = false;
                                         }
                                     });
 
-                                    $(this).find('.max-qty').each(function() {
+                                    $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('.max-qty-variant').each(function() {
                                         if($(this).val() == ''){
                                             check_price = false;
                                         }
                                     });
 
-                                    $(this).find('.unit-price-variant').each(function() {
+                                    $(this).parent().parent().parent().find('#bloc_pricing_configuration').find('.unit-price-variant').each(function() {
                                         if($(this).val() == ''){
                                             check_price = false;
                                         }
                                     });
-                                });
-                            }else{
-                                check_attributes = false;
-                                check_price = false;
-                            }
+                                }
+                            });
 
-                        }else{
-                            $('#bloc-pricing-parent tr').each(function() {
+                            $('body #bloc-pricing-parent tr').each(function() {
                                 $(this).find('.min-qty').each(function() {
                                     if($(this).val() == ''){
                                         check_price = false;
@@ -5340,495 +5302,530 @@
                                     }
                                 });
                             });
-                        }
-
-                        //Validation of sample description
-                        var check_sample_description = true;
-                        if($('#sample_description_parent').val().trim() === ''){
-                            check_sample_description = false
-                        }
-
-                        //Validation of short description
-                        var check_short_description = true;
-                        if($('#short_description').val().trim() === ''){
-                            check_short_description = false
-                        }
-
-                        //Validation of long description
-                        var check_long_description = true;
-                        if($('#long_description').val().trim() === ''){
-                            check_long_description = false
-                        }
-
-                        //Validation of sample price
-                        var sample_price_parent = parseFloat($('#sample_price_parent').val());
-                        var check_sample_price = true;
-                        var check_sample_price_undefined = true;
-                        if(!isNaN(sample_price_parent)){
-                            if(sample_price_parent <= 0){
-                                check_sample_price = false;
-                            }
                         }else{
-                            check_sample_price_undefined = false;
+                            check_attributes = false;
+                            check_price = false;
                         }
 
-                        //Validation of shipping
-                        var check_shipping = true;
-                        var min_qty_shipping = $('#min-qty-shipping').val();
-                        var max_qty_shipping = $('#max-qty-shipping').val();
-                        var shipper_shipping = $('shipper_shipping').val();
-
-                        if($('body input[name="activate_attributes"]').is(':checked')){
-                            var attributes_selected = $('body #attributes').val();
-                            if(attributes_selected.length != 0){
-                                $('body #bloc_variants_created .variant-shipping').each(function() {
-                                    if($(this).is(':checked')){
-                                        $('#shipping_configuration_box tr').each(function() {
-                                            $(this).find('.min-qty-shipping').each(function() {
-                                                if($(this).val() == ''){
-                                                    check_shipping = false;
-                                                }
-                                            });
-
-                                            $(this).find('.max-qty-shipping').each(function() {
-                                                if($(this).val() == ''){
-                                                    check_shipping = false;
-                                                }
-                                            });
-
-                                            $(this).find('.shipper').each(function() {
-                                                if($(this).val() == ''){
-                                                    check_shipping = false;
-                                                }
-                                            });
-                                        });
-                                    }else{
-                                        $(this).parent().parent().parent().find('#bloc_default_shipping').find('.min-qty-shipping').each(function() {
-                                            if($(this).val() == ''){
-                                                check_shipping = false;
-                                            }
-                                        });
-
-                                        $(this).parent().parent().parent().find('#bloc_default_shipping').find('.max-qty-shipping').each(function() {
-                                            if($(this).val() == ''){
-                                                check_shipping = false;
-                                            }
-                                        });
-
-                                        $(this).parent().parent().parent().find('#bloc_default_shipping').find('.shipper').each(function() {
-                                            if($(this).val() == ''){
-                                                check_shipping = false;
-                                            }
-                                        });
-
-                                        $('#shipping_configuration_box tr').each(function() {
-                                            $(this).find('.min-qty-shipping').each(function() {
-                                                if($(this).val() == ''){
-                                                    check_shipping = false;
-                                                }
-                                            });
-
-                                            $(this).find('.max-qty-shipping').each(function() {
-                                                if($(this).val() == ''){
-                                                    check_shipping = false;
-                                                }
-                                            });
-
-                                            $(this).find('.shipper').each(function() {
-                                                if($(this).val() == ''){
-                                                    check_shipping = false;
-                                                }
-                                            });
-                                        });
-                                    }
-                                });
-                            }else{
-                                check_attributes = false;
-                                check_shipping = false;
-                            }
-
-                        }else{
-                            $('#shipping_configuration_box tr').each(function() {
-                                $(this).find('.min-qty-shipping').each(function() {
-                                    if($(this).val() == ''){
-                                        check_shipping = false;
-                                    }
-                                });
-
-                                $(this).find('.max-qty-shipping').each(function() {
-                                    if($(this).val() == ''){
-                                        check_shipping = false;
-                                    }
-                                });
-
-                                $(this).find('.shipper').each(function() {
-                                    if($(this).val() == ''){
-                                        check_shipping = false;
-                                    }
-                                });
+                    }else{
+                        $('#bloc-pricing-parent tr').each(function() {
+                            $(this).find('.min-qty').each(function() {
+                                if($(this).val() == ''){
+                                    check_price = false;
+                                }
                             });
+
+                            $(this).find('.max-qty').each(function() {
+                                if($(this).val() == ''){
+                                    check_price = false;
+                                }
+                            });
+
+                            $(this).find('.unit-price-variant').each(function() {
+                                if($(this).val() == ''){
+                                    check_price = false;
+                                }
+                            });
+                        });
+                    }
+
+                    //Validation of sample description
+                    var check_sample_description = true;
+                    if($('#sample_description_parent').val().trim() === ''){
+                        check_sample_description = false
+                    }
+
+                    //Validation of short description
+                    var check_short_description = true;
+                    if($('#short_description').val().trim() === ''){
+                        check_short_description = false
+                    }
+
+                    //Validation of long description
+                    var check_long_description = true;
+                    if($('#long_description').val().trim() === ''){
+                        check_long_description = false
+                    }
+
+                    //Validation of sample price
+                    var sample_price_parent = parseFloat($('#sample_price_parent').val());
+                    var check_sample_price = true;
+                    var check_sample_price_undefined = true;
+                    if(!isNaN(sample_price_parent)){
+                        if(sample_price_parent <= 0){
+                            check_sample_price = false;
                         }
+                    }else{
+                        check_sample_price_undefined = false;
+                    }
 
-                        var check_sample_shipping_variant = true;
-                        if($('body input[name="activate_attributes"]').is(':checked')){
-                            var attributes_selected = $('body #attributes').val();
-                            if(attributes_selected.length != 0){
-                                $('#bloc_variants_created .shipper_sample').each(function() {
-                                    if($(this).val() == ''){
-                                        check_sample_shipping_variant = false;
-                                    }
-                                });
+                    //Validation of shipping
+                    var check_shipping = true;
+                    var min_qty_shipping = $('#min-qty-shipping').val();
+                    var max_qty_shipping = $('#max-qty-shipping').val();
+                    var shipper_shipping = $('shipper_shipping').val();
 
-                                $('#bloc_variants_created .estimated_sample').each(function() {
-                                    if($(this).val() == ''){
-                                        check_sample_shipping_variant = false;
-                                    }
-                                });
+                    if($('body input[name="activate_attributes"]').is(':checked')){
+                        var attributes_selected = $('body #attributes').val();
+                        if(attributes_selected.length != 0){
+                            $('body #bloc_variants_created .variant-shipping').each(function() {
+                                if($(this).is(':checked')){
+                                    $('#shipping_configuration_box tr').each(function() {
+                                        $(this).find('.min-qty-shipping').each(function() {
+                                            if($(this).val() == ''){
+                                                check_shipping = false;
+                                            }
+                                        });
 
-                                $('#bloc_variants_created .estimated_shipping_sample').each(function() {
-                                    if($(this).val() == ''){
-                                        check_sample_shipping_variant = false;
-                                    }
-                                });
+                                        $(this).find('.max-qty-shipping').each(function() {
+                                            if($(this).val() == ''){
+                                                check_shipping = false;
+                                            }
+                                        });
 
-                                $('#bloc_variants_created .paid_sample').each(function() {
-                                    if($(this).val() == ''){
-                                        check_sample_shipping_variant = false;
-                                    }
-                                });
+                                        $(this).find('.shipper').each(function() {
+                                            if($(this).val() == ''){
+                                                check_shipping = false;
+                                            }
+                                        });
+                                    });
+                                }else{
+                                    $(this).parent().parent().parent().find('#bloc_default_shipping').find('.min-qty-shipping').each(function() {
+                                        if($(this).val() == ''){
+                                            check_shipping = false;
+                                        }
+                                    });
 
-                            }
-                        }
+                                    $(this).parent().parent().parent().find('#bloc_default_shipping').find('.max-qty-shipping').each(function() {
+                                        if($(this).val() == ''){
+                                            check_shipping = false;
+                                        }
+                                    });
 
-                        //Validation of sku
-                        var check_sku = true;
-                        if($('body input[name="activate_attributes"]').is(':checked')){
-                            var attributes_selected = $('body #attributes').val();
-                            if(attributes_selected.length != 0){
-                                $('body #bloc_variants_created .sku').each(function() {
-                                    if($(this).val() == ''){
-                                        check_sku = false;
-                                    }
-                                });
-                            }else{
-                                check_attributes = false;
-                                check_sku = false;
-                            }
+                                    $(this).parent().parent().parent().find('#bloc_default_shipping').find('.shipper').each(function() {
+                                        if($(this).val() == ''){
+                                            check_shipping = false;
+                                        }
+                                    });
 
+                                    $('#shipping_configuration_box tr').each(function() {
+                                        $(this).find('.min-qty-shipping').each(function() {
+                                            if($(this).val() == ''){
+                                                check_shipping = false;
+                                            }
+                                        });
+
+                                        $(this).find('.max-qty-shipping').each(function() {
+                                            if($(this).val() == ''){
+                                                check_shipping = false;
+                                            }
+                                        });
+
+                                        $(this).find('.shipper').each(function() {
+                                            if($(this).val() == ''){
+                                                check_shipping = false;
+                                            }
+                                        });
+                                    });
+                                }
+                            });
                         }else{
-                            if(($('body #sku_product_parent').val() == '') || ($('body #sku_product_parent').val() == undefined)){
-                                check_sku = false
-                            }
+                            check_attributes = false;
+                            check_shipping = false;
                         }
 
-                        //Validation of images
-                        var check_images = true;
-                        if($('body input[name="activate_attributes"]').is(':checked')){
-                            var attributes_selected = $('body #attributes').val();
-                            if(attributes_selected.length != 0){
-                                $('body #bloc_variants_created .photos_variant').each(function() {
-                                    if($(this).parent().parent().find('.uploaded_images').children('div').length == 0){
+                    }else{
+                        $('#shipping_configuration_box tr').each(function() {
+                            $(this).find('.min-qty-shipping').each(function() {
+                                if($(this).val() == ''){
+                                    check_shipping = false;
+                                }
+                            });
+
+                            $(this).find('.max-qty-shipping').each(function() {
+                                if($(this).val() == ''){
+                                    check_shipping = false;
+                                }
+                            });
+
+                            $(this).find('.shipper').each(function() {
+                                if($(this).val() == ''){
+                                    check_shipping = false;
+                                }
+                            });
+                        });
+                    }
+
+                    var check_sample_shipping_variant = true;
+                    if($('body input[name="activate_attributes"]').is(':checked')){
+                        var attributes_selected = $('body #attributes').val();
+                        if(attributes_selected.length != 0){
+                            $('#bloc_variants_created .shipper_sample').each(function() {
+                                if($(this).val() == ''){
+                                    check_sample_shipping_variant = false;
+                                }
+                            });
+
+                            $('#bloc_variants_created .estimated_sample').each(function() {
+                                if($(this).val() == ''){
+                                    check_sample_shipping_variant = false;
+                                }
+                            });
+
+                            $('#bloc_variants_created .estimated_shipping_sample').each(function() {
+                                if($(this).val() == ''){
+                                    check_sample_shipping_variant = false;
+                                }
+                            });
+
+                            $('#bloc_variants_created .paid_sample').each(function() {
+                                if($(this).val() == ''){
+                                    check_sample_shipping_variant = false;
+                                }
+                            });
+
+                        }
+                    }
+
+                    //Validation of sku
+                    var check_sku = true;
+                    if($('body input[name="activate_attributes"]').is(':checked')){
+                        var attributes_selected = $('body #attributes').val();
+                        if(attributes_selected.length != 0){
+                            $('body #bloc_variants_created .sku').each(function() {
+                                if($(this).val() == ''){
+                                    check_sku = false;
+                                }
+                            });
+                        }else{
+                            check_attributes = false;
+                            check_sku = false;
+                        }
+
+                    }else{
+                        if(($('body #sku_product_parent').val() == '') || ($('body #sku_product_parent').val() == undefined)){
+                            check_sku = false
+                        }
+                    }
+
+                    //Validation of images
+                    var check_images = true;
+                    if($('body input[name="activate_attributes"]').is(':checked')){
+                        var attributes_selected = $('body #attributes').val();
+                        if(attributes_selected.length != 0){
+                            $('body #bloc_variants_created .photos_variant').each(function() {
+                                if($(this).parent().parent().find('.uploaded_images').children('div').length == 0){
+                                    check_images = false;
+                                    console.log('false')
+                                }
+
+                                if($(this)[0].files.length === 0){
+                                    if(check_images != true){
                                         check_images = false;
-                                        console.log('false')
                                     }
-
-                                    if($(this)[0].files.length === 0){
-                                        if(check_images != true){
-                                            check_images = false;
-                                        }
-                                    }else{
-                                        check_images = true;
-                                    }
-                                });
-                            }else{
-                                check_attributes = false;
-                                check_images = false;
-                            }
-                        }
-
-                        //Validation of attributes
-                        var check_attributes_empty = true;
-                        var check_units_empty = true;
-                        if($('body input[name="activate_attributes"]').is(':checked')){
-                            $("#bloc_variants_created div").each(function(index, element) {
-                                $(element).find('.attributes').each(function(index, child_element) {
-                                    // Change the attribute name of the current input
-                                    if ($(child_element).attr('type') == 'radio') {
-                                        var name = $(child_element).attr('name');
-                                        if ($(`body input[name="${name}"]:checked`).length === 0) {
-                                            check_attributes_empty = false;
-                                        }
-                                    }else{
-                                        var specificString = 'attributes-undefined-';
-                                        if($(child_element).attr('name') != undefined){
-                                            if (!$(child_element).attr('name').includes(specificString)){
-                                                if($(child_element).val() == ''){
-                                                    check_attributes_empty = false;
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                });
-
-                                $(element).find('.attributes-units').each(function(index, child_element_units) {
-                                    if($(child_element_units).val() == ''){
-                                        check_units_empty = false;
-                                    }
-                                });
-
+                                }else{
+                                    check_images = true;
+                                }
                             });
+                        }else{
+                            check_attributes = false;
+                            check_images = false;
                         }
+                    }
 
-                        var check_attributes_generale_empty = true;
-                        var check_units_generale_empty = true;
-                        $("#general_attributes div").each(function(index, element) {
+                    //Validation of attributes
+                    var check_attributes_empty = true;
+                    var check_units_empty = true;
+                    if($('body input[name="activate_attributes"]').is(':checked')){
+                        $("#bloc_variants_created div").each(function(index, element) {
                             $(element).find('.attributes').each(function(index, child_element) {
                                 // Change the attribute name of the current input
                                 if ($(child_element).attr('type') == 'radio') {
                                     var name = $(child_element).attr('name');
                                     if ($(`body input[name="${name}"]:checked`).length === 0) {
-                                        check_attributes_generale_empty = false;
+                                        check_attributes_empty = false;
                                     }
                                 }else{
+                                    var specificString = 'attributes-undefined-';
                                     if($(child_element).attr('name') != undefined){
-                                        if(($(child_element).attr('name') != "attribute_generale-undefined")){
+                                        if (!$(child_element).attr('name').includes(specificString)){
                                             if($(child_element).val() == ''){
-                                                check_attributes_generale_empty = false;
+                                                check_attributes_empty = false;
                                             }
                                         }
                                     }
                                 }
+
                             });
 
                             $(element).find('.attributes-units').each(function(index, child_element_units) {
                                 if($(child_element_units).val() == ''){
-                                    check_units_generale_empty = false;
+                                    check_units_empty = false;
                                 }
                             });
 
                         });
+                    }
 
-                        var check_main_images = true;
-                        if ($('#image-preview').children('div').length > 0) {
-                            var check_main_images = true;
-                        } else {
-                            var check_main_images = false;
-                        }
-
-                        if($('body #photoUploadcustom')[0].files.length == 0){
-                            if(check_main_images != true){
-                                check_main_images = false;
-                            }
-                        }
-
-                        var check_thumbnail_images = true;
-                        // if ($('#image-preview-Thumbnail').children('div').length > 0) {
-                        //     var check_thumbnail_images = true;
-                        // } else {
-                        //     var check_thumbnail_images = false;
-                        // }
-
-                        if($('body #photoUploadThumbnailSeconde')[0].files.length == 0){
-                            if(check_thumbnail_images != true){
-                                check_thumbnail_images = false;
-                            }
-                        }
-
-                        var check_sample_price_variant = true;
-                        if($('body input[name="activate_attributes"]').is(':checked')){
-                            $("#bloc_variants_created div").each(function(index, element) {
-                                $(element).find('.sample_description').each(function(index, child_element) {
-                                    if($(this).val() != ''){
-                                        var sample_price_variant = $(this).parent().parent().parent().find('.sample_price').val();
-                                        if(!isNaN(sample_price_variant)){
-                                            if(sample_price_variant <= 0){
-                                                check_sample_price_variant = false;
-                                            }
-                                        }else{
-                                            check_sample_price_variant = false;
+                    var check_attributes_generale_empty = true;
+                    var check_units_generale_empty = true;
+                    $("#general_attributes div").each(function(index, element) {
+                        $(element).find('.attributes').each(function(index, child_element) {
+                            // Change the attribute name of the current input
+                            if ($(child_element).attr('type') == 'radio') {
+                                var name = $(child_element).attr('name');
+                                if ($(`body input[name="${name}"]:checked`).length === 0) {
+                                    check_attributes_generale_empty = false;
+                                }
+                            }else{
+                                if($(child_element).attr('name') != undefined){
+                                    if(($(child_element).attr('name') != "attribute_generale-undefined")){
+                                        if($(child_element).val() == ''){
+                                            check_attributes_generale_empty = false;
                                         }
                                     }
-                                    
-                                });
+                                }
+                            }
+                        });
+
+                        $(element).find('.attributes-units').each(function(index, child_element_units) {
+                            if($(child_element_units).val() == ''){
+                                check_units_generale_empty = false;
+                            }
+                        });
+
+                    });
+
+                    var tagifyInputs = $(".aiz-tag-input").not(".tagify");
+                    var isEmpty = false;
+
+                    tagifyInputs.each(function() {
+                        var tagify = $(this).data('tagify');
+
+                        if (tagify.value.length === 0) {
+                            isEmpty = true;
+                            return false; // Exit the loop early if an empty Tagify input is found
+                        }
+                    }); 
+
+                    var check_main_images = true;
+                    if ($('#image-preview').children('div').length > 0) {
+                        var check_main_images = true;
+                    } else {
+                        var check_main_images = false;
+                    }
+
+                    if($('body #photoUploadcustom')[0].files.length == 0){
+                        if(check_main_images != true){
+                            check_main_images = false;
+                        }
+                    }
+
+                    var check_thumbnail_images = true;
+                    // if ($('#image-preview-Thumbnail').children('div').length > 0) {
+                    //     var check_thumbnail_images = true;
+                    // } else {
+                    //     var check_thumbnail_images = false;
+                    // }
+
+                    if($('body #photoUploadThumbnailSeconde')[0].files.length == 0){
+                        if(check_thumbnail_images != true){
+                            check_thumbnail_images = false;
+                        }
+                    }
+
+                    var check_sample_price_variant = true;
+                    if($('body input[name="activate_attributes"]').is(':checked')){
+                        $("#bloc_variants_created div").each(function(index, element) {
+                            $(element).find('.sample_description').each(function(index, child_element) {
+                                if($(this).val() != ''){
+                                    var sample_price_variant = $(this).parent().parent().parent().find('.sample_price').val();
+                                    if(!isNaN(sample_price_variant)){
+                                        if(sample_price_variant <= 0){
+                                            check_sample_price_variant = false;
+                                        }
+                                    }else{
+                                        check_sample_price_variant = false;
+                                    }
+                                }
+                                
                             });
+                        });
+                    }
+
+                    if(check_sample_price_variant == false){
+                        var message = "{{ translate('The sample price variant is required and must be greater than or equal to 0.1 AED.')}}";
+                        remarks.push(message);
+                    }
+
+                    var check_attributes_selected = true;
+                    if($('body input[name="activate_attributes"]').is(':checked')){
+                        if ($('#attributes option:selected').length == 0) {
+                            check_attributes_selected = false;
+                        }
+                    }
+
+                    var remarks = [];
+                    if(check_attributes_selected != false){
+                        if(check_attributes == false){
+                            //console.log('ok');
+                            var message = "{{ translate('You need to choose at least one attribute.')}}";
+                            remarks.push(message);
+                        }
+                        
+                        if(check_price == false){
+                            //console.log('ok1');
+                            var message = "{{ translate('Please check your pricing configuration.')}}";
+                            remarks.push(message);
+                        }
+                        if($('#sample_description_parent').val() != ''){
+                            if(check_sample_price == false){
+                                //console.log('ok2');
+                                var message = "{{ translate('The sample price must be greater than or equal to 0.1 AED.')}}";
+                                remarks.push(message);
+                            }
+
+                            if(check_sample_price_undefined == false){
+                                //console.log('ok3');
+                                var message = "{{ translate('The sample price is required and must be greater than or equal to 0.1 AED.')}}";
+                                remarks.push(message);
+                            }
+
+                            if($('#shipper_sample_parent').val() == '' || $('#estimated_sample_parent').val() == '' || $('#estimated_shipping_sample_parent').val() == '' || $('#paid_sample_parent').val() == ''){
+                                var message = "{{ translate('There is a problem with the configuration of your shipping sample.')}}";
+                                remarks.push(message);
+                            }
                         }
 
-                        if(check_sample_price_variant == false){
-                            var message = "{{ translate('The sample price variant is required and must be greater than or equal to 0.1 AED.')}}";
+                        if(check_sample_shipping_variant == false){
+                            var message = "{{ translate('There is a problem with the configuration of your shipping variant sample.')}}";
+                            remarks.push(message);
+                        }
+                        if(check_shipping == false){
+                            //console.log('ok4');
+                            var message = "{{ translate('There is an issue with your shipping configuration.')}}";
+                            remarks.push(message);
+                        }
+                        if(check_sku == false){
+                            //console.log('ok5');
+                            var message = "{{ translate('There is an empty SKU.')}}";
+                            remarks.push(message);
+                        }
+                        if(check_images == false){
+                            //console.log('ok6');
+                            var message = "{{ translate('All file inputs in the variant section must contain at least one photo.')}}";
+                            remarks.push(message);
+                        }
+                        if(check_main_images == false){
+                            //console.log('ok7');
+                            var message = "{{ translate('The main image must include at least one picture.')}}";
+                            remarks.push(message);
+                        }
+                        if(check_thumbnail_images == false){
+                            //console.log('ok8');
+                            var message = "{{ translate('The thumbnail image must include at least one picture.')}}";
                             remarks.push(message);
                         }
 
-                        var check_attributes_selected = true;
-                        if($('body input[name="activate_attributes"]').is(':checked')){
-                            if ($('#attributes option:selected').length == 0) {
-                                check_attributes_selected = false;
-                            }
+                        if(check_short_description == false){
+                            //console.log('ok9');
+                            var message = "{{ translate('The short description is required.')}}";
+                            remarks.push(message); 
                         }
 
-                        var remarks = [];
-                        if(check_attributes_selected != false){
-                            if(check_attributes == false){
-                                //console.log('ok');
-                                var message = "{{ translate('You need to choose at least one attribute.')}}";
-                                remarks.push(message);
-                            }
-                            
-                            if(check_price == false){
-                                //console.log('ok1');
-                                var message = "{{ translate('Please check your pricing configuration.')}}";
-                                remarks.push(message);
-                            }
-                            if($('#sample_description_parent').val() != ''){
-                                if(check_sample_price == false){
-                                    //console.log('ok2');
-                                    var message = "{{ translate('The sample price must be greater than or equal to 0.1 AED.')}}";
-                                    remarks.push(message);
-                                }
-
-                                if(check_sample_price_undefined == false){
-                                    //console.log('ok3');
-                                    var message = "{{ translate('The sample price is required and must be greater than or equal to 0.1 AED.')}}";
-                                    remarks.push(message);
-                                }
-
-                                if($('#shipper_sample_parent').val() == '' || $('#estimated_sample_parent').val() == '' || $('#estimated_shipping_sample_parent').val() == '' || $('#paid_sample_parent').val() == ''){
-                                    var message = "{{ translate('There is a problem with the configuration of your shipping sample.')}}";
-                                    remarks.push(message);
-                                }
-                            }
-
-                            if(check_sample_shipping_variant == false){
-                                var message = "{{ translate('There is a problem with the configuration of your shipping variant sample.')}}";
-                                remarks.push(message);
-                            }
-                            if(check_shipping == false){
-                                //console.log('ok4');
-                                var message = "{{ translate('There is an issue with your shipping configuration.')}}";
-                                remarks.push(message);
-                            }
-                            if(check_sku == false){
-                                //console.log('ok5');
-                                var message = "{{ translate('There is an empty SKU.')}}";
-                                remarks.push(message);
-                            }
-                            if(check_images == false){
-                                //console.log('ok6');
-                                var message = "{{ translate('All file inputs in the variant section must contain at least one photo.')}}";
-                                remarks.push(message);
-                            }
-                            if(check_main_images == false){
-                                //console.log('ok7');
-                                var message = "{{ translate('The main image must include at least one picture.')}}";
-                                remarks.push(message);
-                            }
-                            if(check_thumbnail_images == false){
-                                //console.log('ok8');
-                                var message = "{{ translate('The thumbnail image must include at least one picture.')}}";
-                                remarks.push(message);
-                            }
-
-                            if(check_short_description == false){
-                                //console.log('ok9');
-                                var message = "{{ translate('The short description is required.')}}";
-                                remarks.push(message); 
-                            }
-
-                            if(check_long_description == false){
-                                //console.log('ok10');
-                                var message = "{{ translate('The description is required.')}}";
-                                remarks.push(message); 
-                            }
-
-                            if(check_attributes_empty == false){
-                                var message = "{{ translate('All attributes must have values.')}}";
-                                remarks.push(message); 
-                            }
-
-                            if(check_units_empty == false){
-                                var message = "{{ translate('All units must have values.')}}";
-                                remarks.push(message); 
-                            }
-
-                            if(check_attributes_generale_empty == false){
-                                var message = "{{ translate('All attributes in section General Attributes must have values.')}}";
-                                remarks.push(message); 
-                            }
-
-                            if(check_units_generale_empty == false){
-                                var message = "{{ translate('All units in section General Attributes must have values.')}}";
-                                remarks.push(message); 
-                            }
-                        }else{
-                            var message = '{{ translate("A minimum of one attribute must be selected in order to create your product.")}}';
-                            remarks.push(message);
+                        if(isEmpty){
+                            var message = "{{translate('tags input cannot be empty.')}}";
+                            remarks.push(message); 
                         }
-                        if (remarks.length != 0) {
-                            var html = '<ol>';
-                            remarks.forEach(function(item) {
-                                html = html + '<li>' + item + '</li>'
-                            });
 
-                            html = html + '</ol>';
+                        if(check_long_description == false){
+                            //console.log('ok10');
+                            var message = "{{ translate('The description is required.')}}";
+                            remarks.push(message); 
+                        }
 
-                            $('#title-modal').text('Form validation');
-                            $('#text-modal').html(html);
+                        if(check_attributes_empty == false){
+                            var message = "{{ translate('All attributes must have values.')}}";
+                            remarks.push(message); 
+                        }
 
-                            $('#modal-info').modal('show');
-                            $('#modal-info').find('.modal-body').removeClass('text-center');
-                        }else{
-                            if(approved == 1){
-                                Swal.fire({
-                                    title: "{{ translate('Product Update?')}}",
-                                    text: "{{ translate('As this product update requires approval, you can keep the last approved product published in the marketplace until the update is approved. If you unpublish the last approved product, then you have to publish the updated product after approval, manually. Do you want to keep the last approved product published?')}}",
-                                    icon: "info",
-                                    showCancelButton: true,
-                                    cancelButtonText: "{{ translate('Cancel Update') }}",
-                                    confirmButtonText: "{{ translate('Yes') }}",
-                                    showDenyButton: true,
-                                    denyButtonText: "{{ translate('No') }}",
-                                    focusConfirm: false,
-                                    backdrop:false,
-                                    preConfirm: () => {
-                                        return Swal.getConfirmButton().click();
-                                    },
-                                    onOpen: () => {
-                                        var html = '<button type="button" class="swal2-cancel swal2-styled" aria-label="" style="display: inline-block; margin-right: 83px !important">Cancel Update</button>';
-                                        $('body').find('.swal2-actions').find('.swal2-cancel').remove();
-                                        $('body').find('.swal2-actions').prepend(html);
-                                    }
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        $('#last_version').val(1);
-                                    } else if (result.isDenied) {
-                                        $('#last_version').val(0);
-                                    } else {
-                                        return false; // Cancel action if "Cancel Update" is clicked
-                                    }
+                        if(check_units_empty == false){
+                            var message = "{{ translate('All units must have values.')}}";
+                            remarks.push(message); 
+                        }
 
-                                    document.getElementById('choice_form').submit();
+                        if(check_attributes_generale_empty == false){
+                            var message = "{{ translate('All attributes in section General Attributes must have values.')}}";
+                            remarks.push(message); 
+                        }
 
-                                });
-                            }else{
+                        if(check_units_generale_empty == false){
+                            var message = "{{ translate('All units in section General Attributes must have values.')}}";
+                            remarks.push(message); 
+                        }
+                    }else{
+                        var message = '{{ translate("A minimum of one attribute must be selected in order to create your product.")}}';
+                        remarks.push(message);
+                    }
+                    if (remarks.length != 0) {
+                        var html = '<ol>';
+                        remarks.forEach(function(item) {
+                            html = html + '<li>' + item + '</li>'
+                        });
+
+                        html = html + '</ol>';
+
+                        $('#title-modal').text('Please fill the missing fields and/or correct the listed entries in order to submit your product for approval');
+                        $('#text-modal').html(html);
+
+                        $('#modal-info').modal('show');
+                        $('#modal-info').find('.modal-body').removeClass('text-center');
+                    }else{
+                        if(approved == 1){
+                            Swal.fire({
+                                title: "{{ translate('Product Update?')}}",
+                                text: "{{ translate('As this product update requires approval, you can keep the last approved product published in the marketplace until the update is approved. If you unpublish the last approved product, then you have to publish the updated product after approval, manually. Do you want to keep the last approved product published?')}}",
+                                icon: "info",
+                                showCancelButton: true,
+                                cancelButtonText: "{{ translate('Cancel Update') }}",
+                                confirmButtonText: "{{ translate('Yes') }}",
+                                showDenyButton: true,
+                                denyButtonText: "{{ translate('No') }}",
+                                focusConfirm: false,
+                                backdrop:false,
+                                preConfirm: () => {
+                                    return Swal.getConfirmButton().click();
+                                },
+                                onOpen: () => {
+                                    var html = '<button type="button" class="swal2-cancel swal2-styled" aria-label="" style="display: inline-block; margin-right: 83px !important">Cancel Update</button>';
+                                    $('body').find('.swal2-actions').find('.swal2-cancel').remove();
+                                    $('body').find('.swal2-actions').prepend(html);
+                                }
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $('#last_version').val(1);
+                                } else if (result.isDenied) {
+                                    $('#last_version').val(0);
+                                } else {
+                                    return false; // Cancel action if "Cancel Update" is clicked
+                                }
+
                                 document.getElementById('choice_form').submit();
-                            }
+
+                            });
+                        }else{
+                            document.getElementById('choice_form').submit();
                         }
+                    }
 
-                }else{
-                    Swal.fire({
-                        title: '{{ translate("Cancelled")}}',
-                        text: '{{ translate("Please select a category without subcategories.")}}',
-                        icon: 'error',
-                        scrollbarPadding: false,
-                        backdrop:false,
-                    })
-                }
             }else{
-                var inputTopPosition = $("#tags").offset().top;
-
-                // Animate scrolling to the input element
-                $("html, body").animate({ scrollTop: inputTopPosition }, 1000);
-                $('#error-message').show();
+                Swal.fire({
+                    title: '{{ translate("Cancelled")}}',
+                    text: '{{ translate("Please select a category without subcategories.")}}',
+                    icon: 'error',
+                    scrollbarPadding: false,
+                    backdrop:false,
+                })
             }
         });
     });

@@ -12775,7 +12775,7 @@ border-radius: 8px;
 }
 .stock-quantity-content{
     float: left;
-    min-width:120px;
+    min-width:170px;
     max-width:100%;
     height:28px;
 }
@@ -12870,8 +12870,8 @@ border-radius: 8px;
  float: left;
 }
 .product-color-style{
-    width: 32px;
-    height: 32px;
+    width: 22px;
+    height: 22px;
     border-radius: 32px;
     opacity: 0.5;
 }
@@ -12931,6 +12931,7 @@ border:none !important;
 .checked-color {
     opacity: 0;
     visibility: hidden;
+    margin: 2px;
 }
 .aiz-megabox > input:checked ~ .aiz-megabox-elem .checked-color {
     visibility: visible;
@@ -13215,4 +13216,7 @@ border:none !important;
 .attrib-name{
     height: 30px;
     line-height: 30px;
+}
+.font-prompt-force{
+    font-family: 'Prompt-Light' !important;
 }

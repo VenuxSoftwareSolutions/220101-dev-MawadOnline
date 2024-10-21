@@ -57,7 +57,7 @@ thead tr{
                         <a href="{{ route('seller.products.create')}}" class="btn btn-secondary btn-lg">
                         <i class="las la-plus la-1x text-white"></i> {{ translate('Add New Product') }}</a>
                     </div>
-                    
+
                 </div>
                 @endcan
             </div>
@@ -190,13 +190,7 @@ thead tr{
                                     @endif
                                 </td> --}}
                                 <td>
-                                    @php
-                                        $qty = 0;
-                                        foreach ($product->stocks as $key => $stock) {
-                                            $qty += $stock->qty;
-                                        }
-                                        echo $qty;
-                                    @endphp
+                                    {{$product->getTotalQuantity()}}
                                 </td>
                                 <td>{{ count($product->getChildrenProducts()) > 0 ? '--' : $product->getPriceRange() }}</td>
                                 <td>
@@ -233,13 +227,12 @@ thead tr{
                                 <td>
                                     @if(count($product->getChildrenProducts()) == 0)
                                         <label class="aiz-switch aiz-switch-success mb-0">
-                                            <input value="{{ $product->id }}" class="publsihed_product" type="checkbox" <?php if($product->published == 1) echo "checked";?> >
-                                            <span class=""></span>
+                                            <input value="{{ $product->id }}" class="publsihed_product" @if($product->approved != 1) disabled @endif type="checkbox" <?php if($product->published == 1 && $product->approved == 1) echo "checked";?> >
+                                            <span class=""> </span>
                                         </label>
                                     @endif
                                 </td>
                                 <td class="text-right remove-top-padding">
-                                    @if(($product->approved != 4) && ($product->approved != 3))
                                         <a class="btn btn-sm" href="{{route('seller.products.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')])}}" title="{{ translate('Edit') }}">
                                             <img src="{{asset('public/Edit.svg')}}">
                                         </a>
@@ -250,7 +243,6 @@ thead tr{
                                         <a href="#" class="btn btn-sm confirm-delete" data-href="{{route('seller.products.destroy', $product->id)}}" title="{{ translate('Delete') }}">
                                             <img src="{{asset('public/trash.svg')}}">
                                         </a>
-                                    @endif
                                 </td>
                             </tr>
                             @if(count($product->getChildrenProducts()) > 0)
@@ -313,7 +305,7 @@ thead tr{
                                         </td>
                                         <td>
                                             <label class="aiz-switch aiz-switch-success mb-0">
-                                                <input value="{{ $children->id }}" class="publsihed_product" id="{{ $children->id }}" type="checkbox" <?php if($children->published == 1) echo "checked";?> >
+                                                <input value="{{ $children->id }}" class="publsihed_product" @if($children->approved != 1) disabled @endif id="{{ $children->id }}" type="checkbox" <?php if($children->published == 1) echo "checked";?> >
                                                 <span class=""></span>
                                             </label>
                                         </td>

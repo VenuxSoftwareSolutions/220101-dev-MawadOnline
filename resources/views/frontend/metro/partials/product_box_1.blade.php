@@ -73,17 +73,19 @@
             </div>
             @endif
 
-            
+            @php
+                $totalRating = $product->reviews->count();
+            @endphp
             <div class="absolute-bottom-left-rating aiz-p-hov-span-rating font-prompt">
                 <a href="javascript:void(0)" class="hov-svg-white border-radius-8px" "
                     data-toggle="tooltip" data-placement="left">
                     <span>
-                        4.0
+                        {{ $totalRating > 0 ? number_format($product->reviews->sum('rating') / $totalRating, 1) : number_format(0, 1) }}
                         <svg width="17" height="17" class="rating-star" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M18.3334 8.41623C18.4167 7.99956 18.0834 7.49956 17.6667 7.49956L12.9167 6.8329L10.7501 2.49956C10.6667 2.3329 10.5834 2.24956 10.4167 2.16623C10.0001 1.91623 9.50008 2.0829 9.25008 2.49956L7.16675 6.8329L2.41675 7.49956C2.16675 7.49956 2.00008 7.5829 1.91675 7.74956C1.58341 8.0829 1.58341 8.58289 1.91675 8.91623L5.33341 12.2496L4.50008 16.9996C4.50008 17.1662 4.50008 17.3329 4.58341 17.4996C4.83341 17.9162 5.33341 18.0829 5.75008 17.8329L10.0001 15.5829L14.2501 17.8329C14.3334 17.9162 14.5001 17.9162 14.6667 17.9162C14.7501 17.9162 14.7501 17.9162 14.8334 17.9162C15.2501 17.8329 15.5834 17.4162 15.5001 16.9162L14.6667 12.1662L18.0834 8.8329C18.2501 8.74956 18.3334 8.5829 18.3334 8.41623Z" fill="#FFB800"/>
                             </svg>
 
-                        <span class="rating-content">(1.5k)</span>
+                        <span class="rating-content">({{$totalRating}})</span>
                     </span>
                 </a>
             </div>
@@ -128,15 +130,41 @@
         </h3>
         <div class="fs-14 d-flex justify-content-start">
             @if ($product->auction_product == 0)
-                <!-- price -->
-                <div class="">
-                    <span class="fw-700 text-dark mr-1">{{ home_discounted_base_price($product) }}</span>
-                </div>
-                <!-- Previous price -->
-                @if (home_base_price($product) != home_discounted_base_price($product))
+
+                @if(count($product->getPricingConfiguration()) > 0)
+                @foreach ($product->getPricingConfiguration() as $pricing)
+                @php
+                $date_range = '';
+                if($pricing->discount_start_datetime){
+                    $start_date = new DateTime($pricing->discount_start_datetime);
+                    $start_date_formatted = $start_date->format('d-m-Y H:i:s');
+
+                    $end_date = new DateTime($pricing->discount_end_datetime);
+                    $end_date_formatted = $end_date->format('d-m-Y H:i:s');
+
+                    $date_range = $start_date_formatted.' to '.$end_date_formatted;
+                }
+                @endphp
+                @if ($pricing->discount_amount)
+
+                @php
+                    $disc = (home_discounted_base_price($product,false) - $pricing->discount_amount) ;
+                    $formattedDisc = "AED" . number_format($disc, 2, '.', ',');
+                @endphp
+                    <!-- price -->
+                    <div class="">
+                        <span class="fw-700 text-dark mr-1">{{ $formattedDisc }}</span>
+                    </div>
+                    <!-- Previous price -->
                     <div class="">
                         <del class="fw-400 text-secondary">{{ home_discounted_base_price($product) }}</del>
                     </div>
+                @else
+                <div class="">
+                    <span class="fw-700 text-dark mr-1">{{ home_discounted_base_price($product) }}</span>
+                </div>
+                @endif
+                @endforeach
                 @endif
             @endif
             @if ($product->auction_product == 1)
@@ -157,7 +185,7 @@
                     <path d="M3.5 10L4.91 18.64C5.23 20.58 6 22 8.86 22H14.89C18 22 18.46 20.64 18.82 18.76L20.5 10" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round"/>
                     </svg>
 
-                <span class="fs-14 stock-quantity-text">Only 1 left in stock</span>
+                <span class="fs-14 stock-quantity-text" style="font-size: 6px">Only {{$product->low_stock_quantity != null ? $product->low_stock_quantity : 0 }} left in stock</span>
             </div>
     </div>
 </div>

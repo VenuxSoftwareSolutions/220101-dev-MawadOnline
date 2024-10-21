@@ -445,7 +445,7 @@
                                         {!! $previewData['detailedProduct']['description'] !!}
                                     </div>
                                     @else
-                                        <div class="mw-100 overflow-hidden text-left aiz-editor-data">
+                                        <div class="mw-100 overflow-hidden text-left aiz-editor-data font-prompt">
                                             No description available.
                                         </div>
                                     @endif
@@ -618,6 +618,7 @@
                             <!-- Download -->
                             <div class="tab-pane fade" id="tab_default_2">
                                 <div class="py-3 col-12 p-0 float-left">
+                                    @if(count($previewData['detailedProduct']['documents']) > 0)
                                     <div class="download-title fs-20 font-prompt-md text-left col-md-12">BIM/CAD</div>
                                     <div class="col-md-12 my-2 float-left">
                                         @if(count($previewData['detailedProduct']['documents']) > 0)
@@ -629,7 +630,7 @@
                                                             <div class="py-5 px-4">
                                                                 <div class="my-4 mx-0">
                                                                     <center>
-                                                                        <svg height="41px" width="40px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                                                        <svg height="41px" width="40px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                                                                         viewBox="0 0 309.267 309.267" xml:space="preserve">
                                                                    <g>
                                                                        <path style="fill:#E2574C;" d="M38.658,0h164.23l87.049,86.711v203.227c0,10.679-8.659,19.329-19.329,19.329H38.658
@@ -669,7 +670,7 @@
                                                             <div class="py-5 px-4">
                                                                 <div class="my-4 mx-0">
                                                                     <center>
-                                                                        <svg height="41px" width="40px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                                                        <svg height="41px" width="40px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                                                                         viewBox="0 0 56 56" xml:space="preserve">
                                                                    <g>
                                                                        <path style="fill:#E9E9E0;" d="M36.985,0H7.963C7.155,0,6.5,0.655,6.5,1.926V55c0,0.345,0.655,1,1.463,1h40.074
@@ -726,7 +727,7 @@
                                                             <div class="py-5 px-4">
                                                                 <div class="my-4 mx-0">
                                                                     <center>
-                                                                        <svg fill="#000000" height="41px" width="40px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                                                        <svg fill="#000000" height="41px" width="40px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                                                                         viewBox="0 0 58 58" xml:space="preserve">
                                                                    <g>
                                                                        <path d="M50.95,12.187L39.313,0.55C38.964,0.201,38.48,0,37.985,0H8.963C7.777,0,6.5,0.916,6.5,2.926V39h0.633l16.736-14.245
@@ -1378,14 +1379,16 @@
                                     <div>
                                 </div>
                             </div>
+                            @endif
                         </div>
                         <!-- ----------------- -->
                         <div class="p-0 py-2 col-12 float-left">
+                            @if(!empty ($previewData['detailedProduct']['video_provider']) && $previewData['detailedProduct']['getYoutubeVideoId'] != "")
                             <div class="download-title fs-20 font-prompt-md text-left col-md-12">Videos</div>
                             <div class="col-12 float-left my-2">
                                 <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
                                     <div class="video-img">
-                                        @if(isset($previewData['detailedProduct']['video_provider']))
+                                        @if(($previewData['detailedProduct']['video_provider']))
                                             {{-- YouTube Video Thumbnail --}}
                                             @if($previewData['detailedProduct']['video_provider'] == "youtube" && $previewData['detailedProduct']['getYoutubeVideoId'] != "")
                                                 <img class="col-12 p-0" data-toggle="modal" data-target="#videoModal"
@@ -1410,6 +1413,7 @@
                             <div>
                         </div>
                     </div>
+                    @endif
                 </div>
                 </div>
                     <div class="tab-pane fade" id="tab_default_3">
@@ -2452,7 +2456,8 @@
                     }
                 });
 
-                $(document).on('click', '.quantity-control', function() {
+                //$(document).on('click', '.quantity-control', function() {
+                $(document).on('change', '#quantity', function() {
 
                 var action = $(this).data('type');
                 var quantityInput = $('#quantity');
