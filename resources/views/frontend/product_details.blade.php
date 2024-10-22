@@ -438,7 +438,7 @@
                             <!-- Description -->
                             <div class="tab-pane fade active show col-12 float-left" id="tab_default_1">
 
-                                <div class="col-12 col-md-6 py-5 float-left">
+                                <div class="col-12 col-md-6 py-5 float-left description_bottom">
                                     <span class="fs-20 font-prompt-md pb-2">Product information</span>
                                     @if(!empty($previewData['detailedProduct']['description']))
                                     <div class="mw-100 overflow-hidden text-left aiz-editor-data fs-16 font-prompt">

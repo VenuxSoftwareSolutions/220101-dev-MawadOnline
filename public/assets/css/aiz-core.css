@@ -13220,3 +13220,6 @@ border:none !important;
 .font-prompt-force{
     font-family: 'Prompt-Light' !important;
 }
+.description_bottom div div div div{
+    font-family: 'Prompt-Light' !important;
+}
