@@ -23,11 +23,11 @@
 
             @endphp
             @if (isset($detailedProduct) && $detailedProduct->getTotalQuantity() != 0)
-            <div class="col-3 d-flex justify-content-end align-items-center">
+            <div class="col-3 d-flex justify-content-end mt-2">
                 <span class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ translate('In Stock') }}</span>
             </div>
             @else
-            <div class="col-3 d-flex justify-content-end align-items-center">
+            <div class="col-3 d-flex justify-content-end mt-2">
                 <span class="badge badge-md badge-inline badge-pill badge-danger-light fs-14 font-prompt-md border-radius-8px outof-stock-style">{{ translate('Out Of Stock') }}</span>
             </div>
             @endif
@@ -95,7 +95,7 @@
                     <!--AED <span id="chosen_price">{{ $previewData['detailedProduct']['price'] }}</span> / {{ @$previewData['detailedProduct']['unit_of_sale'] }}-->
                     AED <span>{{ $previewData['detailedProduct']['price'] }}</span> / {{ @$previewData['detailedProduct']['unit_of_sale'] }}
                     @endif
-                        
+
                 </strong>
 
                   <!-- Home Price -->
