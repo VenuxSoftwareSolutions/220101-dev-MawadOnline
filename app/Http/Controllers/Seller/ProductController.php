@@ -48,6 +48,8 @@ use Illuminate\Support\Facades\Notification;
 use App\Notifications\ShopProductNotification;
 use AizPackages\CombinationGenerate\Services\CombinationService;
 use App\Models\Review;
+use App\Models\StockSummary;
+
 class ProductController extends Controller
 {
     protected $productService;
@@ -1080,7 +1082,7 @@ class ProductController extends Controller
 
         // dd($data) ;
         // Retrieve the brand information
-
+        $outStock = false ;
         $brand = Brand::find($data['brand_id']);
 
         $numeric_keys = [];
@@ -1330,6 +1332,8 @@ class ProductController extends Controller
             }
         }
 
+
+
        $attributes = [];
 
        foreach ($variations as $variation) {
@@ -1347,6 +1351,10 @@ class ProductController extends Controller
            }
        }
 
+       if (isset($data['variant']['sku']))
+        foreach ($data['variant']['sku'] as $variationId=>$sku) {
+            $variations[$variationId]['sku']= $sku;
+        }
 
 
         //    dd($variations) ;
@@ -1373,14 +1381,24 @@ class ProductController extends Controller
         }
         if (is_array($variations) && !empty($variations)) {
             $lastItem  = end($variations);
+
             $variationId = key($variations); // Get the key (variation ID) of the last item
             // sort($lastItem['variant_pricing-from']['from']) ;
             // sort($lastItem['variant_pricing-from']['unit_price']) ;
             // sort($lastItem['variant_pricing-from']['to']) ;
+            // dd($lastItem,$variationId,$variations) ;
             if (isset($lastItem['variant_pricing-from']['to'], $lastItem['variant_pricing-from']['from']) &&
             !empty($lastItem['variant_pricing-from']['to']) && !empty($lastItem['variant_pricing-from']['from'])) {
                 $max =max($lastItem['variant_pricing-from']['to'])  ;
                 $min =min($lastItem['variant_pricing-from']['from']) ;
+                if(isset($data['product_id'])){
+                    $product_stock = StockSummary::where('variant_id', $variationId)->sum('current_total_quantity');
+                    if ($product_stock < $min) {
+                        $outStock = true ;
+                    }
+
+                }
+
             }
         }
 
@@ -1394,8 +1412,18 @@ class ProductController extends Controller
         // }
         if (isset($data['from']) && is_array($data['from']) && count($data['from']) > 0) {
             // sort($data['from']);
-            if(!isset($min))
+            if(!isset($min)) {
                 $min = min($data['from']) ;
+                if(isset($data['product_id'])){
+                    $product_stock = StockSummary::where('variant_id', $data['product_id'])->sum('current_total_quantity');
+
+                    if ($product_stock < $min) {
+                        $outStock = true ;
+                    }
+                }
+
+            }
+
         }
 
         // if (isset($data['unit_price']) && is_array($data['unit_price']) && count($data['unit_price']) > 0) {
@@ -1557,7 +1585,7 @@ class ProductController extends Controller
         $allDocuments = collect($existingDocumentsArray)->merge($newDocuments);
 
 
-
+        // dd($data , $variationId) ;
         // Prepare detailed product data
         $detailedProduct = [
             'shop_name' => $shop_name,
@@ -1600,13 +1628,14 @@ class ProductController extends Controller
             'percent'=> $percent ?? null,
             'product_id' => $data['product_id'] ?? null ,
             'category' => isset($data['parent_id']) && !empty($data['parent_id']) ? optional(Category::find($data['parent_id']))->name : null,
-            'sku'=>  $data['product_sk'] ?? null ,
+            'sku'=> $lastItem['sku'] ??  $data['product_sk'] ?? null ,
             'tags'=> $data['tags'] ,
 
             'ratingPercentages' => 0,
             'documents' => $allDocuments,
             'previewCreate'=>true,
             "unit_of_sale" => $data['unit'] ?? null ,
+            "outStock" => $outStock ,
 
 
 
@@ -1824,9 +1853,12 @@ class ProductController extends Controller
     }
 
     public function ProductCheckedAttributes(Request $request) {
-        // dd($request->all()) ;
+        $outStock = false ;
+
         $data=$request->session()->get('productPreviewData', null) ;
+
         $variations = $data['detailedProduct']['variations'] ;
+
         $checkedAttributes = $request->checkedAttributes ; // Checked attribute and its value
         // dd($variations,$checkedAttributes) ;
         $matchedImages = [];
@@ -1879,21 +1911,24 @@ class ProductController extends Controller
                  }
                  if ($pickedAnyVariation == false) {
                     $variationId = $variationIdKey ;
-                    $reviewStats = Review::where('product_id', $variationId)
-                    ->selectRaw('COUNT(*) as total, SUM(rating) as sum')
-                    ->first();
+                    if(isset($data['product_id'])){
 
-                    $totalRating = $reviewStats->total;
-                    $totalSum = $reviewStats->sum;
+                        $reviewStats = Review::where('product_id', $variationId)
+                        ->selectRaw('COUNT(*) as total, SUM(rating) as sum')
+                        ->first();
 
-                    if ($totalRating > 0) {
-                        $avgRating = $totalSum / $totalRating ;
-                        $renderStarRating = $this->renderStarRating($totalSum / $totalRating);
-                    } else {
+                        $totalRating = $reviewStats->total;
+                        $totalSum = $reviewStats->sum;
 
-                        $renderStarRating = $this->renderStarRating(0);
+                        if ($totalRating > 0) {
+                            $avgRating = $totalSum / $totalRating ;
+                            $renderStarRating = $this->renderStarRating($totalSum / $totalRating);
+                        } else {
+
+                            $renderStarRating = $this->renderStarRating(0);
+                        }
                     }
-
+                    $sku = $variation['sku'] ?? null ;
                     $quantity = $variation['variant_pricing-from']['from'][0] ?? "" ;
                     $price = $variation['variant_pricing-from']['unit_price'][0] ?? "" ;
                     $total =  isset($variation['variant_pricing-from']['from'][0]) && isset($variation['variant_pricing-from']['unit_price'][0]) ? $variation['variant_pricing-from']['from'][0] * $variation['variant_pricing-from']['unit_price'][0] : "" ;
@@ -1990,6 +2025,14 @@ class ProductController extends Controller
                         }
                     }
                 }
+                if(isset($data['product_id'])){
+                    $product_stock = StockSummary::where('variant_id', $variationId)->sum('current_total_quantity');
+
+                    if ($product_stock < $minimum) {
+                        $outStock = true ;
+                    }
+                }
+
             }
         }
         // dd($availableAttributes) ;
@@ -2010,7 +2053,9 @@ class ProductController extends Controller
             'percent'=> $percent ?? null,
             'totalRating' => $totalRating ?? 0 ,
             'renderStarRating' => $renderStarRating ??  $this->renderStarRating(0),
-            'avgRating' => $avgRating ?? 0
+            'avgRating' => $avgRating ?? 0,
+            'sku' =>$sku ?? null ,
+            'outStock' =>$outStock
         ];
         // return response()->json($availableAttributes);
         return response()->json($response);

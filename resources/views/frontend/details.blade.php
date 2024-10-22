@@ -22,7 +22,7 @@
                 }
 
             @endphp
-            @if (isset($detailedProduct) && $detailedProduct->getTotalQuantity() != 0)
+            {{-- @if (isset($detailedProduct) && $detailedProduct->getTotalQuantity() != 0)
             <div class="col-3 d-flex justify-content-end align-items-center">
                 <span class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ translate('In Stock') }}</span>
             </div>
@@ -30,7 +30,17 @@
             <div class="col-3 d-flex justify-content-end align-items-center">
                 <span class="badge badge-md badge-inline badge-pill badge-danger-light fs-14 font-prompt-md border-radius-8px outof-stock-style">{{ translate('Out Of Stock') }}</span>
             </div>
+            @endif --}}
+            @if (isset($previewData['detailedProduct']['outStock']) && $previewData['detailedProduct']['outStock']==false )
+            <div id="stock-status-container" class="col-3 d-flex justify-content-end align-items-center">
+                <span class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ translate('In Stock') }}</span>
+            </div>
+            @elseif (isset($previewData['detailedProduct']['outStock']) && $previewData['detailedProduct']['outStock']==true )
+            <div id="stock-status-container" class="col-3 d-flex justify-content-end align-items-center">
+                <span class="badge badge-md badge-inline badge-pill badge-danger-light fs-14 font-prompt-md border-radius-8px outof-stock-style">{{ translate('Out Of Stock') }}</span>
+            </div>
             @endif
+
     </div>
     <!-- Short Description -->
     <div class="row col-md-12 fs-16 font-prompt">
@@ -95,7 +105,7 @@
                     <!--AED <span id="chosen_price">{{ $previewData['detailedProduct']['price'] }}</span> / {{ @$previewData['detailedProduct']['unit_of_sale'] }}-->
                     AED <span>{{ $previewData['detailedProduct']['price'] }}</span> / {{ @$previewData['detailedProduct']['unit_of_sale'] }}
                     @endif
-                        
+
                 </strong>
 
                   <!-- Home Price -->
@@ -242,7 +252,7 @@
     <div class="col-md-12 p-0 pb-2">
         <div class="product-desc-each">
             <span class="fs-16 font-prompt-md">SKU:</span>
-            <span class="fs-16 font-prompt">{{ $previewData['detailedProduct']['sku'] }}</span>
+            <span class="fs-16 font-prompt sku-product">{{ $previewData['detailedProduct']['sku'] }}</span>
         </div>
     </div>
     <!-- Unit of Sale -->
