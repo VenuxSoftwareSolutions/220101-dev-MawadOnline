@@ -145,6 +145,7 @@ class SearchController extends Controller
         // })->get();
 	    // $shops  = Shop::all();
         // $shops = $shops->select('shops.*')->distinct('shops.id')->get();
+        
         // filter Brand
         $brand_ids =[];
         if ($brand_id != null) {
