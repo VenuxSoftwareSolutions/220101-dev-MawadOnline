@@ -34,11 +34,11 @@
             <div class="d-flex flex-wrap justify-content-center justify-content-md-start">
                 <a class="fw-700 fs-11 fs-md-13 mr-3 mr-sm-4 mr-md-5 text-dark opacity-60 hov-opacity-100 @if(!isset($type)) opacity-100 @endif"
                         href="{{ route('shop.visit', $shop->slug) }}">{{ translate('Store Home')}}</a>
-                <a class="fw-700 fs-11 fs-md-13 mr-3 mr-sm-4 mr-md-5 text-dark opacity-60 hov-opacity-100 @if(isset($type) && $type == 'top-selling') opacity-100 @endif" 
+                <a class="fw-700 fs-11 fs-md-13 mr-3 mr-sm-4 mr-md-5 text-dark opacity-60 hov-opacity-100 @if(isset($type) && $type == 'top-selling') opacity-100 @endif"
                         href="{{ route('shop.visit.type', ['slug'=>$shop->slug, 'type'=>'top-selling']) }}">{{ translate('Top Selling')}}</a>
-                <a class="fw-700 fs-11 fs-md-13 mr-3 mr-sm-4 mr-md-5 text-dark opacity-60 hov-opacity-100 @if(isset($type) && $type == 'cupons') opacity-100 @endif" 
+                <a class="fw-700 fs-11 fs-md-13 mr-3 mr-sm-4 mr-md-5 text-dark opacity-60 hov-opacity-100 @if(isset($type) && $type == 'cupons') opacity-100 @endif"
                         href="{{ route('shop.visit.type', ['slug'=>$shop->slug, 'type'=>'cupons']) }}">{{ translate('Coupons')}}</a>
-                <a class="fw-700 fs-11 fs-md-13 text-dark opacity-60 hov-opacity-100 @if(isset($type) && $type == 'all-products') opacity-100 @endif" 
+                <a class="fw-700 fs-11 fs-md-13 text-dark opacity-60 hov-opacity-100 @if(isset($type) && $type == 'all-products') opacity-100 @endif"
                         href="{{ route('shop.visit.type', ['slug'=>$shop->slug, 'type'=>'all-products']) }}">{{ translate('All Products')}}</a>
             </div>
         </div>
@@ -55,8 +55,8 @@
         @if ($shop->top_banner)
             <!-- Top Banner -->
             <section class="h-160px h-md-200px h-lg-300px h-xl-100 w-100">
-                <img class="d-block lazyload h-100 img-fit" 
-                    src="{{ static_asset('assets/img/placeholder-rect.jpg') }}" 
+                <img class="d-block lazyload h-100 img-fit"
+                    src="{{ static_asset('assets/img/placeholder-rect.jpg') }}"
                     data-src="{{ uploaded_asset($shop->top_banner) }}" alt="{{ env('APP_NAME') }} offer">
             </section>
         @endif
@@ -90,15 +90,7 @@
                                                 </g>
                                             </svg>
                                         </span>
-                                    @else
-                                        <span class="ml-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="17.5" height="17.5" viewBox="0 0 17.5 17.5">
-                                                <g id="Group_25616" data-name="Group 25616" transform="translate(-537.249 -1042.75)">
-                                                    <path id="Union_5" data-name="Union 5" d="M0,8.75A8.75,8.75,0,1,1,8.75,17.5,8.75,8.75,0,0,1,0,8.75Zm.876,0A7.875,7.875,0,1,0,8.75.875,7.883,7.883,0,0,0,.876,8.75Zm.875,0a7,7,0,1,1,7,7A7.008,7.008,0,0,1,1.751,8.751Zm3.73-.907a.789.789,0,0,0,0,1.115l2.23,2.23a.788.788,0,0,0,1.115,0l3.717-3.717a.789.789,0,0,0,0-1.115.788.788,0,0,0-1.115,0l-3.16,3.16L6.6,7.844a.788.788,0,0,0-1.115,0Z" transform="translate(537.249 1042.75)" fill="red"/>
-                                                </g>
-                                            </svg>
-                                        </span>
-                                    @endif
+                                        @endif
                                 </a>
                                 <!-- Ratting -->
                                 <div class="rating rating-mr-1 text-dark">
@@ -172,14 +164,14 @@
                             <div class="d-flex justify-content-md-end pl-lg-3 pt-3 pt-lg-0">
                                 @if(in_array($shop->id, $followed_sellers))
                                     <a href="{{ route("followed_seller.remove", ['id'=>$shop->id]) }}"  data-toggle="tooltip" data-title="{{ translate('Unfollow Seller') }}" data-placement="top"
-                                        class="btn btn-success d-flex align-items-center justify-content-center fs-12 w-190px follow-btn followed" 
+                                        class="btn btn-success d-flex align-items-center justify-content-center fs-12 w-190px follow-btn followed"
                                         style="height: 40px; border-radius: 30px !important; justify-content: center;">
                                         <i class="las la-check fs-16 mr-2"></i>
                                         <span class="fw-700">{{ translate('Followed') }}</span> &nbsp; ({{ count($shop->followers) }})
                                     </a>
                                 @else
                                     <a href="{{ route("followed_seller.store", ['id'=>$shop->id]) }}"
-                                        class="btn btn-primary d-flex align-items-center justify-content-center fs-12 w-190px follow-btn" 
+                                        class="btn btn-primary d-flex align-items-center justify-content-center fs-12 w-190px follow-btn"
                                         style="height: 40px; border-radius: 30px !important; justify-content: center;">
                                         <i class="las la-plus fs-16 mr-2"></i>
                                         <span class="fw-700">{{ translate('Follow Seller') }}</span> &nbsp; ({{ count($shop->followers) }})
@@ -192,7 +184,7 @@
             </div>
         </div>
     </section>
-        
+
     @if (!isset($type))
         @php
             $feature_products = $shop->user->products->where('published', 1)->where('approved', 1)->where('seller_featured', 1);
@@ -226,7 +218,7 @@
                 </div>
             </section>
         @endif
-        
+
         <!-- Banner Slider -->
         <section class="mt-3 mb-3">
             <div class="container">
@@ -241,7 +233,7 @@
                 </div>
             </div>
         </section>
-        
+
         <!-- Coupons -->
         @php
             $coupons = get_coupons($shop->user->id);
@@ -279,8 +271,8 @@
             @foreach (explode(',',$shop->banner_full_width_1) as $key => $banner)
                 <section class="container mb-3 mt-3">
                     <div class="w-100">
-                        <img class="d-block lazyload h-100 img-fit" 
-                            src="{{ static_asset('assets/img/placeholder-rect.jpg') }}" 
+                        <img class="d-block lazyload h-100 img-fit"
+                            src="{{ static_asset('assets/img/placeholder-rect.jpg') }}"
                             data-src="{{ uploaded_asset($banner) }}" alt="{{ env('APP_NAME') }} offer">
                     </div>
                 </section>
@@ -294,8 +286,8 @@
                     @foreach (explode(',',$shop->banners_half_width) as $key => $banner)
                     <div class="col-md-6 mb-3 mb-md-0">
                         <div class="w-100">
-                            <img class="d-block lazyload h-100 img-fit" 
-                                src="{{ static_asset('assets/img/placeholder-rect.jpg') }}" 
+                            <img class="d-block lazyload h-100 img-fit"
+                                src="{{ static_asset('assets/img/placeholder-rect.jpg') }}"
                                 data-src="{{ uploaded_asset($banner) }}" alt="{{ env('APP_NAME') }} offer">
                         </div>
                     </div>
@@ -318,7 +310,7 @@
                         @elseif ($type == 'top-selling')
                             {{ translate('Top Selling')}}
                         @elseif ($type == 'cupons')
-                            {{ translate('All Cupons')}}
+                            {{ translate('All Coupons')}}
                         @endif
                     </span>
                 </h3>
@@ -330,7 +322,7 @@
                     </div>
                 @endif
             </div>
-            
+
             @php
                 if (!isset($type)){
                     $products = get_seller_products($shop->user->id);
@@ -359,13 +351,13 @@
                     <!-- Banner full width 2 -->
                     @foreach (explode(',',$shop->banner_full_width_2) as $key => $banner)
                         <div class="mt-3 mb-3 w-100">
-                            <img class="d-block lazyload h-100 img-fit" 
-                                src="{{ static_asset('assets/img/placeholder-rect.jpg') }}" 
+                            <img class="d-block lazyload h-100 img-fit"
+                                src="{{ static_asset('assets/img/placeholder-rect.jpg') }}"
                                 data-src="{{ uploaded_asset($banner) }}" alt="{{ env('APP_NAME') }} offer">
                         </div>
                     @endforeach
                 @endif
-                
+
 
             @elseif ($type == 'cupons')
                 <!-- All Coupons Section -->
@@ -379,7 +371,7 @@
                 <div class="aiz-pagination mt-4 mb-4">
                     {{ $coupons->links() }}
                 </div>
-            
+
             @elseif ($type == 'all-products')
                 <!-- All Products Section -->
                 <form class="" id="search-form" action="" method="GET">
@@ -570,7 +562,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Contents -->
                         <div class="col-xl-9">
                             <!-- Top Filters -->
@@ -597,7 +589,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Products -->
                             <div class="px-3">
                                 <div class="row gutters-16 row-cols-xxl-4 row-cols-xl-3 row-cols-lg-4 row-cols-md-3 row-cols-2 border-top border-left">
@@ -639,7 +631,7 @@
         function filter(){
             $('#search-form').submit();
         }
-        
+
         function rangefilter(arg){
             $('input[name=min_price]').val(arg[0]);
             $('input[name=max_price]').val(arg[1]);
