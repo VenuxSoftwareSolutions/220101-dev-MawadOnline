@@ -2485,9 +2485,9 @@
                         console.log(response.unit_price)
                         if (response.unit_price != null) {
                             if (response.discountPrice > 0) {
-                                $("#qty-interval").text(response.discountPrice+" AED")
-                                $("#chosen_price").text(response.totalDiscount+" AED")
-                                $("#previous-price").text(response.unit_price+" AED")
+                                $("#qty-interval").text(response.discountPrice)
+                                $("#chosen_price").text(response.totalDiscount)
+                                $("#previous-price").text(response.unit_price)
 
                                 if (response.percent !== null && response.percent > 0) {
 
@@ -2506,8 +2506,8 @@
                                 $("#previous-price").text('') ;
                                 $("#percent").removeClass("bg-primary");
 
-                                $("#qty-interval").text(response.unit_price+" AED")
-                                $("#chosen_price").text(response.total+" AED")
+                                $("#qty-interval").text(response.unit_price)
+                                $("#chosen_price").text(response.total)
                                 $("#percent").text('')
 
                             }
@@ -2582,16 +2582,16 @@
                     else {
                         if (response.price > 0) {
                             $('#variationId').val(response.variationId) ;
-                            $("#qty-interval").text(response.price+" AED")
+                            $("#qty-interval").text(response.price+)
                             $("#quantity").val(response.quantity)
-                            $("#chosen_price").text(response.total+" AED")
+                            $("#chosen_price").text(response.total)
                             $('#quantity').attr('min', response.minimum); // Minimum value
                             $('#quantity').attr('max', response.maximum); // Maximum value
                             if (response.discountedPrice > 0) {
 
-                                $("#qty-interval").text(response.discountedPrice+" AED")
-                                $("#chosen_price").text(response.totalDiscount+" AED")
-                                $("#previous-price").text(response.price+" AED")
+                                $("#qty-interval").text(response.discountedPrice)
+                                $("#chosen_price").text(response.totalDiscount)
+                                $("#previous-price").text(response.price)
                                 if (response.percent !== null && response.percent > 0) {
 
                                     $("#percent").text('-'+response.percent+'%')
@@ -2609,8 +2609,8 @@
                                 $("#previous-price").text('') ;
                                 $("#percent").removeClass("bg-primary");
 
-                                $("#qty-interval").text(response.price+" AED")
-                                $("#chosen_price").text(response.total+" AED")
+                                $("#qty-interval").text(response.price)
+                                $("#chosen_price").text(response.total)
                                 $("#percent").text('')
 
                                 }
