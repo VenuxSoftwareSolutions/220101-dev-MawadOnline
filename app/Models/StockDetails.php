@@ -21,7 +21,7 @@ class StockDetails extends Model
     }
         public function productVariant()
     {
-        return $this->belongsTo(Product::class, 'variant_id');
+        return $this->belongsTo(Product::class, 'variant_id')->withTrashed();
     }
 
         public function seller() {
