@@ -166,7 +166,10 @@
                         <tr>
                             <td>{{ $record->created_at }}</td>
                             <td>{{ $record->operation_type }}</td>
-                            <td>{{ $record->productVariant->name.' '.$record->productVariant->sku }}</td>
+                            <td>    @if($record->productVariant)
+                                     {{ $record->productVariant->name.' '.$record->productVariant->sku }}
+                                    @endif
+                            </td>
                             <td>{{ $record->warehouse->warehouse_name }}</td>
                             <td>{{ $record->before_quantity }}</td>
                             <td>{{ $record->transaction_quantity	 }}</td>

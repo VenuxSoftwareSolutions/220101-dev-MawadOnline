@@ -265,13 +265,7 @@ thead tr{
                                             {{ $children->sku }}
                                         </td>
                                         <td>
-                                            @php
-                                                $qty = 0;
-                                                foreach ($children->stocks as $key => $stock) {
-                                                    $qty += $stock->qty;
-                                                }
-                                                echo $qty;
-                                            @endphp
+                                        {{$children->getTotalQuantity()}}
                                         </td>
                                         <td>{{ $children->getPriceRange() }}</td>
                                         <td>

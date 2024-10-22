@@ -22,6 +22,6 @@ class StockSummary extends Model
     }
         public function productVariant()
     {
-        return $this->belongsTo(Product::class, 'variant_id','id');
+        return $this->belongsTo(Product::class, 'variant_id','id')->withTrashed();
     }
 }
