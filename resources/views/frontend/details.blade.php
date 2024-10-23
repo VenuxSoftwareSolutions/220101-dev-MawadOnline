@@ -12,6 +12,7 @@
 
         @if($previewData['detailedProduct']['variationId'] || $previewData['detailedProduct']['product_id'] || isset($previewData['detailedProduct']['previewCreate']))
             @php
+
                 if(!isset($previewData['detailedProduct']['previewCreate'])) {
                     if($previewData['detailedProduct']['variationId'])
                         $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['variationId']);
@@ -406,9 +407,9 @@
                              $valueStringLastItem =  implode('-', $lastItem[$attributeId]);
                      @endphp
                      <label class="attribute_value aiz-megabox pl-0 mb-0">
-                        <input {{-- @if ($valueStringLastItem == $valueString  )
+                        <input  @if ($valueStringLastItem == $valueString  )
                         checked
-                    @endif --}} niveau={{$niveau}} id="attribute_id_{{$attributeId}}_{{$valueString}}" type="radio" attributeId="{{$attributeId}}"  value="{{$valueString}}" name="attribute_id_{{$attributeId}}"  >
+                    @endif   niveau={{$niveau}} id="attribute_id_{{$attributeId}}_{{$valueString}}" type="radio" attributeId="{{$attributeId}}"  value="{{$valueString}}" name="attribute_id_{{$attributeId}}"  >
                         <span class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center">
 
                         @foreach ($value as $color)
@@ -416,11 +417,13 @@
                         @if (preg_match('/^#[0-9A-F]{6}$/i', $color))
                                <!-- <span class="size-25px d-inline-block rounded" style="background: {{ $color }};"></span>-->
 
-                               <label class="aiz-megabox pl-0 mr-1 mb-0" data-toggle="tooltip"
-                               data-title="{{ get_single_color_name($color) }}">
-                               <input type="radio" name="color"
-                                   value="{{ get_single_color_name($color) }}"
-                                   @if ($key == 0) checked @endif>
+                               {{-- <label class="aiz-megabox pl-0 mr-1 mb-0" data-toggle="tooltip"
+                               data-title="{{ get_single_color_name($color) }}" >
+                               <input attributeId="{{$attributeId}}" niveau={{$niveau}} id="attribute_id_{{$attributeId}}_{{$valueString}}" type="radio" name="attribute_id_{{$attributeId}}"
+                                    value="{{$color}}"
+                                   @if (($lastItem) && isset($lastItem[$attributeId]) && $lastItem[$attributeId] == $value  )
+                                   checked
+                               @endif> --}}
                                <span
                                    class="aiz-megabox-elem d-flex align-items-center justify-content-center">
                                    <span class="d-inline-block product-color-style"
@@ -432,7 +435,7 @@
 
                                    </span>
                                </span>
-                           </label>
+                           {{-- </label> --}}
 
                         @else
                             {{$color}}

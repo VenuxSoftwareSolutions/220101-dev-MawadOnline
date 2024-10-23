@@ -1351,10 +1351,19 @@ class ProductController extends Controller
            }
        }
 
-       if (isset($data['variant']['sku']))
+       if (isset($data['variant']['sku'])) {
         foreach ($data['variant']['sku'] as $variationId=>$sku) {
             $variations[$variationId]['sku']= $sku;
         }
+       }else {
+            foreach($variations as $keyVar=>$variation) {
+                if(isset($data['sku-'.$keyVar])) {
+                        $variations[$keyVar]['sku']= $data['sku-'.$keyVar];
+
+                }
+            }
+       }
+
 
 
         //    dd($variations) ;
@@ -1613,7 +1622,9 @@ class ProductController extends Controller
             'to' =>$data['to']  ?? [],
             'unit_price' =>$data['unit_price'] ?? [] ,
             'variations' =>$variations,
-            'variationId' => $variationId ?? null,
+            'variationId' => isset($data['product_id']) && $variationId ? $variationId : null,
+            // 'variationId' => $variationId ?? null,
+
             'lastItem' => $lastItem ?? [],
             'catalog' => false,
             'video_provider'  => $data["video_provider"] ,
@@ -1853,6 +1864,8 @@ class ProductController extends Controller
     }
 
     public function ProductCheckedAttributes(Request $request) {
+
+
         $outStock = false ;
 
         $data=$request->session()->get('productPreviewData', null) ;
@@ -1911,7 +1924,7 @@ class ProductController extends Controller
                  }
                  if ($pickedAnyVariation == false) {
                     $variationId = $variationIdKey ;
-                    if(isset($data['product_id'])){
+                    if(isset($data['detailedProduct']['product_id'])){
 
                         $reviewStats = Review::where('product_id', $variationId)
                         ->selectRaw('COUNT(*) as total, SUM(rating) as sum')
@@ -2025,9 +2038,8 @@ class ProductController extends Controller
                         }
                     }
                 }
-                if(isset($data['product_id'])){
+                if(isset($data['detailedProduct']['product_id'])){
                     $product_stock = StockSummary::where('variant_id', $variationId)->sum('current_total_quantity');
-
                     if ($product_stock < $minimum) {
                         $outStock = true ;
                     }
