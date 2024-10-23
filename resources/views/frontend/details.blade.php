@@ -32,55 +32,7 @@
             </div>
             @endif
     </div>
-    <!-- Short Description -->
-    <div class="row col-md-12 fs-16 font-prompt">
-        <!--{!! $previewData['detailedProduct']['short_description'] !!}-->
 
-        <div>
-            @php
-                // Get the first 140 characters of the description
-                $shortDescription = Str::limit($previewData['detailedProduct']['short_description'], 85);
-                $descriptionLength = strlen($previewData['detailedProduct']['short_description']);
-            @endphp
-
-            <!-- Short description -->
-            <p id="shortDescription">
-                {!! $shortDescription !!}
-                @if($descriptionLength > 85)
-                    <span class="seemorebtn" onclick="toggleDescription()">View more</span>
-                @endif
-            </p>
-
-            <!-- Full description (hidden initially) -->
-            @if($descriptionLength > 85)
-                <p id="fullDescription" style="display: none;">
-                    {!! $previewData['detailedProduct']['short_description'] !!}
-                    <span class="seemorebtn" onclick="toggleDescription()">View less</span>
-                </p>
-            @endif
-
-            <!-- Toggle button
-            <div style="margin-top: 10px;">
-                <button id="seeMoreBtn" onclick="toggleDescription()">See More</button>
-            </div>-->
-        </div>
-
-        <script>
-            function toggleDescription() {
-                var shortDesc = document.getElementById("shortDescription");
-                var fullDesc = document.getElementById("fullDescription");
-                if (shortDesc.style.display === "none") {
-                    shortDesc.style.display = "block";
-                    fullDesc.style.display = "none";
-                } else {
-                    shortDesc.style.display = "none";
-                    fullDesc.style.display = "block";
-                }
-            }
-        </script>
-
-
-    </div>
     <!-- Price -->
     <div class="row no-gutters mb-2">
         <div class="col-sm-10">
@@ -192,6 +144,55 @@
             </div>
         @endif --}}
     </div>
+        <!-- Short Description -->
+        <div class="row col-md-12 fs-16 font-prompt shortdesctxt">
+            <!--{!! $previewData['detailedProduct']['short_description'] !!}-->
+
+            <div>
+                @php
+                    // Get the first 140 characters of the description
+                    $shortDescription = Str::limit($previewData['detailedProduct']['short_description'], 85);
+                    $descriptionLength = strlen($previewData['detailedProduct']['short_description']);
+                @endphp
+
+                <!-- Short description -->
+                <p id="shortDescription" class="m-0">
+                    {!! $shortDescription !!}
+                    @if($descriptionLength > 85)
+                        <span class="seemorebtn" onclick="toggleDescription()">View more</span>
+                    @endif
+                </p>
+
+                <!-- Full description (hidden initially) -->
+                @if($descriptionLength > 85)
+                    <p id="fullDescription" style="display: none;">
+                        {!! $previewData['detailedProduct']['short_description'] !!}
+                        <span class="seemorebtn" onclick="toggleDescription()">View less</span>
+                    </p>
+                @endif
+
+                <!-- Toggle button
+                <div style="margin-top: 10px;">
+                    <button id="seeMoreBtn" onclick="toggleDescription()">See More</button>
+                </div>-->
+            </div>
+
+            <script>
+                function toggleDescription() {
+                    var shortDesc = document.getElementById("shortDescription");
+                    var fullDesc = document.getElementById("fullDescription");
+                    if (shortDesc.style.display === "none") {
+                        shortDesc.style.display = "block";
+                        fullDesc.style.display = "none";
+                    } else {
+                        shortDesc.style.display = "none";
+                        fullDesc.style.display = "block";
+                    }
+                }
+            </script>
+
+
+        </div>
 <!-- new commented
     <div class="row mb-3">
         <div class="col-6">
