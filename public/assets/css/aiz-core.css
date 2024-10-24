@@ -11430,6 +11430,15 @@ ul.apps a:hover i{
     width: 100%;
     background-color: #3D3D3B;
   }
+  .custom-bg {
+    background-color: #3D3D3B; /* Default to black for larger screens */
+  }
+
+  @media (max-width: 992px) {
+    .custom-bg {
+      background-color: #ffffff; /* White for mobile screens (under 576px) */
+    }
+  }
 .search-input-box > input{
     border-radius: 10px;
     overflow:hidden;
@@ -13228,4 +13237,7 @@ border:none !important;
 }
 .shortdesctxt{
     color: #7E808A;
+}
+.mt-search-icon{
+    margin-top: 9px;
 }

@@ -32,7 +32,99 @@
             </div>
             @endif
     </div>
+    <!-- Short Description -->
+    <div class="row col-md-12 fs-16 font-prompt shortdesctxt">
+        <!--{!! $previewData['detailedProduct']['short_description'] !!}-->
 
+        <div>
+            @php
+                // Get the first 140 characters of the description
+                $shortDescription = Str::limit($previewData['detailedProduct']['short_description'], 85);
+                $descriptionLength = strlen($previewData['detailedProduct']['short_description']);
+            @endphp
+
+            <!-- Short description -->
+            <p id="shortDescription">
+                {!! $shortDescription !!}
+                @if($descriptionLength > 85)
+                    <span class="seemorebtn" onclick="toggleDescription()">View more</span>
+                @endif
+            </p>
+
+            <!-- Full description (hidden initially) -->
+            @if($descriptionLength > 85)
+                <p id="fullDescription" style="display: none;">
+                    {!! $previewData['detailedProduct']['short_description'] !!}
+                    <span class="seemorebtn" onclick="toggleDescription()">View less</span>
+                </p>
+            @endif
+
+            <!-- Toggle button
+            <div style="margin-top: 10px;">
+                <button id="seeMoreBtn" onclick="toggleDescription()">See More</button>
+            </div>-->
+        </div>
+
+        <script>
+            function toggleDescription() {
+                var shortDesc = document.getElementById("shortDescription");
+                var fullDesc = document.getElementById("fullDescription");
+                if (shortDesc.style.display === "none") {
+                    shortDesc.style.display = "block";
+                    fullDesc.style.display = "none";
+                } else {
+                    shortDesc.style.display = "none";
+                    fullDesc.style.display = "block";
+                }
+            }
+        </script>
+
+
+    </div>
+
+    <div class="row align-items-center mb-3">
+        <!-- Review -->
+        {{-- @if ($detailedProduct->auction_product != 1) --}}
+        <div class="col-12">
+
+
+
+            <span class="rating rating-mr-1 rating-var">
+                @if(isset($totalRating) && $totalRating > 0)
+                    {{ renderStarRating($detailedProduct->reviews->sum('rating') / $totalRating) }}
+                @else
+                    {{ renderStarRating(0) }} <!-- Assuming 0 stars when there are no reviews -->
+                @endif
+            </span>
+            <span class="total-var-rating ml-1 fs-16 font-prompt-md rating-style">({{ $totalRating ?? "0" }} {{ translate('reviews') }})</span>
+         @else
+            <span class="rating rating-mr-1 rating-var fs-16 font-prompt-md rating-style">
+                {{ renderStarRating(0) }}
+
+
+            </span>
+            <span class="total-var-rating ml-1 fs-16 font-prompt-md rating-style">(0
+                {{ translate('reviews') }})</span>
+
+            @endif
+
+        </div>
+        <hr>
+        {{-- @endif --}}
+        <!-- Estimate Shipping Time -->
+        {{-- @if ($detailedProduct->est_shipping_days)
+            <div class="col-auto fs-14 mt-1">
+                <small class="mr-1 opacity-50 fs-14">{{ translate('Estimate Shipping Time') }}:</small>
+                <span class="fw-500">{{ $detailedProduct->est_shipping_days }} {{ translate('Days') }}</span>
+            </div>
+        @endif
+        <!-- In stock -->
+        @if ($detailedProduct->digital == 1)
+            <div class="col-12 mt-1">
+                <span class="badge badge-md badge-inline badge-pill badge-success">{{ translate('In stock') }}</span>
+            </div>
+        @endif --}}
+    </div>
     <!-- Price -->
     <div class="row no-gutters mb-2">
         <div class="col-sm-10">
@@ -100,98 +192,6 @@
                         450</small>
                 </div> --}}
             </div>
-        </div>
-    <div class="row align-items-center mb-3">
-        <!-- Review -->
-        {{-- @if ($detailedProduct->auction_product != 1) --}}
-        <div class="col-12">
-
-
-
-            <span class="rating rating-mr-1 rating-var">
-                @if(isset($totalRating) && $totalRating > 0)
-                    {{ renderStarRating($detailedProduct->reviews->sum('rating') / $totalRating) }}
-                @else
-                    {{ renderStarRating(0) }} <!-- Assuming 0 stars when there are no reviews -->
-                @endif
-            </span>
-            <span class="total-var-rating ml-1 fs-16 font-prompt-md rating-style">({{ $totalRating ?? "0" }} {{ translate('reviews') }})</span>
-         @else
-            <span class="rating rating-mr-1 rating-var fs-16 font-prompt-md rating-style">
-                {{ renderStarRating(0) }}
-
-
-            </span>
-            <span class="total-var-rating ml-1 fs-16 font-prompt-md rating-style">(0
-                {{ translate('reviews') }})</span>
-
-            @endif
-
-        </div>
-        <hr>
-        {{-- @endif --}}
-        <!-- Estimate Shipping Time -->
-        {{-- @if ($detailedProduct->est_shipping_days)
-            <div class="col-auto fs-14 mt-1">
-                <small class="mr-1 opacity-50 fs-14">{{ translate('Estimate Shipping Time') }}:</small>
-                <span class="fw-500">{{ $detailedProduct->est_shipping_days }} {{ translate('Days') }}</span>
-            </div>
-        @endif
-        <!-- In stock -->
-        @if ($detailedProduct->digital == 1)
-            <div class="col-12 mt-1">
-                <span class="badge badge-md badge-inline badge-pill badge-success">{{ translate('In stock') }}</span>
-            </div>
-        @endif --}}
-    </div>
-        <!-- Short Description -->
-        <div class="row col-md-12 fs-16 font-prompt shortdesctxt">
-            <!--{!! $previewData['detailedProduct']['short_description'] !!}-->
-
-            <div>
-                @php
-                    // Get the first 140 characters of the description
-                    $shortDescription = Str::limit($previewData['detailedProduct']['short_description'], 85);
-                    $descriptionLength = strlen($previewData['detailedProduct']['short_description']);
-                @endphp
-
-                <!-- Short description -->
-                <p id="shortDescription" class="m-0">
-                    {!! $shortDescription !!}
-                    @if($descriptionLength > 85)
-                        <span class="seemorebtn" onclick="toggleDescription()">View more</span>
-                    @endif
-                </p>
-
-                <!-- Full description (hidden initially) -->
-                @if($descriptionLength > 85)
-                    <p id="fullDescription" style="display: none;">
-                        {!! $previewData['detailedProduct']['short_description'] !!}
-                        <span class="seemorebtn" onclick="toggleDescription()">View less</span>
-                    </p>
-                @endif
-
-                <!-- Toggle button
-                <div style="margin-top: 10px;">
-                    <button id="seeMoreBtn" onclick="toggleDescription()">See More</button>
-                </div>-->
-            </div>
-
-            <script>
-                function toggleDescription() {
-                    var shortDesc = document.getElementById("shortDescription");
-                    var fullDesc = document.getElementById("fullDescription");
-                    if (shortDesc.style.display === "none") {
-                        shortDesc.style.display = "block";
-                        fullDesc.style.display = "none";
-                    } else {
-                        shortDesc.style.display = "none";
-                        fullDesc.style.display = "block";
-                    }
-                }
-            </script>
-
-
         </div>
 <!-- new commented
     <div class="row mb-3">
