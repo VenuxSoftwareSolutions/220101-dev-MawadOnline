@@ -42,6 +42,7 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Validator;
 use App\Mail\SecondEmailVerifyMailManager;
+use App\Models\StockSummary;
 use App\Models\Waitlist;
 use DateTime;
 use Illuminate\Support\Facades\DB;
@@ -297,6 +298,8 @@ class HomeController extends Controller
     public function product(Request $request, $slug)
     {
 
+        $outStock = false ;
+
         if (!Auth::check()) {
             session(['link' => url()->current()]);
         }
@@ -469,6 +472,10 @@ class HomeController extends Controller
                 $childrens_ids = Product::where('parent_id', $parent->id)->pluck('id')->toArray();
 
                 foreach($childrens_ids as $children_id){
+                    $product = Product::find($children_id);
+                    $variations[$children_id]['sku'] = $product ? $product->sku : null;
+                    $variations[$children_id]['slug'] = $product ? $product->slug : null;
+
                     $variations[$children_id]['variant_pricing-from']['from'] = PricingConfiguration::where('id_products', $children_id)->pluck('from')->toArray();
                     $variations[$children_id]['variant_pricing-from']['to'] = PricingConfiguration::where('id_products', $children_id)->pluck('to')->toArray();
                     $variations[$children_id]['variant_pricing-from']['unit_price'] = PricingConfiguration::where('id_products', $children_id)->pluck('unit_price')->toArray();
@@ -514,7 +521,7 @@ class HomeController extends Controller
 
                                  // Append the new value to the array
                                  $variations[$children_id][$attribute->id_attribute][] = $revision_children_attribute->old_value;
-                         }else{
+                            }else{
                                 if($revision_children_attribute->key != 'add_attribute'){
                                     $variations[$children_id][$attribute->id_attribute] = $revision_children_attribute->old_value;
                                 }
@@ -608,7 +615,7 @@ class HomeController extends Controller
             if(count($variations) > 0){
                 foreach ($variations as $variation) {
                     foreach ($variation as $attributeId => $value) {
-                        if ($attributeId != "storedFilePaths" && $attributeId != "variant_pricing-from" ) {
+                        if ($attributeId != "storedFilePaths" && $attributeId != "variant_pricing-from" && $attributeId !="sku" && $attributeId !="slug"    ) {
                          if (!isset($attributes[$attributeId])) {
                              $attributes[$attributeId] = [];
                          }
@@ -625,20 +632,46 @@ class HomeController extends Controller
 
 
             if (is_array($variations) && !empty($variations)) {
-                $lastItem  = end($variations);
-                $variationId = key($variations);
+
+                foreach ($variations as $variationId => $variation) {
+                    if (isset($variation['slug']) && $variation['slug'] === $slug) {
+                        $lastItem = $variation; // Store the matching variation
+                        $variationId = $variationId;
+
+                        break; // Stop the loop once a match is found
+                    }
+                }
+                if(!isset($lastItem)) {
+                    $lastItem  = end($variations);
+                    $variationId = key($variations);
+                }
+
                 if(count($lastItem['variant_pricing-from']['to']) >0){
                     $max =max($lastItem['variant_pricing-from']['to']) ;
                 }
                 if(count($lastItem['variant_pricing-from']['from']) >0){
                     $min =min($lastItem['variant_pricing-from']['from']) ;
+                    $product_stock = StockSummary::where('variant_id', $variationId)->sum('current_total_quantity');
+
+                    if ($product_stock < $min) {
+                        $outStock = true ;
+
+                    }
                 }
+
 
             }
 
             if (isset($pricing['from']) && is_array($pricing['from']) && count($pricing['from']) > 0) {
-                if(!isset($min))
+                if(!isset($min)) {
                     $min = min($pricing['from']) ;
+                    $product_stock = StockSummary::where('variant_id', $parent->id)->sum('current_total_quantity');
+
+                    if ($product_stock < $min) {
+                        $outStock = true ;
+
+                    }
+                }
             }
 
             if (isset($pricing['to']) && is_array($pricing['to']) && count($pricing['to']) > 0) {
@@ -835,12 +868,13 @@ class HomeController extends Controller
                     'discount_amount'=> $pricing['discount_amount'],
                     'percent'=> $percent ?? null,
                     'product_id' => $parent->id ?? null ,
-                    'sku'=>$parent->sku ?? null ,
+                    'sku'=>$lastItem['sku'] ?? $parent->sku ?? null ,
                     'tags'=>$parent->tags ?? null ,
                     'category' => optional(Category::find($parent->category_id))->name,
                     'documents' => UploadProducts::where('id_product', $parent->id)->where('type', 'documents')->get(),
                     'ratingPercentages' => $ratingPercentages,
                     "unit_of_sale" => $parent->unit ?? null ,
+                    "outStock" => $outStock ,
 
 
                 ];
@@ -961,18 +995,14 @@ class HomeController extends Controller
         }
         $shop  = Shop::where('slug', $slug)->first();
         if ($shop != null) {
-
             if($shop->user->banned == 1){
                 abort(404);
             }
-
-            // if ($shop->verification_status != 0) {
-            //     return view('frontend.seller_shop', compact('shop'));
-            // } else {
-                // return view('frontend.seller_shop_without_verification', compact('shop'));
-            // }
-
-            return view('frontend.seller_shop', compact('shop'));
+            if ($shop->verification_status != 0) {
+                return view('frontend.seller_shop', compact('shop'));
+            } else {
+                return view('frontend.seller_shop_without_verification', compact('shop'));
+            }
         }
         abort(404);
     }
