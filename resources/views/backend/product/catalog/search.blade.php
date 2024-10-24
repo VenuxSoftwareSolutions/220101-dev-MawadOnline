@@ -80,7 +80,6 @@
             $('#result').hide();
         }else{
             $.get("{{ route('catalog.search.action') }}",{name:search}, function(data){
-                console.log('done');
                 $('#memList').empty().html(data);
                 $('#result').show();
             })

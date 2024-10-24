@@ -1219,7 +1219,7 @@ class ProductController extends Controller
                     <br>Please note the necessary correction(s):<br> ' . $request->reason . '<br>Kindly make the appropriate changes to ensure that the listing meets our marketplace standards. <br>We appreciate your prompt attention to this matter.
                     Thank you for your cooperation.
                     <br>Best regards,
-                    <br>MAWAD team.';
+                    <br>MAWADONLINE team.';
                 }else{
                     $status = 'Rejection Notification for Product Listing';
                     $text = 'Dear Mr/Mrs,
@@ -1227,7 +1227,7 @@ class ProductController extends Controller
                     <br>The reason for rejection is as follows:<br> ' . $request->reason . '<br>We understand that this may be disappointing, and we encourage you to review our marketplace guidelines to ensure future submissions meet our requirements.
                     <br>Thank you for your understanding.
                     <br>Best regards,
-                    <br>MAWAD team.';
+                    <br>MAWADONLINE team.';
                 }
 
                 $user = User::find($product->user_id);
@@ -1246,6 +1246,34 @@ class ProductController extends Controller
 
             if($request->status == 1){
                 $this->copy_changes_product_in_catalog($product->id);
+
+                $status = 'Your product has been approved on our marketplace';
+                $text = 'We are pleased to inform you that your product ' . $product->name . ' has been approved on our marketplace after review by our administration team.<br>
+
+                        You can now view it online and track it through your seller account.<br>
+
+                        We thank you for your trust and remain at your disposal for any questions.<br>
+
+                        Best regards, <br>MAWADONLINE team.';
+                
+                $user = User::find($product->user_id);
+                Mail::to($user->email)->send(new ApprovalProductMail($status, $text));
+            }
+
+            if($request->status == 4){
+                $status = 'Your product is under review';
+
+                $text = 'We would like to inform you that your product ' . $product->name . ' is currently under review by our team. Our administration is carefully checking the details to ensure that it meets the standards of our marketplace.<br>
+
+                        We will notify you as soon as the review is complete.<br>
+
+                        Thank you for your patience and trust.<br>
+
+                        Best regards, <br>MAWADONLINE team.';
+
+                
+                $user = User::find($product->user_id);
+                Mail::to($user->email)->send(new ApprovalProductMail($status, $text));
             }
 
 
@@ -1424,7 +1452,7 @@ class ProductController extends Controller
 
         // dd($data) ;
        // Extract unique attribute IDs and their values
-    //    $attributes = $this->extractAttributes($variants);
+        //    $attributes = $this->extractAttributes($variants);
        $variations = [];
 
        foreach ($data as $key => $value) {
@@ -1487,7 +1515,7 @@ class ProductController extends Controller
            }
        }
 
-    //    dd($data['variant']['attributes']) ;
+        //    dd($data['variant']['attributes']) ;
        if (isset($data['variant']['attributes']))
         foreach ($data['variant']['attributes'] as $variationId=>$variations_db) {
             foreach ($variations_db as $attributeId=>$attribute) {
@@ -1548,20 +1576,20 @@ class ProductController extends Controller
 
 
 
-    //    dd($variations) ;
-    //    $attributeAvailable= [] ;
-    //    $attributeId = 6; // Example attribute ID
-    //    $attributeValue = 5 ;
-    //    foreach ($variations as $key => $variation) {
-    //         foreach($variation as $key=>$attribute) {
-    //             if ($key ==$attributeId && $attribute==$attributeValue ) {
-    //                 $attributeAvailable[] = array_keys($variation) ;
-    //                 break ;
-    //             }
-    //         }
+        //    dd($variations) ;
+        //    $attributeAvailable= [] ;
+        //    $attributeId = 6; // Example attribute ID
+        //    $attributeValue = 5 ;
+        //    foreach ($variations as $key => $variation) {
+        //         foreach($variation as $key=>$attribute) {
+        //             if ($key ==$attributeId && $attribute==$attributeValue ) {
+        //                 $attributeAvailable[] = array_keys($variation) ;
+        //                 break ;
+        //             }
+        //         }
 
-    //    }
-    //    dd($attributeAvailable) ;
+        //    }
+        //    dd($attributeAvailable) ;
 
         if ($data["video_provider"] === "youtube") {
              $getYoutubeVideoId=$this->getYoutubeVideoId($data["video_link"]) ;
