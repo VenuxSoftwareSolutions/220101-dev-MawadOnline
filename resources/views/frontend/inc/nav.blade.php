@@ -231,7 +231,7 @@
                     <!-- Wishlist -->
                     <div class="dd-none d-lg-block mr-3"
                         data-hover="dropdown">
-                        <div class="nav-cart-box dropdown h-100" id="cart_items" style="width: max-content;">
+                        <div class="nav-cart-box dropdown h-100" {{-- id="cart_items" --}} style="width: max-content;">
                             <a href="{{ route('wishlists.index') }}" class="d-flex align-items-center text-dark" data-toggle="tooltip" data-title="{{ translate('Wishlist') }}" data-placement="top">
                                 <span class="position-relative d-inline-block">
                                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">

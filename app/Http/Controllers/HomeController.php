@@ -583,12 +583,13 @@ class HomeController extends Controller
             foreach($attributes_general as $attribute_general){
                 $revision_parent_attribute = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\ProductAttributeValues')->where('revisionable_id', $attribute_general->id)->latest()->first();
                 if($revision_parent_attribute != null && $parent->last_version == 1){
-                    if($attribute->id_units != null){
+                    if($attribute_general->id_units != null){
+
                         $unit = null;
                         if($revision_parent_attribute->key = 'id_units'){
                             $unit = Unity::find($revision_parent_attribute->old_value);
                         }else{
-                            $unit = Unity::find($attribute->id_units);
+                            $unit = Unity::find($attribute_general->id_units);
                         }
 
                         if ($unit){
@@ -642,6 +643,7 @@ class HomeController extends Controller
                     }
                 }
                 if(!isset($lastItem)) {
+
                     $lastItem  = end($variations);
                     $variationId = key($variations);
                 }
@@ -661,24 +663,24 @@ class HomeController extends Controller
 
 
             }
+            if (count($variations) == 0) {
+                if (isset($pricing['from']) && is_array($pricing['from']) && count($pricing['from']) > 0) {
+                    if(!isset($min)) {
+                        $min = min($pricing['from']) ;
+                        $product_stock = StockSummary::where('variant_id', $parent->id)->sum('current_total_quantity');
 
-            if (isset($pricing['from']) && is_array($pricing['from']) && count($pricing['from']) > 0) {
-                if(!isset($min)) {
-                    $min = min($pricing['from']) ;
-                    $product_stock = StockSummary::where('variant_id', $parent->id)->sum('current_total_quantity');
+                        if ($product_stock < $min) {
+                            $outStock = true ;
 
-                    if ($product_stock < $min) {
-                        $outStock = true ;
-
+                        }
                     }
                 }
-            }
 
-            if (isset($pricing['to']) && is_array($pricing['to']) && count($pricing['to']) > 0) {
-                if(!isset($max))
-                    $max = max($pricing['to']) ;
+                if (isset($pricing['to']) && is_array($pricing['to']) && count($pricing['to']) > 0) {
+                    if(!isset($max))
+                        $max = max($pricing['to']) ;
+                }
             }
-
             $revision_parent_video_provider = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'video_provider')->latest()->first();
             $video_provider = '';
             if($revision_parent_video_provider != null && $parent->last_version == 1){

@@ -84,5 +84,6 @@ return [
     'strict_email' => 'The email address is not valid.',
     'preview_mode_warning' => 'You are in preview mode. You cannot add products to the cart.',
     'preview_mode_warning_form' => 'You are in preview mode. You cannot submit a review.',
+    'item_out_of_stock' => 'item out of stock',
 
 ];

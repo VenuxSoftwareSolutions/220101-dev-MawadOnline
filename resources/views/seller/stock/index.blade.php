@@ -230,19 +230,23 @@
                 </thead>
                 <tbody>
                     @foreach ($inventoryData as $item)
-                        <tr>
+                        @if ($item->productVariant)
+                            <tr>
 
-                            <td>{{$item->productVariant ? $item->productVariant->name :""}}</td>
-                            <td>{{$item->productVariant ? $item->productVariant->sku : ""}}</td>
-                            <td>{{ $item->warehouse->warehouse_name ?? "" }}</td>
-                            <td>{{ $item->current_total_quantity }}</td>
-                            <td>{{ $item->updated_at }}</td>
-                            <td>
-                                <button type="button" onclick="openUpdateDialog('{{ $item->variant_id  }}', '{{ $item->current_total_quantity }}',{{$item->warehouse->id ?? ''}})" class="btn btn-primary customer-btn-color">{{ __('stock.Add/Remove Stock') }}</button>
-                            </td>
 
-                            <!-- Add other fields accordingly -->
-                        </tr>
+
+                                <td>{{$item->productVariant ? $item->productVariant->name :""}}</td>
+                                <td>{{$item->productVariant ? $item->productVariant->sku : ""}}</td>
+                                <td>{{ $item->warehouse->warehouse_name ?? "" }}</td>
+                                <td>{{ $item->current_total_quantity }}</td>
+                                <td>{{ $item->updated_at }}</td>
+                                <td>
+                                    <button type="button" onclick="openUpdateDialog('{{ $item->variant_id  }}', '{{ $item->current_total_quantity }}',{{$item->warehouse->id ?? ''}})" class="btn btn-primary customer-btn-color">{{ __('stock.Add/Remove Stock') }}</button>
+                                </td>
+
+                                <!-- Add other fields accordingly -->
+                            </tr>
+                        @endif
                     @endforeach
                 </tbody>
             </table>

@@ -15,13 +15,13 @@ class StockSummary extends Model
     ];
 
 
-    
+
     public function warehouse()
     {
         return $this->belongsTo(Warehouse::class);
     }
         public function productVariant()
     {
-        return $this->belongsTo(Product::class, 'variant_id','id')->withTrashed();
+        return $this->belongsTo(Product::class, 'variant_id','id');
     }
 }
