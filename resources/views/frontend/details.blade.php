@@ -23,16 +23,16 @@
                 }
 
             @endphp
-            @if (isset($detailedProduct) && $detailedProduct->getTotalQuantity() != 0)
-            <div class="col-3 d-flex justify-content-end mt-2">
+            {{-- @if (isset($detailedProduct) && $detailedProduct->getTotalQuantity() != 0)
+            <div class="col-3 d-flex justify-content-end align-items-center">
                 <span class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ translate('In Stock') }}</span>
             </div>
             @else
             <div class="col-3 d-flex justify-content-end mt-2">
                 <span class="badge badge-md badge-inline badge-pill badge-danger-light fs-14 font-prompt-md border-radius-8px outof-stock-style">{{ translate('Out Of Stock') }}</span>
             </div>
-            @endif 
-            {{-- @if (isset($previewData['detailedProduct']['outStock']) && $previewData['detailedProduct']['outStock']==false )
+            @endif --}}
+            @if (isset($previewData['detailedProduct']['outStock']) && $previewData['detailedProduct']['outStock']==false )
             <div id="stock-status-container" class="col-3 d-flex justify-content-end align-items-center">
                 <span class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ translate('In Stock') }}</span>
             </div>
@@ -40,7 +40,7 @@
             <div id="stock-status-container" class="col-3 d-flex justify-content-end align-items-center">
                 <span class="badge badge-md badge-inline badge-pill badge-danger-light fs-14 font-prompt-md border-radius-8px outof-stock-style">{{ translate('Out Of Stock') }}</span>
             </div>
-            @endif --}}
+            @endif
 
     </div>
 
