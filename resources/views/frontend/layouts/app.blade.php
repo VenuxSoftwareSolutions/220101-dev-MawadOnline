@@ -640,9 +640,9 @@
                     console.log(response.unit_price)
                     if (response.unit_price != null) {
                         if (response.discountPrice > 0) {
-                            $("#qty-interval").text(response.discountPrice+" AED")
-                            $("#chosen_price").text(response.totalDiscount+" AED")
-                            $("#previous-price").text(response.unit_price+" AED")
+                            $("#qty-interval").text(response.discountPrice)
+                            $("#chosen_price").text(response.totalDiscount)
+                            $("#previous-price").text(response.unit_price)
 
                             if (response.percent !== null && response.percent > 0) {
 
@@ -661,8 +661,8 @@
                             $("#previous-price").text('') ;
                             $("#percent").removeClass("bg-primary");
 
-                            $("#qty-interval").text(response.unit_price+" AED")
-                            $("#chosen_price").text(response.total+" AED")
+                            $("#qty-interval").text(response.unit_price)
+                            $("#chosen_price").text(response.total)
                             $("#percent").text('')
 
                         }
