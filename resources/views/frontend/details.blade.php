@@ -408,15 +408,9 @@
                              $valueStringLastItem =  implode('-', $lastItem[$attributeId]);
                      @endphp
                      <label class="attribute_value aiz-megabox pl-0 mb-0">
-<<<<<<< HEAD
-                        <!--<input {{-- @if ($valueStringLastItem == $valueString  )
-                        checked
-                    @endif --}} niveau={{$niveau}} id="attribute_id_{{$attributeId}}_{{$valueString}}" type="radio" attributeId="{{$attributeId}}"  value="{{$valueString}}" name="attribute_id_{{$attributeId}}"  >-->
-=======
                         <input  @if ($valueStringLastItem == $valueString  )
                         checked
                     @endif   niveau={{$niveau}} id="attribute_id_{{$attributeId}}_{{$valueString}}" type="radio" attributeId="{{$attributeId}}"  value="{{$valueString}}" name="attribute_id_{{$attributeId}}"  >
->>>>>>> e01701a5930bfcaadaaa73ce1334cece40b33f05
                         <span class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center">
 
                         @foreach ($value as $color)
