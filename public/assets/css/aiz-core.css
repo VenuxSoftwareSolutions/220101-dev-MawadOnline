@@ -13241,3 +13241,7 @@ border:none !important;
 .mt-search-icon{
     margin-top: 9px;
 }
+.categ-img{
+    max-height: 150px;
+    max-width: 150px;
+}
