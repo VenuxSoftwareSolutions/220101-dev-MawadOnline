@@ -1288,7 +1288,10 @@ class ProductController extends Controller
     }
 
     public function search(){
-        return view('backend.product.catalog.search');
+        $catalogs = ProductCatalog::orderBy('created_at', 'desc')->paginate(12);
+        return view('backend.product.catalog.search', [
+            'catalogs' => $catalogs
+        ]);
     }
 
     public function tempStore(Request $request)
