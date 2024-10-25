@@ -12,6 +12,7 @@
 
         @if($previewData['detailedProduct']['variationId'] || $previewData['detailedProduct']['product_id'] || isset($previewData['detailedProduct']['previewCreate']))
             @php
+
                 if(!isset($previewData['detailedProduct']['previewCreate'])) {
                     if($previewData['detailedProduct']['variationId'])
                         $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['variationId']);
@@ -22,15 +23,25 @@
                 }
 
             @endphp
-            @if (isset($detailedProduct) && $detailedProduct->getTotalQuantity() != 0)
-            <div class="col-3 d-flex justify-content-end mt-2">
+            {{-- @if (isset($detailedProduct) && $detailedProduct->getTotalQuantity() != 0)
+            <div class="col-3 d-flex justify-content-end align-items-center">
                 <span class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ translate('In Stock') }}</span>
             </div>
             @else
             <div class="col-3 d-flex justify-content-end mt-2">
                 <span class="badge badge-md badge-inline badge-pill badge-danger-light fs-14 font-prompt-md border-radius-8px outof-stock-style">{{ translate('Out Of Stock') }}</span>
             </div>
+            @endif --}}
+            @if (isset($previewData['detailedProduct']['outStock']) && $previewData['detailedProduct']['outStock']==false )
+            <div id="stock-status-container" class="col-3 d-flex justify-content-end align-items-center">
+                <span class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ translate('In Stock') }}</span>
+            </div>
+            @elseif (isset($previewData['detailedProduct']['outStock']) && $previewData['detailedProduct']['outStock']==true )
+            <div id="stock-status-container" class="col-3 d-flex justify-content-end align-items-center">
+                <span class="badge badge-md badge-inline badge-pill badge-danger-light fs-14 font-prompt-md border-radius-8px outof-stock-style">{{ translate('Out Of Stock') }}</span>
+            </div>
             @endif
+
     </div>
     <!-- Short Description -->
     <div class="row col-md-12 fs-16 font-prompt shortdesctxt">
@@ -243,7 +254,7 @@
     <div class="col-md-12 p-0 pb-2">
         <div class="product-desc-each">
             <span class="fs-16 font-prompt-md">SKU:</span>
-            <span class="fs-16 font-prompt">{{ $previewData['detailedProduct']['sku'] }}</span>
+            <span class="fs-16 font-prompt sku-product">{{ $previewData['detailedProduct']['sku'] }}</span>
         </div>
     </div>
     <!-- Unit of Sale -->
@@ -397,9 +408,9 @@
                              $valueStringLastItem =  implode('-', $lastItem[$attributeId]);
                      @endphp
                      <label class="attribute_value aiz-megabox pl-0 mb-0">
-                        <!--<input {{-- @if ($valueStringLastItem == $valueString  )
+                        <input  @if ($valueStringLastItem == $valueString  )
                         checked
-                    @endif --}} niveau={{$niveau}} id="attribute_id_{{$attributeId}}_{{$valueString}}" type="radio" attributeId="{{$attributeId}}"  value="{{$valueString}}" name="attribute_id_{{$attributeId}}"  >-->
+                    @endif   niveau={{$niveau}} id="attribute_id_{{$attributeId}}_{{$valueString}}" type="radio" attributeId="{{$attributeId}}"  value="{{$valueString}}" name="attribute_id_{{$attributeId}}"  >
                         <span class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center">
 
                         @foreach ($value as $color)
@@ -407,11 +418,13 @@
                         @if (preg_match('/^#[0-9A-F]{6}$/i', $color))
                                <!-- <span class="size-25px d-inline-block rounded" style="background: {{ $color }};"></span>-->
 
-                               <label class="aiz-megabox pl-0 mr-1 mb-0" data-toggle="tooltip"
-                               data-title="{{ get_single_color_name($color) }}">
-                               <input type="radio" name="color"
-                                   value="{{ get_single_color_name($color) }}"
-                                   @if ($key == 0) checked @endif>
+                               {{-- <label class="aiz-megabox pl-0 mr-1 mb-0" data-toggle="tooltip"
+                               data-title="{{ get_single_color_name($color) }}" >
+                               <input attributeId="{{$attributeId}}" niveau={{$niveau}} id="attribute_id_{{$attributeId}}_{{$valueString}}" type="radio" name="attribute_id_{{$attributeId}}"
+                                    value="{{$color}}"
+                                   @if (($lastItem) && isset($lastItem[$attributeId]) && $lastItem[$attributeId] == $value  )
+                                   checked
+                               @endif> --}}
                                <span
                                    class="aiz-megabox-elem d-flex align-items-center justify-content-center">
                                    <span class="d-inline-block product-color-style"
@@ -423,7 +436,7 @@
 
                                    </span>
                                </span>
-                           </label>
+                           {{-- </label> --}}
 
                         @else
                             {{$color}}

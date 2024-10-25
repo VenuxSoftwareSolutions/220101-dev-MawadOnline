@@ -2637,6 +2637,13 @@
                         $('.total-var-rating').text('(' + response.totalRating + ' reviews)');
                         $('.rating-var').html(response.renderStarRating);
                         $('.avgRating').text(response.avgRating);
+                        $('.sku-product').text(response.sku);
+                        const statusBadge = response.outStock
+                            ? `<span class="badge badge-md badge-inline badge-pill badge-danger-light fs-14 font-prompt-md border-radius-8px outof-stock-style">{{ translate('Out Of Stock') }}</span>`
+                            : `<span class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ translate('In Stock') }}</span>`;
+
+                        $('#stock-status-container').html(statusBadge)
+
                         var images = response.matchedImages; // Assuming response contains matchedImages array
 
                         // Clear existing images
