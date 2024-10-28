@@ -2,14 +2,16 @@
 
 namespace App\Jobs;
 
+use App\Exports\ErrorsExport;
+use App\Mail\ValidationReportMail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Imports\BuildingMaterialImport;
 use Illuminate\Support\Facades\Storage;
+use Mail;
 
 class ValidateBulkUploadFileJob implements ShouldQueue
 {
@@ -17,70 +19,77 @@ class ValidateBulkUploadFileJob implements ShouldQueue
 
     protected $filePath;
 
-    /**
-     * Create a new job instance.
-     *
-     * @param $filePath
-     */
-    public function __construct($filePath)
+    protected $fileModelId; // 5 minutes
+
+    public function __construct($filePath, $fileModelId)
     {
         $this->filePath = $filePath;
+        $this->fileModelId = $fileModelId;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
     public function handle()
     {
-         // Load the file from storage
+        $fileModel = \App\Models\BulkUploadFile::find($this->fileModelId);
+        if (!$fileModel) {
+            throw new \Exception("File model not found: $this->fileModelId");
+            }
+            
+        $fileModel->status = 'processing';
+        $fileModel->save();
+        
+
+        // Load the file from storage
         $file = Storage::path('storage/'.$this->filePath);
+        if (!file_exists($file)) {
+            throw new \Exception("File does not exist: $file");
+        }
 
-        $errors = [];
-        $data = Excel::toArray([], $file)[1]; // Assuming you want to use the second sheet
+        // Extract data from the file
+        $data = Excel::toArray([], $file)[1]; // Assuming you're working with the second sheet
 
-
-         // Get the headers from the second row (row index 1)
+        // Get the headers from the second row (row index 1)
         $headers = $data[1];
 
-        // Map the headers to their corresponding column letters or index numbers
+        // Map the headers to their corresponding column letters
         $headerMapping = $this->getHeaderMapping($headers);
 
-        dd($headerMapping);
-        $columnMapping = [
-            'A' => 0, 'B' => 1, 'C' => 2, 'D' => 3, 'E' => 4, 'F' => 5, 'G' => 6, 'H' => 7, 
-            'J' => 8, 'K' => 9, 'L' => 10, 'M' => 11, 'AJ' => 35, 'AY' => 50, 'AZ' => 51, 
-            'BA' => 52, 'BY' => 76, 'CB' => 79, 'CC' => 80, 'CD' => 81, 'CE' => 82, 
-            'CF' => 83, 'CG' => 84, 'CH' => 85, 'CJ' => 87, 'CK' => 88, 'CL' => 89, 'CM' => 90
-        ];
+        // Filter headers with a trailing '*'
+        $requiredColumns = $this->getRequiredColumns($headerMapping);
 
-        // Start iterating from the 4th row (index 3 in zero-based index)
+        $errors = [];
+
+
+         // Start iterating through the rows (assuming data starts from row 4 - index 3)
         for ($rowIndex = 3; $rowIndex < count($data); $rowIndex++) {
             $row = $data[$rowIndex];
+
             if ($this->rowHasData($row)) {
-                foreach ($columnMapping as $columnLetter => $columnIndex) {
+                foreach ($requiredColumns as $columnLetter => $headerName) {
+                    $columnIndex = $this->getColumnIndex($columnLetter);
                     $this->validateCell($errors, $rowIndex, $columnLetter, $row, ['required', 'max:255'], $columnIndex);
                 }
             }
         }
 
-        // Process validation errors (you can log them, save them, or return them)
+
+
         if (!empty($errors)) {
-            dd($errors);
-            // Handle errors, such as logging them, notifying the user, etc.
+            // Handle validation errors (e.g., logging, notifying users)
+            $reportPath = $this->generateReport($errors,$data);
+
+            Mail::to($fileModel->user->email)->send(new ValidationReportMail($reportPath));
+
+            $fileModel->status = 'failed';
+            $fileModel->save();
         }
+
+           // No errors, collect all data (including optional fields)
+        
+           Dispatch(new ProcessMappingJob($data,$fileModel->user_id));
+            $fileModel->status = 'processing';
+            $fileModel->save();
     }
 
-    private function rowHasData($row)
-    {
-        foreach ($row as $cell) {
-            if (!empty($cell)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
 
     /**
@@ -94,10 +103,32 @@ class ValidateBulkUploadFileJob implements ShouldQueue
         $headerMapping = [];
         foreach ($headers as $columnIndex => $headerName) {
             $columnLetter = $this->getColumnLetter($columnIndex);
-            $headerMapping[$columnLetter] = $headerName;
+            // Ensure we only map non-empty headers
+            if (!empty($headerName)) {
+                $headerMapping[$columnLetter] = $headerName;
+            }
         }
 
         return $headerMapping;
+    }
+
+
+    /**
+     * Get the required columns based on headers ending with '*'.
+     *
+     * @param array $headerMapping
+     * @return array
+     */
+    private function getRequiredColumns($headerMapping)
+    {
+        $requiredColumns = [];
+        foreach ($headerMapping as $columnLetter => $headerName) {
+            if (substr($headerName, -1) === '*') {
+                $requiredColumns[$columnLetter] = $headerName;
+            }
+        }
+
+        return $requiredColumns;
     }
 
     /**
@@ -116,6 +147,32 @@ class ValidateBulkUploadFileJob implements ShouldQueue
         return $letters;
     }
 
+    /**
+     * Convert a column letter to its index (A -> 0, B -> 1, AA -> 26, etc.)
+     *
+     * @param string $columnLetter
+     * @return int
+     */
+    private function getColumnIndex($columnLetter)
+    {
+        $index = 0;
+        $letters = str_split(strtoupper($columnLetter));
+        foreach ($letters as $i => $letter) {
+            $index = $index * 26 + (ord($letter) - 64);
+        }
+
+        return $index - 1;
+    }
+
+    private function rowHasData($row)
+    {
+        foreach ($row as $cell) {
+            if (!empty($cell)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     private function validateCell(&$errors, $rowIndex, $columnLetter, $row, $rules, $columnIndex)
     {
@@ -130,4 +187,19 @@ class ValidateBulkUploadFileJob implements ShouldQueue
             $errors[$rowIndex][$columnLetter] = $validator->errors()->first($columnLetter);
         }
     }
+
+     private function generateReport($errors,$data)
+    {
+        // Define a unique file name for the report
+        $fileName = 'validation_errors_report_' . now()->timestamp . '.xlsx';
+        $filePath = 'reports/' . $fileName;
+
+        $header_mapping = $this->getHeaderMapping($data[1]);
+        // Pass both the errors and header mapping to the export class
+        Excel::store(new ErrorsExport($errors, $header_mapping), $filePath, 'local');
+
+        return Storage::path($filePath);
+    }
+
 }
+

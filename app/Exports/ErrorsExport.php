@@ -1,33 +1,62 @@
-<?php
+<?php 
 
-// app/Exports/ErrorsExport.php
 namespace App\Exports;
 
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Illuminate\Support\Collection;
 
-class ErrorsExport implements FromCollection, WithHeadings
+class ErrorsExport implements FromArray, WithHeadings
 {
     protected $errors;
+    protected $headerMapping;
 
-    public function __construct(array $errors)
+
+    public function __construct(array $errors, array $headerMapping)
     {
-        $this->errors = $errors;
+        $this->headerMapping = $headerMapping;
+
+        $this->errors = $this->formatErrors($errors);
     }
 
-    public function collection()
+    /**
+     * Format errors into a human-readable structure.
+     */
+    private function formatErrors($errors)
     {
-        // Convert each error string to an array
-        $formattedErrors = array_map(function ($error) {
-            return [$error];
-        }, $this->errors);
+        $formattedErrors = [];
+        foreach ($errors as $rowIndex => $errorDetails) {
+            foreach ($errorDetails as $columnLetter => $errorMessage) {
+                $headerName = $this->headerMapping[$columnLetter] ?? 'Unknown Header';
+                $formattedErrors[] = [
+                    'Row' => $rowIndex + 1, // Excel is 1-based index
+                    'Column' => $columnLetter,
+                    'Header' => $headerName, // Include the column header
+                    'Error Message' => $errorMessage
+                ];
+            }
+        }
 
-        return new Collection($formattedErrors);
+        return $formattedErrors;
     }
 
+    /**
+     * Return the array of data that will be written to Excel.
+     */
+    public function array(): array
+    {
+        return $this->errors;
+    }
+
+    /**
+     * Define the headings for the Excel sheet.
+     */
     public function headings(): array
     {
-        return ['Error Message'];
+        return [
+            'Row',
+            'Column',
+            'Header',
+            'Error Message',
+        ];
     }
 }

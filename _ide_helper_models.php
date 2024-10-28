@@ -640,6 +640,7 @@ namespace App\Models{
  * @property string $size
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder|BulkUploadFile newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|BulkUploadFile newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|BulkUploadFile query()
@@ -2433,8 +2434,8 @@ namespace App\Models{
  * @property int $wholesale_product
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon $updated_at
- * @property string $country_code
- * @property string $manufacturer
+ * @property string|null $country_code
+ * @property string|null $manufacturer
  * @property int $parent_id
  * @property string|null $sku
  * @property int $shipping
@@ -3068,7 +3069,7 @@ namespace App\Models{
  *
  * @property int $id
  * @property int $user_id
- * @property string $modified_fields
+ * @property mixed $modified_fields
  * @property string $status
  * @property int $admin_viewed
  * @property \Illuminate\Support\Carbon|null $created_at

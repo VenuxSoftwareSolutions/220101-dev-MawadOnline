@@ -183,7 +183,6 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-       // dd($request->all());
         $product = $this->productService->store($request->except([
             'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
         ]));
@@ -230,7 +229,6 @@ class ProductController extends Controller
     }
 
     public function store_draft(Request $request){
-        //dd($request->all());
         $parent = Product::find($request->product_id);
         if($parent != null){
             $product = $this->productService->draft($request->except([

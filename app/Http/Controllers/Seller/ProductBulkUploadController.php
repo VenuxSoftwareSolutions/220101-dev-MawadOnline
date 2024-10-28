@@ -142,49 +142,14 @@ class ProductBulkUploadController extends Controller
             $fileModel->size = humanFileSize($file->getSize());
             $fileModel->save();
 
-            ValidateBulkUploadFileJob::dispatch($fileModel->path);
+            ValidateBulkUploadFileJob::dispatch($fileModel->path, $fileModel->id);
 
-            dd('ok');
-
-             // Read and validate the Excel file
-            $errors = $this->validateExcel($file);
-
-            if (count($errors) > 0) {
-                $fileModel->status = 'failed';
-                $fileModel->save();
-
-                // Generate the report and send it by email
-                $reportPath = $this->generateReport($errors);
-
-                Mail::to('recipient@example.com')->send(new ValidationReportMail($reportPath));
-
-                flash(translate('Validation errors found. A report has been sent to your email.'))->error();
-
-                return back();
-            }
+           
 
             flash(translate('File uploaded successfully.'))->success();
 
-                // Dispatch the job
-         //   ImportBulkFileJob::dispatch($path);
-            
-
-         $path = Storage::disk('public')->path($path);
-
-        $import = new ProductsBulkImport(
-            app()->make('App\Services\ProductService'),
-            app()->make('App\Services\ProductTaxService'),
-            app()->make('App\Services\ProductFlashDealService'),
-            app()->make('App\Services\ProductStockService'),
-            app()->make('App\Services\ProductUploadsService'),
-            app()->make('App\Services\ProductPricingService')
-        );
-
-
-        $x =    Excel::import($import, $path);
-
-        dd($x);
-          //  return back();
+       
+            return back();
         }         
     }
 
@@ -395,9 +360,9 @@ class ProductBulkUploadController extends Controller
     
                 if ($data['success']) {
                     $fileName = $data['fileName'];
-                    $fileName = basename($fileName);
+                  //  $fileName = basename($fileName);
 
-                    $filePath = public_path('buxl/' . $fileName);
+                    $filePath = $fileName;
                     Log::info($fileName);
                     Log::info($filePath);
 
