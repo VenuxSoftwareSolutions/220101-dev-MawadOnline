@@ -129,42 +129,76 @@
                 title="{{ $product->getTranslation('name') }}">{{ $product->getTranslation('name') }}</a>
         </h3>
         <div class="fs-14 d-flex justify-content-start">
-            @if ($product->auction_product == 0)
-
+            {{-- @if ($product->auction_product == 0)
                 @if(count($product->getPricingConfiguration()) > 0)
-                @foreach ($product->getPricingConfiguration() as $pricing)
-                @php
-                $date_range = '';
-                if($pricing->discount_start_datetime){
-                    $start_date = new DateTime($pricing->discount_start_datetime);
-                    $start_date_formatted = $start_date->format('d-m-Y H:i:s');
+                    @foreach ($product->getPricingConfiguration() as $pricing)
+                        @php
+                            $date_range = '';
+                            if($pricing->discount_start_datetime){
+                                $start_date = new DateTime($pricing->discount_start_datetime);
+                                $start_date_formatted = $start_date->format('d-m-Y H:i:s');
 
-                    $end_date = new DateTime($pricing->discount_end_datetime);
-                    $end_date_formatted = $end_date->format('d-m-Y H:i:s');
+                                $end_date = new DateTime($pricing->discount_end_datetime);
+                                $end_date_formatted = $end_date->format('d-m-Y H:i:s');
 
-                    $date_range = $start_date_formatted.' to '.$end_date_formatted;
-                }
-                @endphp
-                @if ($pricing->discount_amount)
+                                $date_range = $start_date_formatted.' to '.$end_date_formatted;
+                            }
+                        @endphp
+                        @if ($pricing->discount_amount)
 
-                @php
-                    $disc = (home_discounted_base_price($product,false) - $pricing->discount_amount) ;
-                    $formattedDisc = "AED" . number_format($disc, 2, '.', ',');
-                @endphp
-                    <!-- price -->
-                    <div class="">
-                        <span class="fw-700 text-dark mr-1">{{ $formattedDisc }}</span>
-                    </div>
-                    <!-- Previous price -->
-                    <div class="">
-                        <del class="fw-400 text-secondary">{{ home_discounted_base_price($product) }}</del>
-                    </div>
-                @else
-                <div class="">
-                    <span class="fw-700 text-dark mr-1">{{ home_discounted_base_price($product) }}</span>
-                </div>
+                            @php
+                                $disc = (home_discounted_base_price($product,false) - $pricing->discount_amount) ;
+                                $formattedDisc = "AED" . number_format($disc, 2, '.', ',');
+                            @endphp
+                            <!-- price -->
+                            <div class="">
+                                <span class="fw-700 text-dark mr-1">{{ $formattedDisc }}</span>
+                            </div>
+                            <!-- Previous price -->
+                            <div class="">
+                                <del class="fw-400 text-secondary">{{ home_discounted_base_price($product) }}</del>
+                            </div>
+                        @else
+                            <div class="">
+                                <span class="fw-700 text-dark mr-1">{{ home_discounted_base_price($product) }}</span>
+                            </div>
+                        @endif
+                    @endforeach
                 @endif
-                @endforeach
+            @endif
+            @if ($product->auction_product == 1)
+                <!-- Bid Amount -->
+                <div class="">
+                    <span class="fw-700 text-primary">{{ single_price($product->starting_bid) }}</span>
+                </div>
+            @endif --}}
+
+            @if ($product->auction_product == 0)
+                @if($product->getFirstPricingConfiguration() != null)
+                    @if (($product->getFirstPricingConfiguration()->discount_amount != null) || ($product->getFirstPricingConfiguration()->discount_percentage != null))
+                        @php
+                            if($product->getFirstPricingConfiguration()->discount_amount != null){
+                                $disc = (home_discounted_base_price($product,false) - $product->getFirstPricingConfiguration()->discount_amount);
+                                $formattedDisc = "AED" . number_format($disc, 2, '.', ',');
+                            }else{
+                                $disc = (home_discounted_base_price($product,false) - $product->getFirstPricingConfiguration()->discount_percentage);
+                                $formattedDisc = "AED" . number_format($disc, 2, '.', ',');
+                            }
+                            
+                        @endphp
+                        <!-- price -->
+                        <div class="">
+                            <span class="fw-700 text-dark mr-1">{{ home_discounted_base_price($product) }}</span>
+                        </div>
+                        <!-- Previous price -->
+                        <div class="">
+                            <del class="fw-400 text-secondary">{{ "AED" . number_format($product->getFirstPricingConfiguration()->unit_price, 2, '.', ',') }}</del>
+                        </div>
+                    @else
+                        <div class="">
+                            <span class="fw-700 text-dark mr-1">{{ "AED" . number_format($product->getFirstPricingConfiguration()->unit_price, 2, '.', ',') }}</span>
+                        </div>
+                    @endif
                 @endif
             @endif
             @if ($product->auction_product == 1)

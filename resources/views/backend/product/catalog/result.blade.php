@@ -1,15 +1,10 @@
 @php 
-    $sum = count($products) + count($catalogs)
+    $sum = count($catalogs)
 @endphp
-@if(count($products) > 0)
-    @foreach($products as $product)
-        <li class="list-group-item"><a href="{{ route('catalog.preview_product', ['id' => $product->id, 'is_catalog' => 2]) }}">{{ $product->name }} {{ translate('(from products)') }}</a></li>
-    @endforeach
-@endif
 
 @if(count($catalogs) > 0)
     @foreach($catalogs as $catalog)
-        <li class="list-group-item"><a href="{{ route('catalog.preview_product', ['id' => $catalog->id, 'is_catalog' => 1]) }}">{{ $catalog->name }} {{ translate('(from catalog)') }}</a></li>
+        <li class="list-group-item"><a href="{{ route('catalog.preview_product', ['id' => $catalog->id, 'is_catalog' => 1]) }}">{{ $catalog->name }}</a></li>
     @endforeach
 @endif
 

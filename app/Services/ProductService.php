@@ -582,7 +582,7 @@ class ProductService
                             }else{
                                 $current_data["discount_amount"] = null;
                             }
-                            if(isset($current_data["discount_percentage"])){
+                            if(isset($pricing["discount_percentage"])){
                                 $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
                             }else{
                                 $current_data["discount_percentage"] = null;
@@ -596,7 +596,7 @@ class ProductService
                         dump('Error: ' . $e->getMessage());
                     }
                 }
-
+                //dd($all_data_to_insert);
                 if(count($all_data_to_insert) > 0){
                     PricingConfiguration::insert($all_data_to_insert);
                 }
