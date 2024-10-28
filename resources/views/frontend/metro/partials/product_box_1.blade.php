@@ -218,8 +218,19 @@
                     <path d="M2 7.84998C2 5.99998 2.99 5.84998 4.22 5.84998H19.78C21.01 5.84998 22 5.99998 22 7.84998C22 9.99998 21.01 9.84998 19.78 9.84998H4.22C2.99 9.84998 2 9.99998 2 7.84998Z" stroke="#3A3B40" stroke-width="1.5"/>
                     <path d="M3.5 10L4.91 18.64C5.23 20.58 6 22 8.86 22H14.89C18 22 18.46 20.64 18.82 18.76L20.5 10" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round"/>
                     </svg>
+                    @php
+                    $totalQuantity = $product->getTotalQuantity();
+                    // $stockQuantity = $totalQuantity > 0 && $product->low_stock_quantity != null && $totalQuantity >= $product->low_stock_quantity
+                    //                  ? $product->low_stock_quantity
+                    //                  : ($totalQuantity > 0 ? $totalQuantity : 0);
+                @endphp
 
-                <span class="fs-14 stock-quantity-text" style="font-size: 6px">Only {{$product->low_stock_quantity != null ? $product->low_stock_quantity : 0 }} left in stock</span>
+                <span class="fs-14 stock-quantity-text" style="font-size: 6px">
+                    {{ $totalQuantity > 0 ? "Only $totalQuantity left in stock" : 'Out of stock' }}
+                </span>
+
+
+                {{-- <span class="fs-14 stock-quantity-text" style="font-size: 6px">Only {{$product->low_stock_quantity != null ? $product->low_stock_quantity : 0 }} left in stock</span> --}}
             </div>
     </div>
 </div>
