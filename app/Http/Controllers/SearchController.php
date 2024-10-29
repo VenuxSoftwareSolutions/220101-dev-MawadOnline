@@ -123,8 +123,9 @@ class SearchController extends Controller
         // list brands
         //dd($products->count());
         $brands = $products->join('brands', 'brands.id', '=', 'products.brand_id');
-        
+        // dd($brands->select('brands.*')->distinct('brands.id')->get());
         // list shops
+        
         $shops = $products
         ->join('users', 'users.id', '=', 'products.user_id')
         ->join('shops', 'shops.user_id','users.id')
@@ -133,7 +134,10 @@ class SearchController extends Controller
         $brands = $brands->select('brands.*')->distinct('brands.id')->get();
         $shops = $shops->select('shops.*')->distinct('shops.id')->get();
 
-        $products = Product::where('published', '1')->where('auction_product', 0)->where('approved', '1');
+        $products = Product::join('users', 'users.id', '=', 'products.user_id')
+        ->join('shops', 'shops.user_id','users.id')
+        ->where('users.banned','!=', 1)
+        ->where('shops.verification_status','!=',0)->where('published', '1')->where('auction_product', 0)->where('approved', '1');
         if($query)
         $products = $products->where("products.name",'like',"%".$query."%");
         if ($category_id != null )
@@ -145,7 +149,7 @@ class SearchController extends Controller
         // })->get();
 	    // $shops  = Shop::all();
         // $shops = $shops->select('shops.*')->distinct('shops.id')->get();
-        
+
         // filter Brand
         $brand_ids =[];
         if ($brand_id != null) {
