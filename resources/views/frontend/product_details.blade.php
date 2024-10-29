@@ -438,7 +438,7 @@
                             <!-- Description -->
                             <div class="tab-pane fade active show col-12 float-left" id="tab_default_1">
 
-                                <div class="col-12 col-md-6 py-5 float-left">
+                                <div class="col-12 col-md-6 py-5 float-left description_bottom">
                                     <span class="fs-20 font-prompt-md pb-2">Product information</span>
                                     @if(!empty($previewData['detailedProduct']['description']))
                                     <div class="mw-100 overflow-hidden text-left aiz-editor-data fs-16 font-prompt">
@@ -2485,9 +2485,9 @@
                         console.log(response.unit_price)
                         if (response.unit_price != null) {
                             if (response.discountPrice > 0) {
-                                $("#qty-interval").text(response.discountPrice+" AED")
-                                $("#chosen_price").text(response.totalDiscount+" AED")
-                                $("#previous-price").text(response.unit_price+" AED")
+                                $("#qty-interval").text(response.discountPrice)
+                                $("#chosen_price").text(response.totalDiscount)
+                                $("#previous-price").text(response.unit_price)
 
                                 if (response.percent !== null && response.percent > 0) {
 
@@ -2506,8 +2506,8 @@
                                 $("#previous-price").text('') ;
                                 $("#percent").removeClass("bg-primary");
 
-                                $("#qty-interval").text(response.unit_price+" AED")
-                                $("#chosen_price").text(response.total+" AED")
+                                $("#qty-interval").text(response.unit_price)
+                                $("#chosen_price").text(response.total)
                                 $("#percent").text('')
 
                             }
@@ -2582,16 +2582,16 @@
                     else {
                         if (response.price > 0) {
                             $('#variationId').val(response.variationId) ;
-                            $("#qty-interval").text(response.price+" AED")
+                            $("#qty-interval").text(response.price)
                             $("#quantity").val(response.quantity)
-                            $("#chosen_price").text(response.total+" AED")
+                            $("#chosen_price").text(response.total)
                             $('#quantity').attr('min', response.minimum); // Minimum value
                             $('#quantity').attr('max', response.maximum); // Maximum value
                             if (response.discountedPrice > 0) {
 
-                                $("#qty-interval").text(response.discountedPrice+" AED")
-                                $("#chosen_price").text(response.totalDiscount+" AED")
-                                $("#previous-price").text(response.price+" AED")
+                                $("#qty-interval").text(response.discountedPrice)
+                                $("#chosen_price").text(response.totalDiscount)
+                                $("#previous-price").text(response.price)
                                 if (response.percent !== null && response.percent > 0) {
 
                                     $("#percent").text('-'+response.percent+'%')
@@ -2609,8 +2609,8 @@
                                 $("#previous-price").text('') ;
                                 $("#percent").removeClass("bg-primary");
 
-                                $("#qty-interval").text(response.price+" AED")
-                                $("#chosen_price").text(response.total+" AED")
+                                $("#qty-interval").text(response.price)
+                                $("#chosen_price").text(response.total)
                                 $("#percent").text('')
 
                                 }
@@ -2622,12 +2622,13 @@
                                     console.log(min)
                                     console.log(max)
                                     console.log(value)
-                                    if(value <= min){
+                                    if(value <= min || response.outStock){
+
                                         $this.siblings('[data-type="minus"]').attr('disabled',true)
                                     }else if($this.siblings('[data-type="minus"]').attr('disabled')){
                                         $this.siblings('[data-type="minus"]').removeAttr('disabled')
                                     }
-                                    if(value >= max){
+                                    if(value >= max || response.outStock){
                                         $this.siblings('[data-type="plus"]').attr('disabled',true)
                                     }else if($this.siblings('[data-type="plus"]').attr('disabled')){
                                         $this.siblings('[data-type="plus"]').removeAttr('disabled')
@@ -2637,6 +2638,13 @@
                         $('.total-var-rating').text('(' + response.totalRating + ' reviews)');
                         $('.rating-var').html(response.renderStarRating);
                         $('.avgRating').text(response.avgRating);
+                        $('.sku-product').text(response.sku);
+                        const statusBadge = response.outStock
+                            ? `<span class="badge badge-md badge-inline badge-pill badge-danger-light fs-14 font-prompt-md border-radius-8px outof-stock-style">{{ translate('Out Of Stock') }}</span>`
+                            : `<span class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ translate('In Stock') }}</span>`;
+
+                        $('#stock-status-container').html(statusBadge)
+
                         var images = response.matchedImages; // Assuming response contains matchedImages array
 
                         // Clear existing images
@@ -2865,6 +2873,31 @@
         // });
     </script>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const quantityButton = document.getElementById("quantity-button");
+        const plusIcon = quantityButton.querySelector("i.las.la-plus");
 
+        // Get the outStock status from data attribute
+        const isOutOfStock = quantityButton.getAttribute("data-out-stock") === "1" || quantityButton.getAttribute("data-out-stock") === "true";
+
+        // Disable the button if out of stock
+        if (isOutOfStock) {
+            quantityButton.disabled = true;
+        }
+        // Add click event listener to the icon
+        plusIcon.addEventListener("click", function (event) {
+            // Check if the button is disabled
+            if (quantityButton.disabled) {
+                // Display warning message
+                AIZ.plugins.notify('warning', '{{ __("messages.out_of_stock") }}');
+                // Prevent default behavior (if needed)
+                event.preventDefault();
+            }
+        });
+
+
+    });
+</script>
 
 @endsection

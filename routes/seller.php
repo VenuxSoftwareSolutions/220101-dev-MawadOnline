@@ -254,5 +254,6 @@ Route::middleware(['seller_or_admin'])->group(function () {
         Route::get('/catalog/preview_product/{id}/{is_catalog}', 'displayPreviewProductInCatalogProduct')->name('catalog.preview_product');
         Route::post('/catalog/add_product', 'add_product')->name('catalog.add_product');
         Route::post('/catalog/add_product_to_catalog', 'add_product_to_catalog')->name('catalog.add_product_to_catalog');
+        Route::get('/catalog/delete', 'delete_from_catalog')->name('catalog.delete');
     });
 });

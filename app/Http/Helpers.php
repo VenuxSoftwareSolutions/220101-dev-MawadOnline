@@ -770,6 +770,7 @@ if (!function_exists('home_discounted_base_price_by_stock_id')) {
 if (!function_exists('home_discounted_base_price')) {
     function home_discounted_base_price($product, $formatted = true)
     {
+        
         $product_price = $product->getPricingConfiguration();
         if ($product_price !== null && $product_price->isNotEmpty()) {
             $price = $product_price->first()->unit_price;
@@ -792,20 +793,22 @@ if (!function_exists('home_discounted_base_price')) {
         }
 
         if ($discount_applicable) {
-            if ($product->discount_type == 'percent') {
-                $price -= ($price * $product->discount) / 100;
-            } elseif ($product->discount_type == 'amount') {
-                $price -= $product->discount;
+            if($product_price->first() != null){
+                if ( $product_price->first()->discount_type == 'percent') {
+                    $price -= ($price *  $product_price->first()->discount_percentage) / 100;
+                } elseif ( $product_price->first()->discount_type == 'amount') {
+                    $price -=  $product_price->first()->discount_amount;
+                }
             }
         }
 
-        foreach ($product->taxes as $product_tax) {
-            if ($product_tax->tax_type == 'percent') {
-                $tax += ($price * $product_tax->tax) / 100;
-            } elseif ($product_tax->tax_type == 'amount') {
-                $tax += $product_tax->tax;
-            }
-        }
+        // foreach ($product->taxes as $product_tax) {
+        //     if ($product_tax->tax_type == 'percent') {
+        //         $tax += ($price * $product_tax->tax) / 100;
+        //     } elseif ($product_tax->tax_type == 'amount') {
+        //         $tax += $product_tax->tax;
+        //     }
+        // }
         $price += $tax;
 
         $val = convert_price($price);
