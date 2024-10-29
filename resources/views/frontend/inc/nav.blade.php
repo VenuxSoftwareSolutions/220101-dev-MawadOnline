@@ -162,11 +162,14 @@
                     <div class="d-lg-none ml-auto mr-0">
                         <a class="p-2 d-block text-reset" href="javascript:void(0);" data-toggle="class-toggle"
                             data-target=".front-header-search">
-                            <i class="las la-search la-flip-horizontal la-2x"></i>
+                            <svg width="32" height="32" class="la-2x mr-3 mt-search-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M22 22L20 20" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
                         </a>
                     </div>
                     <!-- Search field -->
-                    <div class="flex-grow-1 front-header-search d-flex align-items-center bg-white mx-2 mx-xl-4">
+                    <div class="flex-grow-1 front-header-search d-flex align-items-center bg-white mx-0 mx-xl-4">
                         <div class="position-relative flex-grow-1 px-3 px-lg-0">
                             <form action="{{ route('search') }}" method="GET" class="stop-propagation m-0">
                                 <div class="d-flex position-relative align-items-center">
@@ -175,7 +178,7 @@
                                         <button class="btn px-2" type="button"><i
                                                 class="la la-2x la-long-arrow-left"></i></button>
                                     </div>
-                                    <div class="search-input-box">
+                                    <div class="search-input-box custom-bg">
                                         <input type="text"
                                             class="border border-soft-light form-control fs-14 hov-animate-outline radius-search"
                                             id="search" name="keyword"
@@ -183,15 +186,9 @@
                                             value="{{ $query }}"
                                         @endisset
                                             placeholder="{{ translate('I am shopping for...') }}" autocomplete="off">
-
-                                        <svg id="Group_723" data-name="Group 723" xmlns="http://www.w3.org/2000/svg"
-                                            width="20.001" height="20" viewBox="0 0 20.001 20">
-                                            <path id="Path_3090" data-name="Path 3090"
-                                                d="M9.847,17.839a7.993,7.993,0,1,1,7.993-7.993A8,8,0,0,1,9.847,17.839Zm0-14.387a6.394,6.394,0,1,0,6.394,6.394A6.4,6.4,0,0,0,9.847,3.453Z"
-                                                transform="translate(-1.854 -1.854)" fill="#b5b5bf" />
-                                            <path id="Path_3091" data-name="Path 3091"
-                                                d="M24.4,25.2a.8.8,0,0,1-.565-.234l-6.15-6.15a.8.8,0,0,1,1.13-1.13l6.15,6.15A.8.8,0,0,1,24.4,25.2Z"
-                                                transform="translate(-5.2 -5.2)" fill="#b5b5bf" />
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z" stroke="#A2A4AD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M22 22L20 20" stroke="#A2A4AD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                         </svg>
                                     </div>
                                 </div>
@@ -218,7 +215,10 @@
                     <div class="d-none d-lg-none ml-3 mr-0">
                         <div class="nav-search-box">
                             <a href="#" class="nav-box-link">
-                                <i class="la la-search la-flip-horizontal d-inline-block nav-box-icon"></i>
+                                <svg width="32" height="32" class="la-flip-horizontal d-inline-block nav-box-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M22 22L20 20" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
                             </a>
                         </div>
                     </div>
@@ -229,9 +229,9 @@
                         </div>
                     </div> --}}
                     <!-- Wishlist -->
-                    <div class="dd-none d-lg-block mr-3"
+                    <div class="dd-none d-lg-block mr-3 mt-2"
                         data-hover="dropdown">
-                        <div class="nav-cart-box dropdown h-100" id="cart_items" style="width: max-content;">
+                        <div class="nav-cart-box dropdown h-100" {{-- id="cart_items" --}} style="width: max-content;">
                             <a href="{{ route('wishlists.index') }}" class="d-flex align-items-center text-dark" data-toggle="tooltip" data-title="{{ translate('Wishlist') }}" data-placement="top">
                                 <span class="position-relative d-inline-block">
                                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -247,12 +247,12 @@
 
                         </div>
                     </div>
-                    <div class="d-none d-lg-block mr-3" style="margin-left: 20px;">
+                    <div class="d-none d-lg-block mr-3 mt-2" style="margin-left: 20px;">
                         <div class="" id="wishlist">
                             @include('frontend.'.get_setting('homepage_select').'.partials.wishlist')
                         </div>
                     </div>
-                    <div class="dd-none d-lg-block"
+                    <div class="dd-none d-lg-block  mt-2"
                         data-hover="dropdown">
                         <div class="nav-cart-box dropdown h-100" id="cart_items" style="width: max-content;">
                             @include('frontend.'.get_setting('homepage_select').'.partials.cart')

@@ -46,6 +46,17 @@
                 </div>
             </div>
             <div class="card-body">
+                <div class="row row_center mb-3">
+                    <div class="col-12 search_bloc">
+                        <input type="text" required class="form-control search" style="width: 50%" id="search" placeholder="{{ translate('Search by product name, model, brand …') }}">
+                        
+                    </div>
+                    <div id="result" class="col-12 search_bloc panel panel-default" style="display:none">
+                        <ul class="list-group" id="memList" style="width: 50%">
+                         
+                        </ul>
+                    </div>
+                </div>
                 <div class="row">
                     @if(count($products) > 0)
                         @foreach($products as $product)
@@ -55,7 +66,8 @@
                                     <div class="card-body">
                                     <h5 class="card-title">{{ $product->sku }}</h5>
                                     <p class="card-text">Number of variants: {{ $product->checkIfParentToGetNumVariants() }}.</p>
-                                    <a href="{{ route('catalog.preview_product', ['id' => $product->id, 'is_catalog' => 2]) }}" class="btn btn-primary" style="width: 100%;">{{ translate('View product') }}</a>
+                                    <a href="{{ route('catalog.preview_product', ['id' => $product->id, 'is_catalog' => 2]) }}" class="btn btn-primary" style="background-color: #232734 !important; border-color: #232734 !important;">{{ translate('View product') }}</a>
+                                    <button type="button" class="btn btn-danger" data-id="{{ $product->id }}">{{ translate('Delete from catalog') }}</button>
                                     </div>
                                 </div>
                             </div>
@@ -69,8 +81,9 @@
                                     <div class="card-body">
                                     <h5 class="card-title">{{ $catalog->sku }}</h5>
                                     <p class="card-text">Number of variants: {{ $catalog->checkIfParentToGetNumVariants() }}.</p>
-                                    <a href="{{ route('catalog.preview_product', ['id' => $catalog->id, 'is_catalog' => 1]) }}" class="btn btn-primary" style="width: 100%;">{{ translate('View product') }}</a>
-                                    </div>
+                                    <a href="{{ route('catalog.preview_product', ['id' => $catalog->id, 'is_catalog' => 1]) }}" class="btn btn-primary" style="background-color: #232734 !important; border-color: #232734 !important;">{{ translate('View product') }}</a>
+                                    <button type="button" class="btn btn-danger ml-3" data-id="{{ $catalog->id }}">{{ translate('Delete') }}</button>
+                                </div>
                                 </div>
                             </div>
                         @endforeach
@@ -83,5 +96,32 @@
 @endsection
 
 @section('script')
-  
+    <script>
+        $('#search').keyup(function(){
+            var search = $('#search').val();
+            if(search==""){
+                $("#memList").html("");
+                $('#result').hide();
+            }else{
+                $.get("{{ route('catalog.search.action') }}",{name:search}, function(data){
+                    $('#memList').empty().html(data);
+                    $('#result').show();
+                })
+            }
+        });
+
+        $('.btn-danger').on('click', function(){
+            var id = $(this).data('id');
+            var current = $(this);
+            if(id != undefined){
+                $.get("{{ route('catalog.delete') }}",{id:id}, function(data){
+                    if(data.status == 'success'){
+                        current.parent().parent().remove();
+                    }else{
+                        alert('failed');
+                    }
+                })
+            }
+        })
+    </script>
 @endsection

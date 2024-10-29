@@ -660,6 +660,7 @@ class CartController extends Controller
     // }
     public function addToCart(Request $request)
     {
+
         // Get product preview data from session
         $dataProduct = $request->session()->get('productPreviewData', null);
 

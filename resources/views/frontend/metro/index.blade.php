@@ -240,7 +240,7 @@
                                         <div class="position-absolute h-100 w-100 overflow-hidden">
                                             <img src="{{ isset($category->cover_image) ? my_asset('public/'.$category->cover_image) : static_asset('assets/img/placeholder.jpg') }}"
                                                 alt="{{ $category_name }}"
-                                                class="img-fit h-100 has-transition radius-category"
+                                                class="img-fit h-100 has-transition radius-category categ-img" loading="lazy"
                                                 onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
                                         </div>
 

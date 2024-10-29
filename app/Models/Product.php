@@ -248,6 +248,10 @@ class Product extends Model
         return $pricing;
     }
 
+    public function getFirstPricingConfiguration(){
+        return PricingConfiguration::where('id_products', $this->id)->first();
+    }
+
     public function getIdsAttributesVariant(){
         $ids = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->pluck('id_attribute')->toArray();
         return $ids;

@@ -44,36 +44,43 @@ class CatalogController extends Controller
                                 })->take(3)->get();
             return view('seller.product.catalog.old_result')->with(['products' =>  $products, 'catalogs' => $catalogs, 'search' => $request->name]);
         }elseif((Auth::user()->user_type == "admin") || (Auth::user()->user_type == "staff")){
-            $products = Product::where(function ($query) use ($searchTerm) {
-                                    $query->where('name', 'like', "%{$searchTerm}%")
-                                        ->orWhereHas('brand', function ($query) use ($searchTerm) {
-                                            $query->where('name', 'like', "%{$searchTerm}%");
-                                        });
-                                })->where(function ($query) {
-                                    $query->where('catalog', 1)
-                                        ->orWhere(function ($query) {
-                                            $query->where('catalog', 0)
-                                                    ->where('approved', 1);
-                                        });
-                                })->take(1)->get();
+            // $products = Product::where(function ($query) use ($searchTerm) {
+            //                         $query->where('name', 'like', "%{$searchTerm}%")
+            //                             ->orWhereHas('brand', function ($query) use ($searchTerm) {
+            //                                 $query->where('name', 'like', "%{$searchTerm}%");
+            //                             });
+            //                     })->where(function ($query) {
+            //                         $query->where('catalog', 1)
+            //                             ->orWhere(function ($query) {
+            //                                 $query->where('catalog', 0)
+            //                                         ->where('approved', 1);
+            //                             });
+            //                     })->take(1)->get();
             
 
-            if(count($products) == 0){
-                $catalogs = ProductCatalog::where(function ($query) use ($searchTerm) {
-                    $query->where('name', 'like', "%{$searchTerm}%")
-                        ->orWhereHas('brand', function ($query) use ($searchTerm) {
-                            $query->where('name', 'like', "%{$searchTerm}%");
-                        });
-                })->take(3)->get();
-            }else{
+            // if(count($products) == 0){
+            //     $catalogs = ProductCatalog::where(function ($query) use ($searchTerm) {
+            //         $query->where('name', 'like', "%{$searchTerm}%")
+            //             ->orWhereHas('brand', function ($query) use ($searchTerm) {
+            //                 $query->where('name', 'like', "%{$searchTerm}%");
+            //             });
+            //     })->take(3)->get();
+            // }else{
                 
-                $catalogs = ProductCatalog::where(function ($query) use ($searchTerm) {
-                    $query->where('name', 'like', "%{$searchTerm}%")
-                        ->orWhereHas('brand', function ($query) use ($searchTerm) {
-                            $query->where('name', 'like', "%{$searchTerm}%");
-                        });
-                })->get();
-            }
+            //     $catalogs = ProductCatalog::where(function ($query) use ($searchTerm) {
+            //         $query->where('name', 'like', "%{$searchTerm}%")
+            //             ->orWhereHas('brand', function ($query) use ($searchTerm) {
+            //                 $query->where('name', 'like', "%{$searchTerm}%");
+            //             });
+            //     })->get();
+            // }
+
+            $catalogs = ProductCatalog::where(function ($query) use ($searchTerm) {
+                $query->where('name', 'like', "%{$searchTerm}%")
+                    ->orWhereHas('brand', function ($query) use ($searchTerm) {
+                        $query->where('name', 'like', "%{$searchTerm}%");
+                    });
+            })->get();
 
             //return response()->json($products, 200);
 
@@ -117,18 +124,18 @@ class CatalogController extends Controller
                     'catalogs' => $catalogs,
                 ]);
             }elseif((Auth::user()->user_type == "admin") || (Auth::user()->user_type == "staff")){
-                $products = Product::where(function ($query) use ($search) {
-                                        $query->where('name', 'like', "%{$search}%")
-                                            ->orWhereHas('brand', function ($query) use ($search) {
-                                                $query->where('name', 'like', "%{$search}%");
-                                            });
-                                    })->where(function ($query) {
-                                        $query->where('catalog', 1)
-                                            ->orWhere(function ($query) {
-                                                $query->where('catalog', 0)
-                                                        ->where('approved', 1);
-                                            });
-                                    })->get();
+                // $products = Product::where(function ($query) use ($search) {
+                //                         $query->where('name', 'like', "%{$search}%")
+                //                             ->orWhereHas('brand', function ($query) use ($search) {
+                //                                 $query->where('name', 'like', "%{$search}%");
+                //                             });
+                //                     })->where(function ($query) {
+                //                         $query->where('catalog', 1)
+                //                             ->orWhere(function ($query) {
+                //                                 $query->where('catalog', 0)
+                //                                         ->where('approved', 1);
+                //                             });
+                //                     })->get();
 
                 $catalogs = ProductCatalog::where(function ($query) use ($search) {
                     $query->where('name', 'like', "%{$search}%")
@@ -681,5 +688,21 @@ class CatalogController extends Controller
         return response()->json([
             'data' => $newProduct
         ]);
+    }
+
+    public function delete_from_catalog(Request $request){
+        $catalog = ProductCatalog::find($request->id);
+        if($catalog != null){
+            ProductCatalog::where('parent_id', $request->id)->delete();
+            $catalog->delete();
+
+            return response()->json([
+                'status' => 'success'
+            ]);
+        }else{
+            return response()->json([
+                'status' => 'failed'
+            ]);
+        }
     }
 }
