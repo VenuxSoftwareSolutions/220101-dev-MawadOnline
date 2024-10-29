@@ -7,6 +7,7 @@ use App\Models\AttributeValue;
 use App\Models\BusinessInformation;
 use App\Models\Category;
 use App\Models\Color;
+use App\Models\Country;
 use App\Models\PricingConfiguration;
 use App\Models\Product;
 use App\Models\ProductAttributeValues;
@@ -59,6 +60,11 @@ class ProcessProductsJob implements ShouldQueue
         if ($product->is_parent == 1) {
             $product->categories()->attach($product->category_id);
         }
+
+        // if($product){
+        //     $productFileUpload = $this->uploadProductFiles($product->id,$this->productGroup['parent']);
+        //     dd($productFileUpload);
+        // }
         
         if(count($this->productGroup['children']) > 0) {
             foreach($this->productGroup['children'] as $child){
@@ -75,6 +81,46 @@ class ProcessProductsJob implements ShouldQueue
         }
 
     }
+
+
+    public function uploadProductFiles($productId,$productData)
+    {
+        $filteredData = $this->getValuesBetweenRefundableAndVideoProvider($productData);
+
+
+        dd($filteredData);
+    }
+
+    function getValuesBetweenRefundableAndVideoProvider(array $productData) {
+        // Initialize the result array
+        $result = [];
+        
+        // Set flag to determine when to start and stop collecting data
+        $startCollecting = false;
+        
+        // Loop through the array
+        foreach ($productData as $header => $value) {
+            // Start collecting after "Refundable *"
+            if ($header === "Refundable *") {
+                $startCollecting = true;
+                continue; // Skip "Refundable *"
+            }
+    
+            // Stop collecting after reaching "Video Provider"
+            if ($header === "Video Provider") {
+                break;
+            }
+    
+            // Collect headers and values if flag is set
+            if ($startCollecting) {
+                $result[$header] = $value;
+            }
+        }
+        
+        return $result;
+    }
+    
+
 
     public function store(array $data,$parentProductID = null,$userId)
     {
@@ -125,7 +171,11 @@ class ProcessProductsJob implements ShouldQueue
             $collection['activate_third_party'] = 1;
         }
 
-        if (!isset($collection['country_code'])) {
+        if (isset($collection['country_code'])) {
+            
+            $country = Country::find($collection['country_code']);
+            $collection['country_code'] = strtolower($country->code);
+        }else{
             $collection['country_code'] = '';
         }
 
@@ -654,7 +704,7 @@ class ProcessProductsJob implements ShouldQueue
                                     $attribute_product->id_products = $product->id;
                                     $attribute_product->id_attribute = $attr;
                                     $attribute_product->is_general = 1;
-                                    $color = Color::where('code', $value_color)->first();
+                                    $color = Color::where('id', $value_color)->first();
                                     $attribute_product->id_colors = $color->id;
                                     $attribute_product->value = $color->code;
                                     $attribute_product->save();
@@ -1234,10 +1284,12 @@ class ProcessProductsJob implements ShouldQueue
             return [
                 'id' => $attribute->id,
                 'name' => $attribute->getTranslation('name'),
-                'key' => 'attribute_generale-' . $attribute->id
+                'key' => 'attribute_generale-' . $attribute->id,
+                'type_value' => $attribute->type_value
             ];
         });
 
+        
         // Return the formatted attributes as a JSON response
         return [
             'attributes' => $formattedAttributes
@@ -1278,8 +1330,8 @@ class ProcessProductsJob implements ShouldQueue
             'short_description' => $data['Short Description *'],
             'stock_visibility_state' => $data['Show Stock Quantity *'],
             'refundable' => $data['Refundable *'],
-            'video_provider' => $data['Video Provider'],
-            'video_link' => $data['Video Link'],
+            'video_provider' => $data['Video Provider'] ?? null,
+            'video_link' => $data['Video Link'] ?? null,
 
             //Pricinng configuration
 
@@ -1292,8 +1344,8 @@ class ProcessProductsJob implements ShouldQueue
             'discount_percentage' => $this->extractPriceRange($data, 'Discount Percentage', 'Discount Percentage 2', 'Discount Percentage 3'),
 
             //Sample Configuration
-            'sample_description' => $data['Sample Description'],
-            'sample_price' => $data['Sample Price'],
+            'sample_description' => $data['Sample Description'] ?? null,
+            'sample_price' => $data['Sample Price'] ?? null,
 
             //Product Package Configuration
             'activate_third_party' => 1,
@@ -1346,13 +1398,13 @@ class ProcessProductsJob implements ShouldQueue
             'unit_attribute_generale-39' => "13",
             'unit_attribute_generale-49' => "17",
 
-            'description' => $data['Long Description'],
+            'description' => $data['Long Description'] ?? null,
             'document_names' => [],
 
 
             //SEO Meta Tags
-            'meta_title' => $data['Meta Title'],
-            'meta_description' => $data['Description'],
+            'meta_title' => $data['Meta Title'] ?? null,
+            'meta_description' => $data['Description'] ?? null,
 
 
 
@@ -1375,6 +1427,12 @@ class ProcessProductsJob implements ShouldQueue
 
         // Loop through the arrays
         for ($i = 0; $i < $count; $i++) {
+            // Check if either start date or end date is null
+            if ($startDates[$i] === null || $endDates[$i] === null) {
+                // Return null if any of the dates are null
+                return ['date_range_pricing' => [null]];
+            }
+
             // Convert start date
             $startDate = clone $referenceDate;
             $startDate->modify("+{$startDates[$i]} days");
@@ -1393,6 +1451,7 @@ class ProcessProductsJob implements ShouldQueue
             'date_range_pricing' => $dateRangePricing,
         ];
     }
+
 
 
     public function extractDateRange($data, $startKey, $endKey)
@@ -1422,31 +1481,31 @@ class ProcessProductsJob implements ShouldQueue
         return null;
     }
 
-
     private function extractKeyValuePairsForAttributes(array $data, array $attributes)
     {
         $matchingKeyValuePairs = [];
-
+    
         // Loop through the attributes to find the matching key-value pairs in $data
         foreach ($attributes['attributes'] as $attribute) {
-            // Extract the attribute ID and name from the attribute
+            // Extract the attribute ID and name from the attribute array
             $attributeId = $attribute['id'];
             $attributeName = $attribute['name'];
-
-
-            // Check if this attribute name exists in the $data array
+    
+            // Check if this attribute name exists in the $data array and the type_value is 'list'
             if (isset($data[$attributeName])) {
-                if ($attributeName == 'Color' || $attributeName == 'Product Shape 2') {
-                    continue;
+                if ($attribute['type_value'] == 'list' || $attribute['type_value'] == 'color') {
+                    // Use your idExtracting method for 'list' type values
+                    $matchingKeyValuePairs['attribute_generale-' . $attributeId] = [$this->idExtracting($data,$attributeName)];
                 } else {
                     // Use 'attribute_generale-{id}' as the key and the matching value from $data
-                    $matchingKeyValuePairs['attribute_generale-' . $attributeId] = $data[$attributeName];
+                    $matchingKeyValuePairs['attribute_generale-' . $attributeId] = strtolower($data[$attributeName]);
                 }
             }
         }
-
+    
         return $matchingKeyValuePairs;
     }
+    
 
 
     private function extractKeyValuePairsBetweenSkuAndParentSku(array $data)
