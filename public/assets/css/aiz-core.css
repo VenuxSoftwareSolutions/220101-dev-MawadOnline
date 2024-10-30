@@ -13245,3 +13245,12 @@ border:none !important;
     max-height: 150px !important;
     max-width: 150px !important;
 }
+.shop-menu-arrow {
+    display: none;
+}
+
+@media (min-width: 1280px) {
+    .shop-menu-arrow {
+        display: block;
+    }
+}
