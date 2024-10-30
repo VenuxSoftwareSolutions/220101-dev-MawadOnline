@@ -1493,9 +1493,12 @@ class ProcessProductsJob implements ShouldQueue
     
             // Check if this attribute name exists in the $data array and the type_value is 'list'
             if (isset($data[$attributeName])) {
-                if ($attribute['type_value'] == 'list' || $attribute['type_value'] == 'color') {
+                if ($attribute['type_value'] == 'color') {
                     // Use your idExtracting method for 'list' type values
                     $matchingKeyValuePairs['attribute_generale-' . $attributeId] = [$this->idExtracting($data,$attributeName)];
+                }else if($attribute['type_value'] == 'list'){
+                    $matchingKeyValuePairs['attribute_generale-' . $attributeId] = $this->idExtracting($data,$attributeName);
+
                 } else {
                     // Use 'attribute_generale-{id}' as the key and the matching value from $data
                     $matchingKeyValuePairs['attribute_generale-' . $attributeId] = strtolower($data[$attributeName]);
