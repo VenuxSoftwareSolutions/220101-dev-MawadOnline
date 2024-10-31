@@ -12,6 +12,7 @@ use App\Models\PricingConfiguration;
 use App\Models\Product;
 use App\Models\ProductAttributeValues;
 use App\Models\Shipping;
+use App\Models\StockSummary;
 use App\Models\User;
 use App\Services\ProductFileService;
 use App\Services\ProductService;
@@ -66,6 +67,17 @@ class ProcessProductsJob implements ShouldQueue
         if ($product->is_parent == 1) {
             $product->categories()->attach($product->category_id);
         }
+
+        if(isset($parentProduct['inventory_stock']))
+        {
+            $stock = new StockSummary();
+            $stock->variant_id = $product->id;
+            $stock->warehouse_id = $parentProduct['inventory_stock']['warehouse'];
+            $stock->seller_id = $product->user_id;
+            $stock->current_total_quantity = $parentProduct['inventory_stock']['quantity'];
+            $stock->save();
+        }
+        
 
         // if($product){
         //     $productFileUpload = $this->uploadProductFiles($product->id,$this->productGroup['parent']);
@@ -1424,6 +1436,11 @@ class ProcessProductsJob implements ShouldQueue
             'meta_description' => $data['Description'] ?? null,
 
 
+            'inventory_stock'=>[
+                'warehouse'=> isset($data['Warehouse']) ? $this->idExtracting($data,'Warehouse') : null,
+                'quantity' => isset($data['Quantity']) ? $data['Quantity'] : null,
+                'comment' => isset($data['Comment']) ? $data['Comment'] : null,
+            ],
 
             'submit_button' => "draft",
         ], $productAttributes,$convertedDate));
