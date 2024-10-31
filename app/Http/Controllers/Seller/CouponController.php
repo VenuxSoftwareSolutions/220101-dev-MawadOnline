@@ -128,7 +128,7 @@ class CouponController extends Controller
             return view('partials.coupons.product_base_coupon_edit',compact('coupon', 'products'));
         }
         elseif($request->coupon_type == "cart_base"){
-            $coupon = Coupon::findOrFail($request->id);
+            $coupon = Coupon::findOrFail(id: $request->id);
             return view('partials.coupons.cart_base_coupon_edit',compact('coupon'));
         }
     }
