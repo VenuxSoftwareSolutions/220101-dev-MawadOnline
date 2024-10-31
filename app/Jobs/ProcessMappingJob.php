@@ -9,10 +9,16 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Bus\Batchable;
+use Log;
+use Throwable;
 
 class ProcessMappingJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels,Batchable;
+
+    public $failOnTimeout = false;
+
+    public $timeout = 120000;
 
     protected $allData;
 
@@ -29,9 +35,6 @@ class ProcessMappingJob implements ShouldQueue
         $this->fileModelId = $fileModelId;
     }
 
-    /**
-     * Execute the job.
-     */
     public function handle()
     {
         // Map headers to rows
@@ -50,7 +53,7 @@ class ProcessMappingJob implements ShouldQueue
                 // Otherwise, store it as a new parent product
                 $groupedProducts[$sku] = [
                     'parent' => $row,
-                    'children' => []
+                    'children' => [],
                 ];
             }
         }
@@ -59,13 +62,11 @@ class ProcessMappingJob implements ShouldQueue
         Cache::put("mapped_parent_groups_{$this->fileModelId}", $groupedProducts);
     }
 
-
-
     private function mapHeadersToRowsFromData($data)
     {
         // Extract headers from row 2 (index 1 in zero-based index)
         $headers = array_filter($data[1], function ($header) {
-            return !is_null($header) && $header !== ''; // Keep only non-null and non-empty headers
+            return ! is_null($header) && $header !== ''; // Keep only non-null and non-empty headers
         });
 
         // Modify headers to replace names
@@ -74,7 +75,7 @@ class ProcessMappingJob implements ShouldQueue
         // Initialize an array to store the mapped data
         $mappedData = [];
 
-        // Iterate through each row starting from data[2]
+        // Iterate through each row starting from data[3]
         for ($rowIndex = 3; $rowIndex < count($data); $rowIndex++) {
             $row = $data[$rowIndex];
 
@@ -87,13 +88,13 @@ class ProcessMappingJob implements ShouldQueue
                     $value = $row[$columnIndex] ?? null; // Get the value or null if not present
 
                     // Only include the value if it's not null
-                    if (!is_null($value)) {
+                    if (! is_null($value)) {
                         $rowData[$header] = $value;
                     }
                 }
 
                 // Only add the rowData to the final array if it contains any data
-                if (!empty($rowData)) {
+                if (! empty($rowData)) {
                     $mappedData[] = $rowData;
                 }
             }
@@ -101,8 +102,6 @@ class ProcessMappingJob implements ShouldQueue
 
         return $mappedData;
     }
-
-
 
     /**
      * Replace duplicate headers with numbered suffixes.
@@ -115,7 +114,7 @@ class ProcessMappingJob implements ShouldQueue
         // Iterate through the headers to modify them
         foreach ($headers as $index => $header) {
             // Increment the count for the current header
-            if (!isset($headerCount[$header])) {
+            if (! isset($headerCount[$header])) {
                 $headerCount[$header] = 1; // Start counting from 1
             } else {
                 $headerCount[$header]++; // Increment the count
@@ -123,7 +122,7 @@ class ProcessMappingJob implements ShouldQueue
 
             // If it's not the first occurrence, append the count to the header
             if ($headerCount[$header] > 1) {
-                $headers[$index] = $header . ' ' . $headerCount[$header]; // Add the count to the header
+                $headers[$index] = $header.' '.$headerCount[$header]; // Add the count to the header
             }
         }
 
@@ -136,10 +135,16 @@ class ProcessMappingJob implements ShouldQueue
     private function rowHasData($row)
     {
         foreach ($row as $cell) {
-            if (!empty($cell)) { // Check if the cell is not empty
+            if (! empty($cell)) { // Check if the cell is not empty
                 return true;
             }
         }
+
         return false; // Return false if all cells are empty
+    }
+
+    public function failed(Throwable $exception)
+    {
+        Log::error('Error while handling process mapping job, with message: '.$exception->getMessage());
     }
 }
