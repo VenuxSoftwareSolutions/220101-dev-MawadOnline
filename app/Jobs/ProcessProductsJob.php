@@ -13,6 +13,7 @@ use App\Models\Product;
 use App\Models\ProductAttributeValues;
 use App\Models\Shipping;
 use App\Models\User;
+use App\Services\ProductFileService;
 use App\Services\ProductService;
 use Carbon\Carbon;
 use DateTime;
@@ -33,6 +34,7 @@ class ProcessProductsJob implements ShouldQueue
 
     protected $productGroup;
     protected $userId;
+
 
     /**
      * Create a new job instance.
@@ -57,6 +59,10 @@ class ProcessProductsJob implements ShouldQueue
         $parentProduct['is_parent'] = 1;
         $product =  $this->store($parentProduct,null,$this->userId);
 
+        if($product)
+        {
+            $productFileUpload = $this->uploadProductFiles($product->id,$this->productGroup['parent']);
+        }
         if ($product->is_parent == 1) {
             $product->categories()->attach($product->category_id);
         }
@@ -75,6 +81,10 @@ class ProcessProductsJob implements ShouldQueue
 
                 $variant =  $this->store($childProduct,$product->id,$this->userId);
 
+                if($variant)
+                {
+                    $productFileUpload = $this->uploadProductFiles($product->id,$this->productGroup['children']);
+                }
                 $variant->categories()->attach($product->category_id);
 
             }
@@ -85,10 +95,17 @@ class ProcessProductsJob implements ShouldQueue
 
     public function uploadProductFiles($productId,$productData)
     {
-        $filteredData = $this->getValuesBetweenRefundableAndVideoProvider($productData);
 
+        $productFileService = new ProductFileService();
 
-        dd($filteredData);
+        $productFileService->uploadProductFiles($productId, $productData);
+
+        if($productFileService){
+            return true;
+        }else{
+            false;
+        }
+
     }
 
     function getValuesBetweenRefundableAndVideoProvider(array $productData) {
