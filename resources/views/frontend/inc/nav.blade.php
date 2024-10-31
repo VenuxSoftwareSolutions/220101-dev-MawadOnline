@@ -98,7 +98,7 @@
                             <!-- Become a Seller -->
                             <li class="list-inline-item mr-0 pl-0 py-2">
                                 <a href="{{ route('shops.packages') }}"
-                                    class="text-secondary fs-12 pr-3 d-inline-block border-width-2 border-right">{{ translate('Become a Seller !') }}</a>
+                                    class="text-secondary fs-12 pr-3 d-inline-block border-width-2 border-right">{{ translate('Become a Seller') }}</a>
                             </li>
                             <!-- Seller Login -->
                             <li class="list-inline-item mr-0 pl-0 py-2">
@@ -234,7 +234,7 @@
                         <div class="nav-cart-box dropdown h-100" {{-- id="cart_items" --}} style="width: max-content;">
                             <a href="{{ route('wishlists.index') }}" class="d-flex align-items-center text-dark" data-toggle="tooltip" data-title="{{ translate('Wishlist') }}" data-placement="top">
                                 <span class="position-relative d-inline-block">
-                                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M27.3333 19.9866L20.6533 26.6799" stroke="#F3F4F5" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
                                         <path d="M4.66666 19.9866H27.3333" stroke="#F3F4F5" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
                                         <path d="M4.66666 12.0134L11.3467 5.32007" stroke="#F3F4F5" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
