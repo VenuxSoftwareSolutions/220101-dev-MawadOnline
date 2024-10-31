@@ -110,6 +110,26 @@ class Category extends Model
     {
         return $this->belongsToMany(Attribute::class, 'categories_has_attributes', 'category_id', 'attribute_id');
     }
+    public function discounts()
+    {
+        return $this->hasMany(Discount::class);
+    }
+
+    public function coupons()
+    {
+        return $this->hasMany(Coupon::class);
+    }
+
+    public function hasActiveDiscounts()
+    {
+        return $this->discounts()->active()->withinDateRange()->exists();
+    }
+
+    public function hasActiveCoupons()
+    {
+        return $this->coupons()->active()->withinDateRange()->exists();
+    }
+
 
     
 }
