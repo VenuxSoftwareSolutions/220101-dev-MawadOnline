@@ -81,13 +81,13 @@ class ValidateBulkUploadFileJob implements ShouldQueue
 
             $fileModel->status = 'failed';
             $fileModel->save();
-        }
-
-           // No errors, collect all data (including optional fields)
-        
-           Dispatch(new ProcessMappingJob($data,$fileModel->user_id));
+        }else{
+            // No errors, collect all data (including optional fields)
+                
+            Dispatch(new ProcessMappingJob($data,$fileModel->user_id));
             $fileModel->status = 'processing';
             $fileModel->save();
+        }
     }
 
 
