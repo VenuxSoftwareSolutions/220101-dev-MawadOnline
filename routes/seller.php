@@ -8,6 +8,10 @@ use App\Http\Controllers\Seller\StockController;
 use App\Http\Controllers\Seller\SellerRoleController;
 use App\Http\Controllers\Seller\SellerStaffController;
 use App\Http\Controllers\Seller\CatalogController;
+use App\Http\Controllers\Seller\DiscountController;
+use App\Http\Controllers\Seller\CouponController;
+
+
 
 //Upload
 Route::group(['prefix' => 'vendor', 'middleware' => ['seller', 'verified', 'user', 'prevent-back-history'], 'as' => 'seller.'], function () {
@@ -64,10 +68,6 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
 
         
     });
-         // categories
-
-
-
     // Stocks
     Route::controller(StockController::class)->group(function () {
         Route::get('/stocks', [StockController::class, 'index'])->name('stocks.index');
@@ -108,13 +108,22 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
         Route::get('/digitalproducts/download/{id}', 'download')->name('digitalproducts.download');
     });
 
-    //Coupon
+   /* //Coupon(old implementation)
     Route::resource('coupon', CouponController::class);
     Route::controller(CouponController::class)->group(function () {
         Route::post('/coupon/get_form', 'get_coupon_form')->name('coupon.get_coupon_form');
         Route::post('/coupon/get_form_edit', 'get_coupon_form_edit')->name('coupon.get_coupon_form_edit');
         Route::get('/coupon/destroy/{id}', 'destroy')->name('coupon.destroy');
-    });
+    });*/
+
+    //discounts
+    Route::resource('discounts', DiscountController::class)->except(['show']);
+    Route::post('/discounts/bulk-delete', [DiscountController::class, 'bulkDelete'])->name('discounts.bulk-delete');
+    Route::post('/discounts/toggle-status', [DiscountController::class, 'toggleStatus'])->name('discounts.toggle-status');
+    //COUPONS 
+    Route::resource('coupons', CouponController::class)->except(['show']);
+    Route::post('/coupons/bulk-delete', [CouponController::class, 'bulkDelete'])->name('coupons.bulk-delete');
+    Route::post('/coupons/toggle-status', [CouponController::class, 'toggleStatus'])->name('coupons.toggle-status');
 
     //Order
     Route::resource('orders', OrderController::class);

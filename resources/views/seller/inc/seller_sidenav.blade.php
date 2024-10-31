@@ -100,6 +100,33 @@
                         </ul>
                     </li>
                 @endcanany
+
+
+                {{-- Discounts and Coupons Management --}}
+                    <li class="aiz-side-nav-item">
+                        <a href="#" class="aiz-side-nav-link">
+                            <i class="las la-shopping-cart aiz-side-nav-icon"></i>
+                            <span class="aiz-side-nav-text">{{ __('sidenav.Promotions') }}</span>
+                            <span class="aiz-side-nav-arrow"></span>
+                        </a>
+                        <!--Submenu-->
+                        <ul class="aiz-side-nav-list level-2">
+                            <li id="discounts" class="aiz-side-nav-item">
+                                <a href="{{ route('seller.reviews') }}" class="aiz-side-nav-link {{ areActiveRoutes(['seller.reviews']) }}">
+                                    <span class="aiz-side-nav-text">{{ __('sidenav.Promotions_list') }}</span>
+                                </a>
+                            </li>
+                            {{-- <li id="coupons" class="aiz-side-nav-item">
+                                <a href="{{ route('coupons.index') }}"
+                                    class="aiz-side-nav-link {{ areActiveRoutes(['coupons.index', 'coupons.create', 'coupons.edit']) }}">
+                                    <span class="aiz-side-nav-text">{{ __('sidenav.Coupons') }}</span>
+                                </a>
+                            </li> --}}
+                        </ul>
+                    </li>
+                {{-- Discounts and Coupons Management --}}
+
+
                 {{-- <li id="catalog" class="aiz-side-nav-item">
                     <a href="{{ route('catalog.search_page') }}"
                         class="aiz-side-nav-link {{ areActiveRoutes(['catalog.search_page']) }}">

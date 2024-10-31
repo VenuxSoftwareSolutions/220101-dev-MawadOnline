@@ -14,6 +14,10 @@ return [
     'followed_vendors' => 'البائعين المتابعين',
 'orders_overview_management'=> 'البائعين المتابعين',
     'bulk_upload' => 'تحميل دفعة واحدة',
+    'Promotions' => 'العروض الترويجية',
+    'Promotions_list' => 'قائمة العروض الترويجية',
+
+
 
 
 
