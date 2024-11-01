@@ -50,23 +50,20 @@ class ProductFileService
 
         $filteredFileData = $this->getValuesBetweenVideoLinkAndSKU($productData);
 
-        if(count($filteredImageData) >0)
-        {
-            $this->handleProductFiles($productId, $filteredImageData,true,true,false);
-
+        if (count($filteredImageData) > 0) {
+            $this->handleProductFiles($productId, $filteredImageData, true, true, false);
         }
 
-        if(count($filteredFileData) >0)
-        {
-            $this->handleProductFiles($productId, $filteredFileData,false,false,true);
+        if (count($filteredFileData) > 0) {
+            $this->handleProductFiles($productId, $filteredFileData, false, false, true);
         }
-        
+
         return true;
     }
 
 
 
-    public function handleProductFiles($productId, $data,$image,$thumbnail,$document)
+    public function handleProductFiles($productId, $data, $image, $thumbnail, $document)
     {
         $iteration = 0;
         foreach ($data as $header => $value) {
@@ -85,7 +82,7 @@ class ProductFileService
                     // Debugging: Check the structure of the $files variable
 
                     // Process the retrieved files and folders
-                    $this->processFolder($productId, $files,null,$image,$thumbnail,$document);
+                    $this->processFolder($productId, $files, null, $image, $thumbnail, $document);
                 }
             } else {
                 if (filter_var($value, FILTER_VALIDATE_URL)) {
@@ -98,7 +95,7 @@ class ProductFileService
                         $downloadLink = "https://drive.google.com/uc?export=download&id={$fileId}";
 
                         // Process the file with the download link
-                        $this->processFile($productId, 'test.jpg', $downloadLink, null, $image,false,$document); // Process file
+                        $this->processFile($productId, 'test.jpg', $downloadLink, null, $image, false, $document); // Process file
                     }
                 }
             }
@@ -115,22 +112,22 @@ class ProductFileService
     }
 
 
-    private function processFolder($productId, $files, $folderName = null,$image,$thumbnail,$document)
+    private function processFolder($productId, $files, $folderName = null, $image, $thumbnail, $document)
     {
         foreach ($files as $key => $fileData) {
             // If fileData is an array, it's a folder
             if (is_array($fileData)) {
                 // Recursively process sub-folders
-                $this->processFolder($productId, $fileData, $key,$image,$thumbnail,$document); // Pass the folder name as $key
+                $this->processFolder($productId, $fileData, $key, $image, $thumbnail, $document); // Pass the folder name as $key
             } else {
                 // Debug individual files
                 // Process file (no folder)
-                $this->processFile($productId, $key, $fileData, $folderName,true,$image,$thumbnail,$document); // Process file with folder context
+                $this->processFile($productId, $key, $fileData, $folderName, true, $image, $thumbnail, $document); // Process file with folder context
             }
         }
     }
 
-    public function processFile($productId, $fileName = null, $downloadLink, $folderName = null, $image = null,$thumbnail = null,$document = null)
+    public function processFile($productId, $fileName = null, $downloadLink, $folderName = null, $image = null, $thumbnail = null, $document = null)
     {
         // Download the file content
         $response = Http::get($downloadLink);
@@ -183,8 +180,7 @@ class ProductFileService
         }
 
 
-        if($image)
-        {
+        if ($image) {
             // Save to database (Main Image)
             $productthumbnail = new UploadProducts();
             $productthumbnail->id_product = $productId;
@@ -192,12 +188,10 @@ class ProductFileService
             $productthumbnail->extension = 'jpg';
             $productthumbnail->type = 'images';
             $productthumbnail->save();
-
         }
 
 
-        if($document)
-        {
+        if ($document) {
             $productDocument = new UploadProducts();
             $productDocument->id_product = $productId;
             $productDocument->path = $filePath;
@@ -210,13 +204,13 @@ class ProductFileService
 
 
 
-        
+
         // Output file storage path for verification
         // echo "Stored file: " . Storage::url($filePath);
     }
 
 
-    
+
 
     function getValuesBetweenVideoLinkAndSKU(array $productData)
     {

@@ -34,7 +34,7 @@ class ProcessProductsJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $productGroup;
-    protected $userId;
+    protected $fileModel;
 
 
     /**
@@ -42,10 +42,10 @@ class ProcessProductsJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($productGroup,$userId)
+    public function __construct($productGroup,$fileModel)
     {
         $this->productGroup = $productGroup;
-        $this->userId = $userId;
+        $this->fileModel = $fileModel;
     }
 
     /**
@@ -55,69 +55,70 @@ class ProcessProductsJob implements ShouldQueue
      */
     public function handle()
     {
-        $parentProduct = $this->mapToDatabaseAttributes($this->productGroup['parent']);
-
-        $parentProduct['is_parent'] = 1;
-        $product =  $this->store($parentProduct,null,$this->userId);
-
-        if($product)
-        {
-            $productFileUpload = $this->uploadProductFiles($product->id,$this->productGroup['parent']);
-        }
-        if ($product->is_parent == 1) {
-            $product->categories()->attach($product->category_id);
-        }
-
-        if(isset($parentProduct['inventory_stock']))
-        {
-            $stock = new StockSummary();
-            $stock->variant_id = $product->id;
-            $stock->warehouse_id = $parentProduct['inventory_stock']['warehouse'];
-            $stock->seller_id = $product->user_id;
-            $stock->current_total_quantity = $parentProduct['inventory_stock']['quantity'];
-            $stock->save();
-        }
-        
-
-        // if($product){
-        //     $productFileUpload = $this->uploadProductFiles($product->id,$this->productGroup['parent']);
-        //     dd($productFileUpload);
-        // }
-        
-        if(count($this->productGroup['children']) > 0) {
-            foreach($this->productGroup['children'] as $child){
-                $childProduct = $this->mapToDatabaseAttributes($child);
-
-
-                $childProduct['is_parent'] = 0;
-
-                $variant =  $this->store($childProduct,$product->id,$this->userId);
-
-                if($variant)
-                {
-                    $productFileUpload = $this->uploadProductFiles($product->id,$this->productGroup['children']);
+        try {
+            $parentProduct = $this->mapToDatabaseAttributes($this->productGroup['parent']);
+            $parentProduct['is_parent'] = 1;
+            $product = $this->store($parentProduct, null, $this->fileModel->user_id);
+            
+            if ($product) {
+                $this->uploadProductFiles($product->id, $this->productGroup['parent']);
+                if ($product->is_parent === 1) {
+                    $product->categories()->attach($product->category_id);
                 }
-                $variant->categories()->attach($product->category_id);
+                $this->manageInventoryStock($product, $parentProduct);
+            } 
 
-            }
+            $this->processChildrenProducts($product);
+
+            $this->fileModel->status = 'success';
+            $this->fileModel->save();
+        } catch (Exception $e) {
+            $this->fileModel->status = 'failed';
+            $this->fileModel->save();
         }
-
     }
 
 
-    public function uploadProductFiles($productId,$productData)
+    private function manageInventoryStock($product, $parentProduct)
     {
-
-        $productFileService = new ProductFileService();
-
-        $productFileService->uploadProductFiles($productId, $productData);
-
-        if($productFileService){
-            return true;
-        }else{
-            false;
+        if (isset($parentProduct['inventory_stock'])) {
+            StockSummary::create([
+                'variant_id' => $product->id,
+                'warehouse_id' => $parentProduct['inventory_stock']['warehouse'],
+                'seller_id' => $product->user_id,
+                'current_total_quantity' => $parentProduct['inventory_stock']['quantity'],
+            ]);
         }
+    }
 
+
+    private function processChildrenProducts($product)
+    {
+        if (count($this->productGroup['children']) > 0) {
+            foreach ($this->productGroup['children'] as $child) {
+                $childProduct = $this->mapToDatabaseAttributes($child);
+                $childProduct['is_parent'] = 0;
+                $variant = $this->store($childProduct, $product->id, $this->fileModel->user_id);
+
+                if ($variant) {
+                    $this->uploadProductFiles($product->id, $this->productGroup['children']);
+                }
+                $variant->categories()->attach($product->category_id);
+            }
+        }
+    }
+
+
+    public function uploadProductFiles($productId, $productData)
+    {
+        try {
+            $productFileService = new ProductFileService();
+            $productFileService->uploadProductFiles($productId, $productData);
+            return true;
+        } catch (Exception $e) {
+            // Handle upload error if needed
+            return false;
+        }
     }
 
     function getValuesBetweenRefundableAndVideoProvider(array $productData) {

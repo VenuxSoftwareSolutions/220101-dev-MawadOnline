@@ -13,17 +13,17 @@ class ProcessMappingJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $allData;
-    protected $userId;
+    protected $fileModel;
 
     /**
      * Create a new job instance.
      *
      * @param array $allData
      */
-    public function __construct(array $allData, int $userId)	
+    public function __construct(array $allData, $fileModel)	
     {
         $this->allData = $allData;
-        $this->userId = $userId;
+        $this->fileModel = $fileModel;
     }
 
     /**
@@ -59,9 +59,12 @@ class ProcessMappingJob implements ShouldQueue
         foreach ($productsChunks as $productsChunk) {
             foreach ($productsChunk as $product) {
                 // Dispatch a new job for each product
-                ProcessProductsJob::dispatch($product, $this->userId);
+                ProcessProductsJob::dispatch($product, $this->fileModel);
             }
         }
+
+
+        
     }
 
 
