@@ -2,14 +2,9 @@
 
 namespace App\Http\Controllers\Seller;
 
-use Str;
 use Auth;
 use Artisan;
-use Combinations;
-use Carbon\Carbon;
-use App\Models\Cart;
 use App\Models\Tour;
-use App\Models\User;
 use App\Models\Brand;
 use App\Models\Color;
 use App\Models\Unity;
@@ -17,18 +12,15 @@ use App\Models\Product;
 use App\Models\Shipper;
 use App\Models\Category;
 use App\Models\Shipping;
-use App\Models\Wishlist;
 use App\Models\Shop;
 use App\Models\Attribute;
 use App\Models\Warehouse;
-use App\Models\ProductTax;
 use App\Models\ShippersArea;
 use Illuminate\Http\Request;
 use App\Models\AttributeValue;
 use App\Models\UploadProducts;
 use App\Models\ProductCategory;
 use App\Services\ProductService;
-use App\Models\ProductTranslation;
 use Illuminate\Support\Facades\DB;
 use App\Models\BusinessInformation;
 use App\Services\ProductTaxService;
@@ -36,19 +28,17 @@ use App\Models\PricingConfiguration;
 use App\Models\ColorGroupColor;
 use App\Models\ColorGroup;
 use Illuminate\Support\Facades\File;
-use App\Http\Requests\ProductRequest;
-
 use App\Services\ProductStockService;
 use App\Models\ProductAttributeValues;
 use App\Services\ProductPricingService;
 use DateTime;
 use App\Services\ProductUploadsService;
 use App\Services\ProductFlashDealService;
-use Illuminate\Support\Facades\Notification;
-use App\Notifications\ShopProductNotification;
 use AizPackages\CombinationGenerate\Services\CombinationService;
 use App\Models\Review;
 use App\Models\StockSummary;
+use App\Rules\NoPricingOverlap;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
@@ -185,11 +175,27 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-       // dd($request->all());
+        $validator = Validator::make($request->only(["from", "to"]), [
+            'from' => [
+                'required', 'array',
+                new NoPricingOverlap($request->input('from'), $request->input('to'))
+            ],
+            'to' => ['required', 'array'],
+            'from.*' => 'numeric',
+            'to.*' => 'numeric',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
         $product = $this->productService->store($request->except([
             'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
         ]));
-       // dd($product);
+
         $request->merge(['product_id' => $product->id]);
 
         //Product categories
