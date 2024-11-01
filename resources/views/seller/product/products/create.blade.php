@@ -72,7 +72,7 @@
     <style>
         .multi-select-menuitem input {
             position: relative !important;
-            margin-left: 0 !important; 
+            margin-left: 0 !important;
         }
     </style>
 @endif
@@ -155,21 +155,6 @@
     .disabled-select{
         background-color: #f7f8fa !important;
     }
-    /* @media (min-width: 992px) {
-        .col-lg-9 {
-            -ms-flex: 0 0 55%;
-            flex: 0 0 55%;
-            max-width: 55% !important;
-        }
-        .col-md-9 {
-            max-width: 55% !important;
-        }
-        .input-group-append {
-            display: flex;
-            align-items: center;
-            padding-left: 0px !important;
-        }
-    } */
 
     .clonedDiv{
         margin-top: 60px;
@@ -204,7 +189,6 @@
     }
 
     @media screen and (max-width: 1799px) {
-        /* Add your CSS rules here */
         .icon-delete-image {
             position: absolute;
             color: red;
@@ -234,7 +218,6 @@
             </ul>
         </div>
     @endif
-    {{-- <button type="button" onclick="submitForm()">Preview Product</button> --}}
     <div class="button-container">
         <button type="button" class="preview-button" onclick="submitForm()">{{ __('product.PreviewProduct') }}</button>
     </div>
@@ -1948,7 +1931,7 @@
                             // Change the attribute name of the current input
                             if ($(child_element).attr("name") == undefined) {
                                 var id_attribute = $(child_element).data('id_attributes');
-                                
+
                                 if ($(child_element).data('type') == 'color') {
                                     var name = 'attribute_generale-'+ id_attribute + '[]'
                                     $(child_element).attr('name', name);
@@ -1956,7 +1939,7 @@
                                     var name = 'attribute_generale-'+ id_attribute
                                     $(child_element).attr('name', name);
                                 }
-                                
+
                             }
 
                         });
@@ -2071,7 +2054,7 @@
                 @else
                     var html_to_add = '<div style="float: right; margin-top: -35px"><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
                 @endif
-                
+
                 clonedDiv.find('h3').after(html_to_add);
                 //clonedDiv.find('.fa-circle-xmark').hide();
                 clonedDiv.find('.fa-circle-check').hide();
@@ -2163,7 +2146,7 @@
                     if(check == false){
                         $(element).attr('name', 'attributes-' + dataIdValue + '-' + numbers_variant);
                     }
-                    
+
                 });
 
                 clonedDiv.find('.attributes-units').each(function(index, element) {
@@ -2176,9 +2159,9 @@
                         if(index == key){
                             $(element).find('option[value="' + $(element_original).val() + '"]').prop('selected', true);
                         }
-                        
+
                     })
-                    
+
                 });
 
                 clonedDiv.find('.variant-sample-available').attr('name', 'variant-sample-available' + numbers_variant);
@@ -2309,13 +2292,13 @@
                         else if ($(this).is('select')) {
                             $(this).val(''); // Reset to the first option (index 0)
                         }
-                    }); 
+                    });
 
                     $('#variant_informations').find('.filter-option-inner-inner').each(function() {
                         $(this).text('Nothing selected')
                     });
                 }
-                
+
             }else{
                 var title = "{{ translate('Create variant') }}";
                 var message = '{{ translate("A minimum of one attribute must be selected in order to create a variant.")}}';
@@ -4309,7 +4292,7 @@
                             isEmpty = true;
                             return false; // Exit the loop early if an empty Tagify input is found
                         }
-                    }); 
+                    });
 
                     //Validation of shipping
                     var check_shipping = true;
@@ -4528,7 +4511,7 @@
                                         check_sample_price_variant = false;
                                     }
                                 }
-                                
+
                             });
                         });
                     }
@@ -4577,7 +4560,7 @@
                             var message = "{{ translate('You need to choose at least one attribute.')}}";
                             remarks.push(message);
                         }
-                        
+
                         if(check_price == false){
                             //console.log('ok1');
                             var message = "{{ translate('Please check your pricing configuration.')}}";
@@ -4638,38 +4621,38 @@
                         if(check_short_description == false){
                             //console.log('ok9');
                             var message = "{{ translate('The short description is required.')}}";
-                            remarks.push(message); 
+                            remarks.push(message);
                         }
 
                         if(check_long_description == false){
                             //console.log('ok10');
                             var message = "{{ translate('The description is required.')}}";
-                            remarks.push(message); 
+                            remarks.push(message);
                         }
 
                         if(check_attributes_empty == false){
                             var message = "{{ translate('All attributes must have values.')}}";
-                            remarks.push(message); 
+                            remarks.push(message);
                         }
 
                         if(check_units_empty == false){
                             var message = "{{ translate('All units must have values.')}}";
-                            remarks.push(message); 
+                            remarks.push(message);
                         }
 
                         if(isEmpty){
                             var message = "{{translate('tags input cannot be empty.')}}";
-                            remarks.push(message); 
+                            remarks.push(message);
                         }
 
                         if(check_attributes_generale_empty == false){
                             var message = "{{ translate('All attributes in section General Attributes must have values.')}}";
-                            remarks.push(message); 
+                            remarks.push(message);
                         }
 
                         if(check_units_generale_empty == false){
                             var message = "{{ translate('All units in section General Attributes must have values.')}}";
-                            remarks.push(message); 
+                            remarks.push(message);
                         }
                     }else{
                         var message = '{{ translate("A minimum of one attribute must be selected in order to create your product.")}}';
