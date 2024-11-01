@@ -118,18 +118,21 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="toggle-switch text-center">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="statusToggle1" checked>
-                            </div>
+                        <td>
+                            <label class="aiz-switch aiz-switch-success mb-0">
+                                <input class="publsihed_product" type="checkbox" checked >
+                                <span class=""> </span>
+                            </label>
                         </td>
                         <td>Ceiling Panels</td>
                         <td>20%</td>
                         <td>100</td>
                         <td>03/10/2022</td>
                         <td>03/31/2022</td>
-                        <td class="text-center">
-                            <i class="bi bi-pencil action-icon"></i>
+                        <td >
+                            <a class="btn btn-sm" href="{{route('seller.discounts.index')}}" title="{{ translate('Edit') }}">
+                                <img src="{{asset('public/Edit.svg')}}">
+                            </a>                        
                         </td>
                     </tr>
                 </tbody>
