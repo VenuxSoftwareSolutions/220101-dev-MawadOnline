@@ -61,7 +61,7 @@ class ProcessProductsJob implements ShouldQueue
         $parentProduct = $this->mapToDatabaseAttributes($this->productGroup['parent']);
 
         $parentProduct['is_parent'] = 1;
-        $product =  $this->store($parentProduct, null, $this->fileModel->user_id);
+        $product =  $this->store($parentProduct, null, $this->fileModel->user_id,0,1);
 
         if ($product) {
             $productFileUpload = $this->uploadProductFiles($product->id, $this->productGroup['parent']);
@@ -85,7 +85,7 @@ class ProcessProductsJob implements ShouldQueue
 
                 $childProduct['is_parent'] = 0;
 
-                $variant =  $this->store($childProduct, $product->id, $this->fileModel->user_id);
+                $variant =  $this->store($childProduct, $product->id, $this->fileModel->user_id,1,0);
 
                 if ($variant) {
                     $productFileUpload = $this->uploadProductFiles($variant->id, $child);
@@ -168,7 +168,7 @@ class ProcessProductsJob implements ShouldQueue
 
 
 
-    public function store(array $data, $parentProductID = null, $userId)
+    public function store(array $data, $parentProductID = null, $userId,$is_variant = 0,$is_general = 0)
     {
         $collection = collect($data);
 
@@ -737,7 +737,9 @@ class ProcessProductsJob implements ShouldQueue
                             $attribute_product = new ProductAttributeValues();
                             $attribute_product->id_products = $product->id;
                             $attribute_product->id_attribute = $attr;
-                            $attribute_product->is_general = 1;
+                            $attribute_product->is_general = $is_general;
+                            $attribute_product->is_variant = $is_variant;
+
                             $value_attribute = AttributeValue::find($value);
                             $attribute_product->id_values = $value;
                             $attribute_product->value = $value_attribute->value;
@@ -748,7 +750,9 @@ class ProcessProductsJob implements ShouldQueue
                                     $attribute_product = new ProductAttributeValues();
                                     $attribute_product->id_products = $product->id;
                                     $attribute_product->id_attribute = $attr;
-                                    $attribute_product->is_general = 1;
+                                    $attribute_product->is_general = $is_general;
+                                    $attribute_product->is_variant = $is_variant;
+
                                     $color = Color::where('id', $value_color)->first();
                                     $attribute_product->id_colors = $color->id;
                                     $attribute_product->value = $color->code;
@@ -759,7 +763,9 @@ class ProcessProductsJob implements ShouldQueue
                             $attribute_product = new ProductAttributeValues();
                             $attribute_product->id_products = $product->id;
                             $attribute_product->id_attribute = $attr;
-                            $attribute_product->is_general = 1;
+                            $attribute_product->is_general = $is_general;
+                            $attribute_product->is_variant = $is_variant;
+
                             $attribute_product->id_units = $unit_general_attributes_data[$attr];
                             $attribute_product->value = $value;
                             $attribute_product->save();
@@ -767,7 +773,9 @@ class ProcessProductsJob implements ShouldQueue
                             $attribute_product = new ProductAttributeValues();
                             $attribute_product->id_products = $product->id;
                             $attribute_product->id_attribute = $attr;
-                            $attribute_product->is_general = 1;
+                            $attribute_product->is_general = $is_general;
+                            $attribute_product->is_variant = $is_variant;
+
                             $attribute_product->value = $value;
                             $attribute_product->save();
                         }
