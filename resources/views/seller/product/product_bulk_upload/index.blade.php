@@ -299,14 +299,14 @@ $(function() {
                             } else if (data === 'failed') {
                                 return '<span class="badge badge-danger" style="display:inline">Failed</span>';
                             }else{
-                                return data
+                                return'<span class="badge badge-success" style="display:inline">success</span>';
                             }
                         }
                     },
                 { "data": "extension" },
                 { "data": "size" }
             ],
-            "order": [[0, "asc"]], // Sort by first column in ascending order
+            "order": [[1, "desc"]], // Sort by first column in ascending order
             "dom": 'Bfrtip', // Add buttons to the layout
             "language": {
                 "search": "", // Remove the label text for search input

@@ -2582,7 +2582,7 @@
                     else {
                         if (response.price > 0) {
                             $('#variationId').val(response.variationId) ;
-                            $("#qty-interval").text(response.price+)
+                            $("#qty-interval").text(response.price)
                             $("#quantity").val(response.quantity)
                             $("#chosen_price").text(response.total)
                             $('#quantity').attr('min', response.minimum); // Minimum value
@@ -2622,12 +2622,13 @@
                                     console.log(min)
                                     console.log(max)
                                     console.log(value)
-                                    if(value <= min){
+                                    if(value <= min || response.outStock){
+
                                         $this.siblings('[data-type="minus"]').attr('disabled',true)
                                     }else if($this.siblings('[data-type="minus"]').attr('disabled')){
                                         $this.siblings('[data-type="minus"]').removeAttr('disabled')
                                     }
-                                    if(value >= max){
+                                    if(value >= max || response.outStock){
                                         $this.siblings('[data-type="plus"]').attr('disabled',true)
                                     }else if($this.siblings('[data-type="plus"]').attr('disabled')){
                                         $this.siblings('[data-type="plus"]').removeAttr('disabled')
@@ -2872,6 +2873,31 @@
         // });
     </script>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const quantityButton = document.getElementById("quantity-button");
+        const plusIcon = quantityButton.querySelector("i.las.la-plus");
 
+        // Get the outStock status from data attribute
+        const isOutOfStock = quantityButton.getAttribute("data-out-stock") === "1" || quantityButton.getAttribute("data-out-stock") === "true";
+
+        // Disable the button if out of stock
+        if (isOutOfStock) {
+            quantityButton.disabled = true;
+        }
+        // Add click event listener to the icon
+        plusIcon.addEventListener("click", function (event) {
+            // Check if the button is disabled
+            if (quantityButton.disabled) {
+                // Display warning message
+                AIZ.plugins.notify('warning', '{{ __("messages.out_of_stock") }}');
+                // Prevent default behavior (if needed)
+                event.preventDefault();
+            }
+        });
+
+
+    });
+</script>
 
 @endsection

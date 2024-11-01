@@ -8,11 +8,11 @@
                 <a href="{{ route('products.category', $category->slug) }}"
                     class="text-truncate text-dark px-4 fs-14 d-block hov-column-gap-1">
                     <img class="cat-image lazyload mr-2 opacity-60" src="{{ static_asset('assets/img/placeholder.jpg') }}"
-                        data-src="{{ isset($category->thumbnail_image) ? my_asset($category->thumbnail_image) : static_asset('assets/img/placeholder.jpg') }}" width="16" alt="{{ $category_name }}"
+                        data-src="{{ isset($category->thumbnail_image) ? my_asset('public/'.$category->thumbnail_image) : static_asset('assets/img/placeholder.jpg') }}" width="16" alt="{{ $category_name }}"
                         onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
                     <span class="cat-name has-transition">{{ $category_name }}</span>
                 </a>
-                
+
                 <div class="sub-cat-menu more c-scrollbar-light border p-4 shadow-none">
                     <div class="c-preloader text-center absolute-center">
                         <i class="las la-spinner la-spin la-3x opacity-70"></i>

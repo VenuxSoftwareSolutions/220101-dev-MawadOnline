@@ -1622,7 +1622,7 @@ class ProductController extends Controller
             'to' =>$data['to']  ?? [],
             'unit_price' =>$data['unit_price'] ?? [] ,
             'variations' =>$variations,
-            'variationId' => isset($data['product_id']) && $variationId ? $variationId : null,
+            'variationId' => isset($data['product_id']) && isset($variationId) ? $variationId : null,
             // 'variationId' => $variationId ?? null,
 
             'lastItem' => $lastItem ?? [],

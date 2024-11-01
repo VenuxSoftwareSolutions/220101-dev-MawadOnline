@@ -170,7 +170,7 @@ button {
     <section class="pt-4 mb-4">
         <div class="container">
             <div class="row">
-                <div class="mx-auto">
+                <div class="mx-auto col-11">
                     <h1 class="fw-700 fs-20 fs-md-24 text-dark text-center mb-3">
                         @if (!Auth::user() || (Auth::user() && Auth::user()->owner_id == null))
                             {{ translate('Register Your Shop') }}
@@ -197,11 +197,17 @@ button {
 
                                         </a>
                                     </li>
+                                        <svg width="18" height="18" class="shop-menu-arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002" stroke="#a09e9e" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
                                     <li class="nav-item">
                                         <a class="nav-link" id="code-verification-tab" data-toggle="tab" href="#code-verification">
                                             <span class="number-icon">2</span> {{ translate('Code Verification Email') }}
                                         </a>
                                     </li>
+                                    <svg width="18" height="18" class="shop-menu-arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002" stroke="#a09e9e" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
                                 @endif
                                 @if (!Auth::user() || (Auth::user() && (Auth::user()->owner_id == null || Auth::user()->owner_id == Auth::user()->id)) )
                                     <li class="nav-item">
@@ -209,16 +215,25 @@ button {
                                             <span class="number-icon">3</span> {{ translate('Business Information') }}
                                         </a>
                                     </li>
+                                    <svg width="18" height="18" class="shop-menu-arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002" stroke="#a09e9e" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
                                     <li class="nav-item">
                                         <a class="nav-link" id="contact-person-tab" data-toggle="tab" href="#contact-person">
                                             <span class="number-icon">4</span> {{ translate('Contact Person') }}
                                         </a>
                                     </li>
+                                    <svg width="18" height="18" class="shop-menu-arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002" stroke="#a09e9e" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
                                     <li class="nav-item">
                                         <a class="nav-link" id="warehouses-tab" data-toggle="tab" href="#warehouses">
                                             <span class="number-icon">5</span> {{ translate('Warehouses') }}
                                         </a>
                                     </li>
+                                    <svg width="18" height="18" class="shop-menu-arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002" stroke="#a09e9e" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
                                     <li class="nav-item">
                                         <a class="nav-link" id="payout-info-tab" data-toggle="tab" href="#payout-info">
                                             <span class="number-icon">6</span> {{ translate('Payout Information') }}

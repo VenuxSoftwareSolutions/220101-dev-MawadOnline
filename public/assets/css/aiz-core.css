@@ -11430,6 +11430,15 @@ ul.apps a:hover i{
     width: 100%;
     background-color: #3D3D3B;
   }
+  .custom-bg {
+    background-color: #3D3D3B; /* Default to black for larger screens */
+  }
+
+  @media (max-width: 992px) {
+    .custom-bg {
+      background-color: #ffffff; /* White for mobile screens (under 576px) */
+    }
+  }
 .search-input-box > input{
     border-radius: 10px;
     overflow:hidden;
@@ -12788,13 +12797,13 @@ border-radius: 8px;
     float: left;
 }
 .font-prompt{
-    font-family: 'Prompt-Light';
+    font-family: 'Prompt-Light', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 .font-prompt-sb{
-    font-family: 'Prompt-SemiBold';
+    font-family: 'Prompt-SemiBold', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 .font-prompt-md{
-    font-family: 'Prompt-Medium';
+    font-family: 'Prompt-Medium', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 .line-h-24{
     line-height:24px;
@@ -13013,7 +13022,7 @@ border:none !important;
     color: #ffffff;
     position: absolute;
     left: 35px;
-    bottom: 22px;
+    bottom: 17px;
     border-radius: 25px;
 }
 
@@ -13030,8 +13039,8 @@ border:none !important;
     background: #e8362c;
     color: #ffffff;
     position: absolute;
-    left: 24px;
-    bottom: 22px;
+    left: 20px;
+    bottom: 17px;
     border-radius: 25px;
 }
 
@@ -13228,4 +13237,20 @@ border:none !important;
 }
 .shortdesctxt{
     color: #7E808A;
+}
+.mt-search-icon{
+    margin-top: 9px;
+}
+.categ-img{
+    max-height: 150px !important;
+    max-width: 150px !important;
+}
+.shop-menu-arrow {
+    display: none;
+}
+
+@media (min-width: 1280px) {
+    .shop-menu-arrow {
+        display: block;
+    }
 }

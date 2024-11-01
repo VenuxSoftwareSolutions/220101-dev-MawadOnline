@@ -10,6 +10,7 @@
         "aiz-packages/combination-generate": "dev-main",
         "enshrined/svg-sanitize": "^0.15.4",
         "fideloper/proxy": "^4.4",
+        "google/apiclient": "^2.18",
         "guzzlehttp/guzzle": "^7.5",
         "instamojo/instamojo-php": "^0.4.0",
         "intervention/image": "^2",
