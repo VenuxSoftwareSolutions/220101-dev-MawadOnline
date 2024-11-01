@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Exports\ErrorsExport;
 use App\Mail\ValidationReportMail;
+use Cache;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -12,10 +13,14 @@ use Illuminate\Queue\SerializesModels;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 use Mail;
+use Illuminate\Bus\Batchable;
+
+
+
 
 class ValidateBulkUploadFileJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels,Batchable;
 
     protected $filePath;
 
@@ -82,11 +87,13 @@ class ValidateBulkUploadFileJob implements ShouldQueue
             $fileModel->status = 'failed';
             $fileModel->save();
         }else{
-            // No errors, collect all data (including optional fields)
-                
-            Dispatch(new ProcessMappingJob($data,$fileModel));
-            $fileModel->status = 'processing';
+            
+            Cache::put("validated_parent_groups_{$this->fileModelId}", $data);
+            $fileModel->status = 'validated';
             $fileModel->save();
+            //Dispatch(new ProcessMappingJob($data,$fileModel));
+           // $fileModel->status = 'processing';
+           // $fileModel->save();
         }
     }
 

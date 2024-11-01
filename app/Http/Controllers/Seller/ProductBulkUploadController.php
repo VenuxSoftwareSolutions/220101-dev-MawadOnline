@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Seller;
 
+use App\Events\UploadProgress;
 use App\Exports\ErrorsExport;
 use App\Exports\ProductBulkExport;
 use App\Imports\ProductsBulkImport;
 use App\Jobs\ImportBulkFileJob;
+use App\Jobs\ProcessMappingJob;
+use App\Jobs\ProcessProductsJob;
 use App\Jobs\ValidateBulkUploadFileJob;
 use App\Mail\ValidationReportMail;
 use PDF;
@@ -23,10 +26,15 @@ use App\Services\ProductService;
 use App\Services\ProductStockService;
 use App\Services\ProductTaxService;
 use App\Services\ProductUploadsService;
+use Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Storage;
+use Illuminate\Bus\Batch;
+use Illuminate\Support\Facades\Bus;
+use Throwable;
+
 
 class ProductBulkUploadController extends Controller
 {
@@ -60,27 +68,32 @@ class ProductBulkUploadController extends Controller
         $pageStart = $request->input('start'); // Start index for the current page
         $orderColumn = $request->input('columns')[$request->input('order')[0]['column']]['data']; // Column to sort
         $orderDir = $request->input('order')[0]['dir']; // Order direction (asc/desc)
-    
+
         $searchValue = $request->input('search')['value']; // Search value
-    
+
         $query = BulkUploadFile::where('user_id', Auth::user()->id);
-    
+
         if ($searchValue) {
-            $query->where(function($q) use ($searchValue) {
+            $query->where(function ($q) use ($searchValue) {
                 $q->where('filename', 'like', '%' . $searchValue . '%')
-                  ->orWhere('status', 'like', '%' . $searchValue . '%')
-                  ->orWhere('extension', 'like', '%' . $searchValue . '%')
-                  ->orWhere('size', 'like', '%' . $searchValue . '%');
+                    ->orWhere('status', 'like', '%' . $searchValue . '%')
+                    ->orWhere('extension', 'like', '%' . $searchValue . '%')
+                    ->orWhere('size', 'like', '%' . $searchValue . '%');
             });
         }
-    
+
         $totalRecords = $query->count();
-    
+
         $files = $query->orderBy($orderColumn, $orderDir)
-                       ->offset($pageStart)
-                       ->limit($perPage)
-                       ->get();
-    
+            ->offset($pageStart)
+            ->limit($perPage)
+            ->get();
+
+            $files->each(function ($file) {
+                // Add a progress field, initially 0
+                $file->progress = $file->status == 'processing' ? '0%' : '100%'; // Example logic
+            });
+
         return response()->json([
             'draw' => intval($request->input('draw')),
             'recordsTotal' => $totalRecords,
@@ -94,10 +107,9 @@ class ProductBulkUploadController extends Controller
     {
         $owner = User::find(Auth::user()->owner_id);
 
-        if($owner->shop->verification_status){
+        if ($owner->shop->verification_status) {
             return view('seller.product.product_bulk_upload.index');
-        }
-        else{
+        } else {
             flash(translate('Your shop is not verified yet!'))->warning();
             return back();
         }
@@ -107,7 +119,7 @@ class ProductBulkUploadController extends Controller
     {
         $categories = Category::all();
 
-        return PDF::loadView('backend.downloads.category',[
+        return PDF::loadView('backend.downloads.category', [
             'categories' => $categories,
         ], [], [])->download('category.pdf');
     }
@@ -116,18 +128,18 @@ class ProductBulkUploadController extends Controller
     {
         $brands = Brand::all();
 
-        return PDF::loadView('backend.downloads.brand',[
+        return PDF::loadView('backend.downloads.brand', [
             'brands' => $brands,
         ], [], [])->download('brands.pdf');
     }
 
     public function bulk_upload(Request $request)
     {
-        
+
         $request->validate([
             'bulk_file' => 'required|file', // Adjusted validation rule
-            ], [
-                'bulk_file.mimes' => 'The uploaded file must be a file of type: xlsx, xlsm.',
+        ], [
+            'bulk_file.mimes' => 'The uploaded file must be a file of type: xlsx, xlsm.',
         ]);
 
         if ($request->file('bulk_file')->isValid()) {
@@ -142,15 +154,53 @@ class ProductBulkUploadController extends Controller
             $fileModel->size = humanFileSize($file->getSize());
             $fileModel->save();
 
-            ValidateBulkUploadFileJob::dispatch($fileModel->path, $fileModel->id);
 
-           
+            Bus::batch([
+                new ValidateBulkUploadFileJob($fileModel->path, $fileModel->id),
+            ])->then(function (Batch $batch) use ($fileModel) {
+                broadcast(new UploadProgress($fileModel->id, 0)); // 25% after validation
 
-            flash(translate('File uploaded successfully.'))->success();
+                // Retrieve validated data from cache
+                $validatedData = Cache::get("validated_parent_groups_{$fileModel->id}");
 
-       
+                if ($validatedData) {
+                    // Add getParentProductGroups job with validated data
+                    $batch->add(new ProcessMappingJob($validatedData, $fileModel->id));
+
+                    broadcast(new UploadProgress($fileModel->id, 25)); // 25% after validation
+                }
+            })->then(function (Batch $batch) use ($fileModel) {
+
+                $parentProductGroups = Cache::get("mapped_parent_groups_{$fileModel->id}");
+                broadcast(new UploadProgress($fileModel->id, 50)); // 25% after validation
+
+                // Process each parent product group
+
+                if ($parentProductGroups) {
+                    foreach ($parentProductGroups as $productGroup) {
+                        $batch->add(new ProcessProductsJob($productGroup, $fileModel));
+                        broadcast(new UploadProgress($fileModel->id, 75)); // 25% after validation
+
+                    }
+                }
+                broadcast(new UploadProgress($fileModel->id, 100)); // 25% after validation
+
+            })->catch(function (Batch $batch, Throwable $e) use ($fileModel) {
+                $fileModel->status = 'failed';
+                $fileModel->save();
+                Log::error('Bulk upload process failed: ' . $e->getMessage());
+            })->finally(function (Batch $batch) use ($fileModel) {
+                $fileModel->status = $batch->finished() ? 'success' : 'failed';
+                $fileModel->save();
+            })->dispatch();
+
+
+
+            flash(translate('File uploaded successfully. Processing started.'))->success();
             return back();
-        }         
+        }
+
+        return back()->with('error', 'File upload failed.');
     }
 
 
@@ -158,7 +208,7 @@ class ProductBulkUploadController extends Controller
     {
         $errors = [];
         $data = Excel::toArray([], $file)[1]; // Assuming you want to use the second sheet
-    
+
         // Start iterating from the 4th row (index 3 in zero-based index)
         for ($rowIndex = 3; $rowIndex < count($data); $rowIndex++) {
             $row = $data[$rowIndex];
@@ -197,7 +247,7 @@ class ProductBulkUploadController extends Controller
                 // Add more validation rules as needed for other cells in the row
             }
         }
-    
+
         return $errors;
     }
 
@@ -211,7 +261,7 @@ class ProductBulkUploadController extends Controller
         }
         return false;
     }
-    
+
     private function validateCell(&$errors, $rowIndex, $column, $row, $rules)
     {
         $colIndex = $this->excelColumnIndex($column);
@@ -304,17 +354,17 @@ class ProductBulkUploadController extends Controller
 
         return $alpha;
     }
-    
-  
+
+
 
     private function generateReport($errors)
     {
         $fileName = 'validation_report.xlsx';
         $filePath = 'reports/' . $fileName; // Relative path inside storage/app
-    
+
         // Generate Excel file and store it
         Excel::store(new ErrorsExport($errors), $filePath, 'local');
-    
+
         // Return the full path to the stored file
         return public_path($filePath);
     }
@@ -341,9 +391,7 @@ class ProductBulkUploadController extends Controller
         } elseif ($categoryLevel == 2) {
             // If second level, set level2CategoryId
             $level2CategoryId = $selectedId;
-        }
-
-        {
+        } {
             // Define the payload
             $payload = [
                 'vendorId' => Auth::id(),
@@ -357,10 +405,10 @@ class ProductBulkUploadController extends Controller
             Log::info($response->json());
             if ($response->successful()) {
                 $data = $response->json();
-    
+
                 if ($data['success']) {
                     $fileName = $data['fileName'];
-                  //  $fileName = basename($fileName);
+                    //  $fileName = basename($fileName);
 
                     $filePath = $fileName;
                     Log::info($fileName);
@@ -380,7 +428,6 @@ class ProductBulkUploadController extends Controller
                 return response()->json(['error' => 'Request failed.'], $response->status());
             }
         }
-
     }
 
 
