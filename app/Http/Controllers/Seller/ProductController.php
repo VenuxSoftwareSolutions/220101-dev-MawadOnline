@@ -2,52 +2,58 @@
 
 namespace App\Http\Controllers\Seller;
 
-use Auth;
-use Artisan;
-use App\Models\Tour;
+use AizPackages\CombinationGenerate\Services\CombinationService;
+use App\Models\Attribute;
+use App\Models\AttributeValue;
 use App\Models\Brand;
-use App\Models\Color;
-use App\Models\Unity;
-use App\Models\Product;
-use App\Models\Shipper;
+use App\Models\BusinessInformation;
 use App\Models\Category;
+use App\Models\Color;
+use App\Models\ColorGroup;
+use App\Models\ColorGroupColor;
+use App\Models\PricingConfiguration;
+use App\Models\Product;
+use App\Models\ProductAttributeValues;
+use App\Models\ProductCategory;
+use App\Models\Review;
+use App\Models\Shipper;
+use App\Models\ShippersArea;
 use App\Models\Shipping;
 use App\Models\Shop;
-use App\Models\Attribute;
-use App\Models\Warehouse;
-use App\Models\ShippersArea;
-use Illuminate\Http\Request;
-use App\Models\AttributeValue;
-use App\Models\UploadProducts;
-use App\Models\ProductCategory;
-use App\Services\ProductService;
-use Illuminate\Support\Facades\DB;
-use App\Models\BusinessInformation;
-use App\Services\ProductTaxService;
-use App\Models\PricingConfiguration;
-use App\Models\ColorGroupColor;
-use App\Models\ColorGroup;
-use Illuminate\Support\Facades\File;
-use App\Services\ProductStockService;
-use App\Models\ProductAttributeValues;
-use App\Services\ProductPricingService;
-use DateTime;
-use App\Services\ProductUploadsService;
-use App\Services\ProductFlashDealService;
-use AizPackages\CombinationGenerate\Services\CombinationService;
-use App\Models\Review;
 use App\Models\StockSummary;
+use App\Models\Tour;
+use App\Models\Unity;
+use App\Models\UploadProducts;
+use App\Models\Warehouse;
 use App\Rules\NoPricingOverlap;
+use App\Services\ProductFlashDealService;
+use App\Services\ProductPricingService;
+use App\Services\ProductService;
+use App\Services\ProductStockService;
+use App\Services\ProductTaxService;
+use App\Services\ProductUploadsService;
+use Artisan;
+use Auth;
+use DateTime;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
     protected $productService;
+
     protected $productCategoryService;
+
     protected $productTaxService;
+
     protected $productFlashDealService;
+
     protected $productStockService;
+
     protected $productUploadsService;
+
     protected $productPricingService;
 
     public function __construct(
@@ -73,64 +79,66 @@ class ProductController extends Controller
 
     public function index(Request $request)
     {
-        seller_lease_creation($user=Auth::user());
+        seller_lease_creation($user = Auth::user());
 
         $search = null;
         $products = Product::where('user_id', Auth::user()->owner_id)->where(function ($query) {
             $query->where('is_draft', '=', 1)
-            ->where('parent_id', 0)
-            ->orWhere(function ($query) {
-                $query->where('is_draft',0)
-                    ->where('parent_id', 0)
-                    ->where('is_parent', 0);
-            })
-            ->orWhere(function ($query) {
-                $query->where('is_draft',0)
-                    ->where('is_parent', 1);
-            });
-        })->orderBy('id','desc');
+                ->where('parent_id', 0)
+                ->orWhere(function ($query) {
+                    $query->where('is_draft', 0)
+                        ->where('parent_id', 0)
+                        ->where('is_parent', 0);
+                })
+                ->orWhere(function ($query) {
+                    $query->where('is_draft', 0)
+                        ->where('is_parent', 1);
+                });
+        })->orderBy('id', 'desc');
 
         if ($request->has('search')) {
             $search = $request->search;
-            $products = $products->where('name', 'like', '%' . $search . '%');
+            $products = $products->where('name', 'like', '%'.$search.'%');
         }
         $products = $products->paginate(10);
-        $tour_steps=Tour::orderBy('step_number')->get();
+        $tour_steps = Tour::orderBy('step_number')->get();
 
-        return view('seller.product.products.index', compact('products', 'search','tour_steps'));
+        return view('seller.product.products.index', compact('products', 'search', 'tour_steps'));
     }
 
-    public function delete_image(Request $request){
+    public function delete_image(Request $request)
+    {
         $image = UploadProducts::find($request->id);
-        if($image != null){
-            if(file_exists(public_path($image->path))){
+        if ($image != null) {
+            if (file_exists(public_path($image->path))) {
                 unlink(public_path($image->path));
             }
 
             $image->delete();
 
             return response()->json([
-                'status' => 'success'
+                'status' => 'success',
             ]);
-        }else{
+        } else {
             return response()->json([
-                'status' => 'failed'
+                'status' => 'failed',
             ]);
         }
 
     }
 
-    public function delete_pricing(Request $request){
+    public function delete_pricing(Request $request)
+    {
         $pricing = PricingConfiguration::find($request->id);
-        if($pricing != null){
+        if ($pricing != null) {
             $pricing->delete();
 
             return response()->json([
-                'status' => 'success'
+                'status' => 'success',
             ]);
-        }else{
+        } else {
             return response()->json([
-                'status' => 'failed'
+                'status' => 'failed',
             ]);
         }
     }
@@ -148,19 +156,19 @@ class ProductController extends Controller
         $categories = Category::where('level', 1)
             ->with('childrenCategories')
             ->get();
-            //dd($categories);
+        //dd($categories);
 
         $shippers = Shipper::all();
         $supported_shippers = [];
-        if(count($shippers) > 0){
-            foreach($shippers as $shipper){
+        if (count($shippers) > 0) {
+            foreach ($shippers as $shipper) {
                 $shipper_areas = ShippersArea::where('shipper_id', $shipper->id)->get();
 
-                if(count($shipper_areas) > 0){
-                    foreach($shipper_areas as $area){
+                if (count($shipper_areas) > 0) {
+                    foreach ($shipper_areas as $area) {
                         $warhouses = Warehouse::where('user_id', Auth::user()->owner_id)->where('emirate_id', $area->emirate_id)->where('area_id', $area->area_id)->get();
-                        if(count($warhouses) > 0){
-                            if(!array_key_exists($shipper->id, $supported_shippers)){
+                        if (count($warhouses) > 0) {
+                            if (! array_key_exists($shipper->id, $supported_shippers)) {
                                 $supported_shippers[$shipper->id] = $shipper;
                             }
                         }
@@ -175,10 +183,10 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->only(["from", "to"]), [
+        $validator = Validator::make($request->only(['from', 'to']), [
             'from' => [
                 'required', 'array',
-                new NoPricingOverlap($request->input('from'), $request->input('to'))
+                new NoPricingOverlap($request->input('from'), $request->input('to')),
             ],
             'to' => ['required', 'array'],
             'from.*' => 'numeric',
@@ -193,16 +201,16 @@ class ProductController extends Controller
         }
 
         $product = $this->productService->store($request->except([
-            'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
+            'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type',
         ]));
 
         $request->merge(['product_id' => $product->id]);
 
         //Product categories
-        if($product->is_parent == 1){
+        if ($product->is_parent == 1) {
             $products = Product::where('parent_id', $product->id)->get();
-            if(count($products) > 0){
-                foreach($products as $child){
+            if (count($products) > 0) {
+                foreach ($products as $child) {
                     $child->categories()->attach($request->parent_id);
                 }
             }
@@ -210,7 +218,7 @@ class ProductController extends Controller
         $product->categories()->attach($request->parent_id);
 
         //Upload documents, images and thumbnails
-        if($request->document_names){
+        if ($request->document_names) {
             $data['document_names'] = $request->document_names;
             $data['documents'] = $request->documents;
             $data['product'] = $product;
@@ -225,31 +233,31 @@ class ProductController extends Controller
         Artisan::call('view:clear');
         Artisan::call('cache:clear');
 
-        if($product->is_draft == 1){
-            return redirect()->route('seller.products.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')]);
-        }else{
-            if($product->stock_after_create){
+        if ($product->is_draft == 1) {
+            return redirect()->route('seller.products.edit', ['id' => $product->id, 'lang' => env('DEFAULT_LANGUAGE')]);
+        } else {
+            if ($product->stock_after_create) {
                 return redirect()->route('seller.stocks.index');
-            }else{
+            } else {
                 return redirect()->route('seller.products');
             }
         }
-
     }
 
-    public function store_draft(Request $request){
+    public function store_draft(Request $request)
+    {
         //dd($request->all());
         $parent = Product::find($request->product_id);
-        if($parent != null){
+        if ($parent != null) {
             $product = $this->productService->draft($request->except([
-                'category_ids', 'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
+                'category_ids', 'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type',
             ]), $parent);
 
             //Product categories
-            if($product->is_parent == 1){
+            if ($product->is_parent == 1) {
                 $products = Product::where('parent_id', $product->id)->get();
-                if(count($products) > 0){
-                    foreach($products as $child){
+                if (count($products) > 0) {
+                    foreach ($products as $child) {
                         $child->categories()->attach($request->parent_id);
                     }
                 }
@@ -271,27 +279,28 @@ class ProductController extends Controller
 
             Artisan::call('view:clear');
             Artisan::call('cache:clear');
-            if($product->is_draft == 1){
-                return redirect()->route('seller.products.edit', ['id'=>$product->id, 'lang'=>env('DEFAULT_LANGUAGE')]);
-            }else{
+            if ($product->is_draft == 1) {
+                return redirect()->route('seller.products.edit', ['id' => $product->id, 'lang' => env('DEFAULT_LANGUAGE')]);
+            } else {
                 return redirect()->route('seller.products');
             }
 
-        }else{
+        } else {
             return redirect()->back();
         }
 
     }
 
-    public function getAttributeCategorie(Request $request){
+    public function getAttributeCategorie(Request $request)
+    {
         $current_categorie = Category::find($request->id);
         $parents = [];
-        if($current_categorie->parent_id == 0){
+        if ($current_categorie->parent_id == 0) {
             array_push($parents, $current_categorie->id);
-        }else{
+        } else {
             array_push($parents, $current_categorie->id);
-            while($current_categorie->parent_id != 0) {
-                $parent = Category::where('id',$current_categorie->parent_id)->first();
+            while ($current_categorie->parent_id != 0) {
+                $parent = Category::where('id', $current_categorie->parent_id)->first();
                 array_push($parents, $parent->id);
                 $current_categorie = $parent;
             }
@@ -299,67 +308,67 @@ class ProductController extends Controller
 
         $attributes_ids = [];
         $attributes = [];
-        $html = "";
-        $html_attributes_generale = "";
-        if(count($parents) > 0){
+        $html = '';
+        $html_attributes_generale = '';
+        if (count($parents) > 0) {
             $attributes_ids = DB::table('categories_has_attributes')->whereIn('category_id', $parents)->pluck('attribute_id')->toArray();
-            if(count($attributes_ids) > 0){
-                $attributes = Attribute::whereIn('id',$attributes_ids)->get();
-                if(count($attributes) > 0){
+            if (count($attributes_ids) > 0) {
+                $attributes = Attribute::whereIn('id', $attributes_ids)->get();
+                if (count($attributes) > 0) {
                     $html .= '<select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" id="attributes" multiple disabled>';
-                    foreach ($attributes as $key=>$attribute){
-                        $html .= "<option  value='".$attribute->id."'>". $attribute->getTranslation('name') ."</option>";
-                        $html_attributes_generale .= '<div class="row attribute-variant-'. $attribute->id .' mb-3">
+                    foreach ($attributes as $key => $attribute) {
+                        $html .= "<option  value='".$attribute->id."'>".$attribute->getTranslation('name').'</option>';
+                        $html_attributes_generale .= '<div class="row attribute-variant-'.$attribute->id.' mb-3">
                         <label class="col-md-2 col-from-label">'.$attribute->getTranslation('name').'</label>';
 
                         switch ($attribute->type_value) {
-                            case "text":
+                            case 'text':
                                 $html_attributes_generale .= '<div class="col-md-10">
                                             <input type="text" class="form-control attributes" name="attribute_generale-'.$attribute->id.'">
                                         </div>';
                                 break;
-                            case "list":
+                            case 'list':
                                 $values = $attribute->attribute_values_list(app()->getLocale());
                                 $options = '<div class="col-md-10"><select class="form-control" data-live-search="true" data-selected-text-format="count" name="attribute_generale-'.$attribute->id.'">';
-                                foreach ($values as $key=>$value){
-                                    $options .= "<option  value='".$value->id."'>". $value->value ."</option>";
+                                foreach ($values as $key => $value) {
+                                    $options .= "<option  value='".$value->id."'>".$value->value.'</option>';
                                 }
-                                $options .= "</select></div>";
+                                $options .= '</select></div>';
                                 $html_attributes_generale .= $options;
                                 break;
-                            case "color":
+                            case 'color':
                                 $colors = Color::orderBy('name', 'asc')->get();
                                 $html_attributes_generale .= '<div class="col-md-10">
                                 <select class="form-control attributes aiz-selectpicker" name="attribute_generale-'.$attribute->id.'[]" data-type="color" data-live-search="true" data-selected-text-format="count" multiple>';
-                                    foreach ($colors as $key => $color){
-                                        $groups_ids = ColorGroupColor::where('color_id', $color->id)->pluck('color_group_id')->toArray();
-                                        $groups = [];
-                                        if(count($groups_ids) > 0){
-                                            $groups = ColorGroup::whereIn('id', $groups_ids)->pluck('name')->toArray();
-                                        }
-                                        if(count($groups) > 0){
-                                            $names = implode(' ', $groups);
-                                            $html_attributes_generale .= '<option value="' . $color->code . '" data-content="<span><span class=\'size-15px d-inline-block mr-2 rounded border\' style=\'background:' . $color->code . '\'></span><span>' . $color->name  . '<span style=\'display:none;\'>'. $names .'</span>' . '</span></span>"></option>';
-                                        }else{
-                                            $html_attributes_generale .= '<option value="' . $color->code . '" data-content="<span><span class=\'size-15px d-inline-block mr-2 rounded border\' style=\'background:' . $color->code . '\'></span><span>' . $color->name . '</span></span>"></option>';
-                                        }
-
+                                foreach ($colors as $key => $color) {
+                                    $groups_ids = ColorGroupColor::where('color_id', $color->id)->pluck('color_group_id')->toArray();
+                                    $groups = [];
+                                    if (count($groups_ids) > 0) {
+                                        $groups = ColorGroup::whereIn('id', $groups_ids)->pluck('name')->toArray();
                                     }
+                                    if (count($groups) > 0) {
+                                        $names = implode(' ', $groups);
+                                        $html_attributes_generale .= '<option value="'.$color->code.'" data-content="<span><span class=\'size-15px d-inline-block mr-2 rounded border\' style=\'background:'.$color->code.'\'></span><span>'.$color->name.'<span style=\'display:none;\'>'.$names.'</span>'.'</span></span>"></option>';
+                                    } else {
+                                        $html_attributes_generale .= '<option value="'.$color->code.'" data-content="<span><span class=\'size-15px d-inline-block mr-2 rounded border\' style=\'background:'.$color->code.'\'></span><span>'.$color->name.'</span></span>"></option>';
+                                    }
+
+                                }
                                 $html_attributes_generale .= '</select></div>';
                                 break;
-                            case "numeric":
+                            case 'numeric':
                                 $units_id = $attribute->get_attribute_units();
                                 $units = Unity::whereIn('id', $units_id)->get();
                                 $options = '<select class="form-control attributes-units" name="unit_attribute_generale-'.$attribute->id.'" data-live-search="true" data-selected-text-format="count">';
-                                foreach ($units as $key=>$unit){
-                                    $options .= "<option  value='".$unit->id."'>". $unit->name ."</option>";
+                                foreach ($units as $key => $unit) {
+                                    $options .= "<option  value='".$unit->id."'>".$unit->name.'</option>';
                                 }
-                                $options .= "</select>";
+                                $options .= '</select>';
                                 $html_attributes_generale .= '<div class="col-md-10"><div class="row"><div class="col-6">
                                             <input type="number" step="0.1" class="form-control attributes" name="attribute_generale-'.$attribute->id.'"></div><div class="col-6">'.$options.'
                                         </div></div></div>';
                                 break;
-                            case "boolean":
+                            case 'boolean':
                                 $html_attributes_generale .= '<div class="col-md-10" style="padding-top: 10px">
                                             <label style="margin-right: 15px">
                                                 <input type="radio" class="attributes" name="attribute_generale-'.$attribute->id.'" name="boolean" value="yes">Yes
@@ -374,27 +383,28 @@ class ProductController extends Controller
                         $html_attributes_generale .= '</div>';
 
                     }
-                    $html .= "</select>";
+                    $html .= '</select>';
                 }
             }
         }
 
         return response()->json([
-            "html" => $html,
-            'html_attributes_generale' => $html_attributes_generale
+            'html' => $html,
+            'html_attributes_generale' => $html_attributes_generale,
         ]);
 
     }
 
-    public function getAttributes(Request $request){
-        if($request->ids != null){
+    public function getAttributes(Request $request)
+    {
+        if ($request->ids != null) {
             $attributes = Attribute::whereIn('id', $request->ids)->get();
-        }else{
+        } else {
             $attributes = [];
         }
-        if($request->selected != null){
+        if ($request->selected != null) {
             $attributes_not_selected = array_diff($request->allValues, $request->selected);
-        }else{
+        } else {
             $attributes_not_selected = array_diff($request->allValues, []);
         }
 
@@ -402,62 +412,61 @@ class ProductController extends Controller
 
         $html = '';
         $html_attributes_generale = '';
-        if(count($attributes) > 0){
-            foreach($attributes as $attribute){
-                $html .= '<div class="row mb-3 attribute-variant-'. $attribute->id .'">
+        if (count($attributes) > 0) {
+            foreach ($attributes as $attribute) {
+                $html .= '<div class="row mb-3 attribute-variant-'.$attribute->id.'">
                 <label class="col-md-2 col-from-label">'.translate($attribute->getTranslation('name')).'</label>';
 
                 switch ($attribute->type_value) {
-                    case "text":
+                    case 'text':
                         $html .= '<div class="col-md-10">
                                     <input type="text" class="form-control attributes" data-id_attributes="'.$attribute->id.'">
                                 </div>';
                         break;
-                    case "list":
+                    case 'list':
                         $values = $attribute->attribute_values_list(app()->getLocale());
                         $options = '<div class="col-md-10"><select class="form-control attributes" data-id_attributes="'.$attribute->id.'" data-live-search="true" data-selected-text-format="count" >';
-                        foreach ($values as $key=>$value){
-                            $options .= "<option  value='".$value->id."'>". $value->value ."</option>";
+                        foreach ($values as $key => $value) {
+                            $options .= "<option  value='".$value->id."'>".$value->value.'</option>';
                         }
-                        $options .= "</select></div>";
+                        $options .= '</select></div>';
                         $html .= $options;
                         break;
-                    case "color":
+                    case 'color':
                         $colors = Color::orderBy('name', 'asc')->get();
                         $html .= '<div class="col-md-10">
                         <select class="form-control attributes color aiz-selectpicker" data-id_attributes="'.$attribute->id.'" data-type="color" data-live-search="true" data-selected-text-format="count" multiple>';
-                            foreach ($colors as $key => $color){
-                                $groups_ids = ColorGroupColor::where('color_id', $color->id)->pluck('color_group_id')->toArray();
-                                $groups = [];
+                        foreach ($colors as $key => $color) {
+                            $groups_ids = ColorGroupColor::where('color_id', $color->id)->pluck('color_group_id')->toArray();
+                            $groups = [];
 
-                                if(count($groups_ids) > 0){
-                                    $groups = ColorGroup::whereIn('id', $groups_ids)->pluck('name')->toArray();
-                                }
-
-                                if(count($groups) > 0){
-                                    $names = implode(' ', $groups);
-                                    $html .= '<option value="' . $color->code . '" data-content="<span><span class=\'size-15px d-inline-block mr-2 rounded border\' style=\'background:' . $color->code . '\'></span><span>' . $color->name  . '<span style=\'display:none;\'>'. $names .'</span>' . '</span></span>"></option>';
-                                }else{
-                                    $html .= '<option value="' . $color->code . '" data-content="<span><span class=\'size-15px d-inline-block mr-2 rounded border\' style=\'background:' . $color->code . '\'></span><span>' . $color->name . '</span></span>"></option>';
-                                }
-
-
+                            if (count($groups_ids) > 0) {
+                                $groups = ColorGroup::whereIn('id', $groups_ids)->pluck('name')->toArray();
                             }
+
+                            if (count($groups) > 0) {
+                                $names = implode(' ', $groups);
+                                $html .= '<option value="'.$color->code.'" data-content="<span><span class=\'size-15px d-inline-block mr-2 rounded border\' style=\'background:'.$color->code.'\'></span><span>'.$color->name.'<span style=\'display:none;\'>'.$names.'</span>'.'</span></span>"></option>';
+                            } else {
+                                $html .= '<option value="'.$color->code.'" data-content="<span><span class=\'size-15px d-inline-block mr-2 rounded border\' style=\'background:'.$color->code.'\'></span><span>'.$color->name.'</span></span>"></option>';
+                            }
+
+                        }
                         $html .= '</select></div>';
                         break;
-                    case "numeric":
+                    case 'numeric':
                         $units_id = $attribute->get_attribute_units();
                         $units = Unity::whereIn('id', $units_id)->get();
                         $options = '<select class="form-control attributes-units" data-id_attributes="'.$attribute->id.'" data-live-search="true" data-selected-text-format="count">';
-                        foreach ($units as $key=>$unit){
-                            $options .= "<option  value='".$unit->id."'>". $unit->name ."</option>";
+                        foreach ($units as $key => $unit) {
+                            $options .= "<option  value='".$unit->id."'>".$unit->name.'</option>';
                         }
-                        $options .= "</select>";
+                        $options .= '</select>';
                         $html .= '<div class="col-md-10"><div class="row"><div class="col-6">
                                     <input type="number" step="0.1" class="form-control attributes" data-id_attributes="'.$attribute->id.'"></div><div class="col-6">'.$options.'
                                 </div></div>';
                         break;
-                    case "boolean":
+                    case 'boolean':
                         $html .= '<div class="col-md-10" style="padding-top: 10px">
                                     <label style="margin-right: 15px">
                                         <input type="radio" class="attributes" data-id_attributes="'.$attribute->id.'" value="yes">Yes
@@ -473,51 +482,51 @@ class ProductController extends Controller
             }
         }
 
-        if(count($attributes_generale) > 0){
-            foreach($attributes_generale as $attribute_generale){
+        if (count($attributes_generale) > 0) {
+            foreach ($attributes_generale as $attribute_generale) {
                 $html_attributes_generale .= '<div class="row mb-3">
-                        <div class="col-md-4 attribute-variant-'. $attribute_generale->id .'">
+                        <div class="col-md-4 attribute-variant-'.$attribute_generale->id.'">
                             <input type="text" class="form-control" value="'.translate($attribute_generale->getTranslation('name')).'" disabled>
                         </div>';
 
                 switch ($attribute_generale->type_value) {
-                    case "text":
-                        $html_attributes_generale .= '<div class="col-md-8 attribute-variant-'. $attribute_generale->id .'">
+                    case 'text':
+                        $html_attributes_generale .= '<div class="col-md-8 attribute-variant-'.$attribute_generale->id.'">
                                     <input type="text" class="form-control attributes" name="attribute_generale-'.$attribute_generale->id.'">
                                 </div>';
                         break;
-                    case "list":
+                    case 'list':
                         $values = $attribute_generale->attribute_values_list(app()->getLocale());
-                        $options = '<div class="col-md-8 attribute-variant-'. $attribute_generale->id .'"><select class="form-control" data-live-search="true" data-selected-text-format="count" name="attribute_generale-'.$attribute_generale->id.'">';
-                        foreach ($values as $key=>$value){
-                            $options .= "<option  value='".$value->id."'>". $value->value ."</option>";
+                        $options = '<div class="col-md-8 attribute-variant-'.$attribute_generale->id.'"><select class="form-control" data-live-search="true" data-selected-text-format="count" name="attribute_generale-'.$attribute_generale->id.'">';
+                        foreach ($values as $key => $value) {
+                            $options .= "<option  value='".$value->id."'>".$value->value.'</option>';
                         }
-                        $options .= "</select></div>";
+                        $options .= '</select></div>';
                         $html_attributes_generale .= $options;
                         break;
-                    case "color":
+                    case 'color':
                         $colors = Color::orderBy('name', 'asc')->get();
-                        $html_attributes_generale .= '<div class="col-md-8 attribute-variant-'. $attribute_generale->id .'">
+                        $html_attributes_generale .= '<div class="col-md-8 attribute-variant-'.$attribute_generale->id.'">
                         <select class="form-control attributes aiz-selectpicker" name="attribute_generale-'.$attribute_generale->id.'" data-type="color" data-live-search="true" data-selected-text-format="count">';
-                            foreach ($colors as $key => $color){
-                                $html_attributes_generale .= '<option value="' . $color->code . '" data-content="<span><span class=\'size-15px d-inline-block mr-2 rounded border\' style=\'background:' . $color->code . '\'></span><span>' . $color->name . '</span></span>"></option>';
-                            }
+                        foreach ($colors as $key => $color) {
+                            $html_attributes_generale .= '<option value="'.$color->code.'" data-content="<span><span class=\'size-15px d-inline-block mr-2 rounded border\' style=\'background:'.$color->code.'\'></span><span>'.$color->name.'</span></span>"></option>';
+                        }
                         $html_attributes_generale .= '</select></div>';
                         break;
-                    case "numeric":
+                    case 'numeric':
                         $units_id = $attribute_generale->get_attribute_units();
                         $units = Unity::whereIn('id', $units_id)->get();
                         $options = '<select class="form-control attributes-units" name="unit_attribute_generale-'.$attribute_generale->id.'" data-live-search="true" data-selected-text-format="count">';
-                        foreach ($units as $key=>$unit){
-                            $options .= "<option  value='".$unit->id."'>". $unit->name ."</option>";
+                        foreach ($units as $key => $unit) {
+                            $options .= "<option  value='".$unit->id."'>".$unit->name.'</option>';
                         }
-                        $options .= "</select>";
-                        $html_attributes_generale .= '<div class="col-md-8 attribute-variant-'. $attribute_generale->id .'"><div class="row"><div class="col-6">
+                        $options .= '</select>';
+                        $html_attributes_generale .= '<div class="col-md-8 attribute-variant-'.$attribute_generale->id.'"><div class="row"><div class="col-6">
                                     <input type="number" step="0.1" class="form-control attributes" name="attribute_generale-'.$attribute_generale->id.'"></div><div class="col-6">'.$options.'
                                 </div></div>';
                         break;
-                    case "boolean":
-                        $html_attributes_generale .= '<div class="col-md-8 attribute-variant-'. $attribute_generale->id .'" style="padding-top: 10px">
+                    case 'boolean':
+                        $html_attributes_generale .= '<div class="col-md-8 attribute-variant-'.$attribute_generale->id.'" style="padding-top: 10px">
                                     <label style="margin-right: 15px">
                                         <input type="radio" class="attributes" name="attribute_generale-'.$attribute_generale->id.'" name="boolean" value="yes">Yes
                                     </label>
@@ -534,7 +543,7 @@ class ProductController extends Controller
 
         return response()->json([
             'html' => $html,
-            'html_attributes_generale' => $html_attributes_generale
+            'html_attributes_generale' => $html_attributes_generale,
         ]);
     }
 
@@ -549,10 +558,10 @@ class ProductController extends Controller
         $colors = Color::orderBy('name', 'asc')->get();
         $product_category = ProductCategory::where('product_id', $id)->first();
         $vat_user = BusinessInformation::where('user_id', Auth::user()->owner_id)->first();
-        if($product_category != null){
-            $categorie =  Category::find($product_category->category_id);
-        }else{
-            $categorie=null;
+        if ($product_category != null) {
+            $categorie = Category::find($product_category->category_id);
+        } else {
+            $categorie = null;
         }
 
         $attributes = [];
@@ -567,15 +576,15 @@ class ProductController extends Controller
 
         $shippers = Shipper::all();
         $supported_shippers = [];
-        if(count($shippers) > 0){
-            foreach($shippers as $shipper){
+        if (count($shippers) > 0) {
+            foreach ($shippers as $shipper) {
                 $shipper_areas = ShippersArea::where('shipper_id', $shipper->id)->get();
 
-                if(count($shipper_areas) > 0){
-                    foreach($shipper_areas as $area){
+                if (count($shipper_areas) > 0) {
+                    foreach ($shipper_areas as $area) {
                         $warhouses = Warehouse::where('user_id', Auth::user()->owner_id)->where('emirate_id', $area->emirate_id)->where('area_id', $area->area_id)->get();
-                        if(count($warhouses) > 0){
-                            if(!array_key_exists($shipper->id, $supported_shippers)){
+                        if (count($warhouses) > 0) {
+                            if (! array_key_exists($shipper->id, $supported_shippers)) {
                                 $supported_shippers[$shipper->id] = $shipper;
                             }
                         }
@@ -585,34 +594,34 @@ class ProductController extends Controller
             }
         }
 
-        if($product != null){
-            if($product->activate_third_party == 1){
+        if ($product != null) {
+            if ($product->activate_third_party == 1) {
                 $volumetric_weight = ($product->length * $product->height * $product->width) / 5000;
-                if($volumetric_weight > $product->weight){
+                if ($volumetric_weight > $product->weight) {
                     $chargeable_weight = $volumetric_weight;
-                }else{
+                } else {
                     $chargeable_weight = $product->weight;
                 }
 
-                if($product->unit_weight == "pounds"){
+                if ($product->unit_weight == 'pounds') {
                     $chargeable_weight *= 2.2;
                 }
             }
 
-            if($product->activate_third_party_sample == 1){
+            if ($product->activate_third_party_sample == 1) {
                 $volumetric_weight_sample = ($product->length_sample * $product->height_sample * $product->width_sample) / 5000;
-                if($volumetric_weight_sample > $product->package_weight_sample){
+                if ($volumetric_weight_sample > $product->package_weight_sample) {
                     $chargeable_weight_sample = $volumetric_weight_sample;
-                }else{
+                } else {
                     $chargeable_weight_sample = $product->package_weight_sample;
                 }
 
-                if($product->unit_weight == "pounds"){
+                if ($product->unit_weight == 'pounds') {
                     $chargeable_weight_sample *= 2.2;
                 }
             }
 
-            if($product->is_parent == 1){
+            if ($product->is_parent == 1) {
                 $childrens = Product::where('parent_id', $id)->get();
                 $childrens_ids = Product::where('parent_id', $id)->pluck('id')->toArray();
                 $variants_attributes = ProductAttributeValues::whereIn('id_products', $childrens_ids)->where('is_variant', 1)->get();
@@ -624,56 +633,56 @@ class ProductController extends Controller
             $general_attributes_ids_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->pluck('id_attribute')->toArray();
             $data_general_attributes = [];
 
-            if(count($general_attributes) > 0){
-                foreach ($general_attributes as $general_attribute){
+            if (count($general_attributes) > 0) {
+                foreach ($general_attributes as $general_attribute) {
                     // $data_general_attributes[$general_attribute->id_attribute] = $general_attribute;
-                    if($general_attribute->id_colors != null){
-                        if (array_key_exists($general_attribute->id_attribute,$data_general_attributes)){
+                    if ($general_attribute->id_colors != null) {
+                        if (array_key_exists($general_attribute->id_attribute, $data_general_attributes)) {
                             array_push($data_general_attributes[$general_attribute->id_attribute], $general_attribute->id_colors);
-                        }else{
+                        } else {
                             $data_general_attributes[$general_attribute->id_attribute] = [$general_attribute->id_colors];
                         }
-                    }else{
+                    } else {
                         $data_general_attributes[$general_attribute->id_attribute] = $general_attribute;
                     }
                 }
             }
 
-            if($product_category != null){
+            if ($product_category != null) {
                 $categorie = Category::find($product_category->category_id);
                 $current_categorie = $categorie;
 
                 $parents = [];
-                if($current_categorie->parent_id == 0){
+                if ($current_categorie->parent_id == 0) {
                     array_push($parents, $current_categorie->id);
-                }else{
+                } else {
                     array_push($parents, $current_categorie->id);
-                    while($current_categorie->parent_id != 0) {
-                        $parent = Category::where('id',$current_categorie->parent_id)->first();
+                    while ($current_categorie->parent_id != 0) {
+                        $parent = Category::where('id', $current_categorie->parent_id)->first();
                         array_push($parents, $parent->id);
                         $current_categorie = $parent;
                     }
                 }
 
-                if(count($parents) > 0){
+                if (count($parents) > 0) {
                     $attributes_ids = DB::table('categories_has_attributes')->whereIn('category_id', $parents)->pluck('attribute_id')->toArray();
-                    if(count($attributes_ids) > 0){
-                        $attributes = Attribute::whereIn('id',$attributes_ids)->get();
-                        $all_general_attributes = Attribute::whereIn('id',$attributes_ids)->whereNotIn('id', $variants_attributes_ids_attributes)->whereNotIn('id', $general_attributes_ids_attributes)->get();
-                        if(count($all_general_attributes) > 0){
-                            foreach($all_general_attributes as $attribute){
+                    if (count($attributes_ids) > 0) {
+                        $attributes = Attribute::whereIn('id', $attributes_ids)->get();
+                        $all_general_attributes = Attribute::whereIn('id', $attributes_ids)->whereNotIn('id', $variants_attributes_ids_attributes)->whereNotIn('id', $general_attributes_ids_attributes)->get();
+                        if (count($all_general_attributes) > 0) {
+                            foreach ($all_general_attributes as $attribute) {
                                 $data_general_attributes[$attribute->id] = $attribute;
-                                if($attribute->type_value == 'color'){
-                                    if (array_key_exists($attribute->id,$data_general_attributes)){
+                                if ($attribute->type_value == 'color') {
+                                    if (array_key_exists($attribute->id, $data_general_attributes)) {
                                         $data_general_attributes[$attribute->id] = [null];
-                                    }else{
+                                    } else {
                                         $data_general_attributes[$attribute->id] = [null];
                                     }
-                                }else{
+                                } else {
                                     $data_general_attributes[$attribute->id] = $attribute;
                                 }
 
-                                if (!in_array($attribute->id, $general_attributes_ids_attributes)) {
+                                if (! in_array($attribute->id, $general_attributes_ids_attributes)) {
                                     array_push($general_attributes_ids_attributes, $attribute->id);
                                 }
                             }
@@ -683,7 +692,7 @@ class ProductController extends Controller
                 }
             }
 
-            if($product->is_draft == 1){
+            if ($product->is_draft == 1) {
                 return view('seller.product.products.draft', [
                     'product' => $product,
                     'vat_user' => $vat_user,
@@ -699,9 +708,9 @@ class ProductController extends Controller
                     'colors' => $colors,
                     'supported_shippers' => $supported_shippers,
                     'chargeable_weight' => $chargeable_weight,
-                    'chargeable_weight_sample' => $chargeable_weight_sample
+                    'chargeable_weight_sample' => $chargeable_weight_sample,
                 ]);
-            }else{
+            } else {
                 return view('seller.product.products.edit', [
                     'product' => $product,
                     'vat_user' => $vat_user,
@@ -717,26 +726,28 @@ class ProductController extends Controller
                     'colors' => $colors,
                     'supported_shippers' => $supported_shippers,
                     'chargeable_weight' => $chargeable_weight,
-                    'chargeable_weight_sample' => $chargeable_weight_sample
+                    'chargeable_weight_sample' => $chargeable_weight_sample,
                 ]);
             }
-        }else{
+        } else {
             abort(404);
         }
+
         return view('seller.product.products.edit', compact('product', 'categories', 'tags', 'lang'));
     }
 
-    public function delete_shipping(Request $request){
+    public function delete_shipping(Request $request)
+    {
         $shipping = Shipping::find($request->id);
-        if($shipping != null){
+        if ($shipping != null) {
             $shipping->delete();
 
             return response()->json([
-                'status' => 'success'
+                'status' => 'success',
             ]);
-        }else{
+        } else {
             return response()->json([
-                'status' => 'failed'
+                'status' => 'failed',
             ]);
         }
     }
@@ -744,16 +755,16 @@ class ProductController extends Controller
     public function update(Request $request)
     {
         $parent = Product::find($request->product_id);
-        if($parent != null){
+        if ($parent != null) {
             $product = $this->productService->update($request->except([
-                'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
+                'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type',
             ]), $parent);
 
             //Product categories
-            if($product->is_parent == 1){
+            if ($product->is_parent == 1) {
                 $products = Product::where('parent_id', $product->id)->get();
-                if(count($products) > 0){
-                    foreach($products as $child){
+                if (count($products) > 0) {
+                    foreach ($products as $child) {
                         $child->categories()->attach($request->parent_id);
                     }
                 }
@@ -771,7 +782,6 @@ class ProductController extends Controller
             $update = true;
             $this->productUploadsService->store_uploads($data, $update);
 
-
             flash(translate('Product has been updated successfully'))->success();
 
             Artisan::call('view:clear');
@@ -779,11 +789,9 @@ class ProductController extends Controller
 
             return redirect()->route('seller.products');
 
-
-        }else{
+        } else {
             return redirect()->back();
         }
-
 
         //flash(translate('Product has been updated successfully'))->success();
 
@@ -791,7 +799,7 @@ class ProductController extends Controller
 
     public function sku_combination(Request $request)
     {
-        $options = array();
+        $options = [];
         if ($request->has('colors_active') && $request->has('colors') && count($request->colors) > 0) {
             $colors_active = 1;
             array_push($options, $request->colors);
@@ -804,8 +812,8 @@ class ProductController extends Controller
 
         if ($request->has('choice_no')) {
             foreach ($request->choice_no as $key => $no) {
-                $name = 'choice_options_' . $no;
-                $data = array();
+                $name = 'choice_options_'.$no;
+                $data = [];
                 foreach ($request[$name] as $key => $item) {
                     array_push($data, $item);
                 }
@@ -813,16 +821,18 @@ class ProductController extends Controller
             }
         }
 
-        $combinations = (new CombinationService())->generate_combination($options);
+        $combinations = (new CombinationService)->generate_combination($options);
+
         return view('backend.product.products.sku_combinations', compact('combinations', 'unit_price', 'colors_active', 'product_name'));
     }
 
-    public function delete_variant(Request $request){
+    public function delete_variant(Request $request)
+    {
         $product = Product::find($request->id_variant);
-        if($product != null){
+        if ($product != null) {
             $uploads = UploadProducts::where('id_product', $request->id_variant)->get();
-            if(count($uploads) > 0){
-                if(file_exists(public_path('/upload_products/Product-'.$request->id_variant))){
+            if (count($uploads) > 0) {
+                if (file_exists(public_path('/upload_products/Product-'.$request->id_variant))) {
                     File::deleteDirectory(public_path('/upload_products/Product-'.$request->id_variant));
                 }
 
@@ -834,21 +844,20 @@ class ProductController extends Controller
             $product_to_delete = Product::where('id', $request->id_variant)->delete();
 
             return response()->json([
-                'status' => 'done'
+                'status' => 'done',
             ]);
-        }else{
+        } else {
             return response()->json([
-                'status' => 'failed'
+                'status' => 'failed',
             ]);
         }
     }
-
 
     public function sku_combination_edit(Request $request)
     {
         $product = Product::findOrFail($request->id);
 
-        $options = array();
+        $options = [];
         if ($request->has('colors_active') && $request->has('colors') && count($request->colors) > 0) {
             $colors_active = 1;
             array_push($options, $request->colors);
@@ -861,8 +870,8 @@ class ProductController extends Controller
 
         if ($request->has('choice_no')) {
             foreach ($request->choice_no as $key => $no) {
-                $name = 'choice_options_' . $no;
-                $data = array();
+                $name = 'choice_options_'.$no;
+                $data = [];
                 foreach ($request[$name] as $key => $item) {
                     array_push($data, $item);
                 }
@@ -870,7 +879,8 @@ class ProductController extends Controller
             }
         }
 
-        $combinations = (new CombinationService())->generate_combination($options);
+        $combinations = (new CombinationService)->generate_combination($options);
+
         return view('backend.product.products.sku_combinations_edit', compact('combinations', 'unit_price', 'colors_active', 'product_name', 'product'));
     }
 
@@ -881,7 +891,7 @@ class ProductController extends Controller
         $html = '';
 
         foreach ($all_attribute_values as $row) {
-            $html .= '<option value="' . $row->value . '">' . $row->value . '</option>';
+            $html .= '<option value="'.$row->value.'">'.$row->value.'</option>';
         }
 
         echo json_encode($html);
@@ -890,16 +900,16 @@ class ProductController extends Controller
     public function updatePublished(Request $request)
     {
         $product = Product::find($request->id);
-        if($product != null){
+        if ($product != null) {
             $product->published = $request->status;
             $product->save();
 
             return response()->json([
-                'status' => "success"
+                'status' => 'success',
             ]);
-        }else{
+        } else {
             return response()->json([
-                'status' => "failed"
+                'status' => 'failed',
             ]);
         }
     }
@@ -911,8 +921,10 @@ class ProductController extends Controller
         if ($product->save()) {
             Artisan::call('view:clear');
             Artisan::call('cache:clear');
+
             return 1;
         }
+
         return 0;
     }
 
@@ -922,12 +934,14 @@ class ProductController extends Controller
 
         if (Auth::user()->id != $product->user_id) {
             flash(translate('This product is not yours.'))->warning();
+
             return back();
         }
 
         if (addon_is_activated('seller_subscription')) {
-            if (!seller_package_validity_check()) {
+            if (! seller_package_validity_check()) {
                 flash(translate('Please upgrade your package.'))->warning();
+
                 return back();
             }
         }
@@ -942,6 +956,7 @@ class ProductController extends Controller
         $this->productTaxService->product_duplicate_store($product->taxes, $product_new);
 
         flash(translate('Product has been duplicated successfully'))->success();
+
         return redirect()->route('seller.products');
     }
 
@@ -959,7 +974,6 @@ class ProductController extends Controller
         //     $product->stocks()->delete();
         //     $product->taxes()->delete();
 
-
         //     if (Product::destroy($id)) {
         //         Cart::where('product_id', $id)->delete();
         //         Wishlist::where('product_id', $id)->delete();
@@ -976,14 +990,15 @@ class ProductController extends Controller
         //     }
 
         if (Auth::user()->id == $product->user_id) {
-            if(count($product->getChildrenProducts()) > 0){
-                foreach($product->getChildrenProducts() as $children){
+            if (count($product->getChildrenProducts()) > 0) {
+                foreach ($product->getChildrenProducts() as $children) {
                     $children->delete();
                 }
             }
             Product::destroy($id);
+
             return back();
-        }else{
+        } else {
             abort(404);
         }
     }
@@ -998,6 +1013,7 @@ class ProductController extends Controller
 
         return 1;
     }
+
     private function extractAttributes($variants)
     {
         $attributes = [];
@@ -1006,7 +1022,7 @@ class ProductController extends Controller
             // Remove duplicates from values
             $uniqueValues = array_unique($values);
 
-            $attribute = Attribute::find($attributeId) ;
+            $attribute = Attribute::find($attributeId);
             // Add attribute ID and unique values to the list
             if ($attribute) {
                 $attributes[$attribute->getTranslation('name')] = $uniqueValues;
@@ -1017,12 +1033,11 @@ class ProductController extends Controller
         return $attributes;
     }
 
-
     public function tempStore(Request $request)
     {
         // return response()->json([$request->all()]);
 
-           // Assuming you have a method to prepare or simulate data needed for the preview
+        // Assuming you have a method to prepare or simulate data needed for the preview
         $detailedProduct = $this->prepareDetailedProductData($request->all());
         // return response()->json(['data'=>['slug'=>gettype($detailedProduct)],'success' => true]);
         $product_queries = []; // Simulate or prepare this data
@@ -1033,43 +1048,46 @@ class ProductController extends Controller
         // Store all necessary data in the session for preview
         $request->session()->put('productPreviewData', compact('detailedProduct', 'product_queries', 'total_query', 'reviews', 'review_status'));
 
-
         $slug = $request->name;
-        return response()->json(['data'=>['slug'=>$slug],'success' => true]);
+
+        return response()->json(['data' => ['slug' => $slug], 'success' => true]);
     }
 
-
-
-    public function getYoutubeVideoId($videoLink) {
+    public function getYoutubeVideoId($videoLink)
+    {
         // Parse the YouTube video URL to extract the video ID
         $videoId = '';
         parse_str(parse_url($videoLink, PHP_URL_QUERY), $queryParams);
         if (isset($queryParams['v'])) {
             $videoId = $queryParams['v'];
         }
+
         return $videoId;
     }
-    public function getVimeoVideoId($videoLink) {
+
+    public function getVimeoVideoId($videoLink)
+    {
         // Parse the Vimeo video URL to extract the video ID
         $videoId = '';
         $regex = '/(?:https?:\/\/)?(?:www\.)?(?:vimeo\.com)\/?(.+)/';
         if (preg_match($regex, $videoLink, $matches)) {
             $videoId = $matches[1];
         }
+
         return $videoId;
     }
 
-    function generateSku($name) {
+    public function generateSku($name)
+    {
         // Convert the name to a slug (lowercase and hyphenated)
         $sku = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $name)));
 
         // Optionally, you can add a unique identifier, like a timestamp or an incrementing number
-        return  $sku;
+        return $sku;
     }
 
-
-    public function prepareDetailedProductData($data){
-
+    public function prepareDetailedProductData($data)
+    {
 
         // Check if main_photos has files
         // if (isset($data['photos_variant-0']) && is_array($data['photos_variant-0'])) {
@@ -1088,7 +1106,7 @@ class ProductController extends Controller
 
         // dd($data) ;
         // Retrieve the brand information
-        $outStock = false ;
+        $outStock = false;
         $brand = Brand::find($data['brand_id']);
 
         $numeric_keys = [];
@@ -1097,7 +1115,7 @@ class ProductController extends Controller
             // Extract numeric part from the key
             $numeric_part = substr($key, strrpos($key, '-') + 1);
             // Check if the extracted part is numeric and not already added
-            if (is_numeric($numeric_part) && !in_array($numeric_part, $numeric_keys)) {
+            if (is_numeric($numeric_part) && ! in_array($numeric_part, $numeric_keys)) {
                 // Add to the array of numeric keys
                 $numeric_keys[] = $numeric_part;
             }
@@ -1110,25 +1128,24 @@ class ProductController extends Controller
         //                 // $storedFilePaths = $this->saveMainPhotos($data["photos_variant-$numeric_key"]);
         //                 $produitVariationImage=true ;
 
-
         //     }
         // }
         $storedFilePaths = [];
 
         // if(!$produitVariationImage) {
-            if (isset($data['main_photos']) && is_array($data['main_photos'])) {
-                // Process and save main photos
-                $storedFilePaths = $this->saveMainPhotos($data['main_photos']);
-            }
+        if (isset($data['main_photos']) && is_array($data['main_photos'])) {
+            // Process and save main photos
+            $storedFilePaths = $this->saveMainPhotos($data['main_photos']);
+        }
 
-            if (isset($data['product_id'])) {
-                $upload_products_db = UploadProducts::where('id_product',$data['product_id'])->pluck('path')->toArray() ;
-                $upload_products_db = array_filter($upload_products_db, function($path) {
-                    return !strpos($path, 'thumbnails');
-                });
-                $storedFilePaths = array_merge($storedFilePaths, $upload_products_db);
+        if (isset($data['product_id'])) {
+            $upload_products_db = UploadProducts::where('id_product', $data['product_id'])->pluck('path')->toArray();
+            $upload_products_db = array_filter($upload_products_db, function ($path) {
+                return ! strpos($path, 'thumbnails');
+            });
+            $storedFilePaths = array_merge($storedFilePaths, $upload_products_db);
 
-            }
+        }
 
         // }
         // if (isset($variationId)) {
@@ -1154,26 +1171,27 @@ class ProductController extends Controller
         //     }
         // }
 
-       // Now $numeric_keys array contains the unique numeric parts
+        // Now $numeric_keys array contains the unique numeric parts
         $attributesArray = [];
         foreach ($numeric_keys as $numeric_key) {
             // Access corresponding values
             if (isset($data["attribute_generale-$numeric_key"])) {
                 // Value is set, you can do something with it here
-                $attribute = Attribute::find($numeric_key) ;
+                $attribute = Attribute::find($numeric_key);
 
                 $value = $data["attribute_generale-$numeric_key"];
-            // Add attribute name and value to the array
-            if ($attribute) {
-                if (isset($data["unit_attribute_generale-$numeric_key"])){
-                    $unit = Unity::find($data["unit_attribute_generale-$numeric_key"]) ;
-                    if ($unit)
-                        $attributesArray[$attribute->id] = $value.' '.$unit->name;
+                // Add attribute name and value to the array
+                if ($attribute) {
+                    if (isset($data["unit_attribute_generale-$numeric_key"])) {
+                        $unit = Unity::find($data["unit_attribute_generale-$numeric_key"]);
+                        if ($unit) {
+                            $attributesArray[$attribute->id] = $value.' '.$unit->name;
+                        }
+                    } else {
+                        $attributesArray[$attribute->id] = $value;
+                    }
                 }
-                else
-                         $attributesArray[$attribute->id] = $value;
             }
-         }
         }
         // dd($data) ;
         // $variants = [];
@@ -1197,123 +1215,123 @@ class ProductController extends Controller
         //     }
         // }
 
-
         // dd($data) ;
-       // Extract unique attribute IDs and their values
+        // Extract unique attribute IDs and their values
         //    $attributes = $this->extractAttributes($variants);
-       $variations = [];
+        $variations = [];
 
-       foreach ($data as $key => $value) {
-           if (strpos($key, 'attributes') === 0 && (strpos($key, 'attributes_units') === false)) {
-               // Extract the attribute number and variation id
-               $parts = explode('-', $key);
-               $variationId = $parts[2];
-               $attributeId = $parts[1];
-               // Initialize the variation if not exists
-               if (!isset($variations[$variationId])) {
-                   $variations[$variationId] = [];
-               }
-               // Add attribute to variation
-               if (isset($data["attributes_units-$attributeId-$variationId"])){
-                $unit = Unity::find($data["attributes_units-$attributeId-$variationId"]) ;
-                if ($unit)
-                    $variations[$variationId][$attributeId] = $value.' '.$unit->name;
-                }
-                else
-                    $variations[$variationId][$attributeId] = $value;
-
-               if (isset($data["photos_variant-$variationId"]) && is_array($data["photos_variant-$variationId"])) {
-                $variations[$variationId]['storedFilePaths'] = $this->saveMainPhotos($data["photos_variant-$variationId"]);
-
-               }
-
-               else {
-                $variations[$variationId]['storedFilePaths']= [] ;
-               }
-               if (count($storedFilePaths) > 0) {
-                // If you want to merge main photo paths with variation photo paths
-                $variations[$variationId]['storedFilePaths'] = array_merge(
-                    $variations[$variationId]['storedFilePaths'],
-                    $storedFilePaths
-                 );
-                 }
-               if (isset($data["variant_pricing-from$variationId"]) && is_array($data["variant_pricing-from$variationId"])) {
-                $variations[$variationId]['variant_pricing-from']['from'] =$data["variant_pricing-from$variationId"]['from'] ?? [] ;
-                $variations[$variationId]['variant_pricing-from']['to'] =$data["variant_pricing-from$variationId"]['to'] ?? [] ;
-                $variations[$variationId]['variant_pricing-from']['unit_price'] =$data["variant_pricing-from$variationId"]['unit_price'] ?? [] ;
-                $variations[$variationId]['variant_pricing-from']['discount'] =[
-                    'type' => $data["variant_pricing-from$variationId"]['discount_type']?? null,
-                    'amount' => $data["variant_pricing-from$variationId"]['discount_amount']?? null,
-                    'percentage' => $data["variant_pricing-from$variationId"]['discount_percentage']?? null,
-                    'date' => $data["variant_pricing-from$variationId"]['discount_range']?? null,
-                ] ;
-               } elseif (isset($data["variant-pricing-$variationId"]) && $data["variant-pricing-$variationId"] == 1 ){
-                    $variations[$variationId]['variant_pricing-from']['from'] =$data['from'] ?? []  ;
-                    $variations[$variationId]['variant_pricing-from']['to'] =$data['to']  ?? [] ;
-                    $variations[$variationId]['variant_pricing-from']['unit_price'] =$data['unit_price'] ?? []  ;
-                    $variations[$variationId]['variant_pricing-from']['discount'] =[
-                        'type' => $data['discount_type']?? null,
-                        'amount' => $data['discount_amount']?? null,
-                        'percentage' => $data['discount_percentage']?? null,
-                        'date' => $data['date_range_pricing']?? null,
-                    ] ;
-               }
-            //    if (isset($variations[$variationId]['variant_pricing-from'])) {
-            //     // Sorting each array if it's not empty
-            //     foreach ($variations[$variationId]['variant_pricing-from'] as &$subArray) {
-            //         if (!empty($subArray)) {
-            //             sort($subArray);
-            //         }
-            //     }
-            //     unset($subArray); // Unset the reference to avoid potential side-effects
-            //    }
-
-           }
-       }
-
-        //    dd($data['variant']['attributes']) ;
-       if (isset($data['variant']['attributes']))
-        foreach ($data['variant']['attributes'] as $variationId=>$variations_db) {
-            foreach ($variations_db as $attributeId=>$attribute) {
-                if (!isset($variations[$variationId])) {
+        foreach ($data as $key => $value) {
+            if (strpos($key, 'attributes') === 0 && (strpos($key, 'attributes_units') === false)) {
+                // Extract the attribute number and variation id
+                $parts = explode('-', $key);
+                $variationId = $parts[2];
+                $attributeId = $parts[1];
+                // Initialize the variation if not exists
+                if (! isset($variations[$variationId])) {
                     $variations[$variationId] = [];
                 }
-                if(isset($data['unit_variant'][$variationId][$attributeId])){
-                    $unit = Unity::find($data['unit_variant'][$variationId][$attributeId]) ;
-                    if ($unit)
-                        $variations[$variationId][$attributeId] = $attribute.' '.$unit->name;
-                 }
-                else
-                    $variations[$variationId][$attributeId] = $attribute;
-            }
+                // Add attribute to variation
+                if (isset($data["attributes_units-$attributeId-$variationId"])) {
+                    $unit = Unity::find($data["attributes_units-$attributeId-$variationId"]);
+                    if ($unit) {
+                        $variations[$variationId][$attributeId] = $value.' '.$unit->name;
+                    }
+                } else {
+                    $variations[$variationId][$attributeId] = $value;
+                }
 
+                if (isset($data["photos_variant-$variationId"]) && is_array($data["photos_variant-$variationId"])) {
+                    $variations[$variationId]['storedFilePaths'] = $this->saveMainPhotos($data["photos_variant-$variationId"]);
+
+                } else {
+                    $variations[$variationId]['storedFilePaths'] = [];
+                }
+                if (count($storedFilePaths) > 0) {
+                    // If you want to merge main photo paths with variation photo paths
+                    $variations[$variationId]['storedFilePaths'] = array_merge(
+                        $variations[$variationId]['storedFilePaths'],
+                        $storedFilePaths
+                    );
+                }
+                if (isset($data["variant_pricing-from$variationId"]) && is_array($data["variant_pricing-from$variationId"])) {
+                    $variations[$variationId]['variant_pricing-from']['from'] = $data["variant_pricing-from$variationId"]['from'] ?? [];
+                    $variations[$variationId]['variant_pricing-from']['to'] = $data["variant_pricing-from$variationId"]['to'] ?? [];
+                    $variations[$variationId]['variant_pricing-from']['unit_price'] = $data["variant_pricing-from$variationId"]['unit_price'] ?? [];
+                    $variations[$variationId]['variant_pricing-from']['discount'] = [
+                        'type' => $data["variant_pricing-from$variationId"]['discount_type'] ?? null,
+                        'amount' => $data["variant_pricing-from$variationId"]['discount_amount'] ?? null,
+                        'percentage' => $data["variant_pricing-from$variationId"]['discount_percentage'] ?? null,
+                        'date' => $data["variant_pricing-from$variationId"]['discount_range'] ?? null,
+                    ];
+                } elseif (isset($data["variant-pricing-$variationId"]) && $data["variant-pricing-$variationId"] == 1) {
+                    $variations[$variationId]['variant_pricing-from']['from'] = $data['from'] ?? [];
+                    $variations[$variationId]['variant_pricing-from']['to'] = $data['to'] ?? [];
+                    $variations[$variationId]['variant_pricing-from']['unit_price'] = $data['unit_price'] ?? [];
+                    $variations[$variationId]['variant_pricing-from']['discount'] = [
+                        'type' => $data['discount_type'] ?? null,
+                        'amount' => $data['discount_amount'] ?? null,
+                        'percentage' => $data['discount_percentage'] ?? null,
+                        'date' => $data['date_range_pricing'] ?? null,
+                    ];
+                }
+                //    if (isset($variations[$variationId]['variant_pricing-from'])) {
+                //     // Sorting each array if it's not empty
+                //     foreach ($variations[$variationId]['variant_pricing-from'] as &$subArray) {
+                //         if (!empty($subArray)) {
+                //             sort($subArray);
+                //         }
+                //     }
+                //     unset($subArray); // Unset the reference to avoid potential side-effects
+                //    }
+
+            }
         }
 
-        if (isset($data['variant']['from']))
-        foreach ($data['variant']['from'] as $variationId=>$variations_db_from) {
+        //    dd($data['variant']['attributes']) ;
+        if (isset($data['variant']['attributes'])) {
+            foreach ($data['variant']['attributes'] as $variationId => $variations_db) {
+                foreach ($variations_db as $attributeId => $attribute) {
+                    if (! isset($variations[$variationId])) {
+                        $variations[$variationId] = [];
+                    }
+                    if (isset($data['unit_variant'][$variationId][$attributeId])) {
+                        $unit = Unity::find($data['unit_variant'][$variationId][$attributeId]);
+                        if ($unit) {
+                            $variations[$variationId][$attributeId] = $attribute.' '.$unit->name;
+                        }
+                    } else {
+                        $variations[$variationId][$attributeId] = $attribute;
+                    }
+                }
 
-                if (!isset($variations[$variationId])) {
+            }
+        }
+
+        if (isset($data['variant']['from'])) {
+            foreach ($data['variant']['from'] as $variationId => $variations_db_from) {
+
+                if (! isset($variations[$variationId])) {
                     $variations[$variationId] = [];
                 }
                 $variations[$variationId]['variant_pricing-from']['from'] = $variations_db_from;
                 $variations[$variationId]['variant_pricing-from']['to'] = $data['variant']['to'][$variationId] ?? [];
                 $variations[$variationId]['variant_pricing-from']['unit_price'] = $data['variant']['unit_price'][$variationId] ?? [];
-                $upload_products_db = UploadProducts::where('id_product',$variationId)->pluck('path')->toArray() ;
-                $variations[$variationId]['variant_pricing-from']['discount'] =[
-                    'type' => $data['variant']['discount_type'][$variationId]?? null,
-                    'amount' => $data['variant']['discount_amount'][$variationId]?? null,
-                    'percentage' => $data['variant']['discount_percentage'][$variationId]?? null,
-                    'date' => $data['variant']['date_range_pricing'][$variationId]?? null,
-                ] ;
-                $variations[$variationId]['storedFilePaths'] = $upload_products_db ;
+                $upload_products_db = UploadProducts::where('id_product', $variationId)->pluck('path')->toArray();
+                $variations[$variationId]['variant_pricing-from']['discount'] = [
+                    'type' => $data['variant']['discount_type'][$variationId] ?? null,
+                    'amount' => $data['variant']['discount_amount'][$variationId] ?? null,
+                    'percentage' => $data['variant']['discount_percentage'][$variationId] ?? null,
+                    'date' => $data['variant']['date_range_pricing'][$variationId] ?? null,
+                ];
+                $variations[$variationId]['storedFilePaths'] = $upload_products_db;
 
                 if (count($storedFilePaths) > 0) {
                     // If you want to merge main photo paths with variation photo paths
                     $variations[$variationId]['storedFilePaths'] = array_merge(
                         $variations[$variationId]['storedFilePaths'],
                         $storedFilePaths
-                     );
-                     }
+                    );
+                }
                 // if (isset($variations[$variationId]['variant_pricing-from'])) {
                 //     // Sorting each array if it's not empty
                 //     foreach ($variations[$variationId]['variant_pricing-from'] as &$subArray) {
@@ -1324,53 +1342,48 @@ class ProductController extends Controller
                 //     unset($subArray); // Unset the reference to avoid potential side-effects
                 //    }
 
+            }
         }
 
         if (isset($data['variant']['photo']) && is_array($data['variant']['photo'])) {
-            foreach ($data['variant']['photo'] as $variationId=>$photos) {
-                $upload_products_db =$this->saveMainPhotos($photos) ;
-                $productPhotoDb = $variations[$variationId]['storedFilePaths'] ;
+            foreach ($data['variant']['photo'] as $variationId => $photos) {
+                $upload_products_db = $this->saveMainPhotos($photos);
+                $productPhotoDb = $variations[$variationId]['storedFilePaths'];
 
                 $variations[$variationId]['storedFilePaths'] = array_merge($productPhotoDb, $upload_products_db);
 
+            }
+        }
 
+        $attributes = [];
+
+        foreach ($variations as $variation) {
+            foreach ($variation as $attributeId => $value) {
+                if ($attributeId != 'storedFilePaths' && $attributeId != 'variant_pricing-from') {
+                    if (! isset($attributes[$attributeId])) {
+                        $attributes[$attributeId] = [];
+                    }
+                    // Add value to the unique attributes array if it doesn't already exist
+                    if (! in_array($value, $attributes[$attributeId])) {
+                        $attributes[$attributeId][] = $value;
+                    }
+                }
 
             }
         }
 
-
-
-       $attributes = [];
-
-       foreach ($variations as $variation) {
-           foreach ($variation as $attributeId => $value) {
-               if ($attributeId != "storedFilePaths" && $attributeId != "variant_pricing-from" ) {
-                if (!isset($attributes[$attributeId])) {
-                    $attributes[$attributeId] = [];
-                }
-                // Add value to the unique attributes array if it doesn't already exist
-                if (!in_array($value, $attributes[$attributeId])) {
-                    $attributes[$attributeId][] = $value;
-                }
-               }
-
-           }
-       }
-
-       if (isset($data['variant']['sku'])) {
-        foreach ($data['variant']['sku'] as $variationId=>$sku) {
-            $variations[$variationId]['sku']= $sku;
-        }
-       }else {
-            foreach($variations as $keyVar=>$variation) {
-                if(isset($data['sku-'.$keyVar])) {
-                        $variations[$keyVar]['sku']= $data['sku-'.$keyVar];
+        if (isset($data['variant']['sku'])) {
+            foreach ($data['variant']['sku'] as $variationId => $sku) {
+                $variations[$variationId]['sku'] = $sku;
+            }
+        } else {
+            foreach ($variations as $keyVar => $variation) {
+                if (isset($data['sku-'.$keyVar])) {
+                    $variations[$keyVar]['sku'] = $data['sku-'.$keyVar];
 
                 }
             }
-       }
-
-
+        }
 
         //    dd($variations) ;
         //    $attributeAvailable= [] ;
@@ -1387,15 +1400,14 @@ class ProductController extends Controller
         //    }
         //    dd($attributeAvailable) ;
 
-        if ($data["video_provider"] === "youtube") {
-             $getYoutubeVideoId=$this->getYoutubeVideoId($data["video_link"]) ;
+        if ($data['video_provider'] === 'youtube') {
+            $getYoutubeVideoId = $this->getYoutubeVideoId($data['video_link']);
 
+        } else {
+            $getVimeoVideoId = $this->getVimeoVideoId($data['video_link']);
         }
-        else {
-            $getVimeoVideoId=$this->getVimeoVideoId($data["video_link"]) ;
-        }
-        if (is_array($variations) && !empty($variations)) {
-            $lastItem  = end($variations);
+        if (is_array($variations) && ! empty($variations)) {
+            $lastItem = end($variations);
 
             $variationId = key($variations); // Get the key (variation ID) of the last item
             // sort($lastItem['variant_pricing-from']['from']) ;
@@ -1403,20 +1415,19 @@ class ProductController extends Controller
             // sort($lastItem['variant_pricing-from']['to']) ;
             // dd($lastItem,$variationId,$variations) ;
             if (isset($lastItem['variant_pricing-from']['to'], $lastItem['variant_pricing-from']['from']) &&
-            !empty($lastItem['variant_pricing-from']['to']) && !empty($lastItem['variant_pricing-from']['from'])) {
-                $max =max($lastItem['variant_pricing-from']['to'])  ;
-                $min =min($lastItem['variant_pricing-from']['from']) ;
-                if(isset($data['product_id'])){
+            ! empty($lastItem['variant_pricing-from']['to']) && ! empty($lastItem['variant_pricing-from']['from'])) {
+                $max = max($lastItem['variant_pricing-from']['to']);
+                $min = min($lastItem['variant_pricing-from']['from']);
+                if (isset($data['product_id'])) {
                     $product_stock = StockSummary::where('variant_id', $variationId)->sum('current_total_quantity');
                     if ($product_stock < $min) {
-                        $outStock = true ;
+                        $outStock = true;
                     }
 
                 }
 
             }
         }
-
 
         // if (isset($data['from']) && is_array($data['from']) && !empty($data['from'])) {
         //     sort($data['from']);
@@ -1427,13 +1438,13 @@ class ProductController extends Controller
         // }
         if (isset($data['from']) && is_array($data['from']) && count($data['from']) > 0) {
             // sort($data['from']);
-            if(!isset($min)) {
-                $min = min($data['from']) ;
-                if(isset($data['product_id'])){
+            if (! isset($min)) {
+                $min = min($data['from']);
+                if (isset($data['product_id'])) {
                     $product_stock = StockSummary::where('variant_id', $data['product_id'])->sum('current_total_quantity');
 
                     if ($product_stock < $min) {
-                        $outStock = true ;
+                        $outStock = true;
                     }
                 }
 
@@ -1447,22 +1458,23 @@ class ProductController extends Controller
 
         if (isset($data['to']) && is_array($data['to']) && count($data['to']) > 0) {
             // sort($data['to']);
-            if(!isset($max))
-                $max = max($data['to']) ;
+            if (! isset($max)) {
+                $max = max($data['to']);
+            }
         }
 
-        $total = isset($data['from'][0]) && isset($data['unit_price'][0]) ? $data['from'][0] * $data['unit_price'][0] : "";
+        $total = isset($data['from'][0]) && isset($data['unit_price'][0]) ? $data['from'][0] * $data['unit_price'][0] : '';
         // return response()->json(['status', $attributesArray]);
-        if( isset($lastItem['variant_pricing-from']['discount']['date']) && is_array($lastItem['variant_pricing-from']['discount']['date']) && !empty($lastItem['variant_pricing-from']['discount']['date']) && isset($lastItem['variant_pricing-from']['discount']['date'][0]) && $lastItem['variant_pricing-from']['discount']['date'][0] !== null){
-        // Extract start and end dates from the first date interval
+        if (isset($lastItem['variant_pricing-from']['discount']['date']) && is_array($lastItem['variant_pricing-from']['discount']['date']) && ! empty($lastItem['variant_pricing-from']['discount']['date']) && isset($lastItem['variant_pricing-from']['discount']['date'][0]) && $lastItem['variant_pricing-from']['discount']['date'][0] !== null) {
+            // Extract start and end dates from the first date interval
 
-        $dateRange = $lastItem['variant_pricing-from']['discount']['date'][0];
-        list($startDate, $endDate) = explode(' to ', $dateRange);
+            $dateRange = $lastItem['variant_pricing-from']['discount']['date'][0];
+            [$startDate, $endDate] = explode(' to ', $dateRange);
 
-        // Convert date strings to DateTime objects for comparison
-        $currentDate = new DateTime(); // Current date/time
-        $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
-        $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
+            // Convert date strings to DateTime objects for comparison
+            $currentDate = new DateTime; // Current date/time
+            $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
+            $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
 
             // Check if the current date/time is within the specified date interval
             if ($currentDate >= $startDateTime && $currentDate <= $endDateTime) {
@@ -1472,10 +1484,9 @@ class ProductController extends Controller
                 // Calculate the total price based on quantity and unit price
                 $variantPricing = $unitPrice;
 
-                if($lastItem['variant_pricing-from']['discount']['type'][0] == "percent") {
-                    $percent = $lastItem['variant_pricing-from']['discount']['percentage'][0] ;
+                if ($lastItem['variant_pricing-from']['discount']['type'][0] == 'percent') {
+                    $percent = $lastItem['variant_pricing-from']['discount']['percentage'][0];
                     if ($percent) {
-
 
                         // Calculate the discount amount based on the given percentage
                         $discountPercent = $percent; // Example: $percent = 5; // 5% discount
@@ -1485,9 +1496,9 @@ class ProductController extends Controller
                         $discountedPrice = $variantPricing - $discountAmount;
 
                     }
-                }else if($lastItem['variant_pricing-from']['discount']['type'][0] == "amount"){
+                } elseif ($lastItem['variant_pricing-from']['discount']['type'][0] == 'amount') {
                     // Calculate the discount amount based on the given amount
-                    $amount = $lastItem['variant_pricing-from']['discount']['amount'][0] ;
+                    $amount = $lastItem['variant_pricing-from']['discount']['amount'][0];
 
                     if ($amount) {
                         $discountAmount = $amount;
@@ -1500,68 +1511,67 @@ class ProductController extends Controller
             }
         }
         if (isset($discountedPrice) && $discountedPrice > 0 && isset($lastItem['variant_pricing-from']['from'][0])) {
-            $totalDiscount=$lastItem['variant_pricing-from']['from'][0]*$discountedPrice;
+            $totalDiscount = $lastItem['variant_pricing-from']['from'][0] * $discountedPrice;
         }
         if (count($variations) == 0) {
-            if( isset($data['date_range_pricing']) && is_array($data['date_range_pricing']) && !empty($data['date_range_pricing']) && isset($data['date_range_pricing'][0]) && $data['date_range_pricing'][0] !== null){
+            if (isset($data['date_range_pricing']) && is_array($data['date_range_pricing']) && ! empty($data['date_range_pricing']) && isset($data['date_range_pricing'][0]) && $data['date_range_pricing'][0] !== null) {
                 // Extract start and end dates from the first date interval
 
                 $dateRange = $data['date_range_pricing'][0];
-                list($startDate, $endDate) = explode(' to ', $dateRange);
+                [$startDate, $endDate] = explode(' to ', $dateRange);
 
                 // Convert date strings to DateTime objects for comparison
-                $currentDate = new DateTime(); // Current date/time
+                $currentDate = new DateTime; // Current date/time
                 $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
                 $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
 
-                    // Check if the current date/time is within the specified date interval
-                    if ($currentDate >= $startDateTime && $currentDate <= $endDateTime) {
-                        // Assuming $lastItem is your array containing the pricing information
-                        $unitPrice = $data['unit_price'][0]; // Assuming 'unit_price' is the price per unit
+                // Check if the current date/time is within the specified date interval
+                if ($currentDate >= $startDateTime && $currentDate <= $endDateTime) {
+                    // Assuming $lastItem is your array containing the pricing information
+                    $unitPrice = $data['unit_price'][0]; // Assuming 'unit_price' is the price per unit
 
-                        // Calculate the total price based on quantity and unit price
-                        $variantPricing = $unitPrice;
+                    // Calculate the total price based on quantity and unit price
+                    $variantPricing = $unitPrice;
 
-                        if($data['discount_type'][0] == "percent") {
-                            $percent = $data['discount_percentage'][0] ;
-                            if ($percent) {
+                    if ($data['discount_type'][0] == 'percent') {
+                        $percent = $data['discount_percentage'][0];
+                        if ($percent) {
 
+                            // Calculate the discount amount based on the given percentage
+                            $discountPercent = $percent; // Example: $percent = 5; // 5% discount
+                            $discountAmount = ($variantPricing * $discountPercent) / 100;
 
-                                // Calculate the discount amount based on the given percentage
-                                $discountPercent = $percent; // Example: $percent = 5; // 5% discount
-                                $discountAmount = ($variantPricing * $discountPercent) / 100;
-
-                                // Calculate the discounted price
-                                $discountedPrice = $variantPricing - $discountAmount;
-
-                            }
-                        }else if($data['discount_type'][0] == "amount"){
-                            // Calculate the discount amount based on the given amount
-                            $amount = $data['discount_amount'][0] ;
-
-                            if ($amount) {
-                                $discountAmount = $amount;
-                                // Calculate the discounted price
-                                $discountedPrice = $variantPricing - $discountAmount;
-
-                            }
+                            // Calculate the discounted price
+                            $discountedPrice = $variantPricing - $discountAmount;
 
                         }
+                    } elseif ($data['discount_type'][0] == 'amount') {
+                        // Calculate the discount amount based on the given amount
+                        $amount = $data['discount_amount'][0];
+
+                        if ($amount) {
+                            $discountAmount = $amount;
+                            // Calculate the discounted price
+                            $discountedPrice = $variantPricing - $discountAmount;
+
+                        }
+
                     }
                 }
-                if (isset($discountedPrice) && $discountedPrice > 0 && isset($data['from'][0])) {
-                    $totalDiscount=$data['from'][0]*$discountedPrice;
-                }
+            }
+            if (isset($discountedPrice) && $discountedPrice > 0 && isset($data['from'][0])) {
+                $totalDiscount = $data['from'][0] * $discountedPrice;
+            }
         }
 
         $shop = Shop::where('user_id', Auth::user()->owner_id)->first();
-        if($shop != null){
+        if ($shop != null) {
             $shop_name = $shop->name;
-        }else{
+        } else {
             $shop_name = null;
         }
 
-        if (isset($data['product_id']) && !empty($data['product_id'])) {
+        if (isset($data['product_id']) && ! empty($data['product_id'])) {
             // Retrieve existing documents for the given product ID
             $existingDocuments = UploadProducts::where('id_product', $data['product_id'])
                 ->where('type', 'documents')
@@ -1571,41 +1581,39 @@ class ProductController extends Controller
             $existingDocuments = collect();
         }
 
-        $newDocuments= [] ;
-         // Check if the documents were uploaded
-    if (isset($data['documents'])) {
-        foreach ($data['documents'] as $document) {
+        $newDocuments = [];
+        // Check if the documents were uploaded
+        if (isset($data['documents'])) {
+            foreach ($data['documents'] as $document) {
 
-          // Generate a unique name for the file using the current timestamp
-            $fileName = time() . '_' . $document->getClientOriginalExtension();
+                // Generate a unique name for the file using the current timestamp
+                $fileName = time().'_'.$document->getClientOriginalExtension();
 
-            // Create a path for storing the document
-            $path = $document->storeAs('/upload_products/Product-temp/documents', $fileName);
+                // Create a path for storing the document
+                $path = $document->storeAs('/upload_products/Product-temp/documents', $fileName);
 
-            // Add document info to the newDocuments array
-            $newDocuments[] = [
+                // Add document info to the newDocuments array
+                $newDocuments[] = [
 
-                'path' => '/'.$path,
-                'extension' => $document->extension(),
-                'document_name' => $document->getClientOriginalName(),
-                'type' => 'documents',
-                // You can add created_at and updated_at if needed
-            ];
+                    'path' => '/'.$path,
+                    'extension' => $document->extension(),
+                    'document_name' => $document->getClientOriginalName(),
+                    'type' => 'documents',
+                    // You can add created_at and updated_at if needed
+                ];
+            }
         }
-    }
 
-
-    // Combine existing documents with new ones
+        // Combine existing documents with new ones
         $existingDocumentsArray = $existingDocuments->toArray();
         $allDocuments = collect($existingDocumentsArray)->merge($newDocuments);
-
 
         // dd($data , $variationId) ;
         // Prepare detailed product data
         $detailedProduct = [
             'shop_name' => $shop_name,
             'name' => $data['name'],
-            'brand' => $brand ? $brand->name : "",
+            'brand' => $brand ? $brand->name : '',
             'unit' => $data['unit'],
             'description' => $data['description'],
             'short_description' => $data['short_description'],
@@ -1618,58 +1626,55 @@ class ProductController extends Controller
             // 'total' => $total,
             'quantity' => $lastItem['variant_pricing-from']['from'][0] ?? $data['from'][0] ?? '',
             'price' => $lastItem['variant_pricing-from']['unit_price'][0] ?? $data['unit_price'][0] ?? '',
-            'total' => $totalDiscount ??(isset($lastItem['variant_pricing-from']['from'][0]) && isset($lastItem['variant_pricing-from']['unit_price'][0]) ? $lastItem['variant_pricing-from']['from'][0] * $lastItem['variant_pricing-from']['unit_price'][0] : $total) ,
-            'max' =>$max ?? 1 ,
-            'min' =>$min ?? 1 ,
-            'general_attributes' =>$attributesArray,
-            'attributes' =>$attributes ?? [] ,
-            'description' =>$data['description'] ,
-            'from' =>$data['from'] ?? [] ,
-            'to' =>$data['to']  ?? [],
-            'unit_price' =>$data['unit_price'] ?? [] ,
-            'variations' =>$variations,
+            'total' => $totalDiscount ?? (isset($lastItem['variant_pricing-from']['from'][0]) && isset($lastItem['variant_pricing-from']['unit_price'][0]) ? $lastItem['variant_pricing-from']['from'][0] * $lastItem['variant_pricing-from']['unit_price'][0] : $total),
+            'max' => $max ?? 1,
+            'min' => $min ?? 1,
+            'general_attributes' => $attributesArray,
+            'attributes' => $attributes ?? [],
+            'description' => $data['description'],
+            'from' => $data['from'] ?? [],
+            'to' => $data['to'] ?? [],
+            'unit_price' => $data['unit_price'] ?? [],
+            'variations' => $variations,
             'variationId' => isset($data['product_id']) && isset($variationId) ? $variationId : null,
             // 'variationId' => $variationId ?? null,
 
             'lastItem' => $lastItem ?? [],
             'catalog' => false,
-            'video_provider'  => $data["video_provider"] ,
-            'getYoutubeVideoId' =>$getYoutubeVideoId ?? null ,
+            'video_provider' => $data['video_provider'],
+            'getYoutubeVideoId' => $getYoutubeVideoId ?? null,
             'getVimeoVideoId' => $getVimeoVideoId ?? null,
             'discountedPrice' => $discountedPrice ?? null,
             'totalDiscount' => $totalDiscount ?? null,
-            'date_range_pricing' =>  $data['date_range_pricing']  ?? null,
-            'discount_type' => $data['discount_type'] ?? null ,
+            'date_range_pricing' => $data['date_range_pricing'] ?? null,
+            'discount_type' => $data['discount_type'] ?? null,
             'discount_percentage' => $data['discount_percentage'],
-            'discount_amount'=> $data['discount_amount'],
-            'percent'=> $percent ?? null,
-            'product_id' => $data['product_id'] ?? null ,
-            'category' => isset($data['parent_id']) && !empty($data['parent_id']) ? optional(Category::find($data['parent_id']))->name : null,
-            'sku'=> $lastItem['sku'] ??  $data['product_sk'] ?? null ,
-            'tags'=> $data['tags'] ,
+            'discount_amount' => $data['discount_amount'],
+            'percent' => $percent ?? null,
+            'product_id' => $data['product_id'] ?? null,
+            'category' => isset($data['parent_id']) && ! empty($data['parent_id']) ? optional(Category::find($data['parent_id']))->name : null,
+            'sku' => $lastItem['sku'] ?? $data['product_sk'] ?? null,
+            'tags' => $data['tags'],
 
             'ratingPercentages' => 0,
             'documents' => $allDocuments,
-            'previewCreate'=>true,
-            "unit_of_sale" => $data['unit'] ?? null ,
-            "outStock" => $outStock ,
-
-
+            'previewCreate' => true,
+            'unit_of_sale' => $data['unit'] ?? null,
+            'outStock' => $outStock,
 
         ];
-
-
 
         return $detailedProduct;
     }
 
-    private function saveMainPhotos($photos){
+    private function saveMainPhotos($photos)
+    {
 
         $storedFilePaths = [];
 
         foreach ($photos as $photo) {
             // Generate a unique filename
-            $filename = uniqid('main_photo_') . '.' . $photo->getClientOriginalExtension();
+            $filename = uniqid('main_photo_').'.'.$photo->getClientOriginalExtension();
 
             // Store the file to the desired location (e.g., public storage)
             $storedPath = $photo->storeAs('preview_products', $filename);
@@ -1681,154 +1686,146 @@ class ProductController extends Controller
         return $storedFilePaths;
     }
 
-
     public function preview(Request $request)
     {
 
         $previewData = $request->session()->get('productPreviewData', null);
 
         // dd($previewData);
-        if (!$previewData) {
+        if (! $previewData) {
             return redirect()->back()->withErrors('No preview data found.');
         }
 
         // Extract all variables required for the view
         extract($previewData);
 
-
         // Add a flag to indicate that this is a preview
         $isPreview = true;
 
-
-        return view('frontend.product_details', compact('previewData','isPreview'));
+        return view('frontend.product_details', compact('previewData', 'isPreview'));
         // return view('frontend.product_details.preview', compact('previewData'));
     }
 
-    public function updatePricePreview(Request $request) {
+    public function updatePricePreview(Request $request)
+    {
 
-        $data=$request->session()->get('productPreviewData', null) ;
-        $variations = $data['detailedProduct']['variations'] ;
+        $data = $request->session()->get('productPreviewData', null);
+        $variations = $data['detailedProduct']['variations'];
 
         // Given value
         $qty = $request->quantity;
-        $totalDiscount = 0 ;
-        $discountPrice = 0 ;
+        $totalDiscount = 0;
+        $discountPrice = 0;
         // Iterate through the ranges
         $unitPrice = null;
         // if($request->variationId != null) {
-            if(count($variations ) > 0) {
+        if (count($variations) > 0) {
 
             foreach ($variations[$request->variationId]['variant_pricing-from']['from'] as $index => $from) {
                 $to = $variations[$request->variationId]['variant_pricing-from']['to'][$index];
 
                 if ($qty >= $from && $qty <= $to) {
-                     $unitPrice = $variations[$request->variationId]['variant_pricing-from']['unit_price'][$index];
-                     if( isset($variations[$request->variationId]['variant_pricing-from']['discount']['date'][$index]) && ($variations[$request->variationId]['variant_pricing-from']['discount']['date'][$index])){
+                    $unitPrice = $variations[$request->variationId]['variant_pricing-from']['unit_price'][$index];
+                    if (isset($variations[$request->variationId]['variant_pricing-from']['discount']['date'][$index]) && ($variations[$request->variationId]['variant_pricing-from']['discount']['date'][$index])) {
                         // Extract start and end dates from the first date interval
 
                         $dateRange = $variations[$request->variationId]['variant_pricing-from']['discount']['date'][$index];
-                        list($startDate, $endDate) = explode(' to ', $dateRange);
+                        [$startDate, $endDate] = explode(' to ', $dateRange);
 
                         // Convert date strings to DateTime objects for comparison
-                        $currentDate = new DateTime(); // Current date/time
+                        $currentDate = new DateTime; // Current date/time
                         $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
                         $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
 
-                            // Check if the current date/time is within the specified date interval
-                            if ($currentDate >= $startDateTime && $currentDate <= $endDateTime) {
+                        // Check if the current date/time is within the specified date interval
+                        if ($currentDate >= $startDateTime && $currentDate <= $endDateTime) {
 
+                            if ($variations[$request->variationId]['variant_pricing-from']['discount']['type'][$index] == 'percent') {
+                                $percent = $variations[$request->variationId]['variant_pricing-from']['discount']['percentage'][$index];
+                                if ($percent) {
 
-                                if($variations[$request->variationId]['variant_pricing-from']['discount']['type'][$index] == "percent") {
-                                    $percent = $variations[$request->variationId]['variant_pricing-from']['discount']['percentage'][$index] ;
-                                    if ($percent) {
+                                    // Calculate the discount amount based on the given percentage
+                                    $discountPercent = $percent; // Example: $percent = 5; // 5% discount
+                                    $discountAmount = ($unitPrice * $discountPercent) / 100;
 
-
-                                        // Calculate the discount amount based on the given percentage
-                                        $discountPercent = $percent; // Example: $percent = 5; // 5% discount
-                                        $discountAmount = ($unitPrice * $discountPercent) / 100;
-
-                                        // Calculate the discounted price
-                                        $discountPrice = $unitPrice - $discountAmount;
-
-
-                                    }
-                                }else if($variations[$request->variationId]['variant_pricing-from']['discount']['type'][$index] == "amount"){
-                                    // Calculate the discount amount based on the given amount
-                                    $amount = $variations[$request->variationId]['variant_pricing-from']['discount']['amount'][$index] ;
-
-                                    if ($amount) {
-                                        $discountAmount = $amount;
-                                        // Calculate the discounted price
-                                        $discountPrice = $unitPrice - $discountAmount;
-
-                                    }
+                                    // Calculate the discounted price
+                                    $discountPrice = $unitPrice - $discountAmount;
 
                                 }
+                            } elseif ($variations[$request->variationId]['variant_pricing-from']['discount']['type'][$index] == 'amount') {
+                                // Calculate the discount amount based on the given amount
+                                $amount = $variations[$request->variationId]['variant_pricing-from']['discount']['amount'][$index];
+
+                                if ($amount) {
+                                    $discountAmount = $amount;
+                                    // Calculate the discounted price
+                                    $discountPrice = $unitPrice - $discountAmount;
+
+                                }
+
                             }
                         }
+                    }
                     break; // Stop iterating once the range is found
                 }
             }
 
-        }
-        else {
+        } else {
             foreach ($data['detailedProduct']['from'] as $index => $from) {
                 $to = $data['detailedProduct']['to'][$index];
                 if ($qty >= $from && $qty <= $to) {
                     $unitPrice = $data['detailedProduct']['unit_price'][$index];
 
-                    if( isset($data['detailedProduct']['date_range_pricing'][$index]) && ($data['detailedProduct']['date_range_pricing'][$index])){
+                    if (isset($data['detailedProduct']['date_range_pricing'][$index]) && ($data['detailedProduct']['date_range_pricing'][$index])) {
                         // Extract start and end dates from the first date interval
 
                         $dateRange = $data['detailedProduct']['date_range_pricing'][$index];
-                        list($startDate, $endDate) = explode(' to ', $dateRange);
+                        [$startDate, $endDate] = explode(' to ', $dateRange);
 
                         // Convert date strings to DateTime objects for comparison
-                        $currentDate = new DateTime(); // Current date/time
+                        $currentDate = new DateTime; // Current date/time
                         $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
                         $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
 
-                            // Check if the current date/time is within the specified date interval
-                            if ($currentDate >= $startDateTime && $currentDate <= $endDateTime) {
+                        // Check if the current date/time is within the specified date interval
+                        if ($currentDate >= $startDateTime && $currentDate <= $endDateTime) {
 
+                            if ($data['detailedProduct']['discount_type'][$index] == 'percent') {
+                                $percent = $data['detailedProduct']['discount_percentage'][$index];
 
-                                if($data['detailedProduct']['discount_type'][$index] == "percent") {
-                                    $percent = $data['detailedProduct']['discount_percentage'][$index] ;
+                                if ($percent) {
 
-                                    if ($percent) {
+                                    // Calculate the discount amount based on the given percentage
+                                    $discountPercent = $percent; // Example: $percent = 5; // 5% discount
+                                    $discountAmount = ($unitPrice * $discountPercent) / 100;
 
-
-                                        // Calculate the discount amount based on the given percentage
-                                        $discountPercent = $percent; // Example: $percent = 5; // 5% discount
-                                        $discountAmount = ($unitPrice * $discountPercent) / 100;
-
-                                        // Calculate the discounted price
-                                        $discountPrice = $unitPrice - $discountAmount;
-
-                                    }
-                                }else if($data['detailedProduct']['discount_type'][$index] == "amount"){
-                                    // Calculate the discount amount based on the given
-
-                                    $amount = $data['detailedProduct']['discount_amount'][$index] ;
-
-                                    if ($amount) {
-                                        $discountAmount = $amount;
-                                        // Calculate the discounted price
-                                        $discountPrice = $unitPrice - $discountAmount;
-
-                                    }
+                                    // Calculate the discounted price
+                                    $discountPrice = $unitPrice - $discountAmount;
 
                                 }
+                            } elseif ($data['detailedProduct']['discount_type'][$index] == 'amount') {
+                                // Calculate the discount amount based on the given
+
+                                $amount = $data['detailedProduct']['discount_amount'][$index];
+
+                                if ($amount) {
+                                    $discountAmount = $amount;
+                                    // Calculate the discounted price
+                                    $discountPrice = $unitPrice - $discountAmount;
+
+                                }
+
                             }
                         }
+                    }
                     break; // Stop iterating once the range is found
                 }
             }
         }
-        $maximum = 1 ;
-        $minimum = 1 ;
+        $maximum = 1;
+        $minimum = 1;
         // if($request->variationId != null) {
-            if(count($variations ) > 0) {
+        if (count($variations) > 0) {
 
             // Convert array values to integers
             $valuesFrom = array_map('intval', $variations[$request->variationId]['variant_pricing-from']['from']);
@@ -1837,21 +1834,24 @@ class ProductController extends Controller
             $valuesFrom = array_map('intval', $data['detailedProduct']['from']);
             $valuesMax = array_map('intval', $data['detailedProduct']['to']);
         }
-            // Get the maximum value
-            if (!empty($valuesMax))
-                $maximum = max($valuesMax);
-            // Get the minimum value
-            if (!empty($valuesFrom))
-                $minimum = min($valuesFrom);
-
-
-        $total=$qty*$unitPrice;
-        if (isset($discountPrice) && $discountPrice > 0) {
-            $totalDiscount=$qty*$discountPrice;
+        // Get the maximum value
+        if (! empty($valuesMax)) {
+            $maximum = max($valuesMax);
         }
-     // Return the unit price as JSON response
-     return response()->json(['unit_price' => $unitPrice,"qty"=>$qty,'total'=>$total,'maximum'=>$maximum,'minimum'=>$minimum,'totalDiscount'=>$totalDiscount,'discountPrice'=>$discountPrice,'percent'=> $percent ?? null,]);
+        // Get the minimum value
+        if (! empty($valuesFrom)) {
+            $minimum = min($valuesFrom);
+        }
+
+        $total = $qty * $unitPrice;
+        if (isset($discountPrice) && $discountPrice > 0) {
+            $totalDiscount = $qty * $discountPrice;
+        }
+
+        // Return the unit price as JSON response
+        return response()->json(['unit_price' => $unitPrice, 'qty' => $qty, 'total' => $total, 'maximum' => $maximum, 'minimum' => $minimum, 'totalDiscount' => $totalDiscount, 'discountPrice' => $discountPrice, 'percent' => $percent ?? null]);
     }
+
     private function renderStarRating($rating, $maxRating = 5)
     {
         $fullStar = "<i class = 'las la-star active'></i>";
@@ -1859,36 +1859,37 @@ class ProductController extends Controller
         $emptyStar = "<i class = 'las la-star'></i>";
         $rating = $rating <= $maxRating ? $rating : $maxRating;
 
-        $fullStarCount = (int)$rating;
+        $fullStarCount = (int) $rating;
         $halfStarCount = ceil($rating) - $fullStarCount;
         $emptyStarCount = $maxRating - $fullStarCount - $halfStarCount;
 
         $html = str_repeat($fullStar, $fullStarCount);
         $html .= str_repeat($halfStar, $halfStarCount);
         $html .= str_repeat($emptyStar, $emptyStarCount);
+
         return $html;
     }
 
-    public function ProductCheckedAttributes(Request $request) {
+    public function ProductCheckedAttributes(Request $request)
+    {
 
+        $outStock = false;
 
-        $outStock = false ;
+        $data = $request->session()->get('productPreviewData', null);
 
-        $data=$request->session()->get('productPreviewData', null) ;
+        $variations = $data['detailedProduct']['variations'];
 
-        $variations = $data['detailedProduct']['variations'] ;
-
-        $checkedAttributes = $request->checkedAttributes ; // Checked attribute and its value
+        $checkedAttributes = $request->checkedAttributes; // Checked attribute and its value
         // dd($variations,$checkedAttributes) ;
         $matchedImages = [];
         $availableAttributes = [];
-        $anyMatched = false ;
-        $pickedAnyVariation = false ;
-        $maximum = 1 ;
-        $minimum = 1 ;
+        $anyMatched = false;
+        $pickedAnyVariation = false;
+        $maximum = 1;
+        $minimum = 1;
         // $totalDiscount = 0 ;
-        $discountedPrice = 0 ;
-        foreach ($variations as $variationIdKey =>$variation) {
+        $discountedPrice = 0;
+        foreach ($variations as $variationIdKey => $variation) {
 
             $matchesCheckedAttributes = true;
 
@@ -1900,119 +1901,118 @@ class ProductController extends Controller
             //     }
             // }
             foreach ($checkedAttributes as $attributeId => $value) {
-                $valueString = "" ;
+                $valueString = '';
                 if (isset($variation[$attributeId]) && is_array($variation[$attributeId])) {
                     // Join array elements with a hyphen
                     $valueString = implode('-', $variation[$attributeId]);
 
-
                 }
 
                 // If the attribute doesn't exist in variation or the values don't match
-                if (!isset($variation[$attributeId]) ||
+                if (! isset($variation[$attributeId]) ||
                     (is_array($variation[$attributeId]) && $valueString !== $value) ||
-                    (!is_array($variation[$attributeId]) && $variation[$attributeId] !== $value)) {
+                    (! is_array($variation[$attributeId]) && $variation[$attributeId] !== $value)) {
 
                     $matchesCheckedAttributes = false;
                     break;
                 }
             }
 
-
             // If the variation matches the checked attributes, collect other attributes
             if ($matchesCheckedAttributes) {
-                $anyMatched = true ;
-                if (isset($variation['storedFilePaths']) && is_array($variation['storedFilePaths']) && count($matchedImages) == 0  ) {
-                        foreach ($variation['storedFilePaths'] as $image) {
-                            $matchedImages[] = $image;
-                        }
+                $anyMatched = true;
+                if (isset($variation['storedFilePaths']) && is_array($variation['storedFilePaths']) && count($matchedImages) == 0) {
+                    foreach ($variation['storedFilePaths'] as $image) {
+                        $matchedImages[] = $image;
+                    }
 
-                 }
-                 if ($pickedAnyVariation == false) {
-                    $variationId = $variationIdKey ;
-                    if(isset($data['detailedProduct']['product_id'])){
+                }
+                if ($pickedAnyVariation == false) {
+                    $variationId = $variationIdKey;
+                    if (isset($data['detailedProduct']['product_id'])) {
 
                         $reviewStats = Review::where('product_id', $variationId)
-                        ->selectRaw('COUNT(*) as total, SUM(rating) as sum')
-                        ->first();
+                            ->selectRaw('COUNT(*) as total, SUM(rating) as sum')
+                            ->first();
 
                         $totalRating = $reviewStats->total;
                         $totalSum = $reviewStats->sum;
 
                         if ($totalRating > 0) {
-                            $avgRating = $totalSum / $totalRating ;
+                            $avgRating = $totalSum / $totalRating;
                             $renderStarRating = $this->renderStarRating($totalSum / $totalRating);
                         } else {
 
                             $renderStarRating = $this->renderStarRating(0);
                         }
                     }
-                    $sku = $variation['sku'] ?? null ;
-                    $quantity = $variation['variant_pricing-from']['from'][0] ?? "" ;
-                    $price = $variation['variant_pricing-from']['unit_price'][0] ?? "" ;
-                    $total =  isset($variation['variant_pricing-from']['from'][0]) && isset($variation['variant_pricing-from']['unit_price'][0]) ? $variation['variant_pricing-from']['from'][0] * $variation['variant_pricing-from']['unit_price'][0] : "" ;
+                    $sku = $variation['sku'] ?? null;
+                    $quantity = $variation['variant_pricing-from']['from'][0] ?? '';
+                    $price = $variation['variant_pricing-from']['unit_price'][0] ?? '';
+                    $total = isset($variation['variant_pricing-from']['from'][0]) && isset($variation['variant_pricing-from']['unit_price'][0]) ? $variation['variant_pricing-from']['from'][0] * $variation['variant_pricing-from']['unit_price'][0] : '';
 
-                    if( isset($variation['variant_pricing-from']['discount']['date']) && is_array($variation['variant_pricing-from']['discount']['date'])&& !empty($variation['variant_pricing-from']['discount']['date'][0])){
+                    if (isset($variation['variant_pricing-from']['discount']['date']) && is_array($variation['variant_pricing-from']['discount']['date']) && ! empty($variation['variant_pricing-from']['discount']['date'][0])) {
                         // Extract start and end dates from the first date interval
 
                         $dateRange = $variation['variant_pricing-from']['discount']['date'][0];
-                        list($startDate, $endDate) = explode(' to ', $dateRange);
+                        [$startDate, $endDate] = explode(' to ', $dateRange);
 
                         // Convert date strings to DateTime objects for comparison
-                        $currentDate = new DateTime(); // Current date/time
+                        $currentDate = new DateTime; // Current date/time
                         $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
                         $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
 
-                            // Check if the current date/time is within the specified date interval
-                            if ($currentDate >= $startDateTime && $currentDate <= $endDateTime) {
-                                // Assuming $lastItem is your array containing the pricing information
-                                $unitPrice = $variation['variant_pricing-from']['unit_price'][0]; // Assuming 'unit_price' is the price per unit
+                        // Check if the current date/time is within the specified date interval
+                        if ($currentDate >= $startDateTime && $currentDate <= $endDateTime) {
+                            // Assuming $lastItem is your array containing the pricing information
+                            $unitPrice = $variation['variant_pricing-from']['unit_price'][0]; // Assuming 'unit_price' is the price per unit
 
-                                // Calculate the total price based on quantity and unit price
-                                $variantPricing = $unitPrice;
+                            // Calculate the total price based on quantity and unit price
+                            $variantPricing = $unitPrice;
 
-                                if($variation['variant_pricing-from']['discount']['type'][0] == "percent") {
-                                    $percent = $variation['variant_pricing-from']['discount']['percentage'][0] ;
-                                    if ($percent) {
+                            if ($variation['variant_pricing-from']['discount']['type'][0] == 'percent') {
+                                $percent = $variation['variant_pricing-from']['discount']['percentage'][0];
+                                if ($percent) {
 
+                                    // Calculate the discount amount based on the given percentage
+                                    $discountPercent = $percent; // Example: $percent = 5; // 5% discount
+                                    $discountAmount = ($variantPricing * $discountPercent) / 100;
 
-                                        // Calculate the discount amount based on the given percentage
-                                        $discountPercent = $percent; // Example: $percent = 5; // 5% discount
-                                        $discountAmount = ($variantPricing * $discountPercent) / 100;
-
-                                        // Calculate the discounted price
-                                        $discountedPrice = $variantPricing - $discountAmount;
-
-                                    }
-                                }else if($variation['variant_pricing-from']['discount']['type'][0] == "amount"){
-                                    // Calculate the discount amount based on the given amount
-                                    $amount = $variation['variant_pricing-from']['discount']['amount'][0] ;
-
-                                    if ($amount) {
-                                        $discountAmount = $amount;
-                                        // Calculate the discounted price
-                                        $discountedPrice = $variantPricing - $discountAmount;
-
-                                    }
+                                    // Calculate the discounted price
+                                    $discountedPrice = $variantPricing - $discountAmount;
 
                                 }
+                            } elseif ($variation['variant_pricing-from']['discount']['type'][0] == 'amount') {
+                                // Calculate the discount amount based on the given amount
+                                $amount = $variation['variant_pricing-from']['discount']['amount'][0];
+
+                                if ($amount) {
+                                    $discountAmount = $amount;
+                                    // Calculate the discounted price
+                                    $discountedPrice = $variantPricing - $discountAmount;
+
+                                }
+
                             }
                         }
-                        if (isset($discountedPrice) && $discountedPrice > 0 && isset($variation['variant_pricing-from']['from'][0])) {
-                            $totalDiscount=$variation['variant_pricing-from']['from'][0]*$discountedPrice;
-                        }
+                    }
+                    if (isset($discountedPrice) && $discountedPrice > 0 && isset($variation['variant_pricing-from']['from'][0])) {
+                        $totalDiscount = $variation['variant_pricing-from']['from'][0] * $discountedPrice;
+                    }
 
                     // Convert array values to integers
                     $valuesFrom = array_map('intval', $variation['variant_pricing-from']['from']);
                     $valuesMax = array_map('intval', $variation['variant_pricing-from']['to']);
                     // Get the maximum value
-                    if (!empty($valuesMax))
+                    if (! empty($valuesMax)) {
                         $maximum = max($valuesMax);
+                    }
                     // Get the minimum value
-                    if (!empty($valuesFrom))
-                         $minimum = min($valuesFrom);
-                    $pickedAnyVariation = true ;
-                 }
+                    if (! empty($valuesFrom)) {
+                        $minimum = min($valuesFrom);
+                    }
+                    $pickedAnyVariation = true;
+                }
 
                 // foreach ($variation as $attributeId => $value) {
                 //     if (!isset($checkedAttributes[$attributeId])) {
@@ -2026,28 +2026,27 @@ class ProductController extends Controller
                 // }
                 // dd($variation) ;
                 foreach ($variation as $attributeId => $value) {
-                    if (!isset($checkedAttributes[$attributeId])) {
-                        if (!isset($availableAttributes[$attributeId])) {
+                    if (! isset($checkedAttributes[$attributeId])) {
+                        if (! isset($availableAttributes[$attributeId])) {
                             $availableAttributes[$attributeId] = [];
                         }
-                            // Check if $value is an array and does not contain any arrays inside it
-                            if (is_array($value) && !array_filter($value, 'is_array')) {
-                                // Join array elements with a hyphen
-                                $valueString = implode('-', $value);
-                            }
-                             else {
-                                $valueString = $value;  // Treat $value as a string if it's not an array
-                            }
+                        // Check if $value is an array and does not contain any arrays inside it
+                        if (is_array($value) && ! array_filter($value, 'is_array')) {
+                            // Join array elements with a hyphen
+                            $valueString = implode('-', $value);
+                        } else {
+                            $valueString = $value;  // Treat $value as a string if it's not an array
+                        }
 
-                        if (!in_array($valueString, $availableAttributes[$attributeId])) {
+                        if (! in_array($valueString, $availableAttributes[$attributeId])) {
                             $availableAttributes[$attributeId][] = $valueString;
                         }
                     }
                 }
-                if(isset($data['detailedProduct']['product_id'])){
+                if (isset($data['detailedProduct']['product_id'])) {
                     $product_stock = StockSummary::where('variant_id', $variationId)->sum('current_total_quantity');
                     if ($product_stock < $minimum) {
-                        $outStock = true ;
+                        $outStock = true;
                     }
                 }
 
@@ -2061,24 +2060,23 @@ class ProductController extends Controller
             'anyMatched' => $anyMatched,
             'matchedImages' => $matchedImages,
             'variationId' => $variationId ?? null,
-            'quantity' => $quantity ?? null  ,
-            'price' => $price ?? null ,
+            'quantity' => $quantity ?? null,
+            'price' => $price ?? null,
             'total' => $totalDiscount ?? $total ?? null,
-            'maximum' => $maximum ,
-            'minimum' => $minimum ,
+            'maximum' => $maximum,
+            'minimum' => $minimum,
             'discountedPrice' => $discountedPrice ?? null,
             'totalDiscount' => $totalDiscount ?? null,
-            'percent'=> $percent ?? null,
-            'totalRating' => $totalRating ?? 0 ,
-            'renderStarRating' => $renderStarRating ??  $this->renderStarRating(0),
+            'percent' => $percent ?? null,
+            'totalRating' => $totalRating ?? 0,
+            'renderStarRating' => $renderStarRating ?? $this->renderStarRating(0),
             'avgRating' => $avgRating ?? 0,
-            'sku' =>$sku ?? null ,
-            'outStock' =>$outStock
+            'sku' => $sku ?? null,
+            'outStock' => $outStock,
         ];
+
         // return response()->json($availableAttributes);
         return response()->json($response);
 
     }
-
-
 }
