@@ -32,4 +32,6 @@ return [
     'bulk_upload' => 'Bulk Upload',
     'Promotions' => 'Promotions',
     'Promotions_list' => 'Promotions List',
+    'Promotions_create' => 'Add Promotion',
+
 ];

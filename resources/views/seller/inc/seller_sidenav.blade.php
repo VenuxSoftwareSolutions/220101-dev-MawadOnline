@@ -113,9 +113,16 @@
                         <ul class="aiz-side-nav-list level-2">
                             <li id="discounts" class="aiz-side-nav-item">
                                 <a href="{{ route('seller.discounts.index') }}"
-                                class="aiz-side-nav-link {{ areActiveRoutes(['seller.discounts.index', 'seller.discounts.create', 'seller.discounts.edit']) }}">
+                                class="aiz-side-nav-link ">
 
                                     <span class="aiz-side-nav-text">{{ __('sidenav.Promotions_list') }}</span>
+                                </a>
+                            </li>
+                            <li id="discounts" class="aiz-side-nav-item">
+                                <a href="{{ route('seller.discounts.create') }}"
+                                class="aiz-side-nav-link ">
+
+                                    <span class="aiz-side-nav-text">{{ __('sidenav.Promotions_create') }}</span>
                                 </a>
                             </li>
                             

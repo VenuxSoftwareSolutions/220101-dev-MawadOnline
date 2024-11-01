@@ -14,5 +14,10 @@ class DiscountController extends Controller
         return view('seller.promotions.index');
 
     }
+    public function create()
+    {
+        return view('seller.promotions.create');
+    }
+
 
 }

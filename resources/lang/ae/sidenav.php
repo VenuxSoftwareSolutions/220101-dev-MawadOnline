@@ -16,6 +16,7 @@ return [
     'bulk_upload' => 'تحميل دفعة واحدة',
     'Promotions' => 'العروض الترويجية',
     'Promotions_list' => 'قائمة العروض الترويجية',
+    'Promotions_create' => ' إضافة العروض الترويجية',
 
 
 
