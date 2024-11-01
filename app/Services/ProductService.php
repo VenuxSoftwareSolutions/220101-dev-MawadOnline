@@ -521,9 +521,6 @@ class ProductService
             }
         }
 
-
-
-
         if(!isset($data['activate_attributes'])){
 
             $product = Product::create($data);
@@ -557,6 +554,8 @@ class ProductService
                                             $current_data["discount_start_datetime"] = null;
                                             $current_data["discount_end_datetime"] = null;
                                             $current_data["discount_type"] = null;
+                                            $current_data["discount_amount"] = null;
+                                            $current_data["discount_percentage"] = null;
                                         }
 
 
@@ -564,12 +563,16 @@ class ProductService
                                         $current_data["discount_start_datetime"] = null;
                                         $current_data["discount_end_datetime"] = null;
                                         $current_data["discount_type"] = null;
+                                        $current_data["discount_amount"] = null;
+                                        $current_data["discount_percentage"] = null;
                                     }
 
                                 }else{
                                     $current_data["discount_start_datetime"] = null;
                                     $current_data["discount_end_datetime"] = null;
                                     $current_data["discount_type"] = null;
+                                    $current_data["discount_amount"] = null;
+                                    $current_data["discount_percentage"] = null;
                                 }
 
                             $current_data["id_products"] = $product->id;
@@ -577,12 +580,12 @@ class ProductService
                             $current_data["to"] = $pricing['to'][$key];
                             $current_data["unit_price"] = $pricing['unit_price'][$key];
 
-                            if(isset($pricing['discount_amount'])){
+                            if(isset($pricing['discount_amount']) && ($pricing['date_range_pricing'][$key] != null)){
                                 $current_data["discount_amount"] = $pricing['discount_amount'][$key];
                             }else{
                                 $current_data["discount_amount"] = null;
                             }
-                            if(isset($pricing["discount_percentage"])){
+                            if(isset($pricing["discount_percentage"]) && ($pricing['date_range_pricing'][$key] != null)){
                                 $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
                             }else{
                                 $current_data["discount_percentage"] = null;
@@ -696,16 +699,22 @@ class ProductService
                                     $current_data["discount_start_datetime"] = null;
                                     $current_data["discount_end_datetime"] = null;
                                     $current_data["discount_type"] = null;
+                                    $current_data["discount_amount"] = null;
+                                    $current_data["discount_percentage"] = null;
                                 }
                             }else{
                                 $current_data["discount_start_datetime"] = null;
                                 $current_data["discount_end_datetime"] = null;
                                 $current_data["discount_type"] = null;
+                                $current_data["discount_amount"] = null;
+                                $current_data["discount_percentage"] = null;
                             }
                         }else{
                             $current_data["discount_start_datetime"] = null;
                             $current_data["discount_end_datetime"] = null;
                             $current_data["discount_type"] = null;
+                            $current_data["discount_amount"] = null;
+                            $current_data["discount_percentage"] = null;
                         }
 
                     $current_data["id_products"] = $product_parent->id;
@@ -713,12 +722,12 @@ class ProductService
                     $current_data["to"] = $pricing['to'][$key];
                     $current_data["unit_price"] = $pricing['unit_price'][$key];
 
-                    if(isset($pricing['discount_amount'])){
+                    if(isset($pricing['discount_amount']) && ($pricing['date_range_pricing'][$key] != null) && ($pricing['date_range_pricing'][$key] != null)){
                         $current_data["discount_amount"] = $pricing['discount_amount'][$key];
                     }else{
                         $current_data["discount_amount"] = null;
                     }
-                    if(isset($current_data["discount_percentage"])){
+                    if(isset($current_data["discount_percentage"]) && ($pricing['date_range_pricing'][$key] != null) && ($pricing['date_range_pricing'][$key] != null)){
                         $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
                     }else{
                         $current_data["discount_percentage"] = null;
@@ -960,6 +969,8 @@ class ProductService
                                                 $current_data["discount_start_datetime"] = null;
                                                 $current_data["discount_end_datetime"] = null;
                                                 $current_data["discount_type"] = null;
+                                                $current_data["discount_amount"] = null;
+                                                $current_data["discount_percentage"] = null;
                                             }
 
 
@@ -967,16 +978,22 @@ class ProductService
                                             $current_data["discount_start_datetime"] = null;
                                             $current_data["discount_end_datetime"] = null;
                                             $current_data["discount_type"] = null;
+                                            $current_data["discount_amount"] = null;
+                                            $current_data["discount_percentage"] = null;
                                         }
                                     }else{
                                         $current_data["discount_start_datetime"] = null;
                                         $current_data["discount_end_datetime"] = null;
                                         $current_data["discount_type"] = null;
+                                        $current_data["discount_amount"] = null;
+                                        $current_data["discount_percentage"] = null;
                                     }
                                 }else{
                                     $current_data["discount_start_datetime"] = null;
                                     $current_data["discount_end_datetime"] = null;
                                     $current_data["discount_type"] = null;
+                                    $current_data["discount_amount"] = null;
+                                    $current_data["discount_percentage"] = null;
                                 }
 
 
@@ -986,12 +1003,12 @@ class ProductService
                                 $current_data["to"] = $variant['pricing']['to'][$key];
                                 $current_data["unit_price"] = $variant['pricing']['unit_price'][$key];
 
-                                if(isset($variant['pricing']['discount_amount'])){
+                                if(isset($variant['pricing']['discount_amount']) && ($variant['pricing']['discount_range'][$key] != null)){
                                     $current_data["discount_amount"] = $variant['pricing']['discount_amount'][$key];
                                 }else{
                                     $current_data["discount_amount"] = null;
                                 }
-                                if(isset($variant['pricing']['discount_percentage'])){
+                                if(isset($variant['pricing']['discount_percentage']) && ($variant['pricing']['discount_range'][$key] != null)){
                                     $current_data["discount_percentage"] = $variant['pricing']['discount_percentage'][$key];
                                 }else{
                                     $current_data["discount_percentage"] = null;
@@ -1035,16 +1052,22 @@ class ProductService
                                                 $current_data["discount_start_datetime"] = null;
                                                 $current_data["discount_end_datetime"] = null;
                                                 $current_data["discount_type"] = null;
+                                                $current_data["discount_amount"] = null;
+                                                $current_data["discount_percentage"] = null;
                                             }
                                         }else{
                                             $current_data["discount_start_datetime"] = null;
                                             $current_data["discount_end_datetime"] = null;
                                             $current_data["discount_type"] = null;
+                                            $current_data["discount_amount"] = null;
+                                            $current_data["discount_percentage"] = null;
                                         }
                                     }else{
                                         $current_data["discount_start_datetime"] = null;
                                         $current_data["discount_end_datetime"] = null;
                                         $current_data["discount_type"] = null;
+                                        $current_data["discount_amount"] = null;
+                                        $current_data["discount_percentage"] = null;
                                     }
 
                                 $current_data["id_products"] = $product->id;
@@ -1052,12 +1075,12 @@ class ProductService
                                 $current_data["to"] = $pricing['to'][$key];
                                 $current_data["unit_price"] = $pricing['unit_price'][$key];
 
-                                if(isset($pricing['discount_amount'])){
+                                if(isset($pricing['discount_amount']) && ($pricing['date_range_pricing'][$key] != null)){
                                     $current_data["discount_amount"] = $pricing['discount_amount'][$key];
                                 }else{
                                     $current_data["discount_amount"] = null;
                                 }
-                                if(isset($current_data["discount_percentage"])){
+                                if(isset($current_data["discount_percentage"]) && ($pricing['date_range_pricing'][$key] != null)){
                                     $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
                                 }else{
                                     $current_data["discount_percentage"] = null;
@@ -1815,15 +1838,14 @@ class ProductService
             $collection = $collection->toArray();
             $product_update->update($collection);
             $ids_attributes_color = Attribute::where('type_value', 'color')->pluck('id')->toArray();
-
             if(count($pricing) > 0){
                 $all_data_to_insert = [];
-
+                //dd($pricing);
                 foreach($pricing['from'] as $key => $from){
                     $current_data = [];
                     if(($from != null) && ($pricing['to'][$key] != null) && ($pricing['unit_price'][$key] != null)){
                         if(isset($pricing['date_range_pricing'])){
-                            if($pricing['date_range_pricing'] != null){
+                            if($pricing['date_range_pricing'][$key] != null){
                                 if($pricing['date_range_pricing'][$key] != null){
                                     $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
                                     $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
@@ -1846,22 +1868,30 @@ class ProductService
                                         $current_data["discount_start_datetime"] = null;
                                         $current_data["discount_end_datetime"] = null;
                                         $current_data["discount_type"] = null;
+                                        $current_data["discount_amount"] = null;
+                                        $current_data["discount_percentage"] = null;
                                     }
                                 }else{
                                     $current_data["discount_start_datetime"] = null;
-                                $current_data["discount_end_datetime"] = null;
-                                $current_data["discount_type"] = null;
+                                    $current_data["discount_end_datetime"] = null;
+                                    $current_data["discount_type"] = null;
+                                    $current_data["discount_amount"] = null;
+                                    $current_data["discount_percentage"] = null;
                                 }
 
                             }else{
                                 $current_data["discount_start_datetime"] = null;
                                 $current_data["discount_end_datetime"] = null;
                                 $current_data["discount_type"] = null;
+                                $current_data["discount_amount"] = null;
+                                $current_data["discount_percentage"] = null;
                             }
                         }else{
                             $current_data["discount_start_datetime"] = null;
                             $current_data["discount_end_datetime"] = null;
                             $current_data["discount_type"] = null;
+                            $current_data["discount_amount"] = null;
+                            $current_data["discount_percentage"] = null;
                         }
 
                         $current_data["id_products"] = $product_update->id;
@@ -1869,12 +1899,12 @@ class ProductService
                         $current_data["to"] = $pricing['to'][$key];
                         $current_data["unit_price"] = $pricing['unit_price'][$key];
 
-                        if(isset($pricing['discount_amount'])){
+                        if(isset($pricing['discount_amount']) && ($pricing['date_range_pricing'][$key] != null)){
                             $current_data["discount_amount"] = $pricing['discount_amount'][$key];
                         }else{
                             $current_data["discount_amount"] = null;
                         }
-                        if(isset($pricing["discount_percentage"])){
+                        if(isset($pricing["discount_percentage"]) && ($pricing['date_range_pricing'][$key] != null)){
                             $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
                         }else{
                             $current_data["discount_percentage"] = null;
@@ -1883,6 +1913,8 @@ class ProductService
                         array_push($all_data_to_insert, $current_data);
                     }
                 }
+
+                //dd($all_data_to_insert);
 
                 PricingConfiguration::where('id_products', $product_update->id)->delete();
                 PricingConfiguration::insert($all_data_to_insert);
@@ -2083,22 +2115,30 @@ class ProductService
                                         $current_data["discount_start_datetime"] = null;
                                         $current_data["discount_end_datetime"] = null;
                                         $current_data["discount_type"] = null;
+                                        $current_data["discount_amount"] = null;
+                                        $current_data["discount_percentage"] = null;
                                     }
                                 }else{
                                     $current_data["discount_start_datetime"] = null;
-                                $current_data["discount_end_datetime"] = null;
-                                $current_data["discount_type"] = null;
+                                    $current_data["discount_end_datetime"] = null;
+                                    $current_data["discount_type"] = null;
+                                    $current_data["discount_amount"] = null;
+                                    $current_data["discount_percentage"] = null;
                                 }
 
                             }else{
                                 $current_data["discount_start_datetime"] = null;
                                 $current_data["discount_end_datetime"] = null;
                                 $current_data["discount_type"] = null;
+                                $current_data["discount_amount"] = null;
+                                $current_data["discount_percentage"] = null;
                             }
                         }else{
                             $current_data["discount_start_datetime"] = null;
                             $current_data["discount_end_datetime"] = null;
                             $current_data["discount_type"] = null;
+                            $current_data["discount_amount"] = null;
+                            $current_data["discount_percentage"] = null;
                         }
 
                         $current_data["id_products"] = $product_update->id;
@@ -2106,12 +2146,12 @@ class ProductService
                         $current_data["to"] = $pricing['to'][$key];
                         $current_data["unit_price"] = $pricing['unit_price'][$key];
 
-                        if(isset($pricing['discount_amount'])){
+                        if(isset($pricing['discount_amount']) && ($pricing['date_range_pricing'][$key] != null)){
                             $current_data["discount_amount"] = $pricing['discount_amount'][$key];
                         }else{
                             $current_data["discount_amount"] = null;
                         }
-                        if(isset($pricing["discount_percentage"])){
+                        if(isset($pricing["discount_percentage"]) && ($pricing['date_range_pricing'][$key] != null)){
                             $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
                         }else{
                             $current_data["discount_percentage"] = null;
@@ -2386,33 +2426,41 @@ class ProductService
                                                     $current_data["discount_start_datetime"] = null;
                                                     $current_data["discount_end_datetime"] = null;
                                                     $current_data["discount_type"] = null;
+                                                    $current_data["discount_amount"] = null;
+                                                    $current_data["discount_percentage"] = null;
                                                 }
                                             }else{
                                                 $current_data["discount_start_datetime"] = null;
                                                 $current_data["discount_end_datetime"] = null;
                                                 $current_data["discount_type"] = null;
+                                                $current_data["discount_amount"] = null;
+                                                $current_data["discount_percentage"] = null;
                                             }
                                         }else{
                                             $current_data["discount_start_datetime"] = null;
                                             $current_data["discount_end_datetime"] = null;
                                             $current_data["discount_type"] = null;
+                                            $current_data["discount_amount"] = null;
+                                            $current_data["discount_percentage"] = null;
                                         }
                                     }else{
                                         $current_data["discount_start_datetime"] = null;
                                         $current_data["discount_end_datetime"] = null;
                                         $current_data["discount_type"] = null;
+                                        $current_data["discount_amount"] = null;
+                                        $current_data["discount_percentage"] = null;
                                     }
                                     $current_data["id_products"] = $product->id;
                                     $current_data["from"] = $from;
                                     $current_data["to"] = $variant['pricing']['to'][$key];
                                     $current_data["unit_price"] = $variant['pricing']['unit_price'][$key];
 
-                                    if(isset($variant['pricing']['discount_amount'])){
+                                    if(isset($variant['pricing']['discount_amount']) && ($variant['pricing']['date_range_pricing'][$key] != null)){
                                         $current_data["discount_amount"] = $variant['pricing']['discount_amount'][$key];
                                     }else{
                                         $current_data["discount_amount"] = null;
                                     }
-                                    if(isset($variant['pricing']['discount_percentage'])){
+                                    if(isset($variant['pricing']['discount_percentage']) && ($variant['pricing']['date_range_pricing'][$key] != null)){
                                         $current_data["discount_percentage"] = $variant['pricing']['discount_percentage'][$key];
                                     }else{
                                         $current_data["discount_percentage"] = null;
@@ -2455,17 +2503,23 @@ class ProductService
                                                     $current_data["discount_start_datetime"] = null;
                                                     $current_data["discount_end_datetime"] = null;
                                                     $current_data["discount_type"] = null;
+                                                    $current_data["discount_amount"] = null;
+                                                    $current_data["discount_percentage"] = null;
                                                 }
                                             }
                                         }else{
                                             $current_data["discount_start_datetime"] = null;
                                             $current_data["discount_end_datetime"] = null;
                                             $current_data["discount_type"] = null;
+                                            $current_data["discount_amount"] = null;
+                                            $current_data["discount_percentage"] = null;
                                         }
                                     }else{
                                         $current_data["discount_start_datetime"] = null;
                                         $current_data["discount_end_datetime"] = null;
                                         $current_data["discount_type"] = null;
+                                        $current_data["discount_amount"] = null;
+                                        $current_data["discount_percentage"] = null;
                                     }
 
                                     $current_data["id_products"] = $product->id;
@@ -2473,12 +2527,12 @@ class ProductService
                                     $current_data["to"] = $pricing['to'][$key];
                                     $current_data["unit_price"] = $pricing['unit_price'][$key];
 
-                                    if(isset($pricing['discount_amount'])){
+                                    if(isset($pricing['discount_amount']) && ($pricing['date_range_pricing'][$key] != null)){
                                         $current_data["discount_amount"] = $pricing['discount_amount'][$key];
                                     }else{
                                         $current_data["discount_amount"] = null;
                                     }
-                                    if(isset($pricing['discount_percentage'])){
+                                    if(isset($pricing['discount_percentage']) && ($pricing['date_range_pricing'][$key] != null)){
                                         $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
                                     }else{
                                         $current_data["discount_percentage"] = null;
@@ -2880,21 +2934,29 @@ class ProductService
                                                 $current_data["discount_start_datetime"] = null;
                                                 $current_data["discount_end_datetime"] = null;
                                                 $current_data["discount_type"] = null;
+                                                $current_data["discount_amount"] = null;
+                                                $current_data["discount_percentage"] = null;
                                             }
                                         }else{
                                             $current_data["discount_start_datetime"] = null;
                                             $current_data["discount_end_datetime"] = null;
                                             $current_data["discount_type"] = null;
+                                            $current_data["discount_amount"] = null;
+                                            $current_data["discount_percentage"] = null;
                                         }
                                     }else{
                                         $current_data["discount_start_datetime"] = null;
                                         $current_data["discount_end_datetime"] = null;
                                         $current_data["discount_type"] = null;
+                                        $current_data["discount_amount"] = null;
+                                        $current_data["discount_percentage"] = null;
                                     }
                                 }else{
                                     $current_data["discount_start_datetime"] = null;
                                     $current_data["discount_end_datetime"] = null;
                                     $current_data["discount_type"] = null;
+                                    $current_data["discount_amount"] = null;
+                                    $current_data["discount_percentage"] = null;
                                 }
 
                                 $current_data["id_products"] = $new_product->id;
@@ -2902,12 +2964,12 @@ class ProductService
                                 $current_data["to"] = $variant['pricing']['to'][$key];
                                 $current_data["unit_price"] = $variant['pricing']['unit_price'][$key];
 
-                                if(isset($variant['pricing']['discount_amount'])){
+                                if(isset($variant['pricing']['discount_amount']) && ($variant['pricing']['discount_range'][$key] != null)){
                                     $current_data["discount_amount"] = $variant['pricing']['discount_amount'][$key];
                                 }else{
                                     $current_data["discount_amount"] = null;
                                 }
-                                if(isset($variant['pricing']['discount_percentage'])){
+                                if(isset($variant['pricing']['discount_percentage']) && ($variant['pricing']['discount_range'][$key] != null)){
                                     $current_data["discount_percentage"] = $variant['pricing']['discount_percentage'][$key];
                                 }else{
                                     $current_data["discount_percentage"] = null;
@@ -2948,16 +3010,22 @@ class ProductService
                                                 $current_data["discount_start_datetime"] = null;
                                                 $current_data["discount_end_datetime"] = null;
                                                 $current_data["discount_type"] = null;
+                                                $current_data["discount_amount"] = null;
+                                                $current_data["discount_percentage"] = null;
                                             }
                                         }else{
                                             $current_data["discount_start_datetime"] = null;
                                             $current_data["discount_end_datetime"] = null;
                                             $current_data["discount_type"] = null;
+                                            $current_data["discount_amount"] = null;
+                                            $current_data["discount_percentage"] = null;
                                         }
                                     }else{
                                         $current_data["discount_start_datetime"] = null;
                                         $current_data["discount_end_datetime"] = null;
                                         $current_data["discount_type"] = null;
+                                        $current_data["discount_amount"] = null;
+                                        $current_data["discount_percentage"] = null;
                                     }
 
                                 $current_data["id_products"] = $new_product->id;
@@ -2965,12 +3033,12 @@ class ProductService
                                 $current_data["to"] = $pricing['to'][$key];
                                 $current_data["unit_price"] = $pricing['unit_price'][$key];
 
-                                if(isset($pricing['discount_amount'])){
+                                if(isset($pricing['discount_amount']) && ($pricing['date_range_pricing'][$key] != null)){
                                     $current_data["discount_amount"] = $pricing['discount_amount'][$key];
                                 }else{
                                     $current_data["discount_amount"] = null;
                                 }
-                                if(isset($pricing["discount_percentage"])){
+                                if(isset($pricing["discount_percentage"]) && ($pricing['date_range_pricing'][$key] != null)){
                                     $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
                                 }else{
                                     $current_data["discount_percentage"] = null;
@@ -3748,22 +3816,30 @@ class ProductService
                                         $current_data["discount_start_datetime"] = null;
                                         $current_data["discount_end_datetime"] = null;
                                         $current_data["discount_type"] = null;
+                                        $current_data["discount_amount"] = null;
+                                        $current_data["discount_percentage"] = null;
                                     }
                                 }else{
                                     $current_data["discount_start_datetime"] = null;
-                                $current_data["discount_end_datetime"] = null;
-                                $current_data["discount_type"] = null;
+                                    $current_data["discount_end_datetime"] = null;
+                                    $current_data["discount_type"] = null;
+                                    $current_data["discount_amount"] = null;
+                                    $current_data["discount_percentage"] = null;
                                 }
 
                             }else{
                                 $current_data["discount_start_datetime"] = null;
                                 $current_data["discount_end_datetime"] = null;
                                 $current_data["discount_type"] = null;
+                                $current_data["discount_amount"] = null;
+                                $current_data["discount_percentage"] = null;
                             }
                         }else{
                             $current_data["discount_start_datetime"] = null;
                             $current_data["discount_end_datetime"] = null;
                             $current_data["discount_type"] = null;
+                            $current_data["discount_amount"] = null;
+                            $current_data["discount_percentage"] = null;
                         }
 
                         $current_data["id_products"] = $product_draft->id;
@@ -3771,12 +3847,12 @@ class ProductService
                         $current_data["to"] = $pricing['to'][$key];
                         $current_data["unit_price"] = $pricing['unit_price'][$key];
 
-                        if(isset($pricing['discount_amount'])){
+                        if(isset($pricing['discount_amount']) && ($pricing['date_range_pricing'][$key] != null)){
                             $current_data["discount_amount"] = $pricing['discount_amount'][$key];
                         }else{
                             $current_data["discount_amount"] = null;
                         }
-                        if(isset($pricing["discount_percentage"])){
+                        if(isset($pricing["discount_percentage"]) && ($pricing['date_range_pricing'][$key] != null)){
                             $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
                         }else{
                             $current_data["discount_percentage"] = null;
@@ -3921,22 +3997,30 @@ class ProductService
                                         $current_data["discount_start_datetime"] = null;
                                         $current_data["discount_end_datetime"] = null;
                                         $current_data["discount_type"] = null;
+                                        $current_data["discount_amount"] = null;
+                                        $current_data["discount_percentage"] = null;
                                     }
                                 }else{
                                     $current_data["discount_start_datetime"] = null;
-                                $current_data["discount_end_datetime"] = null;
-                                $current_data["discount_type"] = null;
+                                    $current_data["discount_end_datetime"] = null;
+                                    $current_data["discount_type"] = null;
+                                    $current_data["discount_amount"] = null;
+                                    $current_data["discount_percentage"] = null;
                                 }
 
                             }else{
                                 $current_data["discount_start_datetime"] = null;
                                 $current_data["discount_end_datetime"] = null;
                                 $current_data["discount_type"] = null;
+                                $current_data["discount_amount"] = null;
+                                $current_data["discount_percentage"] = null;
                             }
                         }else{
                             $current_data["discount_start_datetime"] = null;
                             $current_data["discount_end_datetime"] = null;
                             $current_data["discount_type"] = null;
+                            $current_data["discount_amount"] = null;
+                            $current_data["discount_percentage"] = null;
                         }
 
                         $current_data["id_products"] = $product_draft->id;
@@ -3944,12 +4028,12 @@ class ProductService
                         $current_data["to"] = $pricing['to'][$key];
                         $current_data["unit_price"] = $pricing['unit_price'][$key];
 
-                        if(isset($pricing['discount_amount'])){
+                        if(isset($pricing['discount_amount']) && ($pricing['date_range_pricing'][$key] != null)){
                             $current_data["discount_amount"] = $pricing['discount_amount'][$key];
                         }else{
                             $current_data["discount_amount"] = null;
                         }
-                        if(isset($pricing["discount_percentage"])){
+                        if(isset($pricing["discount_percentage"]) && ($pricing['date_range_pricing'][$key] != null)){
                             $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
                         }else{
                             $current_data["discount_percentage"] = null;
@@ -4174,33 +4258,41 @@ class ProductService
                                                     $current_data["discount_start_datetime"] = null;
                                                     $current_data["discount_end_datetime"] = null;
                                                     $current_data["discount_type"] = null;
+                                                    $current_data["discount_amount"] = null;
+                                                    $current_data["discount_percentage"] = null;
                                                 }
                                             }else{
                                                 $current_data["discount_start_datetime"] = null;
                                                 $current_data["discount_end_datetime"] = null;
                                                 $current_data["discount_type"] = null;
+                                                $current_data["discount_amount"] = null;
+                                                $current_data["discount_percentage"] = null;
                                             }
                                         }else{
                                             $current_data["discount_start_datetime"] = null;
                                             $current_data["discount_end_datetime"] = null;
                                             $current_data["discount_type"] = null;
+                                            $current_data["discount_amount"] = null;
+                                            $current_data["discount_percentage"] = null;
                                         }
                                     }else{
                                         $current_data["discount_start_datetime"] = null;
                                         $current_data["discount_end_datetime"] = null;
                                         $current_data["discount_type"] = null;
+                                        $current_data["discount_amount"] = null;
+                                        $current_data["discount_percentage"] = null;
                                     }
                                     $current_data["id_products"] = $product->id;
                                     $current_data["from"] = $from;
                                     $current_data["to"] = $variant['pricing']['to'][$key];
                                     $current_data["unit_price"] = $variant['pricing']['unit_price'][$key];
 
-                                    if(isset($variant['pricing']['discount_amount'])){
+                                    if(isset($variant['pricing']['discount_amount']) && ($variant['pricing']['date_range_pricing'][$key] != null)){
                                         $current_data["discount_amount"] = $variant['pricing']['discount_amount'][$key];
                                     }else{
                                         $current_data["discount_amount"] = null;
                                     }
-                                    if(isset($variant['pricing']['discount_percentage'])){
+                                    if(isset($variant['pricing']['discount_percentage']) && ($variant['pricing']['date_range_pricing'][$key] != null)){
                                         $current_data["discount_percentage"] = $variant['pricing']['discount_percentage'][$key];
                                     }else{
                                         $current_data["discount_percentage"] = null;
@@ -4243,17 +4335,23 @@ class ProductService
                                                     $current_data["discount_start_datetime"] = null;
                                                     $current_data["discount_end_datetime"] = null;
                                                     $current_data["discount_type"] = null;
+                                                    $current_data["discount_amount"] = null;
+                                                    $current_data["discount_percentage"] = null;
                                                 }
                                             }
                                         }else{
                                             $current_data["discount_start_datetime"] = null;
                                             $current_data["discount_end_datetime"] = null;
                                             $current_data["discount_type"] = null;
+                                            $current_data["discount_amount"] = null;
+                                            $current_data["discount_percentage"] = null;
                                         }
                                     }else{
                                         $current_data["discount_start_datetime"] = null;
                                         $current_data["discount_end_datetime"] = null;
                                         $current_data["discount_type"] = null;
+                                        $current_data["discount_amount"] = null;
+                                        $current_data["discount_percentage"] = null;
                                     }
 
                                     $current_data["id_products"] = $product->id;
@@ -4261,12 +4359,12 @@ class ProductService
                                     $current_data["to"] = $pricing['to'][$key];
                                     $current_data["unit_price"] = $pricing['unit_price'][$key];
 
-                                    if(isset($pricing['discount_amount'])){
+                                    if(isset($pricing['discount_amount']) && ($pricing['date_range_pricing'][$key] != null)){
                                         $current_data["discount_amount"] = $pricing['discount_amount'][$key];
                                     }else{
                                         $current_data["discount_amount"] = null;
                                     }
-                                    if(isset($pricing['discount_percentage'])){
+                                    if(isset($pricing['discount_percentage']) && ($pricing['date_range_pricing'][$key] != null)){
                                         $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
                                     }else{
                                         $current_data["discount_percentage"] = null;
@@ -4568,21 +4666,29 @@ class ProductService
                                                 $current_data["discount_start_datetime"] = null;
                                                 $current_data["discount_end_datetime"] = null;
                                                 $current_data["discount_type"] = null;
+                                                $current_data["discount_amount"] = null;
+                                                $current_data["discount_percentage"] = null;
                                             }
                                         }else{
                                             $current_data["discount_start_datetime"] = null;
                                             $current_data["discount_end_datetime"] = null;
                                             $current_data["discount_type"] = null;
+                                            $current_data["discount_amount"] = null;
+                                            $current_data["discount_percentage"] = null;
                                         }
                                     }else{
                                         $current_data["discount_start_datetime"] = null;
                                         $current_data["discount_end_datetime"] = null;
                                         $current_data["discount_type"] = null;
+                                        $current_data["discount_amount"] = null;
+                                        $current_data["discount_percentage"] = null;
                                     }
                                 }else{
                                     $current_data["discount_start_datetime"] = null;
                                     $current_data["discount_end_datetime"] = null;
                                     $current_data["discount_type"] = null;
+                                    $current_data["discount_amount"] = null;
+                                    $current_data["discount_percentage"] = null;
                                 }
 
                                 $current_data["id_products"] = $new_product->id;
@@ -4590,12 +4696,12 @@ class ProductService
                                 $current_data["to"] = $variant['pricing']['to'][$key];
                                 $current_data["unit_price"] = $variant['pricing']['unit_price'][$key];
 
-                                if(isset($variant['pricing']['discount_amount'])){
+                                if(isset($variant['pricing']['discount_amount']) && ($variant['pricing']['discount_range'][$key] != null)){
                                     $current_data["discount_amount"] = $variant['pricing']['discount_amount'][$key];
                                 }else{
                                     $current_data["discount_amount"] = null;
                                 }
-                                if(isset($variant['pricing']['discount_percentage'])){
+                                if(isset($variant['pricing']['discount_percentage']) && ($variant['pricing']['discount_range'][$key] != null)){
                                     $current_data["discount_percentage"] = $variant['pricing']['discount_percentage'][$key];
                                 }else{
                                     $current_data["discount_percentage"] = null;
@@ -4636,16 +4742,22 @@ class ProductService
                                                 $current_data["discount_start_datetime"] = null;
                                                 $current_data["discount_end_datetime"] = null;
                                                 $current_data["discount_type"] = null;
+                                                $current_data["discount_amount"] = null;
+                                                $current_data["discount_percentage"] = null;
                                             }
                                         }else{
                                             $current_data["discount_start_datetime"] = null;
                                             $current_data["discount_end_datetime"] = null;
                                             $current_data["discount_type"] = null;
+                                            $current_data["discount_amount"] = null;
+                                            $current_data["discount_percentage"] = null;
                                         }
                                     }else{
                                         $current_data["discount_start_datetime"] = null;
                                         $current_data["discount_end_datetime"] = null;
                                         $current_data["discount_type"] = null;
+                                        $current_data["discount_amount"] = null;
+                                        $current_data["discount_percentage"] = null;
                                     }
 
                                 $current_data["id_products"] = $new_product->id;
@@ -4653,12 +4765,12 @@ class ProductService
                                 $current_data["to"] = $pricing['to'][$key];
                                 $current_data["unit_price"] = $pricing['unit_price'][$key];
 
-                                if(isset($pricing['discount_amount'])){
+                                if(isset($pricing['discount_amount']) && ($pricing['date_range_pricing'][$key] != null)){
                                     $current_data["discount_amount"] = $pricing['discount_amount'][$key];
                                 }else{
                                     $current_data["discount_amount"] = null;
                                 }
-                                if(isset($pricing["discount_percentage"])){
+                                if(isset($pricing["discount_percentage"]) && ($pricing['date_range_pricing'][$key] != null)){
                                     $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
                                 }else{
                                     $current_data["discount_percentage"] = null;

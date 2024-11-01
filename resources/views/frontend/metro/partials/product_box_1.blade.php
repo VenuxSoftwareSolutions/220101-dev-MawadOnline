@@ -175,7 +175,15 @@
 
             @if ($product->auction_product == 0)
                 @if($product->getFirstPricingConfiguration() != null)
-                    @if (($product->getFirstPricingConfiguration()->discount_amount != null) || ($product->getFirstPricingConfiguration()->discount_percentage != null))
+                    @php
+                        // Retrieve dates from the database
+                        $discountStart = \Carbon\Carbon::parse($product->getFirstPricingConfiguration()->discount_start_datetime);
+                        $discountEnd = \Carbon\Carbon::parse($product->getFirstPricingConfiguration()->discount_end_datetime);
+
+                        // Get today's date
+                        $today = \Carbon\Carbon::today();
+                    @endphp
+                    @if($today->between($discountStart, $discountEnd))
                         @php
                             if($product->getFirstPricingConfiguration()->discount_amount != null){
                                 $disc = (home_discounted_base_price($product,false) - $product->getFirstPricingConfiguration()->discount_amount);
