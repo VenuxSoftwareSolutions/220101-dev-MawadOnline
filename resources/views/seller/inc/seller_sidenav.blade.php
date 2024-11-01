@@ -112,16 +112,13 @@
                         <!--Submenu-->
                         <ul class="aiz-side-nav-list level-2">
                             <li id="discounts" class="aiz-side-nav-item">
-                                <a href="{{ route('seller.discounts.index') }}" class="aiz-side-nav-link {{ areActiveRoutes(['seller.discounts']) }}">
+                                <a href="{{ route('seller.discounts.index') }}"
+                                class="aiz-side-nav-link {{ areActiveRoutes(['seller.discounts.index', 'seller.discounts.create', 'seller.discounts.edit']) }}">
+
                                     <span class="aiz-side-nav-text">{{ __('sidenav.Promotions_list') }}</span>
                                 </a>
                             </li>
-                            {{-- <li id="coupons" class="aiz-side-nav-item">
-                                <a href="{{ route('coupons.index') }}"
-                                    class="aiz-side-nav-link {{ areActiveRoutes(['coupons.index', 'coupons.create', 'coupons.edit']) }}">
-                                    <span class="aiz-side-nav-text">{{ __('sidenav.Coupons') }}</span>
-                                </a>
-                            </li> --}}
+                            
                         </ul>
                     </li>
                 {{-- Discounts and Coupons Management --}}
