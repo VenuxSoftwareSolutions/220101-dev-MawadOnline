@@ -26,6 +26,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Log;
 use Request;
 use Str;
 
@@ -42,7 +43,7 @@ class ProcessProductsJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($productGroup,$fileModel)
+    public function __construct($productGroup, $fileModel)
     {
         $this->productGroup = $productGroup;
         $this->fileModel = $fileModel;
@@ -55,79 +56,93 @@ class ProcessProductsJob implements ShouldQueue
      */
     public function handle()
     {
-        try {
-            $parentProduct = $this->mapToDatabaseAttributes($this->productGroup['parent']);
-            $parentProduct['is_parent'] = 1;
-            $product = $this->store($parentProduct, null, $this->fileModel->user_id);
-            
-            if ($product) {
-                $this->uploadProductFiles($product->id, $this->productGroup['parent']);
-                if ($product->is_parent === 1) {
-                    $product->categories()->attach($product->category_id);
-                }
-                $this->manageInventoryStock($product, $parentProduct);
-            } 
 
-            $this->processChildrenProducts($product);
+        $parentProduct = $this->mapToDatabaseAttributes($this->productGroup['parent']);
 
-            $this->fileModel->status = 'success';
-            $this->fileModel->save();
-        } catch (Exception $e) {
-            $this->fileModel->status = 'failed';
-            $this->fileModel->save();
+        $parentProduct['is_parent'] = 1;
+        $product =  $this->store($parentProduct, null, $this->fileModel->user_id);
+
+        if ($product) {
+            $productFileUpload = $this->uploadProductFiles($product->id, $this->productGroup['parent']);
         }
+        if ($product->is_parent == 1) {
+            $product->categories()->attach($product->category_id);
+        }
+
+
+        $this->manageInventoryStock($product, $parentProduct);
+
+        // if($product){
+        //     $productFileUpload = $this->uploadProductFiles($product->id,$this->productGroup['parent']);
+        //     dd($productFileUpload);
+        // }
+
+        if (count($this->productGroup['children']) > 0) {
+            foreach ($this->productGroup['children'] as $child) {
+                $childProduct = $this->mapToDatabaseAttributes($child);
+
+
+                $childProduct['is_parent'] = 0;
+
+                $variant =  $this->store($childProduct, $product->id, $this->fileModel->user_id);
+
+                if ($variant) {
+                    $productFileUpload = $this->uploadProductFiles($variant->id, $child);
+                }
+                $variant->categories()->attach($product->category_id);
+
+
+                $this->manageInventoryStock($product, $child);
+            }
+        }
+
+        $this->fileModel->status = 'success';
+        $this->fileModel->save();
     }
 
 
     private function manageInventoryStock($product, $parentProduct)
     {
-        if (isset($parentProduct['inventory_stock'])) {
-            StockSummary::create([
-                'variant_id' => $product->id,
-                'warehouse_id' => $parentProduct['inventory_stock']['warehouse'],
-                'seller_id' => $product->user_id,
-                'current_total_quantity' => $parentProduct['inventory_stock']['quantity'],
-            ]);
-        }
-    }
-
-
-    private function processChildrenProducts($product)
-    {
-        if (count($this->productGroup['children']) > 0) {
-            foreach ($this->productGroup['children'] as $child) {
-                $childProduct = $this->mapToDatabaseAttributes($child);
-                $childProduct['is_parent'] = 0;
-                $variant = $this->store($childProduct, $product->id, $this->fileModel->user_id);
-
-                if ($variant) {
-                    $this->uploadProductFiles($product->id, $this->productGroup['children']);
-                }
-                $variant->categories()->attach($product->category_id);
+        if (isset($parentProduct['inventory_stock']) && !empty($parentProduct['inventory_stock']['warehouse'])) {
+            try {
+                StockSummary::create([
+                    'variant_id' => $product->id,
+                    'warehouse_id' => $parentProduct['inventory_stock']['warehouse'],
+                    'seller_id' => $product->user_id,
+                    'current_total_quantity' => $parentProduct['inventory_stock']['quantity'],
+                ]);
+            } catch (Exception $e) {
+                // Log the exception and allow the script to continue
+                Log::error('Error creating stock summary: ' . $e->getMessage());
             }
+        } else {
+            // Optionally log or handle the missing warehouse data scenario
+            Log::warning('Warehouse information is missing for product ID: ' . $product->id);
         }
     }
-
 
     public function uploadProductFiles($productId, $productData)
     {
-        try {
-            $productFileService = new ProductFileService();
-            $productFileService->uploadProductFiles($productId, $productData);
+
+        $productFileService = new ProductFileService();
+
+        $productFileService->uploadProductFiles($productId, $productData);
+
+        if ($productFileService) {
             return true;
-        } catch (Exception $e) {
-            // Handle upload error if needed
-            return false;
+        } else {
+            false;
         }
     }
 
-    function getValuesBetweenRefundableAndVideoProvider(array $productData) {
+    function getValuesBetweenRefundableAndVideoProvider(array $productData)
+    {
         // Initialize the result array
         $result = [];
-        
+
         // Set flag to determine when to start and stop collecting data
         $startCollecting = false;
-        
+
         // Loop through the array
         foreach ($productData as $header => $value) {
             // Start collecting after "Refundable *"
@@ -135,24 +150,24 @@ class ProcessProductsJob implements ShouldQueue
                 $startCollecting = true;
                 continue; // Skip "Refundable *"
             }
-    
+
             // Stop collecting after reaching "Video Provider"
             if ($header === "Video Provider") {
                 break;
             }
-    
+
             // Collect headers and values if flag is set
             if ($startCollecting) {
                 $result[$header] = $value;
             }
         }
-        
+
         return $result;
     }
-    
 
 
-    public function store(array $data,$parentProductID = null,$userId)
+
+    public function store(array $data, $parentProductID = null, $userId)
     {
         $collection = collect($data);
 
@@ -179,12 +194,12 @@ class ProcessProductsJob implements ShouldQueue
         }
 
 
-      
+
         if ($collection['parent_id'] != null) {
             $collection['category_id'] = $collection['parent_id'];
         }
 
-       
+
         unset($collection['parent_id']);
 
 
@@ -202,10 +217,10 @@ class ProcessProductsJob implements ShouldQueue
         }
 
         if (isset($collection['country_code'])) {
-            
+
             $country = Country::find($collection['country_code']);
             $collection['country_code'] = strtolower($country->code);
-        }else{
+        } else {
             $collection['country_code'] = '';
         }
 
@@ -636,8 +651,7 @@ class ProcessProductsJob implements ShouldQueue
 
         if (!isset($data['activate_attributes'])) {
 
-            if($parentProductID !=null)
-            {
+            if ($parentProductID != null) {
                 $data['parent_id'] = $parentProductID;
             }
 
@@ -1319,7 +1333,7 @@ class ProcessProductsJob implements ShouldQueue
             ];
         });
 
-        
+
         // Return the formatted attributes as a JSON response
         return [
             'attributes' => $formattedAttributes
@@ -1339,8 +1353,8 @@ class ProcessProductsJob implements ShouldQueue
         $productAttributes = $this->extractKeyValuePairsForAttributes($matchedKeyValuePairs, $attributes);
 
 
-        $startDateRange = $this->extractPriceRange($data, 'Discount Start Date','Discount Start Date 2','Discount Start Date 3');
-        $endDateRange = $this->extractPriceRange($data, 'Discount End Date','Discount End Date 2','Discount End Date 3');
+        $startDateRange = $this->extractPriceRange($data, 'Discount Start Date', 'Discount Start Date 2', 'Discount Start Date 3');
+        $endDateRange = $this->extractPriceRange($data, 'Discount End Date', 'Discount End Date 2', 'Discount End Date 3');
 
 
         $convertedDate = $this->convertDate($startDateRange, $endDateRange);
@@ -1354,7 +1368,7 @@ class ProcessProductsJob implements ShouldQueue
             'name' => $data['Product Name *'],
             'brand_id' => $this->idExtracting($data, 'Brand *'),
             'unit' => $data['Unit of Sale *'],
-            'country_code' => $this->idExtracting($data,'Country of Origin *'),
+            'country_code' => $this->idExtracting($data, 'Country of Origin *'),
             'manufacturer' => $data['Manufacturer *'],
             'tags' =>  [json_encode($this->tagsHandling($data))],
             'short_description' => $data['Short Description *'],
@@ -1368,7 +1382,7 @@ class ProcessProductsJob implements ShouldQueue
             'from' => $this->extractPriceRange($data, 'From Quantity *', 'From Quantity', 'From Quantity 2'), // Flattened array
             'to' => $this->extractPriceRange($data, 'To Quantity *', 'To Quantity', 'To Quantity 2'),
             'unit_price' => $this->extractPriceRange($data, 'Unit Price *', 'Unit Price', 'Unit Price 2'),
-            
+
             'discount_type' => $this->extractPriceTypeRange($data, 'Discount Type', 'Discount Type 2', 'Discount Type 3'),
             'discount_amount' => $this->extractPriceRange($data, 'Discount Amount', 'Discount Amount 2', 'Discount Amount 3'),
             'discount_percentage' => $this->extractPriceRange($data, 'Discount Percentage', 'Discount Percentage 2', 'Discount Percentage 3'),
@@ -1416,7 +1430,7 @@ class ProcessProductsJob implements ShouldQueue
             'package_weight_sample' => isset($data['Weight']) ? $data['Weight'] : null,
             'min_third_party_sample' => isset($data['Min. Temperature']) ? $data['Min. Temperature'] : null,
             'max_third_party_sample' => isset($data['Max. Temperature']) ? $data['Max. Temperature'] : null,
-        
+
 
             'parent_id' => $this->idExtracting($data, 'Product Type (Leaf Category) *'),
             'product_sk' => $data['SKU *'],
@@ -1437,14 +1451,14 @@ class ProcessProductsJob implements ShouldQueue
             'meta_description' => $data['Description'] ?? null,
 
 
-            'inventory_stock'=>[
-                'warehouse'=> isset($data['Warehouse']) ? $this->idExtracting($data,'Warehouse') : null,
+            'inventory_stock' => [
+                'warehouse' => isset($data['Warehouse']) ? $this->idExtracting($data, 'Warehouse') : null,
                 'quantity' => isset($data['Quantity']) ? $data['Quantity'] : null,
                 'comment' => isset($data['Comment']) ? $data['Comment'] : null,
             ],
 
             'submit_button' => "draft",
-        ], $productAttributes,$convertedDate));
+        ], $productAttributes, $convertedDate));
 
         return Request::except('bulk_file');
     }
@@ -1519,31 +1533,30 @@ class ProcessProductsJob implements ShouldQueue
     private function extractKeyValuePairsForAttributes(array $data, array $attributes)
     {
         $matchingKeyValuePairs = [];
-    
+
         // Loop through the attributes to find the matching key-value pairs in $data
         foreach ($attributes['attributes'] as $attribute) {
             // Extract the attribute ID and name from the attribute array
             $attributeId = $attribute['id'];
             $attributeName = $attribute['name'];
-    
+
             // Check if this attribute name exists in the $data array and the type_value is 'list'
             if (isset($data[$attributeName])) {
                 if ($attribute['type_value'] == 'color') {
                     // Use your idExtracting method for 'list' type values
-                    $matchingKeyValuePairs['attribute_generale-' . $attributeId] = [$this->idExtracting($data,$attributeName)];
-                }else if($attribute['type_value'] == 'list'){
-                    $matchingKeyValuePairs['attribute_generale-' . $attributeId] = $this->idExtracting($data,$attributeName);
-
+                    $matchingKeyValuePairs['attribute_generale-' . $attributeId] = [$this->idExtracting($data, $attributeName)];
+                } else if ($attribute['type_value'] == 'list') {
+                    $matchingKeyValuePairs['attribute_generale-' . $attributeId] = $this->idExtracting($data, $attributeName);
                 } else {
                     // Use 'attribute_generale-{id}' as the key and the matching value from $data
                     $matchingKeyValuePairs['attribute_generale-' . $attributeId] = strtolower($data[$attributeName]);
                 }
             }
         }
-    
+
         return $matchingKeyValuePairs;
     }
-    
+
 
 
     private function extractKeyValuePairsBetweenSkuAndParentSku(array $data)
