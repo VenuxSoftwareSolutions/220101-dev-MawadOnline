@@ -112,7 +112,7 @@
                         <!--Submenu-->
                         <ul class="aiz-side-nav-list level-2">
                             <li id="discounts" class="aiz-side-nav-item">
-                                <a href="{{ route('seller.reviews') }}" class="aiz-side-nav-link {{ areActiveRoutes(['seller.reviews']) }}">
+                                <a href="{{ route('seller.discounts.index') }}" class="aiz-side-nav-link {{ areActiveRoutes(['seller.discounts']) }}">
                                     <span class="aiz-side-nav-text">{{ __('sidenav.Promotions_list') }}</span>
                                 </a>
                             </li>
