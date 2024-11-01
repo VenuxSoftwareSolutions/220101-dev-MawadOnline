@@ -56,6 +56,13 @@ COPY --chown=www-data:www-data . /var/www
 # Copy Apache configuration file
 COPY docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
 
+
+RUN certbot certonly --webroot -w /var/www/public -d mawadonline.com -d www.mawadonline.com
+
+RUN a2ensite 000-default.conf
+
+
+
 # Expose port 80
 EXPOSE 80
 
