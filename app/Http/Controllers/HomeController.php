@@ -1000,11 +1000,14 @@ class HomeController extends Controller
             if($shop->user->banned == 1){
                 abort(404);
             }
-            if ($shop->verification_status != 0) {
+            // if ($shop->verification_status != 0) {
+            //     return view('frontend.seller_shop', compact('shop'));
+            // } else {
+            //     return view('frontend.seller_shop_without_verification', compact('shop'));
+
                 return view('frontend.seller_shop', compact('shop'));
-            } else {
-                return view('frontend.seller_shop_without_verification', compact('shop'));
-            }
+
+            // }
         }
         abort(404);
     }
