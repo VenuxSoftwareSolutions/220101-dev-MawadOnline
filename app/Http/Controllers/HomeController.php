@@ -1434,11 +1434,10 @@ class HomeController extends Controller
 
     public function all_seller(Request $request)
     {
-        if (get_setting('vendor_system_activation') != 1) {
-            return redirect()->route('home');
-        }
-        $shops = Shop::whereIn('user_id', verified_sellers_id())
-            ->paginate(15);
+
+        $shops = Shop::whereHas('user', function($query) {
+            $query->where('status', 'enabled');
+        })->paginate(15);
 
         return view('frontend.shop_listing', compact('shops'));
     }
