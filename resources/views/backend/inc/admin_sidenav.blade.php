@@ -1548,57 +1548,7 @@
                 @endcanany
 
                 <!-- System Update & Server Status -->
-                @canany(['system_update','server_status'])
-                    <li class="aiz-side-nav-item">
-                        <a href="#" class="aiz-side-nav-link">
-                            <div class="aiz-side-nav-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-                                    <g id="Group_28317" data-name="Group 28317" transform="translate(-19315.001 1976)">
-                                      <g id="layer1" transform="translate(19314.471 -1976.53)">
-                                        <path id="path3159" d="M3.386.53A2.862,2.862,0,0,0,.53,3.386V13.67a2.865,2.865,0,0,0,2.856,2.86H13.67a2.869,2.869,0,0,0,2.86-2.86V3.386A2.865,2.865,0,0,0,13.67.53Zm0,1.143H13.67a1.7,1.7,0,0,1,1.718,1.713V13.67a1.7,1.7,0,0,1-1.718,1.718H3.386A1.7,1.7,0,0,1,1.673,13.67V3.386A1.7,1.7,0,0,1,3.386,1.673Z" fill="#575b6a"/>
-                                      </g>
-                                      <g id="Group_28316" data-name="Group 28316" transform="translate(19317.551 -1973.449)">
-                                        <g id="LWPOLYLINE" transform="translate(0 3.708)">
-                                          <path id="Path_25666" data-name="Path 25666" d="M194.061,143.129a.436.436,0,0,0,0,.873h1.527a.436.436,0,0,0,0-.873Z" transform="translate(-193.625 -143.129)" fill="#575b6a"/>
-                                        </g>
-                                        <g id="LWPOLYLINE-2" data-name="LWPOLYLINE" transform="translate(3.663)">
-                                          <path id="Path_25667" data-name="Path 25667" d="M199.926,137.186a.436.436,0,0,1,.872,0v1.527a.436.436,0,0,1-.872,0Z" transform="translate(-199.926 -136.75)" fill="#575b6a"/>
-                                        </g>
-                                        <g id="LWPOLYLINE-3" data-name="LWPOLYLINE" transform="translate(5.239 1.075)">
-                                          <path id="Path_25668" data-name="Path 25668" d="M204.463,139.345a.436.436,0,1,0-.617-.617l-1.079,1.079a.436.436,0,1,0,.617.617Z" transform="translate(-202.638 -138.6)" fill="#575b6a"/>
-                                        </g>
-                                        <g id="LWPOLYLINE-4" data-name="LWPOLYLINE" transform="translate(1.097 1.075)">
-                                          <path id="Path_25669" data-name="Path 25669" d="M195.64,139.345a.436.436,0,1,1,.617-.617l1.079,1.079a.436.436,0,1,1-.617.617Z" transform="translate(-195.512 -138.6)" fill="#575b6a"/>
-                                        </g>
-                                        <g id="LWPOLYLINE-5" data-name="LWPOLYLINE" transform="translate(1.097 5.261)">
-                                          <path id="Path_25670" data-name="Path 25670" d="M195.64,147.008a.436.436,0,0,0,.617.617l1.079-1.079a.436.436,0,1,0-.617-.617Z" transform="translate(-195.512 -145.8)" fill="#575b6a"/>
-                                        </g>
-                                        <path id="Path_25671" data-name="Path 25671" d="M206.87,148.144,205,146.269l.864-.471a.436.436,0,0,0-.044-.786l-5.682-2.322a.436.436,0,0,0-.569.568l2.322,5.682a.436.436,0,0,0,.786.044l.471-.864,1.875,1.875a.437.437,0,0,0,.617,0l1.233-1.233A.437.437,0,0,0,206.87,148.144Zm-1.544.913-1.977-1.977a.436.436,0,0,0-.691.1l-.311.57-1.58-3.868,3.868,1.58-.57.311a.436.436,0,0,0-.174.591.467.467,0,0,0,.074.1l1.977,1.977Z" transform="translate(-196.099 -139.223)" fill="#575b6a"/>
-                                      </g>
-                                    </g>
-                                </svg>
-                            </div>
-                            <span class="aiz-side-nav-text">{{translate('System')}}</span>
-                            <span class="aiz-side-nav-arrow"></span>
-                        </a>
-                        <ul class="aiz-side-nav-list level-2">
-                            @can('system_update')
-                                <li class="aiz-side-nav-item">
-                                    <a href="{{ route('system_update') }}" class="aiz-side-nav-link">
-                                        <span class="aiz-side-nav-text">{{translate('Update')}}</span>
-                                    </a>
-                                </li>
-                            @endcan
-                            @can('server_status')
-                            <li class="aiz-side-nav-item">
-                                <a href="{{route('system_server')}}" class="aiz-side-nav-link">
-                                    <span class="aiz-side-nav-text">{{translate('Server status')}}</span>
-                                </a>
-                            </li>
-                            @endcan
-                        </ul>
-                    </li>
-                @endcanany
+                
 
                 <!-- Addon Manager -->
                 @can('manage_addons')
