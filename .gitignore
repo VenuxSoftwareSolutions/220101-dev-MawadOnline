@@ -12,7 +12,7 @@
 /public/trade_license_doc
 /public/upload_products
 /public/assets/myText.txt
-/public/*
+/public
 /storage/*.key
 /storage/debugbar
 vendor
