@@ -82,10 +82,15 @@ class StockController extends Controller
         }
 
         if ($productVariant && $warehouse) {
-            $inventoryData =  StockSummary::where('variant_id', $productVariant)
-                ->where('warehouse_id', $warehouse)->where('seller_id', $seller->id)->get();
+            $inventoryData = StockSummary::where('variant_id', $productVariant)
+                ->where('warehouse_id', $warehouse)
+                ->where('seller_id', $seller->id)
+                ->orderBy('updated_at', 'desc') // Sort by most recent updates
+                ->get();
         } else {
-            $inventoryData =  StockSummary::where('seller_id', $seller->id)->get();
+            $inventoryData = StockSummary::where('seller_id', $seller->id)
+                ->orderBy('updated_at', 'desc') // Sort by most recent updates
+                ->get();
         }
         $warehouses = Warehouse::where('user_id', $seller->id)->get();
         $products = Product::where('is_parent', 0)   // Filter products where 'is_parent' column is 0
