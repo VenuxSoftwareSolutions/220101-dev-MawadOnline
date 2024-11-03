@@ -783,14 +783,12 @@ if (!function_exists('home_discounted_base_price')) {
 
         $discount_applicable = false;
 
-        if ($product->discount_start_date == null) {
+        if ($product_price->first()->discount_start_date == null) {
             $discount_applicable = true;
-        } elseif (
-            strtotime(date('d-m-Y H:i:s')) >= $product->discount_start_date &&
-            strtotime(date('d-m-Y H:i:s')) <= $product->discount_end_date
-        ) {
+        } elseif ((strtotime(date('d-m-Y H:i:s')) >= $product_price->first()->discount_start_date) && (strtotime(date('d-m-Y H:i:s')) <= $product_price->first()->discount_end_date)) {
             $discount_applicable = true;
         }
+
 
         if ($discount_applicable) {
             if($product_price->first() != null){
