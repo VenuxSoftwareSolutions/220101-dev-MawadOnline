@@ -1012,29 +1012,15 @@
                 </div> --}}
                 {{-- Bloc Product Category --}}
                 <div class="card">
-                    {{-- <div class="card-header">
-                        <h5 class="mb-0 h6">{{ translate('Product Category') }}</h5>
-                        <h6 class="float-right fs-13 mb-0">
-                            <span id="message-category"><span>
-                            {{ translate('Select Main') }}
-                            <span class="position-relative main-category-info-icon">
-                                <i class="las la-question-circle fs-18 text-info"></i>
-                                <span class="main-category-info bg-soft-info p-2 position-absolute d-none border">{{ translate('This will be used for commission based calculations and homepage category wise product Show.') }}</span>
-                            </span>
-
-                        </h6>
-                    </div> --}}
-                    <input type="hidden" id="selected_parent_id" name="parent_id" value="">
+                    <input type="hidden" id="selected_parent_id" name="parent_id" value="{{ old('parent_id') }}">
                     <input type="hidden" id="check_selected_parent_id" value="-1">
 
                     <div class="card-body">
-
                         <div class="tree_main">
-
                             <input type="text" id="search_input" class="form-control"
-                                placeholder="{{ translate('Search') }}">
+                                placeholder="{{ translate('Search') }}"
+                                value="{{ old('parent_id') ? get_single_category(old('parent_id'))->name : '' }}">
                             <div class="h-300px overflow-auto c-scrollbar-light">
-
                                 <div id="jstree"></div>
                             </div>
                         </div>
@@ -1249,7 +1235,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{ translate('Description') }}</label>
                             <div class="col-md-8">
-                                <textarea class="aiz-text-editor" name="description" id="long_description"></textarea>
+                                <textarea class="aiz-text-editor" name="description" id="long_description">{{ old("description") }}</textarea>
                                 <input type="hidden" id="hidden_value" value="">
                             </div>
                         </div>
