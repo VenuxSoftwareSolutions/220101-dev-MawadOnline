@@ -28,7 +28,7 @@ class ProductService
     public function store(array $data)
     {
         $collection = collect($data);
-        
+
         $vat_user = BusinessInformation::where('user_id', Auth::user()->owner_id)->first();
 
         $approved = 1;
@@ -605,7 +605,7 @@ class ProductService
                 }
             }
 
-        
+
             if(count($general_attributes_data) > 0){
                 foreach ($general_attributes_data as $attr => $value) {
                     if($value != null){
@@ -649,7 +649,7 @@ class ProductService
                             $attribute_product->save();
                         }
 
-                        
+
                     }
                 }
             }
@@ -857,7 +857,7 @@ class ProductService
                     //attributes of variant
                     //$sku = "";
                     foreach($variant['attributes'] as $key => $value_attribute){
-                        if($value_attribute != null){                            
+                        if($value_attribute != null){
                             if(in_array($key, $ids_attributes_list)){
                                 $attribute_product = new ProductAttributeValues();
                                 $attribute_product->id_products = $product->id;
@@ -880,7 +880,7 @@ class ProductService
                                         $attribute_product->save();
                                     }
                                 }
-                                
+
                             }elseif(in_array($key, $ids_attributes_numeric)){
                                 $attribute_product = new ProductAttributeValues();
                                 $attribute_product->id_products = $product->id;
@@ -1203,19 +1203,19 @@ class ProductService
     public function update(array $data, Product $product_update)
     {
         $collection = collect($data);
-        
+
         $collection['user_id'] = Auth::user()->owner_id;
 
         $collection['rejection_reason'] = null;
         $vat_user = BusinessInformation::where('user_id', Auth::user()->owner_id)->first();
 
-        $slug = Str::slug($collection['name']);
-        $same_slug_count = Product::where('slug', 'LIKE', $slug . '%')->count();
-        $slug_suffix = $same_slug_count > 1 ? '-' . $same_slug_count + 1 : '';
-        $slug .= $slug_suffix;
+        // $slug = Str::slug($collection['name']);
+        // $same_slug_count = Product::where('slug', 'LIKE', $slug . '%')->count();
+        // $slug_suffix = $same_slug_count > 1 ? '-' . $same_slug_count + 1 : '';
+        // $slug .= $slug_suffix;
 
 
-        $collection['slug'] = $slug;
+        // $collection['slug'] = $slug;
         if(isset($collection['refundable'])){
             $collection['refundable'] = 1;
         }else{
@@ -1976,7 +1976,7 @@ class ProductService
                                     }
                                 }
                             }
-                            
+
                         }elseif(in_array($attr, $ids_attributes_numeric)){
                             $check_add = false;
                             if($attribute_product == null){
@@ -2255,7 +2255,7 @@ class ProductService
                                 }else{
                                     $attribute_product = ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->first();
                                 }
-                                
+
                                 if(in_array($key, $ids_attributes_list)){
                                     $check_add_attribute = false;
                                     if($attribute_product == null){
@@ -2324,7 +2324,7 @@ class ProductService
                                     $attribute_product->save();
                                 }
 
-                                
+
 
                                 array_push($ids_product_attribute_values, $attribute_product->id);
                                 if(!in_array($key, $ids_attributes_color)){
@@ -2341,7 +2341,7 @@ class ProductService
                                         ]);
                                     }
                                 }
-                                
+
                             }
                         }
 
@@ -2634,7 +2634,7 @@ class ProductService
                         }else{
                             $attribute_product = ProductAttributeValues::where('id_products', $product_update->id)->where('id_attribute', $attr)->first();
                         }
-                        
+
 
                         if(in_array($attr, $ids_attributes_list)){
                             $check_add = false;
@@ -2809,15 +2809,21 @@ class ProductService
                         $collection['sample_price'] = $variant['sample_price'];
                     }
 
+                    $slug = Str::slug($collection['name']);
+
+                    $same_slug_count = Product::where('slug', 'LIKE', $slug . '%')->count();
+                    $slug_suffix = $same_slug_count > 1 ? '-' . $same_slug_count + 1 : '';
+                    $slug .= $slug_suffix;
+
                     $randomString = Str::random(5);
-                    $collection['slug'] =  $collection['slug'] . '-' . $randomString;
+                    $collection['slug'] =  $slug . '-' . $randomString;
 
                     $new_product = Product::create($collection);
 
                     //attributes of variant
                     foreach($variant['attributes'] as $key => $value_attribute){
                         if($value_attribute != null){
-                            
+
                             if(in_array($key, $ids_attributes_list)){
                                 $attribute_product = new ProductAttributeValues();
                                 $attribute_product->id_products = $new_product->id;
@@ -3140,19 +3146,19 @@ class ProductService
     {
 
         $collection = collect($data);
-        
+
         $collection['user_id'] = Auth::user()->owner_id;
         $collection['approved'] = 0;
         $collection['rejection_reason'] = null;
         $vat_user = BusinessInformation::where('user_id', Auth::user()->owner_id)->first();
 
-        $slug = Str::slug($collection['name']);
-        $same_slug_count = Product::where('slug', 'LIKE', $slug . '%')->count();
-        $slug_suffix = $same_slug_count > 1 ? '-' . $same_slug_count + 1 : '';
-        $slug .= $slug_suffix;
+        // $slug = Str::slug($collection['name']);
+        // $same_slug_count = Product::where('slug', 'LIKE', $slug . '%')->count();
+        // $slug_suffix = $same_slug_count > 1 ? '-' . $same_slug_count + 1 : '';
+        // $slug .= $slug_suffix;
 
 
-        $collection['slug'] = $slug;
+        // $collection['slug'] = $slug;
         if(isset($collection['refundable'])){
             $collection['refundable'] = 1;
         }else{
@@ -4134,7 +4140,7 @@ class ProductService
                                 // $attribute_product = ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->first();
 
                                 if(in_array($key, $ids_attributes_color)){
-                                    
+
                                     ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->whereNotIn('value', $value_attribute)->delete();
                                 }else{
                                     $attribute_product = ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->first();
@@ -4474,7 +4480,7 @@ class ProductService
                             }else{
                                 $attribute_product = ProductAttributeValues::where('id_products', $product_draft->id)->where('id_attribute', $attr)->first();
                             }
-    
+
                             if(in_array($attr, $ids_attributes_list)){
                                 if($attribute_product == null){
                                     $attribute_product = new ProductAttributeValues();
@@ -4555,8 +4561,16 @@ class ProductService
                         $collection['sample_price'] = $variant['sample_price'];
                     }
 
+                    // $randomString = Str::random(5);
+                    // $collection['slug'] =  $collection['slug'] . '-' . $randomString;
+                    $slug = Str::slug($collection['name']);
+
+                    $same_slug_count = Product::where('slug', 'LIKE', $slug . '%')->count();
+                    $slug_suffix = $same_slug_count > 1 ? '-' . $same_slug_count + 1 : '';
+                    $slug .= $slug_suffix;
+
                     $randomString = Str::random(5);
-                    $collection['slug'] =  $collection['slug'] . '-' . $randomString;
+                    $collection['slug'] =  $slug . '-' . $randomString;
 
                     $new_product = Product::create($collection);
 
