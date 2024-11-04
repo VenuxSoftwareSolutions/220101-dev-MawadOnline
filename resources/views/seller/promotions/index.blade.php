@@ -239,12 +239,28 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-dark" id="saveChangesBtn" data-id="">Save Changes</button>
-                    <button type="button" class="btn btn-outline-danger" id="deleteDiscountBtn"
-                        data-id="">Delete</button>
+                    <button type="button" class="btn btn-danger" id="deleteDiscountBtn" data-id="discountId">Delete</button>
+
                 </div>
             </div>
         </div>
     </div>
+    <div id="modal-info" class="modal fade">
+        <div class="modal-dialog modal-md modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title h6" id="title-modal">{{translate('Delete Confirmation')}}</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="mt-1 fs-14" id="text-modal">{{translate('Are you sure to delete this?')}}</p>
+                    <button type="button" class="btn btn-secondary rounded-0 mt-2" data-dismiss="modal">{{translate('Cancel')}}</button>
+                    <button type="button" class="btn btn-danger rounded-0 mt-2" id="confirmDeleteBtn">{{translate('OK')}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
 @endsection
 <script>
     function formatDate(dateString) {
@@ -259,6 +275,8 @@
                 window.location.href = `?scope=${scope}`;
             });
         });
+       
+
         const editButtons = document.querySelectorAll('.edit-discount-btn');
         editButtons.forEach(button => {
             button.addEventListener('click', function(event) {
@@ -324,28 +342,31 @@
                 })
                 .catch(error => console.error('Error updating discount:', error));
         });
+        let discountIdToDelete = null;
 
-        document.getElementById('deleteDiscountBtn').addEventListener('click', function() {
-            const discountId = document.querySelector('.edit-discount-btn[data-id]').getAttribute(
-                'data-id');
+        document.getElementById("deleteDiscountBtn").addEventListener("click", function () {
+            discountIdToDelete = this.getAttribute("data-id");
+            $('#modal-info').modal('show'); 
+        });
 
-            fetch(`/vendor/discounts/${discountId}`, {
+        document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
+            if (discountIdToDelete) {
+                fetch(`/vendor/discounts/${discountIdToDelete}`, {
                     method: 'DELETE',
                     headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                            .getAttribute('content')
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     }
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.success) {
-                        alert(data.message);
-                        bootstrapModal.hide();
-                        window.location.reload();
-                    }
+                    alert(data.message);
+                    $('#modal-info').modal('hide'); // Hide the confirmation modal
+                    window.location.reload(); // Reload the page to reflect the deletion
                 })
                 .catch(error => console.error('Error deleting discount:', error));
+            }
         });
+
 
     });
 </script>
