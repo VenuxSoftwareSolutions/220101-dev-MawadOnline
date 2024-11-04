@@ -923,7 +923,6 @@
                                 </div>
                                 <small>{{ translate('Fill all required fields for shippers to confirm delivery ability') }}.</small>
                                 <div id="result_calculate_third_party_sample">
-
                                 </div>
                             </div>
                             <div class="bloc-default-shipping-style" style="margin-top: 22px;">
@@ -954,30 +953,27 @@
                                                     </select>
                                                 </td>
                                                 <td><input type="number" class="form-control estimated_sample"
-                                                        id="estimated_sample_parent" name="estimated_sample"></td>
+                                                        id="estimated_sample_parent" name="estimated_sample"
+                                                        value="{{ old('estimated_sample') }}"></td>
                                                 <td><input type="number" disabled
                                                         class="form-control estimated_shipping_sample"
                                                         id="estimated_shipping_sample_parent"
-                                                        name="estimated_shipping_sample"></td>
+                                                        name="estimated_shipping_sample"
+                                                        value="{{ old('estimated_shipping_sample') }}"></td>
                                                 <td>
                                                     <select class="form-control paid_sample" name="paid_sample"
                                                         id="paid_sample_parent" disabled>
                                                         <option value="" selected>{{ translate('Choose paid by') }}
                                                         </option>
-                                                        <option value="vendor" @selected(old('shipper') == 'vendor')>
+                                                        <option value="vendor" @selected(old('paid_sample') == 'vendor')>
                                                             {{ translate('vendor') }}</option>
-                                                        <option value="buyer" @selected(old('shipper') == 'buyer')>
+                                                        <option value="buyer" @selected(old('paid_sample') == 'buyer')>
                                                             {{ translate('Buyer') }}</option>
                                                     </select>
                                                 </td>
-                                                {{-- <td>
-                                                    <label class="aiz-switch aiz-switch-success mb-0">
-                                                        <input value="1" type="checkbox" class="vat_sample" name="vat_sample" @if ($vat_user->vat_registered == 1) checked @endif>
-                                                        <span></span>
-                                                    </label>
-                                                </td> --}}
                                                 <td><input type="number" disabled class="form-control shipping_amount"
-                                                        name="shipping_amount" step="0.1" readonly></td>
+                                                        name="shipping_amount" value="{{ old('shipping_amount') }}"
+                                                        step="0.1" readonly></td>
                                             </tr>
                                         </tbody>
                                     </table>
