@@ -83,6 +83,34 @@ class DiscountController extends Controller
         return redirect()->route('seller.discounts.index')->with('success', 'Discount created successfully.');
     }
 
+    public function edit($id)
+    {
+        $discount = Discount::findOrFail($id);
+        return response()->json($discount);
+    }
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'startDate' => 'required|date',
+            'endDate' => 'required|date|after_or_equal:startDate',
+        ]);
+
+        $discount = Discount::findOrFail($id);
+        $discount->start_date = $request->input('startDate');
+        $discount->end_date = $request->input('endDate');
+        $discount->save();
+
+        return response()->json(['success' => true, 'message' => 'Discount updated successfully.']);
+    }
+    public function destroy($id)
+    {
+        $discount = Discount::findOrFail($id);
+        $discount->delete();
+        return response()->json(['success' => true, 'message' => 'Discount deleted successfully.']);
+    }
+
+
+
 
 
 }

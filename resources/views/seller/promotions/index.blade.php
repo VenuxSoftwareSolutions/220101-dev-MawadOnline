@@ -135,7 +135,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($discounts as $discount)
+                        @foreach ($discounts as $discount)
                             <tr>
                                 <td>
                                     <label class="aiz-switch aiz-switch-success mb-0">
@@ -149,16 +149,18 @@
                                 <td>{{ $discount->start_date->format('m/d/Y') }}</td>
                                 <td>{{ $discount->end_date->format('m/d/Y') }}</td>
                                 <td>
-                                    <a class="btn btn-sm edit-discount-btn" href="#" title="Edit">
+                                    <a class="btn btn-sm edit-discount-btn" href="#" title="Edit"
+                                        data-id="{{ $discount->id }}">
                                         <img src="{{ asset('public/Edit.svg') }}">
                                     </a>
                                 </td>
+
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
-    
+
             <!-- Coupons Table -->
             <div class="tab-pane fade" id="coupons" role="tabpanel">
                 <h5>Coupons</h5>
@@ -194,97 +196,159 @@
                 </table>
             </div>
         </div>
-    
+
     </div>
 @endsection
 @section('modal')
+    <div id="editDiscountModal" class="modal fade">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Discount</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+                </div>
 
-<div id="editDiscountModal" class="modal fade">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <h5 class="modal-title">Edit Orders over an Amount Discount</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
-            </div>
+                <div class="modal-body">
+                    <form id="editDiscountForm">
+                        <div class="mb-3">
+                            <label for="startDate" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" id="startDate">
+                        </div>
 
-            <!-- Modal Body -->
-            <div class="modal-body">
-                <form>
-                    <!-- Start Date -->
-                    <div class="mb-3">
-                        <label for="startDate" class="form-label">Start Date</label>
-                        <input type="date" class="form-control" id="startDate" value="2022-03-14">
-                    </div>
+                        <div class="mb-3">
+                            <label for="endDate" class="form-label">End Date</label>
+                            <input type="date" class="form-control" id="endDate">
+                        </div>
 
-                    <!-- End Date -->
-                    <div class="mb-3">
-                        <label for="endDate" class="form-label">End Date</label>
-                        <input type="date" class="form-control" id="endDate" value="2022-03-25">
-                    </div>
+                        <div class="mb-3">
+                            <label for="amount" class="form-label">Amount</label>
+                            <input type="text" class="form-control" id="amount" disabled>
+                        </div>
 
-                    <!-- Amount -->
-                    <div class="mb-3">
-                        <label for="amount" class="form-label">Amount</label>
-                        <select class="form-select" id="amount">
-                            <option selected>Select Option</option>
-                            <!-- Additional options if needed -->
-                        </select>
-                    </div>
+                        <div class="mb-3">
+                            <label for="percentage" class="form-label">Percentage</label>
+                            <input type="text" class="form-control" id="percentage" disabled>
+                        </div>
 
-                    <!-- Percentage -->
-                    <div class="mb-3">
-                        <label for="percentage" class="form-label">Percentage</label>
-                        <select class="form-select" id="percentage">
-                            <option selected>Choose Option</option>
-                            <!-- Additional options if needed -->
-                        </select>
-                    </div>
+                        <div class="mb-3">
+                            <label for="maxDiscount" class="form-label">Max Discount</label>
+                            <input type="text" class="form-control" id="maxDiscount" disabled>
+                        </div>
+                    </form>
+                </div>
 
-                    <!-- Max Discount -->
-                    <div class="mb-3">
-                        <label for="maxDiscount" class="form-label">Max Discount</label>
-                        <select class="form-select" id="maxDiscount">
-                            <option selected>Choose Option</option>
-                            <!-- Additional options if needed -->
-                        </select>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-dark">Edit</button>
-                <button type="button" class="btn btn-outline-danger">Delete</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" id="saveChangesBtn" data-id="">Save Changes</button>
+                    <button type="button" class="btn btn-outline-danger" id="deleteDiscountBtn"
+                        data-id="">Delete</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 @endsection
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const tabCards = document.querySelectorAll('.tab-card');
-            const editButtons = document.querySelectorAll('.edit-discount-btn');
+<script>
+    function formatDate(dateString) {
+        return dateString.split('T')[0];
+    }
 
-            // Handle tab card click and redirect with scope
-            tabCards.forEach(card => {
-                card.addEventListener('click', () => {
-                    const scope = card.getAttribute('data-scope');
-                    window.location.href = `?scope=${scope}`;
-                });
-            });
-
-            // Open modal on edit button click
-            editButtons.forEach(button => {
-                button.addEventListener('click', function () {
-                    const discountId = button.getAttribute('data-id');
-                    document.getElementById('editDiscountModal').querySelector('.modal-title').textContent = `Edit Discount ${discountId}`;
-                    const modal = new bootstrap.Modal(document.getElementById('editDiscountModal'));
-                    modal.show();
-                });
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabCards = document.querySelectorAll('.tab-card');
+        tabCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const scope = card.getAttribute('data-scope');
+                window.location.href = `?scope=${scope}`;
             });
         });
-    </script>
+        const editButtons = document.querySelectorAll('.edit-discount-btn');
+        editButtons.forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+
+                // Retrieve the discount ID from the `data-id` attribute
+                const discountId = button.getAttribute('data-id');
+
+                // Fetch the discount data using AJAX
+                fetch(`/vendor/discounts/${discountId}/edit`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        document.getElementById('startDate').value = formatDate(data
+                            .start_date);
+                        document.getElementById('endDate').value = formatDate(data
+                            .end_date);
+                        document.getElementById('amount').value = data.min_order_amount;
+                        document.getElementById('percentage').value = data
+                            .discount_percentage;
+                        document.getElementById('maxDiscount').value = data.max_discount;
+
+                        document.getElementById('amount').disabled = true;
+                        document.getElementById('percentage').disabled = true;
+                        document.getElementById('maxDiscount').disabled = true;
+
+                        const modal = new bootstrap.Modal(document.getElementById(
+                            'editDiscountModal'));
+                        modal.show();
+                    })
+                    .catch(error => console.error('Error fetching discount data:', error));
+            });
+        });
+        const editDiscountModal = document.getElementById('editDiscountModal');
+        const bootstrapModal = new bootstrap.Modal(editDiscountModal);
+
+        document.getElementById('saveChangesBtn').addEventListener('click', function() {
+            const discountId = document.querySelector('.edit-discount-btn[data-id]').getAttribute(
+                'data-id');
+            console.log("disid=" + discountId);
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+
+            fetch(`/vendor/discounts/${discountId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                            .getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        startDate,
+                        endDate
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        bootstrapModal.hide();
+                        window.location.reload();
+                    }
+                })
+                .catch(error => console.error('Error updating discount:', error));
+        });
+
+        document.getElementById('deleteDiscountBtn').addEventListener('click', function() {
+            const discountId = document.querySelector('.edit-discount-btn[data-id]').getAttribute(
+                'data-id');
+
+            fetch(`/vendor/discounts/${discountId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                            .getAttribute('content')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        bootstrapModal.hide();
+                        window.location.reload();
+                    }
+                })
+                .catch(error => console.error('Error deleting discount:', error));
+        });
+
+    });
+</script>
 
 {{-- @push('scripts')
     <script type="text/javascript">
