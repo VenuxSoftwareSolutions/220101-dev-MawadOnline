@@ -17,10 +17,12 @@ return new class extends Migration
             $table->id();
             $table->string('scope'); 
             $table->foreignId('product_id')->nullable()->constrained()->onDelete('cascade'); //  product-based discounts
-            $table->foreignId('category_id')->nullable()->constrained()->onDelete('cascade'); //  category-based discounts
+            $table->unsignedBigInteger('category_id')->foreignId('category_id')->nullable()->constrained()->onDelete('cascade'); //  category-based discounts
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->double('min_order_amount', 20, 2)->nullable(); //  order over a specified amount
             $table->double('discount_percentage', 5, 2);
             $table->double('max_discount', 20, 2)->nullable(); 
+            $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps();

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('code')->unique(); // Unique code for the coupon
             $table->string('scope'); // 'product', 'category', 'order', 'all_orders'
             $table->foreignId('product_id')->nullable()->constrained()->onDelete('cascade');
-            $table->foreignId('category_id')->nullable()->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('category_id')->foreignId('category_id')->nullable()->constrained()->onDelete('cascade');
             $table->double('min_order_amount', 20, 2)->nullable(); 
             $table->double('discount_percentage', 5, 2); 
             $table->double('max_discount', 20, 2)->nullable(); 

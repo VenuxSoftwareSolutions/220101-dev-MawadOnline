@@ -14,41 +14,53 @@
             transition: background-color 0.2s ease;
             height: 100%;
         }
-        .tab-card.active, .tab-card:hover {
+
+        .tab-card.active,
+        .tab-card:hover {
             background-color: #e9ecef;
             border-color: #ced4da;
         }
+
         .tab-card-icon {
             font-size: 24px;
             color: #495057;
         }
+
         .tab-card-title {
             font-size: 18px;
             font-weight: 500;
             color: #333;
             margin-top: 10px;
         }
+
         .tab-card-description {
             font-size: 14px;
             color: #666;
         }
+
         .nav-tabs {
             border-bottom: none;
         }
+
         .nav-item {
             width: 50%;
             text-align: center;
         }
-        .table th, .table td {
+
+        .table th,
+        .table td {
             vertical-align: middle;
         }
+
         .table .toggle-switch {
             width: 50px;
         }
+
         .action-icon {
             color: #495057;
             cursor: pointer;
         }
+
         .action-icon:hover {
             color: #333;
         }
@@ -56,128 +68,234 @@
 @endpush
 
 @section('panel_content')
-<div class="container mt-5">
-    <!-- Tabs for Discount Types with Card Styles -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="tab-card active" id="product-tab" data-bs-toggle="tab" data-bs-target="#product" role="tab">
-                <div class="tab-card-icon"><i class="bi bi-box"></i></div>
-                <div class="tab-card-title">Product</div>
-                <div class="tab-card-description">Click here to offer a discount on a certain product from your inventory.</div>
+    <div class="container mt-5">
+        <!-- Tabs for Discount Types with Card Styles -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="tab-card active" id="product-tab" data-bs-toggle="tab" data-bs-target="#product" role="tab">
+                    <div class="tab-card-icon"><i class="bi bi-box"></i></div>
+                    <div class="tab-card-title">Product</div>
+                    <div class="tab-card-description">Click here to offer a discount on a certain product from your
+                        inventory.</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="tab-card" id="category-tab" data-bs-toggle="tab" data-bs-target="#category" role="tab">
+                    <div class="tab-card-icon"><i class="bi bi-tag"></i></div>
+                    <div class="tab-card-title">Category</div>
+                    <div class="tab-card-description">Click here to offer a discount on a certain category from your
+                        inventory.</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="tab-card" id="ordersOverAmount-tab" data-bs-toggle="tab" data-bs-target="#ordersOverAmount"
+                    role="tab">
+                    <div class="tab-card-icon"><i class="bi bi-cart4"></i></div>
+                    <div class="tab-card-title">Orders over an Amount</div>
+                    <div class="tab-card-description">Click here to offer a discount on all orders above a certain amount.
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="tab-card" id="allOrders-tab" data-bs-toggle="tab" data-bs-target="#allOrders" role="tab">
+                    <div class="tab-card-icon"><i class="bi bi-basket"></i></div>
+                    <div class="tab-card-title">All Orders</div>
+                    <div class="tab-card-description">Click here to offer a discount on all the orders.</div>
+                </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="tab-card" id="category-tab" data-bs-toggle="tab" data-bs-target="#category" role="tab">
-                <div class="tab-card-icon"><i class="bi bi-tag"></i></div>
-                <div class="tab-card-title">Category</div>
-                <div class="tab-card-description">Click here to offer a discount on a certain category from your inventory.</div>
+
+        <!-- Tabs for Discounts and Coupons -->
+        <ul class="nav nav-tabs mb-3" id="discountCouponTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="discounts-tab" data-bs-toggle="tab" data-bs-target="#discounts"
+                    type="button" role="tab">Discounts</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="coupons-tab" data-bs-toggle="tab" data-bs-target="#coupons" type="button"
+                    role="tab">Coupons</button>
+            </li>
+        </ul>
+
+        <!-- Content for Discounts and Coupons -->
+        <div class="tab-content" id="discountCouponContent">
+            <!-- Discounts Table -->
+            <div class="tab-pane fade show active" id="discounts" role="tabpanel">
+                <h5>Discounts - Product</h5>
+                <table class="table table-bordered mt-3">
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Product Name</th>
+                            <th>Percent</th>
+                            <th>Max Discount</th>
+                            <th>Start Date</th>
+                            <th>Expires on</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($discounts as $discount)
+                            <tr>
+                                <td>
+                                    <label class="aiz-switch aiz-switch-success mb-0">
+                                        <input class="publsihed_product" type="checkbox" checked>
+                                        <span class=""> </span>
+                                    </label>
+                                </td>
+                                <td>{{ $discount->product ? $discount->product->name : 'N/A' }}</td>
+                                <td>{{ $discount->discount_percentage }}%</td>
+                                <td>{{ $discount->max_discount }}</td>
+                                <td>{{ $discount->start_date->format('m/d/Y') }}</td>
+                                <td>{{ $discount->end_date->format('m/d/Y') }}</td>
+                                <td>
+                                    <a class="btn btn-sm edit-discount-btn" href="#" title="Edit">
+                                        <img src="{{ asset('public/Edit.svg') }}">
+                                    </a>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+    
+            <!-- Coupons Table -->
+            <div class="tab-pane fade" id="coupons" role="tabpanel">
+                <h5>Coupons</h5>
+                <table class="table table-bordered mt-3">
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Coupon Code</th>
+                            <th>Discount</th>
+                            <th>Max Use</th>
+                            <th>Start Date</th>
+                            <th>Expires on</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="toggle-switch text-center">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="statusToggle2">
+                                </div>
+                            </td>
+                            <td>COUPON2022</td>
+                            <td>15%</td>
+                            <td>50</td>
+                            <td>04/01/2022</td>
+                            <td>04/30/2022</td>
+                            <td class="text-center">
+                                <i class="bi bi-pencil action-icon"></i>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="tab-card" id="ordersOverAmount-tab" data-bs-toggle="tab" data-bs-target="#ordersOverAmount" role="tab">
-                <div class="tab-card-icon"><i class="bi bi-cart4"></i></div>
-                <div class="tab-card-title">Orders over an Amount</div>
-                <div class="tab-card-description">Click here to offer a discount on all orders above a certain amount.</div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="tab-card" id="allOrders-tab" data-bs-toggle="tab" data-bs-target="#allOrders" role="tab">
-                <div class="tab-card-icon"><i class="bi bi-basket"></i></div>
-                <div class="tab-card-title">All Orders</div>
-                <div class="tab-card-description">Click here to offer a discount on all the orders.</div>
-            </div>
-        </div>
+    
     </div>
+@endsection
+@section('modal')
 
-    <!-- Tabs for Discounts and Coupons -->
-    <ul class="nav nav-tabs mb-3" id="discountCouponTabs" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="discounts-tab" data-bs-toggle="tab" data-bs-target="#discounts" type="button" role="tab">Discounts</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="coupons-tab" data-bs-toggle="tab" data-bs-target="#coupons" type="button" role="tab">Coupons</button>
-        </li>
-    </ul>
+<div id="editDiscountModal" class="modal fade">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Orders over an Amount Discount</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+            </div>
 
-    <!-- Content for Discounts and Coupons -->
-    <div class="tab-content" id="discountCouponContent">
-        <!-- Discounts Table -->
-        <div class="tab-pane fade show active" id="discounts" role="tabpanel">
-            <h5>Discounts</h5>
-            <table class="table table-bordered mt-3">
-                <thead>
-                    <tr>
-                        <th>Status</th>
-                        <th>Category Name</th>
-                        <th>Percent</th>
-                        <th>Max Discount</th>
-                        <th>Start Date</th>
-                        <th>Expires on</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <label class="aiz-switch aiz-switch-success mb-0">
-                                <input class="publsihed_product" type="checkbox" checked >
-                                <span class=""> </span>
-                            </label>
-                        </td>
-                        <td>Ceiling Panels</td>
-                        <td>20%</td>
-                        <td>100</td>
-                        <td>03/10/2022</td>
-                        <td>03/31/2022</td>
-                        <td >
-                            <a class="btn btn-sm" href="{{route('seller.discounts.index')}}" title="{{ translate('Edit') }}">
-                                <img src="{{asset('public/Edit.svg')}}">
-                            </a>                        
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <form>
+                    <!-- Start Date -->
+                    <div class="mb-3">
+                        <label for="startDate" class="form-label">Start Date</label>
+                        <input type="date" class="form-control" id="startDate" value="2022-03-14">
+                    </div>
 
-        <!-- Coupons Table -->
-        <div class="tab-pane fade" id="coupons" role="tabpanel">
-            <h5>Coupons</h5>
-            <table class="table table-bordered mt-3">
-                <thead>
-                    <tr>
-                        <th>Status</th>
-                        <th>Coupon Code</th>
-                        <th>Discount</th>
-                        <th>Max Use</th>
-                        <th>Start Date</th>
-                        <th>Expires on</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="toggle-switch text-center">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="statusToggle2">
-                            </div>
-                        </td>
-                        <td>COUPON2022</td>
-                        <td>15%</td>
-                        <td>50</td>
-                        <td>04/01/2022</td>
-                        <td>04/30/2022</td>
-                        <td class="text-center">
-                            <i class="bi bi-pencil action-icon"></i>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                    <!-- End Date -->
+                    <div class="mb-3">
+                        <label for="endDate" class="form-label">End Date</label>
+                        <input type="date" class="form-control" id="endDate" value="2022-03-25">
+                    </div>
+
+                    <!-- Amount -->
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Amount</label>
+                        <select class="form-select" id="amount">
+                            <option selected>Select Option</option>
+                            <!-- Additional options if needed -->
+                        </select>
+                    </div>
+
+                    <!-- Percentage -->
+                    <div class="mb-3">
+                        <label for="percentage" class="form-label">Percentage</label>
+                        <select class="form-select" id="percentage">
+                            <option selected>Choose Option</option>
+                            <!-- Additional options if needed -->
+                        </select>
+                    </div>
+
+                    <!-- Max Discount -->
+                    <div class="mb-3">
+                        <label for="maxDiscount" class="form-label">Max Discount</label>
+                        <select class="form-select" id="maxDiscount">
+                            <option selected>Choose Option</option>
+                            <!-- Additional options if needed -->
+                        </select>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-dark">Edit</button>
+                <button type="button" class="btn btn-outline-danger">Delete</button>
+            </div>
         </div>
     </div>
 </div>
 @endsection
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabCards = document.querySelectorAll('.tab-card');
+            const editButtons = document.querySelectorAll('.edit-discount-btn');
 
-@push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
+            // Handle tab card click and redirect with scope
+            tabCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const scope = card.getAttribute('data-scope');
+                    window.location.href = `?scope=${scope}`;
+                });
+            });
+
+            // Open modal on edit button click
+            editButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const discountId = button.getAttribute('data-id');
+                    document.getElementById('editDiscountModal').querySelector('.modal-title').textContent = `Edit Discount ${discountId}`;
+                    const modal = new bootstrap.Modal(document.getElementById('editDiscountModal'));
+                    modal.show();
+                });
+            });
+        });
+    </script>
+
+{{-- @push('scripts')
+    <script type="text/javascript">
+       $(document).ready(function() {
+            $('body').on('click', '.edit-discount-btn', function(e) {
+                console.log("clicked");
+                e.preventDefault();
+                $('#editDiscountModal').modal('show');
+            });
+        });
+
+    </script> 
 @endpush
+--}}

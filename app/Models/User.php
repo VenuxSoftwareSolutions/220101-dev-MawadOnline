@@ -51,6 +51,10 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(Customer::class);
     }
+    public function discounts()
+    {
+        return $this->hasMany(Discount::class);
+    }
 
     public function affiliate_user()
     {
