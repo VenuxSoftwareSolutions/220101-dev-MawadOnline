@@ -46,7 +46,6 @@ use App\Models\CustomerProduct;
 use App\Models\PricingConfiguration;
 use App\Utility\SendSMSUtility;
 use App\Models\FlashDealProduct;
-use App\Utility\CategoryUtility;
 use App\Models\AuctionProductBid;
 use App\Models\ManualPaymentMethod;
 use App\Models\SellerPackagePayment;
@@ -770,7 +769,7 @@ if (!function_exists('home_discounted_base_price_by_stock_id')) {
 if (!function_exists('home_discounted_base_price')) {
     function home_discounted_base_price($product, $formatted = true)
     {
-        
+
         $product_price = $product->getPricingConfiguration();
         if ($product_price !== null && $product_price->isNotEmpty()) {
             $price = $product_price->first()->unit_price;
