@@ -7,18 +7,22 @@ use Illuminate\Contracts\Validation\Rule;
 class NoPricingOverlap implements Rule
 {
     protected $from;
+
     protected $to;
 
-    public function __construct($from, $to)
+    protected $is_shipping;
+
+    public function __construct($from, $to, $is_shipping = false)
     {
         $this->from = $from;
         $this->to = $to;
+        $this->is_shipping = $is_shipping;
     }
 
     public function passes($attribute, $value = null)
     {
         foreach ($this->from as $index => $from_quantity) {
-            if (!isset($this->to[$index]) || $from_quantity >= $this->to[$index]) {
+            if (! isset($this->to[$index]) || $from_quantity >= $this->to[$index]) {
                 return false;
             }
 
@@ -32,6 +36,6 @@ class NoPricingOverlap implements Rule
 
     public function message()
     {
-        return 'Pricing ranges should not overlap.';
+        return $this->is_shipping ? 'Shipping duration/charge ranges should not overlap.' : 'Pricing ranges should not overlap.';
     }
 }

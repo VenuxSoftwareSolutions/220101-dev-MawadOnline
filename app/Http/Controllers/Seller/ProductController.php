@@ -183,7 +183,9 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->only(['from', 'to']), [
+        $is_shipping = true;
+
+        Validator::make($request->only(['from', 'to','from_shipping', 'to_shipping']), [
             'from' => [
                 'required', 'array',
                 new NoPricingOverlap($request->input('from'), $request->input('to')),
@@ -191,14 +193,14 @@ class ProductController extends Controller
             'to' => ['required', 'array'],
             'from.*' => 'numeric',
             'to.*' => 'numeric',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()
-                ->back()
-                ->withErrors($validator)
-                ->withInput();
-        }
+            'from_shipping' => [
+                'required', 'array',
+                new NoPricingOverlap($request->input('from_shipping'), $request->input('to_shipping'), $is_shipping),
+            ],
+            'to_shipping' => ['required', 'array'],
+            'from_shipping.*' => 'numeric',
+            'to_shipping.*' => 'numeric',
+        ])->validate();
 
         $product = $this->productService->store($request->except([
             'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type',
