@@ -30,7 +30,7 @@
             <!-- Sliders -->
             <div class="home-slider slider-full">
                 @if (get_setting('home_slider_images') != null)
-                    <div class="aiz-carousel dots-inside-bottom mobile-img-auto-height" data-autoplay="true" data-infinite="true">
+                    <div class="aiz-carousel dots-inside-bottom mobile-img-auto-height" data-autoplay="true" data-dots="true" data-infinite="true">
 
                         @php
                             $decoded_slider_images = json_decode(get_setting('home_slider_images', null, $lang), true);
