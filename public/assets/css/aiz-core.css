@@ -13254,3 +13254,7 @@ border:none !important;
         display: block;
     }
 }
+
+.border-none-force{
+    border: none !important;
+}

@@ -33,11 +33,11 @@
             </div>
             @endif --}}
             @if (isset($previewData['detailedProduct']['outStock']) && $previewData['detailedProduct']['outStock']==false )
-            <div id="stock-status-container" class="col-3 d-flex justify-content-end align-items-center">
+            <div id="stock-status-container" class="col-3 d-flex justify-content-end mt-2">
                 <span class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ translate('In Stock') }}</span>
             </div>
             @elseif (isset($previewData['detailedProduct']['outStock']) && $previewData['detailedProduct']['outStock']==true )
-            <div id="stock-status-container" class="col-3 d-flex justify-content-end align-items-center">
+            <div id="stock-status-container" class="col-3 d-flex justify-content-end mt-2">
                 <span class="badge badge-md badge-inline badge-pill badge-danger-light fs-14 font-prompt-md border-radius-8px outof-stock-style">{{ translate('Out Of Stock') }}</span>
             </div>
             @endif
@@ -407,13 +407,14 @@
                         if(($lastItem) && isset($lastItem[$attributeId]) && is_array($lastItem[$attributeId]))
                              $valueStringLastItem =  implode('-', $lastItem[$attributeId]);
                      @endphp
+                     @foreach ($value as $color)
                      <label class="attribute_value aiz-megabox pl-0 mb-0">
                         <input  @if ($valueStringLastItem == $valueString  )
                         checked
                     @endif   niveau={{$niveau}} id="attribute_id_{{$attributeId}}_{{$valueString}}" type="radio" attributeId="{{$attributeId}}"  value="{{$valueString}}" name="attribute_id_{{$attributeId}}"  >
-                        <span class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center">
+                        <span class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center border-none-force">
 
-                        @foreach ($value as $color)
+
 
                         @if (preg_match('/^#[0-9A-F]{6}$/i', $color))
                                <!-- <span class="size-25px d-inline-block rounded" style="background: {{ $color }};"></span>-->
@@ -441,11 +442,11 @@
                         @else
                             {{$color}}
                         @endif
-                        @endforeach
+
                     </span>
 
                     </label>
-
+                    @endforeach
                  @else
 
             <label class="attribute_value aiz-megabox pl-0 mr-2 mb-0">
