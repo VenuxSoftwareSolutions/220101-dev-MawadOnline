@@ -105,8 +105,8 @@
                 {{-- Discounts and Coupons Management --}}
                     <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link">
-                            <i class="las la-shopping-cart aiz-side-nav-icon"></i>
-                            <span class="aiz-side-nav-text">{{ __('sidenav.Promotions') }}</span>
+                            <i class="las la-gift aiz-side-nav-icon"></i>
+                            <span class="aiz-side-nav-text">{{ __('sidenav.Deals') }}</span>
                             <span class="aiz-side-nav-arrow"></span>
                         </a>
                         <!--Submenu-->
@@ -115,14 +115,14 @@
                                 <a href="{{ route('seller.discounts.index') }}"
                                 class="aiz-side-nav-link ">
 
-                                    <span class="aiz-side-nav-text">{{ __('sidenav.Promotions_list') }}</span>
+                                    <span class="aiz-side-nav-text">{{ __('sidenav.Deals_list') }}</span>
                                 </a>
                             </li>
                             <li id="discounts" class="aiz-side-nav-item">
                                 <a href="{{ route('seller.discounts.create') }}"
                                 class="aiz-side-nav-link ">
 
-                                    <span class="aiz-side-nav-text">{{ __('sidenav.Promotions_create') }}</span>
+                                    <span class="aiz-side-nav-text">{{ __('sidenav.Deals_create') }}</span>
                                 </a>
                             </li>
                             
