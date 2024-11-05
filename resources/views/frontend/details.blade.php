@@ -831,7 +831,7 @@
                         </div>
                         <div class="float-right">
                             <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="link-style-none">
-                                <button class="fs-14 font-prompt border-radius-8px view-store-btn">View Store</button>
+                                <button class="fs-14 font-prompt border-radius-8px view-store-btn">View e-shop</button>
                             </a>
                         </div>
                         <div class="rating rating-mr-1 text-dark float-left">
