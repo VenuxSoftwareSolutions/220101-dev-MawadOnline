@@ -162,7 +162,7 @@ if (!function_exists('filter_products')) {
         }
 
        $products = $products->where("is_parent", "!=", 1)
-            ->where("parent_id", "!=", 0);
+            ->orWhere("parent_id", "!=", 0);
 
         $verified_sellers = verified_sellers_id();
 
