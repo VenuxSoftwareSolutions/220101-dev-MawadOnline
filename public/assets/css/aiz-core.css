@@ -13254,7 +13254,32 @@ border:none !important;
         display: block;
     }
 }
-
 .border-none-force{
     border: none !important;
+}
+.sample-option{
+   height: 56px;
+   border-radius: 20px;
+   border:solid 1px #DBDCDF;
+   background:#F3F4F5;
+   padding: 4px;
+}
+.sample-option-button {
+    height: 46px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s ease; /* Animation duration and easing */
+}
+ /* Clicked button style */
+ .button-clicked {
+    border-radius: 16px;
+    background: #CB774B;
+    color: #ffffff;
+}
+
+/* Non-clicked button style */
+.nonclicked-button {
+    background: none;
+    color: #7E808A;
 }

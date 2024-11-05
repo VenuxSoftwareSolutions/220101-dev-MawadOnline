@@ -1,6 +1,31 @@
 <div class="text-left col-md-6 float-left">
     <!-- Product Name -->
     <div class="row">
+        <div class="col-12 sample-option">
+            <button id="product-button" class="sample-option-button col-6 fs-16 font-prompt float-left button-clicked">Buy Product</button>
+            <button id="sample-button" class="sample-option-button col-6 fs-16 font-prompt float-left nonclicked-button">Buy Sample</button>
+        </div>
+    </div>
+    <script>
+        const productButton = document.getElementById("product-button");
+        const sampleButton = document.getElementById("sample-button");
+
+        function toggleButtonStyles(clickedButton, otherButton) {
+            clickedButton.classList.add("button-clicked");
+            clickedButton.classList.remove("nonclicked-button");
+            otherButton.classList.add("nonclicked-button");
+            otherButton.classList.remove("button-clicked");
+        }
+
+        productButton.addEventListener("click", () => {
+            toggleButtonStyles(productButton, sampleButton);
+        });
+
+        sampleButton.addEventListener("click", () => {
+            toggleButtonStyles(sampleButton, productButton);
+        });
+    </script>
+    <div class="row mt-3">
         <div class="col-9">
             <h2 class="mt-1 fs-24 fw-700 text-dark font-prompt-sb">
                 {{ $previewData['detailedProduct']['name'] }}
