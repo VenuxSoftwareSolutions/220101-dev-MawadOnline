@@ -215,9 +215,15 @@
                 productSelect.disabled = true;
                 orderAmountInput.disabled = true;
 
+                categorySelect.value = null;
+                productSelect.value = null;
+                orderAmountInput.value = '';
 
                 if (scope === "category") {
                     categorySelect.disabled = false;
+                    productSelect.value = "";  
+                    orderAmountInput.value = "";  
+
                 } else if (scope === "product") {
                     productSelect.disabled = false;
                 } else if (scope === "ordersOverAmount") {
@@ -227,7 +233,7 @@
                 $('.aiz-selectpicker').selectpicker('refresh');
         }
 
-        form.addEventListener("submit", function(event) {
+       /* form.addEventListener("submit", function(event) {
             event.preventDefault();
             if (validateForm()) {
                 Swal.fire({
@@ -239,7 +245,7 @@
                     form.submit();
                 });
             }
-        });
+        });*/
         document.querySelectorAll('.tab-card').forEach(card => {
                 card.addEventListener('click', function () {
                     const scope = this.getAttribute('data-scope');
@@ -256,7 +262,6 @@
 
             const urlParams = new URLSearchParams(window.location.search);
             const selectedScope = urlParams.get('scope');
-
             if (selectedScope) {
                 updateFieldState(selectedScope);
 
