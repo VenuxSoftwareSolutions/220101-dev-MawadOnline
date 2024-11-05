@@ -106,7 +106,7 @@ class DiscountController extends Controller
     {
         $discount = Discount::findOrFail($id);
         $discount->delete();
-        return response()->json(['success' => true, 'message' => 'Discount deleted successfully.']);
+        return response()->json(data: ['success' => true, 'message' => 'Discount deleted successfully.']);
     }
 
 

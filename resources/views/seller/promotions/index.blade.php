@@ -64,6 +64,11 @@
         .action-icon:hover {
             color: #333;
         }
+        .toast-success {
+            background-color: green !important;
+            color: white !important;
+        }
+
     </style>
 @endpush
 
@@ -119,6 +124,21 @@
 
         <!-- Content for Discounts and Coupons -->
         <div class="tab-content" id="discountCouponContent">
+            @if (session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             <!-- Discounts Table -->
             <div class="tab-pane fade show active" id="discounts" role="tabpanel">
                 <h5>Discounts - Product</h5>
@@ -239,7 +259,8 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-dark" id="saveChangesBtn" data-id="">Save Changes</button>
-                    <button type="button" class="btn btn-danger" id="deleteDiscountBtn" data-id="discountId">Delete</button>
+                    <button type="button" class="btn btn-danger" id="deleteDiscountBtn"
+                        data-id="discountId">Delete</button>
 
                 </div>
             </div>
@@ -249,127 +270,148 @@
         <div class="modal-dialog modal-md modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title h6" id="title-modal">{{translate('Delete Confirmation')}}</h4>
+                    <h4 class="modal-title h6" id="title-modal">{{ translate('Delete Confirmation') }}</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 </div>
                 <div class="modal-body text-center">
-                    <p class="mt-1 fs-14" id="text-modal">{{translate('Are you sure to delete this?')}}</p>
-                    <button type="button" class="btn btn-secondary rounded-0 mt-2" data-dismiss="modal">{{translate('Cancel')}}</button>
-                    <button type="button" class="btn btn-danger rounded-0 mt-2" id="confirmDeleteBtn">{{translate('OK')}}</button>
+                    <p class="mt-1 fs-14" id="text-modal">{{ translate('Are you sure to delete this?') }}</p>
+                    <button type="button" class="btn btn-secondary rounded-0 mt-2"
+                        data-dismiss="modal">{{ translate('Cancel') }}</button>
+                    <button type="button" class="btn btn-danger rounded-0 mt-2"
+                        id="confirmDeleteBtn">{{ translate('OK') }}</button>
                 </div>
             </div>
         </div>
     </div>
-    
 @endsection
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+
 <script>
     function formatDate(dateString) {
         return dateString.split('T')[0];
     }
 
+    function fetchDiscountData(discountId) {
+        return fetch(`/vendor/discounts/${discountId}/edit`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('startDate').value = formatDate(data.start_date);
+                document.getElementById('endDate').value = formatDate(data.end_date);
+                document.getElementById('amount').value = data.min_order_amount;
+                document.getElementById('percentage').value = data.discount_percentage;
+                document.getElementById('maxDiscount').value = data.max_discount;
+
+                document.getElementById('amount').disabled = true;
+                document.getElementById('percentage').disabled = true;
+                document.getElementById('maxDiscount').disabled = true;
+
+                const modal = new bootstrap.Modal(document.getElementById('editDiscountModal'));
+                modal.show();
+            })
+            .catch(error => console.error('Error fetching discount data:', error));
+    }
+
+    function updateDiscount(discountId, startDate, endDate) {
+        fetch(`/vendor/discounts/${discountId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ startDate, endDate })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const bootstrapModal = new bootstrap.Modal(document.getElementById('editDiscountModal'));
+                    bootstrapModal.hide();
+                    displayToast(data.message);
+                    window.location.reload();
+                }
+            })
+            .catch(error => console.error('Error updating discount:', error));
+    }
+
+    function deleteDiscount(discountId) {
+        fetch(`/vendor/discounts/${discountId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                $('#modal-info').modal('hide');
+                displayToast(data.message);
+                window.location.reload();
+            })
+            .catch(error => console.error('Error deleting discount:', error));
+    }
+
+    function displayToast(message) {
+        if (typeof toastr !== "undefined") {
+            toastr.options = {
+                closeButton: true,
+                debug: false,
+                newestOnTop: true,
+                progressBar: true,
+                positionClass: "toast-top-right",
+                preventDuplicates: true,
+                showDuration: "500",
+                hideDuration: "2000",
+                timeOut: "10000",
+                extendedTimeOut: "2000",
+                showEasing: "swing",
+                hideEasing: "linear",
+                showMethod: "fadeIn",
+                hideMethod: "fadeOut"
+            };
+            toastr.success(message);
+        } else {
+            console.error("Toastr is not loaded");
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
-        const tabCards = document.querySelectorAll('.tab-card');
-        tabCards.forEach(card => {
+        document.querySelectorAll('.tab-card').forEach(card => {
             card.addEventListener('click', () => {
                 const scope = card.getAttribute('data-scope');
                 window.location.href = `?scope=${scope}`;
             });
         });
-       
 
-        const editButtons = document.querySelectorAll('.edit-discount-btn');
-        editButtons.forEach(button => {
+        document.querySelectorAll('.edit-discount-btn').forEach(button => {
             button.addEventListener('click', function(event) {
                 event.preventDefault();
-
-                // Retrieve the discount ID from the `data-id` attribute
                 const discountId = button.getAttribute('data-id');
-
-                // Fetch the discount data using AJAX
-                fetch(`/vendor/discounts/${discountId}/edit`)
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data);
-                        document.getElementById('startDate').value = formatDate(data
-                            .start_date);
-                        document.getElementById('endDate').value = formatDate(data
-                            .end_date);
-                        document.getElementById('amount').value = data.min_order_amount;
-                        document.getElementById('percentage').value = data
-                            .discount_percentage;
-                        document.getElementById('maxDiscount').value = data.max_discount;
-
-                        document.getElementById('amount').disabled = true;
-                        document.getElementById('percentage').disabled = true;
-                        document.getElementById('maxDiscount').disabled = true;
-
-                        const modal = new bootstrap.Modal(document.getElementById(
-                            'editDiscountModal'));
-                        modal.show();
-                    })
-                    .catch(error => console.error('Error fetching discount data:', error));
+                fetchDiscountData(discountId);
             });
         });
-        const editDiscountModal = document.getElementById('editDiscountModal');
-        const bootstrapModal = new bootstrap.Modal(editDiscountModal);
 
         document.getElementById('saveChangesBtn').addEventListener('click', function() {
-            const discountId = document.querySelector('.edit-discount-btn[data-id]').getAttribute(
-                'data-id');
-            console.log("disid=" + discountId);
+            const discountId = document.querySelector('.edit-discount-btn[data-id]').getAttribute('data-id');
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
-
-            fetch(`/vendor/discounts/${discountId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                            .getAttribute('content')
-                    },
-                    body: JSON.stringify({
-                        startDate,
-                        endDate
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert(data.message);
-                        bootstrapModal.hide();
-                        window.location.reload();
-                    }
-                })
-                .catch(error => console.error('Error updating discount:', error));
-        });
-        let discountIdToDelete = null;
-
-        document.getElementById("deleteDiscountBtn").addEventListener("click", function () {
-            discountIdToDelete = this.getAttribute("data-id");
-            $('#modal-info').modal('show'); 
+            updateDiscount(discountId, startDate, endDate);
         });
 
-        document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
-            if (discountIdToDelete) {
-                fetch(`/vendor/discounts/${discountIdToDelete}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    alert(data.message);
-                    $('#modal-info').modal('hide'); // Hide the confirmation modal
-                    window.location.reload(); // Reload the page to reflect the deletion
-                })
-                .catch(error => console.error('Error deleting discount:', error));
+        document.getElementById("deleteDiscountBtn").addEventListener("click", function() {
+            const discountId = document.querySelector('.edit-discount-btn[data-id]').getAttribute('data-id');
+            $('#modal-info').modal('show');
+        });
+
+        document.getElementById("confirmDeleteBtn").addEventListener("click", function() {
+            const discountId = document.querySelector('.edit-discount-btn[data-id]').getAttribute('data-id');
+            if (discountId) {
+                deleteDiscount(discountId);
             }
         });
-
-
     });
 </script>
+
 
 {{-- @push('scripts')
     <script type="text/javascript">
