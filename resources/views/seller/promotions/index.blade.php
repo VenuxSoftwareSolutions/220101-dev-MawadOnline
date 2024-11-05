@@ -77,7 +77,7 @@
         <!-- Tabs for Discount Types with Card Styles -->
         <div class="row mb-4">
             <div class="col-md-3">
-                <div class="tab-card active" id="product-tab" data-bs-toggle="tab" data-bs-target="#product" role="tab">
+                <div class="tab-card active" id="product-tab" data-bs-toggle="tab" data-bs-target="#product" role="tab" data-scope="product">
                     <div class="tab-card-icon"><i class="bi bi-box"></i></div>
                     <div class="tab-card-title">Product</div>
                     <div class="tab-card-description">Click here to offer a discount on a certain product from your
@@ -85,7 +85,7 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="tab-card" id="category-tab" data-bs-toggle="tab" data-bs-target="#category" role="tab">
+                <div class="tab-card" id="category-tab" data-bs-toggle="tab" data-bs-target="#category" role="tab" data-scope="category">
                     <div class="tab-card-icon"><i class="bi bi-tag"></i></div>
                     <div class="tab-card-title">Category</div>
                     <div class="tab-card-description">Click here to offer a discount on a certain category from your
@@ -93,7 +93,7 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="tab-card" id="ordersOverAmount-tab" data-bs-toggle="tab" data-bs-target="#ordersOverAmount"
+                <div class="tab-card" id="ordersOverAmount-tab" data-bs-toggle="tab" data-bs-target="#ordersOverAmount" data-scope="ordersOverAmount"
                     role="tab">
                     <div class="tab-card-icon"><i class="bi bi-cart4"></i></div>
                     <div class="tab-card-title">Orders over an Amount</div>
@@ -102,7 +102,7 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="tab-card" id="allOrders-tab" data-bs-toggle="tab" data-bs-target="#allOrders" role="tab">
+                <div class="tab-card" id="allOrders-tab" data-bs-toggle="tab" data-bs-target="#allOrders" role="tab" data-scope="allOrders">
                     <div class="tab-card-icon"><i class="bi bi-basket"></i></div>
                     <div class="tab-card-title">All Orders</div>
                     <div class="tab-card-description">Click here to offer a discount on all the orders.</div>
@@ -141,12 +141,12 @@
             @endif
             <!-- Discounts Table -->
             <div class="tab-pane fade show active" id="discounts" role="tabpanel">
-                <h5>Discounts - Product</h5>
+                <h5>Discounts - {{ ucfirst($scope) }}</h5>
                 <table class="table table-bordered mt-3">
                     <thead>
                         <tr>
                             <th>Status</th>
-                            <th>Product Name</th>
+                            <th>{{ $columnHeader }}</th>
                             <th>Percent</th>
                             <th>Max Discount</th>
                             <th>Start Date</th>
@@ -155,7 +155,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($discounts as $discount)
+                        @forelse ($discounts as $discount)
                             <tr>
                                 <td>
                                     <label class="aiz-switch aiz-switch-success mb-0">
@@ -163,24 +163,26 @@
                                         <span class=""> </span>
                                     </label>
                                 </td>
-                                <td>{{ $discount->product ? $discount->product->name : 'N/A' }}</td>
+                                <td>{!! $columnValue($discount) !!}</td>
                                 <td>{{ $discount->discount_percentage }}%</td>
                                 <td>{{ $discount->max_discount }}</td>
                                 <td>{{ $discount->start_date->format('m/d/Y') }}</td>
                                 <td>{{ $discount->end_date->format('m/d/Y') }}</td>
                                 <td>
-                                    <a class="btn btn-sm edit-discount-btn" href="#" title="Edit"
-                                        data-id="{{ $discount->id }}">
+                                    <a class="btn btn-sm edit-discount-btn" href="#" title="Edit" data-id="{{ $discount->id }}">
                                         <img src="{{ asset('public/Edit.svg') }}">
                                     </a>
                                 </td>
-
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="7" class="text-center">No discounts available for this scope.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
-
+            
             <!-- Coupons Table -->
             <div class="tab-pane fade" id="coupons" role="tabpanel">
                 <h5>Coupons</h5>
@@ -382,6 +384,7 @@
                 window.location.href = `?scope=${scope}`;
             });
         });
+
 
         document.querySelectorAll('.edit-discount-btn').forEach(button => {
             button.addEventListener('click', function(event) {

@@ -14,26 +14,38 @@ use App\Http\Requests\Discounts\DiscountUpdateRequest;
 
 class DiscountController extends Controller
 {
+ 
     public function index(Request $request)
-    { {
-            $query = Discount::where('user_id', Auth::id())->with('product');
-            ;
-
-            /*if ($request->has('scope')) {
-                $scope = $request->input('scope');
-                if ($scope == 'category') {
-                    $query->where('scope', 'category');
-                } elseif ($scope == 'product') {
-                    $query->where('scope', 'product');
-                } 
-            }*/
-            $discounts = $query->get();
-            $scope = 'product';
-
-            return view('seller.promotions.index', compact('discounts', 'scope'));
+    {
+        $scope = $request->query('scope', 'product'); 
+        $discounts = Discount::where('scope', $scope)->get();
+        $columnHeader = '';
+        $columnValue = '';
+        switch ($scope) {
+            case 'product':
+                $columnHeader = 'Product Name';
+                $columnValue = fn($discount) => $discount->product ? $discount->product->name : 'N/A';
+                break;
+            case 'category':
+                $columnHeader = 'Category';
+                $columnValue = fn($discount) => $discount->category ? $discount->category->name : 'N/A';
+                break;
+            case 'ordersOverAmount':
+                $columnHeader = 'Minimum Amount';
+                $columnValue = fn($discount) => $discount->min_order_amount ?? 'N/A';
+                break;
+            case 'allOrders':
+                $columnHeader = 'All Orders';
+                $columnValue = fn($discount) => ''; 
+                break;
+            default:
+                $columnHeader = 'Product Name';
+                $columnValue = fn($discount) => $discount->product ? $discount->product->name : 'N/A';
+                break;
         }
-
+        return view('seller.promotions.index', compact('discounts', 'scope', 'columnHeader', 'columnValue'));
     }
+
     public function create()
     {
         $categories = Category::all();
@@ -47,7 +59,9 @@ class DiscountController extends Controller
         $validatedData = $request->validated();
         $validatedData['user_id'] = auth()->id();
         Discount::create($validatedData);
-        return redirect()->route('seller.discounts.index')->with('success', 'Discount created successfully.');
+        $scope = $validatedData['scope'];
+        return redirect()->route('seller.discounts.index', ['scope' => $scope])
+        ->with('success', 'Discount created successfully.');
     }
 
     public function edit($id)
