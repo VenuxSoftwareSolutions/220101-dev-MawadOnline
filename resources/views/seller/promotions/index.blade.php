@@ -232,12 +232,12 @@
                     <form id="editDiscountForm">
                         <div class="mb-3">
                             <label for="startDate" class="form-label">Start Date</label>
-                            <input type="date" class="form-control" id="startDate">
+                            <input type="date" class="form-control" name="start_date" id="startDate">
                         </div>
 
                         <div class="mb-3">
                             <label for="endDate" class="form-label">End Date</label>
-                            <input type="date" class="form-control" id="endDate">
+                            <input type="date" class="form-control"  name="end_date" id="endDate">
                         </div>
 
                         <div class="mb-3">
@@ -314,14 +314,14 @@
             .catch(error => console.error('Error fetching discount data:', error));
     }
 
-    function updateDiscount(discountId, startDate, endDate) {
+    function updateDiscount(discountId, start_date, end_date) {
         fetch(`/vendor/discounts/${discountId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
-                body: JSON.stringify({ startDate, endDate })
+                body: JSON.stringify({ start_date, end_date})
             })
             .then(response => response.json())
             .then(data => {
@@ -393,9 +393,9 @@
 
         document.getElementById('saveChangesBtn').addEventListener('click', function() {
             const discountId = document.querySelector('.edit-discount-btn[data-id]').getAttribute('data-id');
-            const startDate = document.getElementById('startDate').value;
-            const endDate = document.getElementById('endDate').value;
-            updateDiscount(discountId, startDate, endDate);
+            const start_date = document.getElementById('startDate').value;
+            const end_date = document.getElementById('endDate').value;
+            updateDiscount(discountId, start_date, end_date);
         });
 
         document.getElementById("deleteDiscountBtn").addEventListener("click", function() {

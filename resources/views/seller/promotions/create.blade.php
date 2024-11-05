@@ -108,11 +108,11 @@
                     <div class="row">
                         <div class="col-md-6">
                             <label for="startDate" class="form-label">Start Date</label>
-                            <input type="date" class="form-control" name="startDate" required>
+                            <input type="date" class="form-control" name="start_date" required>
                         </div>
                         <div class="col-md-6">
                             <label for="endDate" class="form-label">End Date</label>
-                            <input type="date" class="form-control" name="endDate" required>
+                            <input type="date" class="form-control" name="end_date" required>
                         </div>               
                     </div>
 
@@ -142,18 +142,18 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="order_amount" class="form-label">Order Amount</label>
-                            <input type="number" class="form-control" id="order_amount" name="order_amount" placeholder="Minimum order amount" >
+                            <input type="number" class="form-control" id="order_amount" name="min_order_amount" placeholder="Minimum order amount" >
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="percent" class="form-label">Percent</label>
-                            <input type="number" class="form-control" id="percent" name="percent" min="0" max="100" placeholder="0%" required>
+                            <input type="number" class="form-control" id="percent" name="discount_percentage" min="0" max="100" placeholder="0%" required>
                         </div>
                        
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="maxDiscount" class="form-label">Max Discount</label>
-                            <input type="number" class="form-control" name="maxDiscount" placeholder="Maximum discount amount">
+                            <input type="number" class="form-control" name="max_discount" placeholder="Maximum discount amount">
                         </div>
                     </div>
                     <input type="hidden" name="scope" id="scope" value="">
@@ -187,15 +187,14 @@
         }
         function validateForm() {
             const discountType = form.querySelector("input[name='discountType']:checked");
-            const startDate = form.querySelector("input[name='startDate']").value;
-            const endDate = form.querySelector("input[name='endDate']").value;
+            const startDate = form.querySelector("input[name='start_date']").value;
+            const endDate = form.querySelector("input[name='end_date']").value;
             const scope = document.getElementById("scope").value;
-            const percent = form.querySelector("input[name='percent']").value;
-            const maxDiscount = form.querySelector("input[name='maxDiscount']").value;
+            const percent = form.querySelector("input[name='discount_percentage']").value;
+            const maxDiscount = form.querySelector("input[name='max_discount']").value;
             const productId = form.querySelector("select[name='product_id']").value;
             const categoryId = form.querySelector("select[name='category_id']").value;
             const orderAmount = form.querySelector("#order_amount").value;
-
 
             if (!discountType) return showError("Discount type is required.");
             if (!startDate) return showError("Start date is required.");
@@ -206,9 +205,7 @@
             if (maxDiscount && (isNaN(maxDiscount) || maxDiscount < 0)) return showError("Max discount must be a positive number.");
             if (scope === "product" && (!productId || isNaN(productId))) return showError("Please select a valid product.");
             if (scope === "category" && (!categoryId || isNaN(categoryId))) return showError("Please select a valid category.");
-            if (!orderAmount || isNaN(orderAmount) || orderAmount <= 0) {return showError("Minimum Order amount must be a positive number.");}
-
-
+            if (scope === "ordersOverAmount" && (!orderAmount || isNaN(orderAmount) || orderAmount <= 0)) {return showError("Minimum Order amount must be a positive number.");}
             return true; 
         }
         function updateFieldState(scope) {
