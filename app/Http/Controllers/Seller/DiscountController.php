@@ -41,15 +41,14 @@ class DiscountController extends Controller
 
         return view('seller.promotions.create', compact('categories', 'products'));
     }
+
     public function store(DiscountStoreRequest $request)
     {
         $validatedData = $request->validated();
-        $validatedData['user_id']= auth()->id();
-        $discount = Discount::create($validatedData);
+        $validatedData['user_id'] = auth()->id();
+        Discount::create($validatedData);
         return redirect()->route('seller.discounts.index')->with('success', 'Discount created successfully.');
-     }
-    
-
+    }
 
     public function edit($id)
     {
@@ -70,9 +69,5 @@ class DiscountController extends Controller
         $discount->delete();
         return response()->json(data: ['success' => true, 'message' => 'Discount deleted successfully.']);
     }
-
-
-
-
 
 }
