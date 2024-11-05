@@ -756,10 +756,33 @@ class ProductController extends Controller
 
     public function update(Request $request)
     {
+        $is_shipping = true;
+
+        Validator::make($request->only(['from', 'to','from_shipping', 'to_shipping']), [
+            'from' => [
+                'required', 'array',
+                new NoPricingOverlap($request->input('from'), $request->input('to')),
+            ],
+            'to' => ['required', 'array'],
+            'from.*' => 'numeric',
+            'to.*' => 'numeric',
+            'from_shipping' => [
+                'required', 'array',
+                new NoPricingOverlap($request->input('from_shipping'), $request->input('to_shipping'), $is_shipping),
+            ],
+            'to_shipping' => ['required', 'array'],
+            'from_shipping.*' => 'numeric',
+            'to_shipping.*' => 'numeric',
+        ])->validate();
+
         $parent = Product::find($request->product_id);
+
         if ($parent != null) {
             $product = $this->productService->update($request->except([
-                'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type',
+                'photosThumbnail', 'main_photos', 'product',
+                'documents', 'document_names', '_token', 'sku',
+                'choice', 'tax_id', 'tax', 'tax_type',
+                'flash_deal_id', 'flash_discount', 'flash_discount_type',
             ]), $parent);
 
             //Product categories
@@ -790,13 +813,9 @@ class ProductController extends Controller
             Artisan::call('cache:clear');
 
             return redirect()->route('seller.products');
-
         } else {
             return redirect()->back();
         }
-
-        //flash(translate('Product has been updated successfully'))->success();
-
     }
 
     public function sku_combination(Request $request)
