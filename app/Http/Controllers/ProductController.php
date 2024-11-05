@@ -1255,7 +1255,7 @@ class ProductController extends Controller
                         We thank you for your trust and remain at your disposal for any questions.<br>
 
                         Best regards, <br>MAWADONLINE team.';
-                
+
                 $user = User::find($product->user_id);
                 Mail::to($user->email)->send(new ApprovalProductMail($status, $text));
             }
@@ -1271,7 +1271,7 @@ class ProductController extends Controller
 
                         Best regards, <br>MAWADONLINE team.';
 
-                
+
                 $user = User::find($product->user_id);
                 Mail::to($user->email)->send(new ApprovalProductMail($status, $text));
             }
@@ -1288,7 +1288,10 @@ class ProductController extends Controller
     }
 
     public function search(){
-        $catalogs = ProductCatalog::orderBy('created_at', 'desc')->paginate(12);
+        $catalogs = ProductCatalog::whereHas('product', function ($query) {
+            $query->whereNull('deleted_at');
+        })->orderBy('created_at', 'desc')->paginate(12);
+
         return view('backend.product.catalog.search', [
             'catalogs' => $catalogs
         ]);

@@ -4,12 +4,12 @@
         display: flex;
         justify-content: center;
         align-items: center;
-    } 
+    }
 
     .row_center {
         justify-content: center;
         align-items: center;
-    } 
+    }
 
     small{
         font-size: 110% !important;
@@ -50,17 +50,17 @@
                 <div class="row row_center">
                     <div class="col-12 search_bloc">
                         <input type="text" required class="form-control search" style="width: 50%" id="search" placeholder="{{ translate('Search by product name, model, brand …') }}">
-                        
+
                     </div>
                     <div id="result" class="col-12 search_bloc panel panel-default" style="display:none">
                         <ul class="list-group" id="memList" style="width: 50%">
-                         
+
                         </ul>
                     </div>
-                    
+
                     @if(Auth::user()->user_type == "seller")
                         <div class="col-12" style="width: 50%; padding: 0px 422px;">
-                            <small> <a href="{{ route('seller.products.create') }}">{{ translate('Create product manually.') }}</small></a> 
+                            <small> <a href="{{ route('seller.products.create') }}">{{ translate('Create product manually.') }}</small></a>
                             <small>{{ translate('Bulk upload products') }}</small>
                         </div>
                     @endif
@@ -142,5 +142,5 @@
         }
     })
 </script>
-   
+
 @endsection

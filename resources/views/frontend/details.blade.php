@@ -14,11 +14,16 @@
             @php
 
                 if(!isset($previewData['detailedProduct']['previewCreate'])) {
-                    if($previewData['detailedProduct']['variationId'])
+                    if($previewData['detailedProduct']['variationId']) {
+
                         $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['variationId']);
+
+                    }
+
                     else {
                         $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['product_id']);
                     }
+                    if($detailedProduct)
                     $totalRating = $detailedProduct->reviews->count();
                 }
 
@@ -813,6 +818,7 @@
                         data-src="{{ uploaded_asset($detailedProduct->user->shop->logo) }}"
                         onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
                 </a> --}}
+
                 @if(isset($detailedProduct))
                     <div class="product-rightbox-seller-details float-left col-md-12">
                         <div class="float-left col-md-12 p-0">
@@ -844,6 +850,9 @@
                     @php
                         $user = Auth::user() ;
                     @endphp
+                        @if ($user->shop)
+
+
                        <div class="product-rightbox-seller-details float-left">
                         <div class="float-left col-md-12 p-0">
                         <a href="{{ route('shop.visit', $user->shop->slug) }}" class="link-style-none">
@@ -885,6 +894,7 @@
                             </div>
                         </div>
                     </div>
+                    @endif
                 @endif
             </div>
 

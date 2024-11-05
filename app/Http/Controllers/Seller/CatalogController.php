@@ -13,11 +13,13 @@ use App\Models\UploadProducts;
 use App\Models\ProductCategory;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\PricingConfiguration;
 use App\Models\UploadProductCatalog;
 use Illuminate\Support\Facades\File;
 use App\Models\ProductAttributeValues;
 use App\Models\ProductAttributeValueCatalog;
+use App\Models\Review;
 
 class CatalogController extends Controller
 {
@@ -35,7 +37,7 @@ class CatalogController extends Controller
         $searchTerm = $request->name;
 
         if(Auth::user()->user_type == "seller"){
-            
+
             $catalogs = ProductCatalog::where(function ($query) use ($searchTerm) {
                                     $query->where('name', 'like', "%{$searchTerm}%")
                                         ->orWhereHas('brand', function ($query) use ($searchTerm) {
@@ -56,7 +58,7 @@ class CatalogController extends Controller
             //                                         ->where('approved', 1);
             //                             });
             //                     })->take(1)->get();
-            
+
 
             // if(count($products) == 0){
             //     $catalogs = ProductCatalog::where(function ($query) use ($searchTerm) {
@@ -66,7 +68,7 @@ class CatalogController extends Controller
             //             });
             //     })->take(3)->get();
             // }else{
-                
+
             //     $catalogs = ProductCatalog::where(function ($query) use ($searchTerm) {
             //         $query->where('name', 'like', "%{$searchTerm}%")
             //             ->orWhereHas('brand', function ($query) use ($searchTerm) {
@@ -174,6 +176,228 @@ class CatalogController extends Controller
         return $videoId;
     }
 
+    // public function displayPreviewProductInCatalogProduct($id, $is_catalog){
+    //     $is_added_to_catalog = false;
+    //     if($is_catalog == 2){
+    //         $parent = Product::find($id);
+    //         $product_catalog = ProductCatalog::where('product_id', $id)->first();
+    //         // Check if product is existe in catalog or not
+    //         if($product_catalog != null){
+    //             $is_added_to_catalog = true;
+    //         }
+    //     }else{
+    //         $parent = ProductCatalog::find($id);
+    //     }
+
+
+    //     if($parent->is_parent == 0){
+    //         if($parent->parent_id != 0){
+    //             if($is_catalog == 2){
+    //                 $parent = Product::find($parent->parent_id);
+    //             }else{
+    //                 $parent = ProductCatalog::find($parent->parent_id);
+    //             }
+    //         }
+    //     }
+
+    //     $brand = Brand::find($parent->brand_id);
+    //     if($is_catalog == 2){
+    //         $pricing = PricingConfiguration::where('id_products', $parent->id)->get();
+    //         $pricing = [];
+    //         $pricing['from'] = PricingConfiguration::where('id_products', $parent->id)->pluck('from')->toArray();
+    //         $pricing['to'] = PricingConfiguration::where('id_products', $parent->id)->pluck('to')->toArray();
+    //         $pricing['unit_price'] = PricingConfiguration::where('id_products', $parent->id)->pluck('unit_price')->toArray();
+    //         $pricing['discount'] =[
+    //             'type' => null,
+    //             'amount' => null,
+    //             'percentage' => null,
+    //             'date' => null,
+    //         ];
+    //     }else{
+    //         $pricing = [];
+    //         $pricing['from'] = [0];
+    //         $pricing['to'] = [0];
+    //         $pricing['unit_price'] = [0];
+    //         $pricing['discount'] =[
+    //             'type' => null,
+    //             'amount' => null,
+    //             'percentage' => null,
+    //             'date' => null,
+    //         ];
+    //     }
+
+    //     $variations = [];
+    //     $pricing_children = [];
+    //     if($parent->is_parent == 1){
+
+    //         if($is_catalog == 2){
+    //             $childrens_ids = Product::where('parent_id', $parent->id)->pluck('id')->toArray();
+    //         }else{
+    //             $childrens_ids = ProductCatalog::where('parent_id', $parent->id)->pluck('id')->toArray();
+    //         }
+
+    //         foreach($childrens_ids as $children_id){
+    //             if($is_catalog == 2){
+    //                 $variations[$children_id]['variant_pricing-from']['from'] = PricingConfiguration::where('id_products', $children_id)->pluck('from')->toArray();
+    //                 $variations[$children_id]['variant_pricing-from']['to'] = PricingConfiguration::where('id_products', $children_id)->pluck('to')->toArray();
+    //                 $variations[$children_id]['variant_pricing-from']['unit_price'] = PricingConfiguration::where('id_products', $children_id)->pluck('unit_price')->toArray();
+    //                 $variations[$children_id]['variant_pricing-from']['discount'] =[
+    //                     'type' => null,
+    //                     'amount' => null,
+    //                     'percentage' => null,
+    //                     'date' => null,
+    //                 ];
+    //             }else{
+    //                 $variations[$children_id]['variant_pricing-from']['from'] = [0];
+    //                 $variations[$children_id]['variant_pricing-from']['to'] = [0];
+    //                 $variations[$children_id]['variant_pricing-from']['unit_price'] = [0];
+    //                 $variations[$children_id]['variant_pricing-from']['discount'] =[
+    //                     'type' => null,
+    //                     'amount' => null,
+    //                     'percentage' => null,
+    //                     'date' => null,
+    //                 ];
+    //             }
+
+    //             if($is_catalog == 2){
+    //                 $attributes_variant = ProductAttributeValues::where('id_products', $children_id)->where('is_variant', 1)->get();
+    //             }else{
+    //                 $attributes_variant = ProductAttributeValueCatalog::where('catalog_id', $children_id)->where('is_variant', 1)->get();
+    //             }
+
+    //             foreach($attributes_variant as $attribute){
+    //                 if($attribute->id_units != null){
+    //                     $unit = Unity::find($attribute->id_units);
+    //                     if ($unit){
+    //                         $variations[$children_id][$attribute->id_attribute] = $attribute->value.' '.$unit->name;
+    //                     }
+    //                 }else{
+    //                     $variations[$children_id][$attribute->id_attribute] = $attribute->value;
+    //                 }
+    //             }
+    //             if($is_catalog == 2){
+    //                 $variations[$children_id]['storedFilePaths'] = UploadProducts::where('id_product', $children_id)->where('type', 'images')->pluck('path')->toArray();
+    //             }else{
+    //                 $variations[$children_id]['storedFilePaths'] = UploadProductCatalog::where('catalog_id', $children_id)->where('type', 'images')->pluck('path')->toArray();
+    //             }
+    //         }
+    //     }
+
+    //     if($is_catalog == 2){
+    //         $storedFilePaths = UploadProducts::where('id_product', $parent->id)->where('type', 'images')->pluck('path')->toArray();
+    //     }else{
+    //         $storedFilePaths = UploadProductCatalog::where('catalog_id', $parent->id)->where('type', 'images')->pluck('path')->toArray();
+    //     }
+    //     if($is_catalog == 2){
+    //         $attributes_general = ProductAttributeValues::where('id_products', $parent->id)->where('is_general', 1)->get();
+    //     }else{
+    //         $attributes_general = ProductAttributeValueCatalog::where('catalog_id', $parent->id)->where('is_general', 1)->get();
+    //     }
+    //     $attributesGeneralArray = [];
+    //     foreach($attributes_general as $attribute_general){
+    //         if($attribute_general->id_units != null){
+    //             $unit = Unity::find($attribute_general->id_units);
+    //             if ($unit){
+    //                 $attributesGeneralArray[$attribute_general->id_attribute] = $attribute_general->value.' '.$unit->name;
+    //             }
+    //         }else{
+    //             $attributesGeneralArray[$attribute_general->id_attribute] = $attribute_general->value;
+    //         }
+    //     }
+
+    //     $attributes = [];
+    //     if(count($variations) > 0){
+    //         foreach ($variations as $variation) {
+    //             foreach ($variation as $attributeId => $value) {
+    //                 if ($attributeId != "storedFilePaths" && $attributeId != "variant_pricing-from" ) {
+    //                  if (!isset($attributes[$attributeId])) {
+    //                      $attributes[$attributeId] = [];
+    //                  }
+    //                  // Add value to the unique attributes array if it doesn't already exist
+    //                  if (!in_array($value, $attributes[$attributeId])) {
+    //                      $attributes[$attributeId][] = $value;
+    //                  }
+    //                 }
+
+    //             }
+    //          }
+    //     }
+
+
+
+    //     if (is_array($variations) && !empty($variations)) {
+    //         $lastItem  = end($variations);
+    //         $variationId = key($variations);
+    //         if(count($lastItem['variant_pricing-from']['to']) >0){
+    //             $max =max($lastItem['variant_pricing-from']['to']) ;
+    //         }
+    //         if(count($lastItem['variant_pricing-from']['from']) >0){
+    //             $min =min($lastItem['variant_pricing-from']['from']) ;
+    //         }
+
+    //     }
+
+    //     if (isset($pricing['from']) && is_array($pricing['from']) && count($pricing['from']) > 0) {
+    //         if(!isset($min))
+    //             $min = min($pricing['from']) ;
+    //     }
+
+    //     if (isset($pricing['to']) && is_array($pricing['to']) && count($pricing['to']) > 0) {
+    //         if(!isset($max))
+    //             $max = max($pricing['to']) ;
+    //     }
+
+    //     if ($parent->video_provider === "youtube") {
+    //         $getYoutubeVideoId=$this->getYoutubeVideoId($parent->video_link) ;
+    //     }
+    //     else {
+    //         $getVimeoVideoId=$this->getVimeoVideoId($parent->video_link) ;
+    //     }
+
+    //     $total = isset($pricing['from'][0]) && isset($pricing['unit_price'][0]) ? $pricing['from'][0] * $pricing['unit_price'][0] : "";
+
+    //     $detailedProduct = [
+    //             'name' => $parent->name,
+    //             'brand' => $brand ? $brand->name : "",
+    //             'unit' => $parent->unit,
+    //             'description' => $parent->description,
+    //             'main_photos' => $lastItem['storedFilePaths'] ?? $storedFilePaths, // Add stored file paths to the detailed product data
+    //             'quantity' => $lastItem['variant_pricing-from']['from'][0] ?? $pricing['from'][0] ?? '',
+    //             'price' => $lastItem['variant_pricing-from']['unit_price'][0] ?? $pricing['unit_price'][0] ?? '',
+    //             'total' => isset($lastItem['variant_pricing-from']['from'][0]) && isset($lastItem['variant_pricing-from']['unit_price'][0]) ? $lastItem['variant_pricing-from']['from'][0] * $lastItem['variant_pricing-from']['unit_price'][0] : $total,
+
+    //             'general_attributes' =>$attributesGeneralArray,
+    //             'attributes' =>$attributes ?? [] ,
+    //             'from' =>$pricing['from'] ?? [] ,
+    //             'to' =>$pricing['to']  ?? [],
+    //             'unit_price' =>$pricing['unit_price'] ?? [] ,
+    //             'variations' =>$variations,
+    //             'variationId' => $variationId ?? null,
+    //             'lastItem' => $lastItem ?? [],
+    //             'catalog' => true,
+    //             'product_id' => $parent->id,
+    //             'max' =>$max ?? 1 ,
+    //             'min' =>$min ?? 1 ,
+    //             'video_provider'  => $parent->video_provider,
+    //             'getYoutubeVideoId' =>$getYoutubeVideoId ?? null ,
+    //             'getVimeoVideoId' => $getVimeoVideoId ?? null,
+    //             'is_catalog' => $is_catalog,
+    //             'is_added_to_catalog' => $is_added_to_catalog,
+    //             'discountedPrice' => $discountedPrice ?? null,
+    //             'totalDiscount' => $totalDiscount ?? null,
+    //             'date_range_pricing' =>  $pricing['discount']['date']  ?? null,
+    //             'discount_type' => $pricing['discount']['type'] ?? null ,
+    //             'discount_percentage' => $pricing['discount']['percentage'],
+    //             'discount_amount'=> $pricing['discount']['amount'],
+    //             'percent'=> $percent ?? null,
+    //         ];
+
+    //     $previewData['detailedProduct'] = $detailedProduct;
+
+    //     session(['productPreviewData' => $previewData]);
+
+    //     return view('frontend.product_details.preview', compact('previewData'));
+    // }
     public function displayPreviewProductInCatalogProduct($id, $is_catalog){
         $is_added_to_catalog = false;
         if($is_catalog == 2){
@@ -232,9 +456,14 @@ class CatalogController extends Controller
                 $childrens_ids = Product::where('parent_id', $parent->id)->pluck('id')->toArray();
             }else{
                 $childrens_ids = ProductCatalog::where('parent_id', $parent->id)->pluck('id')->toArray();
+
             }
 
             foreach($childrens_ids as $children_id){
+                    $product = Product::find($children_id);
+                    $variations[$children_id]['sku'] = $product ? $product->sku : null;
+                    $variations[$children_id]['slug'] = $product ? $product->slug : null;
+
                 if($is_catalog == 2){
                     $variations[$children_id]['variant_pricing-from']['from'] = PricingConfiguration::where('id_products', $children_id)->pluck('from')->toArray();
                     $variations[$children_id]['variant_pricing-from']['to'] = PricingConfiguration::where('id_products', $children_id)->pluck('to')->toArray();
@@ -307,7 +536,7 @@ class CatalogController extends Controller
         if(count($variations) > 0){
             foreach ($variations as $variation) {
                 foreach ($variation as $attributeId => $value) {
-                    if ($attributeId != "storedFilePaths" && $attributeId != "variant_pricing-from" ) {
+                    if ($attributeId != "storedFilePaths" && $attributeId != "variant_pricing-from" && $attributeId !="sku" && $attributeId !="slug"  ) {
                      if (!isset($attributes[$attributeId])) {
                          $attributes[$attributeId] = [];
                      }
@@ -324,8 +553,20 @@ class CatalogController extends Controller
 
 
         if (is_array($variations) && !empty($variations)) {
-            $lastItem  = end($variations);
-            $variationId = key($variations);
+            foreach ($variations as $variationId => $variation) {
+
+                if ( $variationId == $id) {
+
+                    $lastItem = $variation; // Store the matching variation
+                    $variationId = $variationId;
+
+                    break; // Stop the loop once a match is found
+                }
+            }
+            if(!isset($lastItem)) {
+                $lastItem  = end($variations);
+                $variationId = key($variations);
+            }
             if(count($lastItem['variant_pricing-from']['to']) >0){
                 $max =max($lastItem['variant_pricing-from']['to']) ;
             }
@@ -354,11 +595,38 @@ class CatalogController extends Controller
 
         $total = isset($pricing['from'][0]) && isset($pricing['unit_price'][0]) ? $pricing['from'][0] * $pricing['unit_price'][0] : "";
 
+        // Get all reviews for the specified product
+        $reviews = Review::where('product_id', $parent->id)->where('status', 1)->get();
+
+        // Total number of reviews
+        $totalReviews = $reviews->count();
+
+        // Initialize rating counts
+        $ratingCounts = array_fill(0, 6, 0); // Index 0-5
+
+        // Count each rating
+        foreach ($reviews as $review) {
+            $ratingCounts[$review->rating]++;
+        }
+
+        // Calculate percentage
+        $ratingPercentages = [];
+        for ($i = 0; $i <= 5; $i++) {
+            $percentage = $totalReviews > 0 ? ($ratingCounts[$i] / $totalReviews) * 100 : 0;
+            $ratingPercentages[$i] = [
+                'rating' => $i,
+                'percentage' => round($percentage, 2), // Round to 2 decimal places
+                'count' => $ratingCounts[$i]
+            ];
+        }
+
+
         $detailedProduct = [
                 'name' => $parent->name,
                 'brand' => $brand ? $brand->name : "",
                 'unit' => $parent->unit,
                 'description' => $parent->description,
+                'short_description' => $parent->short_description,
                 'main_photos' => $lastItem['storedFilePaths'] ?? $storedFilePaths, // Add stored file paths to the detailed product data
                 'quantity' => $lastItem['variant_pricing-from']['from'][0] ?? $pricing['from'][0] ?? '',
                 'price' => $lastItem['variant_pricing-from']['unit_price'][0] ?? $pricing['unit_price'][0] ?? '',
@@ -374,6 +642,8 @@ class CatalogController extends Controller
                 'lastItem' => $lastItem ?? [],
                 'catalog' => true,
                 'product_id' => $parent->id,
+                'shop_name' => $parent->getShopName(),
+
                 'max' =>$max ?? 1 ,
                 'min' =>$min ?? 1 ,
                 'video_provider'  => $parent->video_provider,
@@ -388,13 +658,22 @@ class CatalogController extends Controller
                 'discount_percentage' => $pricing['discount']['percentage'],
                 'discount_amount'=> $pricing['discount']['amount'],
                 'percent'=> $percent ?? null,
+                'category' => optional(Category::find($parent->category_id))->name,
+
+                'sku'=>$lastItem['sku'] ?? $parent->sku ?? null ,
+                "unit_of_sale" => $parent->unit ?? null ,
+                'tags'=>$parent->tags ?? null ,
+                'documents' => UploadProducts::where('id_product', $parent->id)->where('type', 'documents')->get(),
+                'ratingPercentages' => $ratingPercentages,
+
             ];
+
 
         $previewData['detailedProduct'] = $detailedProduct;
 
         session(['productPreviewData' => $previewData]);
 
-        return view('frontend.product_details.preview', compact('previewData'));
+        return view('frontend.product_details', compact('previewData'));
     }
 
     public function add_product(Request $request){
@@ -553,7 +832,7 @@ class CatalogController extends Controller
 
     public function add_product_to_catalog(Request $request){
         $existingProduct = Product::find($request->id);
-        
+
         if (!$existingProduct) {
             // Handle the case where the product with the specific ID doesn't exist
             return redirect()->back()->with('error', 'Product not found');
@@ -565,7 +844,7 @@ class CatalogController extends Controller
         $data['product_id'] = $request->id;
         $newProduct = ProductCatalog::insertGetId($data);
 
-        
+
         $path = public_path('/upload_products/Product-'.$request->id);
         $destinationFolder = public_path('/upload_products_catalog/Product-'.$newProduct);
         if (!File::isDirectory($destinationFolder)) {

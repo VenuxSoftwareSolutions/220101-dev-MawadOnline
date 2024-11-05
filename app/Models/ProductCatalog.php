@@ -38,4 +38,17 @@ class ProductCatalog extends Model
         $childrens = ProductCatalog::where('parent_id', $this->id)->get();
         return $childrens;
     }
+
+    public function getShopName(){
+        $shop = Shop::where('user_id', $this->user_id)->first();
+        if($shop != null){
+            return $shop->name;
+        }else{
+            return null;
+        }
+    }
+    public function product() {
+        return $this->belongsTo(Product::class);
+
+    }
 }
