@@ -135,13 +135,22 @@
                                 @endforeach
                             </select>
                         </div>
+                        
+                    
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
+                            <label for="order_amount" class="form-label">Order Amount</label>
+                            <input type="number" class="form-control" id="order_amount" name="order_amount" placeholder="Minimum order amount" >
+                        </div>
+                        <div class="col-md-6 mb-3">
                             <label for="percent" class="form-label">Percent</label>
                             <input type="number" class="form-control" id="percent" name="percent" min="0" max="100" placeholder="0%" required>
                         </div>
+                       
+                    </div>
+                    <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="maxDiscount" class="form-label">Max Discount</label>
                             <input type="number" class="form-control" name="maxDiscount" placeholder="Maximum discount amount">
@@ -165,6 +174,8 @@
         const scopeInput = document.getElementById("scope");
         const categorySelect = document.getElementById("category");
         const productSelect = document.getElementById("product_id");
+        const orderAmountInput = document.getElementById('order_amount');
+
 
         function showError(message) {
             Swal.fire({
@@ -183,6 +194,8 @@
             const maxDiscount = form.querySelector("input[name='maxDiscount']").value;
             const productId = form.querySelector("select[name='product_id']").value;
             const categoryId = form.querySelector("select[name='category_id']").value;
+            const orderAmount = form.querySelector("#order_amount").value;
+
 
             if (!discountType) return showError("Discount type is required.");
             if (!startDate) return showError("Start date is required.");
@@ -193,6 +206,8 @@
             if (maxDiscount && (isNaN(maxDiscount) || maxDiscount < 0)) return showError("Max discount must be a positive number.");
             if (scope === "product" && (!productId || isNaN(productId))) return showError("Please select a valid product.");
             if (scope === "category" && (!categoryId || isNaN(categoryId))) return showError("Please select a valid category.");
+            if (!orderAmount || isNaN(orderAmount) || orderAmount <= 0) {return showError("Minimum Order amount must be a positive number.");}
+
 
             return true; 
         }
@@ -201,11 +216,15 @@
 
                 categorySelect.disabled = true;
                 productSelect.disabled = true;
+                orderAmountInput.disabled = true;
+
 
                 if (scope === "category") {
                     categorySelect.disabled = false;
                 } else if (scope === "product") {
                     productSelect.disabled = false;
+                } else if (scope === "ordersOverAmount") {
+                    orderAmountInput.disabled = false;
                 }
 
                 $('.aiz-selectpicker').selectpicker('refresh');
@@ -236,7 +255,7 @@
                     url.searchParams.set('scope', scope);
                     window.history.replaceState(null, '', url);
                 });
-            });
+        });
 
             const urlParams = new URLSearchParams(window.location.search);
             const selectedScope = urlParams.get('scope');

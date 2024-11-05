@@ -40,6 +40,7 @@ class DiscountController extends Controller
     }
     public function store(Request $request)
     {
+
         //we will put this validation in a separae form request classes 
         $request->validate([
             'discountType' => 'required|string',
@@ -50,27 +51,25 @@ class DiscountController extends Controller
             'maxDiscount' => 'nullable|numeric|min:0',
             'product_id' => 'required_if:scope,product|exists:products,id',
             'category_id' => 'required_if:scope,category|exists:categories,id',
-            'order_amount' => 'required_if:scope,order_over_amount|numeric|min:0',
+            'order_amount' => 'required_if:scope,ordersOverAmount|numeric|min:0',
         ]);
-
         $discount = new Discount();
         $discount->user_id = Auth::id();
         $discount->scope = $request->input('scope');
         $discount->start_date = $request->input('startDate');
         $discount->end_date = $request->input('endDate');
-        $discount->scope = $request->input('scope');
         $discount->discount_percentage = $request->input('percent');
         $discount->max_discount = $request->input('maxDiscount');
         $discount->status = 'active';
 
-        switch ($request->input('scope')) {
+        switch ($request->input(key: 'scope')) {
             case 'product':
                 $discount->product_id = $request->input('product_id');
                 break;
             case 'category':
                 $discount->category_id = $request->input('category_id');
                 break;
-            case 'order_over_amount':
+            case 'ordersOverAmount':
                 $discount->min_order_amount = $request->input('order_amount');
                 break;
             case 'all_orders':
