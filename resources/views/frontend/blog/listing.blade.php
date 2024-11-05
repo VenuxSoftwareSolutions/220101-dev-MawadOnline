@@ -9,7 +9,7 @@
                     <!-- Breadcrumb -->
                     <div class="row gutters-16 mb-4">
                         <div class="col-5 col-xl-6">
-                            <h1 class="fw-700 fs-20 fs-md-24 text-dark mb-0">{{ translate('Blogs')}}</h1>
+                            <h1 class="fw-700 fs-20 fs-md-24 text-dark mb-0">{{ translate('Blog')}}</h1>
                         </div>
                         <div class="col-5 col-xl-6">
                             <ul class="breadcrumb bg-transparent p-0 justify-content-end">
@@ -58,14 +58,14 @@
                                     @endif
                                     <div class="mt-3 text-primary">
                                         <a href="{{ url("blog").'/'. $blog->slug }}" class="fs-14 fw-700 text-primary has-transition d-flex align-items-center hov-column-gap-1">
-                                            {{ translate('Read Full Blog') }}
+                                            {{ translate('Read Full Blog Post') }}
                                             <i class="las las-2x la-arrow-right fs-24 ml-1"></i>
                                         </a>
                                     </div>
                                 </div>
                             </div>
                         @endforeach
-                        
+
                     </div>
                     <!-- Pagination -->
                     <div class="aiz-pagination mt-4">
@@ -115,7 +115,7 @@
                                         @endforeach
                                     </div>
                                 </div>
-                                
+
                             </div>
                         </div>
                     </form>
