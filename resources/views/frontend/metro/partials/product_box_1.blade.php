@@ -192,7 +192,7 @@
                                 $disc = (home_discounted_base_price($product,false) - $product->getFirstPricingConfiguration()->discount_percentage);
                                 $formattedDisc = "AED" . number_format($disc, 2, '.', ',');
                             }
-                            
+
                         @endphp
                         <!-- price -->
                         <div class="">
@@ -228,17 +228,11 @@
                     </svg>
                     @php
                     $totalQuantity = $product->getTotalQuantity();
-                    // $stockQuantity = $totalQuantity > 0 && $product->low_stock_quantity != null && $totalQuantity >= $product->low_stock_quantity
-                    //                  ? $product->low_stock_quantity
-                    //                  : ($totalQuantity > 0 ? $totalQuantity : 0);
                 @endphp
 
                 <span class="fs-14 stock-quantity-text" style="font-size: 6px">
                     {{ $totalQuantity > 0 ? "Only $totalQuantity left in stock" : 'Out of stock' }}
                 </span>
-
-
-                {{-- <span class="fs-14 stock-quantity-text" style="font-size: 6px">Only {{$product->low_stock_quantity != null ? $product->low_stock_quantity : 0 }} left in stock</span> --}}
             </div>
     </div>
 </div>

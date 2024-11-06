@@ -3,19 +3,21 @@
 namespace App\Services;
 
 use App\Models\UploadProducts;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Http;
-use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 
 class ProductFileService
 {
     protected $service;
+
     protected $driveService;
+
     public function __construct()
     {
         // Initialize Google Drive API service using the API key
-        $this->service = new \Google_Client();
+        $this->service = new \Google_Client;
         $this->service->setDeveloperKey(env('GOOGLE_DRIVE_API_KEY'));
         $driveService = new \Google_Service_Drive($this->service);
         $this->driveService = $driveService;
@@ -41,6 +43,7 @@ class ProductFileService
                 $contents[$fileName] = $downloadLink;
             }
         }
+
         return $contents;
     }
 
@@ -61,18 +64,15 @@ class ProductFileService
         return true;
     }
 
-
-
     public function handleProductFiles($productId, $data, $image, $thumbnail, $document)
     {
         $iteration = 0;
-        foreach ($data as $header => $value) {
+        foreach ($data as $value) {
             $iteration++;
 
             if ($iteration < 2) {
                 // Assuming the $value is a Google Drive folder URL
                 if (filter_var($value, FILTER_VALIDATE_URL)) {
-
                     // Extract the folder ID from the Google Drive link
                     $folderId = $this->extractFolderId($value);
 
@@ -104,10 +104,10 @@ class ProductFileService
         return true;
     }
 
-
     private function extractFileId($url)
     {
         preg_match('/\/file\/d\/([^\/]+)\//', $url, $matches);
+
         return $matches[1] ?? null; // Return the file ID if found, otherwise null
     }
 
@@ -139,7 +139,7 @@ class ProductFileService
         }
 
         // If no file name is available from the header, use the default or generate one
-        if (!$fileName) {
+        if (! $fileName) {
             $fileName = 'default_name.jpg'; // Fallback to default name if not found
         }
 
@@ -150,18 +150,14 @@ class ProductFileService
         // Store the file in Laravel's storage
         Storage::put($filePath, $response->body());
 
-
-
         if ($thumbnail) {
             // Create thumbnail path
             $thumbnailFolder = public_path("/upload_products/Product-{$productId}/thumbnails");
 
             // Ensure the thumbnail directory exists
-            if (!File::exists($thumbnailFolder)) {
+            if (! File::exists($thumbnailFolder)) {
                 File::makeDirectory($thumbnailFolder, 0755, true);
             }
-
-
 
             // Resize and save the thumbnail
             $img3 = Image::make(Storage::path($filePath)); // Use Storage::path to get the correct path
@@ -171,7 +167,7 @@ class ProductFileService
             $img3->save($path_to_save);
 
             // Save to database (Thumbnail)
-            $productThumbnail = new UploadProducts();
+            $productThumbnail = new UploadProducts;
             $productThumbnail->id_product = $productId;
             $productThumbnail->path = $path_thumbnail; // Store the relative path
             $productThumbnail->extension = 'jpg';
@@ -179,10 +175,9 @@ class ProductFileService
             $productThumbnail->save();
         }
 
-
         if ($image) {
             // Save to database (Main Image)
-            $productthumbnail = new UploadProducts();
+            $productthumbnail = new UploadProducts;
             $productthumbnail->id_product = $productId;
             $productthumbnail->path = $filePath;
             $productthumbnail->extension = 'jpg';
@@ -190,9 +185,8 @@ class ProductFileService
             $productthumbnail->save();
         }
 
-
         if ($document) {
-            $productDocument = new UploadProducts();
+            $productDocument = new UploadProducts;
             $productDocument->id_product = $productId;
             $productDocument->path = $filePath;
             $productDocument->extension = 'jpg';
@@ -202,15 +196,9 @@ class ProductFileService
             $productDocument->save();
         }
 
-
-
-
         // Output file storage path for verification
         // echo "Stored file: " . Storage::url($filePath);
     }
-
-
-
 
     function getValuesBetweenVideoLinkAndSKU(array $productData)
     {
@@ -223,13 +211,14 @@ class ProductFileService
         // Loop through the array
         foreach ($productData as $header => $value) {
             // Start collecting after "Refundable *"
-            if ($header === "Video Link") {
+            if ($header === 'Video Link') {
                 $startCollecting = true;
+
                 continue; // Skip "Refundable *"
             }
 
             // Stop collecting after reaching "Video Provider"
-            if ($header === "SKU *") {
+            if ($header === 'SKU *') {
                 break;
             }
 
@@ -242,8 +231,7 @@ class ProductFileService
         return $result;
     }
 
-
-    function getValuesBetweenRefundableAndVideoProvider(array $productData)
+    public function getValuesBetweenRefundableAndVideoProvider(array $productData)
     {
         // Initialize the result array
         $result = [];
@@ -254,13 +242,14 @@ class ProductFileService
         // Loop through the array
         foreach ($productData as $header => $value) {
             // Start collecting after "Refundable *"
-            if ($header === "Refundable *") {
+            if ($header === 'Refundable *') {
                 $startCollecting = true;
+
                 continue; // Skip "Refundable *"
             }
 
             // Stop collecting after reaching "Video Provider"
-            if ($header === "Video Provider") {
+            if ($header === 'Video Provider') {
                 break;
             }
 
@@ -272,11 +261,13 @@ class ProductFileService
 
         return $result;
     }
+
     // Helper function to extract folder ID from Google Drive URL
     protected function extractFolderId($url)
     {
         $start = strrpos($url, '/') + 1;
         $end = strpos($url, '?', $start);
+
         return substr($url, $start, $end - $start);
     }
 }

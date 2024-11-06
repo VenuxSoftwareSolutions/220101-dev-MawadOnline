@@ -13,16 +13,13 @@ use App\Models\Product;
 use App\Models\ProductAttributeValues;
 use App\Models\Shipping;
 use App\Models\StockSummary;
-use App\Models\User;
 use App\Services\ProductFileService;
-use App\Services\ProductService;
 use Carbon\Carbon;
 use DateTime;
 use DB;
 use Exception;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -30,14 +27,19 @@ use Illuminate\Queue\SerializesModels;
 use Log;
 use Request;
 use Str;
+use Throwable;
 
 class ProcessProductsJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels,Batchable;
+    use Batchable, Dispatchable, InteractsWithQueue, Queueable,SerializesModels;
+
+    public $failOnTimeout = false;
+
+    public $timeout = 120000;
 
     protected $productGroup;
-    protected $fileModel;
 
+    protected $fileModel;
 
     /**
      * Create a new job instance.
@@ -61,37 +63,29 @@ class ProcessProductsJob implements ShouldQueue
         $parentProduct = $this->mapToDatabaseAttributes($this->productGroup['parent']);
 
         $parentProduct['is_parent'] = 1;
-        $product =  $this->store($parentProduct, null, $this->fileModel->user_id,0,1);
+        $product = $this->store($parentProduct, null, $this->fileModel->user_id);
 
         if ($product) {
-            $productFileUpload = $this->uploadProductFiles($product->id, $this->productGroup['parent']);
+            $this->uploadProductFiles($product->id, $this->productGroup['parent']);
         }
         if ($product->is_parent == 1) {
             $product->categories()->attach($product->category_id);
         }
 
-
         $this->manageInventoryStock($product, $parentProduct);
-
-        // if($product){
-        //     $productFileUpload = $this->uploadProductFiles($product->id,$this->productGroup['parent']);
-        //     dd($productFileUpload);
-        // }
 
         if (count($this->productGroup['children']) > 0) {
             foreach ($this->productGroup['children'] as $child) {
                 $childProduct = $this->mapToDatabaseAttributes($child);
 
-
                 $childProduct['is_parent'] = 0;
 
-                $variant =  $this->store($childProduct, $product->id, $this->fileModel->user_id,1,0);
+                $variant = $this->store($childProduct, $product->id, $this->fileModel->user_id);
 
                 if ($variant) {
-                    $productFileUpload = $this->uploadProductFiles($variant->id, $child);
+                    $this->uploadProductFiles($variant->id, $child);
                 }
                 $variant->categories()->attach($product->category_id);
-
 
                 $this->manageInventoryStock($product, $child);
             }
@@ -101,10 +95,9 @@ class ProcessProductsJob implements ShouldQueue
         $this->fileModel->save();
     }
 
-
     private function manageInventoryStock($product, $parentProduct)
     {
-        if (isset($parentProduct['inventory_stock']) && !empty($parentProduct['inventory_stock']['warehouse'])) {
+        if (isset($parentProduct['inventory_stock']) && ! empty($parentProduct['inventory_stock']['warehouse'])) {
             try {
                 StockSummary::create([
                     'variant_id' => $product->id,
@@ -114,29 +107,28 @@ class ProcessProductsJob implements ShouldQueue
                 ]);
             } catch (Exception $e) {
                 // Log the exception and allow the script to continue
-                Log::error('Error creating stock summary: ' . $e->getMessage());
+                Log::error('Error creating stock summary: '.$e->getMessage());
             }
         } else {
             // Optionally log or handle the missing warehouse data scenario
-            Log::warning('Warehouse information is missing for product ID: ' . $product->id);
+            Log::warning('Warehouse information is missing for product ID: '.$product->id);
         }
     }
 
     public function uploadProductFiles($productId, $productData)
     {
-
-        $productFileService = new ProductFileService();
+        $productFileService = new ProductFileService;
 
         $productFileService->uploadProductFiles($productId, $productData);
 
         if ($productFileService) {
             return true;
         } else {
-            false;
+            return false;
         }
     }
 
-    function getValuesBetweenRefundableAndVideoProvider(array $productData)
+    public function getValuesBetweenRefundableAndVideoProvider(array $productData)
     {
         // Initialize the result array
         $result = [];
@@ -147,13 +139,14 @@ class ProcessProductsJob implements ShouldQueue
         // Loop through the array
         foreach ($productData as $header => $value) {
             // Start collecting after "Refundable *"
-            if ($header === "Refundable *") {
+            if ($header === 'Refundable *') {
                 $startCollecting = true;
+
                 continue; // Skip "Refundable *"
             }
 
             // Stop collecting after reaching "Video Provider"
-            if ($header === "Video Provider") {
+            if ($header === 'Video Provider') {
                 break;
             }
 
@@ -166,9 +159,7 @@ class ProcessProductsJob implements ShouldQueue
         return $result;
     }
 
-
-
-    public function store(array $data, $parentProductID = null, $userId,$is_variant = 0,$is_general = 0)
+    public function store(array $data, $parentProductID, $userId)
     {
         $collection = collect($data);
 
@@ -176,7 +167,7 @@ class ProcessProductsJob implements ShouldQueue
         $user_id = $userId;
         $approved = 1;
 
-        $tags = array();
+        $tags = [];
         if ($collection['tags'][0] != null) {
             foreach (json_decode($collection['tags'][0]) as $key => $tag) {
                 array_push($tags, $tag->value);
@@ -184,7 +175,7 @@ class ProcessProductsJob implements ShouldQueue
         }
         $collection['tags'] = implode(',', $tags);
         $discount_start_date = null;
-        $discount_end_date   = null;
+        $discount_end_date = null;
 
         $collection['approved'] = 0;
 
@@ -194,16 +185,11 @@ class ProcessProductsJob implements ShouldQueue
             $collection['refundable'] = 0;
         }
 
-
-
         if ($collection['parent_id'] != null) {
             $collection['category_id'] = $collection['parent_id'];
         }
 
-
         unset($collection['parent_id']);
-
-
 
         if ($collection['create_stock'] == 1) {
             $collection['stock_after_create'] = 1;
@@ -218,13 +204,11 @@ class ProcessProductsJob implements ShouldQueue
         }
 
         if (isset($collection['country_code'])) {
-
             $country = Country::find($collection['country_code']);
             $collection['country_code'] = strtolower($country->code);
         } else {
             $collection['country_code'] = '';
         }
-
 
         if ($collection['meta_title'] == null) {
             $collection['meta_title'] = $collection['name'];
@@ -234,10 +218,6 @@ class ProcessProductsJob implements ShouldQueue
         }
 
         $pricing = [];
-
-        // if ($collection['meta_img'] == null) {
-        //     $collection['meta_img'] = $collection['thumbnail_img'];
-        // }
 
         $shipping_cost = 0;
         if (isset($collection['shipping_type'])) {
@@ -251,11 +231,11 @@ class ProcessProductsJob implements ShouldQueue
 
         $slug = Str::slug($collection['name']);
 
-        $same_slug_count = Product::where('slug', 'LIKE', $slug . '%')->count();
-        $slug_suffix = $same_slug_count ? '-' . $same_slug_count + 1 : '';
+        $same_slug_count = Product::where('slug', 'LIKE', $slug.'%')->count();
+        $slug_suffix = $same_slug_count ? '-'.$same_slug_count + 1 : '';
         $slug .= $slug_suffix;
 
-        $colors = json_encode(array());
+        $colors = json_encode([]);
         if (
             isset($collection['colors_active']) &&
             $collection['colors_active'] &&
@@ -266,18 +246,16 @@ class ProcessProductsJob implements ShouldQueue
         }
 
         if (isset($collection['stock_visibility_state'])) {
-            $collection['stock_visibility_state'] = "quantity";
+            $collection['stock_visibility_state'] = 'quantity';
         } else {
-            $collection['stock_visibility_state'] = "hide";
+            $collection['stock_visibility_state'] = 'hide';
         }
 
-        //$published = 1;
         $is_draft = 0;
 
         if (isset($collection['button'])) {
             if ($collection['button'] == 'draft') {
                 $is_draft = 1;
-                //$published = 0;
             }
             unset($collection['button']);
         }
@@ -285,7 +263,6 @@ class ProcessProductsJob implements ShouldQueue
         if (isset($collection['submit_button'])) {
             if ($collection['submit_button'] == 'draft') {
                 $is_draft = 1;
-                //$published = 0;
             }
             unset($collection['submit_button']);
         }
@@ -293,25 +270,25 @@ class ProcessProductsJob implements ShouldQueue
         $pricing = [];
         if ((isset($collection['from'])) && (isset($collection['to'])) && (isset($collection['unit_price']))) {
             $pricing = [
-                "from" => $collection['from'],
-                "to" => $collection['to'],
-                "unit_price" => $collection['unit_price'],
+                'from' => $collection['from'],
+                'to' => $collection['to'],
+                'unit_price' => $collection['unit_price'],
             ];
 
             if (isset($collection['discount_type'])) {
-                $pricing["discount_type"] = $collection['discount_type'];
+                $pricing['discount_type'] = $collection['discount_type'];
             }
 
             if (isset($collection['date_range_pricing'])) {
-                $pricing["date_range_pricing"] = $collection['date_range_pricing'];
+                $pricing['date_range_pricing'] = $collection['date_range_pricing'];
             }
 
             if (isset($collection['discount_amount'])) {
-                $pricing["discount_amount"] = $collection['discount_amount'];
+                $pricing['discount_amount'] = $collection['discount_amount'];
             }
 
             if (isset($collection['discount_percentage'])) {
-                $pricing["discount_percentage"] = $collection['discount_percentage'];
+                $pricing['discount_percentage'] = $collection['discount_percentage'];
             }
 
             unset($collection['from']);
@@ -352,31 +329,31 @@ class ProcessProductsJob implements ShouldQueue
             $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
             $collection['shipper_sample'] = implode(',', $collection['shipper_sample']);
         } else {
-            $shipping_sample_parent['shipper_sample'] = NULL;
+            $shipping_sample_parent['shipper_sample'] = null;
         }
 
         if (isset($collection['estimated_sample'])) {
             $shipping_sample_parent['estimated_sample'] = $collection['estimated_sample'];
         } else {
-            $shipping_sample_parent['estimated_sample'] = NULL;
+            $shipping_sample_parent['estimated_sample'] = null;
         }
 
         if (isset($collection['estimated_shipping_sample'])) {
             $shipping_sample_parent['estimated_shipping_sample'] = $collection['estimated_shipping_sample'];
         } else {
-            $shipping_sample_parent['estimated_shipping_sample'] = NULL;
+            $shipping_sample_parent['estimated_shipping_sample'] = null;
         }
 
         if (isset($collection['paid_sample'])) {
             $shipping_sample_parent['paid_sample'] = $collection['paid_sample'];
         } else {
-            $shipping_sample_parent['paid_sample'] = NULL;
+            $shipping_sample_parent['paid_sample'] = null;
         }
 
         if (isset($collection['shipping_amount'])) {
             $shipping_sample_parent['shipping_amount'] = $collection['shipping_amount'];
         } else {
-            $shipping_sample_parent['shipping_amount'] = NULL;
+            $shipping_sample_parent['shipping_amount'] = null;
         }
 
         unset($collection['from_shipping']);
@@ -391,10 +368,7 @@ class ProcessProductsJob implements ShouldQueue
         unset($collection['charge_per_unit_shipping']);
         unset($collection['date_range_pricing']);
 
-
         $vat = $vat_user->vat_registered;
-
-
 
         $variants_data = [];
         $general_attributes_data = [];
@@ -402,44 +376,44 @@ class ProcessProductsJob implements ShouldQueue
         foreach ($data as $key => $value) {
             if (strpos($key, 'attributes-') === 0) {
                 $ids = explode('-', $key);
-                if (!array_key_exists($ids[2], $variants_data)) {
+                if (! array_key_exists($ids[2], $variants_data)) {
                     $variants_data[$ids[2]] = [];
                 }
-                if (!array_key_exists('attributes', $variants_data[$ids[2]])) {
+                if (! array_key_exists('attributes', $variants_data[$ids[2]])) {
                     $variants_data[$ids[2]]['attributes'][$ids[1]] = $value;
                 } else {
-                    if (!array_key_exists($ids[1], $variants_data[$ids[2]]['attributes'])) {
+                    if (! array_key_exists($ids[1], $variants_data[$ids[2]]['attributes'])) {
                         $variants_data[$ids[2]]['attributes'][$ids[1]] = $value;
                     }
                 }
 
-                $key_pricing = 'variant-pricing-' . $ids[2];
-                if (!isset($data[$key_pricing])) {
-                    if (!array_key_exists($ids[2], $variants_data)) {
+                $key_pricing = 'variant-pricing-'.$ids[2];
+                if (! isset($data[$key_pricing])) {
+                    if (! array_key_exists($ids[2], $variants_data)) {
                         $variants_data[$ids[2]] = [];
                     }
 
-                    $variants_data[$ids[2]]['pricing'] = $data['variant_pricing-from' . $ids[2]];
+                    $variants_data[$ids[2]]['pricing'] = $data['variant_pricing-from'.$ids[2]];
                 }
 
-                $key_shipping = 'variant_shipping-' . $ids[2];
+                $key_shipping = 'variant_shipping-'.$ids[2];
                 if (isset($data[$key_shipping])) {
-                    if (!array_key_exists($ids[2], $variants_data)) {
+                    if (! array_key_exists($ids[2], $variants_data)) {
                         $variants_data[$ids[2]] = [];
                     }
 
-                    $variants_data[$ids[2]]['shipping_details'] = $data['variant_shipping-' . $ids[2]];
+                    $variants_data[$ids[2]]['shipping_details'] = $data['variant_shipping-'.$ids[2]];
                 }
 
-                $key_sample_available = 'variant-sample-available' . $ids[2];
+                $key_sample_available = 'variant-sample-available'.$ids[2];
                 if (isset($data[$key_sample_available])) {
-                    if (!array_key_exists($ids[2], $variants_data)) {
+                    if (! array_key_exists($ids[2], $variants_data)) {
                         $variants_data[$ids[2]] = [];
                     }
 
                     $variants_data[$ids[2]]['sample_available'] = 1;
                 } else {
-                    if (!array_key_exists($ids[2], $variants_data)) {
+                    if (! array_key_exists($ids[2], $variants_data)) {
                         $variants_data[$ids[2]] = [];
                     }
 
@@ -449,17 +423,16 @@ class ProcessProductsJob implements ShouldQueue
 
             if (strpos($key, 'sku') === 0) {
                 $ids = explode('-', $key);
-                if (!array_key_exists($ids[1], $variants_data)) {
+                if (! array_key_exists($ids[1], $variants_data)) {
                     $variants_data[$ids[1]] = [];
                 }
 
                 $variants_data[$ids[1]]['sku'] = $value;
             }
 
-
             if (strpos($key, 'stock-warning-') === 0) {
                 $ids = explode('-', $key);
-                if (!array_key_exists($ids[2], $variants_data)) {
+                if (! array_key_exists($ids[2], $variants_data)) {
                     $variants_data[$ids[2]] = [];
                 }
 
@@ -468,7 +441,7 @@ class ProcessProductsJob implements ShouldQueue
 
             if (strpos($key, 'variant-published-') === 0) {
                 $ids = explode('-', $key);
-                if (!array_key_exists($ids[2], $variants_data)) {
+                if (! array_key_exists($ids[2], $variants_data)) {
                     $variants_data[$ids[2]] = [];
                 }
 
@@ -477,7 +450,7 @@ class ProcessProductsJob implements ShouldQueue
 
             if (strpos($key, 'variant-shipping-') === 0) {
                 $ids = explode('-', $key);
-                if (!array_key_exists($ids[2], $variants_data)) {
+                if (! array_key_exists($ids[2], $variants_data)) {
                     $variants_data[$ids[2]] = [];
                 }
 
@@ -486,7 +459,7 @@ class ProcessProductsJob implements ShouldQueue
 
             if (strpos($key, 'photos_variant') === 0) {
                 $ids = explode('-', $key);
-                if (!array_key_exists($ids[1], $variants_data)) {
+                if (! array_key_exists($ids[1], $variants_data)) {
                     $variants_data[$ids[1]] = [];
                 }
 
@@ -495,7 +468,7 @@ class ProcessProductsJob implements ShouldQueue
 
             if (strpos($key, 'attributes_units') === 0) {
                 $ids = explode('-', $key);
-                if (!array_key_exists($ids[2], $variants_data)) {
+                if (! array_key_exists($ids[2], $variants_data)) {
                     $variants_data[$ids[2]] = [];
                 }
 
@@ -514,7 +487,7 @@ class ProcessProductsJob implements ShouldQueue
 
             if (strpos($key, 'vat_sample-') === 0) {
                 $ids = explode('-', $key);
-                if (!array_key_exists($ids[1], $variants_data)) {
+                if (! array_key_exists($ids[1], $variants_data)) {
                     $variants_data[$ids[1]] = [];
                 }
 
@@ -523,7 +496,7 @@ class ProcessProductsJob implements ShouldQueue
 
             if (strpos($key, 'sample_description-') === 0) {
                 $ids = explode('-', $key);
-                if (!array_key_exists($ids[1], $variants_data)) {
+                if (! array_key_exists($ids[1], $variants_data)) {
                     $variants_data[$ids[1]] = [];
                 }
 
@@ -534,7 +507,7 @@ class ProcessProductsJob implements ShouldQueue
 
             if (strpos($key, 'sample_price-') === 0) {
                 $ids = explode('-', $key);
-                if (!array_key_exists($ids[1], $variants_data)) {
+                if (! array_key_exists($ids[1], $variants_data)) {
                     $variants_data[$ids[1]] = [];
                 }
                 if ($value != null) {
@@ -544,7 +517,7 @@ class ProcessProductsJob implements ShouldQueue
 
             if (strpos($key, 'estimated_sample-') === 0) {
                 $ids = explode('-', $key);
-                if (!array_key_exists($ids[1], $variants_data)) {
+                if (! array_key_exists($ids[1], $variants_data)) {
                     $variants_data[$ids[1]] = [];
                 }
 
@@ -553,7 +526,7 @@ class ProcessProductsJob implements ShouldQueue
 
             if (strpos($key, 'estimated_shipping_sample-') === 0) {
                 $ids = explode('-', $key);
-                if (!array_key_exists($ids[1], $variants_data)) {
+                if (! array_key_exists($ids[1], $variants_data)) {
                     $variants_data[$ids[1]] = [];
                 }
 
@@ -562,7 +535,7 @@ class ProcessProductsJob implements ShouldQueue
 
             if (strpos($key, 'shipping_amount-') === 0) {
                 $ids = explode('-', $key);
-                if (!array_key_exists($ids[1], $variants_data)) {
+                if (! array_key_exists($ids[1], $variants_data)) {
                     $variants_data[$ids[1]] = [];
                 }
 
@@ -571,7 +544,7 @@ class ProcessProductsJob implements ShouldQueue
 
             if (strpos($key, 'variant_shipper_sample-') === 0) {
                 $ids = explode('-', $key);
-                if (!array_key_exists($ids[1], $variants_data)) {
+                if (! array_key_exists($ids[1], $variants_data)) {
                     $variants_data[$ids[1]] = [];
                 }
 
@@ -580,15 +553,13 @@ class ProcessProductsJob implements ShouldQueue
 
             if (strpos($key, 'paid_sample-') === 0) {
                 $ids = explode('-', $key);
-                if (!array_key_exists($ids[1], $variants_data)) {
+                if (! array_key_exists($ids[1], $variants_data)) {
                     $variants_data[$ids[1]] = [];
                 }
 
                 $variants_data[$ids[1]]['paid_sample'] = $value;
             }
         }
-
-        //dd($variants_data);
 
         if (isset($collection['product_sk'])) {
             $collection['sku'] = $collection['product_sk'];
@@ -618,7 +589,6 @@ class ProcessProductsJob implements ShouldQueue
             'vat'
         ))->toArray();
 
-
         $ids_attributes_color = Attribute::where('type_value', 'color')->pluck('id')->toArray();
         $ids_attributes_list = Attribute::where('type_value', 'list')->pluck('id')->toArray();
         $ids_attributes_numeric = Attribute::where('type_value', 'numeric')->pluck('id')->toArray();
@@ -647,11 +617,7 @@ class ProcessProductsJob implements ShouldQueue
             }
         }
 
-
-
-
-        if (!isset($data['activate_attributes'])) {
-
+        if (! isset($data['activate_attributes'])) {
             if ($parentProductID != null) {
                 $data['parent_id'] = $parentProductID;
             }
@@ -668,59 +634,59 @@ class ProcessProductsJob implements ShouldQueue
                         if (($from != null) && ($pricing['to'][$key] != null) && ($pricing['unit_price'][$key] != null)) {
                             if ($pricing['date_range_pricing'][$key] != null) {
                                 if (($pricing['date_range_pricing'][$key]) && ($pricing['discount_type'][$key])) {
-                                    $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
+                                    $date_var = explode(' to ', $pricing['date_range_pricing'][$key]);
                                     $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
                                     $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
-                                    $start_to_parse = explode(" ", $date_var[0]);
-                                    $end_to_parse = explode(" ", $date_var[1]);
+                                    $start_to_parse = explode(' ', $date_var[0]);
+                                    $end_to_parse = explode(' ', $date_var[1]);
 
-                                    $explod_start_to_parse = explode("-", $start_to_parse[0]);
-                                    $explod_end_to_parse = explode("-", $end_to_parse[0]);
+                                    $explod_start_to_parse = explode('-', $start_to_parse[0]);
+                                    $explod_end_to_parse = explode('-', $end_to_parse[0]);
 
                                     $check_start = checkdate(intval($explod_start_to_parse[1]), intval($explod_start_to_parse[0]), intval($explod_start_to_parse[2]));
                                     $check_end = checkdate(intval($explod_end_to_parse[1]), intval($explod_end_to_parse[0]), intval($explod_end_to_parse[2]));
 
                                     if (($check_start == true) && ($check_end == true)) {
-                                        $current_data["discount_start_datetime"] = $discount_start_date;
-                                        $current_data["discount_end_datetime"] = $discount_end_date;
-                                        $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                        $current_data['discount_start_datetime'] = $discount_start_date;
+                                        $current_data['discount_end_datetime'] = $discount_end_date;
+                                        $current_data['discount_type'] = $pricing['discount_type'][$key];
                                     } else {
-                                        $current_data["discount_start_datetime"] = null;
-                                        $current_data["discount_end_datetime"] = null;
-                                        $current_data["discount_type"] = null;
+                                        $current_data['discount_start_datetime'] = null;
+                                        $current_data['discount_end_datetime'] = null;
+                                        $current_data['discount_type'] = null;
                                     }
                                 } else {
-                                    $current_data["discount_start_datetime"] = null;
-                                    $current_data["discount_end_datetime"] = null;
-                                    $current_data["discount_type"] = null;
+                                    $current_data['discount_start_datetime'] = null;
+                                    $current_data['discount_end_datetime'] = null;
+                                    $current_data['discount_type'] = null;
                                 }
                             } else {
-                                $current_data["discount_start_datetime"] = null;
-                                $current_data["discount_end_datetime"] = null;
-                                $current_data["discount_type"] = null;
+                                $current_data['discount_start_datetime'] = null;
+                                $current_data['discount_end_datetime'] = null;
+                                $current_data['discount_type'] = null;
                             }
 
-                            $current_data["id_products"] = $product->id;
-                            $current_data["from"] = $from;
-                            $current_data["to"] = $pricing['to'][$key];
-                            $current_data["unit_price"] = $pricing['unit_price'][$key];
+                            $current_data['id_products'] = $product->id;
+                            $current_data['from'] = $from;
+                            $current_data['to'] = $pricing['to'][$key];
+                            $current_data['unit_price'] = $pricing['unit_price'][$key];
 
                             if (isset($pricing['discount_amount'])) {
-                                $current_data["discount_amount"] = $pricing['discount_amount'][$key];
+                                $current_data['discount_amount'] = $pricing['discount_amount'][$key];
                             } else {
-                                $current_data["discount_amount"] = null;
+                                $current_data['discount_amount'] = null;
                             }
-                            if (isset($current_data["discount_percentage"])) {
-                                $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
+                            if (isset($current_data['discount_percentage'])) {
+                                $current_data['discount_percentage'] = $pricing['discount_percentage'][$key];
                             } else {
-                                $current_data["discount_percentage"] = null;
+                                $current_data['discount_percentage'] = null;
                             }
 
                             array_push($all_data_to_insert, $current_data);
                         }
                     } catch (Exception $e) {
                         // Handle the parsing error
-                        dump('Error: ' . $e->getMessage());
+                        Log::error('Error: '.$e->getMessage());
                     }
                 }
 
@@ -729,12 +695,11 @@ class ProcessProductsJob implements ShouldQueue
                 }
             }
 
-
             if (count($general_attributes_data) > 0) {
                 foreach ($general_attributes_data as $attr => $value) {
                     if ($value != null) {
                         if (in_array($attr, $ids_attributes_list)) {
-                            $attribute_product = new ProductAttributeValues();
+                            $attribute_product = new ProductAttributeValues;
                             $attribute_product->id_products = $product->id;
                             $attribute_product->id_attribute = $attr;
                             $attribute_product->is_general = $is_general;
@@ -747,7 +712,7 @@ class ProcessProductsJob implements ShouldQueue
                         } elseif (in_array($attr, $ids_attributes_color)) {
                             if (count($value) > 0) {
                                 foreach ($value as $value_color) {
-                                    $attribute_product = new ProductAttributeValues();
+                                    $attribute_product = new ProductAttributeValues;
                                     $attribute_product->id_products = $product->id;
                                     $attribute_product->id_attribute = $attr;
                                     $attribute_product->is_general = $is_general;
@@ -760,7 +725,7 @@ class ProcessProductsJob implements ShouldQueue
                                 }
                             }
                         } elseif (in_array($attr, $ids_attributes_numeric)) {
-                            $attribute_product = new ProductAttributeValues();
+                            $attribute_product = new ProductAttributeValues;
                             $attribute_product->id_products = $product->id;
                             $attribute_product->id_attribute = $attr;
                             $attribute_product->is_general = $is_general;
@@ -770,7 +735,7 @@ class ProcessProductsJob implements ShouldQueue
                             $attribute_product->value = $value;
                             $attribute_product->save();
                         } else {
-                            $attribute_product = new ProductAttributeValues();
+                            $attribute_product = new ProductAttributeValues;
                             $attribute_product->id_products = $product->id;
                             $attribute_product->id_attribute = $attr;
                             $attribute_product->is_general = $is_general;
@@ -788,6 +753,7 @@ class ProcessProductsJob implements ShouldQueue
                 $keyToPush = 'product_id';
                 $shipping = array_map(function ($arr) use ($id, $keyToPush) {
                     $arr[$keyToPush] = $id;
+
                     return $arr;
                 }, $shipping);
                 Shipping::insert($shipping);
@@ -795,7 +761,6 @@ class ProcessProductsJob implements ShouldQueue
 
             return $product;
         } else {
-
             // //Create Parent Product
             $data['is_parent'] = 1;
             $data['sku'] = $data['name'];
@@ -807,60 +772,58 @@ class ProcessProductsJob implements ShouldQueue
                 if ($pricing['from'][$key] != null && $pricing['unit_price'][$key] != null) {
                     if ($pricing['date_range_pricing'][$key] != null) {
                         if (($pricing['date_range_pricing'][$key]) && ($pricing['discount_type'][$key])) {
-                            $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
+                            $date_var = explode(' to ', $pricing['date_range_pricing'][$key]);
                             $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
                             $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
 
-                            $start_to_parse = explode(" ", $date_var[0]);
-                            $end_to_parse = explode(" ", $date_var[1]);
+                            $start_to_parse = explode(' ', $date_var[0]);
+                            $end_to_parse = explode(' ', $date_var[1]);
 
-                            $explod_start_to_parse = explode("-", $start_to_parse[0]);
-                            $explod_end_to_parse = explode("-", $end_to_parse[0]);
+                            $explod_start_to_parse = explode('-', $start_to_parse[0]);
+                            $explod_end_to_parse = explode('-', $end_to_parse[0]);
 
                             $check_start = checkdate(intval($explod_start_to_parse[1]), intval($explod_start_to_parse[0]), intval($explod_start_to_parse[2]));
                             $check_end = checkdate(intval($explod_end_to_parse[1]), intval($explod_end_to_parse[0]), intval($explod_end_to_parse[2]));
 
                             if (($check_start == true) && ($check_end == true)) {
-                                $current_data["discount_start_datetime"] = $discount_start_date;
-                                $current_data["discount_end_datetime"] = $discount_end_date;
-                                $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                $current_data['discount_start_datetime'] = $discount_start_date;
+                                $current_data['discount_end_datetime'] = $discount_end_date;
+                                $current_data['discount_type'] = $pricing['discount_type'][$key];
                             } else {
-                                $current_data["discount_start_datetime"] = null;
-                                $current_data["discount_end_datetime"] = null;
-                                $current_data["discount_type"] = null;
+                                $current_data['discount_start_datetime'] = null;
+                                $current_data['discount_end_datetime'] = null;
+                                $current_data['discount_type'] = null;
                             }
                         } else {
-                            $current_data["discount_start_datetime"] = null;
-                            $current_data["discount_end_datetime"] = null;
-                            $current_data["discount_type"] = null;
+                            $current_data['discount_start_datetime'] = null;
+                            $current_data['discount_end_datetime'] = null;
+                            $current_data['discount_type'] = null;
                         }
                     } else {
-                        $current_data["discount_start_datetime"] = null;
-                        $current_data["discount_end_datetime"] = null;
-                        $current_data["discount_type"] = null;
+                        $current_data['discount_start_datetime'] = null;
+                        $current_data['discount_end_datetime'] = null;
+                        $current_data['discount_type'] = null;
                     }
 
-                    $current_data["id_products"] = $product_parent->id;
-                    $current_data["from"] = $from;
-                    $current_data["to"] = $pricing['to'][$key];
-                    $current_data["unit_price"] = $pricing['unit_price'][$key];
+                    $current_data['id_products'] = $product_parent->id;
+                    $current_data['from'] = $from;
+                    $current_data['to'] = $pricing['to'][$key];
+                    $current_data['unit_price'] = $pricing['unit_price'][$key];
 
                     if (isset($pricing['discount_amount'])) {
-                        $current_data["discount_amount"] = $pricing['discount_amount'][$key];
+                        $current_data['discount_amount'] = $pricing['discount_amount'][$key];
                     } else {
-                        $current_data["discount_amount"] = null;
+                        $current_data['discount_amount'] = null;
                     }
-                    if (isset($current_data["discount_percentage"])) {
-                        $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
+                    if (isset($current_data['discount_percentage'])) {
+                        $current_data['discount_percentage'] = $pricing['discount_percentage'][$key];
                     } else {
-                        $current_data["discount_percentage"] = null;
+                        $current_data['discount_percentage'] = null;
                     }
 
                     array_push($all_data_to_insert_parent, $current_data);
                 }
             }
-
-
 
             if (count($all_data_to_insert_parent) > 0) {
                 PricingConfiguration::insert($all_data_to_insert_parent);
@@ -871,6 +834,7 @@ class ProcessProductsJob implements ShouldQueue
                 $keyToPush = 'product_id';
                 $shipping = array_map(function ($arr) use ($id, $keyToPush) {
                     $arr[$keyToPush] = $id;
+
                     return $arr;
                 }, $shipping);
                 Shipping::insert($shipping);
@@ -878,20 +842,6 @@ class ProcessProductsJob implements ShouldQueue
 
             unset($data['is_parent']);
             $data['parent_id'] = $product_parent->id;
-            // if(isset($data['vat_sample']))
-            // {
-            //     $data_sample = [
-            //         'vat_sample' => $data['vat_sample'],
-            //         'sample_description' => $data['sample_description'],
-            //         'sample_price' => $data['sample_price'],
-            //     ];
-            // }else{
-            //     $data_sample = [
-            //         'vat_sample' => 0,
-            //         'sample_description' => $data['sample_description'],
-            //         'sample_price' => $data['sample_price'],
-            //     ];
-            // }
 
             $data_sample = [
                 'vat_sample' => $vat,
@@ -907,14 +857,13 @@ class ProcessProductsJob implements ShouldQueue
 
             if (count($variants_data) > 0) {
                 foreach ($variants_data as $id => $variant) {
-
-                    if (!array_key_exists('shipping', $variant)) {
+                    if (! array_key_exists('shipping', $variant)) {
                         $data['shipping'] = 0;
                     } else {
                         $data['shipping'] = $variant['shipping'];
                     }
                     $data['low_stock_quantity'] = $variant['stock'];
-                    if (!array_key_exists('sample_price', $variant)) {
+                    if (! array_key_exists('sample_price', $variant)) {
                         $data['vat_sample'] = $vat;
                         $data['sample_description'] = $data_sample['sample_description'];
                         $data['sample_price'] = $data_sample['sample_price'];
@@ -925,7 +874,7 @@ class ProcessProductsJob implements ShouldQueue
                     }
 
                     if (isset($variant['variant_shipper_sample'])) {
-                        $data['shipper_sample'] = implode(",", $variant['variant_shipper_sample']);
+                        $data['shipper_sample'] = implode(',', $variant['variant_shipper_sample']);
                     } else {
                         $data['shipper_sample'] = $shipping_sample_parent['shipper_sample'];
                     }
@@ -968,11 +917,9 @@ class ProcessProductsJob implements ShouldQueue
                         }
                     }
 
-
-                    $data['sku'] =  $variant['sku'];
+                    $data['sku'] = $variant['sku'];
                     $randomString = Str::random(5);
-                    $data['slug'] =  $data['slug'] . '-' . $randomString;
-
+                    $data['slug'] = $data['slug'].'-'.$randomString;
 
                     $product = Product::create($data);
 
@@ -981,7 +928,7 @@ class ProcessProductsJob implements ShouldQueue
                     foreach ($variant['attributes'] as $key => $value_attribute) {
                         if ($value_attribute != null) {
                             if (in_array($key, $ids_attributes_list)) {
-                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product = new ProductAttributeValues;
                                 $attribute_product->id_products = $product->id;
                                 $attribute_product->id_attribute = $key;
                                 $attribute_product->is_variant = 1;
@@ -992,7 +939,7 @@ class ProcessProductsJob implements ShouldQueue
                             } elseif (in_array($key, $ids_attributes_color)) {
                                 if (count($value_attribute) > 0) {
                                     foreach ($value_attribute as $value_color) {
-                                        $attribute_product = new ProductAttributeValues();
+                                        $attribute_product = new ProductAttributeValues;
                                         $attribute_product->id_products = $product->id;
                                         $attribute_product->id_attribute = $key;
                                         $attribute_product->is_variant = 1;
@@ -1003,7 +950,7 @@ class ProcessProductsJob implements ShouldQueue
                                     }
                                 }
                             } elseif (in_array($key, $ids_attributes_numeric)) {
-                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product = new ProductAttributeValues;
                                 $attribute_product->id_products = $product->id;
                                 $attribute_product->id_attribute = $key;
                                 $attribute_product->is_variant = 1;
@@ -1011,7 +958,7 @@ class ProcessProductsJob implements ShouldQueue
                                 $attribute_product->value = $value_attribute;
                                 $attribute_product->save();
                             } else {
-                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product = new ProductAttributeValues;
                                 $attribute_product->id_products = $product->id;
                                 $attribute_product->id_attribute = $key;
                                 $attribute_product->is_variant = 1;
@@ -1023,32 +970,29 @@ class ProcessProductsJob implements ShouldQueue
                         }
                     }
 
-                    // $product->sku = $product_parent->name . $sku;
-                    // $product->save();
-
                     //Images of variant
                     if (array_key_exists('photo', $variant)) {
                         if (count($variant['photo']) > 0) {
                             $structure = public_path('upload_products');
-                            if (!file_exists($structure)) {
+                            if (! file_exists($structure)) {
                                 mkdir(public_path('upload_products', 0777));
                             }
 
-                            if (!file_exists(public_path('/upload_products/Product-' . $product->id))) {
-                                mkdir(public_path('/upload_products/Product-' . $product->id, 0777));
-                                mkdir(public_path('/upload_products/Product-' . $product->id . '/images', 0777));
+                            if (! file_exists(public_path('/upload_products/Product-'.$product->id))) {
+                                mkdir(public_path('/upload_products/Product-'.$product->id, 0777));
+                                mkdir(public_path('/upload_products/Product-'.$product->id.'/images', 0777));
                             } else {
-                                if (!file_exists(public_path('/upload_products/Product-' . $product->id . '/images'))) {
-                                    mkdir(public_path('/upload_products/Product-' . $product->id . '/images', 0777));
+                                if (! file_exists(public_path('/upload_products/Product-'.$product->id.'/images'))) {
+                                    mkdir(public_path('/upload_products/Product-'.$product->id.'/images', 0777));
                                 }
                             }
 
                             foreach ($variant['photo'] as $key => $image) {
-                                $imageName = time() . rand(5, 15) . '.' . $image->getClientOriginalExtension();
-                                $image->move(public_path('/upload_products/Product-' . $product->id . '/images'), $imageName);
-                                $path = '/upload_products/Product-' . $product->id . '/images' . '/' . $imageName;
+                                $imageName = time().rand(5, 15).'.'.$image->getClientOriginalExtension();
+                                $image->move(public_path('/upload_products/Product-'.$product->id.'/images'), $imageName);
+                                $path = '/upload_products/Product-'.$product->id.'/images'.'/'.$imageName;
 
-                                $uploaded_document = new UploadProducts();
+                                $uploaded_document = new UploadProducts;
                                 $uploaded_document->id_product = $product->id;
                                 $uploaded_document->path = $path;
                                 $uploaded_document->extension = $image->getClientOriginalExtension();
@@ -1068,62 +1012,59 @@ class ProcessProductsJob implements ShouldQueue
                                 if (isset($variant['pricing']['discount_range'])) {
                                     if (($variant['pricing']['discount_range'] != null)) {
                                         if (($variant['pricing']['discount_range'][$key]) && ($variant['pricing']['discount_type'][$key])) {
-                                            $date_var               = explode(" to ", $variant['pricing']['discount_range'][$key]);
+                                            $date_var = explode(' to ', $variant['pricing']['discount_range'][$key]);
                                             $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
                                             $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
 
-                                            $start_to_parse = explode(" ", $date_var[0]);
-                                            $end_to_parse = explode(" ", $date_var[1]);
+                                            $start_to_parse = explode(' ', $date_var[0]);
+                                            $end_to_parse = explode(' ', $date_var[1]);
 
-                                            $explod_start_to_parse = explode("-", $start_to_parse[0]);
-                                            $explod_end_to_parse = explode("-", $end_to_parse[0]);
+                                            $explod_start_to_parse = explode('-', $start_to_parse[0]);
+                                            $explod_end_to_parse = explode('-', $end_to_parse[0]);
 
                                             $check_start = checkdate(intval($explod_start_to_parse[1]), intval($explod_start_to_parse[0]), intval($explod_start_to_parse[2]));
                                             $check_end = checkdate(intval($explod_end_to_parse[1]), intval($explod_end_to_parse[0]), intval($explod_end_to_parse[2]));
 
                                             if (($check_start == true) && ($check_end == true)) {
-                                                $current_data["discount_start_datetime"] = $discount_start_date;
-                                                $current_data["discount_end_datetime"] = $discount_end_date;
-                                                $current_data["discount_type"] = $variant['pricing']['discount_type'][$key];
+                                                $current_data['discount_start_datetime'] = $discount_start_date;
+                                                $current_data['discount_end_datetime'] = $discount_end_date;
+                                                $current_data['discount_type'] = $variant['pricing']['discount_type'][$key];
                                             } else {
-                                                $current_data["discount_start_datetime"] = null;
-                                                $current_data["discount_end_datetime"] = null;
-                                                $current_data["discount_type"] = null;
+                                                $current_data['discount_start_datetime'] = null;
+                                                $current_data['discount_end_datetime'] = null;
+                                                $current_data['discount_type'] = null;
                                             }
                                         } else {
-                                            $current_data["discount_start_datetime"] = null;
-                                            $current_data["discount_end_datetime"] = null;
-                                            $current_data["discount_type"] = null;
+                                            $current_data['discount_start_datetime'] = null;
+                                            $current_data['discount_end_datetime'] = null;
+                                            $current_data['discount_type'] = null;
                                         }
                                     } else {
-                                        $current_data["discount_start_datetime"] = null;
-                                        $current_data["discount_end_datetime"] = null;
-                                        $current_data["discount_type"] = null;
+                                        $current_data['discount_start_datetime'] = null;
+                                        $current_data['discount_end_datetime'] = null;
+                                        $current_data['discount_type'] = null;
                                     }
                                 } else {
-                                    $current_data["discount_start_datetime"] = null;
-                                    $current_data["discount_end_datetime"] = null;
-                                    $current_data["discount_type"] = null;
+                                    $current_data['discount_start_datetime'] = null;
+                                    $current_data['discount_end_datetime'] = null;
+                                    $current_data['discount_type'] = null;
                                 }
 
-
-
-                                $current_data["id_products"] = $product->id;
-                                $current_data["from"] = $from;
-                                $current_data["to"] = $variant['pricing']['to'][$key];
-                                $current_data["unit_price"] = $variant['pricing']['unit_price'][$key];
+                                $current_data['id_products'] = $product->id;
+                                $current_data['from'] = $from;
+                                $current_data['to'] = $variant['pricing']['to'][$key];
+                                $current_data['unit_price'] = $variant['pricing']['unit_price'][$key];
 
                                 if (isset($variant['pricing']['discount_amount'])) {
-                                    $current_data["discount_amount"] = $variant['pricing']['discount_amount'][$key];
+                                    $current_data['discount_amount'] = $variant['pricing']['discount_amount'][$key];
                                 } else {
-                                    $current_data["discount_amount"] = null;
+                                    $current_data['discount_amount'] = null;
                                 }
                                 if (isset($variant['pricing']['discount_percentage'])) {
-                                    $current_data["discount_percentage"] = $variant['pricing']['discount_percentage'][$key];
+                                    $current_data['discount_percentage'] = $variant['pricing']['discount_percentage'][$key];
                                 } else {
-                                    $current_data["discount_percentage"] = null;
+                                    $current_data['discount_percentage'] = null;
                                 }
-
 
                                 array_push($all_data_to_insert, $current_data);
                             }
@@ -1141,53 +1082,53 @@ class ProcessProductsJob implements ShouldQueue
                             if ($pricing['from'][$key] != null && $pricing['unit_price'][$key] != null) {
                                 if ($pricing['date_range_pricing'][$key] != null) {
                                     if (($pricing['date_range_pricing'][$key]) && ($pricing['discount_type'][$key])) {
-                                        $date_var               = explode(" to ", $pricing['date_range_pricing'][$key]);
+                                        $date_var = explode(' to ', $pricing['date_range_pricing'][$key]);
                                         $discount_start_date = Carbon::createFromTimestamp(strtotime($date_var[0]));
                                         $discount_end_date = Carbon::createFromTimestamp(strtotime($date_var[1]));
 
-                                        $start_to_parse = explode(" ", $date_var[0]);
-                                        $end_to_parse = explode(" ", $date_var[1]);
+                                        $start_to_parse = explode(' ', $date_var[0]);
+                                        $end_to_parse = explode(' ', $date_var[1]);
 
-                                        $explod_start_to_parse = explode("-", $start_to_parse[0]);
-                                        $explod_end_to_parse = explode("-", $end_to_parse[0]);
+                                        $explod_start_to_parse = explode('-', $start_to_parse[0]);
+                                        $explod_end_to_parse = explode('-', $end_to_parse[0]);
 
                                         $check_start = checkdate(intval($explod_start_to_parse[1]), intval($explod_start_to_parse[0]), intval($explod_start_to_parse[2]));
                                         $check_end = checkdate(intval($explod_end_to_parse[1]), intval($explod_end_to_parse[0]), intval($explod_end_to_parse[2]));
 
                                         if (($check_start == true) && ($check_end == true)) {
-                                            $current_data["discount_start_datetime"] = $discount_start_date;
-                                            $current_data["discount_end_datetime"] = $discount_end_date;
-                                            $current_data["discount_type"] = $pricing['discount_type'][$key];
+                                            $current_data['discount_start_datetime'] = $discount_start_date;
+                                            $current_data['discount_end_datetime'] = $discount_end_date;
+                                            $current_data['discount_type'] = $pricing['discount_type'][$key];
                                         } else {
-                                            $current_data["discount_start_datetime"] = null;
-                                            $current_data["discount_end_datetime"] = null;
-                                            $current_data["discount_type"] = null;
+                                            $current_data['discount_start_datetime'] = null;
+                                            $current_data['discount_end_datetime'] = null;
+                                            $current_data['discount_type'] = null;
                                         }
                                     } else {
-                                        $current_data["discount_start_datetime"] = null;
-                                        $current_data["discount_end_datetime"] = null;
-                                        $current_data["discount_type"] = null;
+                                        $current_data['discount_start_datetime'] = null;
+                                        $current_data['discount_end_datetime'] = null;
+                                        $current_data['discount_type'] = null;
                                     }
                                 } else {
-                                    $current_data["discount_start_datetime"] = null;
-                                    $current_data["discount_end_datetime"] = null;
-                                    $current_data["discount_type"] = null;
+                                    $current_data['discount_start_datetime'] = null;
+                                    $current_data['discount_end_datetime'] = null;
+                                    $current_data['discount_type'] = null;
                                 }
 
-                                $current_data["id_products"] = $product->id;
-                                $current_data["from"] = $from;
-                                $current_data["to"] = $pricing['to'][$key];
-                                $current_data["unit_price"] = $pricing['unit_price'][$key];
+                                $current_data['id_products'] = $product->id;
+                                $current_data['from'] = $from;
+                                $current_data['to'] = $pricing['to'][$key];
+                                $current_data['unit_price'] = $pricing['unit_price'][$key];
 
                                 if (isset($pricing['discount_amount'])) {
-                                    $current_data["discount_amount"] = $pricing['discount_amount'][$key];
+                                    $current_data['discount_amount'] = $pricing['discount_amount'][$key];
                                 } else {
-                                    $current_data["discount_amount"] = null;
+                                    $current_data['discount_amount'] = null;
                                 }
-                                if (isset($current_data["discount_percentage"])) {
-                                    $current_data["discount_percentage"] = $pricing['discount_percentage'][$key];
+                                if (isset($current_data['discount_percentage'])) {
+                                    $current_data['discount_percentage'] = $pricing['discount_percentage'][$key];
                                 } else {
-                                    $current_data["discount_percentage"] = null;
+                                    $current_data['discount_percentage'] = null;
                                 }
 
                                 array_push($all_data_to_insert, $current_data);
@@ -1244,6 +1185,7 @@ class ProcessProductsJob implements ShouldQueue
                             $keyToPush = 'product_id';
                             $shipping = array_map(function ($arr) use ($id, $keyToPush) {
                                 $arr[$keyToPush] = $id;
+
                                 return $arr;
                             }, $shipping);
 
@@ -1256,7 +1198,7 @@ class ProcessProductsJob implements ShouldQueue
                     foreach ($general_attributes_data as $attr => $value) {
                         if ($value != null) {
                             if (in_array($attr, $ids_attributes_list)) {
-                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product = new ProductAttributeValues;
                                 $attribute_product->id_products = $product_parent->id;
                                 $attribute_product->id_attribute = $attr;
                                 $attribute_product->is_general = 1;
@@ -1267,7 +1209,7 @@ class ProcessProductsJob implements ShouldQueue
                             } elseif (in_array($attr, $ids_attributes_color)) {
                                 if (count($value) > 0) {
                                     foreach ($value as $value_color) {
-                                        $attribute_product = new ProductAttributeValues();
+                                        $attribute_product = new ProductAttributeValues;
                                         $attribute_product->id_products = $product_parent->id;
                                         $attribute_product->id_attribute = $attr;
                                         $attribute_product->is_general = 1;
@@ -1278,7 +1220,7 @@ class ProcessProductsJob implements ShouldQueue
                                     }
                                 }
                             } elseif (in_array($attr, $ids_attributes_numeric)) {
-                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product = new ProductAttributeValues;
                                 $attribute_product->id_products = $product_parent->id;
                                 $attribute_product->id_attribute = $attr;
                                 $attribute_product->is_general = 1;
@@ -1286,7 +1228,7 @@ class ProcessProductsJob implements ShouldQueue
                                 $attribute_product->value = $value;
                                 $attribute_product->save();
                             } else {
-                                $attribute_product = new ProductAttributeValues();
+                                $attribute_product = new ProductAttributeValues;
                                 $attribute_product->id_products = $product_parent->id;
                                 $attribute_product->id_attribute = $attr;
                                 $attribute_product->is_general = 1;
@@ -1297,10 +1239,10 @@ class ProcessProductsJob implements ShouldQueue
                     }
                 }
             }
+
             return $product_parent;
         }
     }
-
 
     public function getAttributeCategorie($cat_id)
     {
@@ -1337,41 +1279,34 @@ class ProcessProductsJob implements ShouldQueue
             return [
                 'id' => $attribute->id,
                 'name' => $attribute->getTranslation('name'),
-                'key' => 'attribute_generale-' . $attribute->id,
-                'type_value' => $attribute->type_value
+                'key' => 'attribute_generale-'.$attribute->id,
+                'type_value' => $attribute->type_value,
             ];
         });
 
-
         // Return the formatted attributes as a JSON response
         return [
-            'attributes' => $formattedAttributes
+            'attributes' => $formattedAttributes,
         ];
     }
-
-
-
-
 
     private function mapToDatabaseAttributes(array $data)
     {
         $attributes = $this->getAttributeCategorie($data['Product Type (Leaf Category) *']);
 
-        $matchedKeyValuePairs  = $this->extractKeyValuePairsBetweenSkuAndParentSku($data);
+        $matchedKeyValuePairs = $this->extractKeyValuePairsBetweenSkuAndParentSku($data);
 
         $productAttributes = $this->extractKeyValuePairsForAttributes($matchedKeyValuePairs, $attributes);
-
 
         $startDateRange = $this->extractPriceRange($data, 'Discount Start Date', 'Discount Start Date 2', 'Discount Start Date 3');
         $endDateRange = $this->extractPriceRange($data, 'Discount End Date', 'Discount End Date 2', 'Discount End Date 3');
 
-
         $convertedDate = $this->convertDate($startDateRange, $endDateRange);
 
-        $request =  Request::merge(array_merge([
+        $request = Request::merge(array_merge([
 
-            'published_modal' => "0",
-            'create_stock' => "0",
+            'published_modal' => '0',
+            'create_stock' => '0',
 
             //Product information
             'name' => $data['Product Name *'],
@@ -1379,7 +1314,7 @@ class ProcessProductsJob implements ShouldQueue
             'unit' => $data['Unit of Sale *'],
             'country_code' => $this->idExtracting($data, 'Country of Origin *'),
             'manufacturer' => $data['Manufacturer *'],
-            'tags' =>  [json_encode($this->tagsHandling($data))],
+            'tags' => [json_encode($this->tagsHandling($data))],
             'short_description' => $data['Short Description *'],
             'stock_visibility_state' => $data['Show Stock Quantity *'],
             'refundable' => $data['Refundable *'],
@@ -1422,7 +1357,6 @@ class ProcessProductsJob implements ShouldQueue
             'charge_per_unit_shipping' => $this->extractPriceRange($data, 'Charge per Unit of Sale', null, null),
             'shipper' => [$this->extractPaid($data, 'Shipper *', null, null)],
 
-
             //Sample Package Configuration
             'shipper_sample' => isset($data['Shipper']) ? [strtolower($data['Shipper'])] : null,
             'estimated_sample' => isset($data['Order Preparation Days']) ? $data['Order Preparation Days'] : null,
@@ -1440,25 +1374,19 @@ class ProcessProductsJob implements ShouldQueue
             'min_third_party_sample' => isset($data['Min. Temperature']) ? $data['Min. Temperature'] : null,
             'max_third_party_sample' => isset($data['Max. Temperature']) ? $data['Max. Temperature'] : null,
 
-
             'parent_id' => $this->idExtracting($data, 'Product Type (Leaf Category) *'),
             'product_sk' => $data['SKU *'],
             'quantite_stock_warning' => null,
 
-
-
-
-            'unit_attribute_generale-39' => "13",
-            'unit_attribute_generale-49' => "17",
+            'unit_attribute_generale-39' => '13',
+            'unit_attribute_generale-49' => '17',
 
             'description' => $data['Long Description'] ?? null,
             'document_names' => [],
 
-
             //SEO Meta Tags
             'meta_title' => $data['Meta Title'] ?? null,
             'meta_description' => $data['Description'] ?? null,
-
 
             'inventory_stock' => [
                 'warehouse' => isset($data['Warehouse']) ? $this->idExtracting($data, 'Warehouse') : null,
@@ -1466,12 +1394,11 @@ class ProcessProductsJob implements ShouldQueue
                 'comment' => isset($data['Comment']) ? $data['Comment'] : null,
             ],
 
-            'submit_button' => "draft",
+            'submit_button' => 'draft',
         ], $productAttributes, $convertedDate));
 
         return Request::except('bulk_file');
     }
-
 
     private function convertDate(array $startDates, array $endDates)
     {
@@ -1510,8 +1437,6 @@ class ProcessProductsJob implements ShouldQueue
         ];
     }
 
-
-
     public function extractDateRange($data, $startKey, $endKey)
     {
         // Retrieve the start and end dates from the $data array
@@ -1521,8 +1446,9 @@ class ProcessProductsJob implements ShouldQueue
         // Function to format a date to "YYYY-MM-DD HH:MM:SS" with time parts
         $formatDate = function ($date, $isStart) {
             if ($date) {
-                return $isStart ? $date . ' 00:00:00' : $date . ' 23:59:00';
+                return $isStart ? $date.' 00:00:00' : $date.' 23:59:00';
             }
+
             return null;
         };
 
@@ -1553,20 +1479,18 @@ class ProcessProductsJob implements ShouldQueue
             if (isset($data[$attributeName])) {
                 if ($attribute['type_value'] == 'color') {
                     // Use your idExtracting method for 'list' type values
-                    $matchingKeyValuePairs['attribute_generale-' . $attributeId] = [$this->idExtracting($data, $attributeName)];
-                } else if ($attribute['type_value'] == 'list') {
-                    $matchingKeyValuePairs['attribute_generale-' . $attributeId] = $this->idExtracting($data, $attributeName);
+                    $matchingKeyValuePairs['attribute_generale-'.$attributeId] = [$this->idExtracting($data, $attributeName)];
+                } elseif ($attribute['type_value'] == 'list') {
+                    $matchingKeyValuePairs['attribute_generale-'.$attributeId] = $this->idExtracting($data, $attributeName);
                 } else {
                     // Use 'attribute_generale-{id}' as the key and the matching value from $data
-                    $matchingKeyValuePairs['attribute_generale-' . $attributeId] = strtolower($data[$attributeName]);
+                    $matchingKeyValuePairs['attribute_generale-'.$attributeId] = strtolower($data[$attributeName]);
                 }
             }
         }
 
         return $matchingKeyValuePairs;
     }
-
-
 
     private function extractKeyValuePairsBetweenSkuAndParentSku(array $data)
     {
@@ -1578,18 +1502,18 @@ class ProcessProductsJob implements ShouldQueue
 
         // Find the index of "SKU *" and "Parent SKU"
         foreach ($keys as $index => $key) {
-            if ($key === "SKU *") {
+            if ($key === 'SKU *') {
                 $startIndex = $index;
             }
 
-            if ($key === "Parent SKU") {
+            if ($key === 'Parent SKU') {
                 $endIndex = $index;
                 break; // Stop once we find the "Parent SKU"
             }
         }
 
         // If both indices are found, return the key-value pairs between them
-        if (!is_null($startIndex) && !is_null($endIndex)) {
+        if (! is_null($startIndex) && ! is_null($endIndex)) {
             // Slice the array between "SKU *" and "Parent SKU"
             $slicedKeys = array_slice($keys, $startIndex + 1, $endIndex - $startIndex - 1);
 
@@ -1600,7 +1524,6 @@ class ProcessProductsJob implements ShouldQueue
         // If either index is not found, return an empty array
         return [];
     }
-
 
     private function extractPaid(array $data, $key1, $key2, $key3)
     {
@@ -1613,12 +1536,12 @@ class ProcessProductsJob implements ShouldQueue
         $result = [strtolower($val1)];
 
         // If val2 is not null, append it to the array
-        if (!is_null($val2)) {
+        if (! is_null($val2)) {
             $result[] = strtolower($val2);
         }
 
         // If val3 is not null, append it to the array
-        if (!is_null($val3)) {
+        if (! is_null($val3)) {
             $result[] = strtolower($val3);
         }
 
@@ -1634,6 +1557,7 @@ class ProcessProductsJob implements ShouldQueue
             } elseif ($value === 'Charge per unit of sale') {
                 return 'charging';
             }
+
             return $value; // Return the value as is if no transformation is needed
         };
 
@@ -1646,18 +1570,17 @@ class ProcessProductsJob implements ShouldQueue
         $result = [$val1];
 
         // If val2 is not null, append it to the array
-        if (!is_null($val2)) {
+        if (! is_null($val2)) {
             $result[] = $val2;
         }
 
         // If val3 is not null, append it to the array
-        if (!is_null($val3)) {
+        if (! is_null($val3)) {
             $result[] = $val3;
         }
 
         return $result;
     }
-
 
     private function extractPriceTypeRange(array $data, $key1, $key2, $key3)
     {
@@ -1668,6 +1591,7 @@ class ProcessProductsJob implements ShouldQueue
             } elseif ($value === 'Flat') {
                 return 'amount';
             }
+
             return $value; // Return the value as is if no transformation is needed
         };
 
@@ -1680,18 +1604,17 @@ class ProcessProductsJob implements ShouldQueue
         $result = [$val1];
 
         // If val2 is not null, append it to the array
-        if (!is_null($val2)) {
+        if (! is_null($val2)) {
             $result[] = $val2;
         }
 
         // If val3 is not null, append it to the array
-        if (!is_null($val3)) {
+        if (! is_null($val3)) {
             $result[] = $val3;
         }
 
         return $result;
     }
-
 
     /**
      * Extract the 'from quantity *' and 'to quantity *' from the product data.
@@ -1706,22 +1629,19 @@ class ProcessProductsJob implements ShouldQueue
         $result = [$val1];
 
         // If val2 is not null, append it to the array
-        if (!is_null($val2)) {
+        if (! is_null($val2)) {
             $result[] = $val2;
         }
 
         // If val3 is not null, append it to the array
-        if (!is_null($val3)) {
+        if (! is_null($val3)) {
             $result[] = $val3;
         }
 
         return $result;
     }
 
-
-
-
-    function extractData($pricingConfigurations, $key)
+    public function extractData($pricingConfigurations, $key)
     {
         $data = [];
 
@@ -1742,15 +1662,14 @@ class ProcessProductsJob implements ShouldQueue
         return $data;
     }
 
-
     private function idExtracting($product, $key)
     {
         $value_string = $product[$key];
         $value_parts = explode('-', $value_string);
         $extracted_id = (int) $value_parts[0];
+
         return $extracted_id;
     }
-
 
     private function tagsHandling($product)
     {
@@ -1759,6 +1678,12 @@ class ProcessProductsJob implements ShouldQueue
         $formatted_tags = array_map(function ($tag) {
             return ['value' => trim($tag)];
         }, $tags_array);
+
         return $formatted_tags;
+    }
+
+    public function failed(Throwable $exception)
+    {
+        Log::error('Error while handling process products job, with message: '.$exception->getMessage());
     }
 }

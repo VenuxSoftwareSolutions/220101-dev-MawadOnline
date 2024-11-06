@@ -4,23 +4,29 @@ namespace App\Jobs;
 
 use App\Exports\ErrorsExport;
 use App\Mail\ValidationReportMail;
+use App\Models\BulkUploadFile;
 use Cache;
+use Exception;
+use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
+use Log;
+use Maatwebsite\Excel\Facades\Excel;
 use Mail;
-use Illuminate\Bus\Batchable;
-
-
-
+use Throwable;
+use Validator;
 
 class ValidateBulkUploadFileJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels,Batchable;
+    use Batchable, Dispatchable, InteractsWithQueue, Queueable,SerializesModels;
+
+    public $failOnTimeout = false;
+
+    public $timeout = 120000;
 
     protected $filePath;
 
@@ -34,75 +40,70 @@ class ValidateBulkUploadFileJob implements ShouldQueue
 
     public function handle()
     {
-        $fileModel = \App\Models\BulkUploadFile::find($this->fileModelId);
-        if (!$fileModel) {
-            throw new \Exception("File model not found: $this->fileModelId");
+        try {
+            $fileModel = BulkUploadFile::find($this->fileModelId);
+
+            if (! $fileModel) {
+                throw new Exception("File model not found: $this->fileModelId");
             }
-            
-        $fileModel->status = 'processing';
-        $fileModel->save();
-        
 
-        // Load the file from storage
-        $file = Storage::path('storage/'.$this->filePath);
-        if (!file_exists($file)) {
-            throw new \Exception("File does not exist: $file");
-        }
+            $fileModel->status = 'processing';
+            $fileModel->save();
 
-        // Extract data from the file
-        $data = Excel::toArray([], $file)[1]; // Assuming you're working with the second sheet
+            // Load the file from storage
+            $file = Storage::path('storage/'.$this->filePath);
+            if (! file_exists($file)) {
+                throw new \Exception("File does not exist: $file");
+            }
 
-        // Get the headers from the second row (row index 1)
-        $headers = $data[1];
+            // Extract data from the file
+            $data = Excel::toArray([], $file)[1]; // Assuming you're working with the second sheet
 
-        // Map the headers to their corresponding column letters
-        $headerMapping = $this->getHeaderMapping($headers);
+            // Get the headers from the second row (row index 1)
+            $headers = $data[1];
 
-        // Filter headers with a trailing '*'
-        $requiredColumns = $this->getRequiredColumns($headerMapping);
+            // Map the headers to their corresponding column letters
+            $headerMapping = $this->getHeaderMapping($headers);
 
-        $errors = [];
+            // Filter headers with a trailing '*'
+            $requiredColumns = $this->getRequiredColumns($headerMapping);
 
+            $errors = [];
 
-         // Start iterating through the rows (assuming data starts from row 4 - index 3)
-        for ($rowIndex = 3; $rowIndex < count($data); $rowIndex++) {
-            $row = $data[$rowIndex];
+            // Start iterating through the rows (assuming data starts from row 4 - index 3)
+            for ($rowIndex = 3; $rowIndex < count($data); $rowIndex++) {
+                $row = $data[$rowIndex];
 
-            if ($this->rowHasData($row)) {
-                foreach ($requiredColumns as $columnLetter => $headerName) {
-                    $columnIndex = $this->getColumnIndex($columnLetter);
-                    $this->validateCell($errors, $rowIndex, $columnLetter, $row, ['required', 'max:255'], $columnIndex);
+                if ($this->rowHasData($row)) {
+                    foreach ($requiredColumns as $columnLetter => $headerName) {
+                        $columnIndex = $this->getColumnIndex($columnLetter);
+                        $this->validateCell($errors, $rowIndex, $columnLetter, $row, ['required', 'max:255'], $columnIndex);
+                    }
                 }
             }
-        }
 
+            if (! empty($errors)) {
+                // Handle validation errors (e.g., logging, notifying users)
+                $reportPath = $this->generateReport($errors, $data);
+                Log::error('Error while handling validate bulk-upload file job, with messages: '.json_encode($errors));
+                Mail::to($fileModel->user->email)->send(new ValidationReportMail($reportPath));
 
-
-        if (!empty($errors)) {
-            // Handle validation errors (e.g., logging, notifying users)
-            $reportPath = $this->generateReport($errors,$data);
-
-            Mail::to($fileModel->user->email)->send(new ValidationReportMail($reportPath));
-
-            $fileModel->status = 'failed';
-            $fileModel->save();
-        }else{
-            
-            Cache::put("validated_parent_groups_{$this->fileModelId}", $data);
-            $fileModel->status = 'validated';
-            $fileModel->save();
-            //Dispatch(new ProcessMappingJob($data,$fileModel));
-           // $fileModel->status = 'processing';
-           // $fileModel->save();
+                $fileModel->status = 'failed';
+                $fileModel->save();
+            } else {
+                Cache::put("validated_parent_groups_{$this->fileModelId}", $data);
+                $fileModel->status = 'validated';
+                $fileModel->save();
+            }
+        } catch (Exception $e) {
+            Log::error('Error while handling validate bulk-upload job, with message: '.$e->getMessage());
         }
     }
-
-
 
     /**
      * Get the mapping of headers with their corresponding column letters.
      *
-     * @param array $headers
+     * @param  array  $headers
      * @return array
      */
     private function getHeaderMapping($headers)
@@ -111,7 +112,7 @@ class ValidateBulkUploadFileJob implements ShouldQueue
         foreach ($headers as $columnIndex => $headerName) {
             $columnLetter = $this->getColumnLetter($columnIndex);
             // Ensure we only map non-empty headers
-            if (!empty($headerName)) {
+            if (! empty($headerName)) {
                 $headerMapping[$columnLetter] = $headerName;
             }
         }
@@ -119,11 +120,10 @@ class ValidateBulkUploadFileJob implements ShouldQueue
         return $headerMapping;
     }
 
-
     /**
      * Get the required columns based on headers ending with '*'.
      *
-     * @param array $headerMapping
+     * @param  array  $headerMapping
      * @return array
      */
     private function getRequiredColumns($headerMapping)
@@ -141,30 +141,31 @@ class ValidateBulkUploadFileJob implements ShouldQueue
     /**
      * Convert a column index to a column letter (e.g., 0 -> A, 26 -> AA).
      *
-     * @param int $index
+     * @param  int  $index
      * @return string
      */
     private function getColumnLetter($index)
     {
         $letters = '';
         while ($index >= 0) {
-            $letters = chr($index % 26 + 65) . $letters;
+            $letters = chr($index % 26 + 65).$letters;
             $index = floor($index / 26) - 1;
         }
+
         return $letters;
     }
 
     /**
      * Convert a column letter to its index (A -> 0, B -> 1, AA -> 26, etc.)
      *
-     * @param string $columnLetter
+     * @param  string  $columnLetter
      * @return int
      */
     private function getColumnIndex($columnLetter)
     {
         $index = 0;
         $letters = str_split(strtoupper($columnLetter));
-        foreach ($letters as $i => $letter) {
+        foreach ($letters as $letter) {
             $index = $index * 26 + (ord($letter) - 64);
         }
 
@@ -174,10 +175,11 @@ class ValidateBulkUploadFileJob implements ShouldQueue
     private function rowHasData($row)
     {
         foreach ($row as $cell) {
-            if (!empty($cell)) {
+            if (! empty($cell)) {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -185,7 +187,7 @@ class ValidateBulkUploadFileJob implements ShouldQueue
     {
         $value = $row[$columnIndex] ?? null;
 
-        $validator = \Validator::make(
+        $validator = Validator::make(
             [$columnLetter => $value],
             [$columnLetter => $rules]
         );
@@ -195,11 +197,11 @@ class ValidateBulkUploadFileJob implements ShouldQueue
         }
     }
 
-     private function generateReport($errors,$data)
+    private function generateReport($errors, $data)
     {
         // Define a unique file name for the report
-        $fileName = 'validation_errors_report_' . now()->timestamp . '.xlsx';
-        $filePath = 'reports/' . $fileName;
+        $fileName = 'validation_errors_report_'.now()->timestamp.'.xlsx';
+        $filePath = 'reports/'.$fileName;
 
         $header_mapping = $this->getHeaderMapping($data[1]);
         // Pass both the errors and header mapping to the export class
@@ -208,5 +210,8 @@ class ValidateBulkUploadFileJob implements ShouldQueue
         return Storage::path($filePath);
     }
 
+    public function failed(Throwable $exception)
+    {
+        Log::error("Error while handling validate bulk-upload file job, with message: {$exception->getMessage()}");
+    }
 }
-

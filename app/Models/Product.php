@@ -12,7 +12,6 @@ use App\Models\Shipping;
 use App\Models\Product;
 use App\Models\Shop;
 use Illuminate\Database\Eloquent\Model;
-use \Venturecraft\Revisionable\RevisionableTrait;
 use App\Traits\EnhancedRevisionableTrait;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -75,7 +74,7 @@ class Product extends Model
             $product->stockSummaries()->delete();
         });
     }
-    
+
     public function stockSummaries()
     {
         return $this->hasMany(StockSummary::class, 'variant_id', 'id');
@@ -219,8 +218,7 @@ class Product extends Model
     }
 
     public function getChildrenProducts(){
-        $childrens = Product::where('parent_id', $this->id)->get();
-        return $childrens;
+        return Product::where('parent_id', $this->id)->get();
     }
 
     public function getChildrenProductsDesc(){
