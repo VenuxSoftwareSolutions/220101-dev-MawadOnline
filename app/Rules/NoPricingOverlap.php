@@ -36,6 +36,6 @@ class NoPricingOverlap implements Rule
 
     public function message()
     {
-        return $this->is_shipping ? 'Shipping duration/charge ranges should not overlap.' : 'Pricing ranges should not overlap.';
+        return $this->is_shipping ? 'Shipping duration/charge ranges should not overlap.' : 'Default pricing configuration should not be overlapped.';
     }
 }
