@@ -89,7 +89,10 @@ class HomeController extends Controller
 
     public function load_featured_section()
     {
-        return view('frontend.'.get_setting('homepage_select').'.partials.featured_products_section');
+        $viewPath = 'frontend.'.get_setting('homepage_select').'.partials.featured_products_section';
+        $featured_products = get_featured_products();
+
+         return view($viewPath, compact('featured_products'));
     }
 
     public function load_best_selling_section()
