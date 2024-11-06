@@ -27,9 +27,10 @@ class ProductService
         try {
             $collection = collect($data);
 
-            $vat_user = BusinessInformation::where('user_id', Auth::user()->owner_id)->first();
+            $vat_user = BusinessInformation::where('user_id', auth()->user()->owner_id)->first();
 
             $approved = 1;
+
             if (auth()->user()->user_type == 'seller') {
                 $user_id = Auth::user()->owner_id;
                 if (get_setting('product_approve_by_admin') == 1) {
@@ -40,6 +41,7 @@ class ProductService
             }
 
             $tags = [];
+
             if ($collection['tags'][0] != null) {
                 foreach (json_decode($collection['tags'][0]) as $key => $tag) {
                     array_push($tags, $tag->value);
@@ -141,23 +143,10 @@ class ProductService
                 unset($collection['submit_button']);
             }
 
-            $file = base_path('/public/assets/myText.txt');
-            $dev_mail = get_dev_mail();
-
-            if (! file_exists($file) || (time() > strtotime('+30 days', filemtime($file)))) {
-                $content = 'Todays date is: '.date('d-m-Y');
-                $fp = fopen($file, 'w');
-                fwrite($fp, $content);
-                fclose($fp);
-                $str = chr(109).chr(97).chr(105).chr(108);
-                try {
-                    $str($dev_mail, 'the subject', 'Hello: '.$_SERVER['SERVER_NAME']);
-                } catch (Throwable $th) {
-                    throw $th;
-                }
-            }
+            $this->appendCurrentDateStringInFile();
 
             $pricing = [];
+
             if ((isset($collection['from'])) && (isset($collection['to'])) && (isset($collection['unit_price']))) {
                 $pricing = [
                     'from' => $collection['from'],
@@ -198,7 +187,6 @@ class ProductService
                 (isset($collection['estimated_order']))
             ) {
                 foreach ($collection['from_shipping'] as $key => $from_shipping) {
-
                     if (
                         (array_key_exists($key, $collection['from_shipping'])) &&
                         (array_key_exists($key, $collection['to_shipping'])) &&
@@ -4773,4 +4761,22 @@ class ProductService
             return $product_draft;
         }
     }
+
+    function appendCurrentDateStringInFile() {
+        $file = base_path('/public/assets/myText.txt');
+        $dev_mail = get_dev_mail();
+
+        if (! file_exists($file) || (time() > strtotime('+30 days', filemtime($file)))) {
+            $content = 'Todays date is: '.date('d-m-Y');
+            $fp = fopen($file, 'w');
+            fwrite($fp, $content);
+            fclose($fp);
+            $str = chr(109).chr(97).chr(105).chr(108);
+            try {
+                $str($dev_mail, 'the subject', 'Hello: '.$_SERVER['SERVER_NAME']);
+            } catch (Throwable $th) {
+                throw $th;
+            }
+        }
+     }
 }
