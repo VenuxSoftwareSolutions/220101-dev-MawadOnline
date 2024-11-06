@@ -4,22 +4,13 @@ namespace App\Http\Controllers\Seller;
 
 use App\Events\UploadProgress;
 use App\Exports\ErrorsExport;
-use App\Exports\ProductBulkExport;
-use App\Imports\ProductsBulkImport;
-use App\Jobs\ImportBulkFileJob;
 use App\Jobs\ProcessMappingJob;
 use App\Jobs\ProcessProductsJob;
 use App\Jobs\ValidateBulkUploadFileJob;
-use App\Mail\ValidationReportMail;
-use PDF;
-use Auth;
-use Excel;
-use App\Models\User;
 use App\Models\Brand;
 use App\Models\BulkUploadFile;
 use App\Models\Category;
-use Illuminate\Http\Request;
-use App\Models\ProductsImport;
+use App\Models\User;
 use App\Services\ProductFlashDealService;
 use App\Services\ProductPricingService;
 use App\Services\ProductService;
@@ -29,20 +20,26 @@ use App\Services\ProductUploadsService;
 use Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
-use Storage;
 use Illuminate\Bus\Batch;
 use Illuminate\Support\Facades\Bus;
 use Throwable;
-
+use Auth;
+use Excel;
+use Illuminate\Http\Request;
+use PDF;
 
 class ProductBulkUploadController extends Controller
 {
     protected $productService;
+
     protected $productTaxService;
+
     protected $productFlashDealService;
+
     protected $productStockService;
+
     protected $productUploadsService;
+
     protected $productPricingService;
 
     public function __construct(
@@ -60,7 +57,6 @@ class ProductBulkUploadController extends Controller
         $this->productUploadsService = $productUploadsService;
         $this->productPricingService = $productPricingService;
     }
-
 
     public function getFiles(Request $request)
     {
@@ -89,19 +85,18 @@ class ProductBulkUploadController extends Controller
             ->limit($perPage)
             ->get();
 
-            $files->each(function ($file) {
-                // Add a progress field, initially 0
-                $file->progress = $file->status == 'processing' ? '0%' : '100%'; // Example logic
-            });
+        $files->each(function ($file) {
+            // Add a progress field, initially 0
+            $file->progress = $file->status == 'processing' ? '0%' : '100%'; // Example logic
+        });
 
         return response()->json([
             'draw' => intval($request->input('draw')),
             'recordsTotal' => $totalRecords,
             'recordsFiltered' => $totalRecords,
-            'data' => $files
+            'data' => $files,
         ]);
     }
-
 
     public function index()
     {
@@ -111,6 +106,7 @@ class ProductBulkUploadController extends Controller
             return view('seller.product.product_bulk_upload.index');
         } else {
             flash(translate('Your shop is not verified yet!'))->warning();
+
             return back();
         }
     }
@@ -135,7 +131,6 @@ class ProductBulkUploadController extends Controller
 
     public function bulk_upload(Request $request)
     {
-
         $request->validate([
             'bulk_file' => 'required|file', // Adjusted validation rule
         ], [
@@ -145,7 +140,7 @@ class ProductBulkUploadController extends Controller
         if ($request->file('bulk_file')->isValid()) {
             $file = $request->file('bulk_file');
             $path = $file->store('bulk_uploads', 'public');
-            $fileModel = new BulkUploadFile();
+            $fileModel = new BulkUploadFile;
             $fileModel->user_id = auth()->id(); // Assuming you have user authentication in place
             $fileModel->filename = $file->getClientOriginalName();
             $fileModel->path = $path;
@@ -153,7 +148,6 @@ class ProductBulkUploadController extends Controller
             $fileModel->extension = $file->getClientOriginalExtension();
             $fileModel->size = humanFileSize($file->getSize());
             $fileModel->save();
-
 
             Bus::batch([
                 new ValidateBulkUploadFileJob($fileModel->path, $fileModel->id),
@@ -202,7 +196,6 @@ class ProductBulkUploadController extends Controller
 
         return back()->with('error', 'File upload failed.');
     }
-
 
     private function validateExcel($file)
     {
@@ -255,10 +248,11 @@ class ProductBulkUploadController extends Controller
     {
         // Check if the row has any non-empty cells
         foreach ($row as $cell) {
-            if (!empty($cell)) {
+            if (! empty($cell)) {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -277,7 +271,7 @@ class ProductBulkUploadController extends Controller
 
         if ($validator->fails()) {
             $cellAddress = $this->getCellAddress($rowIndex, $colIndex);
-            $errors[] = "Cell $cellAddress: " . $validator->errors()->first($column);
+            $errors[] = "Cell $cellAddress: ".$validator->errors()->first($column);
         }
     }
 
@@ -293,7 +287,6 @@ class ProductBulkUploadController extends Controller
         'J' => 'Show Stock Quantity',
         'L' => 'Product Media',
         'M' => 'Gallery Image 1 Relative Path',
-
         // Add more as needed
         'AJ' => 'SKU',
         'AY' => 'From Quantity',
@@ -313,7 +306,6 @@ class ProductBulkUploadController extends Controller
         'CM' => 'Order Preparation Days',
         // Continue for all necessary columns
     ];
-
 
     private function excelColumnIndex($column)
     {
@@ -338,7 +330,7 @@ class ProductBulkUploadController extends Controller
         $rowNumber = $rowIndex + 1;
 
         // Return cell address in Excel format (e.g., A1, B2, AJ4)
-        return $colLetter . $rowNumber;
+        return $colLetter.$rowNumber;
     }
 
     private function excelColumnIndexToLetter($index)
@@ -348,14 +340,12 @@ class ProductBulkUploadController extends Controller
 
         while ($numeric > 0) {
             $remainder = ($numeric - 1) % 26;
-            $alpha = chr(65 + $remainder) . $alpha;
+            $alpha = chr(65 + $remainder).$alpha;
             $numeric = intval(($numeric - $remainder) / 26);
         }
 
         return $alpha;
     }
-
-
 
     private function generateReport($errors)
     {
@@ -369,12 +359,8 @@ class ProductBulkUploadController extends Controller
         return public_path($filePath);
     }
 
-
-
-
     public function download_file(Request $request)
     {
-
         $selectedId = $request->selectedId;
 
         // Determine the category level
@@ -391,45 +377,45 @@ class ProductBulkUploadController extends Controller
         } elseif ($categoryLevel == 2) {
             // If second level, set level2CategoryId
             $level2CategoryId = $selectedId;
-        } {
-            // Define the payload
-            $payload = [
-                'vendorId' => Auth::id(),
-                'level2CategoryId' => $level2CategoryId,
-                'level3CategoryId' => $level3CategoryId,
-            ];
+        }
 
-            // Send the POST request    
-            $response = Http::post('http://localhost:9115/bu/xlgen', $payload);
+        // Define the payload
+        $payload = [
+            'vendorId' => Auth::id(),
+            'level2CategoryId' => $level2CategoryId,
+            'level3CategoryId' => $level3CategoryId,
+        ];
 
-            Log::info($response->json());
-            if ($response->successful()) {
-                $data = $response->json();
+        // Send the POST request
+        $response = Http::post(env('BULK_UPLOAD_SERVER_URL'), $payload);
 
-                if ($data['success']) {
-                    $fileName = $data['fileName'];
-                    //  $fileName = basename($fileName);
+        Log::info($response->json());
 
-                    $filePath = $fileName;
-                    Log::info($fileName);
-                    Log::info($filePath);
+        if ($response->successful()) {
+            $data = $response->json();
 
-                    // Check if the file exists and is readable
-                    if (file_exists($filePath)) {
-                        // Return the file for download
-                        return response()->download($filePath);
-                    } else {
-                        return response()->json(['error' => 'File does not exist or is not readable.'], 404);
-                    }
+            if ($data['success']) {
+                $fileName = $data['fileName'];
+                //  $fileName = basename($fileName);
+
+                $filePath = $fileName;
+                Log::info($fileName);
+                Log::info($filePath);
+
+                // Check if the file exists and is readable
+                if (file_exists($filePath)) {
+                    // Return the file for download
+                    return response()->download($filePath);
                 } else {
-                    return response()->json(['error' => $data['errorMsg']], 400);
+                    return response()->json(['error' => 'File does not exist or is not readable.'], 404);
                 }
             } else {
-                return response()->json(['error' => 'Request failed.'], $response->status());
+                return response()->json(['error' => $data['errorMsg']], 400);
             }
+        } else {
+            return response()->json(['error' => 'Request failed.'], $response->status());
         }
     }
-
 
     // Function to get the level of the category
     private function getCategoryLevel($categoryId)

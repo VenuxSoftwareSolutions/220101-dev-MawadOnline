@@ -23,13 +23,16 @@ RUN apt-get update && apt-get install -y \
     net-tools \
     telnet \
     libwebp-dev
-    
+
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Configure and install GD extension
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install gd
+
+# zip extension
+RUN docker-php-ext-install zip
 
 # Install Certbot for SSL
 RUN apt-get update && apt-get install -y certbot python3-certbot-apache

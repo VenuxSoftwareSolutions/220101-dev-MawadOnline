@@ -99,7 +99,8 @@ class HomeController extends Controller
 
     public function load_best_selling_section()
     {
-        return view('frontend.'.get_setting('homepage_select').'.partials.best_selling_section');
+        $viewPath = 'frontend.'.get_setting('homepage_select').'.partials.best_selling_section';
+        return view($viewPath);
     }
 
     public function load_auction_products_section()

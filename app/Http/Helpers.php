@@ -46,7 +46,6 @@ use App\Models\CustomerProduct;
 use App\Models\PricingConfiguration;
 use App\Utility\SendSMSUtility;
 use App\Models\FlashDealProduct;
-use App\Utility\CategoryUtility;
 use App\Models\AuctionProductBid;
 use App\Models\ManualPaymentMethod;
 use App\Models\SellerPackagePayment;
@@ -156,20 +155,18 @@ if (!function_exists('get_active_countries')) {
 if (!function_exists('filter_products')) {
     function filter_products($products)
     {
-
         $products = $products->where('published', '1')->where('auction_product', 0)->where('approved', '1');
 
         if (!addon_is_activated('wholesale')) {
             $products = $products->where('wholesale_product', 0);
         }
+
+       $products = $products->where("is_parent", "!=", 1)
+            ->orWhere("parent_id", "!=", 0);
+
         $verified_sellers = verified_sellers_id();
-        // $unbanned_sellers_id = unbanned_sellers_id();
+
         if (get_setting('vendor_system_activation') == 1) {
-            // return $products->where(function ($p) use ($verified_sellers, $unbanned_sellers_id) {
-            //     $p->where('added_by', 'admin')->orWhere(function ($q) use ($verified_sellers, $unbanned_sellers_id) {
-            //         $q->whereIn('user_id', $verified_sellers)->whereIn('user_id', $unbanned_sellers_id);
-            //     });
-            // });
             return $products->where(function ($p) use ($verified_sellers) {
                 $p->where('added_by', 'admin')->orWhere(function ($q) use ($verified_sellers) {
                     $q->whereIn('user_id', $verified_sellers);
@@ -770,7 +767,7 @@ if (!function_exists('home_discounted_base_price_by_stock_id')) {
 if (!function_exists('home_discounted_base_price')) {
     function home_discounted_base_price($product, $formatted = true)
     {
-        
+
         $product_price = $product->getPricingConfiguration();
         if ($product_price !== null && $product_price->isNotEmpty()) {
             $price = $product_price->first()->unit_price;
