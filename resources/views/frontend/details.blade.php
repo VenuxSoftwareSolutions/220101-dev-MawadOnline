@@ -1,6 +1,31 @@
 <div class="text-left col-md-6 float-left">
     <!-- Product Name -->
     <div class="row">
+        <div class="col-12 sample-option">
+            <button id="product-button" class="sample-option-button col-6 fs-16 font-prompt float-left button-clicked">Buy Product</button>
+            <button id="sample-button" class="sample-option-button col-6 fs-16 font-prompt float-left nonclicked-button">Buy Sample</button>
+        </div>
+    </div>
+    <script>
+        const productButton = document.getElementById("product-button");
+        const sampleButton = document.getElementById("sample-button");
+
+        function toggleButtonStyles(clickedButton, otherButton) {
+            clickedButton.classList.add("button-clicked");
+            clickedButton.classList.remove("nonclicked-button");
+            otherButton.classList.add("nonclicked-button");
+            otherButton.classList.remove("button-clicked");
+        }
+
+        productButton.addEventListener("click", () => {
+            toggleButtonStyles(productButton, sampleButton);
+        });
+
+        sampleButton.addEventListener("click", () => {
+            toggleButtonStyles(sampleButton, productButton);
+        });
+    </script>
+    <div class="row mt-3">
         <div class="col-9">
             <h2 class="mt-1 fs-24 fw-700 text-dark font-prompt-sb">
                 {{ $previewData['detailedProduct']['name'] }}
@@ -33,11 +58,11 @@
             </div>
             @endif --}}
             @if (isset($previewData['detailedProduct']['outStock']) && $previewData['detailedProduct']['outStock']==false )
-            <div id="stock-status-container" class="col-3 d-flex justify-content-end align-items-center">
+            <div id="stock-status-container" class="col-3 d-flex justify-content-end mt-2">
                 <span class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ translate('In Stock') }}</span>
             </div>
             @elseif (isset($previewData['detailedProduct']['outStock']) && $previewData['detailedProduct']['outStock']==true )
-            <div id="stock-status-container" class="col-3 d-flex justify-content-end align-items-center">
+            <div id="stock-status-container" class="col-3 d-flex justify-content-end mt-2">
                 <span class="badge badge-md badge-inline badge-pill badge-danger-light fs-14 font-prompt-md border-radius-8px outof-stock-style">{{ translate('Out Of Stock') }}</span>
             </div>
             @endif
@@ -407,13 +432,14 @@
                         if(($lastItem) && isset($lastItem[$attributeId]) && is_array($lastItem[$attributeId]))
                              $valueStringLastItem =  implode('-', $lastItem[$attributeId]);
                      @endphp
+                     @foreach ($value as $color)
                      <label class="attribute_value aiz-megabox pl-0 mb-0">
                         <input  @if ($valueStringLastItem == $valueString  )
                         checked
                     @endif   niveau={{$niveau}} id="attribute_id_{{$attributeId}}_{{$valueString}}" type="radio" attributeId="{{$attributeId}}"  value="{{$valueString}}" name="attribute_id_{{$attributeId}}"  >
-                        <span class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center">
+                        <span class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center border-none-force">
 
-                        @foreach ($value as $color)
+
 
                         @if (preg_match('/^#[0-9A-F]{6}$/i', $color))
                                <!-- <span class="size-25px d-inline-block rounded" style="background: {{ $color }};"></span>-->
@@ -441,11 +467,11 @@
                         @else
                             {{$color}}
                         @endif
-                        @endforeach
+
                     </span>
 
                     </label>
-
+                    @endforeach
                  @else
 
             <label class="attribute_value aiz-megabox pl-0 mr-2 mb-0">
@@ -831,7 +857,7 @@
                         </div>
                         <div class="float-right">
                             <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}" class="link-style-none">
-                                <button class="fs-14 font-prompt border-radius-8px view-store-btn">View Store</button>
+                                <button class="fs-14 font-prompt border-radius-8px view-store-btn">View e-shop</button>
                             </a>
                         </div>
                         <div class="rating rating-mr-1 text-dark float-left">

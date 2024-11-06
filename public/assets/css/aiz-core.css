@@ -9887,14 +9887,22 @@ div.footable-loader > span.fooicon:after {
     box-shadow: 0 2px 10px rgba(20, 23, 28, 0.13) !important;
 }
 .aiz-carousel .slick-prev {
-    left: 10px;
+    /*left: 10px;*/
+    left:0px;
 }
 .aiz-carousel.hide-disabled .slick-disabled {
     display: none !important;
 }
 
 .aiz-carousel .slick-next {
-    right: 10px;
+    /*right: 10px;*/
+    right: 0px;
+}
+@media only screen and (max-width: 767px) {
+    .aiz-carousel .slick-next {
+        /*right: 10px;*/
+        right: 10px;
+    }
 }
 .aiz-carousel.arrow-dark .slick-arrow {
     width: 25px;
@@ -9956,7 +9964,7 @@ div.footable-loader > span.fooicon:after {
 }
 .aiz-carousel.dots-inside-bottom .slick-dots {
     position: absolute;
-    bottom: 10px;
+    bottom: -25px;
     left: 50%;
     transform: translateX(-50%);
     -webkit-transform: translateX(-50%);
@@ -13253,4 +13261,33 @@ border:none !important;
     .shop-menu-arrow {
         display: block;
     }
+}
+.border-none-force{
+    border: none !important;
+}
+.sample-option{
+   height: 56px;
+   border-radius: 20px;
+   border:solid 1px #DBDCDF;
+   background:#F3F4F5;
+   padding: 4px;
+}
+.sample-option-button {
+    height: 46px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s ease; /* Animation duration and easing */
+}
+ /* Clicked button style */
+ .button-clicked {
+    border-radius: 16px;
+    background: #CB774B;
+    color: #ffffff;
+}
+
+/* Non-clicked button style */
+.nonclicked-button {
+    background: none;
+    color: #7E808A;
 }

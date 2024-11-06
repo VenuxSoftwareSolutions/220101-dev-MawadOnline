@@ -192,7 +192,7 @@
 
     <!-- Featured Categories -->
     @if (count($featured_categories) > 0)
-        <section class="mb-2 mb-md-3 mt-2 mt-md-3">
+        <section class="mb-2 mb-md-3">
             <div class="container">
                 <div class="bg-white">
                     <!-- Top Section -->

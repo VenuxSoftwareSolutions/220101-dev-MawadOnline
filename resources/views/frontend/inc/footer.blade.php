@@ -100,7 +100,7 @@
         </div>-->
         <div class="row" style="border-bottom:solid 1px #63646C;">
             <!-- about & subscription -->
-            <div class="col-xl-6 col-lg-7">
+            <div class="col-xl-6 col-lg-12">
                 <a class="d-block py-20px mr-3 ml-0" href="{{ route('home') }}">
                     @php
                         $header_logo = get_setting('header_logo');
@@ -224,7 +224,7 @@
             @php
                 $col_values = ((get_setting('vendor_system_activation') == 1) || addon_is_activated('delivery_boy')) ? "col-lg-3 col-md-6 col-sm-6" : "col-md-4 col-sm-6";
             @endphp
-            <div class="col d-none d-lg-block font-prompt">
+            <div class="col d-none d-xl-block font-prompt">
                 <!-- Quick links -->
             <div class="{{ $col_values }} float-left my-3 mx-4">
                 <div class="text-center text-sm-left mt-4">
@@ -408,7 +408,7 @@
     </div>
 
     <!-- Accordion Fotter widgets -->
-    <div class="d-lg-none bg-transparent">
+    <div class="d-xl-none bg-transparent">
         <!-- Quick links -->
         <div class="aiz-accordion-wrap bg-black">
             <div class="aiz-accordion-heading container bg-black">
