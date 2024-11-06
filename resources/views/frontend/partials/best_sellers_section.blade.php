@@ -30,7 +30,7 @@
                                                 {{ renderStarRating($seller->rating) }}
                                             </div>
                                             <a href="{{ route('shop.visit', $seller->slug) }}" class="btn btn-soft-primary btn-sm">
-                                                {{ translate('Visit Store') }} <i class="las la-angle-right"></i>
+                                                {{ translate('visit eShop') }} <i class="las la-angle-right"></i>
                                             </a>
                                         </div>
                                     </div>

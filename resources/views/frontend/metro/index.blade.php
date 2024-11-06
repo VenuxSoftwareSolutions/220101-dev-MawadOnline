@@ -615,7 +615,7 @@
                                         <span class="circle" aria-hidden="true">
                                             <span class="icon arrow"></span>
                                         </span>
-                                        <span class="button-text">{{ translate('Visit Store') }}</span>
+                                        <span class="button-text">{{ translate('visit eShop') }}</span>
                                     </a>
                                     @if ($seller->verification_status == 1)
                                         <span class="absolute-top-right mr-05rem mt-05rem">
