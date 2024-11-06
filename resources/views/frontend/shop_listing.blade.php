@@ -76,7 +76,7 @@
                                             <span class="circle" aria-hidden="true">
                                                 <span class="icon arrow"></span>
                                             </span>
-                                            <span class="button-text">{{ translate('Visit Store') }}</span>
+                                            <span class="button-text">{{ translate('visit eShop') }}</span>
                                         </a>
                                     </div>
                                 </div>

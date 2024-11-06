@@ -43,7 +43,7 @@
                     @endif
                     class="ml-3 text-white hov-text-secondary-base fs-13" style="text-decoration: underline;"
                 >
-                    {{ translate('Visit Store') }}
+                    {{ translate('visit eShop') }}
                 </a>
             @endif
         </h3>

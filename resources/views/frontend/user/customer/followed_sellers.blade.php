@@ -39,7 +39,7 @@
                                 </div>
                                 <!-- Visit Button -->
                                 <a href="{{ route('shop.visit', $followed_seller->shop->slug) }}" class="btn btn-light text-gray-dark btn-block btn-sm rounded-0 border fw-700" tabindex="0" style="padding: 0.75rem">
-                                    {{ translate('Visit Store') }}
+                                    {{ translate('visit eShop') }}
                                 </a>
                             </div>
                         </div>
