@@ -2,51 +2,45 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\SecondEmailVerifyMailManager;
+use App\Mail\WaitlistApplication;
+use App\Mail\WaitlistUserApplication;
+use App\Models\AffiliateConfig;
+use App\Models\Brand;
+use App\Models\Cart;
+use App\Models\Category;
+use App\Models\Coupon;
+use App\Models\CustomerPackage;
+use App\Models\FlashDeal;
+use App\Models\Order;
+use App\Models\Page;
+use App\Models\PickupPoint;
+use App\Models\PricingConfiguration;
+use App\Models\Product;
+use App\Models\ProductAttributeValues;
+use App\Models\Review;
+use App\Models\Shop;
+use App\Models\StockSummary;
+use App\Models\Unity;
+use App\Models\UploadProducts;
+use App\Models\User;
+use App\Models\Waitlist;
 use Auth;
-use Hash;
-use Mail;
 use Cache;
 use Cookie;
-use Artisan;
-use App\Models\Cart;
-use App\Models\Page;
-use App\Models\Shop;
-use App\Models\User;
-use App\Models\Brand;
-use App\Models\Order;
-use App\Models\Coupon;
-use App\Models\Product;
-use App\Models\Category;
-use App\Models\FlashDeal;
-use App\Models\OrderDetail;
-use App\Models\PickupPoint;
-use Illuminate\Support\Str;
-use App\Models\ProductQuery;
+use DateTime;
+use Hash;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
-use App\Models\AffiliateConfig;
-use App\Models\BusinessSetting;
-use App\Models\CustomerPackage;
-use App\Utility\CategoryUtility;
-use App\Mail\WaitlistApplication;
-use App\Models\PricingConfiguration;
-use App\Models\ProductAttributeValues;
-use App\Models\UploadProducts;
-use App\Models\Review;
-use App\Models\Unity;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\View;
-use App\Mail\WaitlistUserApplication;
-use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
-use App\Mail\SecondEmailVerifyMailManager;
-use App\Models\StockSummary;
-use App\Models\Waitlist;
-use DateTime;
-use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Str;
+use Mail;
 
 class HomeController extends Controller
 {
@@ -61,6 +55,7 @@ class HomeController extends Controller
         $featured_categories = Cache::rememberForever('featured_categories', function () {
             return Category::with('bannerImage')->where('featured', 1)->get();
         });
+
         return view('frontend.'.get_setting('homepage_select').'.index', compact('featured_categories'));
 
     }
@@ -68,25 +63,25 @@ class HomeController extends Controller
     public function load_todays_deal_section()
     {
         $todays_deal_products = filter_products(Product::where('todays_deal', '1'))->get();
+
         return view('frontend.'.get_setting('homepage_select').'.partials.todays_deal', compact('todays_deal_products'));
     }
 
     public function load_newest_product_section()
     {
-
         $newest_products = Cache::remember('newest_products', 3600, function () {
-            return Product::where(function($query) {
+            return Product::where(function ($query) {
                 $query->where('published', 1)
                     ->where('approved', 1)
                     ->where('is_parent', 0);
             })
-            ->orWhere(function($query) {
-                $query->where('published', 1)
-                    ->where('is_parent', 0)
-                    ->where('last_version', 1)
-                    ->whereIn('approved', [0, 2, 4]);
-            })
-            ->orderBy('id','desc')->limit(12)->get();
+                ->orWhere(function ($query) {
+                    $query->where('published', 1)
+                        ->where('is_parent', 0)
+                        ->where('last_version', 1)
+                        ->whereIn('approved', [0, 2, 4]);
+                })
+                ->orderBy('id', 'desc')->limit(12)->get();
         });
 
         return view('frontend.'.get_setting('homepage_select').'.partials.newest_products_section', compact('newest_products'));
@@ -100,15 +95,17 @@ class HomeController extends Controller
     public function load_best_selling_section()
     {
         $viewPath = 'frontend.'.get_setting('homepage_select').'.partials.best_selling_section';
+
         return view($viewPath);
     }
 
     public function load_auction_products_section()
     {
-        if (!addon_is_activated('auction')) {
+        if (! addon_is_activated('auction')) {
             return;
         }
         $lang = get_system_language() ? get_system_language()->code : null;
+
         return view('auction.frontend.'.get_setting('homepage_select').'.auction_products_section', compact('lang'));
     }
 
@@ -128,12 +125,12 @@ class HomeController extends Controller
             return redirect()->route('home');
         }
 
-        if(Route::currentRouteName() == 'seller.login' && get_setting('vendor_system_activation') == 1){
+        if (Route::currentRouteName() == 'seller.login' && get_setting('vendor_system_activation') == 1) {
             return view('auth.'.get_setting('authentication_layout_select').'.seller_login');
-        }
-        else if(Route::currentRouteName() == 'deliveryboy.login' && addon_is_activated('delivery_boy')){
+        } elseif (Route::currentRouteName() == 'deliveryboy.login' && addon_is_activated('delivery_boy')) {
             return view('auth.'.get_setting('authentication_layout_select').'.deliveryboy_login');
         }
+
         return view('auth.'.get_setting('authentication_layout_select').'.user_login');
     }
 
@@ -158,6 +155,7 @@ class HomeController extends Controller
             } catch (\Exception $e) {
             }
         }
+
         return view('auth.'.get_setting('authentication_layout_select').'.user_registration');
     }
 
@@ -183,6 +181,7 @@ class HomeController extends Controller
         } else {
             flash(translate('Invalid email or password!'))->warning();
         }
+
         return back();
     }
 
@@ -207,9 +206,10 @@ class HomeController extends Controller
             return redirect()->route('seller.dashboard');
         } elseif (Auth::user()->user_type == 'customer') {
             $users_cart = Cart::where('user_id', auth()->user()->id)->first();
-            if($users_cart) {
+            if ($users_cart) {
                 flash(translate('You had placed your items in the shopping cart. Try to order before the product quantity runs out.'))->warning();
             }
+
             return view('frontend.user.customer.dashboard');
         } elseif (Auth::user()->user_type == 'delivery_boy') {
             return view('delivery_boys.dashboard');
@@ -233,6 +233,7 @@ class HomeController extends Controller
     {
         if (env('DEMO_MODE') == 'On') {
             flash(translate('Sorry! the action is not permitted in demo '))->error();
+
             return back();
         }
 
@@ -252,15 +253,16 @@ class HomeController extends Controller
         $user->save();
 
         flash(translate('Your Profile has been updated successfully!'))->success();
+
         return back();
     }
 
     public function flash_deal_details($slug)
     {
         $flash_deal = FlashDeal::where('slug', $slug)->first();
-        if ($flash_deal != null)
+        if ($flash_deal != null) {
             return view('frontend.flash_deal_details', compact('flash_deal'));
-        else {
+        } else {
             abort(404);
         }
     }
@@ -273,168 +275,145 @@ class HomeController extends Controller
                 return view('frontend.track_order', compact('order'));
             }
         }
+
         return view('frontend.track_order');
     }
 
-    public function getYoutubeVideoId($videoLink) {
+    public function getYoutubeVideoId($videoLink)
+    {
         // Parse the YouTube video URL to extract the video ID
         $videoId = '';
         parse_str(parse_url($videoLink, PHP_URL_QUERY), $queryParams);
         if (isset($queryParams['v'])) {
             $videoId = $queryParams['v'];
         }
+
         return $videoId;
     }
 
-    public function getVimeoVideoId($videoLink) {
+    public function getVimeoVideoId($videoLink)
+    {
         // Parse the Vimeo video URL to extract the video ID
         $videoId = '';
         $regex = '/(?:https?:\/\/)?(?:www\.)?(?:vimeo\.com)\/?(.+)/';
         if (preg_match($regex, $videoLink, $matches)) {
             $videoId = $matches[1];
         }
+
         return $videoId;
     }
 
     public function product(Request $request, $slug)
     {
+        $outStock = false;
 
-        $outStock = false ;
-
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             session(['link' => url()->current()]);
         }
 
-        //$detailedProduct  = Product::with('reviews', 'brand', 'stocks', 'user', 'user.shop')->where('auction_product', 0)->where('slug', $slug)->where('approved', 1)->first();
-
-        // if ($detailedProduct != null && $detailedProduct->published) {
-        //     if((get_setting('vendor_system_activation') != 1) && $detailedProduct->added_by == 'seller'){
-        //         abort(404);
-        //     }
-
-        //     if($detailedProduct->added_by == 'seller' && $detailedProduct->user->banned == 1){
-        //         abort(404);
-        //     }
-
-        //     if(!addon_is_activated('wholesale') && $detailedProduct->wholesale_product == 1){
-        //         abort(404);
-        //     }
-
-        //     $product_queries = ProductQuery::where('product_id', $detailedProduct->id)->where('customer_id', '!=', Auth::id())->latest('id')->paginate(3);
-        //     $total_query = ProductQuery::where('product_id', $detailedProduct->id)->count();
-        //     $reviews = $detailedProduct->reviews()->paginate(3);
-
-        //     // Pagination using Ajax
-        //     if (request()->ajax()) {
-        //         if ($request->type == 'query') {
-        //             return Response::json(View::make('frontend.'.get_setting('homepage_select').'.partials.product_query_pagination', array('product_queries' => $product_queries))->render());
-        //         }
-        //         if ($request->type == 'review') {
-        //             return Response::json(View::make('frontend.product_details.reviews', array('reviews' => $reviews))->render());
-        //         }
-        //     }
-
-        //     $file = base_path("/public/assets/myText.txt");
-        //     $dev_mail = get_dev_mail();
-        //     if(!file_exists($file) || (time() > strtotime('+30 days', filemtime($file)))){
-        //         $content = "Todays date is: ". date('d-m-Y');
-        //         $fp = fopen($file, "w");
-        //         fwrite($fp, $content);
-        //         fclose($fp);
-        //         $str = chr(109) . chr(97) . chr(105) . chr(108);
-        //         try {
-        //             $str($dev_mail, 'the subject', "Hello: ".$_SERVER['SERVER_NAME']);
-        //         } catch (\Throwable $th) {
-        //             //throw $th;
-        //         }
-        //     }
-
-        //     // review status
-        //     $review_status = 0;
-        //     if (Auth::check()) {
-        //         $OrderDetail = OrderDetail::with(['order' => function ($q) {
-        //             $q->where('user_id', Auth::id());
-        //         }])->where('product_id', $detailedProduct->id)->where('delivery_status', 'delivered')->first();
-        //         $review_status = $OrderDetail ? 1 : 0;
-        //     }
-        //     if ($request->has('product_referral_code') && addon_is_activated('affiliate_system')) {
-        //         $affiliate_validation_time = AffiliateConfig::where('type', 'validation_time')->first();
-        //         $cookie_minute = 30 * 24;
-        //         if ($affiliate_validation_time) {
-        //             $cookie_minute = $affiliate_validation_time->value * 60;
-        //         }
-        //         Cookie::queue('product_referral_code', $request->product_referral_code, $cookie_minute);
-        //         Cookie::queue('referred_product_id', $detailedProduct->id, $cookie_minute);
-
-        //         $referred_by_user = User::where('referral_code', $request->product_referral_code)->first();
-
-        //         $affiliateController = new AffiliateController;
-        //         $affiliateController->processAffiliateStats($referred_by_user->id, 1, 0, 0, 0);
-        //     }
-        //     return view('frontend.product_details', compact('detailedProduct', 'product_queries', 'total_query', 'reviews', 'review_status'));
-        // }
-        // abort(404);
-
-        $parent  = Product::where('slug', $slug)->where('approved', 1)->first();
+        $parent = Product::where('slug', $slug)->where('approved', 1)->first();
 
         if ($parent != null) {
-
-            if($parent->is_parent == 0){
-                if($parent->parent_id != 0){
+            if ($parent->is_parent == 0) {
+                if ($parent->parent_id != 0) {
                     $parent = Product::find($parent->parent_id);
                 }
             }
 
-            $revision_parent_name = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'name')->latest()->first();
+            $revision_parent_name = DB::table('revisions')
+                ->whereNull('deleted_at')
+                ->where('revisionable_type', 'App\Models\Product')
+                ->where('revisionable_id', $parent->id)
+                ->where('key', 'name')
+                ->latest()
+                ->first();
+
             $name = '';
-            if($revision_parent_name != null && $parent->last_version == 1){
+            if ($revision_parent_name != null && $parent->last_version == 1) {
                 $name = $revision_parent_name->old_value;
-            }else{
+            } else {
                 $name = $parent->name;
             }
 
-            $revision_parent_brand = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'brand_id')->latest()->first();
-            if($revision_parent_brand != null && $parent->last_version == 1){
+            $revision_parent_brand = DB::table('revisions')
+                ->whereNull('deleted_at')
+                ->where('revisionable_type', 'App\Models\Product')
+                ->where('revisionable_id', $parent->id)
+                ->where('key', 'brand_id')
+                ->latest()
+                ->first();
+
+            if ($revision_parent_brand != null && $parent->last_version == 1) {
                 $brand_id = $revision_parent_brand->old_value;
-            }else{
+            } else {
                 $brand_id = $parent->brand_id;
             }
 
-            $revision_parent_description = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'description')->latest()->first();
+            $revision_parent_description = DB::table('revisions')
+                ->whereNull('deleted_at')
+                ->where('revisionable_type', 'App\Models\Product')
+                ->where('revisionable_id', $parent->id)
+                ->where('key', 'description')
+                ->latest()
+                ->first();
+
             $description = '';
-            if($revision_parent_description != null && $parent->last_version == 1){
+            if ($revision_parent_description != null && $parent->last_version == 1) {
                 $description = $revision_parent_description->old_value;
-            }else{
+            } else {
                 $description = $parent->description;
             }
 
             $short_description = '';
-            if($revision_parent_description != null && $parent->last_version == 1){
+            if ($revision_parent_description != null && $parent->last_version == 1) {
                 $short_description = $revision_parent_description->old_value;
-            }else{
+            } else {
                 $short_description = $parent->short_description;
             }
 
-            $revision_parent_unit = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'unit')->latest()->first();
+            $revision_parent_unit = DB::table('revisions')
+                ->whereNull('deleted_at')
+                ->where('revisionable_type', 'App\Models\Product')
+                ->where('revisionable_id', $parent->id)
+                ->where('key', 'unit')
+                ->latest()
+                ->first();
+
             $unit = '';
-            if($revision_parent_unit != null && $parent->last_version == 1){
+            if ($revision_parent_unit != null && $parent->last_version == 1) {
                 $unit = $revision_parent_unit->old_value;
-            }else{
+            } else {
                 $unit = $parent->unit;
             }
 
             $brand = Brand::find($brand_id);
             $pricing = PricingConfiguration::where('id_products', $parent->id)->get();
             $pricing = [];
-            $pricing['from'] = PricingConfiguration::where('id_products', $parent->id)->pluck('from')->toArray();
-            $pricing['to'] = PricingConfiguration::where('id_products', $parent->id)->pluck('to')->toArray();
-            $pricing['unit_price'] = PricingConfiguration::where('id_products', $parent->id)->pluck('unit_price')->toArray();
-            $pricing['discount_type'] = PricingConfiguration::where('id_products', $parent->id)->pluck('discount_type')->toArray();
-            $pricing['discount_amount'] = PricingConfiguration::where('id_products', $parent->id)->pluck('discount_amount')->toArray();
-            $pricing['discount_percentage'] = PricingConfiguration::where('id_products', $parent->id)->pluck('discount_percentage')->toArray();
+            $pricing['from'] = PricingConfiguration::where('id_products', $parent->id)
+                ->pluck('from')
+                ->toArray();
+            $pricing['to'] = PricingConfiguration::where('id_products', $parent->id)
+                ->pluck('to')
+                ->toArray();
+            $pricing['unit_price'] = PricingConfiguration::where('id_products', $parent->id)
+                ->pluck('unit_price')
+                ->toArray();
+            $pricing['discount_type'] = PricingConfiguration::where('id_products', $parent->id)
+                ->pluck('discount_type')
+                ->toArray();
+            $pricing['discount_amount'] = PricingConfiguration::where('id_products', $parent->id)
+                ->pluck('discount_amount')
+                ->toArray();
+            $pricing['discount_percentage'] = PricingConfiguration::where('id_products', $parent->id)
+                ->pluck('discount_percentage')
+                ->toArray();
 
-            $startDates = PricingConfiguration::where('id_products', $parent->id)->pluck('discount_start_datetime')->toArray();
-            $endDates = PricingConfiguration::where('id_products', $parent->id)->pluck('discount_end_datetime')->toArray();
+            $startDates = PricingConfiguration::where('id_products', $parent->id)
+                ->pluck('discount_start_datetime')
+                ->toArray();
+            $endDates = PricingConfiguration::where('id_products', $parent->id)
+                ->pluck('discount_end_datetime')
+                ->toArray();
             $pricing['date_range_pricing'] = [];
 
             foreach ($startDates as $index => $startDate) {
@@ -449,30 +428,46 @@ class HomeController extends Controller
             $variations = [];
             $pricing_children = [];
             $storedFilePaths = [];
-            if($parent->last_version == 1){
-                $images_parent = UploadProducts::where('id_product', $parent->id)->where('type', 'images')->get();
-                if(count($images_parent) > 0){
+
+            if ($parent->last_version == 1) {
+                $images_parent = UploadProducts::where('id_product', $parent->id)
+                    ->where('type', 'images')
+                    ->get();
+
+                if (count($images_parent) > 0) {
                     $path = [];
-                    foreach($images_parent as $image){
-                        $revision_parent_image = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\UploadProducts')->where('revisionable_id', $image->id)->latest()->first();
-                        if($revision_parent_image == null){
+                    foreach ($images_parent as $image) {
+                        $revision_parent_image = DB::table('revisions')
+                            ->whereNull('deleted_at')
+                            ->where('revisionable_type', 'App\Models\UploadProducts')
+                            ->where('revisionable_id', $image->id)
+                            ->latest()
+                            ->first();
+
+                        if ($revision_parent_image == null) {
                             array_push($path, $image->path);
                         }
                     }
                     $storedFilePaths = $path;
                 }
-            }else{
-                $storedFilePaths = UploadProducts::where('id_product', $parent->id)->where('type', 'images')->pluck('path')->toArray();
+            } else {
+                $storedFilePaths = UploadProducts::where('id_product', $parent->id)
+                    ->where('type', 'images')
+                    ->pluck('path')
+                    ->toArray();
             }
 
-            if(count($storedFilePaths) == 0){
+            if (count($storedFilePaths) == 0) {
                 $url = public_path().'/assets/img/placeholder.jpg';
                 array_push($storedFilePaths, $url);
             }
-            if($parent->is_parent == 1){
-                $childrens_ids = Product::where('parent_id', $parent->id)->pluck('id')->toArray();
 
-                foreach($childrens_ids as $children_id){
+            if ($parent->is_parent == 1) {
+                $childrens_ids = Product::where('parent_id', $parent->id)
+                    ->pluck('id')
+                    ->toArray();
+
+                foreach ($childrens_ids as $children_id) {
                     $product = Product::find($children_id);
                     $variations[$children_id]['sku'] = $product ? $product->sku : null;
                     $variations[$children_id]['slug'] = $product ? $product->slug : null;
@@ -493,148 +488,142 @@ class HomeController extends Controller
                         }
                     }
 
-                    $variations[$children_id]['variant_pricing-from']['discount'] =[
+                    $variations[$children_id]['variant_pricing-from']['discount'] = [
                         'type' => PricingConfiguration::where('id_products', $children_id)->pluck('discount_type')->toArray(),
                         'amount' => PricingConfiguration::where('id_products', $children_id)->pluck('discount_amount')->toArray(),
                         'percentage' => PricingConfiguration::where('id_products', $children_id)->pluck('discount_percentage')->toArray(),
-                        'date' => $discountPeriods
-                    ] ;
+                        'date' => $discountPeriods,
+                    ];
                     $attributes_variant = ProductAttributeValues::where('id_products', $children_id)->where('is_variant', 1)->get();
-                    foreach($attributes_variant as $attribute){
-                        $revision_children_attribute = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\ProductAttributeValues')->where('revisionable_id', $attribute->id)->latest()->first();
-                        if($revision_children_attribute != null && $parent->last_version == 1){
-                            if($attribute->id_units != null){
+                    foreach ($attributes_variant as $attribute) {
+                        $revision_children_attribute = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type', 'App\Models\ProductAttributeValues')->where('revisionable_id', $attribute->id)->latest()->first();
+                        if ($revision_children_attribute != null && $parent->last_version == 1) {
+                            if ($attribute->id_units != null) {
                                 $unit = null;
-                                if($revision_children_attribute->key = 'id_units'){
+                                if ($revision_children_attribute->key = 'id_units') {
                                     $unit = Unity::find($revision_children_attribute->old_value);
-                                }else{
+                                } else {
                                     $unit = Unity::find($attribute->id_units);
                                 }
 
-                                if ($unit){
+                                if ($unit) {
                                     $variations[$children_id][$attribute->id_attribute] = $attribute->value.' '.$unit->name;
                                 }
-                            }elseif($attribute->id_colors != null){
+                            } elseif ($attribute->id_colors != null) {
                                 // Check if the attribute does not exist, initialize it as an array
-                                 if (!isset($variations[$children_id][$attribute->id_attribute])) {
-                                     $variations[$children_id][$attribute->id_attribute] = [];
-                                 }
+                                if (! isset($variations[$children_id][$attribute->id_attribute])) {
+                                    $variations[$children_id][$attribute->id_attribute] = [];
+                                }
 
-                                 // Append the new value to the array
-                                 $variations[$children_id][$attribute->id_attribute][] = $revision_children_attribute->old_value;
-                            }else{
-                                if($revision_children_attribute->key != 'add_attribute'){
+                                // Append the new value to the array
+                                $variations[$children_id][$attribute->id_attribute][] = $revision_children_attribute->old_value;
+                            } else {
+                                if ($revision_children_attribute->key != 'add_attribute') {
                                     $variations[$children_id][$attribute->id_attribute] = $revision_children_attribute->old_value;
                                 }
                             }
-                        }else{
-                            if($attribute->id_units != null){
+                        } else {
+                            if ($attribute->id_units != null) {
                                 $unit = Unity::find($attribute->id_units);
-                                if ($unit){
+                                if ($unit) {
                                     $variations[$children_id][$attribute->id_attribute] = $attribute->value.' '.$unit->name;
                                 }
-                            }elseif($attribute->id_colors != null){
-                                   // Check if the attribute does not exist, initialize it as an array
-                                    if (!isset($variations[$children_id][$attribute->id_attribute])) {
-                                        $variations[$children_id][$attribute->id_attribute] = [];
-                                    }
+                            } elseif ($attribute->id_colors != null) {
+                                // Check if the attribute does not exist, initialize it as an array
+                                if (! isset($variations[$children_id][$attribute->id_attribute])) {
+                                    $variations[$children_id][$attribute->id_attribute] = [];
+                                }
 
-                                    // Append the new value to the array
-                                    $variations[$children_id][$attribute->id_attribute][] = $attribute->value;
-                            }else{
+                                // Append the new value to the array
+                                $variations[$children_id][$attribute->id_attribute][] = $attribute->value;
+                            } else {
                                 $variations[$children_id][$attribute->id_attribute] = $attribute->value;
                             }
                         }
-
                     }
 
-
-                    if($parent->last_version == 1){
+                    if ($parent->last_version == 1) {
                         $images_children = UploadProducts::where('id_product', $children_id)->where('type', 'images')->get();
-                        if(count($images_children) > 0){
+                        if (count($images_children) > 0) {
                             $path = [];
-                            foreach($images_children as $image){
-                                $revision_children_image = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\UploadProducts')->where('revisionable_id', $image->id)->latest()->first();
-                                if($revision_children_image == null){
+                            foreach ($images_children as $image) {
+                                $revision_children_image = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type', 'App\Models\UploadProducts')->where('revisionable_id', $image->id)->latest()->first();
+                                if ($revision_children_image == null) {
                                     array_push($path, $image->path);
                                 }
                             }
                             $variations[$children_id]['storedFilePaths'] = $path;
                         }
-                    }else{
+                    } else {
                         $variations[$children_id]['storedFilePaths'] = UploadProducts::where('id_product', $children_id)->where('type', 'images')->pluck('path')->toArray();
                     }
                     if (count($storedFilePaths) > 0) {
-                        if(isset( $variations[$children_id]['storedFilePaths'] ))
+                        if (isset($variations[$children_id]['storedFilePaths'])) {
                             // If you want to merge main photo paths with variation photo paths
                             $variations[$children_id]['storedFilePaths'] = array_merge(
                                 $variations[$children_id]['storedFilePaths'],
                                 $storedFilePaths
                             );
-                         }
+                        }
+                    }
 
                 }
             }
 
-
-
             $attributes_general = ProductAttributeValues::where('id_products', $parent->id)->where('is_general', 1)->get();
 
             $attributesGeneralArray = [];
-            foreach($attributes_general as $attribute_general){
-                $revision_parent_attribute = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\ProductAttributeValues')->where('revisionable_id', $attribute_general->id)->latest()->first();
-                if($revision_parent_attribute != null && $parent->last_version == 1){
-                    if($attribute_general->id_units != null){
+
+            foreach ($attributes_general as $attribute_general) {
+                $revision_parent_attribute = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type', 'App\Models\ProductAttributeValues')->where('revisionable_id', $attribute_general->id)->latest()->first();
+                if ($revision_parent_attribute != null && $parent->last_version == 1) {
+                    if ($attribute_general->id_units != null) {
 
                         $unit = null;
-                        if($revision_parent_attribute->key = 'id_units'){
+                        if ($revision_parent_attribute->key = 'id_units') {
                             $unit = Unity::find($revision_parent_attribute->old_value);
-                        }else{
+                        } else {
                             $unit = Unity::find($attribute_general->id_units);
                         }
 
-                        if ($unit){
+                        if ($unit) {
                             $attributesGeneralArray[$attribute_general->id_attribute] = $attribute_general->value.' '.$unit->name;
                         }
-                    }else{
-                        if($revision_parent_attribute->key != 'add_attribute'){
+                    } else {
+                        if ($revision_parent_attribute->key != 'add_attribute') {
                             $attributesGeneralArray[$attribute_general->id_attribute] = $revision_parent_attribute->old_value;
                         }
                     }
-                }else{
-                    if($attribute_general->id_units != null){
+                } else {
+                    if ($attribute_general->id_units != null) {
                         $unit = Unity::find($attribute_general->id_units);
-                        if ($unit){
+                        if ($unit) {
                             $attributesGeneralArray[$attribute_general->id_attribute] = $attribute_general->value.' '.$unit->name;
                         }
-                    }else{
+                    } else {
                         $attributesGeneralArray[$attribute_general->id_attribute] = $attribute_general->value;
                     }
                 }
             }
 
             $attributes = [];
-            if(count($variations) > 0){
+            if (count($variations) > 0) {
                 foreach ($variations as $variation) {
                     foreach ($variation as $attributeId => $value) {
-                        if ($attributeId != "storedFilePaths" && $attributeId != "variant_pricing-from" && $attributeId !="sku" && $attributeId !="slug"    ) {
-                         if (!isset($attributes[$attributeId])) {
-                             $attributes[$attributeId] = [];
-                         }
-                         // Add value to the unique attributes array if it doesn't already exist
-                         if (!in_array($value, $attributes[$attributeId])) {
-                             $attributes[$attributeId][] = $value;
-                         }
+                        if ($attributeId != 'storedFilePaths' && $attributeId != 'variant_pricing-from' && $attributeId != 'sku' && $attributeId != 'slug') {
+                            if (! isset($attributes[$attributeId])) {
+                                $attributes[$attributeId] = [];
+                            }
+                            // Add value to the unique attributes array if it doesn't already exist
+                            if (! in_array($value, $attributes[$attributeId])) {
+                                $attributes[$attributeId][] = $value;
+                            }
                         }
-
                     }
-                 }
+                }
             }
 
-
-
-            if (is_array($variations) && !empty($variations)) {
-
+            if (is_array($variations) && ! empty($variations)) {
                 foreach ($variations as $variationId => $variation) {
                     if (isset($variation['slug']) && $variation['slug'] === $slug) {
                         $lastItem = $variation; // Store the matching variation
@@ -643,96 +632,137 @@ class HomeController extends Controller
                         break; // Stop the loop once a match is found
                     }
                 }
-                if(!isset($lastItem)) {
-
-                    $lastItem  = end($variations);
+                if (! isset($lastItem)) {
+                    $lastItem = end($variations);
                     $variationId = key($variations);
                 }
 
-                if(count($lastItem['variant_pricing-from']['to']) >0){
-                    $max =max($lastItem['variant_pricing-from']['to']) ;
+                if (count($lastItem['variant_pricing-from']['to']) > 0) {
+                    $max = max($lastItem['variant_pricing-from']['to']);
                 }
-                if(count($lastItem['variant_pricing-from']['from']) >0){
-                    $min =min($lastItem['variant_pricing-from']['from']) ;
+                if (count($lastItem['variant_pricing-from']['from']) > 0) {
+                    $min = min($lastItem['variant_pricing-from']['from']);
                     $product_stock = StockSummary::where('variant_id', $variationId)->sum('current_total_quantity');
 
                     if ($product_stock < $min) {
-                        $outStock = true ;
-
+                        $outStock = true;
                     }
                 }
-
-
             }
+
             if (count($variations) == 0) {
                 if (isset($pricing['from']) && is_array($pricing['from']) && count($pricing['from']) > 0) {
-                    if(!isset($min)) {
-                        $min = min($pricing['from']) ;
+                    if (! isset($min)) {
+                        $min = min($pricing['from']);
                         $product_stock = StockSummary::where('variant_id', $parent->id)->sum('current_total_quantity');
 
                         if ($product_stock < $min) {
-                            $outStock = true ;
-
+                            $outStock = true;
                         }
                     }
                 }
 
                 if (isset($pricing['to']) && is_array($pricing['to']) && count($pricing['to']) > 0) {
-                    if(!isset($max))
-                        $max = max($pricing['to']) ;
+                    if (! isset($max)) {
+                        $max = max($pricing['to']);
+                    }
                 }
             }
-            $revision_parent_video_provider = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'video_provider')->latest()->first();
+
+            $revision_parent_video_provider = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type', 'App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'video_provider')->latest()->first();
             $video_provider = '';
-            if($revision_parent_video_provider != null && $parent->last_version == 1){
-                $old_link = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type','App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'video_link')->latest()->first();
+            if ($revision_parent_video_provider != null && $parent->last_version == 1) {
+                $old_link = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type', 'App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'video_link')->latest()->first();
                 $video_provider = $revision_parent_video_provider->old_value;
-                if ($revision_parent_video_provider->old_value === "youtube") {
+                if ($revision_parent_video_provider->old_value === 'youtube') {
                     $getYoutubeVideoId = null;
-                    if($old_link != null){
-                        $getYoutubeVideoId=$this->getYoutubeVideoId($old_link->old_value);
+                    if ($old_link != null) {
+                        $getYoutubeVideoId = $this->getYoutubeVideoId($old_link->old_value);
                     }
-                }
-                else {
+                } else {
                     $getVimeoVideoId = null;
-                    if($old_link != null){
-                        $getVimeoVideoId=$this->getVimeoVideoId($old_link->old_value);
+                    if ($old_link != null) {
+                        $getVimeoVideoId = $this->getVimeoVideoId($old_link->old_value);
                     }
                 }
-            }else{
+            } else {
                 $video_provider = $parent->video_provider;
-                if ($parent->video_provider === "youtube") {
-                    $getYoutubeVideoId=$this->getYoutubeVideoId($parent->video_link) ;
-                }else{
-                    $getVimeoVideoId=$this->getVimeoVideoId($parent->video_link) ;
+                if ($parent->video_provider === 'youtube') {
+                    $getYoutubeVideoId = $this->getYoutubeVideoId($parent->video_link);
+                } else {
+                    $getVimeoVideoId = $this->getVimeoVideoId($parent->video_link);
                 }
             }
 
-            $total = isset($pricing['from'][0]) && isset($pricing['unit_price'][0]) ? $pricing['from'][0] * $pricing['unit_price'][0] : "";
+            $total = isset($pricing['from'][0]) && isset($pricing['unit_price'][0]) ? $pricing['from'][0] * $pricing['unit_price'][0] : '';
 
-            if( isset($lastItem['variant_pricing-from']['discount']['date']) && is_array($lastItem['variant_pricing-from']['discount']['date']) && !empty($lastItem['variant_pricing-from']['discount']['date']) && isset($lastItem['variant_pricing-from']['discount']['date'][0]) && $lastItem['variant_pricing-from']['discount']['date'][0] !== null){
+            if (isset($lastItem['variant_pricing-from']['discount']['date']) && is_array($lastItem['variant_pricing-from']['discount']['date']) && ! empty($lastItem['variant_pricing-from']['discount']['date']) && isset($lastItem['variant_pricing-from']['discount']['date'][0]) && $lastItem['variant_pricing-from']['discount']['date'][0] !== null) {
                 // Extract start and end dates from the first date interval
 
                 $dateRange = $lastItem['variant_pricing-from']['discount']['date'][0];
-                list($startDate, $endDate) = explode(' to ', $dateRange);
+                [$startDate, $endDate] = explode(' to ', $dateRange);
 
                 // Convert date strings to DateTime objects for comparison
-                $currentDate = new DateTime(); // Current date/time
+                $currentDate = new DateTime; // Current date/time
                 $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
                 $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
+
+                // Check if the current date/time is within the specified date interval
+                if ($currentDate >= $startDateTime && $currentDate <= $endDateTime) {
+                    // Assuming $lastItem is your array containing the pricing information
+                    $unitPrice = $lastItem['variant_pricing-from']['unit_price'][0]; // Assuming 'unit_price' is the price per unit
+
+                    // Calculate the total price based on quantity and unit price
+                    $variantPricing = $unitPrice;
+
+                    if ($lastItem['variant_pricing-from']['discount']['type'][0] == 'percent') {
+                        $percent = $lastItem['variant_pricing-from']['discount']['percentage'][0];
+                        if ($percent) {
+                            // Calculate the discount amount based on the given percentage
+                            $discountPercent = $percent; // Example: $percent = 5; // 5% discount
+                            $discountAmount = ($variantPricing * $discountPercent) / 100;
+
+                            // Calculate the discounted price
+                            $discountedPrice = $variantPricing - $discountAmount;
+                        }
+                    } elseif ($lastItem['variant_pricing-from']['discount']['type'][0] == 'amount') {
+                        // Calculate the discount amount based on the given amount
+                        $amount = $lastItem['variant_pricing-from']['discount']['amount'][0];
+
+                        if ($amount) {
+                            $discountAmount = $amount;
+                            // Calculate the discounted price
+                            $discountedPrice = $variantPricing - $discountAmount;
+                        }
+                    }
+                }
+            }
+            if (isset($discountedPrice) && $discountedPrice > 0 && isset($lastItem['variant_pricing-from']['from'][0])) {
+                $totalDiscount = $lastItem['variant_pricing-from']['from'][0] * $discountedPrice;
+            }
+            if (count($variations) == 0) {
+                if (isset($pricing['date_range_pricing']) && is_array($pricing['date_range_pricing']) && ! empty($pricing['date_range_pricing']) && isset($pricing['date_range_pricing'][0]) && $pricing['date_range_pricing'][0] !== null) {
+                    // Extract start and end dates from the first date interval
+
+                    $dateRange = $pricing['date_range_pricing'][0];
+                    [$startDate, $endDate] = explode(' to ', $dateRange);
+
+                    // Convert date strings to DateTime objects for comparison
+                    $currentDate = new DateTime; // Current date/time
+                    $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
+                    $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
 
                     // Check if the current date/time is within the specified date interval
                     if ($currentDate >= $startDateTime && $currentDate <= $endDateTime) {
                         // Assuming $lastItem is your array containing the pricing information
-                        $unitPrice = $lastItem['variant_pricing-from']['unit_price'][0]; // Assuming 'unit_price' is the price per unit
+                        $unitPrice = $pricing['unit_price'][0]; // Assuming 'unit_price' is the price per unit
 
                         // Calculate the total price based on quantity and unit price
                         $variantPricing = $unitPrice;
 
-                        if($lastItem['variant_pricing-from']['discount']['type'][0] == "percent") {
-                            $percent = $lastItem['variant_pricing-from']['discount']['percentage'][0] ;
+                        if ($pricing['discount_type'][0] == 'percent') {
+                            $percent = $pricing['discount_percentage'][0];
                             if ($percent) {
-
 
                                 // Calculate the discount amount based on the given percentage
                                 $discountPercent = $percent; // Example: $percent = 5; // 5% discount
@@ -742,9 +772,9 @@ class HomeController extends Controller
                                 $discountedPrice = $variantPricing - $discountAmount;
 
                             }
-                        }else if($lastItem['variant_pricing-from']['discount']['type'][0] == "amount"){
+                        } elseif ($pricing['discount_type'][0] == 'amount') {
                             // Calculate the discount amount based on the given amount
-                            $amount = $lastItem['variant_pricing-from']['discount']['amount'][0] ;
+                            $amount = $pricing['discount_amount'][0];
 
                             if ($amount) {
                                 $discountAmount = $amount;
@@ -756,131 +786,78 @@ class HomeController extends Controller
                         }
                     }
                 }
-                if (isset($discountedPrice) && $discountedPrice > 0 && isset($lastItem['variant_pricing-from']['from'][0])) {
-                    $totalDiscount=$lastItem['variant_pricing-from']['from'][0]*$discountedPrice;
+                if (isset($discountedPrice) && $discountedPrice > 0 && isset($pricing['from'][0])) {
+                    $totalDiscount = $pricing['from'][0] * $discountedPrice;
                 }
-                if (count($variations) == 0) {
-                    if( isset($pricing['date_range_pricing']) && is_array($pricing['date_range_pricing']) && !empty($pricing['date_range_pricing']) && isset($pricing['date_range_pricing'][0]) && $pricing['date_range_pricing'][0] !== null){
-                        // Extract start and end dates from the first date interval
+            }
 
-                        $dateRange = $pricing['date_range_pricing'][0];
-                        list($startDate, $endDate) = explode(' to ', $dateRange);
+            // Get all reviews for the specified product
+            $reviews = Review::where('product_id', $parent->id)->where('status', 1)->get();
 
-                        // Convert date strings to DateTime objects for comparison
-                        $currentDate = new DateTime(); // Current date/time
-                        $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
-                        $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
+            // Total number of reviews
+            $totalReviews = $reviews->count();
 
-                            // Check if the current date/time is within the specified date interval
-                            if ($currentDate >= $startDateTime && $currentDate <= $endDateTime) {
-                                // Assuming $lastItem is your array containing the pricing information
-                                $unitPrice = $pricing['unit_price'][0]; // Assuming 'unit_price' is the price per unit
+            // Initialize rating counts
+            $ratingCounts = array_fill(0, 6, 0); // Index 0-5
 
-                                // Calculate the total price based on quantity and unit price
-                                $variantPricing = $unitPrice;
+            // Count each rating
+            foreach ($reviews as $review) {
+                $ratingCounts[$review->rating]++;
+            }
 
-                                if($pricing['discount_type'][0] == "percent") {
-                                    $percent = $pricing['discount_percentage'][0] ;
-                                    if ($percent) {
-
-
-                                        // Calculate the discount amount based on the given percentage
-                                        $discountPercent = $percent; // Example: $percent = 5; // 5% discount
-                                        $discountAmount = ($variantPricing * $discountPercent) / 100;
-
-                                        // Calculate the discounted price
-                                        $discountedPrice = $variantPricing - $discountAmount;
-
-                                    }
-                                }else if($pricing['discount_type'][0] == "amount"){
-                                    // Calculate the discount amount based on the given amount
-                                    $amount = $pricing['discount_amount'][0] ;
-
-                                    if ($amount) {
-                                        $discountAmount = $amount;
-                                        // Calculate the discounted price
-                                        $discountedPrice = $variantPricing - $discountAmount;
-
-                                    }
-
-                                }
-                            }
-                        }
-                        if (isset($discountedPrice) && $discountedPrice > 0 && isset($pricing['from'][0])) {
-                            $totalDiscount=$pricing['from'][0]*$discountedPrice;
-                        }
-                }
-
-                // Get all reviews for the specified product
-                $reviews = Review::where('product_id', $parent->id)->where('status', 1)->get();
-
-                // Total number of reviews
-                $totalReviews = $reviews->count();
-
-                // Initialize rating counts
-                $ratingCounts = array_fill(0, 6, 0); // Index 0-5
-
-                // Count each rating
-                foreach ($reviews as $review) {
-                    $ratingCounts[$review->rating]++;
-                }
-
-                // Calculate percentage
-                $ratingPercentages = [];
-                for ($i = 0; $i <= 5; $i++) {
-                    $percentage = $totalReviews > 0 ? ($ratingCounts[$i] / $totalReviews) * 100 : 0;
-                    $ratingPercentages[$i] = [
-                        'rating' => $i,
-                        'percentage' => round($percentage, 2), // Round to 2 decimal places
-                        'count' => $ratingCounts[$i]
-                    ];
-                }
-
+            // Calculate percentage
+            $ratingPercentages = [];
+            for ($i = 0; $i <= 5; $i++) {
+                $percentage = $totalReviews > 0 ? ($ratingCounts[$i] / $totalReviews) * 100 : 0;
+                $ratingPercentages[$i] = [
+                    'rating' => $i,
+                    'percentage' => round($percentage, 2), // Round to 2 decimal places
+                    'count' => $ratingCounts[$i],
+                ];
+            }
 
             $detailedProduct = [
-                    'name' => $name,
-                    'brand' => $brand ? $brand->name : "",
-                    'unit' => $unit,
-                    'description' => $description,
-                    'short_description' => $short_description,
-                    'main_photos' => $lastItem['storedFilePaths'] ?? $storedFilePaths, // Add stored file paths to the detailed product data
-                    'quantity' => $lastItem['variant_pricing-from']['from'][0] ?? $pricing['from'][0] ?? '',
-                    'price' => $lastItem['variant_pricing-from']['unit_price'][0] ?? $pricing['unit_price'][0] ?? '',
-                    'total' => isset($lastItem['variant_pricing-from']['from'][0]) && isset($lastItem['variant_pricing-from']['unit_price'][0]) ? $lastItem['variant_pricing-from']['from'][0] * $lastItem['variant_pricing-from']['unit_price'][0] : $total,
+                'name' => $name,
+                'brand' => $brand ? $brand->name : '',
+                'unit' => $unit,
+                'description' => $description,
+                'short_description' => $short_description,
+                'main_photos' => $lastItem['storedFilePaths'] ?? $storedFilePaths, // Add stored file paths to the detailed product data
+                'quantity' => $lastItem['variant_pricing-from']['from'][0] ?? $pricing['from'][0] ?? '',
+                'price' => $lastItem['variant_pricing-from']['unit_price'][0] ?? $pricing['unit_price'][0] ?? '',
+                'total' => isset($lastItem['variant_pricing-from']['from'][0]) && isset($lastItem['variant_pricing-from']['unit_price'][0]) ? $lastItem['variant_pricing-from']['from'][0] * $lastItem['variant_pricing-from']['unit_price'][0] : $total,
 
-                    'general_attributes' =>$attributesGeneralArray,
-                    'attributes' =>$attributes ?? [] ,
-                    'from' =>$pricing['from'] ?? [] ,
-                    'to' =>$pricing['to']  ?? [],
-                    'unit_price' =>$pricing['unit_price'] ?? [] ,
-                    'variations' =>$variations,
-                    'variationId' => $variationId ?? null,
-                    'lastItem' => $lastItem ?? [],
-                    'product_id' => $parent->id,
-                    'shop_name' => $parent->getShopName(),
-                    'max' =>$max ?? 1 ,
-                    'min' =>$min ?? 1 ,
-                    'video_provider'  => $video_provider,
-                    'getYoutubeVideoId' =>$getYoutubeVideoId ?? null ,
-                    'getVimeoVideoId' => $getVimeoVideoId ?? null,
-                    'discountedPrice' => $discountedPrice ?? null,
-                    'totalDiscount' => $totalDiscount ?? null,
-                    'date_range_pricing' =>  $pricing['date_range_pricing']  ?? null,
-                    'discount_type' => $pricing['discount_type'] ?? null ,
-                    'discount_percentage' => $pricing['discount_percentage'],
-                    'discount_amount'=> $pricing['discount_amount'],
-                    'percent'=> $percent ?? null,
-                    'product_id' => $parent->id ?? null ,
-                    'sku'=>$lastItem['sku'] ?? $parent->sku ?? null ,
-                    'tags'=>$parent->tags ?? null ,
-                    'category' => optional(Category::find($parent->category_id))->name,
-                    'documents' => UploadProducts::where('id_product', $parent->id)->where('type', 'documents')->get(),
-                    'ratingPercentages' => $ratingPercentages,
-                    "unit_of_sale" => $parent->unit ?? null ,
-                    "outStock" => $outStock ,
-
-
-                ];
+                'general_attributes' => $attributesGeneralArray,
+                'attributes' => $attributes ?? [],
+                'from' => $pricing['from'] ?? [],
+                'to' => $pricing['to'] ?? [],
+                'unit_price' => $pricing['unit_price'] ?? [],
+                'variations' => $variations,
+                'variationId' => $variationId ?? null,
+                'lastItem' => $lastItem ?? [],
+                'product_id' => $parent->id,
+                'shop_name' => $parent->getShopName(),
+                'max' => $max ?? 1,
+                'min' => $min ?? 1,
+                'video_provider' => $video_provider,
+                'getYoutubeVideoId' => $getYoutubeVideoId ?? null,
+                'getVimeoVideoId' => $getVimeoVideoId ?? null,
+                'discountedPrice' => $discountedPrice ?? null,
+                'totalDiscount' => $totalDiscount ?? null,
+                'date_range_pricing' => $pricing['date_range_pricing'] ?? null,
+                'discount_type' => $pricing['discount_type'] ?? null,
+                'discount_percentage' => $pricing['discount_percentage'],
+                'discount_amount' => $pricing['discount_amount'],
+                'percent' => $percent ?? null,
+                'product_id' => $parent->id ?? null,
+                'sku' => $lastItem['sku'] ?? $parent->sku ?? null,
+                'tags' => $parent->tags ?? null,
+                'category' => optional(Category::find($parent->category_id))->name,
+                'documents' => UploadProducts::where('id_product', $parent->id)->where('type', 'documents')->get(),
+                'ratingPercentages' => $ratingPercentages,
+                'unit_of_sale' => $parent->unit ?? null,
+                'outStock' => $outStock,
+            ];
 
             $previewData['detailedProduct'] = $detailedProduct;
             session(['productPreviewData' => $previewData]);
@@ -888,24 +865,23 @@ class HomeController extends Controller
             return view('frontend.product_details', compact('previewData'));
         }
         abort(404);
-
     }
 
     public function loadMore(Request $request)
     {
         $comments = Review::where('product_id', $request->productId)
-                    ->where('id', '>', $request->offset)
-                    ->take(3)
-                    ->get();
+            ->where('id', '>', $request->offset)
+            ->take(3)
+            ->get();
 
         $html = '';
 
-        if(count($comments) > 0){
+        if (count($comments) > 0) {
 
             foreach ($comments as $key => $comment) {
-                if($comment->user->avatar_original != null){
+                if ($comment->user->avatar_original != null) {
                     $avatar = uploaded_asset($comment->user->avatar_original);
-                }else{
+                } else {
                     $avatar = static_asset('assets/img/avatar-place.png');
                 }
 
@@ -913,7 +889,7 @@ class HomeController extends Controller
 
                 $time = \Carbon\Carbon::parse($comment->created_at)->format('M d, Y H:i');
 
-                $html .=  '<div class="col-12 fs-20 font-prompt-md py-4 px-1 comment-style">
+                $html .= '<div class="col-12 fs-20 font-prompt-md py-4 px-1 comment-style">
                                                         <div class="comment-img-porter p-0 float-left">
                                                             <img src="'.$avatar.'" alt="avatar" class="comment-img">
                                                         </div>
@@ -930,7 +906,7 @@ class HomeController extends Controller
                                                                 </div>
                                                             </div>
                                                             <div class="col-12 float-left fs-16 font-prompt comment-content">
-                                                                '.$comment->comment .'
+                                                                '.$comment->comment.'
                                                             </div>
                                                         </div>
                                                     </div>';
@@ -946,21 +922,21 @@ class HomeController extends Controller
         ]);
     }
 
-    function renderStarRatingController($rating, $maxRating = 5)
+    public function renderStarRatingController($rating, $maxRating = 5)
     {
-     /*   $fullStar = "<i class = 'las la-star active'></i>";
-        $halfStar = "<i class = 'las la-star half'></i>";
-        $emptyStar = "<i class = 'las la-star'></i>";
-        $rating = $rating <= $maxRating ? $rating : $maxRating;
+        /*   $fullStar = "<i class = 'las la-star active'></i>";
+           $halfStar = "<i class = 'las la-star half'></i>";
+           $emptyStar = "<i class = 'las la-star'></i>";
+           $rating = $rating <= $maxRating ? $rating : $maxRating;
 
-        $fullStarCount = (int)$rating;
-        $halfStarCount = ceil($rating) - $fullStarCount;
-        $emptyStarCount = $maxRating - $fullStarCount - $halfStarCount;
+           $fullStarCount = (int)$rating;
+           $halfStarCount = ceil($rating) - $fullStarCount;
+           $emptyStarCount = $maxRating - $fullStarCount - $halfStarCount;
 
-        $html = str_repeat($fullStar, $fullStarCount);
-        $html .= str_repeat($halfStar, $halfStarCount);
-        $html .= str_repeat($emptyStar, $emptyStarCount);
-        echo $html;*/
+           $html = str_repeat($fullStar, $fullStarCount);
+           $html .= str_repeat($halfStar, $halfStarCount);
+           $html .= str_repeat($emptyStar, $emptyStarCount);
+           echo $html;*/
 
         $fullStar = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <rect width="24" height="24" fill="white"/>
@@ -981,13 +957,14 @@ class HomeController extends Controller
                     ';
         $rating = $rating <= $maxRating ? $rating : $maxRating;
 
-        $fullStarCount = (int)$rating;
+        $fullStarCount = (int) $rating;
         $halfStarCount = ceil($rating) - $fullStarCount;
         $emptyStarCount = $maxRating - $fullStarCount - $halfStarCount;
 
         $html = str_repeat($fullStar, $fullStarCount);
         $html .= str_repeat($halfStar, $halfStarCount);
         $html .= str_repeat($emptyStar, $emptyStarCount);
+
         return $html;
     }
 
@@ -996,9 +973,9 @@ class HomeController extends Controller
         if (get_setting('vendor_system_activation') != 1) {
             return redirect()->route('home');
         }
-        $shop  = Shop::where('slug', $slug)->first();
+        $shop = Shop::where('slug', $slug)->first();
         if ($shop != null) {
-            if($shop->user->banned == 1){
+            if ($shop->user->banned == 1) {
                 abort(404);
             }
             // if ($shop->verification_status != 0) {
@@ -1006,7 +983,7 @@ class HomeController extends Controller
             // } else {
             //     return view('frontend.seller_shop_without_verification', compact('shop'));
 
-                return view('frontend.seller_shop', compact('shop'));
+            return view('frontend.seller_shop', compact('shop'));
 
             // }
         }
@@ -1018,16 +995,16 @@ class HomeController extends Controller
         if (get_setting('vendor_system_activation') != 1) {
             return redirect()->route('home');
         }
-        $shop  = Shop::where('slug', $slug)->first();
+        $shop = Shop::where('slug', $slug)->first();
         if ($shop != null && $type != null) {
-            if($shop->user->banned == 1){
+            if ($shop->user->banned == 1) {
                 abort(404);
             }
             if ($type == 'all-products') {
                 $sort_by = $request->sort_by;
                 $min_price = $request->min_price;
                 $max_price = $request->max_price;
-                $selected_categories = array();
+                $selected_categories = [];
                 $brand_id = null;
                 $rating = null;
 
@@ -1093,6 +1070,7 @@ class HomeController extends Controller
     public function all_brands(Request $request)
     {
         $brands = Brand::all();
+
         return view('frontend.all_brand', compact('brands'));
     }
 
@@ -1124,6 +1102,7 @@ class HomeController extends Controller
         }
 
         flash(translate('Top 10 categories and brands have been updated successfully'))->success();
+
         return redirect()->route('home_settings.index');
     }
 
@@ -1142,9 +1121,9 @@ class HomeController extends Controller
         if (json_decode($product->choice_options) != null) {
             foreach (json_decode($product->choice_options) as $key => $choice) {
                 if ($str != null) {
-                    $str .= '-' . str_replace(' ', '', $request['attribute_id_' . $choice->attribute_id]);
+                    $str .= '-'.str_replace(' ', '', $request['attribute_id_'.$choice->attribute_id]);
                 } else {
-                    $str .= str_replace(' ', '', $request['attribute_id_' . $choice->attribute_id]);
+                    $str .= str_replace(' ', '', $request['attribute_id_'.$choice->attribute_id]);
                 }
             }
         }
@@ -1152,7 +1131,6 @@ class HomeController extends Controller
         $product_stock = $product->stocks->where('variant', $str)->first();
 
         $price = $product_stock->price;
-
 
         if ($product->wholesale_product) {
             $wholesalePrice = $product_stock->wholesalePrices->where('min_qty', '<=', $request->quantity)->where('max_qty', '>=', $request->quantity)->first();
@@ -1210,49 +1188,55 @@ class HomeController extends Controller
 
         $price += $tax;
 
-        return array(
+        return [
             'price' => single_price($price * $request->quantity),
             'quantity' => $quantity,
             'digital' => $product->digital,
             'variation' => $str,
             'max_limit' => $max_limit,
-            'in_stock' => $in_stock
-        );
+            'in_stock' => $in_stock,
+        ];
     }
 
     public function sellerpolicy()
     {
-        $page =  Page::where('type', 'seller_policy_page')->first();
-        return view("frontend.policies.sellerpolicy", compact('page'));
+        $page = Page::where('type', 'seller_policy_page')->first();
+
+        return view('frontend.policies.sellerpolicy', compact('page'));
     }
 
     public function returnpolicy()
     {
-        $page =  Page::where('type', 'return_policy_page')->first();
-        return view("frontend.policies.returnpolicy", compact('page'));
+        $page = Page::where('type', 'return_policy_page')->first();
+
+        return view('frontend.policies.returnpolicy', compact('page'));
     }
 
     public function supportpolicy()
     {
-        $page =  Page::where('type', 'support_policy_page')->first();
-        return view("frontend.policies.supportpolicy", compact('page'));
+        $page = Page::where('type', 'support_policy_page')->first();
+
+        return view('frontend.policies.supportpolicy', compact('page'));
     }
 
     public function terms()
     {
-        $page =  Page::where('type', 'terms_conditions_page')->first();
-        return view("frontend.policies.terms", compact('page'));
+        $page = Page::where('type', 'terms_conditions_page')->first();
+
+        return view('frontend.policies.terms', compact('page'));
     }
 
     public function privacypolicy()
     {
-        $page =  Page::where('type', 'privacy_policy_page')->first();
-        return view("frontend.policies.privacypolicy", compact('page'));
+        $page = Page::where('type', 'privacy_policy_page')->first();
+
+        return view('frontend.policies.privacypolicy', compact('page'));
     }
 
     public function get_pick_up_points(Request $request)
     {
         $pick_up_points = PickupPoint::all();
+
         return view('frontend.'.get_setting('homepage_select').'.partials.pick_up_points', compact('pick_up_points'));
     }
 
@@ -1260,12 +1244,14 @@ class HomeController extends Controller
     {
         // $category = Category::findOrFail($request->id);
         $categories = Category::with('childrenCategories')->findOrFail($request->id);
+
         return view('frontend.'.get_setting('homepage_select').'.partials.category_elements', compact('categories'));
     }
 
     public function premium_package_index()
     {
         $customer_packages = CustomerPackage::all();
+
         return view('frontend.user.customer_packages_lists', compact('customer_packages'));
     }
 
@@ -1277,7 +1263,6 @@ class HomeController extends Controller
 
     // }
 
-
     // Ajax call
     public function new_verify(Request $request)
     {
@@ -1285,13 +1270,14 @@ class HomeController extends Controller
         if (isUnique($email) == '0') {
             $response['status'] = 2;
             $response['message'] = translate('Email already exists!');
+
             return json_encode($response);
         }
 
         $response = $this->send_email_change_verification_mail($request, $email);
+
         return json_encode($response);
     }
-
 
     // Form request
     public function update_email(Request $request)
@@ -1300,10 +1286,12 @@ class HomeController extends Controller
         if (isUnique($email)) {
             $this->send_email_change_verification_mail($request, $email);
             flash(translate('A verification mail has been sent to the mail you provided us with.'))->success();
+
             return back();
         }
 
         flash(translate('Email already exists!'))->warning();
+
         return back();
     }
 
@@ -1317,9 +1305,9 @@ class HomeController extends Controller
         $array['subject'] = translate('Email Verification');
         $array['from'] = env('MAIL_FROM_ADDRESS');
         $array['content'] = translate('Verify your account');
-        $array['link'] = route('email_change.callback') . '?new_email_verificiation_code=' . $verification_code . '&email=' . $email;
+        $array['link'] = route('email_change.callback').'?new_email_verificiation_code='.$verification_code.'&email='.$email;
         $array['sender'] = Auth::user()->name;
-        $array['details'] = translate("Email Second");
+        $array['details'] = translate('Email Second');
 
         $user = Auth::user();
         $user->new_email_verificiation_code = $verification_code;
@@ -1329,7 +1317,7 @@ class HomeController extends Controller
             Mail::to($email)->queue(new SecondEmailVerifyMailManager($array));
 
             $response['status'] = 1;
-            $response['message'] = translate("Your verification mail has been Sent to your email.");
+            $response['message'] = translate('Your verification mail has been Sent to your email.');
         } catch (\Exception $e) {
             // return $e->getMessage();
             $response['status'] = 0;
@@ -1342,7 +1330,7 @@ class HomeController extends Controller
     public function email_change_callback(Request $request)
     {
         if ($request->has('new_email_verificiation_code') && $request->has('email')) {
-            $verification_code_of_url_param =  $request->input('new_email_verificiation_code');
+            $verification_code_of_url_param = $request->input('new_email_verificiation_code');
             $user = User::where('new_email_verificiation_code', $verification_code_of_url_param)->first();
 
             if ($user != null) {
@@ -1357,11 +1345,13 @@ class HomeController extends Controller
                 if ($user->user_type == 'seller') {
                     return redirect()->route('seller.dashboard');
                 }
+
                 return redirect()->route('dashboard');
             }
         }
 
         flash(translate('Email was not verified. Please resend your mail!'))->error();
+
         return redirect()->route('dashboard');
     }
 
@@ -1377,6 +1367,7 @@ class HomeController extends Controller
             // return response()->json(['errors' => $validator->errors()], 422);
             $errors = $validator->errors()->all();
             session()->flash('errors', $errors);
+
             return view('auth.'.get_setting('authentication_layout_select').'.reset_password');
         }
 
@@ -1395,6 +1386,7 @@ class HomeController extends Controller
                 if (auth()->user()->user_type == 'admin' || auth()->user()->user_type == 'staff') {
                     return redirect()->route('admin.dashboard');
                 }
+
                 return redirect()->route('home');
             } else {
                 session()->flash('warning', translate("Password and confirm password didn't match"));
@@ -1404,24 +1396,23 @@ class HomeController extends Controller
             }
         } else {
             // flash(translate("Verification code mismatch"))->error();
-            session()->flash('error', translate("Verification code mismatch"));
+            session()->flash('error', translate('Verification code mismatch'));
 
             return view('auth.'.get_setting('authentication_layout_select').'.reset_password');
         }
     }
-
 
     public function all_flash_deals()
     {
         $today = strtotime(date('Y-m-d H:i:s'));
 
         $data['all_flash_deals'] = FlashDeal::where('status', 1)
-            ->where('start_date', "<=", $today)
-            ->where('end_date', ">", $today)
+            ->where('start_date', '<=', $today)
+            ->where('end_date', '>', $today)
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view("frontend.flash_deal.all_flash_deal_list", $data);
+        return view('frontend.flash_deal.all_flash_deal_list', $data);
     }
 
     public function todays_deal()
@@ -1430,13 +1421,13 @@ class HomeController extends Controller
             return filter_products(Product::with('thumbnail')->where('todays_deal', '1'))->get();
         });
 
-        return view("frontend.todays_deal", compact('todays_deal_products'));
+        return view('frontend.todays_deal', compact('todays_deal_products'));
     }
 
     public function all_seller(Request $request)
     {
 
-        $shops = Shop::whereHas('user', function($query) {
+        $shops = Shop::whereHas('user', function ($query) {
             $query->where('status', 'enabled');
         })->paginate(15);
 
@@ -1446,15 +1437,16 @@ class HomeController extends Controller
     public function all_coupons(Request $request)
     {
         $coupons = Coupon::where('start_date', '<=', strtotime(date('d-m-Y')))->where('end_date', '>=', strtotime(date('d-m-Y')))->paginate(15);
+
         return view('frontend.coupons', compact('coupons'));
     }
 
     public function inhouse_products(Request $request)
     {
         $products = filter_products(Product::where('added_by', 'admin'))->with('taxes')->paginate(12)->appends(request()->query());
+
         return view('frontend.inhouse_products', compact('products'));
     }
-
 
     public function sendWaitlistEmail(Request $request)
     {
@@ -1463,15 +1455,15 @@ class HomeController extends Controller
             'email' => 'required|email',
             // Updated phone validation rule to match the specified formats
             'phone' => ['required'],
-           //'regex:/^(?:(?:\+9715|009715)\d{2}\s?\d{2}\s?\d{2}\s?\d{2}|05\d\s?\d{3}\s?\d{2}\s?\d{2})$/'
+            //'regex:/^(?:(?:\+9715|009715)\d{2}\s?\d{2}\s?\d{2}\s?\d{2}|05\d\s?\d{3}\s?\d{2}\s?\d{2})$/'
             'work' => 'nullable|regex:/^[\pL\s]+$/u',
             'info' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()
-                        ->withErrors($validator)
-                        ->withInput();
+                ->withErrors($validator)
+                ->withInput();
         }
 
         $name = $request->name;
@@ -1479,8 +1471,7 @@ class HomeController extends Controller
         $phone = $request->phone;
         $work = $request->work;
         $info = $request->info;
-        $subscribeNewsletter = $request->has('subscribeNewsletter') ? "yes" : "no";
-
+        $subscribeNewsletter = $request->has('subscribeNewsletter') ? 'yes' : 'no';
 
         $waitlistData = [
             'name' => $request->name,
@@ -1499,5 +1490,4 @@ class HomeController extends Controller
 
         return Redirect::back()->with('success', 'Your request to join the waitlist has been submitted successfully!');
     }
-
 }
