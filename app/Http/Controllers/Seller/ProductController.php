@@ -2073,31 +2073,58 @@ class ProductController extends Controller
 
             }
         }
+
+        if(isset($data['detailedProduct']['catalog'])) {
+            $response = [
+                'availableAttributes' => $availableAttributes,
+                'anyMatched' => $anyMatched,
+                'matchedImages' => $matchedImages,
+                'variationId' => $variationId ?? null,
+                'quantity' => $quantity ?? null  ,
+                'price' => $price ?? null ,
+                'total' => $totalDiscount ?? $total ?? null,
+                'maximum' => $maximum ,
+                'minimum' => $minimum ,
+                'discountedPrice' => $discountedPrice ?? null,
+                'totalDiscount' => $totalDiscount ?? null,
+                'percent'=> $percent ?? null,
+                'totalRating' =>  0 ,
+                'renderStarRating' => $this->renderStarRating(0),
+                'avgRating' =>  0,
+                'sku' =>$sku ?? null ,
+                'outStock' =>false
+            ];
+        }
+        else {
+
+            $response = [
+                'availableAttributes' => $availableAttributes,
+                'anyMatched' => $anyMatched,
+                'matchedImages' => $matchedImages,
+                'variationId' => $variationId ?? null,
+                'quantity' => $quantity ?? null  ,
+                'price' => $price ?? null ,
+                'total' => $totalDiscount ?? $total ?? null,
+                'maximum' => $maximum ,
+                'minimum' => $minimum ,
+                'discountedPrice' => $discountedPrice ?? null,
+                'totalDiscount' => $totalDiscount ?? null,
+                'percent'=> $percent ?? null,
+                'totalRating' => $totalRating ?? 0 ,
+                'renderStarRating' => $renderStarRating ??  $this->renderStarRating(0),
+                'avgRating' => $avgRating ?? 0,
+                'sku' =>$sku ?? null ,
+                'outStock' =>$outStock
+            ];
+        }
         // dd($availableAttributes) ;
 
         // Add matchesCheckedAttributes to the response
-        $response = [
-            'availableAttributes' => $availableAttributes,
-            'anyMatched' => $anyMatched,
-            'matchedImages' => $matchedImages,
-            'variationId' => $variationId ?? null,
-            'quantity' => $quantity ?? null,
-            'price' => $price ?? null,
-            'total' => $totalDiscount ?? $total ?? null,
-            'maximum' => $maximum,
-            'minimum' => $minimum,
-            'discountedPrice' => $discountedPrice ?? null,
-            'totalDiscount' => $totalDiscount ?? null,
-            'percent' => $percent ?? null,
-            'totalRating' => $totalRating ?? 0,
-            'renderStarRating' => $renderStarRating ?? $this->renderStarRating(0),
-            'avgRating' => $avgRating ?? 0,
-            'sku' => $sku ?? null,
-            'outStock' => $outStock,
-        ];
 
         // return response()->json($availableAttributes);
         return response()->json($response);
 
     }
+
+
 }
