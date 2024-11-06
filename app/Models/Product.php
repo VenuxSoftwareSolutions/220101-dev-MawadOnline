@@ -3,68 +3,58 @@
 namespace App\Models;
 
 use App;
-use App\Models\UploadProducts;
-use App\Models\ProductCategory;
-use App\Models\ProductAttributeValues;
-use App\Models\PricingConfiguration;
-use App\Models\Category;
-use App\Models\Shipping;
-use App\Models\Product;
-use App\Models\Shop;
-use Illuminate\Database\Eloquent\Model;
 use App\Traits\EnhancedRevisionableTrait;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Product extends Model
 {
-
     use EnhancedRevisionableTrait, SoftDeletes;
 
-
     protected $dontKeepRevisionOf = [
-                                    'is_draft',
-                                    'approved',
-                                    'sku',
-                                    'deleted_at',
-                                    'rejection_reason',
-                                    'slug',
-                                    'low_stock_quantity',
-                                    'published',
-                                    'shipping',
-                                    'vat_sample',
-                                    'sample_description',
-                                    'vat',
-                                    'sample_price',
-                                    'activate_third_party',
-                                    'length',
-                                    'width',
-                                    'height',
-                                    'min_third_party',
-                                    'max_third_party',
-                                    'breakable',
-                                    'unit_third_party',
-                                    'shipper_sample',
-                                    'estimated_sample',
-                                    'estimated_shipping_sample',
-                                    'paid_sample',
-                                    'shipping_amount',
-                                    'sample_available',
-                                    'unit_weight',
-                                    'last_version',
-                                    'product_added_from_catalog',
-                                    'activate_third_party_sample',
-                                    'length_sample',
-                                    'width_sample',
-                                    'height_sample',
-                                    'package_weight_sample',
-                                    'weight_unit_sample',
-                                    'breakable_sample',
-                                    'unit_third_party_sample',
-                                    'min_third_party_sample',
-                                    'max_third_party_sample',
-                                    'product_catalog_id',
-                                ];
+        'is_draft',
+        'approved',
+        'sku',
+        'deleted_at',
+        'rejection_reason',
+        'slug',
+        'low_stock_quantity',
+        'published',
+        'shipping',
+        'vat_sample',
+        'sample_description',
+        'vat',
+        'sample_price',
+        'activate_third_party',
+        'length',
+        'width',
+        'height',
+        'min_third_party',
+        'max_third_party',
+        'breakable',
+        'unit_third_party',
+        'shipper_sample',
+        'estimated_sample',
+        'estimated_shipping_sample',
+        'paid_sample',
+        'shipping_amount',
+        'sample_available',
+        'unit_weight',
+        'last_version',
+        'product_added_from_catalog',
+        'activate_third_party_sample',
+        'length_sample',
+        'width_sample',
+        'height_sample',
+        'package_weight_sample',
+        'weight_unit_sample',
+        'breakable_sample',
+        'unit_third_party_sample',
+        'min_third_party_sample',
+        'max_third_party_sample',
+        'product_catalog_id',
+    ];
 
     // Ensure cascading deletes at the model level
     protected static function booted()
@@ -88,6 +78,7 @@ class Product extends Model
     protected function getLastActionNumber()
     {
         $lastRevision = $this->revisionHistory()->latest('id')->first();
+
         return $lastRevision ? $lastRevision->action_number + 1 : 0;
     }
 
@@ -99,6 +90,7 @@ class Product extends Model
     {
         $lang = $lang == false ? App::getLocale() : $lang;
         $product_translations = $this->product_translations->where('lang', $lang)->first();
+
         return $product_translations != null ? $product_translations->$field : $this->$field;
     }
 
@@ -116,6 +108,7 @@ class Product extends Model
     {
         return $this->belongsToMany(Category::class, 'product_categories');
     }
+
     public function variants()
     {
         return $this->hasMany(Product::class, 'parent_id', 'id');
@@ -153,9 +146,9 @@ class Product extends Model
 
     public function get_ratting()
     {
-        if($this->reviews->count()>0){
-            return (int)($this->reviews->sum('rating') / $this->reviews->count());
-        }else{
+        if ($this->reviews->count() > 0) {
+            return (int) ($this->reviews->sum('rating') / $this->reviews->count());
+        } else {
             return 0;
         }
 
@@ -180,7 +173,6 @@ class Product extends Model
     {
         return $this->hasMany(ProductTax::class);
     }
-
 
     public function flash_deal_product()
     {
@@ -217,65 +209,80 @@ class Product extends Model
         return $query->where('approved', '1')->where('published', 1);
     }
 
-    public function getChildrenProducts(){
+    public function getChildrenProducts()
+    {
         return Product::where('parent_id', $this->id)->get();
     }
 
-    public function getChildrenProductsDesc(){
+    public function getChildrenProductsDesc()
+    {
         $childrens = Product::where('parent_id', $this->id)->orderBy('id', 'asc')->get();
+
         return $childrens;
     }
 
-    public function getImagesProduct(){
+    public function getImagesProduct()
+    {
         $images = UploadProducts::where('id_product', $this->id)->where('type', 'images')->get();
+
         return $images;
     }
 
-    public function getThumbnailsProduct(){
+    public function getThumbnailsProduct()
+    {
         $thumbnails = UploadProducts::where('id_product', $this->id)->where('type', 'thumbnails')->get();
+
         return $thumbnails;
     }
 
-    public function getDocumentsProduct(){
+    public function getDocumentsProduct()
+    {
         $documents = UploadProducts::where('id_product', $this->id)->where('type', 'documents')->get();
+
         return $documents;
     }
 
-    public function getPricingConfiguration(){
+    public function getPricingConfiguration()
+    {
         $pricing = PricingConfiguration::where('id_products', $this->id)->get();
+
         return $pricing;
     }
 
-    public function getFirstPricingConfiguration(){
+    public function getFirstPricingConfiguration()
+    {
         return PricingConfiguration::where('id_products', $this->id)->first();
     }
 
-    public function getIdsAttributesVariant(){
+    public function getIdsAttributesVariant()
+    {
         $ids = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->pluck('id_attribute')->toArray();
+
         return $ids;
     }
 
-    public function getAttributesVariant(){
+    public function getAttributesVariant()
+    {
         $attributes = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->get();
         $variants_id = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->pluck('id')->toArray();
         $historique_children = DB::table('revisions')->whereNull('deleted_at')->whereIn('revisionable_id', $variants_id)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
 
-        if(count($historique_children) > 0){
-            foreach($historique_children as $historique_child){
-                foreach($attributes as $variant){
-                    if($variant->id == $historique_child->revisionable_id){
+        if (count($historique_children) > 0) {
+            foreach ($historique_children as $historique_child) {
+                foreach ($attributes as $variant) {
+                    if ($variant->id == $historique_child->revisionable_id) {
                         $variant->key = $historique_child->key;
-                        if($historique_child->key == "add_attribute"){
+                        if ($historique_child->key == 'add_attribute') {
                             $variant->added = true;
-                        }else{
-                            if($historique_child->key == 'id_units'){
+                        } else {
+                            if ($historique_child->key == 'id_units') {
                                 $unit = Unity::find($historique_child->old_value);
-                                if($unit != null){
+                                if ($unit != null) {
                                     $variant->old_value = $unit->name;
-                                }else{
+                                } else {
                                     $variant->old_value = '';
                                 }
-                            }else{
+                            } else {
                                 $variant->old_value = $historique_child->old_value;
                             }
                         }
@@ -285,22 +292,22 @@ class Product extends Model
         }
 
         $data = [];
-        if(count($attributes) > 0){
-            foreach ($attributes as $attribute){
-                if($attribute->id_colors != null){
-                    if(isset($attribute->added)){
-                        if (array_key_exists($attribute->id_attribute,$data)){
+        if (count($attributes) > 0) {
+            foreach ($attributes as $attribute) {
+                if ($attribute->id_colors != null) {
+                    if (isset($attribute->added)) {
+                        if (array_key_exists($attribute->id_attribute, $data)) {
                             array_push($data[$attribute->id_attribute], 'yes');
-                        }else{
+                        } else {
                             $data[$attribute->id_attribute] = ['yes'];
                         }
                     }
-                    if (array_key_exists($attribute->id_attribute,$data)){
+                    if (array_key_exists($attribute->id_attribute, $data)) {
                         array_push($data[$attribute->id_attribute], $attribute->id_colors);
-                    }else{
+                    } else {
                         $data[$attribute->id_attribute] = [$attribute->id_colors];
                     }
-                }else{
+                } else {
                     $data[$attribute->id_attribute] = $attribute;
                 }
 
@@ -310,46 +317,50 @@ class Product extends Model
         return $data;
     }
 
-    public function getIdsAttributesChildren(){
+    public function getIdsAttributesChildren()
+    {
         $children = Product::where('parent_id', $this->id)->first();
         $ids = [];
-        if($children != null){
+        if ($children != null) {
             $ids = ProductAttributeValues::where('id_products', $children->id)->where('is_variant', 1)->pluck('id_attribute')->toArray();
         }
 
         return $ids;
     }
 
-    public function getAttributesVariantChildren(){
+    public function getAttributesVariantChildren()
+    {
         $attributes = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->get();
         $data = [];
-        if(count($attributes) > 0){
-            foreach ($attributes as $attribute){
+        if (count($attributes) > 0) {
+            foreach ($attributes as $attribute) {
                 $data[$attribute->id_attribute] = $attribute;
             }
         }
+
         return $data;
     }
 
-    public function pathCategory(){
+    public function pathCategory()
+    {
         $product_category = ProductCategory::where('product_id', $this->id)->first();
         $path = '';
-        if($product_category != null){
+        if ($product_category != null) {
             $current_category = Category::find($product_category->category_id);
-            if($current_category != null){
-                while($current_category->parent_id != 0){
-                    if($path == ''){
+            if ($current_category != null) {
+                while ($current_category->parent_id != 0) {
+                    if ($path == '') {
                         $path = $current_category->name;
-                    }else{
-                        $path = $current_category->name . ' > '  . $path;
+                    } else {
+                        $path = $current_category->name.' > '.$path;
                     }
                     $current_category = Category::find($current_category->parent_id);
                 }
-                if($current_category->parent_id == 0){
-                    if($path == ''){
+                if ($current_category->parent_id == 0) {
+                    if ($path == '') {
                         $path = $current_category->name;
-                    }else{
-                        $path = $current_category->name . ' > '  . $path;
+                    } else {
+                        $path = $current_category->name.' > '.$path;
                     }
                 }
             }
@@ -358,52 +369,52 @@ class Product extends Model
         return $path;
     }
 
-    public function productAttributeValues() {
-        return $this->hasMany(ProductAttributeValues::class,'id_products','id') ;
+    public function productAttributeValues()
+    {
+        return $this->hasMany(ProductAttributeValues::class, 'id_products', 'id');
     }
 
-    public function productVariantDetails() {
+    public function productVariantDetails()
+    {
         try {
-            $productVariantName = " " ;
-            foreach ($this->productAttributeValues as $productAttributeValue  ) {
-                if($productAttributeValue->attribute->type_value == "numeric")
-                {
-                    $productVariantName.= $productAttributeValue->attribute->name.' '.$productAttributeValue->value." ".$productAttributeValue->unity->name." " ;
-                }
-                elseif($productAttributeValue->attribute->type_value =="list") {
-                    $productVariantName.=$productAttributeValue->attribute->name.' '.$productAttributeValue->attributeValues->value." " ;
+            $productVariantName = ' ';
+            foreach ($this->productAttributeValues as $productAttributeValue) {
+                if ($productAttributeValue->attribute->type_value == 'numeric') {
+                    $productVariantName .= $productAttributeValue->attribute->name.' '.$productAttributeValue->value.' '.$productAttributeValue->unity->name.' ';
+                } elseif ($productAttributeValue->attribute->type_value == 'list') {
+                    $productVariantName .= $productAttributeValue->attribute->name.' '.$productAttributeValue->attributeValues->value.' ';
 
+                } elseif ($productAttributeValue->attribute->type_value == 'color') {
+                    $productVariantName .= $productAttributeValue->attribute->name.' '.$productAttributeValue->color->name.' ';
 
-                }
-                elseif($productAttributeValue->attribute->type_value =="color") {
-                    $productVariantName.= $productAttributeValue->attribute->name.' '.$productAttributeValue->color->name." "  ;
-
-                }
-                else{
-                    $productVariantName.= $productAttributeValue->attribute->name.' '.$productAttributeValue->value." "  ;
+                } else {
+                    $productVariantName .= $productAttributeValue->attribute->name.' '.$productAttributeValue->value.' ';
 
                 }
-
 
             }
 
-            return $productVariantName ;
+            return $productVariantName;
         } catch (\Exception $e) {
             // Handle any exceptions here
-            return " " ;
+            return ' ';
         }
     }
 
-    public function getShipping(){
+    public function getShipping()
+    {
         $shipping = Shipping::where('product_id', $this->id)->get();
+
         return $shipping;
     }
 
-    public function getIdsChildrens(){
+    public function getIdsChildrens()
+    {
         return Product::where('parent_id', $this->id)->pluck('id')->toArray();
     }
 
-    public function getPriceRange(){
+    public function getPriceRange()
+    {
         $firstPrice = PricingConfiguration::where('id_products', $this->id)
             ->orderBy('unit_price', 'asc')
             ->pluck('unit_price')
@@ -414,28 +425,30 @@ class Product extends Model
             ->pluck('unit_price')
             ->first();
 
-        if($lastPrice == $firstPrice){
-            return $firstPrice . " AED";
-        }else{
-            return $firstPrice . " AED - " . $lastPrice . " AED";
+        if ($lastPrice == $firstPrice) {
+            return $firstPrice.' AED';
+        } else {
+            return $firstPrice.' AED - '.$lastPrice.' AED';
         }
     }
 
-    public function getFirstImage(){
+    public function getFirstImage()
+    {
         $upload = UploadProducts::where('id_product', $this->id)->where('type', 'images')->first();
 
         $path = '';
-        if($upload != null){
+        if ($upload != null) {
             $path = $upload->path;
         }
 
         return $path;
     }
 
-    public function checkIfParentToGetNumVariants(){
-        if($this->is_parent == 0){
+    public function checkIfParentToGetNumVariants()
+    {
+        if ($this->is_parent == 0) {
             return Product::where('parent_id', $this->parent_id)->count();
-        }else{
+        } else {
             return Product::where('parent_id', $this->id)->count();
         }
     }
@@ -450,39 +463,45 @@ class Product extends Model
         return $this->children()->where('approved', 0)->exists();
     }
 
-    public function getShopName(){
+    public function getShopName()
+    {
         $shop = Shop::where('user_id', $this->user_id)->first();
-        if($shop != null){
+        if ($shop != null) {
             return $shop->name;
-        }else{
+        } else {
             return null;
         }
     }
 
-    public function CheckIfAddedToCatalog(){
+    public function CheckIfAddedToCatalog()
+    {
         $exist = ProductCatalog::where('product_id', $this->id)->first();
-        if($exist != null){
+        if ($exist != null) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    public function getPrice(){
+    public function getPrice()
+    {
         // dd($this->getPricingConfiguration()) ;
     }
-    public function shippingOptions($qty){
+
+    public function shippingOptions($qty)
+    {
 
         // Fetch the shipping options based on quantity range
-        $shippingOptions = Shipping::where('product_id',$this->id)->where('from_shipping', '<=', $qty)
-        ->where('to_shipping', '>=', $qty)
-        ->first();
+        $shippingOptions = Shipping::where('product_id', $this->id)->where('from_shipping', '<=', $qty)
+            ->where('to_shipping', '>=', $qty)
+            ->first();
 
-        return  $shippingOptions ;
+        return $shippingOptions;
 
     }
 
-    public function minMaxQuantity() {
+    public function minMaxQuantity()
+    {
         // Get the minimum and maximum 'from' values for the given product
         $minFrom = PricingConfiguration::where('id_products', $this->id)->min('from');
         // $maxFrom = PricingConfiguration::where('id_products', $this->id)->max('from');
@@ -497,5 +516,4 @@ class Product extends Model
             'maxTo' => $maxTo ?? 1,
         ];
     }
-
 }
