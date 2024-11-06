@@ -30,7 +30,7 @@
             <!-- Sliders -->
             <div class="home-slider slider-full">
                 @if (get_setting('home_slider_images') != null)
-                    <div class="aiz-carousel dots-inside-bottom mobile-img-auto-height" data-autoplay="true" data-infinite="true">
+                    <div class="aiz-carousel dots-inside-bottom mobile-img-auto-height" data-autoplay="true" data-dots="true" data-infinite="true">
 
                         @php
                             $decoded_slider_images = json_decode(get_setting('home_slider_images', null, $lang), true);
@@ -217,7 +217,7 @@
             <div class="container">
                 <div class="bg-white">
                     <!-- Top Section -->
-                    <div class="d-flex mt-2 mt-md-3 mb-2 mb-md-3 align-items-baseline justify-content-between">
+                    <div class="d-flexZ align-items-baseline justify-content-between">
                         <!-- Title -->
                         <h3 class="fs-16 fs-md-20 fw-700 mb-2 mb-sm-0">
                             <span class="">{{ translate('Featured Categories') }}</span>
