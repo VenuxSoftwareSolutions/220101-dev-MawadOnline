@@ -128,8 +128,8 @@
         @csrf
         <!-- Basic Info-->
         <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0 h6">{{ translate('Basic Info')}}</h5>
+            <div class="card-header pl-3 border-0">
+                <h5 class="mb-0 h6 fs-18">{{ translate('Basic Info')}}</h5>
             </div>
             <div class="card-body">
                 <div class="form-group row">
@@ -189,8 +189,8 @@
 
         <!-- Payment System -->
         <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0 h6">{{ translate('Payment Setting')}}</h5>
+            <div class="card-header pl-3 border-0">
+                <h5 class="mb-0 h6 fs-18">{{ translate('Payment Setting')}}</h5>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -259,8 +259,8 @@
 
     <!-- Address -->
     <div class="card">
-        <div class="card-header">
-            <h5 class="mb-0 h6">{{ translate('Address')}}</h5>
+        <div class="card-header pl-3 border-0">
+            <h5 class="mb-0 h6 fs-18">{{ translate('Address')}}</h5>
         </div>
         <div class="card-body">
             <div class="row gutters-10">
@@ -327,8 +327,8 @@
     <form action="{{ route('user.change.email') }}" method="POST">
         @csrf
         <div class="card">
-          <div class="card-header">
-              <h5 class="mb-0 h6">{{ translate('Change your email')}}</h5>
+          <div class="card-header pl-3 border-0">
+              <h5 class="mb-0 h6 fs-18">{{ translate('Change your email')}}</h5>
           </div>
           <div class="card-body">
               <div class="row">
@@ -388,8 +388,10 @@
                     @csrf
                     <!-- ... Personal Info form fields ... -->
                     <div class="bg-white border mb-4">
-                        <div class="fs-20 fw-600 p-3 orange-text">
+                        <div class="card-header pl-3 border-0">
+                            <h5 class="mb-0 h6 fs-18">
                             {{ translate('Personal Info') }}
+                            </h5>
                         </div>
 
                         {{-- <div id="validation-errors" class="alert alert-danger" style="display: none;">
@@ -472,8 +474,10 @@
                         <!-- ... Business Info form fields ... -->
 
                         <div class="bg-white border mb-4">
-                            <div class="fs-20 fw-600 p-3 orange-text">
+                            <div class="card-header pl-3 border-0">
+                                <h5 class="mb-0 h6 fs-18">
                                 {{ translate('Business Information') }}
+                                </h5>
                             </div>
 
                             {{-- <div id="validation-errors" class="alert alert-danger"
@@ -597,8 +601,10 @@
 
                                     </div>
                                     <div class="col-md-12" style="padding-left: 0px">
-                                        <div class="fs-20 fw-600 p-3 orange-text">
+                                        <div class="card-header pl-3 border-0">
+                                            <h5 class="mb-0 h6 fs-18">
                                             {{ __('profile.e_shop_information') }}
+                                            </h5>
                                         </div>   </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -652,8 +658,10 @@
                                     </div>
 
                                     <div class="col-md-12 Grand-title">
-                                        <div class="fs-20 fw-600 p-3 orange-text">
+                                        <div class="card-header pl-3 border-0">
+                                            <h5 class="mb-0 h6 fs-18">
                                             {{ __('profile.license_information') }}
+                                            </h5>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -689,8 +697,10 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12 Grand-title">
-                                        <div class="fs-20 fw-600 p-3 orange-text">
+                                        <div class="card-header pl-3 border-0">
+                                            <h5 class="mb-0 h6 fs-18">
                                             {{ __('profile.location_information') }}
+                                            </h5>
                                         </div>
                                     </div>
 
@@ -818,8 +828,10 @@
                                                  @enderror
                                         </div>
                                     </div>
-                                    <div class="fs-20 fw-600 p-3 orange-text">
+                                    <div class="card-header pl-3 border-0">
+                                        <h5 class="mb-0 h6 fs-18">
                                         {{ __('profile.contact_information') }}
+                                        </h5>
                                      </div>
                                     <div class="col-md-12">
                                         <div class="row">
@@ -839,8 +851,10 @@
 
                                     </div>
                                     <div class="col-md-12" style="padding-left: 0px">
-                                        <div class="fs-20 fw-600 p-3 orange-text">
+                                        <div class="card-header pl-3 border-0">
+                                            <h5 class="mb-0 h6 fs-18">
                                             {{ __('profile.tax_information') }}
+                                            </h5>
                                         </div>   </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -908,8 +922,10 @@
                                     </div>
 
                                     <div class="col-md-12 Grand-title">
-                                        <div class="fs-20 fw-600 p-3 orange-text">
+                                        <div class="card-header pl-3 border-0">
+                                            <h5 class="mb-0 h6 fs-18">
                                             {{ __('profile.regulatory_information') }}
+                                            </h5>
                                         </div>
                                     </div>
                                     <div class="col-md-6" id="taxWaiverGroup" {{-- style="display: none;" --}}>
@@ -983,8 +999,10 @@
 
                     <!-- ... Contact Person form fields ... -->
                     <div class="bg-white border mb-4">
-                        <div class="fs-20 fw-600 p-3 orange-text">
+                        <div class="card-header pl-3 border-0">
+                            <h5 class="mb-0 h6 fs-18">
                             {{ __('profile.personal_information') }}
+                            </h5>
 
                         </div>
 
@@ -1082,8 +1100,10 @@
                                              @enderror
                                     </div>
                                 </div>
-                                <div class="fs-20 fw-600 p-3 orange-text">
+                                <div class="card-header pl-3 border-0">
+                                    <h5 class="mb-0 h6 fs-18">
                                     {{ __('profile.contact_information') }}
+                                    </h5>
                                  </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
@@ -1139,8 +1159,10 @@
                                     </div>
                                 </div>
 
-                                <div class="fs-20 fw-600 p-3 orange-text">
+                                <div class="card-header pl-3 border-0">
+                                    <h5 class="mb-0 h6 fs-18">
                                     {{ __('profile.emirates_id') }}
+                                    </h5>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
@@ -1215,9 +1237,10 @@
                                         </small> --}}
                                 </div>
                                 <div class="col-md-12" style="padding-left: 0px">
-                                    <div class="fs-20 fw-600 p-3 orange-text">
+                                    <div class="card-header pl-3 border-0">
+                                        <h5 class="mb-0 h6 fs-18">
                                         {{ __('profile.employment_information') }}
-
+                                        </h5>
                                     </div>
                                 </div>
 
@@ -1279,9 +1302,10 @@
                     <!-- ... Payout Info form fields ... -->
                     <div class="bg-white border mb-4">
 
-                       <div class="fs-20 fw-600 p-3 orange-text">
+                       <div class="card-header pl-3 border-0">
+                        <h5 class="mb-0 h6 fs-18">
                         {{ __('profile.trade_information') }}
-
+                        </h5>
                         </div>
                         {{-- <div id="validation-errors" class="alert alert-danger"
                                 style="display: none;"></div> --}}
