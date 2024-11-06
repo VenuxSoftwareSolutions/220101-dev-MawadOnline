@@ -233,19 +233,14 @@
                 $('.aiz-selectpicker').selectpicker('refresh');
         }
 
-       /* form.addEventListener("submit", function(event) {
+        form.addEventListener("submit", function(event) {
             event.preventDefault();
             if (validateForm()) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: 'Discount created successfully!',
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    form.submit();
-                });
+                form.submit();
             }
-        });*/
+        });
+            
+        
         document.querySelectorAll('.tab-card').forEach(card => {
                 card.addEventListener('click', function () {
                     const scope = this.getAttribute('data-scope');
