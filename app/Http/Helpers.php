@@ -163,16 +163,16 @@ if (!function_exists('filter_products')) {
             $products = $products->where('wholesale_product', 0);
         }
 
-       $products = $products->where(function($product) {
-            return $product->where("is_parent", "!=", 1)
+       $products = $products->where(function($query) {
+            return $query->where("is_parent", "!=", 1)
                         ->orWhere("parent_id", "!=", 0);
         });
 
         $verified_sellers = verified_sellers_id();
 
         if (get_setting('vendor_system_activation') == 1) {
-            return $products->where(function ($p) use ($verified_sellers) {
-                $p->where('added_by', 'admin')
+            return $products->where(function ($query) use ($verified_sellers) {
+                $query->where('added_by', 'admin')
                     ->orWhere(function ($q) use ($verified_sellers) {
                         $q->whereIn('user_id', $verified_sellers);
                     });
