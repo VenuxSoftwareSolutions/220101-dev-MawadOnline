@@ -233,8 +233,7 @@
         <button type="button" class="preview-button" onclick="submitForm()">{{ __('product.PreviewProduct') }}</button>
     </div>
 
-    <form class="" action="{{ route('seller.products.store') }}" method="POST" enctype="multipart/form-data"
-        id="choice_form">
+    <form action="{{ route('seller.products.store') }}" method="POST" enctype="multipart/form-data" id="choice_form">
         @csrf
         <div class="row gutters-5">
             <div class="col-lg-12">
@@ -1235,7 +1234,7 @@
                         <div class="form-group row">
                             <label class="col-md-3 col-from-label">{{ translate('Description') }}</label>
                             <div class="col-md-8">
-                                <textarea class="aiz-text-editor" name="description" id="long_description">{{ old("description") }}</textarea>
+                                <textarea class="aiz-text-editor" name="description" id="long_description">{{ old('description') }}</textarea>
                                 <input type="hidden" id="hidden_value" value="">
                             </div>
                         </div>
