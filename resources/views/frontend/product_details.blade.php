@@ -2,68 +2,10 @@
 
 <style>
     /* This will apply a style to the label when its associated input is checked */
-.attribute_value input[type="radio"]:checked + .aiz-megabox-elem {
-    border: 1px solid #D42D2A; /* Change the border color or any other style */
-
-}
-
+    .attribute_value input[type="radio"]:checked+.aiz-megabox-elem {
+        border: 1px solid #D42D2A;
+    }
 </style>
-
-{{--
-@section('meta_title'){{ $detailedProduct->meta_title }}@stop
-
-@section('meta_description'){{ $detailedProduct->meta_description }}@stop
-
-@section('meta_keywords'){{ $detailedProduct->tags }}@stop
-
-@section('meta')
-    @php
-        $availability = "out of stock";
-        $qty = 0;
-        if($detailedProduct->variant_product) {
-            foreach ($detailedProduct->stocks as $key => $stock) {
-                $qty += $stock->qty;
-            }
-        }
-        else {
-            $qty = optional($detailedProduct->stocks->first())->qty;
-        }
-        if($qty > 0){
-            $availability = "in stock";
-        }
-    @endphp
-    <!-- Schema.org markup for Google+ -->
-    <meta itemprop="name" content="{{ $detailedProduct->meta_title }}">
-    <meta itemprop="description" content="{{ $detailedProduct->meta_description }}">
-    <meta itemprop="image" content="{{ uploaded_asset($detailedProduct->meta_img) }}">
-
-    <!-- Twitter Card data -->
-    <meta name="twitter:card" content="product">
-    <meta name="twitter:site" content="@publisher_handle">
-    <meta name="twitter:title" content="{{ $detailedProduct->meta_title }}">
-    <meta name="twitter:description" content="{{ $detailedProduct->meta_description }}">
-    <meta name="twitter:creator" content="@author_handle">
-    <meta name="twitter:image" content="{{ uploaded_asset($detailedProduct->meta_img) }}">
-    <meta name="twitter:data1" content="{{ single_price($detailedProduct->unit_price) }}">
-    <meta name="twitter:label1" content="Price">
-
-    <!-- Open Graph data -->
-    <meta property="og:title" content="{{ $detailedProduct->meta_title }}" />
-    <meta property="og:type" content="og:product" />
-    <meta property="og:url" content="{{ route('product', $detailedProduct->slug) }}" />
-    <meta property="og:image" content="{{ uploaded_asset($detailedProduct->meta_img) }}" />
-    <meta property="og:description" content="{{ $detailedProduct->meta_description }}" />
-    <meta property="og:site_name" content="{{ get_setting('meta_title') }}" />
-    <meta property="og:price:amount" content="{{ single_price($detailedProduct->unit_price) }}" />
-    <meta property="product:brand" content="{{ $detailedProduct->brand ? $detailedProduct->brand->name : env('APP_NAME') }}">
-    <meta property="product:availability" content="{{ $availability }}">
-    <meta property="product:condition" content="new">
-    <meta property="product:price:amount" content="{{ number_format($detailedProduct->unit_price, 2) }}">
-    <meta property="product:retailer_item_id" content="{{ $detailedProduct->slug }}">
-    <meta property="product:price:currency"
-        content="{{ get_system_default_currency()->code }}" />
-    <meta property="fb:app_id" content="{{ env('FACEBOOK_PIXEL_ID') }}">
-@endsection --}}
 
 @section('content')
     <section class="mb-4 pt-3">
@@ -88,16 +30,16 @@
         <div class="container">
             <div class="row gutters-16">
                 <!-- Left side
-                <div class="col-lg-3">
-                    <!-- Seller Info
+                    <div class="col-lg-3">
+                        <!-- Seller Info
 
-                    <!-- Top Selling Products
-                    <div class="d-none d-lg-block">
-                        <div class="bg-white border mb-4">
-                            <div class="p-3 p-sm-4 fs-16 fw-600">
-                                Top Selling Products
-                            </div>
-                            {{-- <div class="px-3 px-sm-4 pb-4">
+                        <!-- Top Selling Products
+                        <div class="d-none d-lg-block">
+                            <div class="bg-white border mb-4">
+                                <div class="p-3 p-sm-4 fs-16 fw-600">
+                                    Top Selling Products
+                                </div>
+                                {{-- <div class="px-3 px-sm-4 pb-4">
                                 <ul class="list-group list-group-flush">
                                     <li class="py-3 px-0 list-group-item border-0">
                                         <div
@@ -302,22 +244,22 @@
                                     </li>
                                 </ul>
                             </div> --}}
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Right side -->
+                    <!-- Right side -->
                 <div class="col-lg-12">
 
                     <!-- Reviews & Ratings -->
                     <div class="bg-white mb-4">
                         <!--<div class="p-3 p-sm-4">
-                            <h3 class="fs-16 fw-700 mb-0">
-                                <span class="mr-4">Reviews &amp; Ratings</span>
-                            </h3>
-                        </div>
-                        <!-- Ratting
-                        {{-- <div class="px-3 px-sm-4 mb-4">
+                                <h3 class="fs-16 fw-700 mb-0">
+                                    <span class="mr-4">Reviews &amp; Ratings</span>
+                                </h3>
+                            </div>
+                            <!-- Ratting
+                            {{-- <div class="px-3 px-sm-4 mb-4">
                             <div class="border border-secondary-base bg-soft-secondary-base p-3 p-sm-4">
                                 <div class="row align-items-center">
                                     <div class="col-md-8 mb-3">
@@ -348,152 +290,156 @@
                                 </div>
                             </div>
                         </div> --}} <!--
-                        <div class="px-3 px-sm-4 mb-4">
-                            <div class="border border-secondary-base bg-soft-secondary-base p-3 p-sm-4">
-                                <div class="row align-items-center">
-                                    <div class="col-md-8 mb-3">
-                                        @if($previewData['detailedProduct']['variationId'] || $previewData['detailedProduct']['product_id'] )
-                                        @php
-                                        if($previewData['detailedProduct']['variationId'])
-                                            $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['variationId']);
-                                        else {
-                                            $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['product_id']);
-                                        }
-                                        $totalRating = $detailedProduct->reviews->count();
-                                        @endphp
-                                        <div
+                            <div class="px-3 px-sm-4 mb-4">
+                                <div class="border border-secondary-base bg-soft-secondary-base p-3 p-sm-4">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-8 mb-3">
+                                            @if ($previewData['detailedProduct']['variationId'] || $previewData['detailedProduct']['product_id'])
+    @php
+        if ($previewData['detailedProduct']['variationId']) {
+            $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['variationId']);
+        } else {
+            $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['product_id']);
+        }
+        $totalRating = $detailedProduct->reviews->count();
+    @endphp
+                                            <div
+                                                class="d-flex align-items-center justify-content-between justify-content-md-start">
+                                                <div class="w-100 w-sm-auto">
+                                                    <span class="avgRating fs-36 mr-3">{{ $totalRating > 0 ? $detailedProduct->reviews->sum('rating') / $totalRating : 0 }}</span>
+                                                    <span class="fs-14 mr-3">out of 5.0</span>
+                                                </div>
+                                                <div
+                                                    class="mt-sm-3 w-100 w-sm-auto d-flex flex-wrap justify-content-end justify-content-md-start">
+                                                    <span class="rating rating-mr-1 rating-var">
+                                                        @if ($totalRating > 0)
+    {{ renderStarRating($detailedProduct->reviews->sum('rating') / $totalRating) }}
+@else
+    {{ renderStarRating(0) }} <!-- Assuming 0 stars when there are no reviews
+    @endif
+                                                    </span>
+                                                    <span class="total-var-rating ml-1 fs-14">({{ $totalRating }}
+                                                        reviews)</span>
+                                                </div>
+                                            </div>
+@else
+    <div
                                             class="d-flex align-items-center justify-content-between justify-content-md-start">
                                             <div class="w-100 w-sm-auto">
-                                                <span class="avgRating fs-36 mr-3">{{$totalRating > 0 ? $detailedProduct->reviews->sum('rating') / $totalRating : 0 }}</span>
+                                                <span class="fs-36 mr-3">0</span>
                                                 <span class="fs-14 mr-3">out of 5.0</span>
                                             </div>
                                             <div
                                                 class="mt-sm-3 w-100 w-sm-auto d-flex flex-wrap justify-content-end justify-content-md-start">
                                                 <span class="rating rating-mr-1 rating-var">
-                                                    @if($totalRating > 0)
-                                                    {{ renderStarRating($detailedProduct->reviews->sum('rating') / $totalRating) }}
-                                                @else
-                                                    {{ renderStarRating(0) }} <!-- Assuming 0 stars when there are no reviews
-                                                @endif
+                                                    <i class="las la-star"></i><i class="las la-star"></i><i
+                                                        class="las la-star"></i><i class="las la-star"></i><i
+                                                        class="las la-star"></i>
                                                 </span>
-                                                <span class="total-var-rating ml-1 fs-14">({{$totalRating}}
+                                                <span class="total-var-rating ml-1 fs-14">(0
                                                     reviews)</span>
                                             </div>
+                                            </div>
+    @endif
                                         </div>
-                                        @else
-                                        <div
-                                        class="d-flex align-items-center justify-content-between justify-content-md-start">
-                                        <div class="w-100 w-sm-auto">
-                                            <span class="fs-36 mr-3">0</span>
-                                            <span class="fs-14 mr-3">out of 5.0</span>
+                                        <div class="col-md-4 text-right">
+                                            <a href="javascript:void(0);" onclick="product_review('3')"
+                                                class="btn btn-secondary-base fw-400 rounded-0 text-white">
+                                                <span class="d-md-inline-block"> Rate this Product</span>
+                                            </a>
                                         </div>
-                                        <div
-                                            class="mt-sm-3 w-100 w-sm-auto d-flex flex-wrap justify-content-end justify-content-md-start">
-                                            <span class="rating rating-mr-1 rating-var">
-                                                <i class="las la-star"></i><i class="las la-star"></i><i
-                                                    class="las la-star"></i><i class="las la-star"></i><i
-                                                    class="las la-star"></i>
-                                            </span>
-                                            <span class="total-var-rating ml-1 fs-14">(0
-                                                reviews)</span>
-                                        </div>
-                                        </div>
-                                        @endif
-                                    </div>
-                                    <div class="col-md-4 text-right">
-                                        <a href="javascript:void(0);" onclick="product_review('3')"
-                                            class="btn btn-secondary-base fw-400 rounded-0 text-white">
-                                            <span class="d-md-inline-block"> Rate this Product</span>
-                                        </a>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <!-- Reviews
-                        <div class="py-3 reviews-area">
-                            <ul class="list-group list-group-flush">
-                            </ul>
+                            <!-- Reviews
+                            <div class="py-3 reviews-area">
+                                <ul class="list-group list-group-flush">
+                                </ul>
 
-                            <div class="text-center fs-18 opacity-70">
-                                There have been no reviews for this product yet.
+                                <div class="text-center fs-18 opacity-70">
+                                    There have been no reviews for this product yet.
+                                </div>
+
+                                <!-- Pagination
+                                <div class="aiz-pagination product-reviews-pagination py-2 px-4 d-flex justify-content-end">
+
+                                </div>
+                            </div>
+                        </div> -->
+                        <!-- Description, Video, Downloads -->
+                        <div class="bg-white mb-4 p-3 p-sm-4 col-12 col-md-12 float-left">
+                            <!-- Tabs -->
+                            <div class="nav aiz-nav-tabs">
+                                <a href="#tab_default_1" data-toggle="tab"
+                                    class="mr-5 pb-2 fs-16 fw-700 text-reset active show">Description</a>
+                                <a href="#tab_default_2" data-toggle="tab"
+                                    class="mr-5 pb-2 fs-16 fw-700 text-reset">Downloadable</a>
+                                <a href="#tab_default_3" data-toggle="tab" class="mr-5 pb-2 fs-16 fw-700 text-reset">Reviews
+                                    ( {{ $totalRating ?? '0' }} )</a>
                             </div>
 
-                            <!-- Pagination
-                            <div class="aiz-pagination product-reviews-pagination py-2 px-4 d-flex justify-content-end">
-
-                            </div>
-                        </div>
-                    </div> -->
-                    <!-- Description, Video, Downloads -->
-                    <div class="bg-white mb-4 p-3 p-sm-4 col-12 col-md-12 float-left">
-                        <!-- Tabs -->
-                        <div class="nav aiz-nav-tabs">
-                            <a href="#tab_default_1" data-toggle="tab" class="mr-5 pb-2 fs-16 fw-700 text-reset active show">Description</a>
-                            <a href="#tab_default_2" data-toggle="tab" class="mr-5 pb-2 fs-16 fw-700 text-reset">Downloadable</a>
-                            <a href="#tab_default_3" data-toggle="tab" class="mr-5 pb-2 fs-16 fw-700 text-reset">Reviews ( {{$totalRating ?? "0"}} )</a>
-                        </div>
-
-                        <!-- Description -->
-                        <div class="tab-content pt-0">
                             <!-- Description -->
-                            <div class="tab-pane fade active show col-12 float-left" id="tab_default_1">
+                            <div class="tab-content pt-0">
+                                <!-- Description -->
+                                <div class="tab-pane fade active show col-12 float-left" id="tab_default_1">
 
-                                <div class="col-12 col-md-6 py-5 float-left description_bottom">
-                                    <span class="fs-20 font-prompt-md pb-2">Product information</span>
-                                    @if(!empty($previewData['detailedProduct']['description']))
-                                    <div class="mw-100 overflow-hidden text-left aiz-editor-data fs-16 font-prompt">
-                                        {!! $previewData['detailedProduct']['description'] !!}
-                                    </div>
-                                    @else
-                                        <div class="mw-100 overflow-hidden text-left aiz-editor-data font-prompt">
-                                            No description available.
-                                        </div>
-                                    @endif
+                                    <div class="col-12 col-md-6 py-5 float-left description_bottom">
+                                        <span class="fs-20 font-prompt-md pb-2">Product information</span>
+                                        @if (!empty($previewData['detailedProduct']['description']))
+                                            <div class="mw-100 overflow-hidden text-left aiz-editor-data fs-16 font-prompt">
+                                                {!! $previewData['detailedProduct']['description'] !!}
+                                            </div>
+                                        @else
+                                            <div class="mw-100 overflow-hidden text-left aiz-editor-data font-prompt">
+                                                No description available.
+                                            </div>
+                                        @endif
 
-                                    <div class="mw-100 overflow-hidden text-left aiz-editor-data">
-                                        <p></p>
-                                        <div id="andonCord_feature_div" class="celwidget" data-feature-name="andonCord"
-                                            data-csa-c-id="kd4re7-yvofjf-6zpba5-x6hqg7"
-                                            data-cel-widget="andonCord_feature_div"
-                                            style="box-sizing: border-box; color: rgb(15, 17, 17); font-family: &quot;Amazon Ember&quot;, Arial, sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;">
-                                        </div>
-                                        <div id="edpIngress_feature_div" class="celwidget" data-feature-name="edpIngress"
-                                            data-csa-c-id="pmr2wx-xpxlc0-2r5u3-8cyojz"
-                                            data-cel-widget="edpIngress_feature_div"
-                                            style="box-sizing: border-box; color: rgb(15, 17, 17); font-family: &quot;Amazon Ember&quot;, Arial, sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;">
-                                        </div>
-                                        <div id="heroQuickPromo_feature_div" class="celwidget"
-                                            data-feature-name="heroQuickPromo" data-csa-c-id="4drovc-ddqeij-75gaj0-y1saxm"
-                                            data-cel-widget="heroQuickPromo_feature_div"
-                                            style="box-sizing: border-box; color: rgb(15, 17, 17); font-family: &quot;Amazon Ember&quot;, Arial, sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;">
-                                            <div id="hero-quick-promo-grid_feature_div" style="box-sizing: border-box;">
-                                                <div id="hero-quick-promo" class="a-row a-spacing-medium"
-                                                    style="box-sizing: border-box; width: 493.375px; margin-bottom: 0px !important;">
+                                        <div class="mw-100 overflow-hidden text-left aiz-editor-data">
+                                            <p></p>
+                                            <div id="andonCord_feature_div" class="celwidget" data-feature-name="andonCord"
+                                                data-csa-c-id="kd4re7-yvofjf-6zpba5-x6hqg7"
+                                                data-cel-widget="andonCord_feature_div"
+                                                style="box-sizing: border-box; color: rgb(15, 17, 17); font-family: &quot;Amazon Ember&quot;, Arial, sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;">
+                                            </div>
+                                            <div id="edpIngress_feature_div" class="celwidget"
+                                                data-feature-name="edpIngress" data-csa-c-id="pmr2wx-xpxlc0-2r5u3-8cyojz"
+                                                data-cel-widget="edpIngress_feature_div"
+                                                style="box-sizing: border-box; color: rgb(15, 17, 17); font-family: &quot;Amazon Ember&quot;, Arial, sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;">
+                                            </div>
+                                            <div id="heroQuickPromo_feature_div" class="celwidget"
+                                                data-feature-name="heroQuickPromo"
+                                                data-csa-c-id="4drovc-ddqeij-75gaj0-y1saxm"
+                                                data-cel-widget="heroQuickPromo_feature_div"
+                                                style="box-sizing: border-box; color: rgb(15, 17, 17); font-family: &quot;Amazon Ember&quot;, Arial, sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;">
+                                                <div id="hero-quick-promo-grid_feature_div" style="box-sizing: border-box;">
+                                                    <div id="hero-quick-promo" class="a-row a-spacing-medium"
+                                                        style="box-sizing: border-box; width: 493.375px; margin-bottom: 0px !important;">
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <p></p>
-                                        <!--
-                                        <div id="featurebullets_feature_div" class="celwidget"
-                                            data-feature-name="featurebullets" data-csa-c-id="reqzvc-d8zszu-2bgmto-k7o74x"
-                                            data-cel-widget="featurebullets_feature_div"
-                                            style="box-sizing: border-box; color: rgb(15, 17, 17); font-family: &quot;Amazon Ember&quot;, Arial, sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;">
-                                            <div id="feature-bullets"
-                                                class="a-section a-spacing-medium a-spacing-top-small"
-                                                style="box-sizing: border-box; margin-top: 8px !important; margin-bottom: 0px;">
-                                                <ul class="a-unordered-list a-vertical a-spacing-mini"
-                                                    style="box-sizing: border-box; margin: 0px 0px 0px 18px; color: rgb(15, 17, 17); padding: 0px;">
-                                                    <li
-                                                        style="box-sizing: border-box; list-style: disc; overflow-wrap: break-word; margin: 0px;">
-                                                        <span class="a-list-item"
-                                                            style="box-sizing: border-box; color: rgb(15, 17, 17); overflow-wrap: break-word; display: block;">
-                                                            <h2
-                                                                style="padding: 0px 0px 4px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; text-rendering: optimizelegibility; font-weight: 700; font-size: 24px; line-height: 32px;">
-                                                                Product details</h2>
-                                                            <div id="detailBullets_feature_div">
-                                                                <ul class="a-unordered-list a-nostyle a-vertical a-spacing-none detail-bullet-list"
-                                                                    style="margin-right: 0px; margin-bottom: 1px; margin-left: 18px; padding: 0px;">
-                                                                    {{-- <li
+                                            <p></p>
+                                            <!--
+                                            <div id="featurebullets_feature_div" class="celwidget"
+                                                data-feature-name="featurebullets" data-csa-c-id="reqzvc-d8zszu-2bgmto-k7o74x"
+                                                data-cel-widget="featurebullets_feature_div"
+                                                style="box-sizing: border-box; color: rgb(15, 17, 17); font-family: &quot;Amazon Ember&quot;, Arial, sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;">
+                                                <div id="feature-bullets"
+                                                    class="a-section a-spacing-medium a-spacing-top-small"
+                                                    style="box-sizing: border-box; margin-top: 8px !important; margin-bottom: 0px;">
+                                                    <ul class="a-unordered-list a-vertical a-spacing-mini"
+                                                        style="box-sizing: border-box; margin: 0px 0px 0px 18px; color: rgb(15, 17, 17); padding: 0px;">
+                                                        <li
+                                                            style="box-sizing: border-box; list-style: disc; overflow-wrap: break-word; margin: 0px;">
+                                                            <span class="a-list-item"
+                                                                style="box-sizing: border-box; color: rgb(15, 17, 17); overflow-wrap: break-word; display: block;">
+                                                                <h2
+                                                                    style="padding: 0px 0px 4px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; text-rendering: optimizelegibility; font-weight: 700; font-size: 24px; line-height: 32px;">
+                                                                    Product details</h2>
+                                                                <div id="detailBullets_feature_div">
+                                                                    <ul class="a-unordered-list a-nostyle a-vertical a-spacing-none detail-bullet-list"
+                                                                        style="margin-right: 0px; margin-bottom: 1px; margin-left: 18px; padding: 0px;">
+                                                                        {{-- <li
                                                                         style="list-style: none; overflow-wrap: break-word; margin: 0px 0px 5.5px;">
                                                                         <span class="a-list-item"><span
                                                                                 class="a-text-bold"
@@ -501,7 +447,7 @@
                                                                                 Discontinued By Manufacturer ‏ :
                                                                                 ‎&nbsp;</span>No</span>
                                                                     </li> --}}
-                                                                    {{-- @foreach ($previewData['detailedProduct']['general_attributes'] as $key => $general_attribute)
+                                                                        {{-- @foreach ($previewData['detailedProduct']['general_attributes'] as $key => $general_attribute)
                                                                     @php
                                                                     $attribue_general = App\Models\Attribute::find($key) ;
 
@@ -523,20 +469,20 @@
 
                                                                     @endforeach --}}
 
-                                                                </ul>
-                                                            </div>
-                                                        </span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div> -->
+                                                                    </ul>
+                                                                </div>
+                                                            </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div> -->
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="bg-white p-sm-4 col-12 col-md-6 float-left mt-4 product-table-style">
-                                    <span class="fs-20 font-prompt-md">Product Specification</span>
-                                    <table class="table prod-details-table border">
-                                        <tbody>
-                                            {{-- @foreach ($previewData['detailedProduct']['general_attributes'] as $key => $general_attribute)
+                                    <div class="bg-white p-sm-4 col-12 col-md-6 float-left mt-4 product-table-style">
+                                        <span class="fs-20 font-prompt-md">Product Specification</span>
+                                        <table class="table prod-details-table border">
+                                            <tbody>
+                                                {{-- @foreach ($previewData['detailedProduct']['general_attributes'] as $key => $general_attribute)
                                                 @php
                                                     $attribue_general = App\Models\Attribute::find($key) ;
 
@@ -554,704 +500,1101 @@
                                                     </tr>
                                                 @endif
                                             @endforeach --}}
-                                            @foreach ($previewData['detailedProduct']['general_attributes'] as $key => $general_attribute)
-                                                @php
-                                                    $attribue_general = App\Models\Attribute::find($key);
-                                                @endphp
+                                                @foreach ($previewData['detailedProduct']['general_attributes'] as $key => $general_attribute)
+                                                    @php
+                                                        $attribue_general = App\Models\Attribute::find($key);
+                                                    @endphp
 
-                                                @if (is_array($general_attribute))
-                                                    {{-- If $general_attribute is an array, loop through each element --}}
-                                                    <tr>
-                                                        <td class="background-green">{{ $attribue_general ? $attribue_general->getTranslation('name') : "" }}</td>
-                                                        <td>
-                                                            @foreach ($general_attribute as $attribute)
-                                                                @if (preg_match('/^#[0-9A-F]{6}$/i', $attribute))
-                                                                    {{-- Display the color --}}
-                                                                    <span class="color-preview" style="display: inline-block; width: 20px; height: 20px; background-color: {{ $attribute }};"></span>
-                                                                @else
-                                                                    {{-- Display the value --}}
-                                                                    <span>{{ $attribute }}</span>
-                                                                @endif
-                                                            @endforeach
-                                                        </td>
-                                                    </tr>
-                                                @else
-                                                    {{-- Single attribute handling --}}
-                                                    @if (preg_match('/^#[0-9A-F]{6}$/i', $general_attribute))
-                                                        {{-- If it is a color --}}
+                                                    @if (is_array($general_attribute))
+                                                        {{-- If $general_attribute is an array, loop through each element --}}
                                                         <tr>
-                                                            <td class="background-green">Color</td>
-                                                            <td><span class="color-preview" style="display: inline-block; width: 20px; height: 20px; background-color: {{ $general_attribute }};"></span></td>
+                                                            <td class="background-green">
+                                                                {{ $attribue_general ? $attribue_general->getTranslation('name') : '' }}
+                                                            </td>
+                                                            <td>
+                                                                @foreach ($general_attribute as $attribute)
+                                                                    @if (preg_match('/^#[0-9A-F]{6}$/i', $attribute))
+                                                                        {{-- Display the color --}}
+                                                                        <span class="color-preview"
+                                                                            style="display: inline-block; width: 20px; height: 20px; background-color: {{ $attribute }};"></span>
+                                                                    @else
+                                                                        {{-- Display the value --}}
+                                                                        <span>{{ $attribute }}</span>
+                                                                    @endif
+                                                                @endforeach
+                                                            </td>
                                                         </tr>
                                                     @else
-                                                        {{-- Non-color attribute --}}
-                                                        <tr>
-                                                            <td class="background-green">{{ $attribue_general ? $attribue_general->getTranslation('name') : "" }}</td>
-                                                            <td>{{ $general_attribute }}</td>
-                                                        </tr>
+                                                        {{-- Single attribute handling --}}
+                                                        @if (preg_match('/^#[0-9A-F]{6}$/i', $general_attribute))
+                                                            {{-- If it is a color --}}
+                                                            <tr>
+                                                                <td class="background-green">Color</td>
+                                                                <td><span class="color-preview"
+                                                                        style="display: inline-block; width: 20px; height: 20px; background-color: {{ $general_attribute }};"></span>
+                                                                </td>
+                                                            </tr>
+                                                        @else
+                                                            {{-- Non-color attribute --}}
+                                                            <tr>
+                                                                <td class="background-green">
+                                                                    {{ $attribue_general ? $attribue_general->getTranslation('name') : '' }}
+                                                                </td>
+                                                                <td>{{ $general_attribute }}</td>
+                                                            </tr>
+                                                        @endif
                                                     @endif
-                                                @endif
-                                            @endforeach
+                                                @endforeach
 
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                            <!-- Video
-                            <div class="tab-pane fade" id="tab_default_2">
-                                <div class="py-5">
-                                    <div class="embed-responsive embed-responsive-16by9">
-                                        @if(isset($previewData['detailedProduct']['video_provider']) && $previewData['detailedProduct']['video_provider'] == "youtube")
-                                        <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/{{ $previewData['detailedProduct']['getYoutubeVideoId'] }}" allowfullscreen></iframe>
-                                        @elseif(isset($previewData['detailedProduct']['video_provider']) && $previewData['detailedProduct']['video_provider'] == "vimeo")
-                                          <iframe class="embed-responsive-item" src="https://player.vimeo.com/video/{{ $previewData['detailedProduct']['getVimeoVideoId'] }}" allowfullscreen></iframe>
-
-                                        @endif
-                                        {{-- @if ($videoData['video_provider'] === 'youtube') --}}
-                                        {{-- <iframe class="embed-responsive-item" src="https://www.youtube.com/watch?v=nk1n4wYSGAs&t=2245s" allowfullscreen></iframe> --}}
-                                        {{-- @endif --}}
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
-                            </div>-->
 
-                            <!-- Download -->
-                            <div class="tab-pane fade" id="tab_default_2">
-                                <div class="py-3 col-12 p-0 float-left">
-                                    @if(count($previewData['detailedProduct']['documents']) > 0)
-                                    <div class="download-title fs-20 font-prompt-md text-left col-md-12">BIM/CAD</div>
-                                    <div class="col-md-12 my-2 float-left">
-                                        @if(count($previewData['detailedProduct']['documents']) > 0)
-                                            @foreach($previewData['detailedProduct']['documents'] as $document)
+                                <!-- Video
+                                <div class="tab-pane fade" id="tab_default_2">
+                                    <div class="py-5">
+                                        <div class="embed-responsive embed-responsive-16by9">
+                                            @if (isset($previewData['detailedProduct']['video_provider']) &&
+                                                    $previewData['detailedProduct']['video_provider'] == 'youtube')
+    <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/{{ $previewData['detailedProduct']['getYoutubeVideoId'] }}" allowfullscreen></iframe>
+@elseif(isset($previewData['detailedProduct']['video_provider']) &&
+        $previewData['detailedProduct']['video_provider'] == 'vimeo')
+    <iframe class="embed-responsive-item" src="https://player.vimeo.com/video/{{ $previewData['detailedProduct']['getVimeoVideoId'] }}" allowfullscreen></iframe>
+    @endif
+                                            {{-- @if ($videoData['video_provider'] === 'youtube') --}}
+                                            {{-- <iframe class="embed-responsive-item" src="https://www.youtube.com/watch?v=nk1n4wYSGAs&t=2245s" allowfullscreen></iframe> --}}
+                                            {{-- @endif --}}
+                                        </div>
+                                    </div>
+                                </div>-->
 
-                                                @switch($document['extension'])
-                                                    @case('pdf')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                        <svg height="41px" width="40px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                                        viewBox="0 0 309.267 309.267" xml:space="preserve">
-                                                                   <g>
-                                                                       <path style="fill:#E2574C;" d="M38.658,0h164.23l87.049,86.711v203.227c0,10.679-8.659,19.329-19.329,19.329H38.658
-                                                                           c-10.67,0-19.329-8.65-19.329-19.329V19.329C19.329,8.65,27.989,0,38.658,0z"/>
-                                                                       <path style="fill:#B53629;" d="M289.658,86.981h-67.372c-10.67,0-19.329-8.659-19.329-19.329V0.193L289.658,86.981z"/>
-                                                                       <path style="fill:#FFFFFF;" d="M217.434,146.544c3.238,0,4.823-2.822,4.823-5.557c0-2.832-1.653-5.567-4.823-5.567h-18.44
-                                                                           c-3.605,0-5.615,2.986-5.615,6.282v45.317c0,4.04,2.3,6.282,5.412,6.282c3.093,0,5.403-2.242,5.403-6.282v-12.438h11.153
-                                                                           c3.46,0,5.19-2.832,5.19-5.644c0-2.754-1.73-5.49-5.19-5.49h-11.153v-16.903C204.194,146.544,217.434,146.544,217.434,146.544z
-                                                                            M155.107,135.42h-13.492c-3.663,0-6.263,2.513-6.263,6.243v45.395c0,4.629,3.74,6.079,6.417,6.079h14.159
-                                                                           c16.758,0,27.824-11.027,27.824-28.047C183.743,147.095,173.325,135.42,155.107,135.42z M155.755,181.946h-8.225v-35.334h7.413
-                                                                           c11.221,0,16.101,7.529,16.101,17.918C171.044,174.253,166.25,181.946,155.755,181.946z M106.33,135.42H92.964
-                                                                           c-3.779,0-5.886,2.493-5.886,6.282v45.317c0,4.04,2.416,6.282,5.663,6.282s5.663-2.242,5.663-6.282v-13.231h8.379
-                                                                           c10.341,0,18.875-7.326,18.875-19.107C125.659,143.152,117.425,135.42,106.33,135.42z M106.108,163.158h-7.703v-17.097h7.703
-                                                                           c4.755,0,7.78,3.711,7.78,8.553C113.878,159.447,110.863,163.158,106.108,163.158z"/>
-                                                                   </g>
-                                                                   </svg>
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">PDF</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('jpg')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                        <svg height="41px" width="40px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                                        viewBox="0 0 56 56" xml:space="preserve">
-                                                                   <g>
-                                                                       <path style="fill:#E9E9E0;" d="M36.985,0H7.963C7.155,0,6.5,0.655,6.5,1.926V55c0,0.345,0.655,1,1.463,1h40.074
-                                                                           c0.808,0,1.463-0.655,1.463-1V12.978c0-0.696-0.093-0.92-0.257-1.085L37.607,0.257C37.442,0.093,37.218,0,36.985,0z"/>
-                                                                       <polygon style="fill:#D9D7CA;" points="37.5,0.151 37.5,12 49.349,12 	"/>
-                                                                       <circle style="fill:#F3D55B;" cx="18.931" cy="14.431" r="4.569"/>
-                                                                       <polygon style="fill:#26B99A;" points="6.5,39 17.5,39 49.5,39 49.5,28 39.5,18.5 29,30 23.517,24.517 	"/>
-                                                                       <path style="fill:#14A085;" d="M48.037,56H7.963C7.155,56,6.5,55.345,6.5,54.537V39h43v15.537C49.5,55.345,48.845,56,48.037,56z"/>
-                                                                       <g>
-                                                                           <path style="fill:#FFFFFF;" d="M21.426,42.65v7.848c0,0.474-0.087,0.873-0.26,1.196c-0.173,0.323-0.406,0.583-0.697,0.779
-                                                                               c-0.292,0.196-0.627,0.333-1.005,0.41C19.085,52.961,18.696,53,18.295,53c-0.201,0-0.436-0.021-0.704-0.062
-                                                                               c-0.269-0.041-0.547-0.104-0.834-0.191s-0.563-0.185-0.827-0.294c-0.265-0.109-0.488-0.232-0.67-0.369l0.697-1.107
-                                                                               c0.091,0.063,0.221,0.13,0.39,0.198c0.168,0.068,0.353,0.132,0.554,0.191c0.2,0.06,0.41,0.111,0.629,0.157
-                                                                               s0.424,0.068,0.615,0.068c0.483,0,0.868-0.094,1.155-0.28s0.439-0.504,0.458-0.95V42.65H21.426z"/>
-                                                                           <path style="fill:#FFFFFF;" d="M25.514,52.932h-1.641V42.855h2.898c0.428,0,0.852,0.068,1.271,0.205
-                                                                               c0.419,0.137,0.795,0.342,1.128,0.615c0.333,0.273,0.602,0.604,0.807,0.991s0.308,0.822,0.308,1.306
-                                                                               c0,0.511-0.087,0.973-0.26,1.388c-0.173,0.415-0.415,0.764-0.725,1.046c-0.31,0.282-0.684,0.501-1.121,0.656
-                                                                               s-0.921,0.232-1.449,0.232h-1.217V52.932z M25.514,44.1v3.992h1.504c0.2,0,0.398-0.034,0.595-0.103
-                                                                               c0.196-0.068,0.376-0.18,0.54-0.335s0.296-0.371,0.396-0.649c0.1-0.278,0.15-0.622,0.15-1.032c0-0.164-0.023-0.354-0.068-0.567
-                                                                               c-0.046-0.214-0.139-0.419-0.28-0.615c-0.142-0.196-0.34-0.36-0.595-0.492C27.5,44.166,27.163,44.1,26.744,44.1H25.514z"/>
-                                                                           <path style="fill:#FFFFFF;" d="M39.5,47.736v3.896c-0.21,0.265-0.444,0.48-0.704,0.649s-0.533,0.308-0.82,0.417
-                                                                               s-0.583,0.187-0.889,0.232C36.781,52.978,36.479,53,36.178,53c-0.602,0-1.155-0.109-1.661-0.328s-0.948-0.542-1.326-0.971
-                                                                               c-0.378-0.429-0.675-0.966-0.889-1.613c-0.214-0.647-0.321-1.395-0.321-2.242s0.107-1.593,0.321-2.235
-                                                                               c0.214-0.643,0.51-1.178,0.889-1.606c0.378-0.429,0.822-0.754,1.333-0.978c0.51-0.224,1.062-0.335,1.654-0.335
-                                                                               c0.547,0,1.057,0.091,1.531,0.273c0.474,0.183,0.897,0.456,1.271,0.82l-1.135,1.012c-0.219-0.265-0.47-0.456-0.752-0.574
-                                                                               c-0.283-0.118-0.574-0.178-0.875-0.178c-0.337,0-0.659,0.063-0.964,0.191c-0.306,0.128-0.579,0.344-0.82,0.649
-                                                                               c-0.242,0.306-0.431,0.699-0.567,1.183s-0.21,1.075-0.219,1.777c0.009,0.684,0.08,1.276,0.212,1.777
-                                                                               c0.132,0.501,0.314,0.911,0.547,1.23s0.497,0.556,0.793,0.711c0.296,0.155,0.608,0.232,0.937,0.232c0.1,0,0.234-0.007,0.403-0.021
-                                                                               c0.168-0.014,0.337-0.036,0.506-0.068c0.168-0.032,0.33-0.075,0.485-0.13c0.155-0.055,0.269-0.132,0.342-0.232v-2.488h-1.709
-                                                                               v-1.121H39.5z"/>
-                                                                       </g>
-                                                                   </g>
-                                                                   </svg>
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">JPG</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('png')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                        <svg fill="#000000" height="41px" width="40px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                                        viewBox="0 0 58 58" xml:space="preserve">
-                                                                   <g>
-                                                                       <path d="M50.95,12.187L39.313,0.55C38.964,0.201,38.48,0,37.985,0H8.963C7.777,0,6.5,0.916,6.5,2.926V39h0.633l16.736-14.245
-                                                                           c0.397-0.337,0.986-0.314,1.355,0.055l4.743,4.743l9.795-10.727c0.181-0.198,0.434-0.315,0.703-0.325
-                                                                           c0.282-0.009,0.53,0.09,0.725,0.274l10,9.5l0.311,0.297V13.978C51.5,13.212,51.408,12.645,50.95,12.187z M16.5,23.638
-                                                                           c-3.071,0-5.569-2.498-5.569-5.569S13.429,12.5,16.5,12.5s5.569,2.498,5.569,5.569S19.571,23.638,16.5,23.638z M48.109,14H37.5
-                                                                           V3.391c0-0.458,0.553-0.687,0.877-0.363l10.095,10.095C48.796,13.447,48.567,14,48.109,14z"/>
-                                                                       <path d="M31.383,30.969l4.807,4.807c0.391,0.391,0.391,1.023,0,1.414s-1.023,0.391-1.414,0L24.462,26.876L10.218,39H51.5v-7.636
-                                                                           L40.551,20.928L31.383,30.969z"/>
-                                                                       <path d="M20.823,49.058c0.196-0.068,0.376-0.18,0.54-0.335s0.296-0.371,0.396-0.649c0.1-0.278,0.15-0.622,0.15-1.032
-                                                                           c0-0.164-0.023-0.354-0.068-0.567c-0.046-0.214-0.139-0.419-0.28-0.615c-0.142-0.196-0.34-0.36-0.595-0.492
-                                                                           c-0.255-0.132-0.593-0.198-1.012-0.198h-1.23v3.992h1.504C20.429,49.16,20.627,49.126,20.823,49.058z"/>
-                                                                       <path d="M16.5,14.5c-1.968,0-3.569,1.601-3.569,3.569s1.601,3.569,3.569,3.569s3.569-1.601,3.569-3.569S18.468,14.5,16.5,14.5z"/>
-                                                                       <path d="M7.85,41H6.5v1.08V43v13c0,1.009,1.22,2,2.463,2h40.074c1.243,0,2.463-0.991,2.463-2V41h-43H7.85z M35.302,46.679
-                                                                           c0.214-0.643,0.51-1.178,0.889-1.606c0.378-0.429,0.822-0.754,1.333-0.978c0.51-0.224,1.062-0.335,1.654-0.335
-                                                                           c0.547,0,1.057,0.091,1.531,0.273c0.474,0.183,0.897,0.456,1.271,0.82l-1.135,1.012c-0.219-0.265-0.47-0.456-0.752-0.574
-                                                                           c-0.283-0.118-0.574-0.178-0.875-0.178c-0.337,0-0.659,0.063-0.964,0.191c-0.306,0.128-0.579,0.344-0.82,0.649
-                                                                           c-0.242,0.306-0.431,0.699-0.567,1.183s-0.21,1.075-0.219,1.777c0.009,0.684,0.08,1.276,0.212,1.777
-                                                                           c0.132,0.501,0.314,0.911,0.547,1.23s0.497,0.556,0.793,0.711c0.296,0.155,0.608,0.232,0.937,0.232c0.1,0,0.234-0.007,0.403-0.021
-                                                                           c0.168-0.014,0.337-0.036,0.506-0.068c0.168-0.032,0.33-0.075,0.485-0.13c0.155-0.055,0.269-0.132,0.342-0.232v-2.488h-1.709
-                                                                           v-1.121H42.5v3.896c-0.21,0.265-0.444,0.48-0.704,0.649s-0.533,0.308-0.82,0.417S40.392,53.954,40.087,54
-                                                                           c-0.306,0.046-0.608,0.068-0.909,0.068c-0.602,0-1.155-0.109-1.661-0.328s-0.948-0.542-1.326-0.971
-                                                                           c-0.378-0.429-0.675-0.966-0.889-1.613c-0.214-0.647-0.321-1.395-0.321-2.242S35.087,47.321,35.302,46.679z M25.369,43.924h1.668
-                                                                           l3.951,6.945v-6.945h1.668V54h-1.668l-3.951-6.945V54h-1.668V43.924z M17.084,43.924h2.898c0.428,0,0.852,0.068,1.271,0.205
-                                                                           c0.419,0.137,0.795,0.342,1.128,0.615c0.333,0.273,0.602,0.604,0.807,0.991s0.308,0.822,0.308,1.306
-                                                                           c0,0.511-0.087,0.973-0.26,1.388c-0.173,0.415-0.415,0.764-0.725,1.046c-0.31,0.282-0.684,0.501-1.121,0.656
-                                                                           s-0.921,0.232-1.449,0.232h-1.217V54h-1.641V43.924z"/>
-                                                                   </g>
-                                                                   </svg>
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">PNG</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('pln')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                    <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <g clip-path="url(#clip0_3326_35086)">
-                                                                        <path d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z" fill="#E85984"/>
-                                                                        <path d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z" fill="#E51050"/>
-                                                                        <path d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z" fill="#E51050"/>
-                                                                        <path d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z" fill="white"/>
-                                                                        <path d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z" fill="#770829"/>
-                                                                        </g>
-                                                                        <defs>
-                                                                        <clipPath id="clip0_3326_35086">
-                                                                        <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                        </clipPath>
-                                                                        </defs>
-                                                                        </svg>
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('dwg')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                    <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <g clip-path="url(#clip0_3326_35086)">
-                                                                        <path d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z" fill="#E85984"/>
-                                                                        <path d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z" fill="#E51050"/>
-                                                                        <path d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z" fill="#E51050"/>
-                                                                        <path d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z" fill="white"/>
-                                                                        <path d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z" fill="#770829"/>
-                                                                        </g>
-                                                                        <defs>
-                                                                        <clipPath id="clip0_3326_35086">
-                                                                        <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                        </clipPath>
-                                                                        </defs>
-                                                                        </svg>
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('dxf')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                    <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <g clip-path="url(#clip0_3326_35086)">
-                                                                        <path d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z" fill="#E85984"/>
-                                                                        <path d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z" fill="#E51050"/>
-                                                                        <path d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z" fill="#E51050"/>
-                                                                        <path d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z" fill="white"/>
-                                                                        <path d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z" fill="#770829"/>
-                                                                        </g>
-                                                                        <defs>
-                                                                        <clipPath id="clip0_3326_35086">
-                                                                        <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                        </clipPath>
-                                                                        </defs>
-                                                                        </svg>
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('gsm')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                    <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <g clip-path="url(#clip0_3326_35086)">
-                                                                        <path d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z" fill="#E85984"/>
-                                                                        <path d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z" fill="#E51050"/>
-                                                                        <path d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z" fill="#E51050"/>
-                                                                        <path d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z" fill="white"/>
-                                                                        <path d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z" fill="#770829"/>
-                                                                        </g>
-                                                                        <defs>
-                                                                        <clipPath id="clip0_3326_35086">
-                                                                        <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                        </clipPath>
-                                                                        </defs>
-                                                                        </svg>
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('stl')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                    <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <g clip-path="url(#clip0_3326_35086)">
-                                                                        <path d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z" fill="#E85984"/>
-                                                                        <path d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z" fill="#E51050"/>
-                                                                        <path d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z" fill="#E51050"/>
-                                                                        <path d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z" fill="white"/>
-                                                                        <path d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z" fill="#770829"/>
-                                                                        </g>
-                                                                        <defs>
-                                                                        <clipPath id="clip0_3326_35086">
-                                                                        <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                        </clipPath>
-                                                                        </defs>
-                                                                        </svg>
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('rfa')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                    <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <g clip-path="url(#clip0_3326_35086)">
-                                                                        <path d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z" fill="#E85984"/>
-                                                                        <path d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z" fill="#E51050"/>
-                                                                        <path d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z" fill="#E51050"/>
-                                                                        <path d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z" fill="white"/>
-                                                                        <path d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z" fill="#770829"/>
-                                                                        </g>
-                                                                        <defs>
-                                                                        <clipPath id="clip0_3326_35086">
-                                                                        <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                        </clipPath>
-                                                                        </defs>
-                                                                        </svg>
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('rvt')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                    <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <g clip-path="url(#clip0_3326_35086)">
-                                                                        <path d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z" fill="#E85984"/>
-                                                                        <path d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z" fill="#E51050"/>
-                                                                        <path d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z" fill="#E51050"/>
-                                                                        <path d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z" fill="white"/>
-                                                                        <path d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z" fill="#770829"/>
-                                                                        </g>
-                                                                        <defs>
-                                                                        <clipPath id="clip0_3326_35086">
-                                                                        <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                        </clipPath>
-                                                                        </defs>
-                                                                        </svg>
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('ifc')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                    <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <g clip-path="url(#clip0_3326_35086)">
-                                                                        <path d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z" fill="#E85984"/>
-                                                                        <path d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z" fill="#E51050"/>
-                                                                        <path d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z" fill="#E51050"/>
-                                                                        <path d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z" fill="white"/>
-                                                                        <path d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z" fill="#770829"/>
-                                                                        </g>
-                                                                        <defs>
-                                                                        <clipPath id="clip0_3326_35086">
-                                                                        <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                        </clipPath>
-                                                                        </defs>
-                                                                        </svg>
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
-                                                                    </center>
-                                                                </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('3ds')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                        <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                            <g clip-path="url(#clip0_3326_35104)">
-                                                                            <path opacity="0.75" d="M23.5474 19.5151L24.6967 15.8119L18.5283 18.3982L23.5474 19.5151ZM36.9317 12.5202C32.2327 7.7296 20.8415 8.626 16.3607 9.74283C11.1233 11.0948 9.72671 15.1212 9.87219 21.6458C9.93039 25.3931 11.5452 28.7142 14.6731 29.8457C21.0452 32.0793 26.5152 31.7707 32.2618 26.216C29.323 23.0125 26.879 21.8957 22.8637 22.1896C18.9648 22.3806 16.7535 21.7634 13.9893 18.7068C17.3645 15.4298 19.4303 13.8428 23.5038 13.4166C28.0574 12.9464 32.1163 14.8861 33.8766 16.6936C35.5205 18.3982 36.3498 22.2924 35.957 27.0095C35.6515 30.8303 34.444 33.0786 31.6653 33.8868C28.0864 35.0037 22.8928 35.5474 18.0919 35.3563C12.4327 35.1212 9.46485 33.9603 8.6356 33.0786C6.88983 31.1095 5.60959 26.9361 5.31863 22.1455C5.02767 17.3549 5.76962 12.8288 7.23898 10.36C8.69379 7.89125 14.0766 6.14253 22.0053 5.6429C28.6247 5.26083 34.764 5.76046 34.8368 5.76046L34.4294 0.426147C34.4294 0.426147 20.2741 2.08669 18.1064 2.27773C12.8546 2.79205 5.78417 3.93827 3.41283 7.96472C-0.820679 15.1506 0.255882 30.4482 5.37682 36.1793C9.94493 41.3225 25.8315 40.4702 32.9455 38.3101C36.1461 37.3402 39.7686 34.6804 40.3942 27.4063C40.8015 22.6157 40.1468 15.8413 36.9317 12.5202ZM22.7036 25.349L27.7227 26.4658L21.5543 29.0522L22.7036 25.349Z" fill="black"/>
-                                                                            <path d="M23.2574 19.0889L24.4067 15.3857L18.2383 17.9721L23.2574 19.0889ZM36.6417 12.094C31.9426 7.30345 20.5514 8.18516 16.0706 9.31668C10.8333 10.6686 9.43667 14.6951 9.58215 21.2197C9.64035 24.9669 11.2552 28.288 14.383 29.4195C20.7551 31.6532 26.2252 31.3446 31.9717 25.7899C29.033 22.5863 26.5889 21.4695 22.5736 21.7634C18.6747 21.9544 16.4634 21.3373 13.6993 18.2807C17.0744 15.0037 19.1403 13.4166 23.2137 12.9904C27.7673 12.5202 31.8262 14.46 33.5866 16.2675C35.2305 17.9721 36.0597 21.8663 35.6669 26.5834C35.3614 30.4041 34.1539 32.6525 31.3752 33.4607C27.7964 34.5775 22.5882 35.1212 17.8018 34.9302C12.1426 34.6951 9.17481 33.5342 8.34556 32.6525C6.59979 30.6833 5.31955 26.5099 5.02859 21.7193C4.73763 16.9287 5.47958 12.4026 6.94894 9.93387C8.40376 7.4651 13.7866 5.71638 21.7153 5.21675C28.3347 4.83468 34.474 5.33431 34.5467 5.33431L34.1394 0C34.1394 0 19.9841 1.66054 17.8164 1.85158C12.5645 2.35121 5.47958 3.51212 3.12279 7.53857C-1.11072 14.7245 -0.0341572 30.0367 5.08678 35.7531C9.65489 40.8964 25.5414 40.0441 32.6555 37.8839C35.8561 36.914 39.4786 34.2542 40.1041 26.9802C40.5115 22.1896 39.8568 15.4151 36.6417 12.094ZM22.4136 24.9229L27.4327 26.0397L21.2643 28.626L22.4136 24.9229Z" fill="#016B6B"/>
-                                                                            </g>
-                                                                            <defs>
-                                                                            <clipPath id="clip0_3326_35104">
-                                                                            <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                            </clipPath>
-                                                                            </defs>
+                                <!-- Download -->
+                                <div class="tab-pane fade" id="tab_default_2">
+                                    <div class="py-3 col-12 p-0 float-left">
+                                        @if (count($previewData['detailedProduct']['documents']) > 0)
+                                            <div class="download-title fs-20 font-prompt-md text-left col-md-12">BIM/CAD
+                                            </div>
+                                            <div class="col-md-12 my-2 float-left">
+                                                @if (count($previewData['detailedProduct']['documents']) > 0)
+                                                    @foreach ($previewData['detailedProduct']['documents'] as $document)
+                                                        @switch($document['extension'])
+                                                            @case('pdf')
+                                                                <div
+                                                                    class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
+                                                                    <div class="py-5 px-4">
+                                                                        <div class="my-4 mx-0">
+                                                                            <center>
+                                                                                <svg height="41px" width="40px" version="1.1"
+                                                                                    id="Layer_1"
+                                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                                    xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                                                    viewBox="0 0 309.267 309.267"
+                                                                                    xml:space="preserve">
+                                                                                    <g>
+                                                                                        <path style="fill:#E2574C;"
+                                                                                            d="M38.658,0h164.23l87.049,86.711v203.227c0,10.679-8.659,19.329-19.329,19.329H38.658
+                                                                                       c-10.67,0-19.329-8.65-19.329-19.329V19.329C19.329,8.65,27.989,0,38.658,0z" />
+                                                                                        <path style="fill:#B53629;"
+                                                                                            d="M289.658,86.981h-67.372c-10.67,0-19.329-8.659-19.329-19.329V0.193L289.658,86.981z" />
+                                                                                        <path style="fill:#FFFFFF;"
+                                                                                            d="M217.434,146.544c3.238,0,4.823-2.822,4.823-5.557c0-2.832-1.653-5.567-4.823-5.567h-18.44
+                                                                                       c-3.605,0-5.615,2.986-5.615,6.282v45.317c0,4.04,2.3,6.282,5.412,6.282c3.093,0,5.403-2.242,5.403-6.282v-12.438h11.153
+                                                                                       c3.46,0,5.19-2.832,5.19-5.644c0-2.754-1.73-5.49-5.19-5.49h-11.153v-16.903C204.194,146.544,217.434,146.544,217.434,146.544z
+                                                                                        M155.107,135.42h-13.492c-3.663,0-6.263,2.513-6.263,6.243v45.395c0,4.629,3.74,6.079,6.417,6.079h14.159
+                                                                                       c16.758,0,27.824-11.027,27.824-28.047C183.743,147.095,173.325,135.42,155.107,135.42z M155.755,181.946h-8.225v-35.334h7.413
+                                                                                       c11.221,0,16.101,7.529,16.101,17.918C171.044,174.253,166.25,181.946,155.755,181.946z M106.33,135.42H92.964
+                                                                                       c-3.779,0-5.886,2.493-5.886,6.282v45.317c0,4.04,2.416,6.282,5.663,6.282s5.663-2.242,5.663-6.282v-13.231h8.379
+                                                                                       c10.341,0,18.875-7.326,18.875-19.107C125.659,143.152,117.425,135.42,106.33,135.42z M106.108,163.158h-7.703v-17.097h7.703
+                                                                                       c4.755,0,7.78,3.711,7.78,8.553C113.878,159.447,110.863,163.158,106.108,163.158z" />
+                                                                                    </g>
+                                                                                </svg>
+                                                                                <br /><span
+                                                                                    class="fs-16 font-prompt-md mt-1 mt-logo-download">PDF</span>
+                                                                            </center>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div
+                                                                        class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
+                                                                        <a href="{{ asset('public' . $document['path']) }}"
+                                                                            class="download-box-btm-l p-0" download>
+                                                                            Download
+                                                                        </a>
+                                                                        <span class="download-box-btm-r">
+                                                                            1
+                                                                            <svg width="24" height="24"
+                                                                                viewBox="0 0 24 24" fill="none"
+                                                                                xmlns="http://www.w3.org/2000/svg">
+                                                                                <path
+                                                                                    d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" />
+                                                                                <path d="M8 2H17C19 2 20 3 20 5V6.38"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" stroke-linecap="round"
+                                                                                    stroke-linejoin="round" />
                                                                             </svg>
-
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">3D Studio MAX</span>
-                                                                    </center>
+                                                                        </span>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('max')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                        <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                            <g clip-path="url(#clip0_3326_35104)">
-                                                                            <path opacity="0.75" d="M23.5474 19.5151L24.6967 15.8119L18.5283 18.3982L23.5474 19.5151ZM36.9317 12.5202C32.2327 7.7296 20.8415 8.626 16.3607 9.74283C11.1233 11.0948 9.72671 15.1212 9.87219 21.6458C9.93039 25.3931 11.5452 28.7142 14.6731 29.8457C21.0452 32.0793 26.5152 31.7707 32.2618 26.216C29.323 23.0125 26.879 21.8957 22.8637 22.1896C18.9648 22.3806 16.7535 21.7634 13.9893 18.7068C17.3645 15.4298 19.4303 13.8428 23.5038 13.4166C28.0574 12.9464 32.1163 14.8861 33.8766 16.6936C35.5205 18.3982 36.3498 22.2924 35.957 27.0095C35.6515 30.8303 34.444 33.0786 31.6653 33.8868C28.0864 35.0037 22.8928 35.5474 18.0919 35.3563C12.4327 35.1212 9.46485 33.9603 8.6356 33.0786C6.88983 31.1095 5.60959 26.9361 5.31863 22.1455C5.02767 17.3549 5.76962 12.8288 7.23898 10.36C8.69379 7.89125 14.0766 6.14253 22.0053 5.6429C28.6247 5.26083 34.764 5.76046 34.8368 5.76046L34.4294 0.426147C34.4294 0.426147 20.2741 2.08669 18.1064 2.27773C12.8546 2.79205 5.78417 3.93827 3.41283 7.96472C-0.820679 15.1506 0.255882 30.4482 5.37682 36.1793C9.94493 41.3225 25.8315 40.4702 32.9455 38.3101C36.1461 37.3402 39.7686 34.6804 40.3942 27.4063C40.8015 22.6157 40.1468 15.8413 36.9317 12.5202ZM22.7036 25.349L27.7227 26.4658L21.5543 29.0522L22.7036 25.349Z" fill="black"/>
-                                                                            <path d="M23.2574 19.0889L24.4067 15.3857L18.2383 17.9721L23.2574 19.0889ZM36.6417 12.094C31.9426 7.30345 20.5514 8.18516 16.0706 9.31668C10.8333 10.6686 9.43667 14.6951 9.58215 21.2197C9.64035 24.9669 11.2552 28.288 14.383 29.4195C20.7551 31.6532 26.2252 31.3446 31.9717 25.7899C29.033 22.5863 26.5889 21.4695 22.5736 21.7634C18.6747 21.9544 16.4634 21.3373 13.6993 18.2807C17.0744 15.0037 19.1403 13.4166 23.2137 12.9904C27.7673 12.5202 31.8262 14.46 33.5866 16.2675C35.2305 17.9721 36.0597 21.8663 35.6669 26.5834C35.3614 30.4041 34.1539 32.6525 31.3752 33.4607C27.7964 34.5775 22.5882 35.1212 17.8018 34.9302C12.1426 34.6951 9.17481 33.5342 8.34556 32.6525C6.59979 30.6833 5.31955 26.5099 5.02859 21.7193C4.73763 16.9287 5.47958 12.4026 6.94894 9.93387C8.40376 7.4651 13.7866 5.71638 21.7153 5.21675C28.3347 4.83468 34.474 5.33431 34.5467 5.33431L34.1394 0C34.1394 0 19.9841 1.66054 17.8164 1.85158C12.5645 2.35121 5.47958 3.51212 3.12279 7.53857C-1.11072 14.7245 -0.0341572 30.0367 5.08678 35.7531C9.65489 40.8964 25.5414 40.0441 32.6555 37.8839C35.8561 36.914 39.4786 34.2542 40.1041 26.9802C40.5115 22.1896 39.8568 15.4151 36.6417 12.094ZM22.4136 24.9229L27.4327 26.0397L21.2643 28.626L22.4136 24.9229Z" fill="#016B6B"/>
-                                                                            </g>
-                                                                            <defs>
-                                                                            <clipPath id="clip0_3326_35104">
-                                                                            <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                            </clipPath>
-                                                                            </defs>
+                                                            @break
+
+                                                            @case('jpg')
+                                                                <div
+                                                                    class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
+                                                                    <div class="py-5 px-4">
+                                                                        <div class="my-4 mx-0">
+                                                                            <center>
+                                                                                <svg height="41px" width="40px" version="1.1"
+                                                                                    id="Capa_1"
+                                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                                    xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                                                    viewBox="0 0 56 56" xml:space="preserve">
+                                                                                    <g>
+                                                                                        <path style="fill:#E9E9E0;"
+                                                                                            d="M36.985,0H7.963C7.155,0,6.5,0.655,6.5,1.926V55c0,0.345,0.655,1,1.463,1h40.074
+                                                                                       c0.808,0,1.463-0.655,1.463-1V12.978c0-0.696-0.093-0.92-0.257-1.085L37.607,0.257C37.442,0.093,37.218,0,36.985,0z" />
+                                                                                        <polygon style="fill:#D9D7CA;"
+                                                                                            points="37.5,0.151 37.5,12 49.349,12 	" />
+                                                                                        <circle style="fill:#F3D55B;"
+                                                                                            cx="18.931" cy="14.431"
+                                                                                            r="4.569" />
+                                                                                        <polygon style="fill:#26B99A;"
+                                                                                            points="6.5,39 17.5,39 49.5,39 49.5,28 39.5,18.5 29,30 23.517,24.517 	" />
+                                                                                        <path style="fill:#14A085;"
+                                                                                            d="M48.037,56H7.963C7.155,56,6.5,55.345,6.5,54.537V39h43v15.537C49.5,55.345,48.845,56,48.037,56z" />
+                                                                                        <g>
+                                                                                            <path style="fill:#FFFFFF;"
+                                                                                                d="M21.426,42.65v7.848c0,0.474-0.087,0.873-0.26,1.196c-0.173,0.323-0.406,0.583-0.697,0.779
+                                                                                           c-0.292,0.196-0.627,0.333-1.005,0.41C19.085,52.961,18.696,53,18.295,53c-0.201,0-0.436-0.021-0.704-0.062
+                                                                                           c-0.269-0.041-0.547-0.104-0.834-0.191s-0.563-0.185-0.827-0.294c-0.265-0.109-0.488-0.232-0.67-0.369l0.697-1.107
+                                                                                           c0.091,0.063,0.221,0.13,0.39,0.198c0.168,0.068,0.353,0.132,0.554,0.191c0.2,0.06,0.41,0.111,0.629,0.157
+                                                                                           s0.424,0.068,0.615,0.068c0.483,0,0.868-0.094,1.155-0.28s0.439-0.504,0.458-0.95V42.65H21.426z" />
+                                                                                            <path style="fill:#FFFFFF;"
+                                                                                                d="M25.514,52.932h-1.641V42.855h2.898c0.428,0,0.852,0.068,1.271,0.205
+                                                                                           c0.419,0.137,0.795,0.342,1.128,0.615c0.333,0.273,0.602,0.604,0.807,0.991s0.308,0.822,0.308,1.306
+                                                                                           c0,0.511-0.087,0.973-0.26,1.388c-0.173,0.415-0.415,0.764-0.725,1.046c-0.31,0.282-0.684,0.501-1.121,0.656
+                                                                                           s-0.921,0.232-1.449,0.232h-1.217V52.932z M25.514,44.1v3.992h1.504c0.2,0,0.398-0.034,0.595-0.103
+                                                                                           c0.196-0.068,0.376-0.18,0.54-0.335s0.296-0.371,0.396-0.649c0.1-0.278,0.15-0.622,0.15-1.032c0-0.164-0.023-0.354-0.068-0.567
+                                                                                           c-0.046-0.214-0.139-0.419-0.28-0.615c-0.142-0.196-0.34-0.36-0.595-0.492C27.5,44.166,27.163,44.1,26.744,44.1H25.514z" />
+                                                                                            <path style="fill:#FFFFFF;" d="M39.5,47.736v3.896c-0.21,0.265-0.444,0.48-0.704,0.649s-0.533,0.308-0.82,0.417
+                                                                                           s-0.583,0.187-0.889,0.232C36.781,52.978,36.479,53,36.178,53c-0.602,0-1.155-0.109-1.661-0.328s-0.948-0.542-1.326-0.971
+                                                                                           c-0.378-0.429-0.675-0.966-0.889-1.613c-0.214-0.647-0.321-1.395-0.321-2.242s0.107-1.593,0.321-2.235
+                                                                                           c0.214-0.643,0.51-1.178,0.889-1.606c0.378-0.429,0.822-0.754,1.333-0.978c0.51-0.224,1.062-0.335,1.654-0.335
+                                                                                           c0.547,0,1.057,0.091,1.531,0.273c0.474,0.183,0.897,0.456,1.271,0.82l-1.135,1.012c-0.219-0.265-0.47-0.456-0.752-0.574
+                                                                                           c-0.283-0.118-0.574-0.178-0.875-0.178c-0.337,0-0.659,0.063-0.964,0.191c-0.306,0.128-0.579,0.344-0.82,0.649
+                                                                                           c-0.242,0.306-0.431,0.699-0.567,1.183s-0.21,1.075-0.219,1.777c0.009,0.684,0.08,1.276,0.212,1.777
+                                                                                           c0.132,0.501,0.314,0.911,0.547,1.23s0.497,0.556,0.793,0.711c0.296,0.155,0.608,0.232,0.937,0.232c0.1,0,0.234-0.007,0.403-0.021
+                                                                                           c0.168-0.014,0.337-0.036,0.506-0.068c0.168-0.032,0.33-0.075,0.485-0.13c0.155-0.055,0.269-0.132,0.342-0.232v-2.488h-1.709
+                                                                                           v-1.121H39.5z" />
+                                                                                        </g>
+                                                                                    </g>
+                                                                                </svg>
+                                                                                <br /><span
+                                                                                    class="fs-16 font-prompt-md mt-1 mt-logo-download">JPG</span>
+                                                                            </center>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div
+                                                                        class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
+                                                                        <a href="{{ asset('public' . $document['path']) }}"
+                                                                            class="download-box-btm-l p-0" download>
+                                                                            Download
+                                                                        </a>
+                                                                        <span class="download-box-btm-r">
+                                                                            1
+                                                                            <svg width="24" height="24"
+                                                                                viewBox="0 0 24 24" fill="none"
+                                                                                xmlns="http://www.w3.org/2000/svg">
+                                                                                <path
+                                                                                    d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" />
+                                                                                <path d="M8 2H17C19 2 20 3 20 5V6.38"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" stroke-linecap="round"
+                                                                                    stroke-linejoin="round" />
                                                                             </svg>
-
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">3D Studio MAX</span>
-                                                                    </center>
+                                                                        </span>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('obj')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                        <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                            <g clip-path="url(#clip0_3326_35104)">
-                                                                            <path opacity="0.75" d="M23.5474 19.5151L24.6967 15.8119L18.5283 18.3982L23.5474 19.5151ZM36.9317 12.5202C32.2327 7.7296 20.8415 8.626 16.3607 9.74283C11.1233 11.0948 9.72671 15.1212 9.87219 21.6458C9.93039 25.3931 11.5452 28.7142 14.6731 29.8457C21.0452 32.0793 26.5152 31.7707 32.2618 26.216C29.323 23.0125 26.879 21.8957 22.8637 22.1896C18.9648 22.3806 16.7535 21.7634 13.9893 18.7068C17.3645 15.4298 19.4303 13.8428 23.5038 13.4166C28.0574 12.9464 32.1163 14.8861 33.8766 16.6936C35.5205 18.3982 36.3498 22.2924 35.957 27.0095C35.6515 30.8303 34.444 33.0786 31.6653 33.8868C28.0864 35.0037 22.8928 35.5474 18.0919 35.3563C12.4327 35.1212 9.46485 33.9603 8.6356 33.0786C6.88983 31.1095 5.60959 26.9361 5.31863 22.1455C5.02767 17.3549 5.76962 12.8288 7.23898 10.36C8.69379 7.89125 14.0766 6.14253 22.0053 5.6429C28.6247 5.26083 34.764 5.76046 34.8368 5.76046L34.4294 0.426147C34.4294 0.426147 20.2741 2.08669 18.1064 2.27773C12.8546 2.79205 5.78417 3.93827 3.41283 7.96472C-0.820679 15.1506 0.255882 30.4482 5.37682 36.1793C9.94493 41.3225 25.8315 40.4702 32.9455 38.3101C36.1461 37.3402 39.7686 34.6804 40.3942 27.4063C40.8015 22.6157 40.1468 15.8413 36.9317 12.5202ZM22.7036 25.349L27.7227 26.4658L21.5543 29.0522L22.7036 25.349Z" fill="black"/>
-                                                                            <path d="M23.2574 19.0889L24.4067 15.3857L18.2383 17.9721L23.2574 19.0889ZM36.6417 12.094C31.9426 7.30345 20.5514 8.18516 16.0706 9.31668C10.8333 10.6686 9.43667 14.6951 9.58215 21.2197C9.64035 24.9669 11.2552 28.288 14.383 29.4195C20.7551 31.6532 26.2252 31.3446 31.9717 25.7899C29.033 22.5863 26.5889 21.4695 22.5736 21.7634C18.6747 21.9544 16.4634 21.3373 13.6993 18.2807C17.0744 15.0037 19.1403 13.4166 23.2137 12.9904C27.7673 12.5202 31.8262 14.46 33.5866 16.2675C35.2305 17.9721 36.0597 21.8663 35.6669 26.5834C35.3614 30.4041 34.1539 32.6525 31.3752 33.4607C27.7964 34.5775 22.5882 35.1212 17.8018 34.9302C12.1426 34.6951 9.17481 33.5342 8.34556 32.6525C6.59979 30.6833 5.31955 26.5099 5.02859 21.7193C4.73763 16.9287 5.47958 12.4026 6.94894 9.93387C8.40376 7.4651 13.7866 5.71638 21.7153 5.21675C28.3347 4.83468 34.474 5.33431 34.5467 5.33431L34.1394 0C34.1394 0 19.9841 1.66054 17.8164 1.85158C12.5645 2.35121 5.47958 3.51212 3.12279 7.53857C-1.11072 14.7245 -0.0341572 30.0367 5.08678 35.7531C9.65489 40.8964 25.5414 40.0441 32.6555 37.8839C35.8561 36.914 39.4786 34.2542 40.1041 26.9802C40.5115 22.1896 39.8568 15.4151 36.6417 12.094ZM22.4136 24.9229L27.4327 26.0397L21.2643 28.626L22.4136 24.9229Z" fill="#016B6B"/>
-                                                                            </g>
-                                                                            <defs>
-                                                                            <clipPath id="clip0_3326_35104">
-                                                                            <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                            </clipPath>
-                                                                            </defs>
+                                                            @break
+
+                                                            @case('png')
+                                                                <div
+                                                                    class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
+                                                                    <div class="py-5 px-4">
+                                                                        <div class="my-4 mx-0">
+                                                                            <center>
+                                                                                <svg fill="#000000" height="41px" width="40px"
+                                                                                    version="1.1" id="Capa_1"
+                                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                                    xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                                                    viewBox="0 0 58 58" xml:space="preserve">
+                                                                                    <g>
+                                                                                        <path
+                                                                                            d="M50.95,12.187L39.313,0.55C38.964,0.201,38.48,0,37.985,0H8.963C7.777,0,6.5,0.916,6.5,2.926V39h0.633l16.736-14.245
+                                                                                       c0.397-0.337,0.986-0.314,1.355,0.055l4.743,4.743l9.795-10.727c0.181-0.198,0.434-0.315,0.703-0.325
+                                                                                       c0.282-0.009,0.53,0.09,0.725,0.274l10,9.5l0.311,0.297V13.978C51.5,13.212,51.408,12.645,50.95,12.187z M16.5,23.638
+                                                                                       c-3.071,0-5.569-2.498-5.569-5.569S13.429,12.5,16.5,12.5s5.569,2.498,5.569,5.569S19.571,23.638,16.5,23.638z M48.109,14H37.5
+                                                                                       V3.391c0-0.458,0.553-0.687,0.877-0.363l10.095,10.095C48.796,13.447,48.567,14,48.109,14z" />
+                                                                                        <path d="M31.383,30.969l4.807,4.807c0.391,0.391,0.391,1.023,0,1.414s-1.023,0.391-1.414,0L24.462,26.876L10.218,39H51.5v-7.636
+                                                                                       L40.551,20.928L31.383,30.969z" />
+                                                                                        <path
+                                                                                            d="M20.823,49.058c0.196-0.068,0.376-0.18,0.54-0.335s0.296-0.371,0.396-0.649c0.1-0.278,0.15-0.622,0.15-1.032
+                                                                                       c0-0.164-0.023-0.354-0.068-0.567c-0.046-0.214-0.139-0.419-0.28-0.615c-0.142-0.196-0.34-0.36-0.595-0.492
+                                                                                       c-0.255-0.132-0.593-0.198-1.012-0.198h-1.23v3.992h1.504C20.429,49.16,20.627,49.126,20.823,49.058z" />
+                                                                                        <path
+                                                                                            d="M16.5,14.5c-1.968,0-3.569,1.601-3.569,3.569s1.601,3.569,3.569,3.569s3.569-1.601,3.569-3.569S18.468,14.5,16.5,14.5z" />
+                                                                                        <path
+                                                                                            d="M7.85,41H6.5v1.08V43v13c0,1.009,1.22,2,2.463,2h40.074c1.243,0,2.463-0.991,2.463-2V41h-43H7.85z M35.302,46.679
+                                                                                       c0.214-0.643,0.51-1.178,0.889-1.606c0.378-0.429,0.822-0.754,1.333-0.978c0.51-0.224,1.062-0.335,1.654-0.335
+                                                                                       c0.547,0,1.057,0.091,1.531,0.273c0.474,0.183,0.897,0.456,1.271,0.82l-1.135,1.012c-0.219-0.265-0.47-0.456-0.752-0.574
+                                                                                       c-0.283-0.118-0.574-0.178-0.875-0.178c-0.337,0-0.659,0.063-0.964,0.191c-0.306,0.128-0.579,0.344-0.82,0.649
+                                                                                       c-0.242,0.306-0.431,0.699-0.567,1.183s-0.21,1.075-0.219,1.777c0.009,0.684,0.08,1.276,0.212,1.777
+                                                                                       c0.132,0.501,0.314,0.911,0.547,1.23s0.497,0.556,0.793,0.711c0.296,0.155,0.608,0.232,0.937,0.232c0.1,0,0.234-0.007,0.403-0.021
+                                                                                       c0.168-0.014,0.337-0.036,0.506-0.068c0.168-0.032,0.33-0.075,0.485-0.13c0.155-0.055,0.269-0.132,0.342-0.232v-2.488h-1.709
+                                                                                       v-1.121H42.5v3.896c-0.21,0.265-0.444,0.48-0.704,0.649s-0.533,0.308-0.82,0.417S40.392,53.954,40.087,54
+                                                                                       c-0.306,0.046-0.608,0.068-0.909,0.068c-0.602,0-1.155-0.109-1.661-0.328s-0.948-0.542-1.326-0.971
+                                                                                       c-0.378-0.429-0.675-0.966-0.889-1.613c-0.214-0.647-0.321-1.395-0.321-2.242S35.087,47.321,35.302,46.679z M25.369,43.924h1.668
+                                                                                       l3.951,6.945v-6.945h1.668V54h-1.668l-3.951-6.945V54h-1.668V43.924z M17.084,43.924h2.898c0.428,0,0.852,0.068,1.271,0.205
+                                                                                       c0.419,0.137,0.795,0.342,1.128,0.615c0.333,0.273,0.602,0.604,0.807,0.991s0.308,0.822,0.308,1.306
+                                                                                       c0,0.511-0.087,0.973-0.26,1.388c-0.173,0.415-0.415,0.764-0.725,1.046c-0.31,0.282-0.684,0.501-1.121,0.656
+                                                                                       s-0.921,0.232-1.449,0.232h-1.217V54h-1.641V43.924z" />
+                                                                                    </g>
+                                                                                </svg>
+                                                                                <br /><span
+                                                                                    class="fs-16 font-prompt-md mt-1 mt-logo-download">PNG</span>
+                                                                            </center>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div
+                                                                        class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
+                                                                        <a href="{{ asset('public' . $document['path']) }}"
+                                                                            class="download-box-btm-l p-0" download>
+                                                                            Download
+                                                                        </a>
+                                                                        <span class="download-box-btm-r">
+                                                                            1
+                                                                            <svg width="24" height="24"
+                                                                                viewBox="0 0 24 24" fill="none"
+                                                                                xmlns="http://www.w3.org/2000/svg">
+                                                                                <path
+                                                                                    d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" />
+                                                                                <path d="M8 2H17C19 2 20 3 20 5V6.38"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" stroke-linecap="round"
+                                                                                    stroke-linejoin="round" />
                                                                             </svg>
-
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">3D Studio MAX</span>
-                                                                    </center>
+                                                                        </span>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('fbx')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                        <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                            <g clip-path="url(#clip0_3326_35104)">
-                                                                            <path opacity="0.75" d="M23.5474 19.5151L24.6967 15.8119L18.5283 18.3982L23.5474 19.5151ZM36.9317 12.5202C32.2327 7.7296 20.8415 8.626 16.3607 9.74283C11.1233 11.0948 9.72671 15.1212 9.87219 21.6458C9.93039 25.3931 11.5452 28.7142 14.6731 29.8457C21.0452 32.0793 26.5152 31.7707 32.2618 26.216C29.323 23.0125 26.879 21.8957 22.8637 22.1896C18.9648 22.3806 16.7535 21.7634 13.9893 18.7068C17.3645 15.4298 19.4303 13.8428 23.5038 13.4166C28.0574 12.9464 32.1163 14.8861 33.8766 16.6936C35.5205 18.3982 36.3498 22.2924 35.957 27.0095C35.6515 30.8303 34.444 33.0786 31.6653 33.8868C28.0864 35.0037 22.8928 35.5474 18.0919 35.3563C12.4327 35.1212 9.46485 33.9603 8.6356 33.0786C6.88983 31.1095 5.60959 26.9361 5.31863 22.1455C5.02767 17.3549 5.76962 12.8288 7.23898 10.36C8.69379 7.89125 14.0766 6.14253 22.0053 5.6429C28.6247 5.26083 34.764 5.76046 34.8368 5.76046L34.4294 0.426147C34.4294 0.426147 20.2741 2.08669 18.1064 2.27773C12.8546 2.79205 5.78417 3.93827 3.41283 7.96472C-0.820679 15.1506 0.255882 30.4482 5.37682 36.1793C9.94493 41.3225 25.8315 40.4702 32.9455 38.3101C36.1461 37.3402 39.7686 34.6804 40.3942 27.4063C40.8015 22.6157 40.1468 15.8413 36.9317 12.5202ZM22.7036 25.349L27.7227 26.4658L21.5543 29.0522L22.7036 25.349Z" fill="black"/>
-                                                                            <path d="M23.2574 19.0889L24.4067 15.3857L18.2383 17.9721L23.2574 19.0889ZM36.6417 12.094C31.9426 7.30345 20.5514 8.18516 16.0706 9.31668C10.8333 10.6686 9.43667 14.6951 9.58215 21.2197C9.64035 24.9669 11.2552 28.288 14.383 29.4195C20.7551 31.6532 26.2252 31.3446 31.9717 25.7899C29.033 22.5863 26.5889 21.4695 22.5736 21.7634C18.6747 21.9544 16.4634 21.3373 13.6993 18.2807C17.0744 15.0037 19.1403 13.4166 23.2137 12.9904C27.7673 12.5202 31.8262 14.46 33.5866 16.2675C35.2305 17.9721 36.0597 21.8663 35.6669 26.5834C35.3614 30.4041 34.1539 32.6525 31.3752 33.4607C27.7964 34.5775 22.5882 35.1212 17.8018 34.9302C12.1426 34.6951 9.17481 33.5342 8.34556 32.6525C6.59979 30.6833 5.31955 26.5099 5.02859 21.7193C4.73763 16.9287 5.47958 12.4026 6.94894 9.93387C8.40376 7.4651 13.7866 5.71638 21.7153 5.21675C28.3347 4.83468 34.474 5.33431 34.5467 5.33431L34.1394 0C34.1394 0 19.9841 1.66054 17.8164 1.85158C12.5645 2.35121 5.47958 3.51212 3.12279 7.53857C-1.11072 14.7245 -0.0341572 30.0367 5.08678 35.7531C9.65489 40.8964 25.5414 40.0441 32.6555 37.8839C35.8561 36.914 39.4786 34.2542 40.1041 26.9802C40.5115 22.1896 39.8568 15.4151 36.6417 12.094ZM22.4136 24.9229L27.4327 26.0397L21.2643 28.626L22.4136 24.9229Z" fill="#016B6B"/>
-                                                                            </g>
-                                                                            <defs>
-                                                                            <clipPath id="clip0_3326_35104">
-                                                                            <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                            </clipPath>
-                                                                            </defs>
+                                                            @break
+
+                                                            @case('pln')
+                                                                <div
+                                                                    class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
+                                                                    <div class="py-5 px-4">
+                                                                        <div class="my-4 mx-0">
+                                                                            <center>
+                                                                                <svg width="41" height="40"
+                                                                                    viewBox="0 0 41 40" fill="none"
+                                                                                    xmlns="http://www.w3.org/2000/svg">
+                                                                                    <g clip-path="url(#clip0_3326_35086)">
+                                                                                        <path
+                                                                                            d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z"
+                                                                                            fill="#E85984" />
+                                                                                        <path
+                                                                                            d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z"
+                                                                                            fill="#E51050" />
+                                                                                        <path
+                                                                                            d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z"
+                                                                                            fill="#E51050" />
+                                                                                        <path
+                                                                                            d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z"
+                                                                                            fill="white" />
+                                                                                        <path
+                                                                                            d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z"
+                                                                                            fill="#770829" />
+                                                                                    </g>
+                                                                                    <defs>
+                                                                                        <clipPath id="clip0_3326_35086">
+                                                                                            <rect width="40" height="40"
+                                                                                                fill="white"
+                                                                                                transform="translate(0.5)" />
+                                                                                        </clipPath>
+                                                                                    </defs>
+                                                                                </svg>
+                                                                                <br /><span
+                                                                                    class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
+                                                                            </center>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div
+                                                                        class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
+                                                                        <a href="{{ asset('public' . $document['path']) }}"
+                                                                            class="download-box-btm-l p-0" download>
+                                                                            Download
+                                                                        </a>
+                                                                        <span class="download-box-btm-r">
+                                                                            1
+                                                                            <svg width="24" height="24"
+                                                                                viewBox="0 0 24 24" fill="none"
+                                                                                xmlns="http://www.w3.org/2000/svg">
+                                                                                <path
+                                                                                    d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" />
+                                                                                <path d="M8 2H17C19 2 20 3 20 5V6.38"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" stroke-linecap="round"
+                                                                                    stroke-linejoin="round" />
                                                                             </svg>
-
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">3D Studio MAX</span>
-                                                                    </center>
+                                                                        </span>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                    @case('skp')
-                                                        <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                                            <div class="py-5 px-4">
-                                                                <div class="my-4 mx-0">
-                                                                    <center>
-                                                                        <svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                            <g clip-path="url(#clip0_3326_35104)">
-                                                                            <path opacity="0.75" d="M23.5474 19.5151L24.6967 15.8119L18.5283 18.3982L23.5474 19.5151ZM36.9317 12.5202C32.2327 7.7296 20.8415 8.626 16.3607 9.74283C11.1233 11.0948 9.72671 15.1212 9.87219 21.6458C9.93039 25.3931 11.5452 28.7142 14.6731 29.8457C21.0452 32.0793 26.5152 31.7707 32.2618 26.216C29.323 23.0125 26.879 21.8957 22.8637 22.1896C18.9648 22.3806 16.7535 21.7634 13.9893 18.7068C17.3645 15.4298 19.4303 13.8428 23.5038 13.4166C28.0574 12.9464 32.1163 14.8861 33.8766 16.6936C35.5205 18.3982 36.3498 22.2924 35.957 27.0095C35.6515 30.8303 34.444 33.0786 31.6653 33.8868C28.0864 35.0037 22.8928 35.5474 18.0919 35.3563C12.4327 35.1212 9.46485 33.9603 8.6356 33.0786C6.88983 31.1095 5.60959 26.9361 5.31863 22.1455C5.02767 17.3549 5.76962 12.8288 7.23898 10.36C8.69379 7.89125 14.0766 6.14253 22.0053 5.6429C28.6247 5.26083 34.764 5.76046 34.8368 5.76046L34.4294 0.426147C34.4294 0.426147 20.2741 2.08669 18.1064 2.27773C12.8546 2.79205 5.78417 3.93827 3.41283 7.96472C-0.820679 15.1506 0.255882 30.4482 5.37682 36.1793C9.94493 41.3225 25.8315 40.4702 32.9455 38.3101C36.1461 37.3402 39.7686 34.6804 40.3942 27.4063C40.8015 22.6157 40.1468 15.8413 36.9317 12.5202ZM22.7036 25.349L27.7227 26.4658L21.5543 29.0522L22.7036 25.349Z" fill="black"/>
-                                                                            <path d="M23.2574 19.0889L24.4067 15.3857L18.2383 17.9721L23.2574 19.0889ZM36.6417 12.094C31.9426 7.30345 20.5514 8.18516 16.0706 9.31668C10.8333 10.6686 9.43667 14.6951 9.58215 21.2197C9.64035 24.9669 11.2552 28.288 14.383 29.4195C20.7551 31.6532 26.2252 31.3446 31.9717 25.7899C29.033 22.5863 26.5889 21.4695 22.5736 21.7634C18.6747 21.9544 16.4634 21.3373 13.6993 18.2807C17.0744 15.0037 19.1403 13.4166 23.2137 12.9904C27.7673 12.5202 31.8262 14.46 33.5866 16.2675C35.2305 17.9721 36.0597 21.8663 35.6669 26.5834C35.3614 30.4041 34.1539 32.6525 31.3752 33.4607C27.7964 34.5775 22.5882 35.1212 17.8018 34.9302C12.1426 34.6951 9.17481 33.5342 8.34556 32.6525C6.59979 30.6833 5.31955 26.5099 5.02859 21.7193C4.73763 16.9287 5.47958 12.4026 6.94894 9.93387C8.40376 7.4651 13.7866 5.71638 21.7153 5.21675C28.3347 4.83468 34.474 5.33431 34.5467 5.33431L34.1394 0C34.1394 0 19.9841 1.66054 17.8164 1.85158C12.5645 2.35121 5.47958 3.51212 3.12279 7.53857C-1.11072 14.7245 -0.0341572 30.0367 5.08678 35.7531C9.65489 40.8964 25.5414 40.0441 32.6555 37.8839C35.8561 36.914 39.4786 34.2542 40.1041 26.9802C40.5115 22.1896 39.8568 15.4151 36.6417 12.094ZM22.4136 24.9229L27.4327 26.0397L21.2643 28.626L22.4136 24.9229Z" fill="#016B6B"/>
-                                                                            </g>
-                                                                            <defs>
-                                                                            <clipPath id="clip0_3326_35104">
-                                                                            <rect width="40" height="40" fill="white" transform="translate(0.5)"/>
-                                                                            </clipPath>
-                                                                            </defs>
+                                                            @break
+
+                                                            @case('dwg')
+                                                                <div
+                                                                    class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
+                                                                    <div class="py-5 px-4">
+                                                                        <div class="my-4 mx-0">
+                                                                            <center>
+                                                                                <svg width="41" height="40"
+                                                                                    viewBox="0 0 41 40" fill="none"
+                                                                                    xmlns="http://www.w3.org/2000/svg">
+                                                                                    <g clip-path="url(#clip0_3326_35086)">
+                                                                                        <path
+                                                                                            d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z"
+                                                                                            fill="#E85984" />
+                                                                                        <path
+                                                                                            d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z"
+                                                                                            fill="#E51050" />
+                                                                                        <path
+                                                                                            d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z"
+                                                                                            fill="#E51050" />
+                                                                                        <path
+                                                                                            d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z"
+                                                                                            fill="white" />
+                                                                                        <path
+                                                                                            d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z"
+                                                                                            fill="#770829" />
+                                                                                    </g>
+                                                                                    <defs>
+                                                                                        <clipPath id="clip0_3326_35086">
+                                                                                            <rect width="40" height="40"
+                                                                                                fill="white"
+                                                                                                transform="translate(0.5)" />
+                                                                                        </clipPath>
+                                                                                    </defs>
+                                                                                </svg>
+                                                                                <br /><span
+                                                                                    class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
+                                                                            </center>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div
+                                                                        class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
+                                                                        <a href="{{ asset('public' . $document['path']) }}"
+                                                                            class="download-box-btm-l p-0" download>
+                                                                            Download
+                                                                        </a>
+                                                                        <span class="download-box-btm-r">
+                                                                            1
+                                                                            <svg width="24" height="24"
+                                                                                viewBox="0 0 24 24" fill="none"
+                                                                                xmlns="http://www.w3.org/2000/svg">
+                                                                                <path
+                                                                                    d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" />
+                                                                                <path d="M8 2H17C19 2 20 3 20 5V6.38"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" stroke-linecap="round"
+                                                                                    stroke-linejoin="round" />
                                                                             </svg>
-
-                                                                        <br/><span class="fs-16 font-prompt-md mt-1 mt-logo-download">3D Studio MAX</span>
-                                                                    </center>
+                                                                        </span>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                            <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
-                                                                <a href="{{ asset('public'.$document["path"]) }}" class="download-box-btm-l p-0" download>
-                                                                    Download
-                                                                </a>
-                                                                <span class="download-box-btm-r">
-                                                                    1
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
-                                                                        <path d="M8 2H17C19 2 20 3 20 5V6.38" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        @break
-                                                @endswitch
-                                            @endforeach
-                                        @else
-                                            No document exist
-                                        @endif
-                                        {{-- <!-- AutoCAD -->
+                                                            @break
+
+                                                            @case('dxf')
+                                                                <div
+                                                                    class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
+                                                                    <div class="py-5 px-4">
+                                                                        <div class="my-4 mx-0">
+                                                                            <center>
+                                                                                <svg width="41" height="40"
+                                                                                    viewBox="0 0 41 40" fill="none"
+                                                                                    xmlns="http://www.w3.org/2000/svg">
+                                                                                    <g clip-path="url(#clip0_3326_35086)">
+                                                                                        <path
+                                                                                            d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z"
+                                                                                            fill="#E85984" />
+                                                                                        <path
+                                                                                            d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z"
+                                                                                            fill="#E51050" />
+                                                                                        <path
+                                                                                            d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z"
+                                                                                            fill="#E51050" />
+                                                                                        <path
+                                                                                            d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z"
+                                                                                            fill="white" />
+                                                                                        <path
+                                                                                            d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z"
+                                                                                            fill="#770829" />
+                                                                                    </g>
+                                                                                    <defs>
+                                                                                        <clipPath id="clip0_3326_35086">
+                                                                                            <rect width="40" height="40"
+                                                                                                fill="white"
+                                                                                                transform="translate(0.5)" />
+                                                                                        </clipPath>
+                                                                                    </defs>
+                                                                                </svg>
+                                                                                <br /><span
+                                                                                    class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
+                                                                            </center>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div
+                                                                        class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
+                                                                        <a href="{{ asset('public' . $document['path']) }}"
+                                                                            class="download-box-btm-l p-0" download>
+                                                                            Download
+                                                                        </a>
+                                                                        <span class="download-box-btm-r">
+                                                                            1
+                                                                            <svg width="24" height="24"
+                                                                                viewBox="0 0 24 24" fill="none"
+                                                                                xmlns="http://www.w3.org/2000/svg">
+                                                                                <path
+                                                                                    d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" />
+                                                                                <path d="M8 2H17C19 2 20 3 20 5V6.38"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" stroke-linecap="round"
+                                                                                    stroke-linejoin="round" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            @break
+
+                                                            @case('gsm')
+                                                                <div
+                                                                    class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
+                                                                    <div class="py-5 px-4">
+                                                                        <div class="my-4 mx-0">
+                                                                            <center>
+                                                                                <svg width="41" height="40"
+                                                                                    viewBox="0 0 41 40" fill="none"
+                                                                                    xmlns="http://www.w3.org/2000/svg">
+                                                                                    <g clip-path="url(#clip0_3326_35086)">
+                                                                                        <path
+                                                                                            d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z"
+                                                                                            fill="#E85984" />
+                                                                                        <path
+                                                                                            d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z"
+                                                                                            fill="#E51050" />
+                                                                                        <path
+                                                                                            d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z"
+                                                                                            fill="#E51050" />
+                                                                                        <path
+                                                                                            d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z"
+                                                                                            fill="white" />
+                                                                                        <path
+                                                                                            d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z"
+                                                                                            fill="#770829" />
+                                                                                    </g>
+                                                                                    <defs>
+                                                                                        <clipPath id="clip0_3326_35086">
+                                                                                            <rect width="40" height="40"
+                                                                                                fill="white"
+                                                                                                transform="translate(0.5)" />
+                                                                                        </clipPath>
+                                                                                    </defs>
+                                                                                </svg>
+                                                                                <br /><span
+                                                                                    class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
+                                                                            </center>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div
+                                                                        class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
+                                                                        <a href="{{ asset('public' . $document['path']) }}"
+                                                                            class="download-box-btm-l p-0" download>
+                                                                            Download
+                                                                        </a>
+                                                                        <span class="download-box-btm-r">
+                                                                            1
+                                                                            <svg width="24" height="24"
+                                                                                viewBox="0 0 24 24" fill="none"
+                                                                                xmlns="http://www.w3.org/2000/svg">
+                                                                                <path
+                                                                                    d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" />
+                                                                                <path d="M8 2H17C19 2 20 3 20 5V6.38"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" stroke-linecap="round"
+                                                                                    stroke-linejoin="round" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            @break
+
+                                                            @case('stl')
+                                                                <div
+                                                                    class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
+                                                                    <div class="py-5 px-4">
+                                                                        <div class="my-4 mx-0">
+                                                                            <center>
+                                                                                <svg width="41" height="40"
+                                                                                    viewBox="0 0 41 40" fill="none"
+                                                                                    xmlns="http://www.w3.org/2000/svg">
+                                                                                    <g clip-path="url(#clip0_3326_35086)">
+                                                                                        <path
+                                                                                            d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z"
+                                                                                            fill="#E85984" />
+                                                                                        <path
+                                                                                            d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z"
+                                                                                            fill="#E51050" />
+                                                                                        <path
+                                                                                            d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z"
+                                                                                            fill="#E51050" />
+                                                                                        <path
+                                                                                            d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z"
+                                                                                            fill="white" />
+                                                                                        <path
+                                                                                            d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z"
+                                                                                            fill="#770829" />
+                                                                                    </g>
+                                                                                    <defs>
+                                                                                        <clipPath id="clip0_3326_35086">
+                                                                                            <rect width="40" height="40"
+                                                                                                fill="white"
+                                                                                                transform="translate(0.5)" />
+                                                                                        </clipPath>
+                                                                                    </defs>
+                                                                                </svg>
+                                                                                <br /><span
+                                                                                    class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
+                                                                            </center>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div
+                                                                        class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
+                                                                        <a href="{{ asset('public' . $document['path']) }}"
+                                                                            class="download-box-btm-l p-0" download>
+                                                                            Download
+                                                                        </a>
+                                                                        <span class="download-box-btm-r">
+                                                                            1
+                                                                            <svg width="24" height="24"
+                                                                                viewBox="0 0 24 24" fill="none"
+                                                                                xmlns="http://www.w3.org/2000/svg">
+                                                                                <path
+                                                                                    d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" />
+                                                                                <path d="M8 2H17C19 2 20 3 20 5V6.38"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" stroke-linecap="round"
+                                                                                    stroke-linejoin="round" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            @break
+
+                                                            @case('rfa')
+                                                                <div
+                                                                    class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
+                                                                    <div class="py-5 px-4">
+                                                                        <div class="my-4 mx-0">
+                                                                            <center>
+                                                                                <svg width="41" height="40"
+                                                                                    viewBox="0 0 41 40" fill="none"
+                                                                                    xmlns="http://www.w3.org/2000/svg">
+                                                                                    <g clip-path="url(#clip0_3326_35086)">
+                                                                                        <path
+                                                                                            d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z"
+                                                                                            fill="#E85984" />
+                                                                                        <path
+                                                                                            d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z"
+                                                                                            fill="#E51050" />
+                                                                                        <path
+                                                                                            d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z"
+                                                                                            fill="#E51050" />
+                                                                                        <path
+                                                                                            d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z"
+                                                                                            fill="white" />
+                                                                                        <path
+                                                                                            d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z"
+                                                                                            fill="#770829" />
+                                                                                    </g>
+                                                                                    <defs>
+                                                                                        <clipPath id="clip0_3326_35086">
+                                                                                            <rect width="40" height="40"
+                                                                                                fill="white"
+                                                                                                transform="translate(0.5)" />
+                                                                                        </clipPath>
+                                                                                    </defs>
+                                                                                </svg>
+                                                                                <br /><span
+                                                                                    class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
+                                                                            </center>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div
+                                                                        class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
+                                                                        <a href="{{ asset('public' . $document['path']) }}"
+                                                                            class="download-box-btm-l p-0" download>
+                                                                            Download
+                                                                        </a>
+                                                                        <span class="download-box-btm-r">
+                                                                            1
+                                                                            <svg width="24" height="24"
+                                                                                viewBox="0 0 24 24" fill="none"
+                                                                                xmlns="http://www.w3.org/2000/svg">
+                                                                                <path
+                                                                                    d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" />
+                                                                                <path d="M8 2H17C19 2 20 3 20 5V6.38"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" stroke-linecap="round"
+                                                                                    stroke-linejoin="round" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            @break
+
+                                                            @case('rvt')
+                                                                <div
+                                                                    class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
+                                                                    <div class="py-5 px-4">
+                                                                        <div class="my-4 mx-0">
+                                                                            <center>
+                                                                                <svg width="41" height="40"
+                                                                                    viewBox="0 0 41 40" fill="none"
+                                                                                    xmlns="http://www.w3.org/2000/svg">
+                                                                                    <g clip-path="url(#clip0_3326_35086)">
+                                                                                        <path
+                                                                                            d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z"
+                                                                                            fill="#E85984" />
+                                                                                        <path
+                                                                                            d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z"
+                                                                                            fill="#E51050" />
+                                                                                        <path
+                                                                                            d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z"
+                                                                                            fill="#E51050" />
+                                                                                        <path
+                                                                                            d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z"
+                                                                                            fill="white" />
+                                                                                        <path
+                                                                                            d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z"
+                                                                                            fill="#770829" />
+                                                                                    </g>
+                                                                                    <defs>
+                                                                                        <clipPath id="clip0_3326_35086">
+                                                                                            <rect width="40" height="40"
+                                                                                                fill="white"
+                                                                                                transform="translate(0.5)" />
+                                                                                        </clipPath>
+                                                                                    </defs>
+                                                                                </svg>
+                                                                                <br /><span
+                                                                                    class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
+                                                                            </center>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div
+                                                                        class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
+                                                                        <a href="{{ asset('public' . $document['path']) }}"
+                                                                            class="download-box-btm-l p-0" download>
+                                                                            Download
+                                                                        </a>
+                                                                        <span class="download-box-btm-r">
+                                                                            1
+                                                                            <svg width="24" height="24"
+                                                                                viewBox="0 0 24 24" fill="none"
+                                                                                xmlns="http://www.w3.org/2000/svg">
+                                                                                <path
+                                                                                    d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" />
+                                                                                <path d="M8 2H17C19 2 20 3 20 5V6.38"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" stroke-linecap="round"
+                                                                                    stroke-linejoin="round" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            @break
+
+                                                            @case('ifc')
+                                                                <div
+                                                                    class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
+                                                                    <div class="py-5 px-4">
+                                                                        <div class="my-4 mx-0">
+                                                                            <center>
+                                                                                <svg width="41" height="40"
+                                                                                    viewBox="0 0 41 40" fill="none"
+                                                                                    xmlns="http://www.w3.org/2000/svg">
+                                                                                    <g clip-path="url(#clip0_3326_35086)">
+                                                                                        <path
+                                                                                            d="M0.603516 5.86286C2.74577 4.47029 4.89102 3.08471 7.02829 1.68616C7.0243 11.5719 7.03528 21.4586 7.0233 31.3443C6.18376 31.9034 5.32926 32.4394 4.49072 33.0004C3.40961 33.6733 2.34248 34.37 1.28433 35.0798C1.07569 35.2255 0.851083 35.3453 0.616493 35.4432C0.60651 25.5834 0.630469 15.7226 0.603516 5.86286Z"
+                                                                                            fill="#E85984" />
+                                                                                        <path
+                                                                                            d="M7.02818 1.68604C16.4797 1.68704 25.9321 1.68405 35.3836 1.68704C36.3699 1.70002 37.3203 2.47666 37.4011 3.4839C37.439 5.25481 37.3762 7.02871 37.4321 8.80061C37.453 15.5798 37.4351 22.3589 37.441 29.1381C37.4271 29.8798 37.476 30.6225 37.4161 31.3632C34.2506 31.3951 31.0832 31.3672 27.9167 31.3762C21.3282 31.3762 14.7397 31.3762 8.15122 31.3772C7.77488 31.3831 7.39754 31.3851 7.02319 31.3442C7.03517 21.4585 7.02419 11.5718 7.02818 1.68604ZM20.0125 7.85227C19.3846 9.6671 18.8835 11.5248 18.2995 13.3537C17.2094 16.9224 16.1183 20.4912 15.0272 24.0599C14.9264 24.3444 14.8415 24.6359 14.7926 24.9344C15.8248 24.9504 16.859 24.9584 17.8912 24.9314C18.2875 23.5588 18.6898 22.1882 19.0721 20.8116C19.1101 20.6898 19.159 20.573 19.2069 20.4562C21.1645 20.4612 23.1231 20.4303 25.0806 20.4722C25.5508 21.9626 25.998 23.461 26.4972 24.9414C27.5523 24.9474 28.6085 24.9544 29.6636 24.9354C29.0377 22.8361 28.325 20.7637 27.6741 18.6724C26.5002 15.0707 25.3691 11.455 24.1882 7.85626C22.7976 7.82232 21.4031 7.82931 20.0125 7.85227Z"
+                                                                                            fill="#E51050" />
+                                                                                        <path
+                                                                                            d="M22.0596 10.0714C22.2613 10.5536 22.3411 11.0747 22.5039 11.5698C23.1008 13.6951 23.7327 15.8124 24.3047 17.9457C22.8373 17.9656 21.3678 17.9666 19.8994 17.9457C20.5762 15.3103 21.3678 12.7038 22.0596 10.0714Z"
+                                                                                            fill="#E51050" />
+                                                                                        <path
+                                                                                            d="M20.0126 7.85236C21.4032 7.8294 22.7977 7.82242 24.1883 7.85636C25.3692 11.4551 26.5003 15.0707 27.6742 18.6725C28.3251 20.7638 29.0378 22.8362 29.6637 24.9355C28.6086 24.9545 27.5524 24.9475 26.4973 24.9415C25.9981 23.4611 25.5509 21.9627 25.0807 20.4723C23.1232 20.4304 21.1646 20.4613 19.207 20.4563C19.1591 20.5731 19.1102 20.6899 19.0722 20.8117C18.6899 22.1883 18.2876 23.5589 17.8913 24.9315C16.8591 24.9585 15.8249 24.9505 14.7927 24.9345C14.8416 24.636 14.9265 24.3445 15.0273 24.06C16.1184 20.4913 17.2095 16.9225 18.2996 13.3537C18.8836 11.5249 19.3847 9.66719 20.0126 7.85236ZM22.06 10.0715C21.3682 12.7039 20.5766 15.3103 19.8998 17.9457C21.3682 17.9667 22.8377 17.9657 24.3051 17.9457C23.7331 15.8125 23.1012 13.6952 22.5042 11.5699C22.3415 11.0747 22.2617 10.5536 22.06 10.0715Z"
+                                                                                            fill="white" />
+                                                                                        <path
+                                                                                            d="M37.4326 8.80067C38.2762 8.69685 39.1317 8.74976 39.9792 8.76573C40.0221 10.9968 39.9852 13.2299 39.9972 15.462C39.9972 22.5826 39.9982 29.7041 39.9972 36.8247C39.9922 37.3548 40.0161 37.8848 39.9802 38.4149C28.9964 38.4329 18.0126 38.4139 7.02878 38.4239C6.37692 38.4219 5.66117 38.362 5.15505 37.9038C4.77571 37.5474 4.48123 37.0563 4.49321 36.5212C4.49021 35.3473 4.49221 34.1743 4.49121 33.0004C5.32975 32.4394 6.18425 31.9033 7.02378 31.3443C7.39813 31.3852 7.77547 31.3832 8.15181 31.3772C14.7403 31.3762 21.3288 31.3762 27.9173 31.3762C31.0837 31.3672 34.2512 31.3952 37.4167 31.3632C37.4766 30.6225 37.4277 29.8798 37.4416 29.1381C37.4356 22.359 37.4536 15.5798 37.4326 8.80067Z"
+                                                                                            fill="#770829" />
+                                                                                    </g>
+                                                                                    <defs>
+                                                                                        <clipPath id="clip0_3326_35086">
+                                                                                            <rect width="40" height="40"
+                                                                                                fill="white"
+                                                                                                transform="translate(0.5)" />
+                                                                                        </clipPath>
+                                                                                    </defs>
+                                                                                </svg>
+                                                                                <br /><span
+                                                                                    class="fs-16 font-prompt-md mt-1 mt-logo-download">AutoCAD</span>
+                                                                            </center>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div
+                                                                        class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
+                                                                        <a href="{{ asset('public' . $document['path']) }}"
+                                                                            class="download-box-btm-l p-0" download>
+                                                                            Download
+                                                                        </a>
+                                                                        <span class="download-box-btm-r">
+                                                                            1
+                                                                            <svg width="24" height="24"
+                                                                                viewBox="0 0 24 24" fill="none"
+                                                                                xmlns="http://www.w3.org/2000/svg">
+                                                                                <path
+                                                                                    d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" />
+                                                                                <path d="M8 2H17C19 2 20 3 20 5V6.38"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" stroke-linecap="round"
+                                                                                    stroke-linejoin="round" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            @break
+
+                                                            @case('3ds')
+                                                                <div
+                                                                    class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
+                                                                    <div class="py-5 px-4">
+                                                                        <div class="my-4 mx-0">
+                                                                            <center>
+                                                                                <svg width="41" height="40"
+                                                                                    viewBox="0 0 41 40" fill="none"
+                                                                                    xmlns="http://www.w3.org/2000/svg">
+                                                                                    <g clip-path="url(#clip0_3326_35104)">
+                                                                                        <path opacity="0.75"
+                                                                                            d="M23.5474 19.5151L24.6967 15.8119L18.5283 18.3982L23.5474 19.5151ZM36.9317 12.5202C32.2327 7.7296 20.8415 8.626 16.3607 9.74283C11.1233 11.0948 9.72671 15.1212 9.87219 21.6458C9.93039 25.3931 11.5452 28.7142 14.6731 29.8457C21.0452 32.0793 26.5152 31.7707 32.2618 26.216C29.323 23.0125 26.879 21.8957 22.8637 22.1896C18.9648 22.3806 16.7535 21.7634 13.9893 18.7068C17.3645 15.4298 19.4303 13.8428 23.5038 13.4166C28.0574 12.9464 32.1163 14.8861 33.8766 16.6936C35.5205 18.3982 36.3498 22.2924 35.957 27.0095C35.6515 30.8303 34.444 33.0786 31.6653 33.8868C28.0864 35.0037 22.8928 35.5474 18.0919 35.3563C12.4327 35.1212 9.46485 33.9603 8.6356 33.0786C6.88983 31.1095 5.60959 26.9361 5.31863 22.1455C5.02767 17.3549 5.76962 12.8288 7.23898 10.36C8.69379 7.89125 14.0766 6.14253 22.0053 5.6429C28.6247 5.26083 34.764 5.76046 34.8368 5.76046L34.4294 0.426147C34.4294 0.426147 20.2741 2.08669 18.1064 2.27773C12.8546 2.79205 5.78417 3.93827 3.41283 7.96472C-0.820679 15.1506 0.255882 30.4482 5.37682 36.1793C9.94493 41.3225 25.8315 40.4702 32.9455 38.3101C36.1461 37.3402 39.7686 34.6804 40.3942 27.4063C40.8015 22.6157 40.1468 15.8413 36.9317 12.5202ZM22.7036 25.349L27.7227 26.4658L21.5543 29.0522L22.7036 25.349Z"
+                                                                                            fill="black" />
+                                                                                        <path
+                                                                                            d="M23.2574 19.0889L24.4067 15.3857L18.2383 17.9721L23.2574 19.0889ZM36.6417 12.094C31.9426 7.30345 20.5514 8.18516 16.0706 9.31668C10.8333 10.6686 9.43667 14.6951 9.58215 21.2197C9.64035 24.9669 11.2552 28.288 14.383 29.4195C20.7551 31.6532 26.2252 31.3446 31.9717 25.7899C29.033 22.5863 26.5889 21.4695 22.5736 21.7634C18.6747 21.9544 16.4634 21.3373 13.6993 18.2807C17.0744 15.0037 19.1403 13.4166 23.2137 12.9904C27.7673 12.5202 31.8262 14.46 33.5866 16.2675C35.2305 17.9721 36.0597 21.8663 35.6669 26.5834C35.3614 30.4041 34.1539 32.6525 31.3752 33.4607C27.7964 34.5775 22.5882 35.1212 17.8018 34.9302C12.1426 34.6951 9.17481 33.5342 8.34556 32.6525C6.59979 30.6833 5.31955 26.5099 5.02859 21.7193C4.73763 16.9287 5.47958 12.4026 6.94894 9.93387C8.40376 7.4651 13.7866 5.71638 21.7153 5.21675C28.3347 4.83468 34.474 5.33431 34.5467 5.33431L34.1394 0C34.1394 0 19.9841 1.66054 17.8164 1.85158C12.5645 2.35121 5.47958 3.51212 3.12279 7.53857C-1.11072 14.7245 -0.0341572 30.0367 5.08678 35.7531C9.65489 40.8964 25.5414 40.0441 32.6555 37.8839C35.8561 36.914 39.4786 34.2542 40.1041 26.9802C40.5115 22.1896 39.8568 15.4151 36.6417 12.094ZM22.4136 24.9229L27.4327 26.0397L21.2643 28.626L22.4136 24.9229Z"
+                                                                                            fill="#016B6B" />
+                                                                                    </g>
+                                                                                    <defs>
+                                                                                        <clipPath id="clip0_3326_35104">
+                                                                                            <rect width="40" height="40"
+                                                                                                fill="white"
+                                                                                                transform="translate(0.5)" />
+                                                                                        </clipPath>
+                                                                                    </defs>
+                                                                                </svg>
+
+                                                                                <br /><span
+                                                                                    class="fs-16 font-prompt-md mt-1 mt-logo-download">3D
+                                                                                    Studio MAX</span>
+                                                                            </center>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div
+                                                                        class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
+                                                                        <a href="{{ asset('public' . $document['path']) }}"
+                                                                            class="download-box-btm-l p-0" download>
+                                                                            Download
+                                                                        </a>
+                                                                        <span class="download-box-btm-r">
+                                                                            1
+                                                                            <svg width="24" height="24"
+                                                                                viewBox="0 0 24 24" fill="none"
+                                                                                xmlns="http://www.w3.org/2000/svg">
+                                                                                <path
+                                                                                    d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" />
+                                                                                <path d="M8 2H17C19 2 20 3 20 5V6.38"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" stroke-linecap="round"
+                                                                                    stroke-linejoin="round" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            @break
+
+                                                            @case('max')
+                                                                <div
+                                                                    class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
+                                                                    <div class="py-5 px-4">
+                                                                        <div class="my-4 mx-0">
+                                                                            <center>
+                                                                                <svg width="41" height="40"
+                                                                                    viewBox="0 0 41 40" fill="none"
+                                                                                    xmlns="http://www.w3.org/2000/svg">
+                                                                                    <g clip-path="url(#clip0_3326_35104)">
+                                                                                        <path opacity="0.75"
+                                                                                            d="M23.5474 19.5151L24.6967 15.8119L18.5283 18.3982L23.5474 19.5151ZM36.9317 12.5202C32.2327 7.7296 20.8415 8.626 16.3607 9.74283C11.1233 11.0948 9.72671 15.1212 9.87219 21.6458C9.93039 25.3931 11.5452 28.7142 14.6731 29.8457C21.0452 32.0793 26.5152 31.7707 32.2618 26.216C29.323 23.0125 26.879 21.8957 22.8637 22.1896C18.9648 22.3806 16.7535 21.7634 13.9893 18.7068C17.3645 15.4298 19.4303 13.8428 23.5038 13.4166C28.0574 12.9464 32.1163 14.8861 33.8766 16.6936C35.5205 18.3982 36.3498 22.2924 35.957 27.0095C35.6515 30.8303 34.444 33.0786 31.6653 33.8868C28.0864 35.0037 22.8928 35.5474 18.0919 35.3563C12.4327 35.1212 9.46485 33.9603 8.6356 33.0786C6.88983 31.1095 5.60959 26.9361 5.31863 22.1455C5.02767 17.3549 5.76962 12.8288 7.23898 10.36C8.69379 7.89125 14.0766 6.14253 22.0053 5.6429C28.6247 5.26083 34.764 5.76046 34.8368 5.76046L34.4294 0.426147C34.4294 0.426147 20.2741 2.08669 18.1064 2.27773C12.8546 2.79205 5.78417 3.93827 3.41283 7.96472C-0.820679 15.1506 0.255882 30.4482 5.37682 36.1793C9.94493 41.3225 25.8315 40.4702 32.9455 38.3101C36.1461 37.3402 39.7686 34.6804 40.3942 27.4063C40.8015 22.6157 40.1468 15.8413 36.9317 12.5202ZM22.7036 25.349L27.7227 26.4658L21.5543 29.0522L22.7036 25.349Z"
+                                                                                            fill="black" />
+                                                                                        <path
+                                                                                            d="M23.2574 19.0889L24.4067 15.3857L18.2383 17.9721L23.2574 19.0889ZM36.6417 12.094C31.9426 7.30345 20.5514 8.18516 16.0706 9.31668C10.8333 10.6686 9.43667 14.6951 9.58215 21.2197C9.64035 24.9669 11.2552 28.288 14.383 29.4195C20.7551 31.6532 26.2252 31.3446 31.9717 25.7899C29.033 22.5863 26.5889 21.4695 22.5736 21.7634C18.6747 21.9544 16.4634 21.3373 13.6993 18.2807C17.0744 15.0037 19.1403 13.4166 23.2137 12.9904C27.7673 12.5202 31.8262 14.46 33.5866 16.2675C35.2305 17.9721 36.0597 21.8663 35.6669 26.5834C35.3614 30.4041 34.1539 32.6525 31.3752 33.4607C27.7964 34.5775 22.5882 35.1212 17.8018 34.9302C12.1426 34.6951 9.17481 33.5342 8.34556 32.6525C6.59979 30.6833 5.31955 26.5099 5.02859 21.7193C4.73763 16.9287 5.47958 12.4026 6.94894 9.93387C8.40376 7.4651 13.7866 5.71638 21.7153 5.21675C28.3347 4.83468 34.474 5.33431 34.5467 5.33431L34.1394 0C34.1394 0 19.9841 1.66054 17.8164 1.85158C12.5645 2.35121 5.47958 3.51212 3.12279 7.53857C-1.11072 14.7245 -0.0341572 30.0367 5.08678 35.7531C9.65489 40.8964 25.5414 40.0441 32.6555 37.8839C35.8561 36.914 39.4786 34.2542 40.1041 26.9802C40.5115 22.1896 39.8568 15.4151 36.6417 12.094ZM22.4136 24.9229L27.4327 26.0397L21.2643 28.626L22.4136 24.9229Z"
+                                                                                            fill="#016B6B" />
+                                                                                    </g>
+                                                                                    <defs>
+                                                                                        <clipPath id="clip0_3326_35104">
+                                                                                            <rect width="40" height="40"
+                                                                                                fill="white"
+                                                                                                transform="translate(0.5)" />
+                                                                                        </clipPath>
+                                                                                    </defs>
+                                                                                </svg>
+
+                                                                                <br /><span
+                                                                                    class="fs-16 font-prompt-md mt-1 mt-logo-download">3D
+                                                                                    Studio MAX</span>
+                                                                            </center>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div
+                                                                        class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
+                                                                        <a href="{{ asset('public' . $document['path']) }}"
+                                                                            class="download-box-btm-l p-0" download>
+                                                                            Download
+                                                                        </a>
+                                                                        <span class="download-box-btm-r">
+                                                                            1
+                                                                            <svg width="24" height="24"
+                                                                                viewBox="0 0 24 24" fill="none"
+                                                                                xmlns="http://www.w3.org/2000/svg">
+                                                                                <path
+                                                                                    d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" />
+                                                                                <path d="M8 2H17C19 2 20 3 20 5V6.38"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" stroke-linecap="round"
+                                                                                    stroke-linejoin="round" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            @break
+
+                                                            @case('obj')
+                                                                <div
+                                                                    class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
+                                                                    <div class="py-5 px-4">
+                                                                        <div class="my-4 mx-0">
+                                                                            <center>
+                                                                                <svg width="41" height="40"
+                                                                                    viewBox="0 0 41 40" fill="none"
+                                                                                    xmlns="http://www.w3.org/2000/svg">
+                                                                                    <g clip-path="url(#clip0_3326_35104)">
+                                                                                        <path opacity="0.75"
+                                                                                            d="M23.5474 19.5151L24.6967 15.8119L18.5283 18.3982L23.5474 19.5151ZM36.9317 12.5202C32.2327 7.7296 20.8415 8.626 16.3607 9.74283C11.1233 11.0948 9.72671 15.1212 9.87219 21.6458C9.93039 25.3931 11.5452 28.7142 14.6731 29.8457C21.0452 32.0793 26.5152 31.7707 32.2618 26.216C29.323 23.0125 26.879 21.8957 22.8637 22.1896C18.9648 22.3806 16.7535 21.7634 13.9893 18.7068C17.3645 15.4298 19.4303 13.8428 23.5038 13.4166C28.0574 12.9464 32.1163 14.8861 33.8766 16.6936C35.5205 18.3982 36.3498 22.2924 35.957 27.0095C35.6515 30.8303 34.444 33.0786 31.6653 33.8868C28.0864 35.0037 22.8928 35.5474 18.0919 35.3563C12.4327 35.1212 9.46485 33.9603 8.6356 33.0786C6.88983 31.1095 5.60959 26.9361 5.31863 22.1455C5.02767 17.3549 5.76962 12.8288 7.23898 10.36C8.69379 7.89125 14.0766 6.14253 22.0053 5.6429C28.6247 5.26083 34.764 5.76046 34.8368 5.76046L34.4294 0.426147C34.4294 0.426147 20.2741 2.08669 18.1064 2.27773C12.8546 2.79205 5.78417 3.93827 3.41283 7.96472C-0.820679 15.1506 0.255882 30.4482 5.37682 36.1793C9.94493 41.3225 25.8315 40.4702 32.9455 38.3101C36.1461 37.3402 39.7686 34.6804 40.3942 27.4063C40.8015 22.6157 40.1468 15.8413 36.9317 12.5202ZM22.7036 25.349L27.7227 26.4658L21.5543 29.0522L22.7036 25.349Z"
+                                                                                            fill="black" />
+                                                                                        <path
+                                                                                            d="M23.2574 19.0889L24.4067 15.3857L18.2383 17.9721L23.2574 19.0889ZM36.6417 12.094C31.9426 7.30345 20.5514 8.18516 16.0706 9.31668C10.8333 10.6686 9.43667 14.6951 9.58215 21.2197C9.64035 24.9669 11.2552 28.288 14.383 29.4195C20.7551 31.6532 26.2252 31.3446 31.9717 25.7899C29.033 22.5863 26.5889 21.4695 22.5736 21.7634C18.6747 21.9544 16.4634 21.3373 13.6993 18.2807C17.0744 15.0037 19.1403 13.4166 23.2137 12.9904C27.7673 12.5202 31.8262 14.46 33.5866 16.2675C35.2305 17.9721 36.0597 21.8663 35.6669 26.5834C35.3614 30.4041 34.1539 32.6525 31.3752 33.4607C27.7964 34.5775 22.5882 35.1212 17.8018 34.9302C12.1426 34.6951 9.17481 33.5342 8.34556 32.6525C6.59979 30.6833 5.31955 26.5099 5.02859 21.7193C4.73763 16.9287 5.47958 12.4026 6.94894 9.93387C8.40376 7.4651 13.7866 5.71638 21.7153 5.21675C28.3347 4.83468 34.474 5.33431 34.5467 5.33431L34.1394 0C34.1394 0 19.9841 1.66054 17.8164 1.85158C12.5645 2.35121 5.47958 3.51212 3.12279 7.53857C-1.11072 14.7245 -0.0341572 30.0367 5.08678 35.7531C9.65489 40.8964 25.5414 40.0441 32.6555 37.8839C35.8561 36.914 39.4786 34.2542 40.1041 26.9802C40.5115 22.1896 39.8568 15.4151 36.6417 12.094ZM22.4136 24.9229L27.4327 26.0397L21.2643 28.626L22.4136 24.9229Z"
+                                                                                            fill="#016B6B" />
+                                                                                    </g>
+                                                                                    <defs>
+                                                                                        <clipPath id="clip0_3326_35104">
+                                                                                            <rect width="40" height="40"
+                                                                                                fill="white"
+                                                                                                transform="translate(0.5)" />
+                                                                                        </clipPath>
+                                                                                    </defs>
+                                                                                </svg>
+
+                                                                                <br /><span
+                                                                                    class="fs-16 font-prompt-md mt-1 mt-logo-download">3D
+                                                                                    Studio MAX</span>
+                                                                            </center>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div
+                                                                        class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
+                                                                        <a href="{{ asset('public' . $document['path']) }}"
+                                                                            class="download-box-btm-l p-0" download>
+                                                                            Download
+                                                                        </a>
+                                                                        <span class="download-box-btm-r">
+                                                                            1
+                                                                            <svg width="24" height="24"
+                                                                                viewBox="0 0 24 24" fill="none"
+                                                                                xmlns="http://www.w3.org/2000/svg">
+                                                                                <path
+                                                                                    d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" />
+                                                                                <path d="M8 2H17C19 2 20 3 20 5V6.38"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" stroke-linecap="round"
+                                                                                    stroke-linejoin="round" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            @break
+
+                                                            @case('fbx')
+                                                                <div
+                                                                    class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
+                                                                    <div class="py-5 px-4">
+                                                                        <div class="my-4 mx-0">
+                                                                            <center>
+                                                                                <svg width="41" height="40"
+                                                                                    viewBox="0 0 41 40" fill="none"
+                                                                                    xmlns="http://www.w3.org/2000/svg">
+                                                                                    <g clip-path="url(#clip0_3326_35104)">
+                                                                                        <path opacity="0.75"
+                                                                                            d="M23.5474 19.5151L24.6967 15.8119L18.5283 18.3982L23.5474 19.5151ZM36.9317 12.5202C32.2327 7.7296 20.8415 8.626 16.3607 9.74283C11.1233 11.0948 9.72671 15.1212 9.87219 21.6458C9.93039 25.3931 11.5452 28.7142 14.6731 29.8457C21.0452 32.0793 26.5152 31.7707 32.2618 26.216C29.323 23.0125 26.879 21.8957 22.8637 22.1896C18.9648 22.3806 16.7535 21.7634 13.9893 18.7068C17.3645 15.4298 19.4303 13.8428 23.5038 13.4166C28.0574 12.9464 32.1163 14.8861 33.8766 16.6936C35.5205 18.3982 36.3498 22.2924 35.957 27.0095C35.6515 30.8303 34.444 33.0786 31.6653 33.8868C28.0864 35.0037 22.8928 35.5474 18.0919 35.3563C12.4327 35.1212 9.46485 33.9603 8.6356 33.0786C6.88983 31.1095 5.60959 26.9361 5.31863 22.1455C5.02767 17.3549 5.76962 12.8288 7.23898 10.36C8.69379 7.89125 14.0766 6.14253 22.0053 5.6429C28.6247 5.26083 34.764 5.76046 34.8368 5.76046L34.4294 0.426147C34.4294 0.426147 20.2741 2.08669 18.1064 2.27773C12.8546 2.79205 5.78417 3.93827 3.41283 7.96472C-0.820679 15.1506 0.255882 30.4482 5.37682 36.1793C9.94493 41.3225 25.8315 40.4702 32.9455 38.3101C36.1461 37.3402 39.7686 34.6804 40.3942 27.4063C40.8015 22.6157 40.1468 15.8413 36.9317 12.5202ZM22.7036 25.349L27.7227 26.4658L21.5543 29.0522L22.7036 25.349Z"
+                                                                                            fill="black" />
+                                                                                        <path
+                                                                                            d="M23.2574 19.0889L24.4067 15.3857L18.2383 17.9721L23.2574 19.0889ZM36.6417 12.094C31.9426 7.30345 20.5514 8.18516 16.0706 9.31668C10.8333 10.6686 9.43667 14.6951 9.58215 21.2197C9.64035 24.9669 11.2552 28.288 14.383 29.4195C20.7551 31.6532 26.2252 31.3446 31.9717 25.7899C29.033 22.5863 26.5889 21.4695 22.5736 21.7634C18.6747 21.9544 16.4634 21.3373 13.6993 18.2807C17.0744 15.0037 19.1403 13.4166 23.2137 12.9904C27.7673 12.5202 31.8262 14.46 33.5866 16.2675C35.2305 17.9721 36.0597 21.8663 35.6669 26.5834C35.3614 30.4041 34.1539 32.6525 31.3752 33.4607C27.7964 34.5775 22.5882 35.1212 17.8018 34.9302C12.1426 34.6951 9.17481 33.5342 8.34556 32.6525C6.59979 30.6833 5.31955 26.5099 5.02859 21.7193C4.73763 16.9287 5.47958 12.4026 6.94894 9.93387C8.40376 7.4651 13.7866 5.71638 21.7153 5.21675C28.3347 4.83468 34.474 5.33431 34.5467 5.33431L34.1394 0C34.1394 0 19.9841 1.66054 17.8164 1.85158C12.5645 2.35121 5.47958 3.51212 3.12279 7.53857C-1.11072 14.7245 -0.0341572 30.0367 5.08678 35.7531C9.65489 40.8964 25.5414 40.0441 32.6555 37.8839C35.8561 36.914 39.4786 34.2542 40.1041 26.9802C40.5115 22.1896 39.8568 15.4151 36.6417 12.094ZM22.4136 24.9229L27.4327 26.0397L21.2643 28.626L22.4136 24.9229Z"
+                                                                                            fill="#016B6B" />
+                                                                                    </g>
+                                                                                    <defs>
+                                                                                        <clipPath id="clip0_3326_35104">
+                                                                                            <rect width="40" height="40"
+                                                                                                fill="white"
+                                                                                                transform="translate(0.5)" />
+                                                                                        </clipPath>
+                                                                                    </defs>
+                                                                                </svg>
+
+                                                                                <br /><span
+                                                                                    class="fs-16 font-prompt-md mt-1 mt-logo-download">3D
+                                                                                    Studio MAX</span>
+                                                                            </center>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div
+                                                                        class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
+                                                                        <a href="{{ asset('public' . $document['path']) }}"
+                                                                            class="download-box-btm-l p-0" download>
+                                                                            Download
+                                                                        </a>
+                                                                        <span class="download-box-btm-r">
+                                                                            1
+                                                                            <svg width="24" height="24"
+                                                                                viewBox="0 0 24 24" fill="none"
+                                                                                xmlns="http://www.w3.org/2000/svg">
+                                                                                <path
+                                                                                    d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" />
+                                                                                <path d="M8 2H17C19 2 20 3 20 5V6.38"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" stroke-linecap="round"
+                                                                                    stroke-linejoin="round" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            @break
+
+                                                            @case('skp')
+                                                                <div
+                                                                    class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
+                                                                    <div class="py-5 px-4">
+                                                                        <div class="my-4 mx-0">
+                                                                            <center>
+                                                                                <svg width="41" height="40"
+                                                                                    viewBox="0 0 41 40" fill="none"
+                                                                                    xmlns="http://www.w3.org/2000/svg">
+                                                                                    <g clip-path="url(#clip0_3326_35104)">
+                                                                                        <path opacity="0.75"
+                                                                                            d="M23.5474 19.5151L24.6967 15.8119L18.5283 18.3982L23.5474 19.5151ZM36.9317 12.5202C32.2327 7.7296 20.8415 8.626 16.3607 9.74283C11.1233 11.0948 9.72671 15.1212 9.87219 21.6458C9.93039 25.3931 11.5452 28.7142 14.6731 29.8457C21.0452 32.0793 26.5152 31.7707 32.2618 26.216C29.323 23.0125 26.879 21.8957 22.8637 22.1896C18.9648 22.3806 16.7535 21.7634 13.9893 18.7068C17.3645 15.4298 19.4303 13.8428 23.5038 13.4166C28.0574 12.9464 32.1163 14.8861 33.8766 16.6936C35.5205 18.3982 36.3498 22.2924 35.957 27.0095C35.6515 30.8303 34.444 33.0786 31.6653 33.8868C28.0864 35.0037 22.8928 35.5474 18.0919 35.3563C12.4327 35.1212 9.46485 33.9603 8.6356 33.0786C6.88983 31.1095 5.60959 26.9361 5.31863 22.1455C5.02767 17.3549 5.76962 12.8288 7.23898 10.36C8.69379 7.89125 14.0766 6.14253 22.0053 5.6429C28.6247 5.26083 34.764 5.76046 34.8368 5.76046L34.4294 0.426147C34.4294 0.426147 20.2741 2.08669 18.1064 2.27773C12.8546 2.79205 5.78417 3.93827 3.41283 7.96472C-0.820679 15.1506 0.255882 30.4482 5.37682 36.1793C9.94493 41.3225 25.8315 40.4702 32.9455 38.3101C36.1461 37.3402 39.7686 34.6804 40.3942 27.4063C40.8015 22.6157 40.1468 15.8413 36.9317 12.5202ZM22.7036 25.349L27.7227 26.4658L21.5543 29.0522L22.7036 25.349Z"
+                                                                                            fill="black" />
+                                                                                        <path
+                                                                                            d="M23.2574 19.0889L24.4067 15.3857L18.2383 17.9721L23.2574 19.0889ZM36.6417 12.094C31.9426 7.30345 20.5514 8.18516 16.0706 9.31668C10.8333 10.6686 9.43667 14.6951 9.58215 21.2197C9.64035 24.9669 11.2552 28.288 14.383 29.4195C20.7551 31.6532 26.2252 31.3446 31.9717 25.7899C29.033 22.5863 26.5889 21.4695 22.5736 21.7634C18.6747 21.9544 16.4634 21.3373 13.6993 18.2807C17.0744 15.0037 19.1403 13.4166 23.2137 12.9904C27.7673 12.5202 31.8262 14.46 33.5866 16.2675C35.2305 17.9721 36.0597 21.8663 35.6669 26.5834C35.3614 30.4041 34.1539 32.6525 31.3752 33.4607C27.7964 34.5775 22.5882 35.1212 17.8018 34.9302C12.1426 34.6951 9.17481 33.5342 8.34556 32.6525C6.59979 30.6833 5.31955 26.5099 5.02859 21.7193C4.73763 16.9287 5.47958 12.4026 6.94894 9.93387C8.40376 7.4651 13.7866 5.71638 21.7153 5.21675C28.3347 4.83468 34.474 5.33431 34.5467 5.33431L34.1394 0C34.1394 0 19.9841 1.66054 17.8164 1.85158C12.5645 2.35121 5.47958 3.51212 3.12279 7.53857C-1.11072 14.7245 -0.0341572 30.0367 5.08678 35.7531C9.65489 40.8964 25.5414 40.0441 32.6555 37.8839C35.8561 36.914 39.4786 34.2542 40.1041 26.9802C40.5115 22.1896 39.8568 15.4151 36.6417 12.094ZM22.4136 24.9229L27.4327 26.0397L21.2643 28.626L22.4136 24.9229Z"
+                                                                                            fill="#016B6B" />
+                                                                                    </g>
+                                                                                    <defs>
+                                                                                        <clipPath id="clip0_3326_35104">
+                                                                                            <rect width="40" height="40"
+                                                                                                fill="white"
+                                                                                                transform="translate(0.5)" />
+                                                                                        </clipPath>
+                                                                                    </defs>
+                                                                                </svg>
+
+                                                                                <br /><span
+                                                                                    class="fs-16 font-prompt-md mt-1 mt-logo-download">3D
+                                                                                    Studio MAX</span>
+                                                                            </center>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div
+                                                                        class="download-box-btm fs-14 font-prompt-md d-flex justify-content-between px-3 py-2">
+                                                                        <a href="{{ asset('public' . $document['path']) }}"
+                                                                            class="download-box-btm-l p-0" download>
+                                                                            Download
+                                                                        </a>
+                                                                        <span class="download-box-btm-r">
+                                                                            1
+                                                                            <svg width="24" height="24"
+                                                                                viewBox="0 0 24 24" fill="none"
+                                                                                xmlns="http://www.w3.org/2000/svg">
+                                                                                <path
+                                                                                    d="M22 11V17C22 21 21 22 17 22H7C3 22 2 21 2 17V7C2 3 3 2 7 2H8.5C10 2 10.33 2.44 10.9 3.2L12.4 5.2C12.78 5.7 13 6 14 6H17C21 6 22 7 22 11Z"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" />
+                                                                                <path d="M8 2H17C19 2 20 3 20 5V6.38"
+                                                                                    stroke="#292D32" stroke-width="1.5"
+                                                                                    stroke-miterlimit="10" stroke-linecap="round"
+                                                                                    stroke-linejoin="round" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            @break
+                                                        @endswitch
+                                                    @endforeach
+                                                @else
+                                                    No document exist
+                                                @endif
+                                                {{-- <!-- AutoCAD -->
                                         <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
                                             <div class="py-5 px-4">
                                                 <div class="my-4 mx-0">
@@ -1376,145 +1719,188 @@
                                                 </span>
                                             </div>
                                         </div> --}}
-                                    <div>
-                                </div>
-                            </div>
-                            @endif
-                        </div>
-                        <!-- ----------------- -->
-                        <div class="p-0 py-2 col-12 float-left">
-                            @if(!empty ($previewData['detailedProduct']['video_provider']) && $previewData['detailedProduct']['getYoutubeVideoId'] != "")
-                            <div class="download-title fs-20 font-prompt-md text-left col-md-12">Videos</div>
-                            <div class="col-12 float-left my-2">
-                                <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
-                                    <div class="video-img">
-                                        @if(($previewData['detailedProduct']['video_provider']))
-                                            {{-- YouTube Video Thumbnail --}}
-                                            @if($previewData['detailedProduct']['video_provider'] == "youtube" && $previewData['detailedProduct']['getYoutubeVideoId'] != "")
-                                                <img class="col-12 p-0" data-toggle="modal" data-target="#videoModal"
-                                                     src="https://img.youtube.com/vi/{{ $previewData['detailedProduct']['getYoutubeVideoId'] }}/hqdefault.jpg">
-                                                <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-start px-3 py-2">
-                                                    <span class="download-box-btm-l">View</span>
+                                                <div>
                                                 </div>
-
-                                            {{-- Vimeo Video Placeholder --}}
-                                            @elseif($previewData['detailedProduct']['video_provider'] == "vimeo" )
-                                                <img class="col-12 p-0" data-toggle="modal" data-target="#videoModal"
-                                                     src="https://via.placeholder.com/640x360.png?text=Vimeo+Video">
-                                                <div class="download-box-btm fs-14 font-prompt-md d-flex justify-content-start px-3 py-2">
-                                                    <span class="download-box-btm-l">View</span>
-                                                </div>
-                                            @endif
+                                            </div>
                                         @endif
                                     </div>
+                                    <!-- ----------------- -->
+                                    <div class="p-0 py-2 col-12 float-left">
+                                        @if (
+                                            !empty($previewData['detailedProduct']['video_provider']) &&
+                                                $previewData['detailedProduct']['getYoutubeVideoId'] != '')
+                                            <div class="download-title fs-20 font-prompt-md text-left col-md-12">Videos
+                                            </div>
+                                            <div class="col-12 float-left my-2">
+                                                <div class="col-lg-2 col-md-3 col-6 mr-2 download-box p-0 float-left">
+                                                    <div class="video-img">
+                                                        @if ($previewData['detailedProduct']['video_provider'])
+                                                            {{-- YouTube Video Thumbnail --}}
+                                                            @if (
+                                                                $previewData['detailedProduct']['video_provider'] == 'youtube' &&
+                                                                    $previewData['detailedProduct']['getYoutubeVideoId'] != '')
+                                                                <img class="col-12 p-0" data-toggle="modal"
+                                                                    data-target="#videoModal"
+                                                                    src="https://img.youtube.com/vi/{{ $previewData['detailedProduct']['getYoutubeVideoId'] }}/hqdefault.jpg">
+                                                                <div
+                                                                    class="download-box-btm fs-14 font-prompt-md d-flex justify-content-start px-3 py-2">
+                                                                    <span class="download-box-btm-l">View</span>
+                                                                </div>
+
+                                                                {{-- Vimeo Video Placeholder --}}
+                                                            @elseif($previewData['detailedProduct']['video_provider'] == 'vimeo')
+                                                                <img class="col-12 p-0" data-toggle="modal"
+                                                                    data-target="#videoModal"
+                                                                    src="https://via.placeholder.com/640x360.png?text=Vimeo+Video">
+                                                                <div
+                                                                    class="download-box-btm fs-14 font-prompt-md d-flex justify-content-start px-3 py-2">
+                                                                    <span class="download-box-btm-l">View</span>
+                                                                </div>
+                                                            @endif
+                                                        @endif
+                                                    </div>
 
 
+                                                </div>
+                                                <div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
                                 </div>
-                            <div>
-                        </div>
-                    </div>
-                    @endif
-                </div>
-                </div>
-                    <div class="tab-pane fade" id="tab_default_3">
-                                <!-- Ratting -->
-                                <div class="px-3 px-sm-4 mb-4 mt-4">
-                                    {{-- @php
+                                <div class="tab-pane fade" id="tab_default_3">
+                                    <!-- Ratting -->
+                                    <div class="px-3 px-sm-4 mb-4 mt-4">
+                                        {{-- @php
                                     $detailedProduct = App\Models\Product::find(5) ;
                                     @endphp --}}
 
-                                    @if($previewData['detailedProduct']['variationId'] || $previewData['detailedProduct']['product_id'] )
-                                    @php
-                                    if($previewData['detailedProduct']['variationId'])
-                                        $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['variationId']);
-                                    else {
-                                        $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['product_id']);
-                                    }
-                                    $totalRating = $detailedProduct->reviews->count();
-                                    @endphp
-                                    <div class="review-title fs-20 font-prompt-md text-left col-md-12">Total Reviews</div>
-                                    <div class="review-subtitle fs-16 font-prompt-md text-left col-md-12">This shows the average of reviews</div>
-                                    <div class="row">
-                                        <div class="col-lg-4 col-md-6 col-12 mt-4 review-box p-4">
-                                            <div class="col-12 fs-48 font-prompt-md text-center">
-                                                {{ $totalRating > 0 ? number_format($detailedProduct->reviews->sum('rating') / $totalRating, 1) : number_format(0, 1) }}
-                                            </div>
-                                            <div class="rating rating-mr-1 rating-var text-center">
-                                                @if($totalRating > 0)
-                                                {{ renderStarRating($detailedProduct->reviews->sum('rating') / $totalRating) }}
-                                            @else
-                                                {{ renderStarRating(0) }}
-                                            @endif
-                                            </div>
-                                            <div class="total-var-rating ml-1 fs-16 text-center mt-2">
-                                                Average of <b>{{$totalRating}} reviews</b>
-                                            </div>
-                                        </div>
-                                        @if (!isset($isPreview))
-                                        <div class="col-lg-8 col-md-6 col-12 mt-4 review-lines p-3">
-                                            <div class="col-12 p-0 float-left mb-2">
-                                                <span class="float-left rating-txt-style fs-16">5 Stars</span>
-                                                <div class="progress float-left mx-2">
-                                                    <div class="progress-bar custom-progress" role="progressbar" style="width: {{ $previewData['detailedProduct']['ratingPercentages'][0]['percentage'] }}%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                        @if ($previewData['detailedProduct']['variationId'] || $previewData['detailedProduct']['product_id'])
+                                            @php
+                                                if ($previewData['detailedProduct']['variationId']) {
+                                                    $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['variationId']);
+                                                } else {
+                                                    $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['product_id']);
+                                                }
+                                                $totalRating = $detailedProduct->reviews->count();
+                                            @endphp
+                                            <div class="review-title fs-20 font-prompt-md text-left col-md-12">Total
+                                                Reviews</div>
+                                            <div class="review-subtitle fs-16 font-prompt-md text-left col-md-12">This
+                                                shows the average of reviews</div>
+                                            <div class="row">
+                                                <div class="col-lg-4 col-md-6 col-12 mt-4 review-box p-4">
+                                                    <div class="col-12 fs-48 font-prompt-md text-center">
+                                                        {{ $totalRating > 0 ? number_format($detailedProduct->reviews->sum('rating') / $totalRating, 1) : number_format(0, 1) }}
+                                                    </div>
+                                                    <div class="rating rating-mr-1 rating-var text-center">
+                                                        @if ($totalRating > 0)
+                                                            {{ renderStarRating($detailedProduct->reviews->sum('rating') / $totalRating) }}
+                                                        @else
+                                                            {{ renderStarRating(0) }}
+                                                        @endif
+                                                    </div>
+                                                    <div class="total-var-rating ml-1 fs-16 text-center mt-2">
+                                                        Average of <b>{{ $totalRating }} reviews</b>
+                                                    </div>
                                                 </div>
-                                                <span class="float-left rating-txt-color fs-16">{{ $previewData['detailedProduct']['ratingPercentages'][0]['percentage'] }}%</span>
+                                                @if (!isset($isPreview))
+                                                    <div class="col-lg-8 col-md-6 col-12 mt-4 review-lines p-3">
+                                                        <div class="col-12 p-0 float-left mb-2">
+                                                            <span class="float-left rating-txt-style fs-16">5 Stars</span>
+                                                            <div class="progress float-left mx-2">
+                                                                <div class="progress-bar custom-progress"
+                                                                    role="progressbar"
+                                                                    style="width: {{ $previewData['detailedProduct']['ratingPercentages'][0]['percentage'] }}%;"
+                                                                    aria-valuenow="25" aria-valuemin="0"
+                                                                    aria-valuemax="100"></div>
+                                                            </div>
+                                                            <span
+                                                                class="float-left rating-txt-color fs-16">{{ $previewData['detailedProduct']['ratingPercentages'][0]['percentage'] }}%</span>
+                                                        </div>
+                                                        <div class="col-12 p-0 float-left mb-2">
+                                                            <span class="float-left rating-txt-style fs-16">4 Stars</span>
+                                                            <div class="progress float-left mx-2">
+                                                                <div class="progress-bar custom-progress"
+                                                                    role="progressbar"
+                                                                    style="width: {{ $previewData['detailedProduct']['ratingPercentages'][1]['percentage'] }}%;"
+                                                                    aria-valuenow="25" aria-valuemin="0"
+                                                                    aria-valuemax="100"></div>
+                                                            </div>
+                                                            <span
+                                                                class="float-left rating-txt-color fs-16">{{ $previewData['detailedProduct']['ratingPercentages'][1]['percentage'] }}%</span>
+                                                        </div>
+                                                        <div class="col-12 p-0 float-left mb-2">
+                                                            <span class="float-left rating-txt-style fs-16">3 Stars</span>
+                                                            <div class="progress float-left mx-2">
+                                                                <div class="progress-bar custom-progress"
+                                                                    role="progressbar"
+                                                                    style="width: {{ $previewData['detailedProduct']['ratingPercentages'][2]['percentage'] }}%;"
+                                                                    aria-valuenow="25" aria-valuemin="0"
+                                                                    aria-valuemax="100"></div>
+                                                            </div>
+                                                            <span
+                                                                class="float-left rating-txt-color fs-16">{{ $previewData['detailedProduct']['ratingPercentages'][2]['percentage'] }}%</span>
+                                                        </div>
+                                                        <div class="col-12 p-0 float-left mb-2">
+                                                            <span class="float-left rating-txt-style fs-16">2 Stars</span>
+                                                            <div class="progress float-left mx-2">
+                                                                <div class="progress-bar custom-progress"
+                                                                    role="progressbar"
+                                                                    style="width: {{ $previewData['detailedProduct']['ratingPercentages'][3]['percentage'] }}%;"
+                                                                    aria-valuenow="25" aria-valuemin="0"
+                                                                    aria-valuemax="100"></div>
+                                                            </div>
+                                                            <span
+                                                                class="float-left rating-txt-color fs-16">{{ $previewData['detailedProduct']['ratingPercentages'][3]['percentage'] }}%</span>
+                                                        </div>
+                                                        <div class="col-12 p-0 float-left mb-2">
+                                                            <span class="float-left rating-txt-style fs-16">1 Star</span>
+                                                            <div class="progress float-left mx-2">
+                                                                <div class="progress-bar custom-progress"
+                                                                    role="progressbar"
+                                                                    style="width: {{ $previewData['detailedProduct']['ratingPercentages'][4]['percentage'] }}%;"
+                                                                    aria-valuenow="25" aria-valuemin="0"
+                                                                    aria-valuemax="100"></div>
+                                                            </div>
+                                                            <span
+                                                                class="float-left rating-txt-color fs-16">{{ $previewData['detailedProduct']['ratingPercentages'][4]['percentage'] }}%</span>
+                                                        </div>
+                                                    </div>
+                                                @endif
                                             </div>
-                                            <div class="col-12 p-0 float-left mb-2">
-                                                <span class="float-left rating-txt-style fs-16">4 Stars</span>
-                                                <div class="progress float-left mx-2">
-                                                    <div class="progress-bar custom-progress" role="progressbar" style="width: {{ $previewData['detailedProduct']['ratingPercentages'][1]['percentage'] }}%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                                <span class="float-left rating-txt-color fs-16">{{ $previewData['detailedProduct']['ratingPercentages'][1]['percentage'] }}%</span>
-                                            </div>
-                                            <div class="col-12 p-0 float-left mb-2">
-                                                <span class="float-left rating-txt-style fs-16">3 Stars</span>
-                                                <div class="progress float-left mx-2">
-                                                    <div class="progress-bar custom-progress" role="progressbar" style="width: {{ $previewData['detailedProduct']['ratingPercentages'][2]['percentage'] }}%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                                <span class="float-left rating-txt-color fs-16">{{ $previewData['detailedProduct']['ratingPercentages'][2]['percentage'] }}%</span>
-                                            </div>
-                                            <div class="col-12 p-0 float-left mb-2">
-                                                <span class="float-left rating-txt-style fs-16">2 Stars</span>
-                                                <div class="progress float-left mx-2">
-                                                    <div class="progress-bar custom-progress" role="progressbar" style="width: {{ $previewData['detailedProduct']['ratingPercentages'][3]['percentage'] }}%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                                <span class="float-left rating-txt-color fs-16">{{ $previewData['detailedProduct']['ratingPercentages'][3]['percentage'] }}%</span>
-                                            </div>
-                                            <div class="col-12 p-0 float-left mb-2">
-                                                <span class="float-left rating-txt-style fs-16">1 Star</span>
-                                                <div class="progress float-left mx-2">
-                                                    <div class="progress-bar custom-progress" role="progressbar" style="width: {{ $previewData['detailedProduct']['ratingPercentages'][4]['percentage'] }}%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                                <span class="float-left rating-txt-color fs-16">{{ $previewData['detailedProduct']['ratingPercentages'][4]['percentage'] }}%</span>
-                                            </div>
-                                        </div>
                                         @endif
-                                    </div>
-                                    @endif
-                                    <div class="row">
-                                        <div class="col-12 fs-20 font-prompt-md pb-3 pt-5 px-1 comment-style">
-                                            {{App\Models\Review::where('product_id', $previewData['detailedProduct']['product_id'])->where('status', 1)->count() }}
+                                        <div class="row">
+                                            <div class="col-12 fs-20 font-prompt-md pb-3 pt-5 px-1 comment-style">
+                                                {{ App\Models\Review::where('product_id', $previewData['detailedProduct']['product_id'])->where('status', 1)->count() }}
                                                 Total Reviews
-                                        </div>
+                                            </div>
 
                                             @php
-                                                $comments = App\Models\Review::where('product_id', $previewData['detailedProduct']['product_id'])->where('status', 1)->take(3)->get();
+                                                $comments = App\Models\Review::where('product_id', $previewData['detailedProduct']['product_id'])
+                                                    ->where('status', 1)
+                                                    ->take(3)
+                                                    ->get();
                                             @endphp
-                                            @if(count($comments) > 0)
+                                            @if (count($comments) > 0)
                                                 @foreach ($comments as $comment)
                                                     <div class="col-12 fs-20 font-prompt-md py-4 px-1 comment-style">
                                                         <div class="comment-img-porter p-0 float-left">
-                                                            @if($comment->user->avatar_original != null)
-                                                                <img src="{{ uploaded_asset($comment->user->avatar_original) }}" alt="{{ translate('avatar') }}" class="comment-img">
+                                                            @if ($comment->user->avatar_original != null)
+                                                                <img src="{{ uploaded_asset($comment->user->avatar_original) }}"
+                                                                    alt="{{ translate('avatar') }}" class="comment-img">
                                                             @else
-                                                                <img src="{{ static_asset('assets/img/avatar-place.png') }}" alt="{{ translate('avatar') }}" class="comment-img">
+                                                                <img src="{{ static_asset('assets/img/avatar-place.png') }}"
+                                                                    alt="{{ translate('avatar') }}" class="comment-img">
                                                             @endif
                                                         </div>
                                                         <div class="col-lg-11 col-md-10 col-9 p-0 float-left">
                                                             <div class="col-12 float-left p-0">
                                                                 <div class="col-6 float-left p-0">
-                                                                    <span class="col-12 float-left fs-16 font-prompt-md comment-name text-left">{{ $comment->name }}</span>
-                                                                    <span class="col-12 float-left fs-14 font-prompt comment-date text-left">{{ \Carbon\Carbon::parse($comment->created_at)->format('M d, Y H:i'); }}</span>
+                                                                    <span
+                                                                        class="col-12 float-left fs-16 font-prompt-md comment-name text-left">{{ $comment->name }}</span>
+                                                                    <span
+                                                                        class="col-12 float-left fs-14 font-prompt comment-date text-left">{{ \Carbon\Carbon::parse($comment->created_at)->format('M d, Y H:i') }}</span>
                                                                 </div>
                                                                 <div class="col-6 float-right p-0">
                                                                     <div class="rating rating-mr-1 rating-var text-right">
@@ -1522,7 +1908,8 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-12 float-left fs-16 font-prompt comment-content">
+                                                            <div
+                                                                class="col-12 float-left fs-16 font-prompt comment-content">
                                                                 {{ $comment->comment }}
                                                             </div>
                                                         </div>
@@ -1543,7 +1930,7 @@
                                                         </div>
                                                         <div class="col-6 float-right p-0">
                                                             <div class="rating rating-mr-1 rating-var text-right">
-                                                            @if($totalRating > 0)
+                                                            @if ($totalRating > 0)
                                                                 {{ renderStarRating($detailedProduct->reviews->sum('rating') / $totalRating) }}
                                                             @else
                                                                 {{ renderStarRating(0) }}
@@ -1557,97 +1944,115 @@
                                                 </div>
                                             </div> --}}
 
-                                        <!-- end comments -->
-                                        @if(count($comments) > 2)
-                                            <div class="col-12 py-3">
-                                                <center>
-                                                    <button class="comment-button-more fs-20 font-prompt-md" id="load-more" data-product-id="{{ $previewData['detailedProduct']['product_id'] }}" @if(count($comments) > 0) data-offset="{{ $comment->id }}" @endif>View More</button>
-                                                </center>
-                                            </div>
-                                        @endif
-                                    </div>
-                                    <!-- end comment and button -->
-                                    <div class="row pt-5">
-                                        <div class="review-title fs-20 font-prompt-md text-left col-md-12">Submit Your Review</div>
-                                        <div class="review-subtitle fs-16 font-prompt-md text-left col-md-12">Your email address will not be published.</div>
-                                        <div class="col-12">
-                                            @if ($errors->any())
-                                                <div class="alert alert-danger">
-                                                    <ul>
-                                                        @foreach ($errors->all() as $error)
-                                                            <li>{{ $error }}</li>
-                                                        @endforeach
-                                                    </ul>
+                                            <!-- end comments -->
+                                            @if (count($comments) > 2)
+                                                <div class="col-12 py-3">
+                                                    <center>
+                                                        <button class="comment-button-more fs-20 font-prompt-md"
+                                                            id="load-more"
+                                                            data-product-id="{{ $previewData['detailedProduct']['product_id'] }}"
+                                                            @if (count($comments) > 0) data-offset="{{ $comment->id }}" @endif>View
+                                                            More</button>
+                                                    </center>
                                                 </div>
-                                            @endif
-                                            @if(session('errors'))
-                                                <div class="alert alert-danger">
-                                                    <ul>
-                                                        @foreach(session('errors') as $error)
-                                                            <li>{{ $error }}</li>
-                                                        @endforeach
-                                                    </ul>
-                                                </div>
-                                            @endif
-                                            @if(isset($isPreview) && $isPreview)
-                                            <div class="alert alert-warning mt-3" role="alert">
-                                                You are in preview mode. You cannot submit a review.
-                                            </div>
-                                        @else
-                                            <form method="POST" action="{{ route('reviews.store') }}">
-                                                @csrf
-                                                <input type="hidden" name="product_id" value="{{ $previewData['detailedProduct']['product_id'] }}">
-                                                <div class="form-group">
-                                                    <label class="opacity-60">{{ translate('Rating')}}</label>
-                                                    <div class="rating rating-input">
-                                                        <label>
-                                                            <input type="radio" name="rating" value="1" required>
-                                                            <i class="las la-star"></i>
-                                                        </label>
-                                                        <label>
-                                                            <input type="radio" name="rating" value="2">
-                                                            <i class="las la-star"></i>
-                                                        </label>
-                                                        <label>
-                                                            <input type="radio" name="rating" value="3">
-                                                            <i class="las la-star"></i>
-                                                        </label>
-                                                        <label>
-                                                            <input type="radio" name="rating" value="4">
-                                                            <i class="las la-star"></i>
-                                                        </label>
-                                                        <label>
-                                                            <input type="radio" name="rating" value="5">
-                                                            <i class="las la-star"></i>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group m-0">
-                                                    <textarea class="form-control text-a-review-f fs-16 mt-3" id="exampleFormControlTextarea3" placeholder="Write your review here" name="comment" rows="5"></textarea>
-                                                </div>
-                                                <div class="form-group m-0">
-                                                    <input type="text" class="form-control text-input-review-f fs-16 mt-2" placeholder="Name" @if(Auth::check()) value="{{ Auth::user()->name }}" @endif aria-label="name" name="name" aria-describedby="basic-addon1">
-                                                </div>
-                                                @if(Auth::check())
-                                                    <button class="btn-review-f fs-16 mt-2 font-prompt py-2 col-6 col-md-3 col-lg-2">Submit Review</button>
-                                                @else
-                                                    <div class="alert alert-danger mt-3" role="alert">
-                                                        You must be <a href="{{ route('user.login') }}" class="alert-link">logged in</a> to write a comment on this product.
-                                                    </div>
-                                                @endif
-                                            </form>
                                             @endif
                                         </div>
+                                        <!-- end comment and button -->
+                                        <div class="row pt-5">
+                                            <div class="review-title fs-20 font-prompt-md text-left col-md-12">Submit Your
+                                                Review</div>
+                                            <div class="review-subtitle fs-16 font-prompt-md text-left col-md-12">Your
+                                                email address will not be published.</div>
+                                            <div class="col-12">
+                                                @if ($errors->any())
+                                                    <div class="alert alert-danger">
+                                                        <ul>
+                                                            @foreach ($errors->all() as $error)
+                                                                <li>{{ $error }}</li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </div>
+                                                @endif
+                                                @if (session('errors'))
+                                                    <div class="alert alert-danger">
+                                                        <ul>
+                                                            @foreach (session('errors') as $error)
+                                                                <li>{{ $error }}</li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </div>
+                                                @endif
+                                                @if (isset($isPreview) && $isPreview)
+                                                    <div class="alert alert-warning mt-3" role="alert">
+                                                        You are in preview mode. You cannot submit a review.
+                                                    </div>
+                                                @else
+                                                    <form method="POST" action="{{ route('reviews.store') }}">
+                                                        @csrf
+                                                        <input type="hidden" name="product_id"
+                                                            value="{{ $previewData['detailedProduct']['product_id'] }}">
+                                                        <div class="form-group">
+                                                            <label class="opacity-60">{{ translate('Rating') }}</label>
+                                                            <div class="rating rating-input">
+                                                                <label>
+                                                                    <input type="radio" name="rating" value="1"
+                                                                        required>
+                                                                    <i class="las la-star"></i>
+                                                                </label>
+                                                                <label>
+                                                                    <input type="radio" name="rating" value="2">
+                                                                    <i class="las la-star"></i>
+                                                                </label>
+                                                                <label>
+                                                                    <input type="radio" name="rating" value="3">
+                                                                    <i class="las la-star"></i>
+                                                                </label>
+                                                                <label>
+                                                                    <input type="radio" name="rating" value="4">
+                                                                    <i class="las la-star"></i>
+                                                                </label>
+                                                                <label>
+                                                                    <input type="radio" name="rating" value="5">
+                                                                    <i class="las la-star"></i>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group m-0">
+                                                            <textarea class="form-control text-a-review-f fs-16 mt-3" id="exampleFormControlTextarea3"
+                                                                placeholder="Write your review here" name="comment" rows="5"></textarea>
+                                                        </div>
+                                                        <div class="form-group m-0">
+                                                            <input type="text"
+                                                                class="form-control text-input-review-f fs-16 mt-2"
+                                                                placeholder="Name"
+                                                                @if (Auth::check()) value="{{ Auth::user()->name }}" @endif
+                                                                aria-label="name" name="name"
+                                                                aria-describedby="basic-addon1">
+                                                        </div>
+                                                        @if (Auth::check())
+                                                            <button
+                                                                class="btn-review-f fs-16 mt-2 font-prompt py-2 col-6 col-md-3 col-lg-2">Submit
+                                                                Review</button>
+                                                        @else
+                                                            <div class="alert alert-danger mt-3" role="alert">
+                                                                You must be <a href="{{ route('user.login') }}"
+                                                                    class="alert-link">logged in</a> to write a comment on
+                                                                this product.
+                                                            </div>
+                                                        @endif
+                                                    </form>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <!-- end form comment -->
                                     </div>
-                                    <!-- end form comment -->
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Related products -->
-                {{-- <div class="bg-white border">
+                    <!-- Related products -->
+                    {{-- <div class="bg-white border">
                     <div class="p-3 p-sm-4">
                         <h3 class="fs-16 fw-700 mb-0">
                             <span class="mr-4">Frequently Brought Products</span>
@@ -1664,33 +2069,33 @@
                         </div>
                     </div>
                 </div> --}}
-                <!-- Product Query
-                <div class="bg-white border mt-4 mb-4" id="product_query">
-                    <div class="p-3 p-sm-4">
-                        <h3 class="fs-16 fw-700 mb-0">
-                            <span>Product Queries (4)</span>
-                        </h3>
-                    </div>
-
-                    <!-- Login & Register
-                    <p class="fs-14 fw-400 mb-0 px-3 px-sm-4 mt-3"><a
-                            href="https://demo.activeitzone.com/ecommerce/users/login">Login</a> Or <a class="mr-1"
-                            href="https://demo.activeitzone.com/ecommerce/users/registration">Register</a>to submit
-                        your questions to seller
-                    </p>
-
-                    <!-- Query Submit -->
-
-                    <!-- Others Queries
-                    <div class="queries-area my-4 mb-0 px-3 px-sm-4">
-                        <div class="py-3">
+                    <!-- Product Query
+                    <div class="bg-white border mt-4 mb-4" id="product_query">
+                        <div class="p-3 p-sm-4">
                             <h3 class="fs-16 fw-700 mb-0">
-                                <span>Other Questions</span>
+                                <span>Product Queries (4)</span>
                             </h3>
                         </div>
 
-                        <!-- Product queries -->
-                        {{-- <div class="produc-queries mb-4">
+                        <!-- Login & Register
+                        <p class="fs-14 fw-400 mb-0 px-3 px-sm-4 mt-3"><a
+                                href="https://demo.activeitzone.com/ecommerce/users/login">Login</a> Or <a class="mr-1"
+                                href="https://demo.activeitzone.com/ecommerce/users/registration">Register</a>to submit
+                            your questions to seller
+                        </p>
+
+                        <!-- Query Submit -->
+
+                    <!-- Others Queries
+                        <div class="queries-area my-4 mb-0 px-3 px-sm-4">
+                            <div class="py-3">
+                                <h3 class="fs-16 fw-700 mb-0">
+                                    <span>Other Questions</span>
+                                </h3>
+                            </div>
+
+                            <!-- Product queries -->
+                    {{-- <div class="produc-queries mb-4">
                             <div class="query d-flex  my-2">
                                 <span class="mt-1">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="36"
@@ -1901,11 +2306,11 @@
 
                         </div> --}}
                     <!--</div>
-                </div>-->
+                    </div>-->
 
-                <!-- Top Selling Products -->
-                <div class="d-lg-none">
-                    {{-- <div class="bg-white border mb-4">
+                    <!-- Top Selling Products -->
+                    <div class="d-lg-none">
+                        {{-- <div class="bg-white border mb-4">
                         <div class="p-3 p-sm-4 fs-16 fw-600">
                             Top Selling Products
                         </div>
@@ -2115,7 +2520,7 @@
                             </ul>
                         </div>
                     </div> --}}
-                </div>
+                    </div>
 
                 </div>
             </div>
@@ -2153,8 +2558,7 @@
                 </div>
                 <div class="p-4">
                     <div class="size-300px size-lg-450px">
-                        <img class="img-fit h-100 lazyload"
-                            src="{{ static_asset('assets/img/placeholder.jpg') }}"
+                        <img class="img-fit h-100 lazyload" src="{{ static_asset('assets/img/placeholder.jpg') }}"
                             data-src=""
                             onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
                     </div>
@@ -2174,28 +2578,29 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                @if(isset($detailedProduct))
-                <form class="" action="{{ route('conversations.store') }}" method="POST"
-                    enctype="multipart/form-data">
-                    @csrf
-                    <input type="hidden" name="product_id" value="{{ $detailedProduct->id }}">
-                    <div class="modal-body gry-bg px-3 pt-3">
-                        <div class="form-group">
-                            <input type="text" class="form-control mb-3 rounded-0" name="title"
-                                value="{{ $detailedProduct->name }}" placeholder="{{ translate('Product Name') }}"
-                                required>
+                @if (isset($detailedProduct))
+                    <form class="" action="{{ route('conversations.store') }}" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="product_id" value="{{ $detailedProduct->id }}">
+                        <div class="modal-body gry-bg px-3 pt-3">
+                            <div class="form-group">
+                                <input type="text" class="form-control mb-3 rounded-0" name="title"
+                                    value="{{ $detailedProduct->name }}" placeholder="{{ translate('Product Name') }}"
+                                    required>
+                            </div>
+                            <div class="form-group">
+                                <textarea class="form-control rounded-0" rows="8" name="message" required
+                                    placeholder="{{ translate('Your Question') }}">{{ route('product', $detailedProduct->slug) }}</textarea>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <textarea class="form-control rounded-0" rows="8" name="message" required
-                                placeholder="{{ translate('Your Question') }}">{{ route('product', $detailedProduct->slug) }}</textarea>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-primary fw-600 rounded-0"
+                                data-dismiss="modal">{{ translate('Cancel') }}</button>
+                            <button type="submit"
+                                class="btn btn-primary fw-600 rounded-0 w-100px">{{ translate('Send') }}</button>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-primary fw-600 rounded-0"
-                            data-dismiss="modal">{{ translate('Cancel') }}</button>
-                        <button type="submit" class="btn btn-primary fw-600 rounded-0 w-100px">{{ translate('Send') }}</button>
-                    </div>
-                </form>
+                    </form>
                 @endif
             </div>
         </div>
@@ -2205,31 +2610,37 @@
     @if (isset($detailedProduct) && $detailedProduct->auction_product == 1)
         @php
             $highest_bid = $detailedProduct->bids->max('amount');
-            $min_bid_amount = $highest_bid != null ? $highest_bid+1 : $detailedProduct->starting_bid;
+            $min_bid_amount = $highest_bid != null ? $highest_bid + 1 : $detailedProduct->starting_bid;
         @endphp
-        <div class="modal fade" id="bid_for_detail_product" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="bid_for_detail_product" tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">{{ translate('Bid For Product') }} <small>({{ translate('Min Bid Amount: ').$min_bid_amount }})</small> </h5>
+                        <h5 class="modal-title" id="exampleModalLabel">{{ translate('Bid For Product') }}
+                            <small>({{ translate('Min Bid Amount: ') . $min_bid_amount }})</small> </h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form class="form-horizontal" action="{{ route('auction_product_bids.store') }}" method="POST" enctype="multipart/form-data">
+                        <form class="form-horizontal" action="{{ route('auction_product_bids.store') }}" method="POST"
+                            enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" name="product_id" value="{{ $detailedProduct->id }}">
                             <div class="form-group">
                                 <label class="form-label">
-                                    {{translate('Place Bid Price')}}
+                                    {{ translate('Place Bid Price') }}
                                     <span class="text-danger">*</span>
                                 </label>
                                 <div class="form-group">
-                                    <input type="number" step="0.01" class="form-control form-control-sm" name="amount" min="{{ $min_bid_amount }}" placeholder="{{ translate('Enter Amount') }}" required>
+                                    <input type="number" step="0.01" class="form-control form-control-sm"
+                                        name="amount" min="{{ $min_bid_amount }}"
+                                        placeholder="{{ translate('Enter Amount') }}" required>
                                 </div>
                             </div>
                             <div class="form-group text-right">
-                                <button type="submit" class="btn btn-sm btn-primary transition-3d-hover mr-1">{{ translate('Submit') }}</button>
+                                <button type="submit"
+                                    class="btn btn-sm btn-primary transition-3d-hover mr-1">{{ translate('Submit') }}</button>
                             </div>
                         </form>
                     </div>
@@ -2247,7 +2658,8 @@
         </div>
     </div>
 
-    <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="videoModalLabel" aria-hidden="true">
+    <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="videoModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -2258,10 +2670,16 @@
                 </div>
                 <div class="modal-body">
                     <div class="embed-responsive embed-responsive-16by9">
-                        @if(isset($previewData['detailedProduct']['video_provider']) && $previewData['detailedProduct']['video_provider'] == "youtube")
-                            <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/{{ $previewData['detailedProduct']['getYoutubeVideoId'] }}" allowfullscreen></iframe>
-                        @elseif(isset($previewData['detailedProduct']['video_provider']) && $previewData['detailedProduct']['video_provider'] == "vimeo")
-                            <iframe class="embed-responsive-item" src="https://player.vimeo.com/video/{{ $previewData['detailedProduct']['getVimeoVideoId'] }}" allowfullscreen></iframe>
+                        @if (isset($previewData['detailedProduct']['video_provider']) &&
+                                $previewData['detailedProduct']['video_provider'] == 'youtube')
+                            <iframe class="embed-responsive-item"
+                                src="https://www.youtube.com/embed/{{ $previewData['detailedProduct']['getYoutubeVideoId'] }}"
+                                allowfullscreen></iframe>
+                        @elseif(isset($previewData['detailedProduct']['video_provider']) &&
+                                $previewData['detailedProduct']['video_provider'] == 'vimeo')
+                            <iframe class="embed-responsive-item"
+                                src="https://player.vimeo.com/video/{{ $previewData['detailedProduct']['getVimeoVideoId'] }}"
+                                allowfullscreen></iframe>
                         @endif
                     </div>
                 </div>
@@ -2275,36 +2693,36 @@
 @endsection
 
 @section('script')
-<script>
-    $(document).ready(function() {
-        $('#load-more').on('click', function() {
-            var productId = $(this).data('product-id');
-            var offset = $(this).data('offset');
+    <script>
+        $(document).ready(function() {
+            $('#load-more').on('click', function() {
+                var productId = $(this).data('product-id');
+                var offset = $(this).data('offset');
 
-            $.ajax({
-                url: "{{ route('comments.loadMore') }}",
-                type: "GET",
-                data: {
-                    productId: productId,
-                    offset: offset
-                },
-                cache: false,
-                dataType: 'JSON',
-                success: function(dataResult) {
-                    $('.comment-style').last().after(dataResult.html);
-                    $('#load-more').data('offset', dataResult.lastId);
-                    // Hide button if no more comments
-                    if(dataResult.lastId == null){
-                        $('#load-more').hide();
+                $.ajax({
+                    url: "{{ route('comments.loadMore') }}",
+                    type: "GET",
+                    data: {
+                        productId: productId,
+                        offset: offset
+                    },
+                    cache: false,
+                    dataType: 'JSON',
+                    success: function(dataResult) {
+                        $('.comment-style').last().after(dataResult.html);
+                        $('#load-more').data('offset', dataResult.lastId);
+                        // Hide button if no more comments
+                        if (dataResult.lastId == null) {
+                            $('#load-more').hide();
+                        }
+                    },
+                    error: function() {
+                        alert('Error loading messages.');
                     }
-                },
-                error: function() {
-                    alert('Error loading messages.');
-                }
-            })
+                })
+            });
         });
-    });
-</script>
+    </script>
     <script type="text/javascript">
         $(document).ready(function() {
             getVariantPrice();
@@ -2404,7 +2822,7 @@
         }
 
         function product_review(product_id) {
-            var product_id = $("#variationId").val() || {{$previewData['detailedProduct']['product_id']}};
+            var product_id = $("#variationId").val() || {{ $previewData['detailedProduct']['product_id'] }};
 
             @if (isCustomer())
                 @if (/* $review_status */ 1 == 1)
@@ -2419,7 +2837,8 @@
                         AIZ.extra.inputRating();
                     });
                 @else
-                    AIZ.plugins.notify('warning', '{{ translate('Sorry, You need to buy this product to give review.') }}');
+                    AIZ.plugins.notify('warning',
+                    '{{ translate('Sorry, You need to buy this product to give review.') }}');
                 @endif
             @elseif (Auth::check() && !isCustomer())
                 AIZ.plugins.notify('warning', '{{ translate('Sorry, Only customers can give review.') }}');
@@ -2449,120 +2868,123 @@
     </script>
     <script>
         // $(document).ready(function() {
-              // Set the CSRF token for all AJAX requests
-               $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
+        // Set the CSRF token for all AJAX requests
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
 
-                //$(document).on('click', '.quantity-control', function() {
-                $(document).on('change', '#quantity', function() {
+        //$(document).on('click', '.quantity-control', function() {
+        $(document).on('change', '#quantity', function() {
 
-                var action = $(this).data('type');
-                var quantityInput = $('#quantity');
-                var currentQuantity = parseInt(quantityInput.val());
-                var variationId = $('#variationId').val() ;
-                // if (action === 'plus') {
-                //     // Increment quantity
-                //     quantityInput.val(currentQuantity + 1);
-                // } else if (action === 'minus' && currentQuantity > 1) {
-                //     // Decrement quantity, ensuring it doesn't go below 1
-                //     quantityInput.val(currentQuantity - 1);
-                // }
+            var action = $(this).data('type');
+            var quantityInput = $('#quantity');
+            var currentQuantity = parseInt(quantityInput.val());
+            var variationId = $('#variationId').val();
+            // if (action === 'plus') {
+            //     // Increment quantity
+            //     quantityInput.val(currentQuantity + 1);
+            // } else if (action === 'minus' && currentQuantity > 1) {
+            //     // Decrement quantity, ensuring it doesn't go below 1
+            //     quantityInput.val(currentQuantity - 1);
+            // }
 
-                // // Update the disabled state of buttons based on quantity
-                // $('.quantity-control[data-type="minus"]').prop('disabled', currentQuantity <= 1);
-                // $('.quantity-control[data-type="plus"]').prop('disabled', currentQuantity >= 197);
+            // // Update the disabled state of buttons based on quantity
+            // $('.quantity-control[data-type="minus"]').prop('disabled', currentQuantity <= 1);
+            // $('.quantity-control[data-type="plus"]').prop('disabled', currentQuantity >= 197);
 
-                // AJAX request to update quantity
-                $.ajax({
-                    url: '{{route("seller.update-price-preview")}}', // URL to your backend endpoint
-                    method: 'POST', // or 'GET' depending on your backend implementation
-                    data: { quantity: quantityInput.val(),variationId },
-                    success: function(response) {
-                        // Handle successful response
-                        console.log(response.unit_price)
-                        if (response.unit_price != null) {
-                            if (response.discountPrice > 0) {
-                                $("#qty-interval").text(response.discountPrice)
-                                $("#chosen_price").text(response.totalDiscount)
-                                $("#previous-price").text(response.unit_price)
+            // AJAX request to update quantity
+            $.ajax({
+                url: '{{ route('seller.update-price-preview') }}', // URL to your backend endpoint
+                method: 'POST', // or 'GET' depending on your backend implementation
+                data: {
+                    quantity: quantityInput.val(),
+                    variationId
+                },
+                success: function(response) {
+                    // Handle successful response
+                    console.log(response.unit_price)
+                    if (response.unit_price != null) {
+                        if (response.discountPrice > 0) {
+                            $("#qty-interval").text(response.discountPrice)
+                            $("#chosen_price").text(response.totalDiscount)
+                            $("#previous-price").text(response.unit_price)
 
-                                if (response.percent !== null && response.percent > 0) {
+                            if (response.percent !== null && response.percent > 0) {
 
-                                $("#percent").text('-'+response.percent+'%')
+                                $("#percent").text('-' + response.percent + '%')
                                 $("#percent").addClass("bg-primary");
 
-                                }
-                                else {
-                                    $("#percent").text('')
-                                    $("#percent").removeClass("bg-primary");
-
-                                }
-
-                            }
-                            else {
-                                $("#previous-price").text('') ;
+                            } else {
+                                $("#percent").text('')
                                 $("#percent").removeClass("bg-primary");
 
-                                $("#qty-interval").text(response.unit_price)
-                                $("#chosen_price").text(response.total)
-                                $("#percent").text('')
-
                             }
-                            // $("#qty-interval").text(response.unit_price+" AED")
-                            $("#quantity").val(response.qty)
-                            // $("#chosen_price").text(response.total+" AED")
-                            $('#quantity').attr('min', response.minimum); // Minimum value
-                            $('#quantity').attr('max', response.maximum); // Maximum value
-                            // $('.quantity-control[data-type="minus"]').prop('disabled', response.qty <= response.minimum);
-                            // $('.quantity-control[data-type="plus"]').prop('disabled', response.qty >= response.maximum);
-                            $('.aiz-plus-minus input').each(function() {
-                                var $this = $(this);
-                                var min = parseInt($(this).attr("min"));
-                                var max = parseInt($(this).attr("max"));
-                                var value = parseInt($(this).val());
-                                console.log(min)
-                                console.log(max)
-                                console.log(value)
-                                if(value <= min){
-                                    $this.siblings('[data-type="minus"]').attr('disabled',true)
-                                }else if($this.siblings('[data-type="minus"]').attr('disabled')){
-                                    $this.siblings('[data-type="minus"]').removeAttr('disabled')
-                                }
-                                if(value >= max){
-                                    $this.siblings('[data-type="plus"]').attr('disabled',true)
-                                }else if($this.siblings('[data-type="plus"]').attr('disabled')){
-                                    $this.siblings('[data-type="plus"]').removeAttr('disabled')
-                                }
-                            });
+
+                        } else {
+                            $("#previous-price").text('');
+                            $("#percent").removeClass("bg-primary");
+
+                            $("#qty-interval").text(response.unit_price)
+                            $("#chosen_price").text(response.total)
+                            $("#percent").text('')
+
                         }
-
-                    },
-                    error: function(xhr, status, error) {
-                        // Handle errors
-                        console.error('Error updating quantity:', error);
+                        // $("#qty-interval").text(response.unit_price+" AED")
+                        $("#quantity").val(response.qty)
+                        // $("#chosen_price").text(response.total+" AED")
+                        $('#quantity').attr('min', response.minimum); // Minimum value
+                        $('#quantity').attr('max', response.maximum); // Maximum value
+                        // $('.quantity-control[data-type="minus"]').prop('disabled', response.qty <= response.minimum);
+                        // $('.quantity-control[data-type="plus"]').prop('disabled', response.qty >= response.maximum);
+                        $('.aiz-plus-minus input').each(function() {
+                            var $this = $(this);
+                            var min = parseInt($(this).attr("min"));
+                            var max = parseInt($(this).attr("max"));
+                            var value = parseInt($(this).val());
+                            console.log(min)
+                            console.log(max)
+                            console.log(value)
+                            if (value <= min) {
+                                $this.siblings('[data-type="minus"]').attr('disabled', true)
+                            } else if ($this.siblings('[data-type="minus"]').attr('disabled')) {
+                                $this.siblings('[data-type="minus"]').removeAttr('disabled')
+                            }
+                            if (value >= max) {
+                                $this.siblings('[data-type="plus"]').attr('disabled', true)
+                            } else if ($this.siblings('[data-type="plus"]').attr('disabled')) {
+                                $this.siblings('[data-type="plus"]').removeAttr('disabled')
+                            }
+                        });
                     }
-                });
+
+                },
+                error: function(xhr, status, error) {
+                    // Handle errors
+                    console.error('Error updating quantity:', error);
+                }
             });
+        });
 
-     // Function to gather checked attributes and values and send them via AJAX
-     function sendCheckedAttributes($currentRadio) {
-                var checkedAttributes = {};
-                $('.attribute_value input[type=radio]:checked').each(function () {
-                    var attributeId = $(this).attr('attributeId');
+        // Function to gather checked attributes and values and send them via AJAX
+        function sendCheckedAttributes($currentRadio) {
+            var checkedAttributes = {};
+            $('.attribute_value input[type=radio]:checked').each(function() {
+                var attributeId = $(this).attr('attributeId');
 
-                    var attributeValue = $(this).val();
-                    checkedAttributes[attributeId] = attributeValue;
-                });
-                console.log(checkedAttributes)
-                // Send checked attributes via AJAX
-                $.ajax({
-                    url: '{{route("seller.product.checked.attributes")}}',
-                    method: 'POST',
-                    data: { checkedAttributes: checkedAttributes },
-                    success: function (response) {
+                var attributeValue = $(this).val();
+                checkedAttributes[attributeId] = attributeValue;
+            });
+            console.log(checkedAttributes)
+            // Send checked attributes via AJAX
+            $.ajax({
+                url: '{{ route('seller.product.checked.attributes') }}',
+                method: 'POST',
+                data: {
+                    checkedAttributes: checkedAttributes
+                },
+                success: function(response) {
                     // Handle success response
                     console.log(response);
 
@@ -2576,12 +2998,11 @@
                         $('label.attribute_value').each(function() {
                             $(this).find('span').css('color', 'black');
                         });
-                        sendCheckedAttributes($currentRadio) ;
+                        sendCheckedAttributes($currentRadio);
 
-                    }
-                    else {
+                    } else {
                         if (response.price > 0) {
-                            $('#variationId').val(response.variationId) ;
+                            $('#variationId').val(response.variationId);
                             $("#qty-interval").text(response.price)
                             $("#quantity").val(response.quantity)
                             $("#chosen_price").text(response.total)
@@ -2594,54 +3015,52 @@
                                 $("#previous-price").text(response.price)
                                 if (response.percent !== null && response.percent > 0) {
 
-                                    $("#percent").text('-'+response.percent+'%')
+                                    $("#percent").text('-' + response.percent + '%')
                                     $("#percent").addClass("bg-primary");
 
-                                }
-                                else {
+                                } else {
                                     $("#percent").text('')
                                     $("#percent").removeClass("bg-primary");
 
                                 }
 
-                                }
-                                else {
-                                $("#previous-price").text('') ;
+                            } else {
+                                $("#previous-price").text('');
                                 $("#percent").removeClass("bg-primary");
 
                                 $("#qty-interval").text(response.price)
                                 $("#chosen_price").text(response.total)
                                 $("#percent").text('')
 
-                                }
+                            }
                             $('.aiz-plus-minus input').each(function() {
-                                    var $this = $(this);
-                                    var min = parseInt($(this).attr("min"));
-                                    var max = parseInt($(this).attr("max"));
-                                    var value = parseInt($(this).val());
-                                    console.log(min)
-                                    console.log(max)
-                                    console.log(value)
-                                    if(value <= min || response.outStock){
+                                var $this = $(this);
+                                var min = parseInt($(this).attr("min"));
+                                var max = parseInt($(this).attr("max"));
+                                var value = parseInt($(this).val());
+                                console.log(min)
+                                console.log(max)
+                                console.log(value)
+                                if (value <= min || response.outStock) {
 
-                                        $this.siblings('[data-type="minus"]').attr('disabled',true)
-                                    }else if($this.siblings('[data-type="minus"]').attr('disabled')){
-                                        $this.siblings('[data-type="minus"]').removeAttr('disabled')
-                                    }
-                                    if(value >= max || response.outStock){
-                                        $this.siblings('[data-type="plus"]').attr('disabled',true)
-                                    }else if($this.siblings('[data-type="plus"]').attr('disabled')){
-                                        $this.siblings('[data-type="plus"]').removeAttr('disabled')
-                                    }
+                                    $this.siblings('[data-type="minus"]').attr('disabled', true)
+                                } else if ($this.siblings('[data-type="minus"]').attr('disabled')) {
+                                    $this.siblings('[data-type="minus"]').removeAttr('disabled')
+                                }
+                                if (value >= max || response.outStock) {
+                                    $this.siblings('[data-type="plus"]').attr('disabled', true)
+                                } else if ($this.siblings('[data-type="plus"]').attr('disabled')) {
+                                    $this.siblings('[data-type="plus"]').removeAttr('disabled')
+                                }
                             });
                         }
                         $('.total-var-rating').text('(' + response.totalRating + ' reviews)');
                         $('.rating-var').html(response.renderStarRating);
                         $('.avgRating').text(response.avgRating);
                         $('.sku-product').text(response.sku);
-                        const statusBadge = response.outStock
-                            ? `<span class="badge badge-md badge-inline badge-pill badge-danger-light fs-14 font-prompt-md border-radius-8px outof-stock-style">{{ translate('Out Of Stock') }}</span>`
-                            : `<span class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ translate('In Stock') }}</span>`;
+                        const statusBadge = response.outStock ?
+                            `<span class="badge badge-md badge-inline badge-pill badge-danger-light fs-14 font-prompt-md border-radius-8px outof-stock-style">{{ translate('Out Of Stock') }}</span>` :
+                            `<span class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ translate('In Stock') }}</span>`;
 
                         $('#stock-status-container').html(statusBadge)
 
@@ -2655,14 +3074,20 @@
                         // Append images to the gallery and thumbnail divs
                         for (var i = 0; i < images.length; i++) {
                             var imageSrc = '{{ asset('/public') }}/' + images[i];
-                            var galleryImage = '<div class="carousel-box img-zoom rounded-0"><img class="img-fluid h-auto lazyload mx-auto" src="' + imageSrc + '" onerror="this.onerror=null;this.src=\'/assets/img/placeholder.jpg\';"></div>';
-                            var thumbnailImage = '<div class="carousel-box c-pointer rounded-0"><img class="lazyload mw-100 size-60px mx-auto border p-1" src="' + imageSrc + '" onerror="this.onerror=null;this.src=\'/assets/img/placeholder.jpg\';"></div>';
+                            var galleryImage =
+                                '<div class="carousel-box img-zoom rounded-0"><img class="img-fluid h-auto lazyload mx-auto" src="' +
+                                imageSrc +
+                                '" onerror="this.onerror=null;this.src=\'/assets/img/placeholder.jpg\';"></div>';
+                            var thumbnailImage =
+                                '<div class="carousel-box c-pointer rounded-0"><img class="lazyload mw-100 size-60px mx-auto border p-1" src="' +
+                                imageSrc +
+                                '" onerror="this.onerror=null;this.src=\'/assets/img/placeholder.jpg\';"></div>';
 
                             $('.product-gallery').append(galleryImage);
                             $('.product-gallery-thumb').append(thumbnailImage);
 
                         }
-                        $(".aiz-carousel").not(".slick-initialized").each(function () {
+                        $(".aiz-carousel").not(".slick-initialized").each(function() {
                             var $this = $(this);
 
 
@@ -2722,12 +3147,18 @@
                             adaptiveHeight = !adaptiveHeight ? false : adaptiveHeight;
 
 
-                            var slidesRtl = ($("html").attr("dir") === "rtl" && !vertical) ? true : false;
-                            var slidesRtlXL = ($("html").attr("dir") === "rtl" && !verticalXl) ? true : false;
-                            var slidesRtlLg = ($("html").attr("dir") === "rtl" && !verticalLg) ? true : false;
-                            var slidesRtlMd = ($("html").attr("dir") === "rtl" && !verticalMd) ? true : false;
-                            var slidesRtlSm = ($("html").attr("dir") === "rtl" && !verticalSm) ? true : false;
-                            var slidesRtlXs = ($("html").attr("dir") === "rtl" && !verticalXs) ? true : false;
+                            var slidesRtl = ($("html").attr("dir") === "rtl" && !vertical) ? true :
+                                false;
+                            var slidesRtlXL = ($("html").attr("dir") === "rtl" && !verticalXl) ? true :
+                                false;
+                            var slidesRtlLg = ($("html").attr("dir") === "rtl" && !verticalLg) ? true :
+                                false;
+                            var slidesRtlMd = ($("html").attr("dir") === "rtl" && !verticalMd) ? true :
+                                false;
+                            var slidesRtlSm = ($("html").attr("dir") === "rtl" && !verticalSm) ? true :
+                                false;
+                            var slidesRtlXs = ($("html").attr("dir") === "rtl" && !verticalXs) ? true :
+                                false;
 
                             $this.slick({
                                 slidesToShow: slidesPerView,
@@ -2746,12 +3177,9 @@
                                 focusOnSelect: focusOnSelect,
                                 adaptiveHeight: adaptiveHeight,
                                 slidesToScroll: 1,
-                                prevArrow:
-                                    '<button type="button" class="slick-prev"><i class="las la-angle-left"></i></button>',
-                                nextArrow:
-                                    '<button type="button" class="slick-next"><i class="las la-angle-right"></i></button>',
-                                responsive: [
-                                    {
+                                prevArrow: '<button type="button" class="slick-prev"><i class="las la-angle-left"></i></button>',
+                                nextArrow: '<button type="button" class="slick-next"><i class="las la-angle-right"></i></button>',
+                                responsive: [{
                                         breakpoint: 1500,
                                         settings: {
                                             slidesToShow: slidesPerViewXl,
@@ -2822,23 +3250,27 @@
                         // }
                         for (var attributeId in response.availableAttributes) {
                             if (response.availableAttributes.hasOwnProperty(attributeId)) {
-                                var availableValues = response.availableAttributes[attributeId]; // Get the entire array
+                                var availableValues = response.availableAttributes[
+                                attributeId]; // Get the entire array
                                 console.log("Available Values for Attribute ID:", attributeId, availableValues);
 
                                 // Iterate over each radio button for this attribute
-                                $('.attribute_value input[type=radio][attributeId="' + attributeId + '"]').each(function () {
-                                    var radioValue = $(this).val();
-                                    var label = $(this).closest('.attribute_value');
+                                $('.attribute_value input[type=radio][attributeId="' + attributeId + '"]').each(
+                                    function() {
+                                        var radioValue = $(this).val();
+                                        var label = $(this).closest('.attribute_value');
 
-                                    // Check if the radio button value is in the available values
-                                    if (!availableValues.some(value => value === radioValue)) {
-                                        // If not in available values, style accordingly
-                                        label.find('span').css('border-bottom', '1px solid red'); // Change to red
-                                    } else {
-                                        // If it is in available values, style accordingly
-                                        label.find('span').css('border-bottom', '1px solid mediumseagreen'); // Change to green
-                                    }
-                                });
+                                        // Check if the radio button value is in the available values
+                                        if (!availableValues.some(value => value === radioValue)) {
+                                            // If not in available values, style accordingly
+                                            label.find('span').css('border-bottom',
+                                            '1px solid red'); // Change to red
+                                        } else {
+                                            // If it is in available values, style accordingly
+                                            label.find('span').css('border-bottom',
+                                                '1px solid mediumseagreen'); // Change to green
+                                        }
+                                    });
                             }
                         }
 
@@ -2846,15 +3278,15 @@
 
                 },
 
-                        error: function (xhr, status, error) {
-                            // Handle error
-                            console.error(error);
-                        }
-                });
-            }
+                error: function(xhr, status, error) {
+                    // Handle error
+                    console.error(error);
+                }
+            });
+        }
 
         // Trigger the function on radio button change
-        $('.attribute_value input[type=radio]').on('change', function () {
+        $('.attribute_value input[type=radio]').on('change', function() {
             // var niveauThreshold = $(this).attr("niveau") ;
             // // Iterate through all radio buttons
             // $('.attribute_value input[type="radio"]').each(function() {
@@ -2873,31 +3305,31 @@
         // });
     </script>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const quantityButton = document.getElementById("quantity-button");
-        const plusIcon = quantityButton.querySelector("i.las.la-plus");
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const quantityButton = document.getElementById("quantity-button");
+            const plusIcon = quantityButton.querySelector("i.las.la-plus");
 
-        // Get the outStock status from data attribute
-        const isOutOfStock = quantityButton.getAttribute("data-out-stock") === "1" || quantityButton.getAttribute("data-out-stock") === "true";
+            // Get the outStock status from data attribute
+            const isOutOfStock = quantityButton.getAttribute("data-out-stock") === "1" || quantityButton
+                .getAttribute("data-out-stock") === "true";
 
-        // Disable the button if out of stock
-        if (isOutOfStock) {
-            quantityButton.disabled = true;
-        }
-        // Add click event listener to the icon
-        plusIcon.addEventListener("click", function (event) {
-            // Check if the button is disabled
-            if (quantityButton.disabled) {
-                // Display warning message
-                AIZ.plugins.notify('warning', '{{ __("messages.out_of_stock") }}');
-                // Prevent default behavior (if needed)
-                event.preventDefault();
+            // Disable the button if out of stock
+            if (isOutOfStock) {
+                quantityButton.disabled = true;
             }
+            // Add click event listener to the icon
+            plusIcon.addEventListener("click", function(event) {
+                // Check if the button is disabled
+                if (quantityButton.disabled) {
+                    // Display warning message
+                    AIZ.plugins.notify('warning', '{{ __('messages.out_of_stock') }}');
+                    // Prevent default behavior (if needed)
+                    event.preventDefault();
+                }
+            });
+
+
         });
-
-
-    });
-</script>
-
+    </script>
 @endsection
