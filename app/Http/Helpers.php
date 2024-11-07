@@ -155,22 +155,27 @@ if (!function_exists('get_active_countries')) {
 if (!function_exists('filter_products')) {
     function filter_products($products)
     {
-        $products = $products->where('published', '1')->where('auction_product', 0)->where('approved', '1');
+        $products = $products->where('published', '1')
+            ->where('auction_product', 0)
+            ->where('approved', '1');
 
         if (!addon_is_activated('wholesale')) {
             $products = $products->where('wholesale_product', 0);
         }
 
-       $products = $products->where("is_parent", "!=", 1)
-            ->orWhere("parent_id", "!=", 0);
+       $products = $products->where(function($query) {
+            return $query->where("is_parent", "!=", 1)
+                        ->orWhere("parent_id", "!=", 0);
+        });
 
         $verified_sellers = verified_sellers_id();
 
         if (get_setting('vendor_system_activation') == 1) {
-            return $products->where(function ($p) use ($verified_sellers) {
-                $p->where('added_by', 'admin')->orWhere(function ($q) use ($verified_sellers) {
-                    $q->whereIn('user_id', $verified_sellers);
-                });
+            return $products->where(function ($query) use ($verified_sellers) {
+                $query->where('added_by', 'admin')
+                    ->orWhere(function ($q) use ($verified_sellers) {
+                        $q->whereIn('user_id', $verified_sellers);
+                    });
             });
         } else {
             return $products->where('added_by', 'admin');
@@ -1861,7 +1866,10 @@ if (!function_exists('get_featured_products')) {
     {
         return Cache::remember('featured_products', 3600, function () {
             $product_query = Product::query();
-            return filter_products($product_query->where('featured', '1'))->latest()->limit(12)->get();
+            return filter_products($product_query->where('featured', '1'))
+                        ->latest()
+                        ->limit(12)
+                        ->get();
         });
     }
 }
