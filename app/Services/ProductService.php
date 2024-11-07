@@ -109,7 +109,7 @@ class ProductService
 
             unset($collection['flat_shipping_cost']);
 
-            $slug = generateUniqueSlug(Product::class, $collection["name"]);
+            $slug = generateUniqueSlug(Product::class, $collection['name']);
 
             $colors = json_encode([]);
 
@@ -1285,8 +1285,8 @@ class ProductService
                                             'key' => 'add_attribute',
                                             'old_value' => null,
                                             'new_value' => $value_color,
-                                            'created_at' => new \DateTime,
-                                            'updated_at' => new \DateTime,
+                                            'created_at' => new DateTime,
+                                            'updated_at' => new DateTime,
                                         ]);
                                     }
                                 }
@@ -1327,8 +1327,8 @@ class ProductService
                                     'key' => 'add_attribute',
                                     'old_value' => null,
                                     'new_value' => $value,
-                                    'created_at' => new \DateTime,
-                                    'updated_at' => new \DateTime,
+                                    'created_at' => new DateTime,
+                                    'updated_at' => new DateTime,
                                 ]);
                             }
                         }
@@ -1608,8 +1608,8 @@ class ProductService
                                                 'key' => 'add_attribute',
                                                 'old_value' => null,
                                                 'new_value' => $value_color,
-                                                'created_at' => new \DateTime,
-                                                'updated_at' => new \DateTime,
+                                                'created_at' => new DateTime,
+                                                'updated_at' => new DateTime,
                                             ]);
                                         }
                                     }
@@ -1648,8 +1648,8 @@ class ProductService
                                             'key' => 'add_attribute',
                                             'old_value' => null,
                                             'new_value' => $value_attribute,
-                                            'created_at' => new \DateTime,
-                                            'updated_at' => new \DateTime,
+                                            'created_at' => new DateTime,
+                                            'updated_at' => new DateTime,
                                         ]);
                                     }
                                 }
@@ -1701,8 +1701,8 @@ class ProductService
                                     'key' => 'add_image',
                                     'old_value' => null,
                                     'new_value' => $uploaded_document->id,
-                                    'created_at' => new \DateTime,
-                                    'updated_at' => new \DateTime,
+                                    'created_at' => new DateTime,
+                                    'updated_at' => new DateTime,
                                 ]);
                             }
                         }
@@ -1987,8 +1987,8 @@ class ProductService
                                             'key' => 'add_attribute',
                                             'old_value' => null,
                                             'new_value' => $value_color,
-                                            'created_at' => new \DateTime,
-                                            'updated_at' => new \DateTime,
+                                            'created_at' => new DateTime,
+                                            'updated_at' => new DateTime,
                                         ]);
                                     }
                                 }
@@ -2031,8 +2031,8 @@ class ProductService
                                     'key' => 'add_attribute',
                                     'old_value' => null,
                                     'new_value' => $value,
-                                    'created_at' => new \DateTime,
-                                    'updated_at' => new \DateTime,
+                                    'created_at' => new DateTime,
+                                    'updated_at' => new DateTime,
                                 ]);
                             }
                         }
@@ -2212,8 +2212,8 @@ class ProductService
                                     'key' => 'add_image',
                                     'old_value' => null,
                                     'new_value' => $uploaded_document->id,
-                                    'created_at' => new \DateTime,
-                                    'updated_at' => new \DateTime,
+                                    'created_at' => new DateTime,
+                                    'updated_at' => new DateTime,
                                 ]);
                             }
                         }
