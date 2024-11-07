@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Rules\ReCaptchaV3;
 use Illuminate\Foundation\Http\FormRequest;
+use DB;
 
 class SellerLoginRequestValidation extends FormRequest
 {
@@ -34,8 +35,8 @@ class SellerLoginRequestValidation extends FormRequest
         if ($this->has('otp_code')) {
             $rules['otp_code'] = ['required', 'string', function ($attribute, $value, $fail) {
                 // Retrieve the OTP entry from the database that matches the email and otp-code
-                $otpEntry = \DB::table('verification_codes') // Assume 'otp_table' is where you store OTPs
-                ->where('email', $this->email)
+                $otpEntry = DB::table('verification_codes') // Assume 'otp_table' is where you store OTPs
+                    ->where('email', $this->email)
                     ->where('code', $value)
                     ->first();
 
