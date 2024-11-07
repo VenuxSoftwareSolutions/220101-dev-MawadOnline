@@ -104,11 +104,7 @@ class ProductService
 
             unset($collection['flat_shipping_cost']);
 
-            $slug = Str::slug($collection['name']);
-
-            $same_slug_count = Product::where('slug', 'LIKE', $slug.'%')->count();
-            $slug_suffix = $same_slug_count ? '-'.$same_slug_count + 1 : '';
-            $slug .= $slug_suffix;
+            $slug = generateUniqueSlug(Product::class, $collection["name"]);
 
             $colors = json_encode([]);
 
