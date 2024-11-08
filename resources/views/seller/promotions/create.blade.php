@@ -299,7 +299,7 @@
                         </div> --}}
                         <div class="col-md-6 mb-3">
                             <label for="category" class="form-label">Category</label>
-                            <select id="category" name="category_id" multiple="multiple">
+                            <select id="category"  name="category_id" multiple="multiple">
                                 @foreach ($nestedCategories as $category)
                                     @include('seller.promotions.partials.category_option', ['category' => $category])
                                 @endforeach
@@ -352,17 +352,21 @@
 @endsection
 
 @section('script')
-    <script src="{{ static_asset('assets/js/jquery.easyui.min.js') }}"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
     <script src="{{ static_asset('assets/js/jquery.tree-multiselect.min.js') }}"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 
     <script>
         $(document).ready(function() {
-            var params = {
+            const form = document.getElementById("discountForm");
+            const scopeInput = document.getElementById("scope");
+            const categorySelect = document.getElementById("category");
+            const productSelect = document.getElementById("product_id");
+            const orderAmountInput = document.getElementById('order_amount');
+    
+            /*multi tree selection params*/
+            let params = {
                 sortable: true,
                 searchable: true,
                 searchParams: ['section', 'text'],
@@ -373,27 +377,76 @@
                         }
                     });
                 },
-                startCollapsed: true 
+                startCollapsed: true,
+                maxSelections: 1,
+                freeze: true // Initial state; will be updated based on scope
             };
     
             $("select#category").treeMultiselect(params);
+            
+    
+            function updateMultiTreeBasedOnScope(scope) {
 
-            $('body').on('click', '.tree-multiselect .section', function(e) {
-                e.stopPropagation(); 
+                $(".tree-multiselect").remove();
+                params.freeze = (scope != "category");
 
-                $(this).children('.section').toggle();
+                $("select#category").treeMultiselect(params)[0].reload();
+           
+            }
+       
+    
+            /* Function to update field state */
+            function updateFieldState(scope) {
+                scopeInput.value = scope;
+                categorySelect.disabled = true;
+                productSelect.disabled = true;
+                orderAmountInput.disabled = true;
+    
+                productSelect.value = null;
+                orderAmountInput.value = '';
+    
+                if (scope === "category") {
+                    categorySelect.disabled = false;
+                    productSelect.value = "";
+                    orderAmountInput.value = "";
+                } else if (scope === "product") {
+                    productSelect.disabled = false;
+                } else if (scope === "ordersOverAmount") {
+                    orderAmountInput.disabled = false;
+                }
+    
+                $('.aiz-selectpicker').selectpicker('refresh');
+    
+                updateMultiTreeBasedOnScope(scope);
+            }
+    
+            document.querySelectorAll('.tab-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const scope = this.getAttribute('data-scope');
+                    updateFieldState(scope);
+    
+                    document.querySelectorAll('.tab-card').forEach(card => card.classList.remove('active'));
+                    this.classList.add('active');
+    
+                    const url = new URL(window.location);
+                    url.searchParams.set('scope', scope);
+                    window.history.replaceState(null, '', url);
+                });
             });
-        });
-    </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const form = document.getElementById("discountForm");
-            const scopeInput = document.getElementById("scope");
-            const categorySelect = document.getElementById("category");
-            const productSelect = document.getElementById("product_id");
-            const orderAmountInput = document.getElementById('order_amount');
-
-
+    
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedScope = urlParams.get('scope');
+            if (selectedScope) {
+                updateFieldState(selectedScope);
+    
+                document.querySelectorAll('.tab-card').forEach(card => {
+                    card.classList.remove('active');
+                    if (card.getAttribute('data-scope') === selectedScope) {
+                        card.classList.add('active');
+                    }
+                });
+            }
+    
             function showError(message) {
                 Swal.fire({
                     icon: 'error',
@@ -402,7 +455,7 @@
                     confirmButtonText: 'Okay'
                 });
             }
-
+    
             function validateForm() {
                 const discountType = form.querySelector("input[name='discountType']:checked");
                 const startDate = form.querySelector("input[name='start_date']").value;
@@ -413,88 +466,31 @@
                 const productId = form.querySelector("select[name='product_id']").value;
                 const categoryId = form.querySelector("select[name='category_id']").value;
                 const orderAmount = form.querySelector("#order_amount").value;
-
+    
                 if (!discountType) return showError("Discount type is required.");
                 if (!startDate) return showError("Start date is required.");
                 if (!endDate) return showError("End date is required.");
-                if (new Date(endDate) < new Date(startDate)) return showError(
-                    "End date must be after or equal to the start date.");
+                if (new Date(endDate) < new Date(startDate)) return showError("End date must be after or equal to the start date.");
                 if (!scope) return showError("Please select a discount scope.");
-                if (percent === "" || isNaN(percent) || percent < 0 || percent > 100) return showError(
-                    "Percent must be a number between 0 and 100.");
-                if (maxDiscount && (isNaN(maxDiscount) || maxDiscount < 0)) return showError(
-                    "Max discount must be a positive number.");
-                if (scope === "product" && (!productId || isNaN(productId))) return showError(
-                    "Please select a valid product.");
-                if (scope === "category" && (!categoryId || isNaN(categoryId))) return showError(
-                    "Please select a valid category.");
+                if (percent === "" || isNaN(percent) || percent < 0 || percent > 100) return showError("Percent must be a number between 0 and 100.");
+                if (maxDiscount && (isNaN(maxDiscount) || maxDiscount < 0)) return showError("Max discount must be a positive number.");
+                if (scope === "product" && (!productId || isNaN(productId))) return showError("Please select a valid product.");
+                if (scope === "category" && (!categoryId || isNaN(categoryId))) return showError("Please select a valid category.");
                 if (scope === "ordersOverAmount" && (!orderAmount || isNaN(orderAmount) || orderAmount <= 0)) {
                     return showError("Minimum Order amount must be a positive number.");
                 }
                 return true;
             }
-
-            function updateFieldState(scope) {
-                scopeInput.value = scope;
-
-                categorySelect.disabled = true;
-                productSelect.disabled = true;
-                orderAmountInput.disabled = true;
-
-                categorySelect.value = null;
-                productSelect.value = null;
-                orderAmountInput.value = '';
-
-                if (scope === "category") {
-                    categorySelect.disabled = false;
-                    productSelect.value = "";
-                    orderAmountInput.value = "";
-
-                } else if (scope === "product") {
-                    productSelect.disabled = false;
-                } else if (scope === "ordersOverAmount") {
-                    orderAmountInput.disabled = false;
-                }
-
-                $('.aiz-selectpicker').selectpicker('refresh');
-            }
-
+    
             form.addEventListener("submit", function(event) {
                 event.preventDefault();
                 if (validateForm()) {
                     form.submit();
                 }
             });
-
-
-            document.querySelectorAll('.tab-card').forEach(card => {
-                card.addEventListener('click', function() {
-                    const scope = this.getAttribute('data-scope');
-                    updateFieldState(scope);
-
-                    document.querySelectorAll('.tab-card').forEach(card => card.classList.remove(
-                        'active'));
-                    this.classList.add('active');
-
-                    const url = new URL(window.location);
-                    url.searchParams.set('scope', scope);
-                    window.history.replaceState(null, '', url);
-                });
-            });
-            const urlParams = new URLSearchParams(window.location.search);
-            const selectedScope = urlParams.get('scope');
-            if (selectedScope) {
-                updateFieldState(selectedScope);
-
-                document.querySelectorAll('.tab-card').forEach(card => {
-                    card.classList.remove('active');
-                    if (card.getAttribute('data-scope') === selectedScope) {
-                        card.classList.add('active');
-                    }
-                });
-            }
-
-
         });
     </script>
+    
+    
+   
 @endsection

@@ -51,7 +51,7 @@ class DiscountController extends Controller
         $categories = Category::all();
         $products = Product::where('user_id', Auth::id())->get();
         $nestedCategories = $this->buildTree($categories);
-        return view('seller.promotions.create', compact('categories', 'products','nestedCategories','formattedCategories'));
+        return view('seller.promotions.create', compact('categories', 'products','nestedCategories'));
     }
 
     public function store(DiscountStoreRequest $request)
