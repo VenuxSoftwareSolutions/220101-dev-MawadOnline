@@ -662,13 +662,7 @@
         </div>
     -->
     <form id="option-choice-form-preview">
-        {{-- <input type="hidden" name="_token" value="4q2wUsXR8Psahk2hhNrRCBY6rAnlDDtK17T5izTc"> <input type="hidden"
-            name="id" value="3"> --}}
         @csrf
-        <!-- Choice Options -->
-
-        <!-- Color Options -->
-
         <!-- Quantity + Add to cart -->
         <div class="row no-gutters mb-3 col-md-12 p-0">
             <div class="col-md-4 col-4">
