@@ -2687,7 +2687,6 @@
         </div>
     </div>
 
-
     <!-- Size chart show Modal -->
     @include('modals.size_chart_show_modal')
 @endsection
@@ -2745,22 +2744,6 @@
                 AIZ.plugins.notify('danger', '{{ translate('Oops, unable to copy') }}');
             }
             $temp.remove();
-            // if (document.selection) {
-            //     var range = document.body.createTextRange();
-            //     range.moveToElementText(document.getElementById(containerid));
-            //     range.select().createTextRange();
-            //     document.execCommand("Copy");
-
-            // } else if (window.getSelection) {
-            //     var range = document.createRange();
-            //     document.getElementById(containerid).style.display = "block";
-            //     range.selectNode(document.getElementById(containerid));
-            //     window.getSelection().addRange(range);
-            //     document.execCommand("Copy");
-            //     document.getElementById(containerid).style.display = "none";
-
-            // }
-            // AIZ.plugins.notify('success', 'Copied');
         }
 
         function show_chat_modal() {
@@ -2808,7 +2791,6 @@
                 alert('Something went worng! Data could not be loaded.');
             });
         }
-        // Pagination end
 
         function showImage(photo) {
             $('#image_modal img').attr('src', photo);
@@ -2870,8 +2852,7 @@
                 }
             });
         }
-    </script>
-    <script>
+
         $(document).on('change', '#quantity', function() {
             let action = $(this).data('type');
             let quantityInput = $(this);
