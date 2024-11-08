@@ -1155,7 +1155,6 @@ class ProductService
             $ids_attributes_color = Attribute::where('type_value', 'color')->pluck('id')->toArray();
             if (count($pricing) > 0) {
                 $all_data_to_insert = [];
-                //dd($pricing);
                 foreach ($pricing['from'] as $key => $from) {
                     $current_data = [];
                     if (($from != null) && ($pricing['to'][$key] != null) && ($pricing['unit_price'][$key] != null)) {
@@ -1228,8 +1227,6 @@ class ProductService
                         array_push($all_data_to_insert, $current_data);
                     }
                 }
-
-                //dd($all_data_to_insert);
 
                 PricingConfiguration::where('id_products', $product_update->id)->delete();
                 PricingConfiguration::insert($all_data_to_insert);
@@ -4979,7 +4976,9 @@ class ProductService
                     'date' => $discountPeriods,
                 ];
 
-                $attributes_variant = ProductAttributeValues::where('id_products', $children_id)->where('is_variant', 1)->get();
+                $attributes_variant = ProductAttributeValues::where('id_products', $children_id)
+                    ->where('is_variant', 1)
+                    ->get();
 
                 foreach ($attributes_variant as $attribute) {
                     $revision_children_attribute = DB::table('revisions')
@@ -5054,6 +5053,7 @@ class ProductService
                                 array_push($path, $image->path);
                             }
                         }
+
                         $variations[$children_id]['storedFilePaths'] = $path;
                     }
                 } else {
@@ -5228,9 +5228,14 @@ class ProductService
 
         $total = isset($pricing['from'][0]) && isset($pricing['unit_price'][0]) ? $pricing['from'][0] * $pricing['unit_price'][0] : '';
 
-        if (isset($lastItem['variant_pricing-from']['discount']['date']) && is_array($lastItem['variant_pricing-from']['discount']['date']) && ! empty($lastItem['variant_pricing-from']['discount']['date']) && isset($lastItem['variant_pricing-from']['discount']['date'][0]) && $lastItem['variant_pricing-from']['discount']['date'][0] !== null) {
+        if (
+            isset($lastItem['variant_pricing-from']['discount']['date']) &&
+            is_array($lastItem['variant_pricing-from']['discount']['date']) &&
+            ! empty($lastItem['variant_pricing-from']['discount']['date']) &&
+            isset($lastItem['variant_pricing-from']['discount']['date'][0]) &&
+            $lastItem['variant_pricing-from']['discount']['date'][0] !== null
+        ) {
             // Extract start and end dates from the first date interval
-
             $dateRange = $lastItem['variant_pricing-from']['discount']['date'][0];
             [$startDate, $endDate] = explode(' to ', $dateRange);
 
@@ -5275,9 +5280,14 @@ class ProductService
         }
 
         if (count($variations) == 0) {
-            if (isset($pricing['date_range_pricing']) && is_array($pricing['date_range_pricing']) && ! empty($pricing['date_range_pricing']) && isset($pricing['date_range_pricing'][0]) && $pricing['date_range_pricing'][0] !== null) {
+            if (
+                isset($pricing['date_range_pricing']) &&
+                is_array($pricing['date_range_pricing']) &&
+                ! empty($pricing['date_range_pricing']) &&
+                isset($pricing['date_range_pricing'][0]) &&
+                $pricing['date_range_pricing'][0] !== null
+            ) {
                 // Extract start and end dates from the first date interval
-
                 $dateRange = $pricing['date_range_pricing'][0];
                 [$startDate, $endDate] = explode(' to ', $dateRange);
 
