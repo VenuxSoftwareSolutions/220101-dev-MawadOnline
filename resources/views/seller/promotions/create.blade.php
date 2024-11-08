@@ -1,6 +1,11 @@
 @extends('seller.layouts.app')
 
 @push('styles')
+<link rel="stylesheet" src="{{ static_asset('assets/css/jquery.tree-multiselect.min.css') }}">
+<link rel="stylesheet" src="{{ static_asset('icon.css') }}">
+<link rel="stylesheet" src="{{ static_asset('easyui.css') }}">
+
+
     <style>
         .tab-card {
             border: 1px solid #e0e0e0;
@@ -50,7 +55,19 @@
             background-color: #555;
             border-color: #555;
         }
-    </style>
+        #category option {
+    padding-left: 10px;
+}
+.selectpicker option {
+    padding-left: 20px;
+}
+
+.selectpicker option[disabled] {
+    color: #aaa; 
+}
+
+</style>
+
 @endpush
 
 @section('panel_content')
@@ -117,7 +134,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6 mb-3">
+                        {{-- <div class="col-md-6 mb-3">
                             <label for="category" class="form-label">Category</label>
                             <select class="form-control aiz-selectpicker" id="category" name="category_id">
                                 <option value="" selected>Select category</option>
@@ -125,7 +142,14 @@
                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
                             </select>
+                        </div> --}}
+                        <div class="col-md-6 mb-3">
+                            <label for="category" class="form-label">Category</label>
+                            <input id="category" class="easyui-combotree" style="width:100%">
+                            <input type="hidden" name="category_id" id="category_id">
                         </div>
+                        
+                        
                         <div class="col-md-6 mb-3">
                             <label for="product_id" class="form-label">Product</label>
                             <select class="form-control aiz-selectpicker" id="product_id" name="product_id">
@@ -167,7 +191,40 @@
     </div>
 @endsection
 
+@section('script')
+<script  src="{{ static_asset('assets/js/jquery.easyui.min.js')}}"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script src="{{ static_asset('assets/js/jquery.tree-multiselect.min.js') }}"></script>
+<script>
+    $(document).ready(function () {
+        var categories = @json($formattedCategories);
+        console.log(categories);        
+        $('#category').combotree({
+            data: categories,
+            editable: true, 
+            panelHeight: 'auto', 
+            onClick: function(node) {
+                if ($(this).tree('isLeaf', node.target)) {
+                    $('#category_id').val(node.id);
+                } else {
+                    $('#category_id').val('');
+                }
+            }
+        });
+
+
+        // Handle category selection
+        $('#category').on("change", function () {
+            var selectedId = comboTree1.getSelectedIds()[0]; // Get the selected category ID
+            $('#category_id').val(selectedId); // Store it in the hidden input
+        });
+    });
+</script>
+
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const form = document.getElementById("discountForm");
@@ -176,6 +233,11 @@
         const productSelect = document.getElementById("product_id");
         const orderAmountInput = document.getElementById('order_amount');
 
+        $('#category').select2({
+            placeholder: 'Select category',
+            width: '100%',
+            allowClear: true
+        });
 
         function showError(message) {
             Swal.fire({
@@ -254,10 +316,9 @@
                     window.history.replaceState(null, '', url);
                 });
         });
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const selectedScope = urlParams.get('scope');
-            if (selectedScope) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedScope = urlParams.get('scope');
+        if (selectedScope) {
                 updateFieldState(selectedScope);
 
                 document.querySelectorAll('.tab-card').forEach(card => {
@@ -266,8 +327,13 @@
                         card.classList.add('active');
                     }
                 });
-            }
- 
+        }
+      
+
     });
-</script>
+       
    
+
+</script>
+@endsection
+ 

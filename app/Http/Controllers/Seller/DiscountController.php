@@ -36,7 +36,7 @@ class DiscountController extends Controller
                 break;
             case 'allOrders':
                 $columnHeader = 'All Orders';
-                $columnValue = fn($discount) => ''; 
+                $columnValue = fn($discount) => '-'; 
                 break;
             default:
                 $columnHeader = 'Product Name';
@@ -50,8 +50,10 @@ class DiscountController extends Controller
     {
         $categories = Category::all();
         $products = Product::where('user_id', Auth::id())->get();
-
-        return view('seller.promotions.create', compact('categories', 'products'));
+        $nestedCategories = $this->buildTree($categories);
+        $formattedCategories = $this->formatCategories($nestedCategories);
+        
+        return view('seller.promotions.create', compact('categories', 'products','formattedCategories'));
     }
 
     public function store(DiscountStoreRequest $request)
@@ -76,12 +78,37 @@ class DiscountController extends Controller
         $discount->update($validatedData);
         return response()->json(['success' => true, 'message' => 'Discount updated successfully.']);
     }
-
     public function destroy($id)
     {
         $discount = Discount::findOrFail($id);
         $discount->delete();
         return response()->json(data: ['success' => true, 'message' => 'Discount deleted successfully.']);
     }
+    private function buildTree($categories, $parentId = 0)
+    {
+        $branch = [];
 
+        foreach ($categories as $category) {
+            if ($category->parent_id == $parentId) {
+                $children = $this->buildTree($categories, $category->id);
+                if ($children) {
+                    $category->children = $children;
+                }
+                $branch[] = $category;
+            }
+        }
+
+        return $branch;
+    }   
+    public function formatCategories($categories) {
+        return array_map(function ($category) {
+            return [
+                'id' => $category['id'],
+                'text' => $category['name'], 
+                'children' => isset($category['children']) ? $this->formatCategories($category['children']) : []
+            ];
+        }, $categories);
+    }
+        
 }
+
