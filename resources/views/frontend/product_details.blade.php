@@ -2867,14 +2867,6 @@
         }
     </script>
     <script>
-        // $(document).ready(function() {
-        // Set the CSRF token for all AJAX requests
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-
         $(document).on('change', '#quantity', function() {
             let action = $(this).data('type');
             let quantityInput = $(this);
@@ -2931,6 +2923,7 @@
                                 } else if ($this.siblings('[data-type="minus"]').attr('disabled')) {
                                     $this.siblings('[data-type="minus"]').removeAttr('disabled')
                                 }
+
                                 if (value >= max) {
                                     $this.siblings('[data-type="plus"]').attr('disabled', true)
                                 } else if ($this.siblings('[data-type="plus"]').attr('disabled')) {
@@ -2940,6 +2933,7 @@
                         }
                     },
                     error: function(xhr, status, error) {
+                        AIZ.plugins.notify("warning", "Error while updating quantity");
                         console.error('Error updating quantity:', error);
                     }
                 });
@@ -2948,14 +2942,14 @@
 
         // Function to gather checked attributes and values and send them via AJAX
         function sendCheckedAttributes($currentRadio) {
-            var checkedAttributes = {};
+            let checkedAttributes = {};
             $('.attribute_value input[type=radio]:checked').each(function() {
                 var attributeId = $(this).attr('attributeId');
 
                 var attributeValue = $(this).val();
                 checkedAttributes[attributeId] = attributeValue;
             });
-            console.log(checkedAttributes)
+
             // Send checked attributes via AJAX
             $.ajax({
                 url: '{{ route('seller.product.checked.attributes') }}',
@@ -2967,7 +2961,6 @@
                     // Handle success response
                     if (response.anyMatched == false) {
                         // Uncheck radio buttons for the current attribute
-                        // $('.attribute_value input[type=radio]').filter(':checked').prop('checked', false);
                         $('.attribute_value input[type=radio]').not($currentRadio).prop('checked', false);
 
                         $('label.attribute_value').each(function() {
@@ -3215,11 +3208,8 @@
                                     });
                             }
                         }
-
                     }
-
                 },
-
                 error: function(xhr, status, error) {
                     // Handle error
                     console.error(error);
