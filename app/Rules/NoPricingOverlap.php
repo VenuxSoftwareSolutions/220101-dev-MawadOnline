@@ -3,6 +3,7 @@
 namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Support\Arr;
 
 class NoPricingOverlap implements Rule
 {
@@ -21,12 +22,15 @@ class NoPricingOverlap implements Rule
 
     public function passes($attribute, $value = null)
     {
-        foreach ($this->from as $index => $from_quantity) {
-            if (! isset($this->to[$index]) || $from_quantity >= $this->to[$index]) {
+        $from = Arr::sort($this->from);
+        $to = Arr::sort($this->to);
+
+        foreach ($from as $index => $from_quantity) {
+            if (! isset($to[$index]) || $from_quantity >= $to[$index]) {
                 return false;
             }
 
-            if (isset($this->from[$index + 1]) && $this->to[$index] > $this->from[$index + 1]) {
+            if (isset($from[$index + 1]) && $to[$index] > $from[$index + 1]) {
                 return false;
             }
         }
