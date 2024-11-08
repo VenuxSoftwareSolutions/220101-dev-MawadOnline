@@ -3229,28 +3229,14 @@
 
         // Trigger the function on radio button change
         $('.attribute_value input[type=radio]').on('change', function() {
-            // var niveauThreshold = $(this).attr("niveau") ;
-            // // Iterate through all radio buttons
-            // $('.attribute_value input[type="radio"]').each(function() {
-            //     var niveau = parseInt($(this).attr('niveau'));
-
-            //     // Check if the radio button's niveau is greater than the threshold
-            //     if (!isNaN(niveau) && niveau > niveauThreshold) {
-            //         // Uncheck the radio button
-            //         $(this).prop('checked', false);
-            //     }
-            // });
             sendCheckedAttributes($(this));
         });
-
-
-        // });
     </script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const quantityButton = document.getElementById("quantity-button");
-            const plusIcon = quantityButton.querySelector("i.las.la-plus");
+            const minusQuantityButton = document.querySelector("button[data-type='minus']");
 
             // Get the outStock status from data attribute
             const isOutOfStock = quantityButton.getAttribute("data-out-stock") === "1" || quantityButton
@@ -3260,8 +3246,8 @@
             if (isOutOfStock) {
                 quantityButton.disabled = true;
             }
-            // Add click event listener to the icon
-            plusIcon.addEventListener("click", function(event) {
+
+            quantityButton?.addEventListener("click", function(event) {
                 // Check if the button is disabled
                 if (quantityButton.disabled) {
                     // Display warning message
@@ -3271,7 +3257,12 @@
                 }
             });
 
-
+            minusQuantityButton?.addEventListener("click", function(event) {
+                if (minusQuantityButton.disabled) {
+                    AIZ.plugins.notify('warning', '{{ __('messages.out_of_stock') }}');
+                    event.preventDefault();
+                }
+            });
         });
     </script>
 @endsection
