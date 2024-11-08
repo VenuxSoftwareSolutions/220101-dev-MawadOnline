@@ -2965,11 +2965,7 @@
                 },
                 success: function(response) {
                     // Handle success response
-                    console.log(response);
-
                     if (response.anyMatched == false) {
-
-
                         // Uncheck radio buttons for the current attribute
                         // $('.attribute_value input[type=radio]').filter(':checked').prop('checked', false);
                         $('.attribute_value input[type=radio]').not($currentRadio).prop('checked', false);
@@ -2978,7 +2974,6 @@
                             $(this).find('span').css('color', 'black');
                         });
                         sendCheckedAttributes($currentRadio);
-
                     } else {
                         if (response.price > 0) {
                             $('#variationId').val(response.variationId);
@@ -2987,22 +2982,19 @@
                             $("#chosen_price").text(response.total)
                             $('#quantity').attr('min', response.minimum); // Minimum value
                             $('#quantity').attr('max', response.maximum); // Maximum value
-                            if (response.discountedPrice > 0) {
 
+                            if (response.discountedPrice > 0) {
                                 $("#qty-interval").text(response.discountedPrice)
                                 $("#chosen_price").text(response.totalDiscount)
                                 $("#previous-price").text(response.price)
-                                if (response.percent !== null && response.percent > 0) {
 
+                                if (response.percent !== null && response.percent > 0) {
                                     $("#percent").text('-' + response.percent + '%')
                                     $("#percent").addClass("bg-primary");
-
                                 } else {
                                     $("#percent").text('')
                                     $("#percent").removeClass("bg-primary");
-
                                 }
-
                             } else {
                                 $("#previous-price").text('');
                                 $("#percent").removeClass("bg-primary");
@@ -3010,18 +3002,14 @@
                                 $("#qty-interval").text(response.price)
                                 $("#chosen_price").text(response.total)
                                 $("#percent").text('')
-
                             }
                             $('.aiz-plus-minus input').each(function() {
                                 var $this = $(this);
                                 var min = parseInt($(this).attr("min"));
                                 var max = parseInt($(this).attr("max"));
                                 var value = parseInt($(this).val());
-                                console.log(min)
-                                console.log(max)
-                                console.log(value)
-                                if (value <= min || response.outStock) {
 
+                                if (value <= min || response.outStock) {
                                     $this.siblings('[data-type="minus"]').attr('disabled', true)
                                 } else if ($this.siblings('[data-type="minus"]').attr('disabled')) {
                                     $this.siblings('[data-type="minus"]').removeAttr('disabled')
@@ -3202,31 +3190,6 @@
                             });
                         });
 
-                        // Iterate over each available attribute
-                        // for (var attributeId in response.availableAttributes) {
-                        //     if (response.availableAttributes.hasOwnProperty(attributeId)) {
-                        //         var availableValues = response.availableAttributes[attributeId][0];
-                        //         console.log("rrrrrrr",availableValues );
-                        //         // Iterate over each radio button for this attribute
-                        //         $('.attribute_value input[type=radio][attributeId="' + attributeId + '"]').each(function () {
-                        //             var radioValue = $(this).val();
-                        //             var label = $(this).closest('.attribute_value');
-
-                        //             // Check if the radio button value is in the available values
-                        //             // if (availableValues.indexOf(radioValue) === -1) {
-                        //             if (availableValues != radioValue ) {
-                        //                 // If not in available values, disable the radio button
-                        //                 // $(this).prop('disabled', true);
-                        //                 label.find('span').css('border-bottom', '1px solid red');
-                        //             } else {
-                        //                 // Otherwise, enable the radio button
-                        //                 // $(this).prop('disabled', false);
-                        //                 label.find('span').css('border-bottom', '1px solid mediumseagreen');
-
-                        //             }
-                        //         });
-                        //     }
-                        // }
                         for (var attributeId in response.availableAttributes) {
                             if (response.availableAttributes.hasOwnProperty(attributeId)) {
                                 var availableValues = response.availableAttributes[
