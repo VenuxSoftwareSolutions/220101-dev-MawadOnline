@@ -73,7 +73,7 @@
     <link rel="stylesheet" href="{{ static_asset('assets/css/aiz-core.css?v=') }}{{ rand(1000, 9999) }}">
     <link rel="stylesheet" href="{{ static_asset('assets/css/custom-style.css') }}">
     <link rel="stylesheet" href="{{ static_asset('assets/css/bootstrap-select-country.min.css') }}">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="{{ static_asset('assets/css/jquery-ui.min.css') }}">
 
      @yield('style')
 
@@ -355,7 +355,7 @@
     <script src="{{ static_asset('assets/js/aiz-core.js?v=') }}{{ rand(1000, 9999) }}"></script>
 
     <script src="{{ static_asset('assets/js/bootstrap-select-country.min.js') }}"></script>
-    <script src="//code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script src="{{ static_asset('assets/js/jquery-ui.min.js') }}"></script>
 
 
     @if (get_setting('facebook_chat') == 1)
