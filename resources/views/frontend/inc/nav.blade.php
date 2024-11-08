@@ -232,7 +232,7 @@
                     <div class="dd-none d-lg-block mr-3 mt-2"
                         data-hover="dropdown">
                         <div class="nav-cart-box dropdown h-100" {{-- id="cart_items" --}} style="width: max-content;">
-                            <a href="{{ route('wishlists.index') }}" class="d-flex align-items-center text-dark" data-toggle="tooltip" data-title="{{ translate('Wishlist') }}" data-placement="top">
+                            <a href="{{ route('wishlists.index') }}" class="d-flex align-items-center text-dark" data-toggle="tooltip" data-title="{{ translate('Compare') }}" data-placement="top">
                                 <span class="position-relative d-inline-block">
                                     <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M27.3333 19.9866L20.6533 26.6799" stroke="#F3F4F5" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>

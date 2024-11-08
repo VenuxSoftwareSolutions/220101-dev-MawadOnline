@@ -9,7 +9,7 @@
     }
 @endphp
 <!-- Cart button with cart count -->
-<a href="javascript:void(0)" class="d-flex align-items-center text-dark px-3 h-100" data-toggle="dropdown" data-display="static" title="{{translate('Cart')}}">
+<a href="javascript:void(0)" class="d-flex align-items-center text-dark px-3 h-100" data-toggle="tooltip" data-title="{{ translate('Cart') }}" data-placement="top">
     <span class="mr-2">
         <span class="badge badge-counter font-prompt">{{count($carts) > 0 ? count($carts) : 0 }}</span>
         <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
