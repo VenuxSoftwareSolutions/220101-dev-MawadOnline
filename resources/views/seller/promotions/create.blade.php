@@ -1,11 +1,6 @@
 @extends('seller.layouts.app')
 
 @push('styles')
-<link rel="stylesheet" src="{{ static_asset('assets/css/jquery.tree-multiselect.min.css') }}">
-<link rel="stylesheet" src="{{ static_asset('icon.css') }}">
-<link rel="stylesheet" src="{{ static_asset('easyui.css') }}">
-
-
     <style>
         .tab-card {
             border: 1px solid #e0e0e0;
@@ -55,19 +50,175 @@
             background-color: #555;
             border-color: #555;
         }
-        #category option {
-    padding-left: 10px;
-}
-.selectpicker option {
-    padding-left: 20px;
-}
 
-.selectpicker option[disabled] {
-    color: #aaa; 
-}
+        /* jQuery Tree Multiselect v2.6.3 | (c) Patrick Tsai | MIT Licensed */
+        div.tree-multiselect {
+            border: 2px solid #D8D8D8;
+            border-radius: 5px;
+            display: table;
+            height: inherit;
+            width: 100%;
+        }
 
-</style>
+        div.tree-multiselect>div.selected,
+        div.tree-multiselect>div.selections {
+            display: inline-block;
+            box-sizing: border-box;
+            overflow: auto;
+            padding: 1%;
+            vertical-align: top;
+            width: 50%;
+        }
 
+        div.tree-multiselect>div.selections {
+            border-right: solid 2px #D8D8D8;
+        }
+
+        div.tree-multiselect>div.selections div.item {
+            margin-left: 16px;
+        }
+
+        div.tree-multiselect>div.selections div.item label {
+            cursor: pointer;
+            display: inline;
+        }
+
+        div.tree-multiselect>div.selections div.item label.disabled {
+            color: #D8D8D8;
+        }
+
+        div.tree-multiselect>div.selections *[searchhit=false] {
+            display: none;
+        }
+
+        div.tree-multiselect>div.selections.no-border {
+            border-right: none;
+        }
+
+        div.tree-multiselect>div.selected>div.item {
+            background: #EAEAEA;
+            border-radius: 2px;
+            padding: 2px 5px;
+            overflow: auto;
+        }
+
+        div.tree-multiselect>div.selected.ui-sortable>div.item:hover {
+            cursor: move;
+        }
+
+        div.tree-multiselect div.section>div.section,
+        div.tree-multiselect div.section>div.item {
+            padding-left: 20px;
+        }
+
+        div.tree-multiselect div.section.collapsed>div.title span.collapse-section:after {
+            content: "+";
+        }
+
+        div.tree-multiselect div.section.collapsed:not([searchhit])>.item,
+        div.tree-multiselect div.section.collapsed:not([searchhit])>.section {
+            display: none;
+        }
+
+        div.tree-multiselect div.title,
+        div.tree-multiselect div.item {
+            margin-bottom: 2px;
+        }
+
+        div.tree-multiselect div.title {
+            background: #777;
+            color: white;
+            padding: 2px;
+        }
+
+        div.tree-multiselect div.title>* {
+            display: inline-block;
+        }
+
+        div.tree-multiselect div.title>span.collapse-section {
+            margin: 0 3px;
+            width: 8px;
+        }
+
+        div.tree-multiselect div.title>span.collapse-section:after {
+            content: "-";
+        }
+
+        div.tree-multiselect div.title:hover {
+            cursor: pointer;
+        }
+
+        div.tree-multiselect input[type=checkbox] {
+            display: inline;
+            margin-right: 5px;
+        }
+
+        div.tree-multiselect input[type=checkbox]:not([disabled]):hover {
+            cursor: pointer;
+        }
+
+        div.tree-multiselect span.remove-selected,
+        div.tree-multiselect span.description {
+            background: #777;
+            border-radius: 2px;
+            color: white;
+            margin-right: 5px;
+            padding: 0 3px;
+        }
+
+        div.tree-multiselect span.remove-selected:hover {
+            cursor: pointer;
+        }
+
+        div.tree-multiselect span.description:hover {
+            cursor: help;
+        }
+
+        div.tree-multiselect div.temp-description-popup {
+            background: #EAEAEA;
+            border: 2px solid #676767;
+            border-radius: 3px;
+            padding: 5px;
+        }
+
+        div.tree-multiselect span.section-name {
+            float: right;
+            font-style: italic;
+        }
+
+        div.tree-multiselect .auxiliary {
+            display: table;
+            width: 100%;
+        }
+
+        div.tree-multiselect .auxiliary input.search {
+            border: 2px solid #D8D8D8;
+            display: table-cell;
+            margin: 0;
+            padding: 5px;
+            width: 100%;
+        }
+
+        div.tree-multiselect .auxiliary .select-all-container {
+            display: table-cell;
+            text-align: right;
+        }
+
+        div.tree-multiselect .auxiliary .select-all-container span.select-all,
+        div.tree-multiselect .auxiliary .select-all-container span.unselect-all {
+            margin-right: 5px;
+            padding-right: 5px;
+        }
+
+        div.tree-multiselect .auxiliary .select-all-container span.select-all:hover,
+        div.tree-multiselect .auxiliary .select-all-container span.unselect-all:hover {
+            cursor: pointer;
+        }
+
+        div.tree-multiselect .auxiliary .select-all-container span.select-all {
+            border-right: 2px solid #D8D8D8;
+        }
+    </style>
 @endpush
 
 @section('panel_content')
@@ -77,21 +228,24 @@
                 <div class="tab-card" id="product-tab" data-scope="product">
                     <div class="tab-card-icon"><i class="bi bi-box"></i></div>
                     <div class="tab-card-title">Product</div>
-                    <div class="tab-card-description">Click here to offer a discount on a certain product from your inventory.</div>
+                    <div class="tab-card-description">Click here to offer a discount on a certain product from your
+                        inventory.</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="tab-card" id="category-tab" data-scope="category">
                     <div class="tab-card-icon"><i class="bi bi-tag"></i></div>
                     <div class="tab-card-title">Category</div>
-                    <div class="tab-card-description">Click here to offer a discount on a certain category from your inventory.</div>
+                    <div class="tab-card-description">Click here to offer a discount on a certain category from your
+                        inventory.</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="tab-card" id="ordersOverAmount-tab" data-scope="ordersOverAmount">
                     <div class="tab-card-icon"><i class="bi bi-cart4"></i></div>
                     <div class="tab-card-title">Orders over an Amount</div>
-                    <div class="tab-card-description">Click here to offer a discount on all orders above a certain amount.</div>
+                    <div class="tab-card-description">Click here to offer a discount on all orders above a certain amount.
+                    </div>
                 </div>
             </div>
             <div class="col-md-3">
@@ -130,7 +284,7 @@
                         <div class="col-md-6">
                             <label for="endDate" class="form-label">End Date</label>
                             <input type="date" class="form-control" name="end_date" required>
-                        </div>               
+                        </div>
                     </div>
 
                     <div class="row">
@@ -138,46 +292,52 @@
                             <label for="category" class="form-label">Category</label>
                             <select class="form-control aiz-selectpicker" id="category" name="category_id">
                                 <option value="" selected>Select category</option>
-                                @foreach($categories as $category)
+                                @foreach ($categories as $category)
                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
                             </select>
                         </div> --}}
                         <div class="col-md-6 mb-3">
                             <label for="category" class="form-label">Category</label>
-                            <input id="category" class="easyui-combotree" style="width:100%">
-                            <input type="hidden" name="category_id" id="category_id">
-                        </div>
-                        
-                        
-                        <div class="col-md-6 mb-3">
-                            <label for="product_id" class="form-label">Product</label>
-                            <select class="form-control aiz-selectpicker" id="product_id" name="product_id">
-                                <option value="" selected>Select product</option>
-                                @foreach($products as $product)
-                                     <option value="{{ $product->id }}">{{ $product->name }}</option>
+                            <select id="category" name="category_id" multiple="multiple">
+                                @foreach ($nestedCategories as $category)
+                                    @include('seller.promotions.partials.category_option', ['category' => $category])
                                 @endforeach
                             </select>
                         </div>
                         
-                    
+
+                        <div class="col-md-6 mb-3">
+                            <label for="product_id" class="form-label">Product</label>
+                            <select class="form-control aiz-selectpicker" id="product_id" name="product_id">
+                                <option value="" selected>Select product</option>
+                                @foreach ($products as $product)
+                                    <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="order_amount" class="form-label">Order Amount</label>
-                            <input type="number" class="form-control" id="order_amount" name="min_order_amount" placeholder="Minimum order amount" >
+                            <input type="number" class="form-control" id="order_amount" name="min_order_amount"
+                                placeholder="Minimum order amount">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="percent" class="form-label">Percent</label>
-                            <input type="number" class="form-control" id="percent" name="discount_percentage" min="0" max="100" placeholder="0%" required>
+                            <input type="number" class="form-control" id="percent" name="discount_percentage"
+                                min="0" max="100" placeholder="0%" required>
                         </div>
-                       
+
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="maxDiscount" class="form-label">Max Discount</label>
-                            <input type="number" class="form-control" name="max_discount" placeholder="Maximum discount amount">
+                            <input type="number" class="form-control" name="max_discount"
+                                placeholder="Maximum discount amount">
                         </div>
                     </div>
                     <input type="hidden" name="scope" id="scope" value="">
@@ -192,85 +352,89 @@
 @endsection
 
 @section('script')
-<script  src="{{ static_asset('assets/js/jquery.easyui.min.js')}}"></script>
+    <script src="{{ static_asset('assets/js/jquery.easyui.min.js') }}"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
-<script src="{{ static_asset('assets/js/jquery.tree-multiselect.min.js') }}"></script>
-<script>
-    $(document).ready(function () {
-        var categories = @json($formattedCategories);
-        console.log(categories);        
-        $('#category').combotree({
-            data: categories,
-            editable: true, 
-            panelHeight: 'auto', 
-            onClick: function(node) {
-                if ($(this).tree('isLeaf', node.target)) {
-                    $('#category_id').val(node.id);
-                } else {
-                    $('#category_id').val('');
-                }
-            }
-        });
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
-        // Handle category selection
-        $('#category').on("change", function () {
-            var selectedId = comboTree1.getSelectedIds()[0]; // Get the selected category ID
-            $('#category_id').val(selectedId); // Store it in the hidden input
-        });
-    });
-</script>
+    <script src="{{ static_asset('assets/js/jquery.tree-multiselect.min.js') }}"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 
+    <script>
+        $(document).ready(function() {
+            var params = {
+                sortable: true,
+                searchable: true,
+                searchParams: ['section', 'text'],
+                onChange: function(allSelectedItems, addedItems, removedItems) {
+                    addedItems.forEach(item => {
+                        if (!$(item).data('leaf')) {
+                            $(item).prop('selected', false); 
+                        }
+                    });
+                },
+                startCollapsed: true 
+            };
+    
+            $("select#category").treeMultiselect(params);
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const form = document.getElementById("discountForm");
-        const scopeInput = document.getElementById("scope");
-        const categorySelect = document.getElementById("category");
-        const productSelect = document.getElementById("product_id");
-        const orderAmountInput = document.getElementById('order_amount');
+            $('body').on('click', '.tree-multiselect .section', function(e) {
+                e.stopPropagation(); 
 
-        $('#category').select2({
-            placeholder: 'Select category',
-            width: '100%',
-            allowClear: true
-        });
-
-        function showError(message) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Validation Error',
-                text: message,
-                confirmButtonText: 'Okay'
+                $(this).children('.section').toggle();
             });
-        }
-        function validateForm() {
-            const discountType = form.querySelector("input[name='discountType']:checked");
-            const startDate = form.querySelector("input[name='start_date']").value;
-            const endDate = form.querySelector("input[name='end_date']").value;
-            const scope = document.getElementById("scope").value;
-            const percent = form.querySelector("input[name='discount_percentage']").value;
-            const maxDiscount = form.querySelector("input[name='max_discount']").value;
-            const productId = form.querySelector("select[name='product_id']").value;
-            const categoryId = form.querySelector("select[name='category_id']").value;
-            const orderAmount = form.querySelector("#order_amount").value;
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.getElementById("discountForm");
+            const scopeInput = document.getElementById("scope");
+            const categorySelect = document.getElementById("category");
+            const productSelect = document.getElementById("product_id");
+            const orderAmountInput = document.getElementById('order_amount');
 
-            if (!discountType) return showError("Discount type is required.");
-            if (!startDate) return showError("Start date is required.");
-            if (!endDate) return showError("End date is required.");
-            if (new Date(endDate) < new Date(startDate)) return showError("End date must be after or equal to the start date.");
-            if (!scope) return showError("Please select a discount scope.");
-            if (percent === "" || isNaN(percent) || percent < 0 || percent > 100) return showError("Percent must be a number between 0 and 100.");
-            if (maxDiscount && (isNaN(maxDiscount) || maxDiscount < 0)) return showError("Max discount must be a positive number.");
-            if (scope === "product" && (!productId || isNaN(productId))) return showError("Please select a valid product.");
-            if (scope === "category" && (!categoryId || isNaN(categoryId))) return showError("Please select a valid category.");
-            if (scope === "ordersOverAmount" && (!orderAmount || isNaN(orderAmount) || orderAmount <= 0)) {return showError("Minimum Order amount must be a positive number.");}
-            return true; 
-        }
-        function updateFieldState(scope) {
+
+            function showError(message) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: message,
+                    confirmButtonText: 'Okay'
+                });
+            }
+
+            function validateForm() {
+                const discountType = form.querySelector("input[name='discountType']:checked");
+                const startDate = form.querySelector("input[name='start_date']").value;
+                const endDate = form.querySelector("input[name='end_date']").value;
+                const scope = document.getElementById("scope").value;
+                const percent = form.querySelector("input[name='discount_percentage']").value;
+                const maxDiscount = form.querySelector("input[name='max_discount']").value;
+                const productId = form.querySelector("select[name='product_id']").value;
+                const categoryId = form.querySelector("select[name='category_id']").value;
+                const orderAmount = form.querySelector("#order_amount").value;
+
+                if (!discountType) return showError("Discount type is required.");
+                if (!startDate) return showError("Start date is required.");
+                if (!endDate) return showError("End date is required.");
+                if (new Date(endDate) < new Date(startDate)) return showError(
+                    "End date must be after or equal to the start date.");
+                if (!scope) return showError("Please select a discount scope.");
+                if (percent === "" || isNaN(percent) || percent < 0 || percent > 100) return showError(
+                    "Percent must be a number between 0 and 100.");
+                if (maxDiscount && (isNaN(maxDiscount) || maxDiscount < 0)) return showError(
+                    "Max discount must be a positive number.");
+                if (scope === "product" && (!productId || isNaN(productId))) return showError(
+                    "Please select a valid product.");
+                if (scope === "category" && (!categoryId || isNaN(categoryId))) return showError(
+                    "Please select a valid category.");
+                if (scope === "ordersOverAmount" && (!orderAmount || isNaN(orderAmount) || orderAmount <= 0)) {
+                    return showError("Minimum Order amount must be a positive number.");
+                }
+                return true;
+            }
+
+            function updateFieldState(scope) {
                 scopeInput.value = scope;
 
                 categorySelect.disabled = true;
@@ -283,8 +447,8 @@
 
                 if (scope === "category") {
                     categorySelect.disabled = false;
-                    productSelect.value = "";  
-                    orderAmountInput.value = "";  
+                    productSelect.value = "";
+                    orderAmountInput.value = "";
 
                 } else if (scope === "product") {
                     productSelect.disabled = false;
@@ -293,32 +457,33 @@
                 }
 
                 $('.aiz-selectpicker').selectpicker('refresh');
-        }
-
-        form.addEventListener("submit", function(event) {
-            event.preventDefault();
-            if (validateForm()) {
-                form.submit();
             }
-        });
-            
-        
-        document.querySelectorAll('.tab-card').forEach(card => {
-                card.addEventListener('click', function () {
+
+            form.addEventListener("submit", function(event) {
+                event.preventDefault();
+                if (validateForm()) {
+                    form.submit();
+                }
+            });
+
+
+            document.querySelectorAll('.tab-card').forEach(card => {
+                card.addEventListener('click', function() {
                     const scope = this.getAttribute('data-scope');
                     updateFieldState(scope);
 
-                    document.querySelectorAll('.tab-card').forEach(card => card.classList.remove('active'));
+                    document.querySelectorAll('.tab-card').forEach(card => card.classList.remove(
+                        'active'));
                     this.classList.add('active');
 
                     const url = new URL(window.location);
                     url.searchParams.set('scope', scope);
                     window.history.replaceState(null, '', url);
                 });
-        });
-        const urlParams = new URLSearchParams(window.location.search);
-        const selectedScope = urlParams.get('scope');
-        if (selectedScope) {
+            });
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedScope = urlParams.get('scope');
+            if (selectedScope) {
                 updateFieldState(selectedScope);
 
                 document.querySelectorAll('.tab-card').forEach(card => {
@@ -327,13 +492,9 @@
                         card.classList.add('active');
                     }
                 });
-        }
-      
+            }
 
-    });
-       
-   
 
-</script>
+        });
+    </script>
 @endsection
- 

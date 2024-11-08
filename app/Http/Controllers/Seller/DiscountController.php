@@ -51,9 +51,7 @@ class DiscountController extends Controller
         $categories = Category::all();
         $products = Product::where('user_id', Auth::id())->get();
         $nestedCategories = $this->buildTree($categories);
-        $formattedCategories = $this->formatCategories($nestedCategories);
-        
-        return view('seller.promotions.create', compact('categories', 'products','formattedCategories'));
+        return view('seller.promotions.create', compact('categories', 'products','nestedCategories','formattedCategories'));
     }
 
     public function store(DiscountStoreRequest $request)
@@ -84,13 +82,16 @@ class DiscountController extends Controller
         $discount->delete();
         return response()->json(data: ['success' => true, 'message' => 'Discount deleted successfully.']);
     }
-    private function buildTree($categories, $parentId = 0)
+    private function buildTree($categories, $parentId = 0, $path = "")
     {
         $branch = [];
 
         foreach ($categories as $category) {
             if ($category->parent_id == $parentId) {
-                $children = $this->buildTree($categories, $category->id);
+                $newPath = $path ? "$path/{$category->name}" : $category->name;
+                $category->path = $newPath;
+                $category->isLeaf = !$categories->where('parent_id', $category->id)->count();
+                $children = $this->buildTree($categories, $category->id, $newPath);
                 if ($children) {
                     $category->children = $children;
                 }
@@ -99,16 +100,8 @@ class DiscountController extends Controller
         }
 
         return $branch;
-    }   
-    public function formatCategories($categories) {
-        return array_map(function ($category) {
-            return [
-                'id' => $category['id'],
-                'text' => $category['name'], 
-                'children' => isset($category['children']) ? $this->formatCategories($category['children']) : []
-            ];
-        }, $categories);
-    }
+    }    
+    
         
 }
 
