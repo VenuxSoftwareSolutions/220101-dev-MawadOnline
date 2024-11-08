@@ -185,7 +185,7 @@ class ProductController extends Controller
     {
         $is_shipping = true;
 
-        Validator::make($request->only(['from', 'to','from_shipping', 'to_shipping']), [
+        Validator::make($request->only(['from', 'to', 'from_shipping', 'to_shipping']), [
             'from' => [
                 'required', 'array',
                 new NoPricingOverlap($request->input('from'), $request->input('to')),
@@ -762,7 +762,7 @@ class ProductController extends Controller
     {
         $is_shipping = true;
 
-        Validator::make($request->only(['from', 'to','from_shipping', 'to_shipping']), [
+        Validator::make($request->only(['from', 'to', 'from_shipping', 'to_shipping']), [
             'from' => [
                 'required', 'array',
                 new NoPricingOverlap($request->input('from'), $request->input('to')),
@@ -1937,47 +1937,46 @@ class ProductController extends Controller
             }
         }
 
-        if(isset($data['detailedProduct']['catalog'])) {
+        if (isset($data['detailedProduct']['catalog'])) {
             $response = [
                 'availableAttributes' => $availableAttributes,
                 'anyMatched' => $anyMatched,
                 'matchedImages' => $matchedImages,
                 'variationId' => $variationId ?? null,
-                'quantity' => $quantity ?? null  ,
-                'price' => $price ?? null ,
+                'quantity' => $quantity ?? null,
+                'price' => $price ?? null,
                 'total' => $totalDiscount ?? $total ?? null,
-                'maximum' => $maximum ,
-                'minimum' => $minimum ,
+                'maximum' => $maximum,
+                'minimum' => $minimum,
                 'discountedPrice' => $discountedPrice ?? null,
                 'totalDiscount' => $totalDiscount ?? null,
-                'percent'=> $percent ?? null,
-                'totalRating' =>  0 ,
+                'percent' => $percent ?? null,
+                'totalRating' => 0,
                 'renderStarRating' => $this->renderStarRating(0),
-                'avgRating' =>  0,
-                'sku' =>$sku ?? null ,
-                'outStock' =>false
+                'avgRating' => 0,
+                'sku' => $sku ?? null,
+                'outStock' => false,
             ];
-        }
-        else {
+        } else {
 
             $response = [
                 'availableAttributes' => $availableAttributes,
                 'anyMatched' => $anyMatched,
                 'matchedImages' => $matchedImages,
                 'variationId' => $variationId ?? null,
-                'quantity' => $quantity ?? null  ,
-                'price' => $price ?? null ,
+                'quantity' => $quantity ?? null,
+                'price' => $price ?? null,
                 'total' => $totalDiscount ?? $total ?? null,
-                'maximum' => $maximum ,
-                'minimum' => $minimum ,
+                'maximum' => $maximum,
+                'minimum' => $minimum,
                 'discountedPrice' => $discountedPrice ?? null,
                 'totalDiscount' => $totalDiscount ?? null,
-                'percent'=> $percent ?? null,
-                'totalRating' => $totalRating ?? 0 ,
-                'renderStarRating' => $renderStarRating ??  $this->renderStarRating(0),
+                'percent' => $percent ?? null,
+                'totalRating' => $totalRating ?? 0,
+                'renderStarRating' => $renderStarRating ?? $this->renderStarRating(0),
                 'avgRating' => $avgRating ?? 0,
-                'sku' =>$sku ?? null ,
-                'outStock' =>$outStock
+                'sku' => $sku ?? null,
+                'outStock' => $outStock,
             ];
         }
         // dd($availableAttributes) ;
@@ -1988,6 +1987,4 @@ class ProductController extends Controller
         return response()->json($response);
 
     }
-
-
 }
