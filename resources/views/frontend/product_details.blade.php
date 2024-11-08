@@ -2875,36 +2875,21 @@
             }
         });
 
-        //$(document).on('click', '.quantity-control', function() {
         $(document).on('change', '#quantity', function() {
-
             var action = $(this).data('type');
             var quantityInput = $('#quantity');
             var currentQuantity = parseInt(quantityInput.val());
             var variationId = $('#variationId').val();
-            // if (action === 'plus') {
-            //     // Increment quantity
-            //     quantityInput.val(currentQuantity + 1);
-            // } else if (action === 'minus' && currentQuantity > 1) {
-            //     // Decrement quantity, ensuring it doesn't go below 1
-            //     quantityInput.val(currentQuantity - 1);
-            // }
-
-            // // Update the disabled state of buttons based on quantity
-            // $('.quantity-control[data-type="minus"]').prop('disabled', currentQuantity <= 1);
-            // $('.quantity-control[data-type="plus"]').prop('disabled', currentQuantity >= 197);
 
             // AJAX request to update quantity
             $.ajax({
-                url: '{{ route('seller.update-price-preview') }}', // URL to your backend endpoint
-                method: 'POST', // or 'GET' depending on your backend implementation
+                url: '{{ route('seller.update-price-preview') }}',
+                method: 'POST',
                 data: {
                     quantity: quantityInput.val(),
                     variationId
                 },
                 success: function(response) {
-                    // Handle successful response
-                    console.log(response.unit_price)
                     if (response.unit_price != null) {
                         if (response.discountPrice > 0) {
                             $("#qty-interval").text(response.discountPrice)
@@ -2912,16 +2897,12 @@
                             $("#previous-price").text(response.unit_price)
 
                             if (response.percent !== null && response.percent > 0) {
-
                                 $("#percent").text('-' + response.percent + '%')
                                 $("#percent").addClass("bg-primary");
-
                             } else {
                                 $("#percent").text('')
                                 $("#percent").removeClass("bg-primary");
-
                             }
-
                         } else {
                             $("#previous-price").text('');
                             $("#percent").removeClass("bg-primary");
@@ -2929,23 +2910,18 @@
                             $("#qty-interval").text(response.unit_price)
                             $("#chosen_price").text(response.total)
                             $("#percent").text('')
-
                         }
-                        // $("#qty-interval").text(response.unit_price+" AED")
+
                         $("#quantity").val(response.qty)
-                        // $("#chosen_price").text(response.total+" AED")
                         $('#quantity').attr('min', response.minimum); // Minimum value
                         $('#quantity').attr('max', response.maximum); // Maximum value
-                        // $('.quantity-control[data-type="minus"]').prop('disabled', response.qty <= response.minimum);
-                        // $('.quantity-control[data-type="plus"]').prop('disabled', response.qty >= response.maximum);
+
                         $('.aiz-plus-minus input').each(function() {
                             var $this = $(this);
                             var min = parseInt($(this).attr("min"));
                             var max = parseInt($(this).attr("max"));
                             var value = parseInt($(this).val());
-                            console.log(min)
-                            console.log(max)
-                            console.log(value)
+
                             if (value <= min) {
                                 $this.siblings('[data-type="minus"]').attr('disabled', true)
                             } else if ($this.siblings('[data-type="minus"]').attr('disabled')) {
@@ -2958,10 +2934,8 @@
                             }
                         });
                     }
-
                 },
                 error: function(xhr, status, error) {
-                    // Handle errors
                     console.error('Error updating quantity:', error);
                 }
             });
