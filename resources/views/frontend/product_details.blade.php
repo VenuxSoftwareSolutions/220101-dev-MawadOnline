@@ -2876,69 +2876,74 @@
         });
 
         $(document).on('change', '#quantity', function() {
-            var action = $(this).data('type');
-            var quantityInput = $('#quantity');
-            var currentQuantity = parseInt(quantityInput.val());
-            var variationId = $('#variationId').val();
+            let action = $(this).data('type');
+            let quantityInput = $(this);
+            let currentQuantity = parseInt(quantityInput.val());
+            let variationId = $('#variationId').val();
 
-            // AJAX request to update quantity
-            $.ajax({
-                url: '{{ route('seller.update-price-preview') }}',
-                method: 'POST',
-                data: {
-                    quantity: quantityInput.val(),
-                    variationId
-                },
-                success: function(response) {
-                    if (response.unit_price != null) {
-                        if (response.discountPrice > 0) {
-                            $("#qty-interval").text(response.discountPrice)
-                            $("#chosen_price").text(response.totalDiscount)
-                            $("#previous-price").text(response.unit_price)
+            if (
+                currentQuantity >= quantityInput.attr("min") &&
+                currentQuantity <= quantityInput.attr("max")
+            ) {
+                // AJAX request to update quantity
+                $.ajax({
+                    url: '{{ route('seller.update-price-preview') }}',
+                    method: 'POST',
+                    data: {
+                        quantity: quantityInput.val(),
+                        variationId
+                    },
+                    success: function(response) {
+                        if (response.unit_price != null) {
+                            if (response.discountPrice > 0) {
+                                $("#qty-interval").text(response.discountPrice)
+                                $("#chosen_price").text(response.totalDiscount)
+                                $("#previous-price").text(response.unit_price)
 
-                            if (response.percent !== null && response.percent > 0) {
-                                $("#percent").text('-' + response.percent + '%')
-                                $("#percent").addClass("bg-primary");
+                                if (response.percent !== null && response.percent > 0) {
+                                    $("#percent").text('-' + response.percent + '%')
+                                    $("#percent").addClass("bg-primary");
+                                } else {
+                                    $("#percent").text('')
+                                    $("#percent").removeClass("bg-primary");
+                                }
                             } else {
-                                $("#percent").text('')
+                                $("#previous-price").text('');
                                 $("#percent").removeClass("bg-primary");
-                            }
-                        } else {
-                            $("#previous-price").text('');
-                            $("#percent").removeClass("bg-primary");
 
-                            $("#qty-interval").text(response.unit_price)
-                            $("#chosen_price").text(response.total)
-                            $("#percent").text('')
+                                $("#qty-interval").text(response.unit_price)
+                                $("#chosen_price").text(response.total)
+                                $("#percent").text('')
+                            }
+
+                            $("#quantity").val(response.qty)
+                            $('#quantity').attr('min', response.minimum); // Minimum value
+                            $('#quantity').attr('max', response.maximum); // Maximum value
+
+                            $('.aiz-plus-minus input').each(function() {
+                                var $this = $(this);
+                                var min = parseInt($(this).attr("min"));
+                                var max = parseInt($(this).attr("max"));
+                                var value = parseInt($(this).val());
+
+                                if (value <= min) {
+                                    $this.siblings('[data-type="minus"]').attr('disabled', true)
+                                } else if ($this.siblings('[data-type="minus"]').attr('disabled')) {
+                                    $this.siblings('[data-type="minus"]').removeAttr('disabled')
+                                }
+                                if (value >= max) {
+                                    $this.siblings('[data-type="plus"]').attr('disabled', true)
+                                } else if ($this.siblings('[data-type="plus"]').attr('disabled')) {
+                                    $this.siblings('[data-type="plus"]').removeAttr('disabled')
+                                }
+                            });
                         }
-
-                        $("#quantity").val(response.qty)
-                        $('#quantity').attr('min', response.minimum); // Minimum value
-                        $('#quantity').attr('max', response.maximum); // Maximum value
-
-                        $('.aiz-plus-minus input').each(function() {
-                            var $this = $(this);
-                            var min = parseInt($(this).attr("min"));
-                            var max = parseInt($(this).attr("max"));
-                            var value = parseInt($(this).val());
-
-                            if (value <= min) {
-                                $this.siblings('[data-type="minus"]').attr('disabled', true)
-                            } else if ($this.siblings('[data-type="minus"]').attr('disabled')) {
-                                $this.siblings('[data-type="minus"]').removeAttr('disabled')
-                            }
-                            if (value >= max) {
-                                $this.siblings('[data-type="plus"]').attr('disabled', true)
-                            } else if ($this.siblings('[data-type="plus"]').attr('disabled')) {
-                                $this.siblings('[data-type="plus"]').removeAttr('disabled')
-                            }
-                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error updating quantity:', error);
                     }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error updating quantity:', error);
-                }
-            });
+                });
+            }
         });
 
         // Function to gather checked attributes and values and send them via AJAX
