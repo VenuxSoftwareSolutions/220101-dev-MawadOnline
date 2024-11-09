@@ -758,21 +758,57 @@ class ProductController extends Controller
         }
     }
 
+    public function validateVariantsPricing(Request $request)
+    {
+        $rules = [];
+
+        $variantsPricing = collect($request->all())
+            ->filter(function ($value, $key) {
+                return preg_match('/^variant_pricing-from\d+$/', $key);
+            });
+
+        if ($variantsPricing->count() > 0) {
+            foreach ($variantsPricing as $key => $variant) {
+                $index = str_replace('variant_pricing-from', '', $key);
+                $from = $variant['from'];
+                $to = $variant['to'];
+
+                $rules[$key] = [
+                    new NoPricingOverlap($from, $to, false, $index)
+                ];
+            }
+
+            $request->validate($rules);
+        }
+    }
+
     public function update(Request $request)
     {
         $is_shipping = true;
 
+        $this->validateVariantsPricing($request);
+
         Validator::make($request->only(['from', 'to', 'from_shipping', 'to_shipping']), [
             'from' => [
                 'required', 'array',
-                new NoPricingOverlap($request->input('from'), $request->input('to')),
+                new NoPricingOverlap(
+                    $request->input('from'),
+                    $request->input('to'),
+                    false,
+                    null,
+                    'Default pricing configuration should not overlap.'
+                ),
             ],
             'to' => ['required', 'array'],
             'from.*' => 'numeric',
             'to.*' => 'numeric',
             'from_shipping' => [
                 'required', 'array',
-                new NoPricingOverlap($request->input('from_shipping'), $request->input('to_shipping'), $is_shipping),
+                new NoPricingOverlap(
+                    $request->input('from_shipping'),
+                    $request->input('to_shipping'),
+                    $is_shipping
+                ),
             ],
             'to_shipping' => ['required', 'array'],
             'from_shipping.*' => 'numeric',
