@@ -3,10 +3,7 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
 class ApprovalProductMail extends Mailable
@@ -26,7 +23,7 @@ class ApprovalProductMail extends Mailable
         $this->status = $status;
         $this->text = $text;
     }
-    
+
     public function build()
     {
         return $this
