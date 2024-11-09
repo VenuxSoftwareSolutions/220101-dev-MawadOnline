@@ -38,7 +38,6 @@ class ProductService
     {
         try {
             $collection = collect($data);
-
             $vat_user = BusinessInformation::where('user_id', auth()->user()->owner_id)->first();
 
             $approved = 1;
@@ -530,6 +529,7 @@ class ProductService
             }
         } catch (Exception $e) {
             Log::error('Error while store product data, with message: '.$e->getMessage());
+            return null;
         }
     }
 

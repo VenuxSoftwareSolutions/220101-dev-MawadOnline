@@ -240,62 +240,68 @@ class ProductController extends Controller
             'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', 'discount_percentage', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type', 'from', 'to', 'unit_price', 'discount_type', 'discount_amount', 'discount_amount',
         ]));
 
-        $request->merge(['product_id' => $product->id]);
+        if ($product !== null) {
+            $request->merge(['product_id' => $product->id]);
 
-        //Product categories
-        $product->categories()->attach($request->category_ids);
+            //Product categories
+            $product->categories()->attach($request->category_ids);
 
-        //Upload documents, images and thumbnails
-        if ($request->document_names) {
-            $data['document_names'] = $request->document_names;
-            $data['documents'] = $request->documents;
-            $data['product'] = $product;
-            $data['main_photos'] = $request->main_photos;
-            $data['photosThumbnail'] = $request->photosThumbnail;
-            $this->productUploadsService->store_uploads($data);
-        }
+            //Upload documents, images and thumbnails
+            if ($request->document_names) {
+                $data['document_names'] = $request->document_names;
+                $data['documents'] = $request->documents;
+                $data['product'] = $product;
+                $data['main_photos'] = $request->main_photos;
+                $data['photosThumbnail'] = $request->photosThumbnail;
+                $this->productUploadsService->store_uploads($data);
+            }
 
-        //Pricing configuration
-        $this->productPricingService->store([
-            'from' => $request->from,
-            'to' => $request->to,
-            'unit_price' => $request->unit_price,
-            'date_range_pricing' => $request->date_range_pricing,
-            'discount_type' => $request->discount_type,
-            'discount_amount' => $request->discount_amount,
-            'discount_percentage' => $request->discount_percentage,
-            'product' => $product,
-        ]);
+            //Pricing configuration
+            $this->productPricingService->store([
+                'from' => $request->from,
+                'to' => $request->to,
+                'unit_price' => $request->unit_price,
+                'date_range_pricing' => $request->date_range_pricing,
+                'discount_type' => $request->discount_type,
+                'discount_amount' => $request->discount_amount,
+                'discount_percentage' => $request->discount_percentage,
+                'product' => $product,
+            ]);
 
-        //VAT & Tax
-        if ($request->tax_id) {
-            $this->productTaxService->store($request->only([
-                'tax_id', 'tax', 'tax_type', 'product_id',
+            //VAT & Tax
+            if ($request->tax_id) {
+                $this->productTaxService->store($request->only([
+                    'tax_id', 'tax', 'tax_type', 'product_id',
+                ]));
+            }
+
+            //Flash Deal
+            $this->productFlashDealService->store($request->only([
+                'flash_deal_id', 'flash_discount', 'flash_discount_type',
+            ]), $product);
+
+            //Product Stock
+            $this->productStockService->store($request->only([
+                'colors_active', 'colors', 'choice_no', 'unit_price', 'sku', 'current_stock', 'product_id',
+            ]), $product);
+
+            // Product Translations
+            $request->merge(['lang' => env('DEFAULT_LANGUAGE')]);
+            ProductTranslation::create($request->only([
+                'lang', 'name', 'unit', 'description', 'product_id',
             ]));
+
+            flash(translate('Product has been inserted successfully'))->success();
+
+            Artisan::call('view:clear');
+            Artisan::call('cache:clear');
+
+            return redirect()->route('products.admin');
+        } else {
+            flash(__("There's an error while saving product"))->error();
+
+            return redirect()->back();
         }
-
-        //Flash Deal
-        $this->productFlashDealService->store($request->only([
-            'flash_deal_id', 'flash_discount', 'flash_discount_type',
-        ]), $product);
-
-        //Product Stock
-        $this->productStockService->store($request->only([
-            'colors_active', 'colors', 'choice_no', 'unit_price', 'sku', 'current_stock', 'product_id',
-        ]), $product);
-
-        // Product Translations
-        $request->merge(['lang' => env('DEFAULT_LANGUAGE')]);
-        ProductTranslation::create($request->only([
-            'lang', 'name', 'unit', 'description', 'product_id',
-        ]));
-
-        flash(translate('Product has been inserted successfully'))->success();
-
-        Artisan::call('view:clear');
-        Artisan::call('cache:clear');
-
-        return redirect()->route('products.admin');
     }
 
     /**
