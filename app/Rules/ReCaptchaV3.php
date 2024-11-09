@@ -2,7 +2,6 @@
 
 namespace App\Rules;
 
-use App\Http\Controllers\OTPVerificationController;
 use App\Mail\VerificationCodeEmail;
 use App\Models\User;
 use App\Models\VerificationCode;
