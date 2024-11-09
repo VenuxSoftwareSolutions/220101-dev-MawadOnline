@@ -24,6 +24,13 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Log;
+use Mail;
+use App\Models\Revision;
+use App\Mail\ApprovalProductMail;
+use App\Models\ProductCatalog;
+use App\Models\ProductAttributeValueCatalog;
+use App\Models\UploadProductCatalog;
+use File;
 
 class ProductService
 {
@@ -5572,6 +5579,501 @@ class ProductService
                 'error' => true,
                 'message' => __("There's an error"),
             ]);
+        }
+    }
+
+    public function approveProduct($request)
+    {
+        try {
+            $product = Product::find($request->id_variant);
+
+            if ($product != null) {
+                if (count($product->getChildrenProducts())) {
+                    foreach ($product->getChildrenProducts() as $children) {
+                        //Attribute section
+                        $attributes_id = DB::table('product_attribute_values')
+                            ->where('id_products', $children->id)
+                            ->pluck('id')
+                            ->toArray();
+
+                            if (($request->status != 1) && ($request->status != 4)) {
+                            $historique_attributes = Revision::where('revisionable_type', 'App\Models\ProductAttributeValues')
+                                ->whereIn('revisionable_id', $attributes_id)
+                                ->get();
+
+                            if (count($historique_attributes) > 0) {
+                                foreach ($historique_attributes as $attribute_history) {
+                                    $update = [];
+                                    switch ($attribute_history->key) {
+                                        case 'value':
+                                            $update['value'] = $attribute_history->old_value;
+                                            break;
+                                        case 'id_units':
+                                            $update['id_units'] = $attribute_history->old_value;
+                                            break;
+                                        case 'id_values':
+                                            $update['id_values'] = $attribute_history->old_value;
+                                            break;
+                                        case 'id_colors':
+                                            $update['id_colors'] = $attribute_history->old_value;
+                                            break;
+                                    }
+
+                                    DB::table('product_attribute_values')
+                                        ->where('id', $attribute_history->revisionable_id)
+                                        ->update($update);
+                                }
+                            }
+                        }
+
+                        $historique_attributes = Revision::where('revisionable_type', 'App\Models\ProductAttributeValues')
+                            ->whereIn('revisionable_id', $attributes_id)
+                            ->delete();
+
+                        //Product section
+                        if (($request->status != 1) && ($request->status != 4)) {
+                            $historique_product_informations = Revision::where('revisionable_type', 'App\Models\Product')
+                                ->where('revisionable_id', $children->id)
+                                ->get();
+
+                            if (count($historique_product_informations) > 0) {
+                                $data = [];
+                                foreach ($historique_product_informations as $product_history) {
+                                    $data[$product_history->key] = $product_history->old_value;
+                                }
+
+                                DB::table('products')
+                                    ->where('id', $children->id)
+                                    ->update($data);
+                            }
+                        }
+
+                        $historique_product_informations = Revision::where('revisionable_type', 'App\Models\Product')
+                            ->where('revisionable_id', $children->id)
+                            ->delete();
+
+                        //Images section & thumbnails
+                        $images_ids = DB::table('upload_products')
+                            ->where('id_product', $children->id)
+                            ->where('type', 'images')
+                            ->orWhere('type', 'thumbnails')
+                            ->pluck('id')
+                            ->toArray();
+
+                        if (($request->status != 1) && ($request->status != 4)) {
+                            $historique_images = Revision::whereIn('revisionable_id', $images_ids)
+                                ->where('revisionable_type', 'App\Models\UploadProducts')
+                                ->get();
+
+                            if (count($historique_images) > 0) {
+                                foreach ($historique_images as $image) {
+                                    $uploaded = DB::table('upload_products')
+                                        ->where('id', $image->new_value)
+                                        ->first();
+
+                                    if (file_exists(public_path($uploaded->path))) {
+                                        unlink(public_path($uploaded->path));
+                                    }
+
+                                    $uploaded = DB::table('upload_products')
+                                        ->where('id', $image->new_value)
+                                        ->delete();
+                                    }
+                            }
+                        }
+
+                        $historique_images = Revision::whereIn('revisionable_id', $images_ids)
+                            ->where('revisionable_type', 'App\Models\UploadProducts')
+                            ->delete();
+
+                        $children->approved = $request->status;
+                        if (($request->status == 1) || ($request->status == 3)) {
+                            $children->last_version = 0;
+                        }
+                        $children->save();
+                    }
+                }
+
+                $attributes_id = DB::table('product_attribute_values')
+                    ->where('id_products', $product->id)
+                    ->pluck('id')
+                    ->toArray();
+
+                if (($request->status != 1) && ($request->status != 4)) {
+                    $historique_attributes = Revision::where('revisionable_type', 'App\Models\ProductAttributeValues')
+                        ->whereIn('revisionable_id', $attributes_id)
+                        ->get();
+
+                    if (count($historique_attributes) > 0) {
+                        foreach ($historique_attributes as $attribute_history) {
+                            $update = [];
+                            switch ($attribute_history->key) {
+                                case 'value':
+                                    $update['value'] = $attribute_history->old_value;
+                                    break;
+                                case 'id_units':
+                                    $update['id_units'] = $attribute_history->old_value;
+                                    break;
+                                case 'id_values':
+                                    $update['id_values'] = $attribute_history->old_value;
+                                    break;
+                                case 'id_colors':
+                                    $update['id_colors'] = $attribute_history->old_value;
+                                    break;
+                            }
+
+                            DB::table('product_attribute_values')
+                                ->where('id', $attribute_history->revisionable_id)
+                                ->update($update);
+                        }
+                    }
+                }
+
+                $historique_attributes = Revision::where('revisionable_type', 'App\Models\ProductAttributeValues')
+                    ->whereIn('revisionable_id', $attributes_id)
+                    ->delete();
+
+                //Product section
+                if (($request->status != 1) && ($request->status != 4)) {
+                    $historique_product_informations = Revision::where('revisionable_type', 'App\Models\Product')
+                        ->where('revisionable_id', $product->id)
+                        ->get();
+
+                    if (count($historique_product_informations) > 0) {
+                        $data = [];
+                        foreach ($historique_product_informations as $product_history) {
+                            $data[$product_history->key] = $product_history->old_value;
+                        }
+
+                        DB::table('products')->where('id', $product->id)->update($data);
+                    }
+                }
+
+                $historique_product_informations = Revision::where('revisionable_type', 'App\Models\Product')
+                    ->where('revisionable_id', $product->id)
+                    ->delete();
+
+                //Images section & thumbnails
+                $images_ids = DB::table('upload_products')
+                    ->where('id_product', $product->id)
+                    ->where('type', 'images')
+                    ->orWhere('type', 'thumbnails')
+                    ->pluck('id')
+                    ->toArray();
+
+                if (($request->status != 1) && ($request->status != 4)) {
+                    $historique_images = Revision::whereIn('revisionable_id', $images_ids)
+                        ->where('revisionable_type', 'App\Models\UploadProducts')
+                        ->get();
+
+                    if (count($historique_images) > 0) {
+                        foreach ($historique_images as $image) {
+                            $uploaded = DB::table('upload_products')
+                                ->where('id', $image->new_value)
+                                ->first();
+
+                            if (file_exists(public_path($uploaded->path))) {
+                                unlink(public_path($uploaded->path));
+                            }
+
+                            $uploaded = DB::table('upload_products')->where('id', $image->new_value)->delete();
+                        }
+                    }
+                }
+
+                $historique_images = Revision::whereIn('revisionable_id', $images_ids)
+                    ->where('revisionable_type', 'App\Models\UploadProducts')
+                    ->delete();
+
+                //Documents section
+                $documents_ids = DB::table('upload_products')
+                    ->where('id_product', $product->id)
+                    ->where('type', 'documents')
+                    ->pluck('id')
+                    ->toArray();
+
+                if (($request->status != 1) && ($request->status != 4)) {
+                    $historique_documents = Revision::whereIn('revisionable_id', $documents_ids)
+                        ->where('revisionable_type', 'App\Models\UploadProducts')
+                        ->get();
+
+                    if (count($historique_documents) > 0) {
+                        foreach ($historique_documents as $document) {
+                            $uploaded = DB::table('upload_products')
+                                ->where('id', $document->revisionable_id)
+                                ->first();
+
+                            if ($document->key == 'add_document') {
+                                if (file_exists(public_path($uploaded->path))) {
+                                    unlink(public_path($uploaded->path));
+                                }
+
+                                $uploaded = DB::table('upload_products')
+                                    ->where('id', $document->revisionable_id)
+                                    ->delete();
+                            } else {
+                                $new_value = json_decode($document->new_value, true);
+                                $old_value = json_decode($document->old_value, true);
+
+                                if (file_exists(public_path($new_value['new_path']))) {
+                                    unlink(public_path($new_value['new_path']));
+                                }
+
+                                $data = [];
+                                $data['path'] = $old_value['old_path'];
+                                $data['document_name'] = $old_value['old_document_name'];
+                                $uploaded = DB::table('upload_products')
+                                    ->where('id', $document->revisionable_id)
+                                    ->update($data);
+                            }
+                        }
+                    }
+                }
+
+                $historique_documents = Revision::whereIn('revisionable_id', $documents_ids)
+                    ->where('revisionable_type', 'App\Models\UploadProducts')
+                    ->delete();
+
+                //check if status is Revision Required or Rejected to set the rejection reason
+                if (($request->status == 2) || ($request->status == 3)) {
+                    if ($request->status == 2) {
+                        $status = 'Revision Required for '.$product->name.' Listing';
+                        $text = 'Dear Mr/Mrs,
+                    <br>We hope this message finds you well. Our team has reviewed the listing for <b>'.$product->name.'</b> on our marketplace and identified areas that require revision.
+                    <br>Please note the necessary correction(s):<br> '.$request->reason.'<br>Kindly make the appropriate changes to ensure that the listing meets our marketplace standards. <br>We appreciate your prompt attention to this matter.
+                    Thank you for your cooperation.
+                    <br>Best regards,
+                    <br>MAWADONLINE team.';
+                    } else {
+                        $status = 'Rejection Notification for Product Listing';
+                        $text = 'Dear Mr/Mrs,
+                    <br>I hope this email finds you well. <br>After careful review, we regret to inform you that the listing for <b>'.$product->name.'</b> on our marketplace has been rejected.
+                    <br>The reason for rejection is as follows:<br> '.$request->reason.'<br>We understand that this may be disappointing, and we encourage you to review our marketplace guidelines to ensure future submissions meet our requirements.
+                    <br>Thank you for your understanding.
+                    <br>Best regards,
+                    <br>MAWADONLINE team.';
+                    }
+
+                    $user = User::find($product->user_id);
+                    Mail::to($user->email)->send(new ApprovalProductMail($status, $text));
+
+                    $product->rejection_reason = $request->reason;
+                } else {
+                    $product->rejection_reason = null;
+                }
+
+                $product->approved = $request->status;
+
+                if (($request->status == 1) || ($request->status == 3)) {
+                    $product->last_version = 0;
+                }
+
+                $product->save();
+
+                if ($request->status == APPROVED_STATUS) {
+                    $this->copyProductChangesInCatalog($product->id);
+
+                    $status = 'Your product has been approved on our marketplace';
+                    $text = 'We are pleased to inform you that your product '.$product->name.' has been approved on our marketplace after review by our administration team.<br>
+
+                        You can now view it online and track it through your seller account.<br>
+
+                        We thank you for your trust and remain at your disposal for any questions.<br>
+
+                        Best regards, <br>MAWADONLINE team.';
+
+                    $user = User::find($product->user_id);
+                    Mail::to($user->email)->send(new ApprovalProductMail($status, $text));
+                }
+
+                if ($request->status == UNDER_REVIEW_STATUS) {
+                    $status = 'Your product is under review';
+
+                    $text = 'We would like to inform you that your product '.$product->name.' is currently under review by our team. Our administration is carefully checking the details to ensure that it meets the standards of our marketplace.<br>
+
+                        We will notify you as soon as the review is complete.<br>
+
+                        Thank you for your patience and trust.<br>
+
+                        Best regards, <br>MAWADONLINE team.';
+
+                    $user = User::find($product->user_id);
+
+                    Mail::to($user->email)->send(new ApprovalProductMail($status, $text));
+                }
+
+                return response()->json([
+                    'status' => 'success',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'failed',
+                ]);
+            }
+        } catch (Exception $e) {
+            Log::error("Error while approving product, with message: {$e->getMessage()}");
+
+            return response()->json(['error' => true, 'message' => __("There's an error")]);
+        }
+    }
+
+    function copyProductChangesInCatalog($id)
+    {
+        $existingProduct = Product::find($id);
+
+        $product_catalog_exist = ProductCatalog::where('product_id', $id)->first();
+        if ($product_catalog_exist != null) {
+            $childrens_catalog = ProductCatalog::where('parent_id', $product_catalog_exist->id)->pluck('id')->toArray();
+            if (count($childrens_catalog) > 0) {
+                ProductAttributeValueCatalog::whereIn('catalog_id', $childrens_catalog)->delete();
+                UploadProductCatalog::whereIn('catalog_id', $childrens_catalog)->delete();
+                ProductCatalog::where('parent_id', $product_catalog_exist->id)->delete();
+
+                foreach ($childrens_catalog as $children_catalog_id) {
+                    $path_children = public_path('/upload_products/Product-'.$children_catalog_id);
+                    File::deleteDirectory($path_children);
+                }
+            }
+
+            $path_parent = public_path('/upload_products/Product-'.$product_catalog_exist->id);
+            File::deleteDirectory($path_parent);
+
+            ProductAttributeValueCatalog::where('catalog_id', $product_catalog_exist->id)->delete();
+            UploadProductCatalog::where('catalog_id', $product_catalog_exist->id)->delete();
+            ProductCatalog::where('id', $product_catalog_exist->id)->delete();
+        }
+
+        if (! $existingProduct) {
+            // Handle the case where the product with the specific ID doesn't exist
+            return redirect()->back()->with('error', 'Product not found');
+        }
+
+        $data = $existingProduct->attributesToArray();
+        // Make necessary updates to the attributes (if any)
+        unset($data['id']);
+        $data['product_id'] = $id;
+        $newProduct = ProductCatalog::insertGetId($data);
+
+        $path = public_path('/upload_products/Product-'.$id);
+        $destinationFolder = public_path('/upload_products_catalog/Product-'.$newProduct);
+
+        if (! File::isDirectory($destinationFolder)) {
+            File::makeDirectory($destinationFolder);
+        }
+
+        if (File::isDirectory($path)) {
+            File::copyDirectory($path, $destinationFolder);
+        }
+
+        $uploads = UploadProducts::where('id_product', $id)->get();
+        $new_records = [];
+
+        if (count($uploads) > 0) {
+            foreach ($uploads as $file) {
+                $current_file = [];
+                $newPath = str_replace("/upload_products/Product-{$id}", "/upload_products_catalog/Product-{$newProduct}", $file->path);
+
+                $current_file['catalog_id'] = $newProduct;
+                $current_file['path'] = $newPath;
+                $current_file['extension'] = $file->extension;
+                $current_file['document_name'] = $file->document_name;
+                $current_file['type'] = $file->type;
+
+                array_push($new_records, $current_file);
+            }
+
+            if (count($new_records) > 0) {
+                UploadProductCatalog::insert($new_records);
+            }
+        }
+
+        $attributes = ProductAttributeValues::where('id_products', $id)->get();
+
+        $new_records_attributes = [];
+
+        if (count($attributes) > 0) {
+            foreach ($attributes as $attribute) {
+                $current_attribute = [];
+                $current_attribute['catalog_id'] = $newProduct;
+                $current_attribute['id_attribute'] = $attribute->id_attribute;
+                $current_attribute['id_units'] = $attribute->id_units;
+                $current_attribute['id_values'] = $attribute->id_values;
+                $current_attribute['id_colors'] = $attribute->id_colors;
+                $current_attribute['value'] = $attribute->value;
+                $current_attribute['is_variant'] = $attribute->is_variant;
+                $current_attribute['is_general'] = $attribute->is_general;
+
+                array_push($new_records_attributes, $current_attribute);
+            }
+
+            if (count($new_records_attributes) > 0) {
+                ProductAttributeValueCatalog::insert($new_records_attributes);
+            }
+        }
+
+        if (count($existingProduct->getChildrenProducts()) > 0) {
+            foreach ($existingProduct->getChildrenProducts() as $children) {
+                $data = $children->attributesToArray();
+                // Make necessary updates to the attributes (if any)
+                unset($data['id']);
+                $data['parent_id'] = $newProduct;
+                $data['product_id'] = $children->id;
+                $newProductChildren = ProductCatalog::insertGetId($data);
+
+                $path = public_path('/upload_products/Product-'.$children->id);
+                $destinationFolder = public_path('/upload_products_catalog/Product-'.$newProductChildren);
+                if (! File::isDirectory($destinationFolder)) {
+                    File::makeDirectory($destinationFolder);
+                }
+
+                if (File::isDirectory($path)) {
+                    File::copyDirectory($path, $destinationFolder);
+                }
+
+                $uploads = UploadProducts::where('id_product', $children->id)->get();
+                $new_records = [];
+                if (count($uploads) > 0) {
+                    foreach ($uploads as $file) {
+                        $current_file = [];
+                        $newPath = str_replace("/upload_products/Product-{$children->id}", "/upload_products_catalog/Product-{$newProductChildren}", $file->path);
+
+                        $current_file['catalog_id'] = $newProductChildren;
+                        $current_file['path'] = $newPath;
+                        $current_file['extension'] = $file->extension;
+                        $current_file['document_name'] = $file->document_name;
+                        $current_file['type'] = $file->type;
+
+                        array_push($new_records, $current_file);
+                    }
+
+                    if (count($new_records) > 0) {
+                        UploadProductCatalog::insert($new_records);
+                    }
+                }
+
+                $attributes = ProductAttributeValues::where('id_products', $children->id)->get();
+                $new_records_attributes = [];
+
+                if (count($attributes) > 0) {
+                    foreach ($attributes as $attribute) {
+                        $current_attribute = [];
+                        $current_attribute['catalog_id'] = $newProductChildren;
+                        $current_attribute['id_attribute'] = $attribute->id_attribute;
+                        $current_attribute['id_units'] = $attribute->id_units;
+                        $current_attribute['id_values'] = $attribute->id_values;
+                        $current_attribute['id_colors'] = $attribute->id_colors;
+                        $current_attribute['value'] = $attribute->value;
+                        $current_attribute['is_variant'] = $attribute->is_variant;
+                        $current_attribute['is_general'] = $attribute->is_general;
+
+                        array_push($new_records_attributes, $current_attribute);
+                    }
+
+                    if (count($new_records_attributes) > 0) {
+                        ProductAttributeValueCatalog::insert($new_records_attributes);
+                    }
+                }
+            }
         }
     }
 }
