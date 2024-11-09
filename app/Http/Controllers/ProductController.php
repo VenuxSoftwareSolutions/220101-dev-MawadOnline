@@ -236,7 +236,6 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //dd($request->all());
         $product = $this->productService->store($request->except([
             'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', 'discount_percentage', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type', 'from', 'to', 'unit_price', 'discount_type', 'discount_amount', 'discount_amount',
         ]));
