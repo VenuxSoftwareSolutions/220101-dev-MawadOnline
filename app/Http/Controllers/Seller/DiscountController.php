@@ -14,10 +14,10 @@ use App\Http\Requests\Discounts\DiscountUpdateRequest;
 
 class DiscountController extends Controller
 {
- 
+
     public function index(Request $request)
     {
-        $scope = $request->query('scope', 'product'); 
+        $scope = $request->query('scope', 'product');
         $discounts = Discount::where('scope', $scope)->get();
         $columnHeader = '';
         $columnValue = '';
@@ -36,7 +36,7 @@ class DiscountController extends Controller
                 break;
             case 'allOrders':
                 $columnHeader = 'All Orders';
-                $columnValue = fn($discount) => '-'; 
+                $columnValue = fn($discount) => '-';
                 break;
             default:
                 $columnHeader = 'Product Name';
@@ -61,7 +61,7 @@ class DiscountController extends Controller
         Discount::create($validatedData);
         $scope = $validatedData['scope'];
         return redirect()->route('seller.discounts.index', ['scope' => $scope])
-        ->with('success', 'Discount created successfully.');
+            ->with('success', 'Discount created successfully.');
     }
 
     public function edit($id)
@@ -86,28 +86,28 @@ class DiscountController extends Controller
     private function buildTree($categories, $parentId = 0, $path = "")
     {
         $branch = [];
-    
+
         foreach ($categories as $category) {
             if ($category->parent_id == $parentId) {
                 $newPath = $path ? "$path/{$category->name}" : $category->name;
                 $category->path = $newPath;
-    
+
                 $children = $this->buildTree($categories, $category->id, $newPath);
-                $category->isLeaf = !is_array($children) || count($children) === 0;    
+                $category->isLeaf = !is_array($children) || count($children) === 0;
                 if ($children) {
                     $category->children = $children;
                 }
-    
+
                 $branch[] = $category;
             }
         }
-    
+
         return $branch;
     }
     public function getProductsByCategory(Request $request)
     {
         $categoryId = $request->query('category_id');
-        
+
         $products = Product::where('user_id', Auth::id())
             ->whereHas('categories', function ($query) use ($categoryId) {
                 $query->where('id', $categoryId);
@@ -118,20 +118,20 @@ class DiscountController extends Controller
     }
 
     public function getCategoriesForProductScope()
-{
-    $products = Product::where('user_id', Auth::id())->get();
-    $productCategoryIds = $products->pluck('categories')->flatten()->pluck('id')->unique();
+    {
+        $products = Product::where('user_id', Auth::id())->get();
+        $productCategoryIds = $products->pluck('categories')->flatten()->pluck('id')->unique();
 
-    $categories = Category::whereIn('id', $productCategoryIds)
-        ->orWhereIn('id', function ($query) use ($productCategoryIds) {
-            $query->select('parent_id')
-                  ->from('categories')
-                  ->whereIn('id', $productCategoryIds);
-        })
-        ->get();
+        $categories = Category::whereIn('id', $productCategoryIds)
+            ->orWhereIn('id', function ($query) use ($productCategoryIds) {
+                $query->select('parent_id')
+                    ->from('categories')
+                    ->whereIn('id', $productCategoryIds);
+            })
+            ->get();
 
-    return response()->json(['categories' => $categories]);
-}
+        return response()->json(['categories' => $categories]);
+    }
 
 }
 

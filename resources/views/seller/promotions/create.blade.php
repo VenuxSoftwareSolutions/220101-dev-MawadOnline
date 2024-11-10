@@ -301,11 +301,13 @@
                             <label for="multiTreeCategory" class="form-label">Category</label>
                             <select id="multiTreeCategory" name="category_id" multiple="multiple">
                                 @foreach ($nestedCategories as $category)
-                                    @include('seller.promotions.partials.category_option', ['category' => $category])
+                                    @include('seller.promotions.partials.category_option', [
+                                        'category' => $category,
+                                    ])
                                 @endforeach
                             </select>
                         </div>
-                        
+
                         <div class="col-md-6 mb-3" id="productCategoryContainer" style="display: none;">
                             <label for="productCategory" class="form-label">Category</label>
                             <select class="form-control aiz-selectpicker" id="productCategory" name="category_id">
@@ -315,8 +317,8 @@
                                 @endforeach
                             </select>
                         </div>
-                        
-                        
+
+
 
                         <div class="col-md-6 mb-3">
                             <label for="product_id" class="form-label">Product</label>
@@ -360,10 +362,36 @@
             </div>
         </div>
     </div>
+
+    <div id="modal-discount-overlap" class="modal fade">
+        <div class="modal-dialog modal-md modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title h6">{{ translate('Discount Overlap Confirmation') }}</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="mt-1 fs-14">{{ translate('Please note that this range overlaps with the existing discounts listed below.') }}</p>
+                    <p class="fs-14">{{ translate('If you proceed, the greater discount will be applied.') }}</p>
+                    
+                    <ul class="list-group mb-3" id="overlapping-discounts-list">
+                        <li class="list-group-item">
+                            <strong>{{ translate('Discount Name') }}</strong> - {{ translate('Date Range') }}
+                        </li>
+                    </ul>
+    
+                    <button type="button" class="btn btn-secondary rounded-0 mt-2"
+                        data-dismiss="modal">{{ translate('Cancel') }}</button>
+                    <button type="button" class="btn btn-primary rounded-0 mt-2"
+                        id="confirmProceedBtn">{{ translate('Proceed') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+         
 @endsection
 
 @section('script')
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ static_asset('assets/js/jquery.tree-multiselect.min.js') }}"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
@@ -378,34 +406,34 @@
 
             const getProductByCategoryUrl = @json(route('seller.discounts.getproductbycategory'));
             const categorybyproduct = @json(route('seller.discounts.getCategoriesForProductScope'));
-    
-            let params = {
-        sortable: true,
-        searchable: true,
-        searchParams: ['section', 'text'],
-        onChange: function(allSelectedItems, addedItems, removedItems) {
-            addedItems.forEach(item => {
-                if (!$(item).data('leaf')) {
-                    $(item).prop('selected', false); 
-                }
-            });
-        },
-        startCollapsed: true,
-        maxSelections: 1,
-        freeze: true // Initially frozen for other scopes
-    };
-    $("select#multiTreeCategory").treeMultiselect(params);
 
-    
+            let params = {
+                sortable: true,
+                searchable: true,
+                searchParams: ['section', 'text'],
+                onChange: function(allSelectedItems, addedItems, removedItems) {
+                    addedItems.forEach(item => {
+                        if (!$(item).data('leaf')) {
+                            $(item).prop('selected', false);
+                        }
+                    });
+                },
+                startCollapsed: true,
+                maxSelections: 1,
+                freeze: true 
+            };
+            $("select#multiTreeCategory").treeMultiselect(params);
+
+
             function updateMultiTreeBasedOnScope(scope) {
                 $(".tree-multiselect").remove();
-    
+
                 if (scope === "product" || scope === "category") {
                     params.freeze = false;
                 } else {
                     params.freeze = true;
                 }
-    
+
                 if (scope === "product") {
                     multiTreeContainer.style.display = "none";
                     productCategoryContainer.style.display = "block";
@@ -414,14 +442,16 @@
                         url: categorybyproduct,
                         type: 'GET',
                         success: function(response) {
-                            $("#productCategory").empty(); 
-                            $("#productCategory").append('<option value="" selected>Select category</option>');
+                            $("#productCategory").empty();
+                            $("#productCategory").append(
+                                '<option value="" selected>Select category</option>');
 
 
                             $.each(response.categories, function(index, category) {
-                                $("#productCategory").append('<option value="' + category.id + '">' + category.name + '</option>');
+                                $("#productCategory").append('<option value="' + category.id +
+                                    '">' + category.name + '</option>');
                             });
-    
+
                             $("#productCategory").treeMultiselect(params);
                         }
                     });
@@ -433,36 +463,40 @@
 
                 }
             }
-    
+
             $('#category').on('change', function() {
                 var selectedCategoryId = $(this).val();
-    
+
                 $.ajax({
                     url: getProductByCategoryUrl,
                     type: 'GET',
-                    data: { category_id: selectedCategoryId },
+                    data: {
+                        category_id: selectedCategoryId
+                    },
                     success: function(response) {
                         var productSelect = $('#product_id');
                         productSelect.empty();
-                        productSelect.append('<option value="" selected>Select product</option>');
-    
+                        productSelect.append(
+                            '<option value="" selected>Select product</option>');
+
                         $.each(response.products, function(index, product) {
-                            productSelect.append('<option value="' + product.id + '">' + product.name + '</option>');
+                            productSelect.append('<option value="' + product.id + '">' +
+                                product.name + '</option>');
                         });
-    
-                        productSelect.selectpicker('refresh'); 
+
+                        productSelect.selectpicker('refresh');
                     }
                 });
             });
-    
+
             function updateFieldState(scope) {
                 scopeInput.value = scope;
                 productSelect.disabled = true;
                 orderAmountInput.disabled = true;
-    
+
                 productSelect.value = null;
                 orderAmountInput.value = '';
-    
+
                 if (scope === "category") {
                     productSelect.value = "";
                     orderAmountInput.value = "";
@@ -471,31 +505,32 @@
                 } else if (scope === "ordersOverAmount") {
                     orderAmountInput.disabled = false;
                 }
-    
+
                 $('.aiz-selectpicker').selectpicker('refresh');
-    
+
                 updateMultiTreeBasedOnScope(scope);
             }
-    
+
             document.querySelectorAll('.tab-card').forEach(card => {
                 card.addEventListener('click', function() {
                     const scope = this.getAttribute('data-scope');
                     updateFieldState(scope);
-    
-                    document.querySelectorAll('.tab-card').forEach(card => card.classList.remove('active'));
+
+                    document.querySelectorAll('.tab-card').forEach(card => card.classList.remove(
+                        'active'));
                     this.classList.add('active');
-    
+
                     const url = new URL(window.location);
                     url.searchParams.set('scope', scope);
                     window.history.replaceState(null, '', url);
                 });
             });
-    
+
             const urlParams = new URLSearchParams(window.location.search);
             const selectedScope = urlParams.get('scope');
             if (selectedScope) {
                 updateFieldState(selectedScope);
-    
+
                 document.querySelectorAll('.tab-card').forEach(card => {
                     card.classList.remove('active');
                     if (card.getAttribute('data-scope') === selectedScope) {
@@ -503,7 +538,7 @@
                     }
                 });
             }
-    
+
             function showError(message) {
                 Swal.fire({
                     icon: 'error',
@@ -512,7 +547,7 @@
                     confirmButtonText: 'Okay'
                 });
             }
-    
+
             function validateForm() {
                 const discountType = form.querySelector("input[name='discountType']:checked");
                 const startDate = form.querySelector("input[name='start_date']").value;
@@ -523,22 +558,27 @@
                 const productId = form.querySelector("select[name='product_id']").value;
                 const categoryId = form.querySelector("select[name='category_id']").value;
                 const orderAmount = form.querySelector("#order_amount").value;
-    
+
                 if (!discountType) return showError("Discount type is required.");
                 if (!startDate) return showError("Start date is required.");
                 if (!endDate) return showError("End date is required.");
-                if (new Date(endDate) < new Date(startDate)) return showError("End date must be after or equal to the start date.");
+                if (new Date(endDate) < new Date(startDate)) return showError(
+                    "End date must be after or equal to the start date.");
                 if (!scope) return showError("Please select a discount scope.");
-                if (percent === "" || isNaN(percent) || percent < 0 || percent > 100) return showError("Percent must be a number between 0 and 100.");
-                if (maxDiscount && (isNaN(maxDiscount) || maxDiscount < 0)) return showError("Max discount must be a positive number.");
-                if (scope === "product" && (!productId || isNaN(productId))) return showError("Please select a valid product.");
-                if (scope === "category" && (!categoryId || isNaN(categoryId))) return showError("Please select a valid category.");
+                if (percent === "" || isNaN(percent) || percent < 0 || percent > 100) return showError(
+                    "Percent must be a number between 0 and 100.");
+                if (maxDiscount && (isNaN(maxDiscount) || maxDiscount < 0)) return showError(
+                    "Max discount must be a positive number.");
+                if (scope === "product" && (!productId || isNaN(productId))) return showError(
+                    "Please select a valid product.");
+                if (scope === "category" && (!categoryId || isNaN(categoryId))) return showError(
+                    "Please select a valid category.");
                 if (scope === "ordersOverAmount" && (!orderAmount || isNaN(orderAmount) || orderAmount <= 0)) {
                     return showError("Minimum Order amount must be a positive number.");
                 }
                 return true;
             }
-    
+
             form.addEventListener("submit", function(event) {
                 event.preventDefault();
                 if (validateForm()) {
@@ -547,5 +587,4 @@
             });
         });
     </script>
-    
- @endsection    
+@endsection

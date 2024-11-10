@@ -48,24 +48,57 @@ class Discount extends Model
             ->whereDate('end_date', '>=', Carbon::now());
     }
 
-    // helpers 
-
-    // Check if the discount is valid for a product/category or order
-    public function isApplicable($scopeType, $scopeId = null, $orderAmount = null)
+    /*helpers*/
+    public static function checkForOverlappingDiscounts($newDiscountData)
     {
-        if ($this->scope === 'all_orders') {
-            return true;
+        $overlaps = [];
+
+        $existingDiscounts = self::where('scope', $newDiscountData['scope'])
+            ->where(function ($query) use ($newDiscountData) {
+                $query->whereDate('start_date', '<=', $newDiscountData['end_date'])
+                      ->whereDate('end_date', '>=', $newDiscountData['start_date']);
+            })
+            ->get();
+
+        foreach ($existingDiscounts as $discount) {
+            if ($discount->scope == 'all_orders' || $discount->scope == 'order') {
+                if (self::isDateRangeOverlap($discount, $newDiscountData)) {
+                    $overlaps[] = $discount;
+                }
+            } elseif ($discount->scope == 'category') {
+                if (self::isCategoryOverlap($discount, $newDiscountData)) {
+                    $overlaps[] = $discount;
+                }
+            } elseif ($discount->scope == 'product') {
+                if ($discount->product_id == $newDiscountData['product_id']) {
+                    $overlaps[] = $discount;
+                }
+            }
         }
 
-        if ($this->scope === 'order' && $orderAmount >= $this->min_order_amount) {
-            return true;
+        return $overlaps;
+    }
+
+    // Helper to check if two date ranges overlap
+    public static function isDateRangeOverlap($existingDiscount, $newDiscountData)
+    {
+        return !($newDiscountData['end_date'] < $existingDiscount->start_date || $newDiscountData['start_date'] > $existingDiscount->end_date);
+    }
+
+    // Helper to check if a discount in the same category has overlapping products
+    public static function isCategoryOverlap($existingDiscount, $newDiscountData)
+    {
+        if ($newDiscountData['scope'] !== 'category') {
+            return false;
         }
 
-        if ($this->scope === $scopeType && $this->{$scopeType . '_id'} == $scopeId) {
-            return true;
-        }
+        // Fetch products under the specified category
+        $categoryProducts = \DB::table('product_categories')
+            ->where('category_id', $existingDiscount->category_id)
+            ->pluck('product_id')
+            ->toArray();
 
-        return false;
+        return in_array($newDiscountData['product_id'], $categoryProducts);
     }
 
 
