@@ -2,134 +2,152 @@
 
 namespace App\Http\Controllers\Seller;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\CouponRequest;
-use Illuminate\Http\Request;
-use App\Models\Coupon;
 use Auth;
+use App\Models\Tour;
+use App\Models\Coupon;
+use App\Models\Category;
+use App\Models\Product;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Http\Requests\Coupons\CouponStoreRequest;
 
 class CouponController extends Controller
 {
-    public function __construct() {
-        // Staff Permission Check
-        $this->middleware(['permission:seller_view_all_coupons'])->only('index');
-        $this->middleware(['permission:seller_add_coupon'])->only('create');
-        $this->middleware(['permission:seller_edit_coupon'])->only('edit');
-        $this->middleware(['permission:seller_edit_coupon'])->only('destroy');
-    }
-
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index(Request $request)
     {
-        $coupons = Coupon::where('user_id', Auth::user()->owner_id)->orderBy('id','desc')->get();
-        return view('seller.coupons.index', compact('coupons'));
+        $scope = $request->query('scope', 'product');
+        $coupons = Coupon::where('scope', $scope)->get();
+        $columnHeader = '';
+        $columnValue = '';
+
+        switch ($scope) {
+            case 'product':
+                $columnHeader = 'Product Name';
+                $columnValue = fn($coupon) => $coupon->product ? $coupon->product->name : 'N/A';
+                break;
+            case 'category':
+                $columnHeader = 'Category';
+                $columnValue = fn($coupon) => $coupon->category ? $coupon->category->name : 'N/A';
+                break;
+            case 'ordersOverAmount':
+                $columnHeader = 'Minimum Amount';
+                $columnValue = fn($coupon) => $coupon->min_order_amount ?? 'N/A';
+                break;
+            case 'allOrders':
+                $columnHeader = 'All Orders';
+                $columnValue = fn($coupon) => '-';
+                break;
+            default:
+                $columnHeader = 'Product Name';
+                $columnValue = fn($coupon) => $coupon->product ? $coupon->product->name : 'N/A';
+                break;
+        }
+
+        return view('seller.promotions.index', compact('coupons', 'scope', 'columnHeader', 'columnValue'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        return view('seller.coupons.create');
+        $categories = Category::all();
+        $products = Product::where('user_id', Auth::id())->get();
+        $nestedCategories = $this->buildTree($categories);
+        return view('seller.promotions.create', compact('categories', 'products', 'nestedCategories'));
     }
 
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(CouponRequest $request)
+    public function store(CouponStoreRequest $request)
     {
-        $user_id = Auth::user()->owner_id;
-        Coupon::create($request->validated() + [
-            'user_id' => $user_id,
+        $validatedData = $request->validated();
+        $validatedData['user_id'] = auth()->id();
+
+        if (!$request->has('ignore_overlap') || !$request->ignore_overlap) {
+            $overlappingCoupons = Coupon::checkForOverlappingCoupons($validatedData);
+    
+            if (count($overlappingCoupons) > 0) {
+                return response()->json([
+                    'status' => 'overlap',
+                    'overlappingCoupons' => $overlappingCoupons,
+                ]);
+            }
+        }
+
+        Coupon::create($validatedData);
+        $scope = $validatedData['scope'];
+        return response()->json([
+            'status' => 'success',
+            'redirectUrl' => route('seller.coupons.index', ['scope' => $scope]),
+            'message' => 'Coupon created successfully.'
         ]);
-
-        flash(translate('Coupon has been saved successfully.'))->success();
-        return redirect()->route('seller.coupon.index');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
-        $coupon = Coupon::findOrFail(decrypt($id));
-        return view('seller.coupons.edit', compact('coupon'));
+        $coupon = Coupon::findOrFail($id);
+        return response()->json($coupon);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(CouponRequest $request, Coupon $coupon)
+    public function update(CouponStoreRequest  $request, $id)
     {
-        $coupon->update($request->validated());
-
-        flash(translate('Coupon has been updated successfully'))->success();
-        return redirect()->route('seller.coupon.index');
+        $validatedData = $request->validated();
+        $coupon = Coupon::findOrFail($id);
+        $coupon->update($validatedData);
+        return response()->json(['success' => true, 'message' => 'Coupon updated successfully.']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        Coupon::destroy($id);
-        flash(translate('Coupon has been deleted successfully'))->success();
-        return redirect()->route('seller.coupon.index');
+        $coupon = Coupon::findOrFail($id);
+        $coupon->delete();
+        return response()->json(['success' => true, 'message' => 'Coupon deleted successfully.']);
     }
 
-    public function get_coupon_form(Request $request)
+    private function buildTree($categories, $parentId = 0, $path = "")
     {
-        if($request->coupon_type == "product_base") {
-            $products = filter_products(\App\Models\Product::where('user_id', Auth::user()->owner_id))->get();
-            return view('partials.coupons.product_base_coupon', compact('products'));
+        $branch = [];
+
+        foreach ($categories as $category) {
+            if ($category->parent_id == $parentId) {
+                $newPath = $path ? "$path/{$category->name}" : $category->name;
+                $category->path = $newPath;
+
+                $children = $this->buildTree($categories, $category->id, $newPath);
+                $category->isLeaf = !is_array($children) || count($children) === 0;
+                if ($children) {
+                    $category->children = $children;
+                }
+
+                $branch[] = $category;
+            }
         }
-        elseif($request->coupon_type == "cart_base"){
-            return view('partials.coupons.cart_base_coupon');
-        }
+
+        return $branch;
     }
 
-    public function get_coupon_form_edit(Request $request)
+    public function getProductsByCategory(Request $request)
     {
-        if($request->coupon_type == "product_base") {
-            $coupon = Coupon::findOrFail($request->id);
-            $products = filter_products(\App\Models\Product::where('user_id', Auth::user()->owner_id))->get();
-            return view('partials.coupons.product_base_coupon_edit',compact('coupon', 'products'));
-        }
-        elseif($request->coupon_type == "cart_base"){
-            $coupon = Coupon::findOrFail(id: $request->id);
-            return view('partials.coupons.cart_base_coupon_edit',compact('coupon'));
-        }
+        $categoryId = $request->query('category_id');
+
+        $products = Product::where('user_id', Auth::id())
+            ->whereHas('categories', function ($query) use ($categoryId) {
+                $query->where('id', $categoryId);
+            })
+            ->get();
+
+        return response()->json(['products' => $products]);
+    }
+
+    public function getCategoriesForProductScope()
+    {
+        $products = Product::where('user_id', Auth::id())->get();
+        $productCategoryIds = $products->pluck('categories')->flatten()->pluck('id')->unique();
+
+        $categories = Category::whereIn('id', $productCategoryIds)
+            ->orWhereIn('id', function ($query) use ($productCategoryIds) {
+                $query->select('parent_id')
+                    ->from('categories')
+                    ->whereIn('id', $productCategoryIds);
+            })
+            ->get();
+
+        return response()->json(['categories' => $categories]);
     }
 }

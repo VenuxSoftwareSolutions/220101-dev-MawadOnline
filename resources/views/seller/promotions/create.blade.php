@@ -361,15 +361,17 @@
                             <div class="form-label"></div>
                             <div style="display: flex; align-items: center; width: 250px; margin: 0 auto; border: 1px dashed #ccc; padding: 10px; text-align: center;">
                                 <span id="generatedCode" style="text-align:center;"></span>
+                                
                                 <button id="copyButton" onclick="copyToClipboard()" style="background: none; border: none; cursor: pointer; display: none; margin-left: 10px;">
                                     <i class="fas fa-copy" aria-hidden="true"></i>
                                 </button>
                             </div>
                         </div>
-                    
+                        <input type="hidden" name="code" id="code">
+
                         <div class="col-md-12 text-center">
                             <button type="button" id="generateButton" class="btn btn-dark-custom" onclick="generateCouponCode()">Generate Coupon</button>
-                            <button type="button" id="activateButton" class="btn btn-dark-custom" onclick="activateCoupon()" style="display: none;">Activate Coupon</button>
+                            <button type="button" id="activateButton" class="btn btn-dark-custom"  style="display: none;">Activate Coupon</button>
                         </div>
                     </div>
                     
@@ -424,6 +426,7 @@
                 code += characters.charAt(Math.floor(Math.random() * characters.length));
             }
             document.getElementById('generatedCode').textContent = code;
+            document.getElementById('code').value = code; 
             document.getElementById('copyButton').style.display = 'inline-block';
             document.getElementById('activateButton').style.display = 'inline-block';
             document.getElementById('generateButton').style.display = 'none';
@@ -451,6 +454,54 @@
                 const formAction = offerType === 'coupon' ? "{{ route('seller.coupons.store') }}" : "{{ route('seller.discounts.store') }}";
                 document.getElementById('discountForm').setAttribute('action', formAction);
         }
+        function submitForm(ignoreOverlap, type) {
+                const formData = new FormData($('#discountForm')[0]);
+                
+                if (ignoreOverlap) {
+                    formData.append('ignore_overlap', true);
+                }
+
+                const url = type === 'coupon' 
+                    ? "{{ route('seller.coupons.store') }}" 
+                    : "{{ route('seller.discounts.store') }}";
+
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        if (response.status === 'overlap') {
+                            showOverlapModal(response.overlappingDiscounts);
+                        } else if (response.status === 'success') {
+                            window.location.href = response.redirectUrl;
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred.');
+                    }
+                });
+        }
+        function showOverlapModal(overlappingDiscounts) {
+            const ul = $('#overlappingDiscountList');
+            ul.empty();
+
+            overlappingDiscounts.forEach(function(discount) {
+                const startDate = new Date(discount.start_date).toISOString().slice(0, 10);
+                const endDate = new Date(discount.end_date).toISOString().slice(0, 10);
+                ul.append(`
+                    <li class="list-group-item">
+                        <strong>Scope:</strong> ${discount.scope} 
+                        <br>
+                        <strong>From:</strong> ${startDate} <strong>to</strong> ${endDate}
+                    </li>
+                `);
+            });
+
+            $('#modal-discount-overlap').modal('show');
+        }
+
         $(document).ready(function() {
             const form = document.getElementById("discountForm");
             const scopeInput = document.getElementById("scope");
@@ -608,7 +659,6 @@
             }
 
             function validateForm() {
-                const discountType = form.querySelector("input[name='discountType']:checked");
                 const startDate = form.querySelector("input[name='start_date']").value;
                 const endDate = form.querySelector("input[name='end_date']").value;
                 const scope = document.getElementById("scope").value;
@@ -617,8 +667,9 @@
                 const productId = form.querySelector("select[name='product_id']").value;
                 const categoryId = form.querySelector("select[name='category_id']").value;
                 const orderAmount = form.querySelector("#order_amount").value;
+                const generatedCode = document.getElementById("code").value;
+                const offerType = document.querySelector('input[name="offerType"]:checked').value;
 
-                if (!discountType) return showError("Discount type is required.");
                 if (!startDate) return showError("Start date is required.");
                 if (!endDate) return showError("End date is required.");
                 if (new Date(endDate) < new Date(startDate)) return showError(
@@ -634,6 +685,9 @@
                     "Please select a valid category.");
                 if (scope === "ordersOverAmount" && (!orderAmount || isNaN(orderAmount) || orderAmount <= 0)) {
                     return showError("Minimum Order amount must be a positive number.");
+                }
+                if (offerType === "coupon" && (!generatedCode)) {
+                    return showError ("Please generate a coupon code before submitting.");
                 }
                 return true;
             }
@@ -655,47 +709,21 @@
                 $('#modal-discount-overlap').modal('hide'); 
                 submitDiscountForm(true); 
             });
+            $('#activateButton').on('click', function() {
+                if (validateForm()) {
+                    submitCouponForm(false);
+                }
+            });
 
             function submitDiscountForm(ignoreOverlap) {
-                const formData = new FormData($('#discountForm')[0]);
+                submitForm(ignoreOverlap, 'discount');
 
-                if (ignoreOverlap) {
-                    formData.append('ignore_overlap', true);
-                }
-
-                $.ajax({
-                    url: $('#discountForm').attr('action'),
-                    method: 'POST',
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    success: function(response) {
-                        if (response.status === 'overlap') {
-                            const ul = $('#overlappingDiscountList');
-                            ul.empty();
-
-                            response.overlappingDiscounts.forEach(function(discount) {
-                                const startDate = new Date(discount.start_date).toISOString().slice(0, 10);
-                                const endDate = new Date(discount.end_date).toISOString().slice(0, 10);
-                                ul.append(`
-                                    <li class="list-group-item">
-                                        <strong>Scope:</strong> ${discount.scope} 
-                                        <br>
-                                        <strong>From:</strong> ${startDate} <strong>to</strong> ${endDate}
-                                    </li>
-                                `);
-                            });
-
-                            $('#modal-discount-overlap').modal('show');
-                        } else if (response.status === 'success') {
-                            window.location.href = response.redirectUrl;
-                        }
-                    },
-                    error: function() {
-                        alert('An error occurred.');
-                    }
-                });
             }
+            function submitCouponForm(ignoreOverlap) {
+                submitForm(ignoreOverlap, 'coupon');
+            }
+
+            
 
             discountRadio.addEventListener('change', toggleCouponFields);
             couponRadio.addEventListener('change', toggleCouponFields);
@@ -707,6 +735,7 @@
                     DiscountContainer.style.display = 'none';
                 } else {
                     couponCodeContainer.style.display = 'none';
+                    DiscountContainer.style.display = 'block';
                 }
             }
 
