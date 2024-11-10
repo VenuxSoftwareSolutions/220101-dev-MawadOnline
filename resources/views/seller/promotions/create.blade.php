@@ -264,13 +264,13 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <div class="form-check">
-                                <input class="attributes" type="radio" name="discountType" id="discount" checked>
+                                <input class="attributes" type="radio" name="offerType" value="discount" onclick="updateFormAndUrl()"  id="discount" checked>
                                 <label class="form-check-label" for="discount">Discount</label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-check">
-                                <input class="attributes" type="radio" name="discountType" id="coupons">
+                                <input class="attributes" type="radio" name="offerType" value="coupon" onclick="updateFormAndUrl()" id="coupons">
                                 <label class="form-check-label" for="coupons">Coupons</label>
                             </div>
                         </div>
@@ -437,6 +437,20 @@
             document.execCommand('copy');   
             document.body.removeChild(textarea);
         }
+        function updateFormAndUrl(selectedScope = null) {
+                const offerType = document.querySelector('input[name="offerType"]:checked').value;
+                const baseUrl = offerType === 'coupon' ? '/vendor/coupons/create' : '/vendor/discounts/create';
+                const scope = selectedScope || new URLSearchParams(window.location.search).get('scope');
+                
+                const url = new URL(window.location.origin + baseUrl);
+                if (scope) {
+                    url.searchParams.set('scope', scope);
+                }
+                window.history.replaceState(null, '', url);
+
+                const formAction = offerType === 'coupon' ? "{{ route('seller.coupons.store') }}" : "{{ route('seller.discounts.store') }}";
+                document.getElementById('discountForm').setAttribute('action', formAction);
+        }
         $(document).ready(function() {
             const form = document.getElementById("discountForm");
             const scopeInput = document.getElementById("scope");
@@ -564,11 +578,11 @@
                         'active'));
                     this.classList.add('active');
 
-                    const url = new URL(window.location);
-                    url.searchParams.set('scope', scope);
-                    window.history.replaceState(null, '', url);
+                    updateFormAndUrl(scope);
+
                 });
             });
+           
 
             const urlParams = new URLSearchParams(window.location.search);
             const selectedScope = urlParams.get('scope');
@@ -582,6 +596,7 @@
                     }
                 });
             }
+            updateFormAndUrl(selectedScope);
 
             function showError(message) {
                 Swal.fire({
