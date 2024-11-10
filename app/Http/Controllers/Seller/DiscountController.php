@@ -51,7 +51,7 @@ class DiscountController extends Controller
         $categories = Category::all();
         $products = Product::where('user_id', Auth::id())->get();
         $nestedCategories = $this->buildTree($categories);
-        return view('seller.promotions.create', compact('categories', 'products','nestedCategories'));
+        return view('seller.promotions.create', compact('categories', 'products', 'nestedCategories'));
     }
 
     public function store(DiscountStoreRequest $request)
@@ -82,26 +82,56 @@ class DiscountController extends Controller
         $discount->delete();
         return response()->json(data: ['success' => true, 'message' => 'Discount deleted successfully.']);
     }
+
     private function buildTree($categories, $parentId = 0, $path = "")
     {
         $branch = [];
-
+    
         foreach ($categories as $category) {
             if ($category->parent_id == $parentId) {
                 $newPath = $path ? "$path/{$category->name}" : $category->name;
                 $category->path = $newPath;
-                $category->isLeaf = !$categories->where('parent_id', $category->id)->count();
+    
                 $children = $this->buildTree($categories, $category->id, $newPath);
+                $category->isLeaf = !is_array($children) || count($children) === 0;    
                 if ($children) {
                     $category->children = $children;
                 }
+    
                 $branch[] = $category;
             }
         }
-
-        return $branch;
-    }    
     
+        return $branch;
+    }
+    public function getProductsByCategory(Request $request)
+    {
+        $categoryId = $request->query('category_id');
         
+        $products = Product::where('user_id', Auth::id())
+            ->whereHas('categories', function ($query) use ($categoryId) {
+                $query->where('id', $categoryId);
+            })
+            ->get();
+
+        return response()->json(['products' => $products]);
+    }
+
+    public function getCategoriesForProductScope()
+{
+    $products = Product::where('user_id', Auth::id())->get();
+    $productCategoryIds = $products->pluck('categories')->flatten()->pluck('id')->unique();
+
+    $categories = Category::whereIn('id', $productCategoryIds)
+        ->orWhereIn('id', function ($query) use ($productCategoryIds) {
+            $query->select('parent_id')
+                  ->from('categories')
+                  ->whereIn('id', $productCategoryIds);
+        })
+        ->get();
+
+    return response()->json(['categories' => $categories]);
+}
+
 }
 

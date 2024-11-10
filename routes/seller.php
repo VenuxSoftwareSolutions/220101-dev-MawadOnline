@@ -120,6 +120,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
     Route::resource('discounts', DiscountController::class)->except(['show']);
     Route::put('/{id}', [DiscountController::class, 'update'])->name('update'); // PUT route for updates
     Route::delete('/{id}', [DiscountController::class, 'destroy'])->name('destroy'); // DELETE route for deletion
+    Route::get('/get-products-by-category', [DiscountController::class, 'getProductsByCategory'])->name('discounts.getproductbycategory');;
+    Route::get('/get-categories-for-product-scope', [DiscountController::class, 'getCategoriesForProductScope'])
+    ->name('discounts.getCategoriesForProductScope');
 
     Route::post('/discounts/bulk-delete', [DiscountController::class, 'bulkDelete'])->name('discounts.bulk-delete');
     Route::post('/discounts/toggle-status', [DiscountController::class, 'toggleStatus'])->name('discounts.toggle-status');

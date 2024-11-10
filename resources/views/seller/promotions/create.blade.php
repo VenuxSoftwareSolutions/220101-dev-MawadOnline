@@ -297,14 +297,25 @@
                                 @endforeach
                             </select>
                         </div> --}}
-                        <div class="col-md-6 mb-3">
-                            <label for="category" class="form-label">Category</label>
-                            <select id="category"  name="category_id" multiple="multiple">
+                        <div class="col-md-6 mb-3" id="multiTreeContainer">
+                            <label for="multiTreeCategory" class="form-label">Category</label>
+                            <select id="multiTreeCategory" name="category_id" multiple="multiple">
                                 @foreach ($nestedCategories as $category)
                                     @include('seller.promotions.partials.category_option', ['category' => $category])
                                 @endforeach
                             </select>
                         </div>
+                        
+                        <div class="col-md-6 mb-3" id="productCategoryContainer" style="display: none;">
+                            <label for="productCategory" class="form-label">Category</label>
+                            <select class="form-control aiz-selectpicker" id="productCategory" name="category_id">
+                                <option value="" selected>Select category</option>
+                                @foreach ($categories as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        
                         
 
                         <div class="col-md-6 mb-3">
@@ -361,44 +372,91 @@
         $(document).ready(function() {
             const form = document.getElementById("discountForm");
             const scopeInput = document.getElementById("scope");
-            const categorySelect = document.getElementById("category");
             const productSelect = document.getElementById("product_id");
             const orderAmountInput = document.getElementById('order_amount');
+            const multiTreeContainer = document.getElementById("multiTreeContainer");
+
+            const getProductByCategoryUrl = @json(route('seller.discounts.getproductbycategory'));
+            const categorybyproduct = @json(route('seller.discounts.getCategoriesForProductScope'));
     
-            /*multi tree selection params*/
             let params = {
-                sortable: true,
-                searchable: true,
-                searchParams: ['section', 'text'],
-                onChange: function(allSelectedItems, addedItems, removedItems) {
-                    addedItems.forEach(item => {
-                        if (!$(item).data('leaf')) {
-                            $(item).prop('selected', false); 
-                        }
-                    });
-                },
-                startCollapsed: true,
-                maxSelections: 1,
-                freeze: true // Initial state; will be updated based on scope
-            };
-    
-            $("select#category").treeMultiselect(params);
-            
+        sortable: true,
+        searchable: true,
+        searchParams: ['section', 'text'],
+        onChange: function(allSelectedItems, addedItems, removedItems) {
+            addedItems.forEach(item => {
+                if (!$(item).data('leaf')) {
+                    $(item).prop('selected', false); 
+                }
+            });
+        },
+        startCollapsed: true,
+        maxSelections: 1,
+        freeze: true // Initially frozen for other scopes
+    };
+    $("select#multiTreeCategory").treeMultiselect(params);
+
     
             function updateMultiTreeBasedOnScope(scope) {
-
                 $(".tree-multiselect").remove();
-                params.freeze = (scope != "category");
-
-                $("select#category").treeMultiselect(params)[0].reload();
-           
-            }
-       
     
-            /* Function to update field state */
+                if (scope === "product" || scope === "category") {
+                    params.freeze = false;
+                } else {
+                    params.freeze = true;
+                }
+    
+                if (scope === "product") {
+                    multiTreeContainer.style.display = "none";
+                    productCategoryContainer.style.display = "block";
+
+                    $.ajax({
+                        url: categorybyproduct,
+                        type: 'GET',
+                        success: function(response) {
+                            $("#productCategory").empty(); 
+                            $("#productCategory").append('<option value="" selected>Select category</option>');
+
+
+                            $.each(response.categories, function(index, category) {
+                                $("#productCategory").append('<option value="' + category.id + '">' + category.name + '</option>');
+                            });
+    
+                            $("#productCategory").treeMultiselect(params);
+                        }
+                    });
+                } else {
+                    multiTreeContainer.style.display = "block";
+                    productCategoryContainer.style.display = "none";
+                    params.freeze = (scope === "ordersOverAmount" || scope === "all orders");
+                    $("select#multiTreeCategory").treeMultiselect(params); // Update freeze setting
+
+                }
+            }
+    
+            $('#category').on('change', function() {
+                var selectedCategoryId = $(this).val();
+    
+                $.ajax({
+                    url: getProductByCategoryUrl,
+                    type: 'GET',
+                    data: { category_id: selectedCategoryId },
+                    success: function(response) {
+                        var productSelect = $('#product_id');
+                        productSelect.empty();
+                        productSelect.append('<option value="" selected>Select product</option>');
+    
+                        $.each(response.products, function(index, product) {
+                            productSelect.append('<option value="' + product.id + '">' + product.name + '</option>');
+                        });
+    
+                        productSelect.selectpicker('refresh'); 
+                    }
+                });
+            });
+    
             function updateFieldState(scope) {
                 scopeInput.value = scope;
-                categorySelect.disabled = true;
                 productSelect.disabled = true;
                 orderAmountInput.disabled = true;
     
@@ -406,7 +464,6 @@
                 orderAmountInput.value = '';
     
                 if (scope === "category") {
-                    categorySelect.disabled = false;
                     productSelect.value = "";
                     orderAmountInput.value = "";
                 } else if (scope === "product") {
@@ -491,6 +548,4 @@
         });
     </script>
     
-    
-   
-@endsection
+ @endsection    
