@@ -14,9 +14,9 @@ return [
     'followed_vendors' => 'البائعين المتابعين',
     'orders_overview_management'=> 'البائعين المتابعين',
     'bulk_upload' => 'تحميل دفعة واحدة',
-    'Deals' => "العروض",
-    'Deals_list' => "قائمة العروض",
-    'Deals_create' => "إضافة عرض"
+    'Offers' => "العروض",
+    'Offers_list' => "قائمة العروض",
+    'Offers_create' => "إضافة عرض"
     
 
 
