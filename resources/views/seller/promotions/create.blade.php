@@ -275,6 +275,7 @@
                             </div>
                         </div>
                     </div>
+    
 
                     <div class="row">
                         <div class="col-md-6">
@@ -355,7 +356,25 @@
                     </div>
                     <input type="hidden" name="scope" id="scope" value="">
 
-                    <div class="text-center">
+                    <div class="row" id="couponCodeContainer" style="display: none;">
+                        <div class="col-md-12 mb-3">
+                            <div class="form-label"></div>
+                            <div style="display: flex; align-items: center; width: 250px; margin: 0 auto; border: 1px dashed #ccc; padding: 10px; text-align: center;">
+                                <span id="generatedCode" style="text-align:center;"></span>
+                                <button id="copyButton" onclick="copyToClipboard()" style="background: none; border: none; cursor: pointer; display: none; margin-left: 10px;">
+                                    <i class="fas fa-copy" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                    
+                        <div class="col-md-12 text-center">
+                            <button type="button" id="generateButton" class="btn btn-dark-custom" onclick="generateCouponCode()">Generate Coupon</button>
+                            <button type="button" id="activateButton" class="btn btn-dark-custom" onclick="activateCoupon()" style="display: none;">Activate Coupon</button>
+                        </div>
+                    </div>
+                    
+    
+                    <div id="DiscountContainer" class="text-center">
                         <button type="submit" class="btn btn-dark-custom">Add Discount</button>
                     </div>
                 </form>
@@ -364,6 +383,7 @@
     </div>
 
     
+
 <div id="modal-discount-overlap" class="modal fade">
     <div class="modal-dialog modal-md modal-dialog-centered">
         <div class="modal-content">
@@ -397,15 +417,39 @@
     <script src="{{ static_asset('assets/js/jquery.tree-multiselect.min.js') }}"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script>
+        function generateCouponCode() {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let code = '';
+            for (let i = 0; i < 10; i++) {
+                code += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            document.getElementById('generatedCode').textContent = code;
+            document.getElementById('copyButton').style.display = 'inline-block';
+            document.getElementById('activateButton').style.display = 'inline-block';
+            document.getElementById('generateButton').style.display = 'none';
+        }
+        function copyToClipboard() {
+            const code = document.getElementById("generatedCode").textContent;
+            const textarea = document.createElement('textarea');
+            textarea.value = code;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');   
+            document.body.removeChild(textarea);
+        }
         $(document).ready(function() {
             const form = document.getElementById("discountForm");
             const scopeInput = document.getElementById("scope");
             const productSelect = document.getElementById("product_id");
             const orderAmountInput = document.getElementById('order_amount');
             const multiTreeContainer = document.getElementById("multiTreeContainer");
-
             const getProductByCategoryUrl = @json(route('seller.discounts.getproductbycategory'));
             const categorybyproduct = @json(route('seller.discounts.getCategoriesForProductScope'));
+            const discountRadio = document.getElementById('discount');
+            const couponRadio = document.getElementById('coupons');
+            const couponCodeContainer = document.getElementById('couponCodeContainer');
+            const DiscountContainer = document.getElementById('DiscountContainer');
+
 
             let params = {
                 sortable: true,
@@ -638,8 +682,21 @@
                 });
             }
 
+            discountRadio.addEventListener('change', toggleCouponFields);
+            couponRadio.addEventListener('change', toggleCouponFields);
 
+            function toggleCouponFields() {
 
+                if (couponRadio.checked) {
+                    couponCodeContainer.style.display = 'block';
+                    DiscountContainer.style.display = 'none';
+                } else {
+                    couponCodeContainer.style.display = 'none';
+                }
+            }
+
+            toggleCouponFields();
+           
         });
     </script>
 @endsection
