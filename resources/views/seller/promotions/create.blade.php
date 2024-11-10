@@ -363,39 +363,39 @@
         </div>
     </div>
 
-    <div id="modal-discount-overlap" class="modal fade">
-        <div class="modal-dialog modal-md modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title h6">{{ translate('Discount Overlap Confirmation') }}</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                </div>
-                <div class="modal-body text-center">
-                    <p class="mt-1 fs-14">{{ translate('Please note that this range overlaps with the existing discounts listed below.') }}</p>
-                    <p class="fs-14">{{ translate('If you proceed, the greater discount will be applied.') }}</p>
-                    
-                    <ul class="list-group mb-3" id="overlapping-discounts-list">
-                        <li class="list-group-item">
-                            <strong>{{ translate('Discount Name') }}</strong> - {{ translate('Date Range') }}
-                        </li>
-                    </ul>
     
-                    <button type="button" class="btn btn-secondary rounded-0 mt-2"
-                        data-dismiss="modal">{{ translate('Cancel') }}</button>
-                    <button type="button" class="btn btn-primary rounded-0 mt-2"
-                        id="confirmProceedBtn">{{ translate('Proceed') }}</button>
-                </div>
+<div id="modal-discount-overlap" class="modal fade">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title h6">{{ translate('Discount Overlap Confirmation') }}</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <div class="modal-body text-center">
+                <p class="mt-1 fs-14">{{ translate('Please note that this range overlaps with the existing discounts listed below.') }}</p>
+                <p class="fs-14">{{ translate('If you proceed, the greater discount will be applied.') }}</p>
+                
+                <ul  id="overlappingDiscountList" class="list-group mb-3" >
+                    <li class="list-group-item">
+                    </li>
+                </ul>
+
+                <button type="button" class="btn btn-secondary rounded-0 mt-2"
+                    data-dismiss="modal">{{ translate('Cancel') }}</button>
+                <button type="button" class="btn btn-primary rounded-0 mt-2"
+                    id="confirmProceedBtn">{{ translate('Proceed') }}</button>
             </div>
         </div>
     </div>
-         
+</div>
+
+             
 @endsection
 
 @section('script')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ static_asset('assets/js/jquery.tree-multiselect.min.js') }}"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-
     <script>
         $(document).ready(function() {
             const form = document.getElementById("discountForm");
@@ -579,12 +579,67 @@
                 return true;
             }
 
-            form.addEventListener("submit", function(event) {
+           /* form.addEventListener("submit", function(event) {
                 event.preventDefault();
                 if (validateForm()) {
                     form.submit();
                 }
+            });*/
+            $('#discountForm').on('submit', function(e) {
+                e.preventDefault();
+                if (validateForm()) {
+                    submitDiscountForm(false); 
+                }
             });
+
+            $('#confirmProceedBtn').on('click', function() {
+                $('#modal-discount-overlap').modal('hide'); 
+                submitDiscountForm(true); 
+            });
+
+            function submitDiscountForm(ignoreOverlap) {
+                const formData = new FormData($('#discountForm')[0]);
+
+                if (ignoreOverlap) {
+                    formData.append('ignore_overlap', true);
+                }
+
+                $.ajax({
+                    url: $('#discountForm').attr('action'),
+                    method: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        if (response.status === 'overlap') {
+                            const ul = $('#overlappingDiscountList');
+                            ul.empty();
+
+                            response.overlappingDiscounts.forEach(function(discount) {
+                                const startDate = new Date(discount.start_date).toISOString().slice(0, 10);
+                                const endDate = new Date(discount.end_date).toISOString().slice(0, 10);
+                                ul.append(`
+                                    <li class="list-group-item">
+                                        <strong>Scope:</strong> ${discount.scope} 
+                                        <br>
+                                        <strong>From:</strong> ${startDate} <strong>to</strong> ${endDate}
+                                    </li>
+                                `);
+                            });
+
+                            $('#modal-discount-overlap').modal('show');
+                        } else if (response.status === 'success') {
+                            window.location.href = response.redirectUrl;
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred.');
+                    }
+                });
+            }
+
+
+
         });
     </script>
 @endsection

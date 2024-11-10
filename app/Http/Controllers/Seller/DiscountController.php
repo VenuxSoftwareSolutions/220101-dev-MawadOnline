@@ -58,10 +58,28 @@ class DiscountController extends Controller
     {
         $validatedData = $request->validated();
         $validatedData['user_id'] = auth()->id();
+        $overlappingDiscounts = Discount::checkForOverlappingDiscounts($validatedData);
+        
+        if (!$request->has('ignore_overlap') || !$request->ignore_overlap) {
+            $overlappingDiscounts = Discount::checkForOverlappingDiscounts($validatedData);
+    
+            if (count($overlappingDiscounts) > 0) {
+                return response()->json([
+                    'status' => 'overlap',
+                    'overlappingDiscounts' => $overlappingDiscounts,
+                ]);
+            }
+        }
+    
+       
+    
         Discount::create($validatedData);
         $scope = $validatedData['scope'];
-        return redirect()->route('seller.discounts.index', ['scope' => $scope])
-            ->with('success', 'Discount created successfully.');
+        return response()->json([
+            'status' => 'success',
+            'redirectUrl' => route('seller.discounts.index', ['scope' => $scope]),
+            'message' => 'Discount created successfully.'
+        ]);
     }
 
     public function edit($id)
