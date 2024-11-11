@@ -113,11 +113,11 @@
         <!-- Tabs for Discounts and Coupons -->
         <ul class="nav nav-tabs mb-3" id="discountCouponTabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="discounts-tab" data-bs-toggle="tab" data-bs-target="#discounts"
+                <button class="nav-link " id="discounts-tab" data-bs-toggle="tab" data-bs-target="#discounts"
                     type="button" role="tab">Discounts</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="coupons-tab" data-bs-toggle="tab" data-bs-target="#coupons" type="button"
+                <button class="nav-link active" id="coupons-tab" data-bs-toggle="tab" data-bs-target="#coupons" type="button"
                     role="tab">Coupons</button>
             </li>
         </ul>
@@ -497,13 +497,23 @@
     document.addEventListener('DOMContentLoaded', function() {
         const tabs = document.querySelectorAll('#discountCouponTabs .nav-link');
         const scopeCards = document.querySelectorAll('.tab-card');
+        const path = window.location.pathname;
+        const discountTab = document.getElementById('discounts-tab');
+        const couponTab = document.getElementById('coupons-tab');
+
+        if (path.includes('/vendor/coupons')) {
+            couponTab.classList.add('active');
+            discountTab.classList.remove('active');
+        } else if (path.includes('/vendor/discounts')) {
+            discountTab.classList.add('active');
+            couponTab.classList.remove('active');
+        }
 
         // Function to update URL based on selected tab and scope
         function updateURL(tab, scope) {
             const baseUrl = (tab === 'discounts') ? '/vendor/discounts' : '/vendor/coupons';
             window.location.href = `${baseUrl}?scope=${scope}`;
         }
-        // Set up tab listeners for Discounts and Coupons
         tabs.forEach(tab => {
             tab.addEventListener('click', function() {
                 const selectedTab = this.id === 'discounts-tab' ? 'discounts' : 'coupons';
