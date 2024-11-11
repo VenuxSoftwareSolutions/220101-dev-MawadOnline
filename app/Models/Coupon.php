@@ -36,6 +36,11 @@ class Coupon extends Model
         'discount_percentage', 'max_discount', 'start_date', 'end_date',
         'status', 'usage_limit'
     ];
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+    ];
+
 
     public function product()
     {

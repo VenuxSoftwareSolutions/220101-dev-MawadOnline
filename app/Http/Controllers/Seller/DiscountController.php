@@ -18,6 +18,7 @@ class DiscountController extends Controller
     public function index(Request $request)
     {
         $scope = $request->query('scope', 'product');
+        $isCoupon = $request->route()->uri === 'vendor/coupons';
         $discounts = Discount::where('scope', $scope)->get();
         $columnHeader = '';
         $columnValue = '';
@@ -43,7 +44,7 @@ class DiscountController extends Controller
                 $columnValue = fn($discount) => $discount->product ? $discount->product->name : 'N/A';
                 break;
         }
-        return view('seller.promotions.index', compact('discounts', 'scope', 'columnHeader', 'columnValue'));
+        return view('seller.promotions.index', compact('discounts', 'scope', 'columnHeader', 'columnValue','isCoupon'));
     }
 
     public function create()

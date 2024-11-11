@@ -16,6 +16,7 @@ class CouponController extends Controller
     public function index(Request $request)
     {
         $scope = $request->query('scope', 'product');
+        $isCoupon = $request->route()->uri === 'vendor/coupons';
         $coupons = Coupon::where('scope', $scope)->get();
         $columnHeader = '';
         $columnValue = '';
@@ -43,7 +44,7 @@ class CouponController extends Controller
                 break;
         }
 
-        return view('seller.promotions.index', compact('coupons', 'scope', 'columnHeader', 'columnValue'));
+        return view('seller.promotions.index', compact('coupons', 'scope', 'columnHeader', 'columnValue','isCoupon'));
     }
 
     public function create()

@@ -139,84 +139,96 @@
                     </ul>
                 </div>
             @endif
-            <!-- Discounts Table -->
-            <div class="tab-pane fade show active" id="discounts" role="tabpanel">
-                <h5>Discounts - {{ ucfirst($scope) }}</h5>
-                <table class="table table-bordered mt-3">
-                    <thead>
-                        <tr>
-                            <th>Status</th>
-                            <th>{{ $columnHeader }}</th>
-                            <th>Percent</th>
-                            <th>Max Discount</th>
-                            <th>Start Date</th>
-                            <th>Expires on</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($discounts as $discount)
+            @if(!$isCoupon)
+                 <!-- Discounts Table -->
+
+                <div class="tab-pane fade show active" id="discounts" role="tabpanel">
+                    <h5>Discounts - {{ ucfirst($scope) }}</h5>
+                    <table class="table table-bordered mt-3">
+                        <thead>
                             <tr>
-                                <td>
-                                    <label class="aiz-switch aiz-switch-success mb-0">
-                                        <input class="publsihed_product" type="checkbox" checked>
-                                        <span class=""> </span>
-                                    </label>
-                                </td>
-                                <td>{!! $columnValue($discount) !!}</td>
-                                <td>{{ $discount->discount_percentage }}%</td>
-                                <td>{{ $discount->max_discount }}</td>
-                                <td>{{ $discount->start_date->format('m/d/Y') }}</td>
-                                <td>{{ $discount->end_date->format('m/d/Y') }}</td>
-                                <td>
-                                    <a class="btn btn-sm edit-discount-btn" href="#" title="Edit" data-id="{{ $discount->id }}">
-                                        <img src="{{ asset('public/Edit.svg') }}">
-                                    </a>
-                                </td>
+                                <th>Status</th>
+                                <th>{{ $columnHeader }}</th>
+                                <th>Percent</th>
+                                <th>Max Discount</th>
+                                <th>Start Date</th>
+                                <th>Expires on</th>
+                                <th>Action</th>
                             </tr>
-                        @empty
+                        </thead>
+                        <tbody>
+                            @forelse ($discounts as $discount)
+                                <tr>
+                                    <td>
+                                        <label class="aiz-switch aiz-switch-success mb-0">
+                                            <input class="publsihed_product" type="checkbox" checked>
+                                            <span class=""> </span>
+                                        </label>
+                                    </td>
+                                    <td>{!! $columnValue($discount) !!}</td>
+                                    <td>{{ $discount->discount_percentage }}%</td>
+                                    <td>{{ $discount->max_discount }}</td>
+                                    <td>{{ $discount->start_date->format('m/d/Y') }}</td>
+                                    <td>{{ $discount->end_date->format('m/d/Y') }}</td>
+                                    <td>
+                                        <a class="btn btn-sm edit-discount-btn" href="#" title="Edit" data-id="{{ $discount->id }}">
+                                            <img src="{{ asset('public/Edit.svg') }}">
+                                        </a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="text-center">No discounts available for this scope.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Coupons Table -->
+            @else
+                <div class="tab-pane fade show active" id="coupons" role="tabpanel">
+                    <h5>Coupons - {{ ucfirst($scope) }}</h5>
+                    <table class="table table-bordered mt-3">
+                        <thead>
                             <tr>
-                                <td colspan="7" class="text-center">No discounts available for this scope.</td>
+                                <th>Status</th>
+                                <th>Coupon Code</th>
+                                <th>Discount</th>
+                                <th>Max Use</th>
+                                <th>Start Date</th>
+                                <th>Expires on</th>
+                                <th>Action</th>
                             </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-            
-            <!-- Coupons Table -->
-            <div class="tab-pane fade" id="coupons" role="tabpanel">
-                <h5>Coupons</h5>
-                <table class="table table-bordered mt-3">
-                    <thead>
-                        <tr>
-                            <th>Status</th>
-                            <th>Coupon Code</th>
-                            <th>Discount</th>
-                            <th>Max Use</th>
-                            <th>Start Date</th>
-                            <th>Expires on</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="toggle-switch text-center">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="statusToggle2">
-                                </div>
-                            </td>
-                            <td>COUPON2022</td>
-                            <td>15%</td>
-                            <td>50</td>
-                            <td>04/01/2022</td>
-                            <td>04/30/2022</td>
-                            <td class="text-center">
-                                <i class="bi bi-pencil action-icon"></i>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                            @forelse ($coupons as $coupon)
+                                <tr>
+                                    <td>
+                                        <label class="aiz-switch aiz-switch-success mb-0">
+                                            <input class="published_product" type="checkbox" checked>
+                                            <span></span>
+                                        </label>
+                                    </td>
+                                    <td>{{ $coupon->code }}</td>
+                                    <td>{{ $coupon->discount_percentage }}%</td>
+                                    <td>{{ $coupon->max_usage }}</td>
+                                    <td>{{ $coupon->start_date->format('m/d/Y') }}</td>
+                                    <td>{{ $coupon->end_date->format('m/d/Y') }}</td>
+                                    <td>
+                                        <a class="btn btn-sm edit-coupon-btn" href="#" title="Edit" data-id="{{ $coupon->id }}">
+                                            <img src="{{ asset('public/Edit.svg') }}">
+                                        </a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="text-center">No coupons available for this scope.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            @endif
         </div>
 
     </div>
