@@ -78,7 +78,7 @@
         <div class="row mb-4">
             <div class="col-md-3">
                 <div class="tab-card active" id="product-tab" data-bs-toggle="tab" data-bs-target="#product" role="tab" data-scope="product">
-                    <div class="tab-card-icon"><i class="bi bi-box"></i></div>
+                    <div class="tab-card-icon"><i class="fas fa-box"></i></div>
                     <div class="tab-card-title">Product</div>
                     <div class="tab-card-description">Click here to offer a discount on a certain product from your
                         inventory.</div>
@@ -86,7 +86,7 @@
             </div>
             <div class="col-md-3">
                 <div class="tab-card" id="category-tab" data-bs-toggle="tab" data-bs-target="#category" role="tab" data-scope="category">
-                    <div class="tab-card-icon"><i class="bi bi-tag"></i></div>
+                    <div class="tab-card-icon"><i class="fas fa-tag"></i></div>
                     <div class="tab-card-title">Category</div>
                     <div class="tab-card-description">Click here to offer a discount on a certain category from your
                         inventory.</div>
@@ -95,7 +95,7 @@
             <div class="col-md-3">
                 <div class="tab-card" id="ordersOverAmount-tab" data-bs-toggle="tab" data-bs-target="#ordersOverAmount" data-scope="ordersOverAmount"
                     role="tab">
-                    <div class="tab-card-icon"><i class="bi bi-cart4"></i></div>
+                    <div class="tab-card-icon"><i class="fas fa-card"></i></div>
                     <div class="tab-card-title">Orders over an Amount</div>
                     <div class="tab-card-description">Click here to offer a discount on all orders above a certain amount.
                     </div>
@@ -103,7 +103,7 @@
             </div>
             <div class="col-md-3">
                 <div class="tab-card" id="allOrders-tab" data-bs-toggle="tab" data-bs-target="#allOrders" role="tab" data-scope="allOrders">
-                    <div class="tab-card-icon"><i class="bi bi-basket"></i></div>
+                    <div class="tab-card-icon"><i class="fas fa-basket"></i></div>
                     <div class="tab-card-title">All Orders</div>
                     <div class="tab-card-description">Click here to offer a discount on all the orders.</div>
                 </div>
@@ -379,14 +379,29 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.tab-card').forEach(card => {
-            card.addEventListener('click', () => {
-                const scope = card.getAttribute('data-scope');
-                window.location.href = `?scope=${scope}`;
+        const tabs = document.querySelectorAll('#discountCouponTabs .nav-link');
+        const scopeCards = document.querySelectorAll('.tab-card');
+
+        // Function to update URL based on selected tab and scope
+        function updateURL(tab, scope) {
+            const baseUrl = (tab === 'discounts') ? '/vendor/discounts' : '/vendor/coupons';
+            window.location.href = `${baseUrl}?scope=${scope}`;
+        }
+        // Set up tab listeners for Discounts and Coupons
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const selectedTab = this.id === 'discounts-tab' ? 'discounts' : 'coupons';
+                const activeScope = document.querySelector('.tab-card.active').getAttribute('data-scope');
+                updateURL(selectedTab, activeScope);
             });
         });
-
-
+        scopeCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const activeTab = document.querySelector('#discountCouponTabs .nav-link.active').id.includes('discounts') ? 'discounts' : 'coupons';
+                const scope = card.getAttribute('data-scope');
+                updateURL(activeTab, scope);
+            });
+        });
         document.querySelectorAll('.edit-discount-btn').forEach(button => {
             button.addEventListener('click', function(event) {
                 event.preventDefault();
