@@ -183,24 +183,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        $is_shipping = true;
-
-        Validator::make($request->only(['from', 'to', 'from_shipping', 'to_shipping']), [
-            'from' => [
-                'required', 'array',
-                new NoPricingOverlap($request->input('from'), $request->input('to')),
-            ],
-            'to' => ['required', 'array'],
-            'from.*' => 'numeric',
-            'to.*' => 'numeric',
-            'from_shipping' => [
-                'required', 'array',
-                new NoPricingOverlap($request->input('from_shipping'), $request->input('to_shipping'), $is_shipping),
-            ],
-            'to_shipping' => ['required', 'array'],
-            'from_shipping.*' => 'numeric',
-            'to_shipping.*' => 'numeric',
-        ])->validate();
+        $this->validateRequest($request);
 
         $product = $this->productService->store($request->except([
             'photosThumbnail', 'main_photos', 'product', 'documents',
@@ -758,9 +741,26 @@ class ProductController extends Controller
         }
     }
 
-    public function validateVariantsPricing(Request $request)
+    public function validateRequest(Request $request)
     {
-        $rules = [];
+        $is_shipping = true;
+
+        $rules = [
+            'from' => [
+                'required', 'array',
+                new NoPricingOverlap($request->input('from'), $request->input('to')),
+            ],
+            'to' => ['required', 'array'],
+            'from.*' => 'numeric',
+            'to.*' => 'numeric',
+            'from_shipping' => [
+                'required', 'array',
+                new NoPricingOverlap($request->input('from_shipping'), $request->input('to_shipping'), $is_shipping),
+            ],
+            'to_shipping' => ['required', 'array'],
+            'from_shipping.*' => 'numeric',
+            'to_shipping.*' => 'numeric',
+        ];
 
         $variantsPricing = collect($request->all())
             ->filter(function ($value, $key) {
@@ -777,43 +777,14 @@ class ProductController extends Controller
                     new NoPricingOverlap($from, $to, false, $index)
                 ];
             }
-
-            $request->validate($rules);
         }
+
+        $request->validate($rules);
     }
 
     public function update(Request $request)
     {
-        $is_shipping = true;
-
-        $this->validateVariantsPricing($request);
-
-        Validator::make($request->only(['from', 'to', 'from_shipping', 'to_shipping']), [
-            'from' => [
-                'required', 'array',
-                new NoPricingOverlap(
-                    $request->input('from'),
-                    $request->input('to'),
-                    false,
-                    null,
-                    'Default pricing configuration should not overlap.'
-                ),
-            ],
-            'to' => ['required', 'array'],
-            'from.*' => 'numeric',
-            'to.*' => 'numeric',
-            'from_shipping' => [
-                'required', 'array',
-                new NoPricingOverlap(
-                    $request->input('from_shipping'),
-                    $request->input('to_shipping'),
-                    $is_shipping
-                ),
-            ],
-            'to_shipping' => ['required', 'array'],
-            'from_shipping.*' => 'numeric',
-            'to_shipping.*' => 'numeric',
-        ])->validate();
+        $this->validateRequest($request);
 
         $parent = Product::find($request->product_id);
 
@@ -854,6 +825,7 @@ class ProductController extends Controller
 
             return redirect()->route('seller.products');
         } else {
+            flash(translate('Error while updating product'))->error();
             return redirect()->back();
         }
     }
