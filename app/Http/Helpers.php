@@ -785,11 +785,25 @@ if (!function_exists('home_discounted_base_price')) {
 
         $discount_applicable = false;
 
-        if ($product_price->first()->discount_start_date == null) {
-            $discount_applicable = true;
-        } elseif ((strtotime(date('d-m-Y H:i:s')) >= $product_price->first()->discount_start_date) && (strtotime(date('d-m-Y H:i:s')) <= $product_price->first()->discount_end_date)) {
-            $discount_applicable = true;
+        $product_price = $product_price->first(); // Assign the first item of the collection to a variable
+
+        if ($product_price === null) {
+            // Handle the case where there's no product price found
+            $discount_applicable = false; // or any other logic you'd prefer in this case
+        } else {
+            // Now we are sure $product_price is not null, proceed to check the discount dates
+            if ($product_price->discount_start_date == null) {
+                $discount_applicable = true;
+            } elseif (
+                (strtotime(date('d-m-Y H:i:s')) >= strtotime($product_price->discount_start_date)) &&
+                (strtotime(date('d-m-Y H:i:s')) <= strtotime($product_price->discount_end_date))
+            ) {
+                $discount_applicable = true;
+            } else {
+                $discount_applicable = false; // Default to false if conditions are not met
+            }
         }
+        
 
 
         if ($discount_applicable) {
