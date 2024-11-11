@@ -4882,22 +4882,23 @@
                         }
 
                         //Validation of attributes
-                        var check_attributes_empty = true;
-                        var check_units_empty = true;
+                        let check_attributes_empty = true;
+                        let check_units_empty = true;
+
                         if ($('body input[name="activate_attributes"]').is(':checked')) {
                             $("#bloc_variants_created div").each(function(index, element) {
                                 $(element).find('.attributes').each(function(index, child_element) {
                                     // Change the attribute name of the current input
                                     if ($(child_element).attr('type') == 'radio') {
-                                        var name = $(child_element).attr('name');
+                                        let name = $(child_element).attr('name');
                                         if ($(`body input[name="${name}"]:checked`)
                                             .length === 0) {
                                             check_attributes_empty = false;
                                         }
                                     } else {
-                                        var specificString = 'attributes-undefined-';
+                                        let specificString = 'attributes-undefined-';
 
-                                        if ((!$(child_element).attr('name').includes(
+                                        if ((!$(child_element).attr('name')?.includes(
                                                 specificString)) && ($(child_element).attr(
                                                 'name') != undefined)) {
                                             if ($(child_element).val() == '') {
@@ -4905,7 +4906,6 @@
                                             }
                                         }
                                     }
-
                                 });
 
                                 $(element).find('.attributes-units').each(function(index,
@@ -4914,17 +4914,17 @@
                                         check_units_empty = false;
                                     }
                                 });
-
                             });
                         }
 
-                        var check_attributes_generale_empty = true;
-                        var check_units_generale_empty = true;
+                        let check_attributes_generale_empty = true;
+                        let check_units_generale_empty = true;
+
                         $("#general_attributes div").each(function(index, element) {
                             $(element).find('.attributes').each(function(index, child_element) {
                                 // Change the attribute name of the current input
                                 if ($(child_element).attr('type') == 'radio') {
-                                    var name = $(child_element).attr('name');
+                                    let name = $(child_element).attr('name');
                                     if ($(`body input[name="${name}"]:checked`).length ===
                                         0) {
                                         check_attributes_generale_empty = false;
