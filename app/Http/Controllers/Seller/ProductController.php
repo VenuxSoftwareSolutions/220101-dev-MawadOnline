@@ -1066,13 +1066,18 @@ class ProductController extends Controller
 
     public function bulk_product_delete(Request $request)
     {
-        if ($request->id) {
-            foreach ($request->id as $product_id) {
-                $this->destroy($product_id);
+        try {
+            if ($request->id) {
+                foreach ($request->id as $product_id) {
+                    $this->destroy($product_id);
+                }
             }
-        }
 
-        return 1;
+            return 1;
+        } catch(\Exception $e) {
+            \Log::error("Error while bulk delete products, with message: {$e->getMessage()}");
+            return response()->json(["error" => true, "message" => __("There's an error")], 500);
+        }
     }
 
     private function extractAttributes($variants)
