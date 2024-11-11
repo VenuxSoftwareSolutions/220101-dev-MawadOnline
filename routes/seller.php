@@ -129,13 +129,14 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
     //COUPONS 
 
     Route::resource('coupons', CouponController::class)->except(['show']);
-    Route::put('/coupons/{id}', [CouponController::class, 'update'])->name('coupons.update'); // PUT route for updates
+    Route::put('/{id}', [CouponController::class, 'update'])->name('update'); 
+
     Route::delete('/coupons/{id}', [CouponController::class, 'destroy'])->name('coupons.destroy'); // DELETE route for deletion
     Route::get('/coupons/get-products-by-category', [CouponController::class, 'getProductsByCategory'])->name('coupons.getProductsByCategory');
     Route::get('/coupons/get-categories-for-product-scope', [CouponController::class, 'getCategoriesForProductScope'])->name('coupons.getCategoriesForProductScope');
     Route::post('/coupons/bulk-delete', [CouponController::class, 'bulkDelete'])->name('coupons.bulk-delete');
     Route::post('/coupons/toggle-status', [CouponController::class, 'toggleStatus'])->name('coupons.toggle-status');
-    
+
     //Order
     Route::resource('orders', OrderController::class);
     Route::controller(OrderController::class)->group(function () {

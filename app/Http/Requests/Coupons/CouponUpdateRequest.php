@@ -13,7 +13,7 @@ class CouponUpdateRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,15 @@ class CouponUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+        ];
+    }
+    public function attributes()
+    {
+        return [
+            'start_date' => 'start date',
+            'end_date' => 'end date',
         ];
     }
 }

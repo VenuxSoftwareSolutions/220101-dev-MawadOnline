@@ -280,6 +280,49 @@
             </div>
         </div>
     </div>
+
+    <div id="editCouponModal" class="modal fade">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Coupon</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="editCouponForm">
+                        <div class="mb-3">
+                            <label for="couponCode" class="form-label">Coupon Code</label>
+                            <input type="text" class="form-control" id="couponCode" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="startDateCoupon" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" name="start_date" id="startDateCoupon">
+                        </div>
+                        <div class="mb-3">
+                            <label for="endDateCoupon" class="form-label">End Date</label>
+                            <input type="date" class="form-control" name="end_date" id="endDateCoupon">
+                        </div>
+                        <div class="mb-3">
+                            <label for="amountCoupon" class="form-label">Amount</label>
+                            <input type="text" class="form-control" id="amountCoupon" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="percentageCoupon" class="form-label">Percentage</label>
+                            <input type="text" class="form-control" id="percentageCoupon" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="maxDiscountCoupon" class="form-label">Max Discount</label>
+                            <input type="text" class="form-control" id="maxDiscountCoupon" disabled>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" id="saveCouponChangesBtn">Save Changes</button>
+                    <button type="button" class="btn btn-danger" id="deleteCouponBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="modal-info" class="modal fade">
         <div class="modal-dialog modal-md modal-dialog-centered">
             <div class="modal-content">
@@ -366,6 +409,67 @@
             .catch(error => console.error('Error deleting discount:', error));
     }
 
+    function fetchCouponData(couponId) {
+        return fetch(`/vendor/coupons/${couponId}/edit`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                document.getElementById('startDateCoupon').value = formatDate(data.start_date);
+                document.getElementById('endDateCoupon').value = formatDate(data.end_date);
+                document.getElementById('couponCode').value = data.code;
+                document.getElementById('amountCoupon').value = data.min_order_amount;
+                document.getElementById('percentageCoupon').value = data.discount_percentage;
+                document.getElementById('maxDiscountCoupon').value = data.max_discount;
+
+                document.getElementById('couponCode').disabled = true;
+                document.getElementById('amountCoupon').disabled = true;
+                document.getElementById('percentageCoupon').disabled = true;
+                document.getElementById('maxDiscountCoupon').disabled = true;
+
+                const modal = new bootstrap.Modal(document.getElementById('editCouponModal'));
+                modal.show();
+            })
+            .catch(error => console.error('Error fetching coupon data:', error));
+    }
+
+    
+    function updateCoupon(couponId, start_date, end_date) {
+        fetch(`/vendor/coupons/${couponId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ start_date, end_date })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const bootstrapModal = new bootstrap.Modal(document.getElementById('editCouponModal'));
+                    bootstrapModal.hide();
+                    displayToast(data.message);
+                    window.location.reload();
+                }
+            })
+            .catch(error => console.error('Error updating coupon:', error));
+    }
+
+    function deleteCoupon(couponId) {
+        fetch(`/vendor/coupons/${couponId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                $('#modal-info').modal('hide');
+                displayToast(data.message);
+                window.location.reload();
+            })
+            .catch(error => console.error('Error deleting coupon:', error));
+    }
+
     function displayToast(message) {
         if (typeof toastr !== "undefined") {
             toastr.options = {
@@ -389,7 +493,7 @@
             console.error("Toastr is not loaded");
         }
     }
-
+    
     document.addEventListener('DOMContentLoaded', function() {
         const tabs = document.querySelectorAll('#discountCouponTabs .nav-link');
         const scopeCards = document.querySelectorAll('.tab-card');
@@ -414,6 +518,7 @@
                 updateURL(activeTab, scope);
             });
         });
+
         document.querySelectorAll('.edit-discount-btn').forEach(button => {
             button.addEventListener('click', function(event) {
                 event.preventDefault();
@@ -440,6 +545,33 @@
                 deleteDiscount(discountId);
             }
         });
+
+        document.querySelectorAll('.edit-coupon-btn').forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                const couponId = button.getAttribute('data-id');
+                fetchCouponData(couponId);
+            });
+        });
+        document.getElementById('saveCouponChangesBtn').addEventListener('click', function() {
+            const couponId = document.querySelector('.edit-coupon-btn[data-id]').getAttribute('data-id');
+            const start_date = document.getElementById('startDateCoupon').value;
+            const end_date = document.getElementById('endDateCoupon').value;
+            updateCoupon(couponId, start_date, end_date);
+        });
+        document.getElementById("deleteCouponBtn").addEventListener("click", function() {
+            const couponId = document.querySelector('.edit-coupon-btn[data-id]').getAttribute('data-id');
+            $('#modal-info').modal('show');
+        });
+        document.getElementById("confirmDeleteBtn").addEventListener("click", function() {
+            const couponId = document.querySelector('.edit-coupon-btn[data-id]').getAttribute('data-id');
+            if (couponId) {
+                deleteCoupon(couponId);
+            }
+        });
+
+
+
     });
 </script>
 

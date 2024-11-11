@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\Coupons\CouponStoreRequest;
+use App\Http\Requests\Coupons\CouponUpdateRequest;
 
 class CouponController extends Controller
 {
@@ -86,7 +87,7 @@ class CouponController extends Controller
         return response()->json($coupon);
     }
 
-    public function update(CouponStoreRequest  $request, $id)
+    public function update(CouponUpdateRequest  $request, $id)
     {
         $validatedData = $request->validated();
         $coupon = Coupon::findOrFail($id);
