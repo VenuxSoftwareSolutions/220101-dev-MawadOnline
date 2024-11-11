@@ -73,7 +73,7 @@
     <link rel="stylesheet" href="{{ static_asset('assets/css/aiz-core.css?v=') }}{{ rand(1000, 9999) }}">
     <link rel="stylesheet" href="{{ static_asset('assets/css/custom-style.css') }}">
     <link rel="stylesheet" href="{{ static_asset('assets/css/bootstrap-select-country.min.css') }}">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="{{ static_asset('assets/css/jquery-ui.min.css') }}">
 
      @yield('style')
 
@@ -234,10 +234,6 @@
             }
 
             $system_language = get_system_language();
-
-            // if ($user != null) {
-            //     $carts = App\Models\Cart::where('user_id', auth()->user()->id)->get();
-            // }
         @endphp
         <!-- Header -->
         @include('frontend.inc.nav')
@@ -252,7 +248,7 @@
     <!-- Floating Buttons -->
     @include('frontend.inc.floating_buttons')
 
-    @if (env("DEMO_MODE") == "On")
+    @if (env('DEMO_MODE') == 'On')
         <!-- demo nav -->
         @include('frontend.inc.demo_nav')
     @endif
@@ -271,7 +267,7 @@
     @endif
 
     <script>
-        document.getElementById('cookieAcceptBtn').addEventListener('click', function() {
+        document.getElementById('cookieAcceptBtn')?.addEventListener('click', function() {
             // Set a cookie that expires in 1 year
             document.cookie = "cookie_accepted=true; path=/; max-age=" + 60 * 60 * 24 * 365;
 
@@ -281,14 +277,10 @@
     </script>
     <!-- cookies agreement
     @if (get_setting('show_cookies_agreement') == 'on')
-
         <div class="aiz-cookie-alert shadow-xl">
             <div class="p-3 bg-dark cookie-in-style">
                 <div class="text-white mb-3 col-md-8 col-12 float-left">
-                    @php
-                        echo get_setting('cookies_agreement_text');
-                    @endphp
-
+                        {{ get_setting('cookies_agreement_text') }}
                 </div>
                 <div class="col-md-2 col-12 float-right">
                 <button class="btn btn-primary aiz-cookie-accept mt-md-3 mt-0">
@@ -328,9 +320,9 @@
         </div>
     @endif
 
-    @include('frontend.'.get_setting('homepage_select').'.partials.modal')
+    @include('frontend.' . get_setting('homepage_select') . '.partials.modal')
 
-    @include('frontend.'.get_setting('homepage_select').'.partials.account_delete_modal')
+    @include('frontend.' . get_setting('homepage_select') . '.partials.account_delete_modal')
 
     <div class="modal fade" id="addToCart">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-zoom product-modal" id="modal-size" role="document">
@@ -342,7 +334,6 @@
                     <span aria-hidden="true" class="fs-24 fw-700" style="margin-left: 2px;">&times;</span>
                 </button>
                 <div id="addToCart-modal-body">
-
                 </div>
             </div>
         </div>
@@ -355,7 +346,7 @@
     <script src="{{ static_asset('assets/js/aiz-core.js?v=') }}{{ rand(1000, 9999) }}"></script>
 
     <script src="{{ static_asset('assets/js/bootstrap-select-country.min.js') }}"></script>
-    <script src="//code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script src="{{ static_asset('assets/js/jquery-ui.min.js') }}"></script>
 
 
     @if (get_setting('facebook_chat') == 1)
@@ -391,7 +382,6 @@
 
     <script>
         @if (Route::currentRouteName() == 'home' || Route::currentRouteName() == '/')
-
             $.post('{{ route('home.section.featured') }}', {
                 _token: '{{ csrf_token() }}'
             }, function(data) {
@@ -437,7 +427,6 @@
 
         $(document).ready(function() {
             $('.category-nav-element').each(function(i, el) {
-
                 $(el).on('mouseover', function(){
                     if(!$(el).find('.sub-cat-menu').hasClass('loaded')){
                         $.post('{{ route('category.elements') }}', {
@@ -488,7 +477,7 @@
         });
 
         function escapeHtml(text) {
-    var map = {
+    let map = {
         '&': '&amp;',
         '<': '&lt;',
         '>': '&gt;',
@@ -607,100 +596,13 @@
                 getVariantPrice();
             });
         }
+
         $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-        $(document).on('click', '.quantity-control', function() {
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
 
-            var action = $(this).data('type');
-            var quantityInput = $('#quantity');
-            var currentQuantity = parseInt(quantityInput.val());
-            var variationId = $('#variationId').val() ;
-            // if (action === 'plus') {
-            //     // Increment quantity
-            //     quantityInput.val(currentQuantity + 1);
-            // } else if (action === 'minus' && currentQuantity > 1) {
-            //     // Decrement quantity, ensuring it doesn't go below 1
-            //     quantityInput.val(currentQuantity - 1);
-            // }
-
-            // // Update the disabled state of buttons based on quantity
-            // $('.quantity-control[data-type="minus"]').prop('disabled', currentQuantity <= 1);
-            // $('.quantity-control[data-type="plus"]').prop('disabled', currentQuantity >= 197);
-
-            // AJAX request to update quantity
-            $.ajax({
-                url: '{{route("seller.update-price-preview")}}', // URL to your backend endpoint
-                method: 'POST', // or 'GET' depending on your backend implementation
-                data: { quantity: quantityInput.val(),variationId },
-                success: function(response) {
-                    // Handle successful response
-                    console.log(response.unit_price)
-                    if (response.unit_price != null) {
-                        if (response.discountPrice > 0) {
-                            $("#qty-interval").text(response.discountPrice)
-                            $("#chosen_price").text(response.totalDiscount)
-                            $("#previous-price").text(response.unit_price)
-
-                            if (response.percent !== null && response.percent > 0) {
-
-                            $("#percent").text('-'+response.percent+'%')
-                            $("#percent").addClass("bg-primary");
-
-                            }
-                            else {
-                                $("#percent").text('')
-                                $("#percent").removeClass("bg-primary");
-
-                            }
-
-                        }
-                        else {
-                            $("#previous-price").text('') ;
-                            $("#percent").removeClass("bg-primary");
-
-                            $("#qty-interval").text(response.unit_price)
-                            $("#chosen_price").text(response.total)
-                            $("#percent").text('')
-
-                        }
-                        // $("#qty-interval").text(response.unit_price+" AED")
-                        $("#quantity").val(response.qty)
-                        // $("#chosen_price").text(response.total+" AED")
-                        $('#quantity').attr('min', response.minimum); // Minimum value
-                        $('#quantity').attr('max', response.maximum); // Maximum value
-                        // $('.quantity-control[data-type="minus"]').prop('disabled', response.qty <= response.minimum);
-                        // $('.quantity-control[data-type="plus"]').prop('disabled', response.qty >= response.maximum);
-                        $('.aiz-plus-minus input').each(function() {
-                            var $this = $(this);
-                            var min = parseInt($(this).attr("min"));
-                            var max = parseInt($(this).attr("max"));
-                            var value = parseInt($(this).val());
-                            console.log(min)
-                            console.log(max)
-                            console.log(value)
-                            if(value <= min){
-                                $this.siblings('[data-type="minus"]').attr('disabled',true)
-                            }else if($this.siblings('[data-type="minus"]').attr('disabled')){
-                                $this.siblings('[data-type="minus"]').removeAttr('disabled')
-                            }
-                            if(value >= max){
-                                $this.siblings('[data-type="plus"]').attr('disabled',true)
-                            }else if($this.siblings('[data-type="plus"]').attr('disabled')){
-                                $this.siblings('[data-type="plus"]').removeAttr('disabled')
-                            }
-                        });
-                    }
-
-                },
-                error: function(xhr, status, error) {
-                    // Handle errors
-                    console.error('Error updating quantity:', error);
-                }
-            });
-            });
         $('#option-choice-form input').on('change', function(){
             getVariantPrice();
         });
@@ -878,7 +780,7 @@
     @if (addon_is_activated('otp_system'))
         <script type="text/javascript">
             // Country Code
-            var isPhoneShown = true,
+            let isPhoneShown = true,
                 countryData = window.intlTelInputGlobals.getCountryData(),
                 input = document.querySelector("#phone-code");
 
@@ -901,11 +803,10 @@
                 }
             });
 
-            var country = iti.getSelectedCountryData();
+            let country = iti.getSelectedCountryData();
             $('input[name=country_code]').val(country.dialCode);
 
             input.addEventListener("countrychange", function(e) {
-                // var currentMask = e.currentTarget.placeholder;
                 var country = iti.getSelectedCountryData();
                 $('input[name=country_code]').val(country.dialCode);
 
@@ -930,12 +831,12 @@
     @endif
 
     <script>
-        var acc = document.getElementsByClassName("aiz-accordion-heading");
-        var i;
+        let acc = document.getElementsByClassName("aiz-accordion-heading");
+        let i;
         for (i = 0; i < acc.length; i++) {
             acc[i].addEventListener("click", function() {
                 this.classList.toggle("active");
-                var panel = this.nextElementSibling;
+                let panel = this.nextElementSibling;
                 if (panel.style.maxHeight) {
                     panel.style.maxHeight = null;
                 } else {
@@ -943,27 +844,25 @@
                 }
             });
         }
-    </script>
 
-    <script>
         function showFloatingButtons() {
             document.querySelector('.floating-buttons-section').classList.toggle('show');;
         }
     </script>
 
-    @if (env("DEMO_MODE") == "On")
+    @if (env('DEMO_MODE') == 'On')
         <script>
-            var demoNav = document.querySelector('.aiz-demo-nav');
-            var menuBtn = document.querySelector('.aiz-demo-nav-toggler');
-            var lineOne = document.querySelector('.aiz-demo-nav-toggler .aiz-demo-nav-btn .line--1');
-            var lineTwo = document.querySelector('.aiz-demo-nav-toggler .aiz-demo-nav-btn .line--2');
-            var lineThree = document.querySelector('.aiz-demo-nav-toggler .aiz-demo-nav-btn .line--3');
+            let demoNav = document.querySelector('.aiz-demo-nav');
+            let menuBtn = document.querySelector('.aiz-demo-nav-toggler');
+            let lineOne = document.querySelector('.aiz-demo-nav-toggler .aiz-demo-nav-btn .line--1');
+            let lineTwo = document.querySelector('.aiz-demo-nav-toggler .aiz-demo-nav-btn .line--2');
+            let lineThree = document.querySelector('.aiz-demo-nav-toggler .aiz-demo-nav-btn .line--3');
+
             menuBtn.addEventListener('click', () => {
                 toggleDemoNav();
             });
 
             function toggleDemoNav() {
-                // demoNav.classList.toggle('show');
                 demoNav.classList.toggle('shadow-none');
                 lineOne.classList.toggle('line-cross');
                 lineTwo.classList.toggle('line-fade-out');
@@ -998,14 +897,10 @@
                     $('header').delay(800).removeClass('z-1').addClass('z-1020');
                 }
             }
-        </script>
-    @endif
+        </script> @endif
 
     @yield('script')
 
-    @php
-        echo get_setting('footer_script');
-    @endphp
-
+    {{ get_setting('footer_script') }}
 </body>
 </html>

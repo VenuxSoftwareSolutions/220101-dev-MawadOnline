@@ -185,7 +185,7 @@ class ProductController extends Controller
     {
         $is_shipping = true;
 
-        Validator::make($request->only(['from', 'to','from_shipping', 'to_shipping']), [
+        Validator::make($request->only(['from', 'to', 'from_shipping', 'to_shipping']), [
             'from' => [
                 'required', 'array',
                 new NoPricingOverlap($request->input('from'), $request->input('to')),
@@ -758,21 +758,57 @@ class ProductController extends Controller
         }
     }
 
+    public function validateVariantsPricing(Request $request)
+    {
+        $rules = [];
+
+        $variantsPricing = collect($request->all())
+            ->filter(function ($value, $key) {
+                return preg_match('/^variant_pricing-from\d+$/', $key);
+            });
+
+        if ($variantsPricing->count() > 0) {
+            foreach ($variantsPricing as $key => $variant) {
+                $index = str_replace('variant_pricing-from', '', $key);
+                $from = $variant['from'];
+                $to = $variant['to'];
+
+                $rules[$key] = [
+                    new NoPricingOverlap($from, $to, false, $index)
+                ];
+            }
+
+            $request->validate($rules);
+        }
+    }
+
     public function update(Request $request)
     {
         $is_shipping = true;
 
-        Validator::make($request->only(['from', 'to','from_shipping', 'to_shipping']), [
+        $this->validateVariantsPricing($request);
+
+        Validator::make($request->only(['from', 'to', 'from_shipping', 'to_shipping']), [
             'from' => [
                 'required', 'array',
-                new NoPricingOverlap($request->input('from'), $request->input('to')),
+                new NoPricingOverlap(
+                    $request->input('from'),
+                    $request->input('to'),
+                    false,
+                    null,
+                    'Default pricing configuration should not overlap.'
+                ),
             ],
             'to' => ['required', 'array'],
             'from.*' => 'numeric',
             'to.*' => 'numeric',
             'from_shipping' => [
                 'required', 'array',
-                new NoPricingOverlap($request->input('from_shipping'), $request->input('to_shipping'), $is_shipping),
+                new NoPricingOverlap(
+                    $request->input('from_shipping'),
+                    $request->input('to_shipping'),
+                    $is_shipping
+                ),
             ],
             'to_shipping' => ['required', 'array'],
             'from_shipping.*' => 'numeric',
@@ -1733,148 +1769,7 @@ class ProductController extends Controller
 
     public function updatePricePreview(Request $request)
     {
-
-        $data = $request->session()->get('productPreviewData', null);
-        $variations = $data['detailedProduct']['variations'];
-
-        // Given value
-        $qty = $request->quantity;
-        $totalDiscount = 0;
-        $discountPrice = 0;
-        // Iterate through the ranges
-        $unitPrice = null;
-        // if($request->variationId != null) {
-        if (count($variations) > 0) {
-
-            foreach ($variations[$request->variationId]['variant_pricing-from']['from'] as $index => $from) {
-                $to = $variations[$request->variationId]['variant_pricing-from']['to'][$index];
-
-                if ($qty >= $from && $qty <= $to) {
-                    $unitPrice = $variations[$request->variationId]['variant_pricing-from']['unit_price'][$index];
-                    if (isset($variations[$request->variationId]['variant_pricing-from']['discount']['date'][$index]) && ($variations[$request->variationId]['variant_pricing-from']['discount']['date'][$index])) {
-                        // Extract start and end dates from the first date interval
-
-                        $dateRange = $variations[$request->variationId]['variant_pricing-from']['discount']['date'][$index];
-                        [$startDate, $endDate] = explode(' to ', $dateRange);
-
-                        // Convert date strings to DateTime objects for comparison
-                        $currentDate = new DateTime; // Current date/time
-                        $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
-                        $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
-
-                        // Check if the current date/time is within the specified date interval
-                        if ($currentDate >= $startDateTime && $currentDate <= $endDateTime) {
-
-                            if ($variations[$request->variationId]['variant_pricing-from']['discount']['type'][$index] == 'percent') {
-                                $percent = $variations[$request->variationId]['variant_pricing-from']['discount']['percentage'][$index];
-                                if ($percent) {
-
-                                    // Calculate the discount amount based on the given percentage
-                                    $discountPercent = $percent; // Example: $percent = 5; // 5% discount
-                                    $discountAmount = ($unitPrice * $discountPercent) / 100;
-
-                                    // Calculate the discounted price
-                                    $discountPrice = $unitPrice - $discountAmount;
-
-                                }
-                            } elseif ($variations[$request->variationId]['variant_pricing-from']['discount']['type'][$index] == 'amount') {
-                                // Calculate the discount amount based on the given amount
-                                $amount = $variations[$request->variationId]['variant_pricing-from']['discount']['amount'][$index];
-
-                                if ($amount) {
-                                    $discountAmount = $amount;
-                                    // Calculate the discounted price
-                                    $discountPrice = $unitPrice - $discountAmount;
-
-                                }
-
-                            }
-                        }
-                    }
-                    break; // Stop iterating once the range is found
-                }
-            }
-
-        } else {
-            foreach ($data['detailedProduct']['from'] as $index => $from) {
-                $to = $data['detailedProduct']['to'][$index];
-                if ($qty >= $from && $qty <= $to) {
-                    $unitPrice = $data['detailedProduct']['unit_price'][$index];
-
-                    if (isset($data['detailedProduct']['date_range_pricing'][$index]) && ($data['detailedProduct']['date_range_pricing'][$index])) {
-                        // Extract start and end dates from the first date interval
-
-                        $dateRange = $data['detailedProduct']['date_range_pricing'][$index];
-                        [$startDate, $endDate] = explode(' to ', $dateRange);
-
-                        // Convert date strings to DateTime objects for comparison
-                        $currentDate = new DateTime; // Current date/time
-                        $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
-                        $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
-
-                        // Check if the current date/time is within the specified date interval
-                        if ($currentDate >= $startDateTime && $currentDate <= $endDateTime) {
-
-                            if ($data['detailedProduct']['discount_type'][$index] == 'percent') {
-                                $percent = $data['detailedProduct']['discount_percentage'][$index];
-
-                                if ($percent) {
-
-                                    // Calculate the discount amount based on the given percentage
-                                    $discountPercent = $percent; // Example: $percent = 5; // 5% discount
-                                    $discountAmount = ($unitPrice * $discountPercent) / 100;
-
-                                    // Calculate the discounted price
-                                    $discountPrice = $unitPrice - $discountAmount;
-
-                                }
-                            } elseif ($data['detailedProduct']['discount_type'][$index] == 'amount') {
-                                // Calculate the discount amount based on the given
-
-                                $amount = $data['detailedProduct']['discount_amount'][$index];
-
-                                if ($amount) {
-                                    $discountAmount = $amount;
-                                    // Calculate the discounted price
-                                    $discountPrice = $unitPrice - $discountAmount;
-
-                                }
-
-                            }
-                        }
-                    }
-                    break; // Stop iterating once the range is found
-                }
-            }
-        }
-        $maximum = 1;
-        $minimum = 1;
-        // if($request->variationId != null) {
-        if (count($variations) > 0) {
-
-            // Convert array values to integers
-            $valuesFrom = array_map('intval', $variations[$request->variationId]['variant_pricing-from']['from']);
-            $valuesMax = array_map('intval', $variations[$request->variationId]['variant_pricing-from']['to']);
-        } else {
-            $valuesFrom = array_map('intval', $data['detailedProduct']['from']);
-            $valuesMax = array_map('intval', $data['detailedProduct']['to']);
-        }
-        // Get the maximum value
-        if (! empty($valuesMax)) {
-            $maximum = max($valuesMax);
-        }
-        // Get the minimum value
-        if (! empty($valuesFrom)) {
-            $minimum = min($valuesFrom);
-        }
-
-        $total = $qty * $unitPrice;
-        if (isset($discountPrice) && $discountPrice > 0) {
-            $totalDiscount = $qty * $discountPrice;
-        }
-
-        // Return the unit price as JSON response
-        return response()->json(['unit_price' => $unitPrice, 'qty' => $qty, 'total' => $total, 'maximum' => $maximum, 'minimum' => $minimum, 'totalDiscount' => $totalDiscount, 'discountPrice' => $discountPrice, 'percent' => $percent ?? null]);
+        return $this->productService->updatePrice($request);
     }
 
     private function renderStarRating($rating, $maxRating = 5)
@@ -2078,47 +1973,46 @@ class ProductController extends Controller
             }
         }
 
-        if(isset($data['detailedProduct']['catalog'])) {
+        if (isset($data['detailedProduct']['catalog'])) {
             $response = [
                 'availableAttributes' => $availableAttributes,
                 'anyMatched' => $anyMatched,
                 'matchedImages' => $matchedImages,
                 'variationId' => $variationId ?? null,
-                'quantity' => $quantity ?? null  ,
-                'price' => $price ?? null ,
+                'quantity' => $quantity ?? null,
+                'price' => $price ?? null,
                 'total' => $totalDiscount ?? $total ?? null,
-                'maximum' => $maximum ,
-                'minimum' => $minimum ,
+                'maximum' => $maximum,
+                'minimum' => $minimum,
                 'discountedPrice' => $discountedPrice ?? null,
                 'totalDiscount' => $totalDiscount ?? null,
-                'percent'=> $percent ?? null,
-                'totalRating' =>  0 ,
+                'percent' => $percent ?? null,
+                'totalRating' => 0,
                 'renderStarRating' => $this->renderStarRating(0),
-                'avgRating' =>  0,
-                'sku' =>$sku ?? null ,
-                'outStock' =>false
+                'avgRating' => 0,
+                'sku' => $sku ?? null,
+                'outStock' => false,
             ];
-        }
-        else {
+        } else {
 
             $response = [
                 'availableAttributes' => $availableAttributes,
                 'anyMatched' => $anyMatched,
                 'matchedImages' => $matchedImages,
                 'variationId' => $variationId ?? null,
-                'quantity' => $quantity ?? null  ,
-                'price' => $price ?? null ,
+                'quantity' => $quantity ?? null,
+                'price' => $price ?? null,
                 'total' => $totalDiscount ?? $total ?? null,
-                'maximum' => $maximum ,
-                'minimum' => $minimum ,
+                'maximum' => $maximum,
+                'minimum' => $minimum,
                 'discountedPrice' => $discountedPrice ?? null,
                 'totalDiscount' => $totalDiscount ?? null,
-                'percent'=> $percent ?? null,
-                'totalRating' => $totalRating ?? 0 ,
-                'renderStarRating' => $renderStarRating ??  $this->renderStarRating(0),
+                'percent' => $percent ?? null,
+                'totalRating' => $totalRating ?? 0,
+                'renderStarRating' => $renderStarRating ?? $this->renderStarRating(0),
                 'avgRating' => $avgRating ?? 0,
-                'sku' =>$sku ?? null ,
-                'outStock' =>$outStock
+                'sku' => $sku ?? null,
+                'outStock' => $outStock,
             ];
         }
         // dd($availableAttributes) ;
@@ -2129,6 +2023,4 @@ class ProductController extends Controller
         return response()->json($response);
 
     }
-
-
 }

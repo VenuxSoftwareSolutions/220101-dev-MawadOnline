@@ -12,7 +12,8 @@
 /public/trade_license_doc
 /public/upload_products
 /public/assets/myText.txt
-/public
+/public/reports/
+/public/buxl/*
 /storage/*.key
 /storage/debugbar
 vendor

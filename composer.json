@@ -1,7 +1,10 @@
 {
     "name": "laravel/laravel",
     "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
     "license": "MIT",
     "type": "project",
     "require": {
@@ -65,7 +68,10 @@
             "Database\\Seeders\\": "database/seeders/",
             "Database\\Factories\\": "database/factories/"
         },
-        "files": ["app/Http/Helpers.php"]
+        "files": [
+            "app/Http/Helpers.php",
+            "app/constants.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
@@ -74,8 +80,7 @@
     },
     "extra": {
         "laravel": {
-            "dont-discover": [
-            ]
+            "dont-discover": []
         }
     },
     "scripts": {

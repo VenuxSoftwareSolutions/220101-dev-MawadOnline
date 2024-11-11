@@ -29,7 +29,6 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'index')->name('dashboard');
         Route::post('/tour', 'updateTour')->name('tour');
-
     });
 
     // Product
@@ -39,7 +38,6 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
         Route::get('/product/preview/{slug}', 'preview')->name('product.preview');
         Route::post('/update-price-preview','updatePricePreview')->name('update-price-preview')->middleware(['admin']);
         Route::post('/send-checked-attributes','ProductCheckedAttributes')->name('product.checked.attributes');
-
         Route::get('/products', 'index')->name('products');
         Route::get('/product/create', 'create')->name('products.create');
         Route::get('/product/delete_variant', 'delete_variant')->name('products.delete_variant');
@@ -61,12 +59,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
         Route::get('/products/delete_image', 'delete_image')->name('products.delete_image');
         Route::get('/products/delete_pricing', 'delete_pricing')->name('products.delete_pricing');
         Route::post('/products/bulk-delete', 'bulk_product_delete')->name('products.bulk-delete');
-
-        
     });
-         // categories
-
-
 
     // Stocks
     Route::controller(StockController::class)->group(function () {
