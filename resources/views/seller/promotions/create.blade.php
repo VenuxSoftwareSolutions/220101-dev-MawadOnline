@@ -298,7 +298,7 @@
                                 @endforeach
                             </select>
                         </div> --}}
-                        <div class="col-md-6 mb-3" id="multiTreeContainer">
+                        <div class="col-md-6 mb-3 tree-multiselect" id="multiTreeContainer" style="display:none;">
                             <label for="multiTreeCategory" class="form-label">Category</label>
                             <select id="multiTreeCategory" name="category_id" multiple="multiple">
                                 @foreach ($nestedCategories as $category)
@@ -309,14 +309,13 @@
                             </select>
                         </div>
 
-                        <div class="col-md-6 mb-3" id="productCategoryContainer" style="display: none;">
+                        <div class="col-md-6 mb-3" id="productCategoryContainer" >
                             <label for="productCategory" class="form-label">Category</label>
                             <select class="form-control aiz-selectpicker" id="productCategory" name="category_id">
-                                <option value="" selected>Select category</option>
-                                @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                @endforeach
-                            </select>
+                                @foreach($categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
+                        </select>
                         </div>
 
 
@@ -325,9 +324,7 @@
                             <label for="product_id" class="form-label">Product</label>
                             <select class="form-control aiz-selectpicker" id="product_id" name="product_id">
                                 <option value="" selected>Select product</option>
-                                @foreach ($products as $product)
-                                    <option value="{{ $product->id }}">{{ $product->name }}</option>
-                                @endforeach
+                              
                             </select>
                         </div>
 
@@ -349,7 +346,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="maxDiscount" class="form-label">Max Discount</label>
+                            <label for="maxDiscount" class="form-label">Max Use	Discount</label>
                             <input type="number" class="form-control" name="max_discount"
                                 placeholder="Maximum discount amount">
                         </div>
@@ -390,12 +387,12 @@
     <div class="modal-dialog modal-md modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title h6">{{ translate('Discount Overlap Confirmation') }}</h4>
+                <h4 class="modal-title h6">{{ translate('Offers Overlap Confirmation') }}</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             </div>
             <div class="modal-body text-center">
                 <p class="mt-1 fs-14">{{ translate('Please note that this range overlaps with the existing discounts listed below.') }}</p>
-                <p class="fs-14">{{ translate('If you proceed, the greater discount will be applied.') }}</p>
+                <p class="fs-14">{{ translate('If you proceed, the greater offer will be applied.') }}</p>
                 
                 <ul  id="overlappingDiscountList" class="list-group mb-3" >
                     <li class="list-group-item">
@@ -455,44 +452,52 @@
                 document.getElementById('discountForm').setAttribute('action', formAction);
         }
         function submitForm(ignoreOverlap, type) {
-                const formData = new FormData($('#discountForm')[0]);
-                
-                if (ignoreOverlap) {
-                    formData.append('ignore_overlap', true);
-                }
+            const formData = new FormData($('#discountForm')[0]);
+            
+            if (ignoreOverlap) {
+                formData.append('ignore_overlap', true);
+            }
 
-                const url = type === 'coupon' 
-                    ? "{{ route('seller.coupons.store') }}" 
-                    : "{{ route('seller.discounts.store') }}";
+            const url = type === 'coupon' 
+                ? "{{ route('seller.coupons.store') }}" 
+                : "{{ route('seller.discounts.store') }}";
 
-                $.ajax({
-                    url: url,
-                    method: 'POST',
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    success: function(response) {
-                        if (response.status === 'overlap') {
-                            showOverlapModal(response.overlappingDiscounts);
-                        } else if (response.status === 'success') {
-                            window.location.href = response.redirectUrl;
-                        }
-                    },
-                    error: function() {
-                        alert('An error occurred.');
+            $.ajax({
+                url: url,
+                method: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    if (response.status === 'overlap') {
+                        const overlappingItems = type === 'coupon' ? response.overlappingCoupons : response.overlappingDiscounts;
+                        showOverlapModal(overlappingItems, type);
+                    } else if (response.status === 'success') {
+                        window.location.href = response.redirectUrl;
                     }
-                });
+                },
+                error: function() {
+                    alert('An error occurred.');
+                }
+            });
         }
-        function showOverlapModal(overlappingDiscounts) {
+        function submitDiscountForm(ignoreOverlap) {
+                submitForm(ignoreOverlap, 'discount');
+
+        }
+        function submitCouponForm(ignoreOverlap) {
+            submitForm(ignoreOverlap, 'coupon');
+        }
+        function showOverlapModal(overlappingItems, type) {
             const ul = $('#overlappingDiscountList');
             ul.empty();
 
-            overlappingDiscounts.forEach(function(discount) {
-                const startDate = new Date(discount.start_date).toISOString().slice(0, 10);
-                const endDate = new Date(discount.end_date).toISOString().slice(0, 10);
+            overlappingItems.forEach(function(item) {
+                const startDate = new Date(item.start_date).toISOString().slice(0, 10);
+                const endDate = new Date(item.end_date).toISOString().slice(0, 10);
                 ul.append(`
                     <li class="list-group-item">
-                        <strong>Scope:</strong> ${discount.scope} 
+                        <strong>Scope:</strong> ${item.scope} 
                         <br>
                         <strong>From:</strong> ${startDate} <strong>to</strong> ${endDate}
                     </li>
@@ -500,14 +505,26 @@
             });
 
             $('#modal-discount-overlap').modal('show');
+
+            $('#confirmProceedBtn').off('click').on('click', function() {
+                $('#modal-discount-overlap').modal('hide');
+                if (type === 'coupon') {
+                    submitCouponForm(true);
+                } else {
+                    submitDiscountForm(true);
+                }
+            });
         }
+
 
         $(document).ready(function() {
             const form = document.getElementById("discountForm");
             const scopeInput = document.getElementById("scope");
             const productSelect = document.getElementById("product_id");
+            const categorySelect = document.getElementById("productCategory");
             const orderAmountInput = document.getElementById('order_amount');
             const multiTreeContainer = document.getElementById("multiTreeContainer");
+            const productCategoryContainer = document.getElementById("productCategoryContainer");
             const getProductByCategoryUrl = @json(route('seller.discounts.getproductbycategory'));
             const categorybyproduct = @json(route('seller.discounts.getCategoriesForProductScope'));
             const discountRadio = document.getElementById('discount');
@@ -515,115 +532,116 @@
             const couponCodeContainer = document.getElementById('couponCodeContainer');
             const DiscountContainer = document.getElementById('DiscountContainer');
 
+           /* categorySelect.addEventListener('change', function() {
+                const selectedCategoryId = this.value;
 
-            let params = {
-                sortable: true,
-                searchable: true,
-                searchParams: ['section', 'text'],
-                onChange: function(allSelectedItems, addedItems, removedItems) {
-                    addedItems.forEach(item => {
-                        if (!$(item).data('leaf')) {
-                            $(item).prop('selected', false);
-                        }
-                    });
-                },
-                startCollapsed: true,
-                maxSelections: 1,
-                freeze: true 
-            };
-            $("select#multiTreeCategory").treeMultiselect(params);
+                    if (selectedCategoryId) {
+                        // Fetch products for the selected category
+                        $.ajax({
+                            url: getProductByCategoryUrl,
+                            type: 'GET',
+                            data: { category_id: selectedCategoryId },
+                            success: function(response) {
+                                productSelect.innerHTML = '<option value="" selected>Select product</option>';
+                                response.products.forEach(function(product) {
+                                    const option = new Option(product.name, product.id);
+                                    productSelect.add(option);
+                                });
 
-
-            function updateMultiTreeBasedOnScope(scope) {
-                $(".tree-multiselect").remove();
-
-                if (scope === "product" || scope === "category") {
-                    params.freeze = false;
-                } else {
-                    params.freeze = true;
-                }
-
-                if (scope === "product") {
-                    multiTreeContainer.style.display = "none";
-                    productCategoryContainer.style.display = "block";
-
-                    $.ajax({
-                        url: categorybyproduct,
-                        type: 'GET',
-                        success: function(response) {
-                            $("#productCategory").empty();
-                            $("#productCategory").append(
-                                '<option value="" selected>Select category</option>');
-
-
-                            $.each(response.categories, function(index, category) {
-                                $("#productCategory").append('<option value="' + category.id +
-                                    '">' + category.name + '</option>');
-                            });
-
-                            $("#productCategory").treeMultiselect(params);
-                        }
-                    });
-                } else {
-                    multiTreeContainer.style.display = "block";
-                    productCategoryContainer.style.display = "none";
-                    params.freeze = (scope === "ordersOverAmount" || scope === "all orders");
-                    $("select#multiTreeCategory").treeMultiselect(params); // Update freeze setting
-
-                }
-            }
-
-            $('#category').on('change', function() {
-                var selectedCategoryId = $(this).val();
-
-                $.ajax({
-                    url: getProductByCategoryUrl,
-                    type: 'GET',
-                    data: {
-                        category_id: selectedCategoryId
-                    },
-                    success: function(response) {
-                        var productSelect = $('#product_id');
-                        productSelect.empty();
-                        productSelect.append(
-                            '<option value="" selected>Select product</option>');
-
-                        $.each(response.products, function(index, product) {
-                            productSelect.append('<option value="' + product.id + '">' +
-                                product.name + '</option>');
+                                $('.aiz-selectpicker').selectpicker('refresh');
+                            }
                         });
-
-                        productSelect.selectpicker('refresh');
+                    } else {
+                        productSelect.innerHTML = '<option value="" selected>Select product</option>';
+                        $('.aiz-selectpicker').selectpicker('refresh');
                     }
-                });
-            });
+            });*/
 
-            function updateFieldState(scope) {
+
+            function updateScopeView(scope) {
                 scopeInput.value = scope;
                 productSelect.disabled = true;
+                productSelect.value = "";
+                categorySelect.disabled = true;
+                categorySelect.value = "";
                 orderAmountInput.disabled = true;
+                orderAmountInput.value = "";
+                productCategoryContainer.style.display = "none";
+                multiTreeContainer.style.display = "none";
 
-                productSelect.value = null;
-                orderAmountInput.value = '';
+                const multiTreeParams = {
+                    sortable: true,
+                    searchable: true,
+                    searchParams: ['section', 'text'],
+                    onChange: function (allSelectedItems, addedItems, removedItems) {
+                        addedItems.forEach(item => {
+                            if (!$(item).data('leaf')) {
+                                $(item).prop('selected', false);
+                            }
+                        });
+                    },
+                    startCollapsed: true,
+                    maxSelections: 1,
+                    freeze: false
+                };
 
-                if (scope === "category") {
-                    productSelect.value = "";
-                    orderAmountInput.value = "";
-                } else if (scope === "product") {
+                if (scope === "product") {
+                    productCategoryContainer.style.display = "block";
                     productSelect.disabled = false;
+                    categorySelect.disabled = false;
+
+
+                } else if (scope === "category") {
+                    multiTreeContainer.style.display = "block";
+                    if ($("select#multiTreeCategory").next(".tree-multiselect").length) {
+                        $("select#multiTreeCategory").next(".tree-multiselect").remove();
+                     }
+
+                    $("select#multiTreeCategory").treeMultiselect(multiTreeParams);
+                    productSelect.value = null;
+                    productSelect.disabled = true;
+
+
+
                 } else if (scope === "ordersOverAmount") {
+                    // Enable order amount field only
                     orderAmountInput.disabled = false;
+                    productCategoryContainer.style.display = "block";
+
+                } else if (scope === "allOrders") {
+                    // All fields remain disabled except the discount fields
+                    productCategoryContainer.style.display = "block";
                 }
 
                 $('.aiz-selectpicker').selectpicker('refresh');
-
-                updateMultiTreeBasedOnScope(scope);
             }
+
+            categorySelect.addEventListener('change', function () {
+                const selectedCategoryId = this.value;
+                if (selectedCategoryId) {
+                    $.ajax({
+                        url: getProductByCategoryUrl,
+                        type: 'GET',
+                        data: { category_id: selectedCategoryId },
+                        success: function (response) {
+                            productSelect.innerHTML = '<option value="" selected>Select product</option>';
+                            response.products.forEach(function (product) {
+                                const option = new Option(product.name, product.id);
+                                productSelect.add(option);
+                            });
+                            $('.aiz-selectpicker').selectpicker('refresh');
+                        }
+                    });
+                } else {
+                    productSelect.innerHTML = '<option value="" selected>Select product</option>';
+                    $('.aiz-selectpicker').selectpicker('refresh');
+                }
+            });
 
             document.querySelectorAll('.tab-card').forEach(card => {
                 card.addEventListener('click', function() {
                     const scope = this.getAttribute('data-scope');
-                    updateFieldState(scope);
+                    updateScopeView(scope);
 
                     document.querySelectorAll('.tab-card').forEach(card => card.classList.remove(
                         'active'));
@@ -633,12 +651,10 @@
 
                 });
             });
-           
-
             const urlParams = new URLSearchParams(window.location.search);
             const selectedScope = urlParams.get('scope');
             if (selectedScope) {
-                updateFieldState(selectedScope);
+                updateScopeView(selectedScope);
 
                 document.querySelectorAll('.tab-card').forEach(card => {
                     card.classList.remove('active');
@@ -692,12 +708,6 @@
                 return true;
             }
 
-           /* form.addEventListener("submit", function(event) {
-                event.preventDefault();
-                if (validateForm()) {
-                    form.submit();
-                }
-            });*/
             $('#discountForm').on('submit', function(e) {
                 e.preventDefault();
                 if (validateForm()) {
@@ -705,29 +715,23 @@
                 }
             });
 
-            $('#confirmProceedBtn').on('click', function() {
-                $('#modal-discount-overlap').modal('hide'); 
-                submitDiscountForm(true); 
-            });
-            $('#activateButton').on('click', function() {
+            $('#activateButton').on('click', function(e) {
+                e.preventDefault();
                 if (validateForm()) {
                     submitCouponForm(false);
                 }
             });
 
-            function submitDiscountForm(ignoreOverlap) {
-                submitForm(ignoreOverlap, 'discount');
 
-            }
-            function submitCouponForm(ignoreOverlap) {
-                submitForm(ignoreOverlap, 'coupon');
-            }
 
+            $('#confirmProceedBtn').on('click', function() {
+                $('#modal-discount-overlap').modal('hide'); 
+                submitDiscountForm(true); 
+            });
+           
             
-
             discountRadio.addEventListener('change', toggleCouponFields);
             couponRadio.addEventListener('change', toggleCouponFields);
-
             function toggleCouponFields() {
 
                 if (couponRadio.checked) {
@@ -738,7 +742,6 @@
                     DiscountContainer.style.display = 'block';
                 }
             }
-
             toggleCouponFields();
            
         });

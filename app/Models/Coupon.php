@@ -85,52 +85,59 @@ class Coupon extends Model
     {
         $overlaps = [];
 
-        $existingCoupons = self::where('scope', $newCouponData['scope'])
-            ->where(function ($query) use ($newCouponData) {
-                $query->whereDate('start_date', '<=', $newCouponData['end_date'])
-                      ->whereDate('end_date', '>=', $newCouponData['start_date']);
-            })
-            ->get();
+        $existingCoupons = self::where(function ($query) use ($newCouponData) {
+            $query->whereDate('start_date', '<=', $newCouponData['end_date'])
+                  ->whereDate('end_date', '>=', $newCouponData['start_date']);
+        })->get();
 
         foreach ($existingCoupons as $coupon) {
-            if ($coupon->scope == 'all_orders' || $coupon->scope == 'order') {
-                if (self::isDateRangeOverlap($coupon, $newCouponData)) {
-                    $overlaps[] = $coupon;
-                }
-            } elseif ($coupon->scope == 'category') {
-                if (self::isCategoryOverlap($coupon, $newCouponData)) {
-                    $overlaps[] = $coupon;
-                }
-            } elseif ($coupon->scope == 'product') {
-                if ($coupon->product_id == $newCouponData['product_id']) {
-                    $overlaps[] = $coupon;
-                }
+            switch ($newCouponData['scope']) {
+                case 'product':
+                    if ($coupon->scope == 'product' && $coupon->product_id == $newCouponData['product_id']) {
+                        $overlaps[] = $coupon;
+                    } elseif ($coupon->scope == 'category' && self::isProductInCategory($newCouponData['product_id'], $coupon->category_id)) {
+                        $overlaps[] = $coupon;
+                    } elseif (in_array($coupon->scope, ['allOrders', 'min_order_amount']) && self::isDateRangeOverlap($coupon, $newCouponData)) {
+                        $overlaps[] = $coupon;
+                    }
+                    break;
+
+                case 'allOrders':
+                case 'min_order_amount':
+                    if (in_array($coupon->scope, ['product', 'category', 'allOrders', 'min_order_amount']) && self::isDateRangeOverlap($coupon, $newCouponData)) {
+                        $overlaps[] = $coupon;
+                    }
+                    break;
+
+                case 'category':
+                    if (in_array($coupon->scope, ['allOrders', 'min_order_amount']) && self::isDateRangeOverlap($coupon, $newCouponData)) {
+                        $overlaps[] = $coupon;
+                    } elseif ($coupon->scope == 'category' && $coupon->category_id == $newCouponData['category_id'] && self::isDateRangeOverlap($coupon, $newCouponData)) {
+                        $overlaps[] = $coupon;
+                    } elseif ($coupon->scope == 'product' && self::isProductInCategory($coupon->product_id, $newCouponData['category_id']) && self::isDateRangeOverlap($coupon, $newCouponData)) {
+                        $overlaps[] = $coupon;
+                    }
+                    break;
             }
         }
 
         return $overlaps;
     }
 
+    // Helper to check if a product is in a category
+    public static function isProductInCategory($productId, $categoryId)
+    {
+        return \DB::table('product_categories')
+            ->where('category_id', $categoryId)
+            ->where('product_id', $productId)
+            ->exists();
+    }
+
     // Helper to check if two date ranges overlap
     public static function isDateRangeOverlap($existingCoupon, $newCouponData)
     {
-        return !($newCouponData['end_date'] < $existingCoupon->start_date ||
-                 $newCouponData['start_date'] > $existingCoupon->end_date);
+        return !($newCouponData['end_date'] < $existingCoupon->start_date || $newCouponData['start_date'] > $existingCoupon->end_date);
     }
 
-    // Helper to check if a coupon in the same category has overlapping products
-    public static function isCategoryOverlap($existingCoupon, $newCouponData)
-    {
-        if ($newCouponData['scope'] !== 'category') {
-            return false;
-        }
-
-        $categoryProducts = \DB::table('product_categories')
-            ->where('category_id', $existingCoupon->category_id)
-            ->pluck('product_id')
-            ->toArray();
-
-        return in_array($newCouponData['product_id'], $categoryProducts);
-    }
 
 }

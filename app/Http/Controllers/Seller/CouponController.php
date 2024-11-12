@@ -56,11 +56,25 @@ class CouponController extends Controller
         return view('seller.promotions.create', compact('categories', 'products', 'nestedCategories'));
     }
 
-    public function store(CouponStoreRequest $request)
+    public function store(CouponStoreRequest $request) 
     {
         $validatedData = $request->validated();
         $validatedData['user_id'] = auth()->id();
-
+    
+        if ($validatedData['scope'] === 'product' && empty($validatedData['product_id'])) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Product ID is required when scope is product.'
+            ], 422);
+        }
+    
+        if ($validatedData['scope'] === 'category' && empty($validatedData['category_id'])) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Category ID is required when scope is category.'
+            ], 422);
+        }
+    
         if (!$request->has('ignore_overlap') || !$request->ignore_overlap) {
             $overlappingCoupons = Coupon::checkForOverlappingCoupons($validatedData);
     
@@ -71,15 +85,17 @@ class CouponController extends Controller
                 ]);
             }
         }
-
+    
         Coupon::create($validatedData);
         $scope = $validatedData['scope'];
+    
         return response()->json([
             'status' => 'success',
             'redirectUrl' => route('seller.coupons.index', ['scope' => $scope]),
             'message' => 'Coupon created successfully.'
         ]);
     }
+    
 
     public function edit($id)
     {

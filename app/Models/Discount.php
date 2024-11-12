@@ -52,54 +52,69 @@ class Discount extends Model
     public static function checkForOverlappingDiscounts($newDiscountData)
     {
         $overlaps = [];
-
-        $existingDiscounts = self::where('scope', $newDiscountData['scope'])
-            ->where(function ($query) use ($newDiscountData) {
-                $query->whereDate('start_date', '<=', $newDiscountData['end_date'])
-                      ->whereDate('end_date', '>=', $newDiscountData['start_date']);
-            })
-            ->get();
-
+    
+        // Fetch all discounts within the date range of the new discount
+        $existingDiscounts = self::where(function ($query) use ($newDiscountData) {
+            $query->whereDate('start_date', '<=', $newDiscountData['end_date'])
+                  ->whereDate('end_date', '>=', $newDiscountData['start_date']);
+        })->get();
+    
         foreach ($existingDiscounts as $discount) {
-            if ($discount->scope == 'all_orders' || $discount->scope == 'order') {
-                if (self::isDateRangeOverlap($discount, $newDiscountData)) {
-                    $overlaps[] = $discount;
-                }
-            } elseif ($discount->scope == 'category') {
-                if (self::isCategoryOverlap($discount, $newDiscountData)) {
-                    $overlaps[] = $discount;
-                }
-            } elseif ($discount->scope == 'product') {
-                if ($discount->product_id == $newDiscountData['product_id']) {
-                    $overlaps[] = $discount;
-                }
+            switch ($newDiscountData['scope']) {
+                case 'product':
+                    if ($discount->scope == 'product' && $discount->product_id == $newDiscountData['product_id']) {
+                        // Product scope with same product and overlapping date
+                        $overlaps[] = $discount;
+                    } elseif ($discount->scope == 'category' && self::isProductInCategory($newDiscountData['product_id'], $discount->category_id)) {
+                        // Product in an existing category discount with overlapping date
+                        $overlaps[] = $discount;
+                    } elseif (in_array($discount->scope, ['allOrders', 'ordersOverAmount']) && self::isDateRangeOverlap($discount, $newDiscountData)) {
+                        // Overlapping with 'all_orders' or 'ordersOverAmount'
+                        $overlaps[] = $discount;
+                    }
+                    break;
+    
+                case 'allOrders':
+                case 'ordersOverAmount':
+                    if (in_array($discount->scope, ['product', 'category', 'allOrders', 'ordersOverAmount']) && self::isDateRangeOverlap($discount, $newDiscountData)) {
+                        // Overlapping with any scope
+                        $overlaps[] = $discount;
+                    }
+                    break;
+    
+                case 'category':
+                    if (in_array($discount->scope, ['allOrders', 'ordersOverAmount']) && self::isDateRangeOverlap($discount, $newDiscountData)) {
+                        // Overlapping with 'all_orders' or 'ordersOverAmount'
+                        $overlaps[] = $discount;
+                    } elseif ($discount->scope == 'category' && $discount->category_id == $newDiscountData['category_id'] && self::isDateRangeOverlap($discount, $newDiscountData)) {
+                        // Same category and overlapping date
+                        $overlaps[] = $discount;
+                    } elseif ($discount->scope == 'product' && self::isProductInCategory($discount->product_id, $newDiscountData['category_id']) && self::isDateRangeOverlap($discount, $newDiscountData)) {
+                        // Product in the new category and overlapping date
+                        $overlaps[] = $discount;
+                    }
+                    break;
             }
         }
-
+    
         return $overlaps;
     }
-
+    
+    // Helper to check if a product is in a category
+    public static function isProductInCategory($productId, $categoryId)
+    {
+        return \DB::table('product_categories')
+            ->where('category_id', $categoryId)
+            ->where('product_id', $productId)
+            ->exists();
+    }
+    
     // Helper to check if two date ranges overlap
     public static function isDateRangeOverlap($existingDiscount, $newDiscountData)
     {
         return !($newDiscountData['end_date'] < $existingDiscount->start_date || $newDiscountData['start_date'] > $existingDiscount->end_date);
     }
-
-    // Helper to check if a discount in the same category has overlapping products
-    public static function isCategoryOverlap($existingDiscount, $newDiscountData)
-    {
-        if ($newDiscountData['scope'] !== 'category') {
-            return false;
-        }
-
-        // Fetch products under the specified category
-        $categoryProducts = \DB::table('product_categories')
-            ->where('category_id', $existingDiscount->category_id)
-            ->pluck('product_id')
-            ->toArray();
-
-        return in_array($newDiscountData['product_id'], $categoryProducts);
-    }
+       
 
 
 

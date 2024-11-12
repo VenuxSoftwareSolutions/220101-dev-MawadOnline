@@ -193,8 +193,8 @@
                             <tr>
                                 <th>Status</th>
                                 <th>Coupon Code</th>
+                                <th>{{ $columnHeader }}</th>
                                 <th>Discount</th>
-                                <th>Max Use</th>
                                 <th>Start Date</th>
                                 <th>Expires on</th>
                                 <th>Action</th>
@@ -210,8 +210,8 @@
                                         </label>
                                     </td>
                                     <td>{{ $coupon->code }}</td>
+                                    <td>{!! $columnValue($coupon) !!}</td>
                                     <td>{{ $coupon->discount_percentage }}%</td>
-                                    <td>{{ $coupon->max_usage }}</td>
                                     <td>{{ $coupon->start_date->format('m/d/Y') }}</td>
                                     <td>{{ $coupon->end_date->format('m/d/Y') }}</td>
                                     <td>

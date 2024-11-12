@@ -44,26 +44,55 @@ class DiscountController extends Controller
                 $columnValue = fn($discount) => $discount->product ? $discount->product->name : 'N/A';
                 break;
         }
-        return view('seller.promotions.index', compact('discounts', 'scope', 'columnHeader', 'columnValue','isCoupon'));
+        return view('seller.promotions.index', compact('discounts', 'scope', 'columnHeader', 'columnValue', 'isCoupon'));
     }
-
     public function create()
     {
-        $categories = Category::all();
-        $products = Product::where('user_id', Auth::id())->get();
-        $nestedCategories = $this->buildTree($categories);
+        $nestedCategories = Category::all();
+
+        $products = Product::where('user_id', Auth::id())->with('categories')->get();
+
+        $productCategoryIds = $products->map(function ($product) {
+            return $product->categories->pluck('id');
+        })->flatten()->unique();
+
+        $categories = Category::whereIn('id', $productCategoryIds)
+            ->orWhereIn('id', function ($query) use ($productCategoryIds) {
+                $query->select('parent_id')
+                    ->from('categories')
+                    ->whereIn('id', $productCategoryIds);
+            })
+            ->get();
+
+
+        $nestedCategories = $this->buildTree($nestedCategories);
         return view('seller.promotions.create', compact('categories', 'products', 'nestedCategories'));
     }
+
+
 
     public function store(DiscountStoreRequest $request)
     {
         $validatedData = $request->validated();
         $validatedData['user_id'] = auth()->id();
+
+        if ($validatedData['scope'] === 'product' && empty($validatedData['product_id'])) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Product ID is required when scope is product.'
+            ], 422);
+        }
+
+        if ($validatedData['scope'] === 'category' && empty($validatedData['category_id'])) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Category ID is required when scope is category.'
+            ], 422);
+        }
+
         $overlappingDiscounts = Discount::checkForOverlappingDiscounts($validatedData);
-        
+
         if (!$request->has('ignore_overlap') || !$request->ignore_overlap) {
-            $overlappingDiscounts = Discount::checkForOverlappingDiscounts($validatedData);
-    
             if (count($overlappingDiscounts) > 0) {
                 return response()->json([
                     'status' => 'overlap',
@@ -71,11 +100,10 @@ class DiscountController extends Controller
                 ]);
             }
         }
-    
-       
-    
+
         Discount::create($validatedData);
         $scope = $validatedData['scope'];
+
         return response()->json([
             'status' => 'success',
             'redirectUrl' => route('seller.discounts.index', ['scope' => $scope]),
