@@ -194,6 +194,10 @@ class ProductController extends Controller
 
         $product = Product::where('id', $id)->with('stocks')->first();
 
+        if (!$product) {
+            return $this->failed(translate('Product not found.'));
+        }
+        
         if (auth()->user()->id != $product->user_id) {
             return $this->failed(translate('This product is not yours.'));
         }
