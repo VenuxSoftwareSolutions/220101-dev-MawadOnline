@@ -57,19 +57,15 @@ class DiscountController extends Controller
         })->flatten()->unique();
 
         $categories = Category::whereIn('id', $productCategoryIds)
-            ->orWhereIn('id', function ($query) use ($productCategoryIds) {
-                $query->select('parent_id')
-                    ->from('categories')
-                    ->whereIn('id', $productCategoryIds);
+            ->whereNotIn('id', function ($query) {
+                $query->select('parent_id')->from('categories')->whereNotNull('parent_id');
             })
             ->get();
 
-
         $nestedCategories = $this->buildTree($nestedCategories);
+
         return view('seller.promotions.create', compact('categories', 'products', 'nestedCategories'));
     }
-
-
 
     public function store(DiscountStoreRequest $request)
     {
