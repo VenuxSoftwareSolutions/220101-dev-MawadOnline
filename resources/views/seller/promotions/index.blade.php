@@ -625,6 +625,7 @@
             }
         });
         confirmToggleBtn.addEventListener('click', function () {
+            proceedClicked = true;
             const url = isCoupon ? '/vendor/coupons/toggle-status' : '/vendor/discounts/toggle-status';
 
             fetch(url, {

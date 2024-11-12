@@ -526,36 +526,12 @@
             const multiTreeContainer = document.getElementById("multiTreeContainer");
             const productCategoryContainer = document.getElementById("productCategoryContainer");
             const getProductByCategoryUrl = @json(route('seller.discounts.getproductbycategory'));
-            const categorybyproduct = @json(route('seller.discounts.getCategoriesForProductScope'));
             const discountRadio = document.getElementById('discount');
             const couponRadio = document.getElementById('coupons');
             const couponCodeContainer = document.getElementById('couponCodeContainer');
             const DiscountContainer = document.getElementById('DiscountContainer');
 
-           /* categorySelect.addEventListener('change', function() {
-                const selectedCategoryId = this.value;
-
-                    if (selectedCategoryId) {
-                        // Fetch products for the selected category
-                        $.ajax({
-                            url: getProductByCategoryUrl,
-                            type: 'GET',
-                            data: { category_id: selectedCategoryId },
-                            success: function(response) {
-                                productSelect.innerHTML = '<option value="" selected>Select product</option>';
-                                response.products.forEach(function(product) {
-                                    const option = new Option(product.name, product.id);
-                                    productSelect.add(option);
-                                });
-
-                                $('.aiz-selectpicker').selectpicker('refresh');
-                            }
-                        });
-                    } else {
-                        productSelect.innerHTML = '<option value="" selected>Select product</option>';
-                        $('.aiz-selectpicker').selectpicker('refresh');
-                    }
-            });*/
+           
 
 
             function updateScopeView(scope) {
