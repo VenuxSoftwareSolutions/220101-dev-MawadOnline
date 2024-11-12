@@ -221,19 +221,16 @@ Route::controller(CartController::class)->group(function () {
     Route::post('/cart/updateQuantity', 'updateQuantity')->name('cart.updateQuantity');
 });
 
-//Paypal START
 Route::controller(PaypalController::class)->group(function () {
     Route::get('/paypal/payment/done', 'getDone')->name('payment.done');
     Route::get('/paypal/payment/cancel', 'getCancel')->name('payment.cancel');
 });
-//Mercadopago START
+
 Route::controller(MercadopagoController::class)->group(function () {
     Route::any('/mercadopago/payment/done', 'paymentstatus')->name('mercadopago.done');
     Route::any('/mercadopago/payment/cancel', 'callback')->name('mercadopago.cancel');
 });
-//Mercadopago
 
-// SSLCOMMERZ Start
 Route::controller(SslcommerzController::class)->group(function () {
     Route::get('/sslcommerz/pay', 'index');
     Route::POST('/sslcommerz/success', 'success');
@@ -241,9 +238,7 @@ Route::controller(SslcommerzController::class)->group(function () {
     Route::POST('/sslcommerz/cancel', 'cancel');
     Route::POST('/sslcommerz/ipn', 'ipn');
 });
-//SSLCOMMERZ END
 
-//Stipe Start
 Route::controller(StripeController::class)->group(function () {
     Route::get('stripe', 'stripe');
     Route::post('/stripe/create-checkout-session', 'create_checkout_session')->name('stripe.get_token');
@@ -251,9 +246,7 @@ Route::controller(StripeController::class)->group(function () {
     Route::get('/stripe/success', 'success')->name('stripe.success');
     Route::get('/stripe/cancel', 'cancel')->name('stripe.cancel');
 });
-//Stripe END
 
-// Compare
 Route::controller(CompareController::class)->group(function () {
     Route::get('/compare', 'index')->name('compare');
     Route::get('/compare/reset', 'reset')->name('compare.reset');
@@ -261,11 +254,9 @@ Route::controller(CompareController::class)->group(function () {
     Route::get('/compare/details/{id}', 'details')->name('compare.details');
 });
 
-// Subscribe
 Route::resource('subscribers', SubscriberController::class);
 
 Route::group(['middleware' => ['user', 'verified', 'unbanned']], function () {
-
     Route::controller(HomeController::class)->group(function () {
         Route::get('/dashboard', 'dashboard')->name('dashboard')->middleware(['prevent-back-history']);
         Route::get('/profile', 'profile')->name('profile');
@@ -278,8 +269,7 @@ Route::group(['middleware' => ['user', 'verified', 'unbanned']], function () {
 });
 
 Route::group(['middleware' => ['customer', 'verified', 'unbanned']], function () {
-
-    // Checkout Routs
+    // Checkout Routes
     Route::group(['prefix' => 'checkout'], function () {
         Route::controller(CheckoutController::class)->group(function () {
             Route::get('/', 'get_shipping_info')->name('checkout.shipping_info');
@@ -348,9 +338,7 @@ Route::group(['middleware' => ['customer', 'verified', 'unbanned']], function ()
 
 Route::get('translation-check/{check}', [LanguageController::class, 'get_translation']);
 
-
 Route::group(['middleware' => ['auth']], function () {
-
     Route::get('invoice/{order_id}', [InvoiceController::class, 'invoice_download'])->name('invoice.download');
 
     // Reviews
@@ -380,12 +368,8 @@ Route::group(['middleware' => ['auth']], function () {
 });
 
 Route::resource('shops', ShopController::class)->middleware('handle-demo-login');
-// Route::get('/pending-approval', function () {
-//     return view('frontend.pending-approval');
-// })->name('pending_approval');
 Route::get('/status/{status}', [ShopController::class,"showStatus"])->name('seller.status');
 Route::get('/register-eshop', [ShopController::class,"seller_packages"])->name('shops.packages');
-
 
 Route::post('verify-code', [ShopController::class,"verifyCode"])->name('verify.code')->middleware('throttle:5,1');
 Route::post('/shops/business_info', [ShopController::class, 'storeBusinessInfo'])->name('shops.business_info');
@@ -396,7 +380,6 @@ Route::post('/shops/warehouse', [ShopController::class, 'storeWarehouse'])->name
 Route::post('/shops/payout_info', [ShopController::class, 'storePayoutInfo'])->name('shops.payout_info');
 Route::post('/shops/register', [ShopController::class, 'storeShopRegister'])->name('shops.register');
 Route::get('dictionary-words', [ShopController::class, 'getWords'])->name('get.words');
-
 
 Route::get('/instamojo/payment/pay-success', [InstamojoController::class, 'success'])->name('instamojo.success');
 
@@ -411,7 +394,6 @@ Route::controller(VoguepayController::class)->group(function () {
     Route::get('/vogue-pay/callback', 'handleCallback');
     Route::get('/vogue-pay/failure/{id}', 'paymentFailure');
 });
-
 
 //Iyzico
 Route::any('/iyzico/payment/callback/{payment_type}/{amount?}/{payment_method?}/{combined_order_id?}/{customer_package_id?}/{seller_package_id?}', [IyzicoController::class, 'callback'])->name('iyzico.callback');
@@ -441,14 +423,12 @@ Route::controller(PayhereController::class)->group(function () {
     Route::any('/payhere/customer_package_payment/cancel', 'customer_package_cancel')->name('payhere.customer_package_payment.cancel');
 });
 
-
 // phonepe
 Route::controller(PhonepeController::class)->group(function () {
     Route::any('/phonepe/pay', 'pay')->name('phonepe.pay');
     Route::any('/phonepe/redirecturl', 'phonepe_redirecturl')->name('phonepe.redirecturl');
     Route::any('/phonepe/callbackUrl', 'phonepe_callbackUrl')->name('phonepe.callbackUrl');
 });
-
 
 //N-genius
 Route::controller(NgeniusController::class)->group(function () {
@@ -495,5 +475,6 @@ Route::controller(PageController::class)->group(function () {
     //Custom page
     Route::get('/{slug}', 'show_custom_page')->name('custom-pages.show_custom_page');
 });
+
 Route::post('/update-price-preview',[ProductController::class, 'updatePricePreview'])->name('seller.update-price-preview');
 Route::post('/send-checked-attributes',[ProductController::class, 'ProductCheckedAttributes'])->name('seller.product.checked.attributes');
