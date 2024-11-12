@@ -362,7 +362,7 @@
                                 <button id="copyButton" onclick="copyToClipboard()" style="background: none; border: none; cursor: pointer; display: none; margin-left: 10px;">
                                     <i class="fas fa-copy" aria-hidden="true"></i>
                                 </button>
-                                <span id="copyMessage" style="margin-left: 10px; color: green; display: none;">Text Copied</span>
+                                <span id="copyMessage" style="margin-left: 10px; color: green; display: none;">Code Copied</span>
 
                             </div>
                         </div>
