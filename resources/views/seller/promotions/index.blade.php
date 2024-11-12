@@ -74,7 +74,6 @@
 
 @section('panel_content')
     <div class="container mt-5">
-        <!-- Tabs for Discount Types with Card Styles -->
         <div class="row mb-4">
             <div class="col-md-3">
                 <div class="tab-card active" id="product-tab" data-bs-toggle="tab" data-bs-target="#product" role="tab" data-scope="product">
@@ -374,8 +373,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
-
 <script>
 
     function formatDate(dateString) {
@@ -529,6 +526,7 @@
         const confirmToggleBtn = document.getElementById('confirm-toggle-btn');
         const confirmationMessage = document.getElementById('confirmation-message');
         let itemId, isCoupon, isEnabled, toggle, originalState;
+        let proceedClicked = false;
 
         if (path.includes('/vendor/coupons')) {
             couponTab.classList.add('active');
@@ -615,16 +613,16 @@
                 isCoupon = toggle.getAttribute('data-type') === 'coupon';
                 isEnabled = toggle.checked;
                 originalState = !isEnabled;
-
+                proceedClicked = false;
                 confirmationMessage.textContent = `Are you sure you want to ${isEnabled ? 'enable' : 'disable'} this ${isCoupon ? 'coupon' : 'discount'}?`;
 
                 $(toggleModal).modal('show');
             });
         });
         $(toggleModal).on('hidden.bs.modal', function () {
-                if (toggle) {
-                    toggle.checked = originalState; 
-                }
+            if (!proceedClicked && toggle) {
+                toggle.checked = originalState; 
+            }
         });
         confirmToggleBtn.addEventListener('click', function () {
             const url = isCoupon ? '/vendor/coupons/toggle-status' : '/vendor/discounts/toggle-status';
@@ -641,14 +639,16 @@
             .then(data => {
                 if (data.success) {
                     displayToast(`${isCoupon ? 'Coupon' : 'Discount'} status updated successfully.`);
+                    toggle.checked = !originalState;
+
                 } else {
                     displayToast('Error updating status.');
-                    toggle.checked = !isEnabled; 
+                    toggle.checked = originalState;
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                toggle.checked = !isEnabled; 
+                toggle.checked = originalState;            
             })
             .finally(() => {
                 $(toggleModal).modal('hide');
@@ -659,21 +659,4 @@
         });
 
 });
-
-  
 </script>
-
-
-{{-- @push('scripts')
-    <script type="text/javascript">
-       $(document).ready(function() {
-            $('body').on('click', '.edit-discount-btn', function(e) {
-                console.log("clicked");
-                e.preventDefault();
-                $('#editDiscountModal').modal('show');
-            });
-        });
-
-    </script> 
-@endpush
---}}
