@@ -168,4 +168,20 @@ class CouponController extends Controller
 
         return response()->json(['categories' => $categories]);
     }
+    public function toggleStatus(Request $request)
+    {
+        $request->validate(['id' => 'required|integer', 'status' => 'required|boolean']);
+
+        $coupon = Coupon::find($request->id);
+
+        if ($coupon) {
+            $coupon->status = $request->status;
+            $coupon->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false], 404);
+    }
+
 }

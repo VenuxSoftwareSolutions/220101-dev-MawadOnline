@@ -176,5 +176,21 @@ class DiscountController extends Controller
         return response()->json(['categories' => $categories]);
     }
 
+    public function toggleStatus(Request $request)
+    {
+        $request->validate(['id' => 'required|integer', 'status' => 'required|boolean']);
+        $discount = Discount::find($request->id);
+
+        if ($discount) {
+            $discount->status = $request->status;
+            $discount->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false], 404);
+    }   
+
+
 }
 

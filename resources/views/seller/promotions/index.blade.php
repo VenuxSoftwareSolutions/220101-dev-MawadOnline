@@ -216,7 +216,7 @@
                                                 class="published_product toggle-offer-switch" 
                                                 type="checkbox" 
                                                 data-id="{{ $coupon->id }}" 
-                                                data-type="discount"
+                                                data-type="coupon"
                                                 {{ $coupon->status ? 'checked' : '' }}
                                             >
                                             <span></span>
@@ -524,6 +524,10 @@
         const path = window.location.pathname;
         const discountTab = document.getElementById('discounts-tab');
         const couponTab = document.getElementById('coupons-tab');
+        const toggleModal = document.getElementById('toggle-confirmation-modal');
+        const confirmToggleBtn = document.getElementById('confirm-toggle-btn');
+        const confirmationMessage = document.getElementById('confirmation-message');
+        let itemId, isCoupon, isEnabled, toggle;
 
         if (path.includes('/vendor/coupons')) {
             couponTab.classList.add('active');
@@ -602,33 +606,54 @@
                 deleteCoupon(couponId);
             }
         });
-        let selectedOfferId = null;
-    let selectedOfferType = null;
-    let isEnablingOffer = null;
+        
+        document.querySelectorAll('.aiz-switch input[type="checkbox"]').forEach(function (element) {
+            element.addEventListener('change', function () {
+                toggle = element;
+                itemId = toggle.getAttribute('data-id');
+                isCoupon = toggle.getAttribute('data-type') === 'coupon';
+                isEnabled = toggle.checked;
 
-    // Event listener for toggle switch click
-    document.querySelectorAll('.toggle-offer-switch').forEach(function(switchElement) {
-        switchElement.addEventListener('change', function(e) {
-            // Prevent immediate toggle
-            e.preventDefault();
+                // Update modal message based on toggle state
+                confirmationMessage.textContent = `Are you sure you want to ${isEnabled ? 'enable' : 'disable'} this ${isCoupon ? 'coupon' : 'discount'}?`;
 
-            selectedOfferId = e.target.dataset.id;
-            selectedOfferType = e.target.dataset.type;
-            isEnablingOffer = e.target.checked;
-
-            const actionText = isEnablingOffer ? "enable" : "disable";
-            document.getElementById('confirmation-message').innerText = 
-                `Are you sure you want to ${actionText} this offer?`;
-
-            // Show confirmation modal
-            $('#toggle-confirmation-modal').modal('show');
+                // Show modal
+                $(toggleModal).modal('show');
+            });
         });
-    });
+        confirmToggleBtn.addEventListener('click', function () {
+            const url = isCoupon ? '/vendor/coupons/toggle-status' : '/vendor/discounts/toggle-status';
 
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ id: itemId, status: isEnabled })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayToast(`${isCoupon ? 'Coupon' : 'Discount'} status updated successfully.`);
+                } else {
+                    displayToast('Error updating status.');
+                    toggle.checked = !isEnabled; 
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                toggle.checked = !isEnabled; 
+            })
+            .finally(() => {
+                // Hide modal after processing
+                $(toggleModal).modal('hide');
+            });
+        });
 
+});
 
-
-    });
+  
 </script>
 
 
