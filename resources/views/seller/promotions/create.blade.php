@@ -289,15 +289,7 @@
                     </div>
 
                     <div class="row">
-                        {{-- <div class="col-md-6 mb-3">
-                            <label for="category" class="form-label">Category</label>
-                            <select class="form-control aiz-selectpicker" id="category" name="category_id">
-                                <option value="" selected>Select category</option>
-                                @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                @endforeach
-                            </select>
-                        </div> --}}
+                        
                         <div class="col-md-6 mb-3 tree-multiselect" id="multiTreeContainer" style="display:none;">
                             <label for="multiTreeCategory" class="form-label">Category</label>
                             <select id="multiTreeCategory" name="category_id" multiple="multiple">
