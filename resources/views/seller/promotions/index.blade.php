@@ -341,7 +341,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title h6" id="title-modal">{{ translate('Delete Confirmation') }}</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
                 </div>
                 <div class="modal-body text-center">
                     <p class="mt-1 fs-14" id="text-modal">{{ translate('Are you sure to delete this?') }}</p>
@@ -377,6 +377,7 @@
 
 
 <script>
+
     function formatDate(dateString) {
         return dateString.split('T')[0];
     }
@@ -527,7 +528,7 @@
         const toggleModal = document.getElementById('toggle-confirmation-modal');
         const confirmToggleBtn = document.getElementById('confirm-toggle-btn');
         const confirmationMessage = document.getElementById('confirmation-message');
-        let itemId, isCoupon, isEnabled, toggle;
+        let itemId, isCoupon, isEnabled, toggle, originalState;
 
         if (path.includes('/vendor/coupons')) {
             couponTab.classList.add('active');
@@ -613,13 +614,17 @@
                 itemId = toggle.getAttribute('data-id');
                 isCoupon = toggle.getAttribute('data-type') === 'coupon';
                 isEnabled = toggle.checked;
+                originalState = !isEnabled;
 
-                // Update modal message based on toggle state
                 confirmationMessage.textContent = `Are you sure you want to ${isEnabled ? 'enable' : 'disable'} this ${isCoupon ? 'coupon' : 'discount'}?`;
 
-                // Show modal
                 $(toggleModal).modal('show');
             });
+        });
+        $(toggleModal).on('hidden.bs.modal', function () {
+                if (toggle) {
+                    toggle.checked = originalState; 
+                }
         });
         confirmToggleBtn.addEventListener('click', function () {
             const url = isCoupon ? '/vendor/coupons/toggle-status' : '/vendor/discounts/toggle-status';
@@ -646,9 +651,11 @@
                 toggle.checked = !isEnabled; 
             })
             .finally(() => {
-                // Hide modal after processing
                 $(toggleModal).modal('hide');
             });
+           
+
+
         });
 
 });
