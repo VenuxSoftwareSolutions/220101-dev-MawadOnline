@@ -161,9 +161,16 @@
                                 <tr>
                                     <td>
                                         <label class="aiz-switch aiz-switch-success mb-0">
-                                            <input class="publsihed_product" type="checkbox" checked>
-                                            <span class=""> </span>
+                                            <input 
+                                                class="published_product toggle-offer-switch" 
+                                                type="checkbox" 
+                                                data-id="{{ $discount->id }}" 
+                                                data-type="discount"
+                                                {{ $discount->status ? 'checked' : '' }}
+                                            >
+                                            <span></span>
                                         </label>
+                        
                                     </td>
                                     <td>{!! $columnValue($discount) !!}</td>
                                     <td>{{ $discount->discount_percentage }}%</td>
@@ -194,7 +201,7 @@
                                 <th>Status</th>
                                 <th>Coupon Code</th>
                                 <th>{{ $columnHeader }}</th>
-                                <th>Discount</th>
+                                <th>Percentage</th>
                                 <th>Start Date</th>
                                 <th>Expires on</th>
                                 <th>Action</th>
@@ -205,10 +212,16 @@
                                 <tr>
                                     <td>
                                         <label class="aiz-switch aiz-switch-success mb-0">
-                                            <input class="published_product" type="checkbox" checked>
+                                            <input 
+                                                class="published_product toggle-offer-switch" 
+                                                type="checkbox" 
+                                                data-id="{{ $coupon->id }}" 
+                                                data-type="discount"
+                                                {{ $coupon->status ? 'checked' : '' }}
+                                            >
                                             <span></span>
-                                        </label>
                                     </td>
+                                    </label>
                                     <td>{{ $coupon->code }}</td>
                                     <td>{!! $columnValue($coupon) !!}</td>
                                     <td>{{ $coupon->discount_percentage }}%</td>
@@ -340,6 +353,22 @@
             </div>
         </div>
     </div>
+    <div id="toggle-confirmation-modal" class="modal fade">
+        <div class="modal-dialog modal-md modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title h6">Confirmation</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body text-center">
+                    <p id="confirmation-message"></p>
+                    <button type="button" class="btn btn-secondary rounded-0 mt-2" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary rounded-0 mt-2" id="confirm-toggle-btn">Proceed</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
 
 @endsection
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -430,9 +459,7 @@
                 modal.show();
             })
             .catch(error => console.error('Error fetching coupon data:', error));
-    }
-
-    
+    }   
     function updateCoupon(couponId, start_date, end_date) {
         fetch(`/vendor/coupons/${couponId}`, {
                 method: 'PUT',
@@ -453,7 +480,6 @@
             })
             .catch(error => console.error('Error updating coupon:', error));
     }
-
     function deleteCoupon(couponId) {
         fetch(`/vendor/coupons/${couponId}`, {
                 method: 'DELETE',
@@ -469,7 +495,6 @@
             })
             .catch(error => console.error('Error deleting coupon:', error));
     }
-
     function displayToast(message) {
         if (typeof toastr !== "undefined") {
             toastr.options = {
@@ -493,7 +518,6 @@
             console.error("Toastr is not loaded");
         }
     }
-    
     document.addEventListener('DOMContentLoaded', function() {
         const tabs = document.querySelectorAll('#discountCouponTabs .nav-link');
         const scopeCards = document.querySelectorAll('.tab-card');
@@ -509,7 +533,6 @@
             couponTab.classList.remove('active');
         }
 
-        // Function to update URL based on selected tab and scope
         function updateURL(tab, scope) {
             const baseUrl = (tab === 'discounts') ? '/vendor/discounts' : '/vendor/coupons';
             window.location.href = `${baseUrl}?scope=${scope}`;
@@ -579,6 +602,29 @@
                 deleteCoupon(couponId);
             }
         });
+        let selectedOfferId = null;
+    let selectedOfferType = null;
+    let isEnablingOffer = null;
+
+    // Event listener for toggle switch click
+    document.querySelectorAll('.toggle-offer-switch').forEach(function(switchElement) {
+        switchElement.addEventListener('change', function(e) {
+            // Prevent immediate toggle
+            e.preventDefault();
+
+            selectedOfferId = e.target.dataset.id;
+            selectedOfferType = e.target.dataset.type;
+            isEnablingOffer = e.target.checked;
+
+            const actionText = isEnablingOffer ? "enable" : "disable";
+            document.getElementById('confirmation-message').innerText = 
+                `Are you sure you want to ${actionText} this offer?`;
+
+            // Show confirmation modal
+            $('#toggle-confirmation-modal').modal('show');
+        });
+    });
+
 
 
 
