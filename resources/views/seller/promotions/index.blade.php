@@ -94,7 +94,7 @@
             <div class="col-md-3">
                 <div class="tab-card" id="ordersOverAmount-tab" data-bs-toggle="tab" data-bs-target="#ordersOverAmount" data-scope="ordersOverAmount"
                     role="tab">
-                    <div class="tab-card-icon"><i class="fas fa-card"></i></div>
+                    <div class="tab-card-icon"><i class="fas fa-image"></i></div>
                     <div class="tab-card-title">Orders over an Amount</div>
                     <div class="tab-card-description">Click here to offer a discount on all orders above a certain amount.
                     </div>
@@ -102,7 +102,7 @@
             </div>
             <div class="col-md-3">
                 <div class="tab-card" id="allOrders-tab" data-bs-toggle="tab" data-bs-target="#allOrders" role="tab" data-scope="allOrders">
-                    <div class="tab-card-icon"><i class="fas fa-basket"></i></div>
+                    <div class="tab-card-icon"><i class="fas fa-home"></i></div>
                     <div class="tab-card-title">All Orders</div>
                     <div class="tab-card-description">Click here to offer a discount on all the orders.</div>
                 </div>

@@ -226,7 +226,7 @@
         <div class="row mb-4">
             <div class="col-md-3">
                 <div class="tab-card" id="product-tab" data-scope="product">
-                    <div class="tab-card-icon"><i class="bi bi-box"></i></div>
+                    <div class="tab-card-icon"><i class="fas fa-box"></i></div>
                     <div class="tab-card-title">Product</div>
                     <div class="tab-card-description">Click here to offer a discount on a certain product from your
                         inventory.</div>
@@ -234,7 +234,7 @@
             </div>
             <div class="col-md-3">
                 <div class="tab-card" id="category-tab" data-scope="category">
-                    <div class="tab-card-icon"><i class="bi bi-tag"></i></div>
+                    <div class="tab-card-icon"><i class="fas fa-tag"></i></div>
                     <div class="tab-card-title">Category</div>
                     <div class="tab-card-description">Click here to offer a discount on a certain category from your
                         inventory.</div>
@@ -242,7 +242,7 @@
             </div>
             <div class="col-md-3">
                 <div class="tab-card" id="ordersOverAmount-tab" data-scope="ordersOverAmount">
-                    <div class="tab-card-icon"><i class="bi bi-cart4"></i></div>
+                    <div class="tab-card-icon"><i class="fas fa-image"></i></div>
                     <div class="tab-card-title">Orders over an Amount</div>
                     <div class="tab-card-description">Click here to offer a discount on all orders above a certain amount.
                     </div>
@@ -250,7 +250,7 @@
             </div>
             <div class="col-md-3">
                 <div class="tab-card" id="allOrders-tab" data-scope="allOrders">
-                    <div class="tab-card-icon"><i class="bi bi-basket"></i></div>
+                    <div class="tab-card-icon"><i class="fas fa-home"></i></div>
                     <div class="tab-card-title">All Orders</div>
                     <div class="tab-card-description">Click here to offer a discount on all the orders.</div>
                 </div>
@@ -362,6 +362,8 @@
                                 <button id="copyButton" onclick="copyToClipboard()" style="background: none; border: none; cursor: pointer; display: none; margin-left: 10px;">
                                     <i class="fas fa-copy" aria-hidden="true"></i>
                                 </button>
+                                <span id="copyMessage" style="margin-left: 10px; color: green; display: none;">Text Copied</span>
+
                             </div>
                         </div>
                         <input type="hidden" name="code" id="code">
@@ -391,7 +393,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             </div>
             <div class="modal-body text-center">
-                <p class="mt-1 fs-14">{{ translate('Please note that this range overlaps with the existing discounts listed below.') }}</p>
+                <p class="mt-1 fs-14">{{ translate('Please note that this range overlaps with the existing offers listed below.') }}</p>
                 <p class="fs-14">{{ translate('If you proceed, the greater offer will be applied.') }}</p>
                 
                 <ul  id="overlappingDiscountList" class="list-group mb-3" >
@@ -436,7 +438,22 @@
             textarea.select();
             document.execCommand('copy');   
             document.body.removeChild(textarea);
+
+            const copyButtonIcon = document.querySelector("#copyButton i");
+            copyButtonIcon.classList.remove('fa-copy');
+            copyButtonIcon.classList.add('fa-check');
+            const copyMessage = document.getElementById("copyMessage");
+            copyMessage.style.display = "inline";
+
+            
+            setTimeout(() => {
+                copyButtonIcon.classList.remove('fa-check');
+                copyButtonIcon.classList.add('fa-copy');
+                copyMessage.style.display = "none";
+
+            }, 2000);
         }
+
         function updateFormAndUrl(selectedScope = null) {
                 const offerType = document.querySelector('input[name="offerType"]:checked').value;
                 const baseUrl = offerType === 'coupon' ? '/vendor/coupons/create' : '/vendor/discounts/create';
@@ -690,16 +707,12 @@
                     submitDiscountForm(false); 
                 }
             });
-
             $('#activateButton').on('click', function(e) {
                 e.preventDefault();
                 if (validateForm()) {
                     submitCouponForm(false);
                 }
             });
-
-
-
             $('#confirmProceedBtn').on('click', function() {
                 $('#modal-discount-overlap').modal('hide'); 
                 submitDiscountForm(true); 

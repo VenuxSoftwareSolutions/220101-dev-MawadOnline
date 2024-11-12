@@ -50,8 +50,18 @@ class CouponController extends Controller
 
     public function create()
     {
-        $categories = Category::all();
-        $products = Product::where('user_id', Auth::id())->get();
+
+        $products = Product::where('user_id', Auth::id())->with('categories')->get();
+
+        $productCategoryIds = $products->map(function ($product) {
+            return $product->categories->pluck('id');
+        })->flatten()->unique();
+
+        $categories = Category::whereIn('id', $productCategoryIds)
+            ->whereNotIn('id', function ($query) {
+                $query->select('parent_id')->from('categories')->whereNotNull('parent_id');
+            })
+            ->get();
         $nestedCategories = $this->buildTree($categories);
         return view('seller.promotions.create', compact('categories', 'products', 'nestedCategories'));
     }

@@ -61,7 +61,6 @@ class DiscountController extends Controller
                 $query->select('parent_id')->from('categories')->whereNotNull('parent_id');
             })
             ->get();
-
         $nestedCategories = $this->buildTree($nestedCategories);
 
         return view('seller.promotions.create', compact('categories', 'products', 'nestedCategories'));
