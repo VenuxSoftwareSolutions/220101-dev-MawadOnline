@@ -142,5 +142,22 @@ class Coupon extends Model
         return !($newCouponData['end_date'] < $existingCoupon->start_date || $newCouponData['start_date'] > $existingCoupon->end_date);
     }
 
+    protected function isNewCouponHigherPriority($newCouponData, $existingCoupon)
+    {
+        if ($newCouponData['discount_percentage'] > $existingCoupon->discount_percentage) {
+            return true;
+        } elseif ($newCouponData['discount_percentage'] < $existingCoupon->discount_percentage) {
+            return false;
+        }
+
+        if ($newCouponData['max_discount'] > $existingCoupon->max_discount) {
+            return true;
+        } elseif ($newCouponData['max_discount'] < $existingCoupon->max_discount) {
+            return false;
+        }
+
+        return Carbon::now()->greaterThan($existingCoupon->created_at);
+    }
+
 
 }

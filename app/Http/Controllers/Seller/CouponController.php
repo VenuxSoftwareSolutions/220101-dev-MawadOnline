@@ -66,45 +66,62 @@ class CouponController extends Controller
         return view('seller.promotions.create', compact('categories', 'products', 'nestedCategories'));
     }
 
-    public function store(CouponStoreRequest $request) 
+    public function store(CouponStoreRequest $request)
     {
         $validatedData = $request->validated();
         $validatedData['user_id'] = auth()->id();
-    
+
         if ($validatedData['scope'] === 'product' && empty($validatedData['product_id'])) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Product ID is required when scope is product.'
             ], 422);
         }
-    
+
         if ($validatedData['scope'] === 'category' && empty($validatedData['category_id'])) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Category ID is required when scope is category.'
             ], 422);
         }
-    
+
+        $overlappingCoupons = Coupon::checkForOverlappingCoupons($validatedData);
+
         if (!$request->has('ignore_overlap') || !$request->ignore_overlap) {
-            $overlappingCoupons = Coupon::checkForOverlappingCoupons($validatedData);
-    
             if (count($overlappingCoupons) > 0) {
+                $highestPriorityCoupon = collect($overlappingCoupons)->sort(function ($a, $b) {
+                    return [$b->discount_percentage, $b->max_discount, $b->created_at] <=> [$a->discount_percentage, $a->max_discount, $a->created_at];
+                })->first();
+
+                foreach ($overlappingCoupons as $coupon) {
+                    $coupon->update(['status' => false]);
+                }
+                $highestPriorityCoupon->update(['status' => true]);
+                
+                if (empty($overlappingCoupons) || Coupon::isNewCouponHigherPriority($validatedData, $highestPriorityCoupon)) {
+                    $validatedData['status'] = true;
+                    $highestPriorityCoupon->update(['status' => false]);
+                } else {
+                    $validatedData['status'] = false;
+                }
+
                 return response()->json([
                     'status' => 'overlap',
                     'overlappingCoupons' => $overlappingCoupons,
                 ]);
             }
         }
-    
+
         Coupon::create($validatedData);
         $scope = $validatedData['scope'];
-    
+
         return response()->json([
             'status' => 'success',
             'redirectUrl' => route('seller.coupons.index', ['scope' => $scope]),
             'message' => 'Coupon created successfully.'
         ]);
     }
+
     
 
     public function edit($id)
