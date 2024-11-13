@@ -242,6 +242,9 @@
                             @endforelse
                         </tbody>
                     </table>
+                    <div class="pagination-links">
+                        {{ $coupons->links() }}
+                    </div>   
                 </div>
             @endif
         </div>
