@@ -74,7 +74,7 @@ class ProductController extends Controller
         $this->productStockService = $productStockService;
         $this->productUploadsService = $productUploadsService;
         $this->productPricingService = $productPricingService;
-
+        $this->middleware('ensure.account.is.activated')->only('create');
         // $this->middleware(['permission:seller_show_product'])->only('index');
         // $this->middleware(['permission:seller_create_product'])->only('create');
         // $this->middleware(['permission:seller_edit_product'])->only('edit');
