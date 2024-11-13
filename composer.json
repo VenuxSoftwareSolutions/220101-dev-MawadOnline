@@ -17,6 +17,7 @@
         "iyzico/iyzipay-php": "^2.0",
         "kingflamez/laravelrave": "dev-master",
         "laracasts/flash": "^3.2",
+        "laravel/cashier": "^14.14",
         "laravel/framework": "^9.2",
         "laravel/sanctum": "^3.3",
         "laravel/socialite": "^5.6",
