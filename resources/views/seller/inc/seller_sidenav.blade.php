@@ -80,7 +80,7 @@
                                     class="aiz-side-nav-link {{ areActiveRoutes(['product_bulk_upload.index']) }}">
                                     <span class="aiz-side-nav-text">{{ translate('Product Bulk Upload') }}</span>
                                 </a>
-                            </li> 
+                            </li>
                             {{-- @can('seller_show_digital_products')
                             <li class="aiz-side-nav-item">
                                 <a href="{{ route('seller.digitalproducts') }}"
@@ -166,14 +166,14 @@
                                 <span class="aiz-side-nav-arrow"></span>
                             </a>
                             <ul class="aiz-side-nav-list level-2"> --}}
-                    @can('seller_view_package_list')
+                    <!-- @can('seller_view_package_list')
                         <li id="packages" class="aiz-side-nav-item">
                             <a href="{{ route('seller.seller_packages_list') }}" class="aiz-side-nav-link">
                                 <i class="las la-shopping-cart aiz-side-nav-icon"></i>
                                 <span class="aiz-side-nav-text">{{ __('sidenav.Packages') }}</span>
                             </a>
                         </li>
-                    @endcan
+                    @endcan -->
                     {{-- @can('seller_view_all_packages')
                                 <li id="package_list" class="aiz-side-nav-item">
                                     <a href="{{ route('seller.packages_payment_list') }}" class="aiz-side-nav-link">
@@ -229,19 +229,31 @@
                     <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link">
                             <i class="las la-shopping-cart aiz-side-nav-icon"></i>
-                            <span class="aiz-side-nav-text">{{ __('staff.Billing') }}</span>
+                            <span class="aiz-side-nav-text">{{ __('sidenav.Packages') }}</span>
                             <span class="aiz-side-nav-arrow"></span>
                         </a>
                         <!--Submenu-->
                         <ul class="aiz-side-nav-list level-2">
+                            @can('seller_view_package_list')
+                            <li id="packages" class="aiz-side-nav-item">
+                                <a href="{{ route('seller.seller_packages_list') }}" class="aiz-side-nav-link">
+                                    <span class="aiz-side-nav-text">{{ __('sidenav.eShop_lease_plan') }}</span>
+                                </a>
+                            </li>
+                            @endcan
+                            <li id="setting" id="profile" class="aiz-side-nav-item">
+                                <a href="{{ route('seller.profile.index') }}" class="aiz-side-nav-link">
+                                    <span class="aiz-side-nav-text">{{ __('profile.e_shop_profile') }}</span>
+                                </a>
+                            </li>
                             @can('seller_view_all_leases')
                                 <li id="lease" class="aiz-side-nav-item">
-                                    <a href="{{ route('seller.lease.index') }}"
-                                        class="aiz-side-nav-link {{ areActiveRoutes(['seller.lease.index']) }}">
-                                        <span class="aiz-side-nav-text">{{ __('staff.e-Shop lease') }}</span>
+                                    <a href="{{ route('seller.lease.index') }}" class="aiz-side-nav-link">
+                                        <span class="aiz-side-nav-text">{{ __('sidenav.eShop_lease_billing') }}</span>
                                     </a>
                                 </li>
                             @endcan
+
                             @can('seller_view_all_sales')
                                 <li id="sales" class="aiz-side-nav-item">
                                     <a href="{{ route('seller.sales.index') }}"
@@ -272,13 +284,13 @@
                         </a>
                     </li>
                 @endcan
-
+<!--
                 <li id="setting" id="profile" class="aiz-side-nav-item">
                     <a href="{{ route('seller.profile.index') }}" class="aiz-side-nav-link">
                         <i class="las la-user aiz-side-nav-icon"></i>
                         <span class="aiz-side-nav-text">{{ __('profile.e_shop_profile') }}</span>
                     </a>
-                </li>
+                </li> -->
 
                 <li id="help" id="help_centre" class="aiz-side-nav-item">
                     <a href="{{ route('seller.help-center.index') }}" class="aiz-side-nav-link">
