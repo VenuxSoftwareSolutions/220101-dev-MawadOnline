@@ -23,6 +23,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\Payment\AamarpayController;
+use App\Http\Controllers\Payment\VendorPaymentStripeController;
 use App\Http\Controllers\Payment\AuthorizenetController;
 use App\Http\Controllers\Payment\BkashController;
 use App\Http\Controllers\Payment\InstamojoController;
@@ -377,6 +378,16 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/addresses/destroy/{id}', 'destroy')->name('addresses.destroy');
         Route::get('/addresses/set-default/{id}', 'set_default')->name('addresses.set_default');
     });
+
+    Route::get('/checkout/{plan}',[VendorPaymentStripeController::class,'payPlan'])
+    ->name('vendor.pay.plan');
+
+    Route::get('/activate/account/{package}',[VendorPaymentStripeController::class,'confirmPaymentAccount'])
+    ->name('save.payment');
+
+    Route::post('/save-payment-method',[VendorPaymentStripeController::class,'storePaymentAccount'])
+    ->name('vendor.save.payment');
+
 });
 
 Route::resource('shops', ShopController::class)->middleware('handle-demo-login');
@@ -495,5 +506,8 @@ Route::controller(PageController::class)->group(function () {
     //Custom page
     Route::get('/{slug}', 'show_custom_page')->name('custom-pages.show_custom_page');
 });
-Route::post('/update-price-preview',[ProductController::class, 'updatePricePreview'])->name('seller.update-price-preview');
-Route::post('/send-checked-attributes',[ProductController::class, 'ProductCheckedAttributes'])->name('seller.product.checked.attributes');
+Route::post('/update-price-preview',[ProductController::class, 'updatePricePreview'])
+->name('seller.update-price-preview');
+Route::post('/send-checked-attributes',[ProductController::class, 'ProductCheckedAttributes'])
+->name('seller.product.checked.attributes');
+
