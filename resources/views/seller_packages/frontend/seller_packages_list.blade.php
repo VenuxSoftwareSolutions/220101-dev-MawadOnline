@@ -92,7 +92,9 @@
             <h5 style="font-weight: 500;font-size: 24px;line-height: 32px">{{  __('package.Subscription Packages') }}</h5>
         </div>
     </section>
-
+@if (session('message'))
+    <div class="alert alert-success">{{ session('message') }}</div>
+@endif
     <section class="mt-0">
         <div class="col-md-12">
 
@@ -146,8 +148,8 @@
                                                 onclick="show_price_modal({{ $seller_packages->id }})">{{ translate('Purchase Package') }}</button>
                                         @endif
                                     @endif --}}
-                                    <button class="btn btn-light fw-600 col-10"
-                                                onclick="select_package({{ $seller_packages[0]->id }})">{{ __('package.EShop Already Registered') }}</button>
+                                    <a class="btn btn-light fw-600 col-10"
+                                                href="{{ route('save.payment',['package' => $seller_packages[0]->id]) }}">{{ __('package.Register your eShop') }}</a>
                                 </div>
                             </div>
                         </div>
