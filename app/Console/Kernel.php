@@ -65,7 +65,7 @@ class Kernel extends ConsoleKernel
                                 $seller_lease->start_date = $startDate->format('Y-m-d') ;
                                 $seller_lease->end_date = $endDate->format('Y-m-d') ;
                                 $seller_lease->total = $package->amount;
-                                $seller_lease->discount = $package->amount;
+                                $seller_lease->discount = get_setting('onboarding_discount_activation') == 1 ? $package->amount : 0;
                                 $seller_lease->save();
 
                                 $lease_details=SellerLeaseDetail::where('lease_id',$last_lease->id)->get();
