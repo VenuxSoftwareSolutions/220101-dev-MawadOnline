@@ -12,11 +12,11 @@ return [
     'digital_products' => 'المنتجات الرقمية',
     'customer_support' => 'دعم العملاء',
     'followed_vendors' => 'البائعين المتابعين',
-'orders_overview_management'=> 'البائعين المتابعين',
+    'orders_overview_management'=> 'البائعين المتابعين',
     'bulk_upload' => 'تحميل دفعة واحدة',
-
-
-
+    'eShop_lease_plan' => 'خطط الإجار',
+    'eShop_lease_billing' => 'خطط الإجار',
+    'eShop_lease_billing' => 'الفواتير',
 
 
 ];
