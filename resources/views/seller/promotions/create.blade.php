@@ -637,7 +637,7 @@
                 });
             });
             const urlParams = new URLSearchParams(window.location.search);
-            const selectedScope = urlParams.get('scope');
+            const selectedScope = urlParams.get('scope') || 'product';
             if (selectedScope) {
                 updateScopeView(selectedScope);
 
