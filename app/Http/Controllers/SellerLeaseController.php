@@ -9,6 +9,7 @@ use App\Models\SellerLease;
 use Illuminate\Http\Request;
 use App\Models\SellerLeaseDetail;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Session;
 
 class SellerLeaseController extends Controller
 {
@@ -23,10 +24,14 @@ class SellerLeaseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         seller_lease_creation($user=Auth::user());
-
+        if($request->has('display_flash') && $request->display_flash == true)
+        {
+            Session::flash('message', trans('lease.payment_completed_successfully'));
+        }
+        // ($request->has('display_flash') && $request->display_flash == true)?:Session::flash('message', 'This is a message!');
         $currentDate = Carbon::now();
         $startDay = (clone $currentDate);
         $endDay = (clone $currentDate)->subDay(1);
@@ -39,11 +44,11 @@ class SellerLeaseController extends Controller
             ->latest() // Order by the latest leases
             ->take(4)  // Take the latest four leases
             ->get();
-// Remove the first element, as it's the current lease
+        // Remove the first element, as it's the current lease
         $leases = $leases->splice(1);
         //$leases=SellerLease::where('vendor_id',Auth::user()->owner_id)->get();
         $tour_steps=Tour::orderBy('step_number')->get();
-        return view('seller.lease',compact('current_lease','current_details','leases','tour_steps'));
+        return view('seller.lease',compact('current_lease','current_details','leases','tour_steps','user'));
     }
 
     /**
