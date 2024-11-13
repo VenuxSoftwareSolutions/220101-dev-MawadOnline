@@ -27,7 +27,7 @@
                             </span>
 
                         </h6>
-                    </div> 
+                    </div>
         <div class="card-body">
 
             <div class="tree_main">
@@ -42,11 +42,21 @@
             </div>
 
             <div class="float-right">
-            <a href="#">
-                <button id="download_button" disabled type="button" class="btn btn-primary mt-2 ">{{ translate('Download File') }}</button>
-                <span class="d-block " id="message-category"></span>
-            </a>
-            
+                @if(is_null(Auth::user()->stripe_id))
+
+                    @php
+                    Session::put('message', trans('lease.you_need_activate_your_account'));
+                    @endphp
+                    <a href="{{route('seller.seller_packages_list')}}" class="btn btn-primary mt-2 ">
+                        <i class="las la-plus"></i> {{ translate('Download File') }}
+                    </a>
+                    @else
+                    <a href="#">
+                        <button id="download_button" disabled type="button" class="btn btn-primary mt-2 ">{{ translate('Download File') }}</button>
+                        <span class="d-block " id="message-category"></span>
+                    </a>
+                    @endif
+
             </div>
 
             {{-- <table class="table aiz-table mb-0" style="font-size:14px; background-color: #cce5ff; border-color: #b8daff">
@@ -67,7 +77,7 @@
         </div> --}}
     </div>
 
-    
+
     <div class="card">
         <div class="card-header">
             <div class="col text-center text-md-left">
@@ -116,7 +126,7 @@
                         <th class="custom-th">{{ __('Extension') }}</th>
                         <th class="custom-th">{{ __('Size') }}</th>
                 </thead>
-                
+
             </table>
         </div>
     </div>
@@ -168,7 +178,7 @@ $(function() {
                         // The node has children, maybe clear selection or handle differently
                         $('#message-category').text("Please select a sub category!");
                         $('#message-category').css({'color': 'red', 'margin-right': '7px'});
-                        $('#check_selected_parent_id').val(-1);                
+                        $('#check_selected_parent_id').val(-1);
                         AIZ.plugins.bootstrapSelect('refresh');
                         // Optionally, clear selection here if needed
                         // $('#jstree').jstree(true).deselect_node(selectedId);
@@ -237,7 +247,7 @@ $(function() {
                 responseType: 'blob'
             },
             success: function(response, status, xhr) {
-                var filename = "";                   
+                var filename = "";
                 var disposition = xhr.getResponseHeader('Content-Disposition');
 
                 if (disposition && disposition.indexOf('attachment') !== -1) {
@@ -291,7 +301,7 @@ $(function() {
             "columns": [
                 { "data": "filename" },
                 { "data": "created_at" },
-                { 
+                {
                         "data": "status",
                         "render": function(data, type, row) {
                             if (data === 'processing') {
