@@ -372,8 +372,8 @@
                     <div class="row" id="couponCodeContainer" style="display: none;">
                         <div class="col-md-12 mb-3">
                             <div class="form-label"></div>
-                            <div style="display: flex; align-items: center; width: 250px; margin: 0 auto; border: 1px dashed #ccc; padding: 10px; text-align: center;">
-                                <span id="generatedCode" style="text-align:center;"></span>
+                            <div style="display: flex; align-items: center; justify-content: center; width: 250px; margin: 0 auto; border: 1px dashed #ccc; padding: 10px; text-align: center;">
+                                <span id="generatedCode" style="  text-align: center;"></span>
                                 
                                 <button id="copyButton" type="button"  onclick="copyToClipboard()" style="background: none; border: none; cursor: pointer; display: none; margin-left: 10px; position: relative;">
                                     <i class="fas fa-copy" aria-hidden="true"></i>
