@@ -57,11 +57,11 @@ class Kernel extends ConsoleKernel
                                 // Calculate the end date of the lease cycle
                                 $endDate = $startDate->copy()->addMonth()->subDay();
 
-                                $package=SellerPackage::find('4');
+                                $package=SellerPackage::find($last_lease->package_id);
 
                                 $seller_lease=new SellerLease;
                                 $seller_lease->vendor_id=$user->id ;
-                                $seller_lease->package_id=4 ;
+                                $seller_lease->package_id=$package->id ;
                                 $seller_lease->start_date = $startDate->format('Y-m-d') ;
                                 $seller_lease->end_date = $endDate->format('Y-m-d') ;
                                 $seller_lease->total = $package->amount;
