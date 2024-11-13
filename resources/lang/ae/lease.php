@@ -20,5 +20,9 @@ return [
     'to' => 'إلى',
     'Lease History' => 'تاريخ الإيجار',
     'Current Lease Due' => 'الإيجار الحالي المستحق',
+    'pay_with_stripe' => 'ادفع الآن | Stripe Payment ',
+    'activate_your_account'=>'قم بتفعيل حسابك',
+    'payment_completed_successfully'=>'تمت عملية الدفع بنجاح',
+    'you_need_activate_your_account'=>'يجب ان تقوم بتفعيل حسابك',
 
 ];
