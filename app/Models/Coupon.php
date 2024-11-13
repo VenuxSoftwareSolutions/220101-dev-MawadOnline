@@ -89,7 +89,8 @@ class Coupon extends Model
 
         $existingCoupons = self::where(function ($query) use ($newCouponData) {
             $query->whereDate('start_date', '<=', $newCouponData['end_date'])
-                  ->whereDate('end_date', '>=', $newCouponData['start_date']);
+                  ->whereDate('end_date', '>=', $newCouponData['start_date'])
+                  ->where('status', true);
         })->get();
 
         foreach ($existingCoupons as $coupon) {
