@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\View;
+use Laravel\Cashier\Cashier;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +20,7 @@ class AppServiceProvider extends ServiceProvider
       Schema::defaultStringLength(191);
       Paginator::useBootstrap();
       View::addNamespace('seller', resource_path('views/seller'));
+    //   Cashier::calculateTaxes();
   }
 
   /**
