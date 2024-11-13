@@ -1,3 +1,4 @@
+
 <div class="text-left">
     <!-- Product Name -->
     <div class="row">
@@ -9,10 +10,21 @@
         @if($previewData['detailedProduct']['catalog'] == true)
             @if(Auth::user()->user_type == "seller")
                 <div class="col-6">
+                    @if(is_null(Auth::user()->stripe_id))
+
+                    @php
+                    Session::put('message', '{{  __('lease.you_need_activate_your_account') }}');
+                    @endphp
+                    <a href="{{route('seller.seller_packages_list')}}" class="btn btn-secondary-base mr-2 add-to-cart fw-600 min-w-150px rounded-0 text-white" style="float: right;
+                    margin-top: -15px;">
+                        <i class="las la-plus"></i> {{ translate('Add product') }}
+                    </a>
+                    @else
                     <button type="button" class="btn btn-secondary-base mr-2 add-to-cart fw-600 min-w-150px rounded-0 text-white add_product" data-product_id="{{ $previewData['detailedProduct']['product_id'] }}" style="float: right;
                     margin-top: -15px;">
                         <i class="las la-plus"></i> {{ translate('Add product') }}
                     </button>
+                    @endif
                 </div>
             @else
                 @if($previewData['detailedProduct']['is_catalog'] == 2 && $previewData['detailedProduct']['is_added_to_catalog'] == false)
