@@ -55,6 +55,9 @@ class Product extends Model
         'max_third_party_sample',
         'product_catalog_id',
     ];
+    protected $guarded = ['choice_attributes'];
+
+    protected $with = ['product_translations', 'taxes', 'thumbnail'];
 
     // Ensure cascading deletes at the model level
     protected static function booted()
@@ -81,10 +84,6 @@ class Product extends Model
 
         return $lastRevision ? $lastRevision->action_number + 1 : 0;
     }
-
-    protected $guarded = ['choice_attributes'];
-
-    protected $with = ['product_translations', 'taxes', 'thumbnail'];
 
     public function getTranslation($field = '', $lang = false)
     {
@@ -151,7 +150,6 @@ class Product extends Model
         } else {
             return 0;
         }
-
     }
 
     public function product_queries()
@@ -216,37 +214,27 @@ class Product extends Model
 
     public function getChildrenProductsDesc()
     {
-        $childrens = Product::where('parent_id', $this->id)->orderBy('id', 'asc')->get();
-
-        return $childrens;
+        return Product::where('parent_id', $this->id)->orderBy('id', 'asc')->get();
     }
 
     public function getImagesProduct()
     {
-        $images = UploadProducts::where('id_product', $this->id)->where('type', 'images')->get();
-
-        return $images;
+        return UploadProducts::where('id_product', $this->id)->where('type', 'images')->get();
     }
 
     public function getThumbnailsProduct()
     {
-        $thumbnails = UploadProducts::where('id_product', $this->id)->where('type', 'thumbnails')->get();
-
-        return $thumbnails;
+        return UploadProducts::where('id_product', $this->id)->where('type', 'thumbnails')->get();
     }
 
     public function getDocumentsProduct()
     {
-        $documents = UploadProducts::where('id_product', $this->id)->where('type', 'documents')->get();
-
-        return $documents;
+        return UploadProducts::where('id_product', $this->id)->where('type', 'documents')->get();
     }
 
     public function getPricingConfiguration()
     {
-        $pricing = PricingConfiguration::where('id_products', $this->id)->get();
-
-        return $pricing;
+        return PricingConfiguration::where('id_products', $this->id)->get();
     }
 
     public function getFirstPricingConfiguration()
@@ -256,9 +244,7 @@ class Product extends Model
 
     public function getIdsAttributesVariant()
     {
-        $ids = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->pluck('id_attribute')->toArray();
-
-        return $ids;
+        return ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->pluck('id_attribute')->toArray();
     }
 
     public function getAttributesVariant()
@@ -391,21 +377,17 @@ class Product extends Model
                     $productVariantName .= $productAttributeValue->attribute->name.' '.$productAttributeValue->value.' ';
 
                 }
-
             }
 
             return $productVariantName;
         } catch (\Exception $e) {
-            // Handle any exceptions here
             return ' ';
         }
     }
 
     public function getShipping()
     {
-        $shipping = Shipping::where('product_id', $this->id)->get();
-
-        return $shipping;
+        return Shipping::where('product_id', $this->id)->get();
     }
 
     public function getIdsChildrens()
@@ -483,36 +465,22 @@ class Product extends Model
         }
     }
 
-    public function getPrice()
-    {
-        // dd($this->getPricingConfiguration()) ;
-    }
-
     public function shippingOptions($qty)
     {
-
         // Fetch the shipping options based on quantity range
-        $shippingOptions = Shipping::where('product_id', $this->id)->where('from_shipping', '<=', $qty)
+        return Shipping::where('product_id', $this->id)->where('from_shipping', '<=', $qty)
             ->where('to_shipping', '>=', $qty)
             ->first();
-
-        return $shippingOptions;
-
     }
 
     public function minMaxQuantity()
     {
-        // Get the minimum and maximum 'from' values for the given product
         $minFrom = PricingConfiguration::where('id_products', $this->id)->min('from');
-        // $maxFrom = PricingConfiguration::where('id_products', $this->id)->max('from');
 
-        // Get the minimum and maximum 'to' values for the given product
-        // $minTo = PricingConfiguration::where('id_products', $this->id)->min('to');
         $maxTo = PricingConfiguration::where('id_products', $this->id)->max('to');
 
         return [
             'minFrom' => $minFrom ?? 1,
-
             'maxTo' => $maxTo ?? 1,
         ];
     }
