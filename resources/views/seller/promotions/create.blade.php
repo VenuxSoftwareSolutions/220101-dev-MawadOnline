@@ -50,7 +50,31 @@
             background-color: #555;
             border-color: #555;
         }
+        #copyButton {
+            position: relative;
+        }   
 
+        .tooltip-text {
+            visibility: hidden;
+            width: 100px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            padding: 5px;
+            position: absolute;
+            bottom: 125%; 
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1;
+        }
+
+        #copyButton:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
         /* jQuery Tree Multiselect v2.6.3 | (c) Patrick Tsai | MIT Licensed */
         div.tree-multiselect {
             border: 2px solid #D8D8D8;
@@ -351,18 +375,17 @@
                             <div style="display: flex; align-items: center; width: 250px; margin: 0 auto; border: 1px dashed #ccc; padding: 10px; text-align: center;">
                                 <span id="generatedCode" style="text-align:center;"></span>
                                 
-                                <button id="copyButton" onclick="copyToClipboard()" style="background: none; border: none; cursor: pointer; display: none; margin-left: 10px;">
+                                <button id="copyButton" type="button"  onclick="copyToClipboard()" style="background: none; border: none; cursor: pointer; display: none; margin-left: 10px; position: relative;">
                                     <i class="fas fa-copy" aria-hidden="true"></i>
+                                    <span class="tooltip-text" id="tooltipText">Copy coupon code</span>
                                 </button>
-                                <span id="copyMessage" style="margin-left: 10px; color: green; display: none;">Code Copied</span>
-
                             </div>
                         </div>
                         <input type="hidden" name="code" id="code">
-
+                    
                         <div class="col-md-12 text-center">
                             <button type="button" id="generateButton" class="btn btn-dark-custom" onclick="generateCouponCode()">Generate Coupon</button>
-                            <button type="button" id="activateButton" class="btn btn-dark-custom"  style="display: none;">Activate Coupon</button>
+                            <button type="button" id="activateButton" class="btn btn-dark-custom" style="display: none;">Activate Coupon</button>
                         </div>
                     </div>
                     
@@ -422,30 +445,29 @@
             document.getElementById('activateButton').style.display = 'inline-block';
             document.getElementById('generateButton').style.display = 'none';
         }
+
         function copyToClipboard() {
             const code = document.getElementById("generatedCode").textContent;
             const textarea = document.createElement('textarea');
             textarea.value = code;
             document.body.appendChild(textarea);
             textarea.select();
-            document.execCommand('copy');   
+            document.execCommand('copy');   
             document.body.removeChild(textarea);
 
             const copyButtonIcon = document.querySelector("#copyButton i");
             copyButtonIcon.classList.remove('fa-copy');
             copyButtonIcon.classList.add('fa-check');
-            const copyMessage = document.getElementById("copyMessage");
-            copyMessage.style.display = "inline";
 
-            
+            const tooltipText = document.getElementById("tooltipText");
+            tooltipText.textContent = "copied!";
+
             setTimeout(() => {
                 copyButtonIcon.classList.remove('fa-check');
                 copyButtonIcon.classList.add('fa-copy');
-                copyMessage.style.display = "none";
-
-            }, 2000);
+                tooltipText.textContent = "Copy coupon code";
+            }, 3000);
         }
-
         function updateFormAndUrl(selectedScope = null) {
                 const offerType = document.querySelector('input[name="offerType"]:checked').value;
                 const baseUrl = offerType === 'coupon' ? '/vendor/coupons/create' : '/vendor/discounts/create';
@@ -524,8 +546,6 @@
                 }
             });
         }
-
-
         $(document).ready(function() {
             const form = document.getElementById("discountForm");
             const scopeInput = document.getElementById("scope");
