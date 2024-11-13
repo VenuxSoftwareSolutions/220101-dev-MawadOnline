@@ -30,8 +30,8 @@ return [
     'Product_Reviews'=>'Product Reviews',
     'Contact_us'=>'Contact Us',
     'bulk_upload' => 'Bulk Upload',
-
-
+    'eShop_lease_plan'=>'eShop Lease Plans',
+    'eShop_lease_billing' => 'eShop Billing',
 
 
 
