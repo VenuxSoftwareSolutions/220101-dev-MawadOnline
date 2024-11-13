@@ -20,5 +20,8 @@ return [
     'to' => 'to',
     'Lease History' => 'Lease History',
     'Current Lease Due' => 'Current Lease Due' ,
-
+    'pay_with_stripe' => 'Pay With Stripe',
+    'activate_your_account'=>'Activate your account',
+    'payment_completed_successfully'=>'Payment completed successfully!',
+    'you_need_activate_your_account'=>'You need activate your account',
 ];
