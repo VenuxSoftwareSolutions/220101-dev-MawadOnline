@@ -2,7 +2,9 @@
 @extends('seller.layouts.app')
 
 @section('panel_content')
-
+@if (session('message'))
+    <div class="alert alert-success">{{ session('message') }}</div>
+@endif
 <div class="aiz-titlebar text-left mt-2 mb-3">
 	<div class="row align-items-center">
 		<div class="col-md-6">
@@ -26,7 +28,7 @@
                     <th>{{__('lease.To Date')}}</th>
                     <th>{{__('lease.Charge for')}}</th>
                     <th>{{__('lease.Amount (AED)')}}</th>
-                    <th>{{__('lease.Status')}}</th>
+                    <!-- <th>{{__('lease.Status')}}</th> -->
                 </tr>
             </thead>
             <tbody>
@@ -35,7 +37,7 @@
                     <td>{{Carbon\Carbon::createFromFormat('Y-m-d', $current_lease->end_date)->isoFormat('DD-MMMM-YYYY')}}</td>
                     <td>{{__('lease.e-Shop lease')}}</td>
                     <td>{{$current_lease->package->amount}}</td>
-                    <td style="color: red;">{{__('lease.Unpaid')}}</td>
+                    <!-- <td style="color: red;">{{__('lease.Unpaid')}}</td> -->
                 </tr>
                 @foreach($current_details as $key => $detail)
                     <tr>
@@ -43,13 +45,13 @@
                         <td>{{Carbon\Carbon::createFromFormat('Y-m-d', $detail->end_date)->isoFormat('DD-MMMM-YYYY')}}</td>
                         <td>1 {{$detail->role->getTranslation('name')}} {{__('lease.Role')}}</td>
                         <td>{{$detail->amount}}</td>
-                        <td style="color: red;">{{__('lease.Unpaid')}}</td>
+                        <!-- <td style="color: red;">{{__('lease.Unpaid')}}</td> -->
                     </tr>
                 @endforeach
                 <tr>
                     <td></td>
                     <td></td>
-                    <td></td>
+                    <!-- <td></td> -->
                     <td class="text-right"><div>{{__('lease.Onboarding Discount')}}:</div> <br>
                         <div>{{__('lease.Sub Total')}}:</div> <br>
                         <div>{{__('lease.VAT')}}:</div> <br>
@@ -61,9 +63,9 @@
                         <div>{{ number_format(($current_lease->total - $current_lease->discount) * 0.05, 2) }} {{__('lease.AED')}}</div> <br>
                         <div>0.00 {{__('lease.AED')}}</div> <br>
                         <div class="fw-700">{{number_format(($current_lease->total-$current_lease->discount)*0.05+($current_lease->total-$current_lease->discount),2)}} {{__('lease.AED')}}</div> <br>
-                        <div>
-                            <button class="btn btn-primary fw-600" disabled>{{__('lease.Pay Now')}}</button>
-                        </div>
+                        <!-- <div>
+                            <a href="{{route('vendor.pay.plan',['plan'=>'prod_RA4L1fkvO8w7Y9'])}}" class="btn btn-primary fw-600" disabled>{{__('lease.pay_with_stripe')}}</a>
+                        </div> -->
                     </td>
                 </tr>
 
@@ -88,7 +90,7 @@
                     <th>{{__('lease.To Date')}}</th>
                     <th>{{__('lease.Charge for')}}</th>
                     <th>{{__('lease.Amount (AED)')}}</th>
-                    <th>{{__('lease.Status')}}</th>
+                    <!-- <th>{{__('lease.Status')}}</th> -->
                 </tr>
             </thead>
             <tbody>
@@ -97,7 +99,7 @@
                     <td>{{Carbon\Carbon::createFromFormat('Y-m-d', $lease->end_date)->isoFormat('DD-MMMM-YYYY')}}</td>
                     <td>{{__('lease.e-Shop lease')}}</td>
                     <td>{{$lease->package->amount}}</td>
-                    <td style="color: red;">{{__('lease.Unpaid')}}</td>
+                    <!-- <td style="color: red;">{{__('lease.Unpaid')}}</td> -->
                 </tr>
                 @php
                     $details=App\Models\SellerLeaseDetail::where('lease_id',$lease->id)->get();
@@ -108,13 +110,13 @@
                         <td>{{Carbon\Carbon::createFromFormat('Y-m-d', $detail->end_date)->isoFormat('DD-MMMM-YYYY')}}</td>
                         <td>1 {{$detail->role->getTranslation('name')}} {{__('lease.Role')}}</td>
                         <td>{{$detail->amount}}</td>
-                        <td style="color: red;">{{__('lease.Unpaid')}}</td>
+                        <!-- <td style="color: red;">{{__('lease.Unpaid')}}</td> -->
                     </tr>
                 @endforeach
                 <tr>
                     <td></td>
                     <td></td>
-                    <td></td>
+                    <!-- <td></td> -->
                     <td class="text-right"><div>{{__('lease.Onboarding Discount')}}:</div> <br>
                         <div>{{__('lease.Sub Total')}}:</div> <br>
                         <div>{{__('lease.VAT')}}:</div> <br>
