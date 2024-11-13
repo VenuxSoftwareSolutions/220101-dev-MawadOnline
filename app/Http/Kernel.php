@@ -47,7 +47,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\Language::class,
             \App\Http\Middleware\HttpsProtocol::class,
-            \App\Http\Middleware\CheckForMaintenanceMode::class
+            \App\Http\Middleware\CheckForMaintenanceMode::class,
         ],
 
         'api' => [
@@ -90,6 +90,7 @@ class Kernel extends HttpKernel
         'prevent-back-history' => \App\Http\Middleware\PreventBackHistory::class,
         'handle-demo-login' => \App\Http\Middleware\HandleDemoLogin::class,
         'seller_or_admin' => \App\Http\Middleware\CheckSellerOrAdmin::class,
+        'ensure.account.is.activated'=> \App\Http\Middleware\EnsureAccountIsActivated::class,
 
     ];
 
