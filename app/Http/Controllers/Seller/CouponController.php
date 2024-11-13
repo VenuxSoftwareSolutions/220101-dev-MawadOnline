@@ -18,7 +18,7 @@ class CouponController extends Controller
     {
         $scope = $request->query('scope', 'product');
         $isCoupon = $request->route()->uri === 'vendor/coupons';
-        $coupons = Coupon::where('scope', $scope)->get();
+        $coupons = Coupon::where('scope', $scope)->paginate(6);
         $columnHeader = '';
         $columnValue = '';
 
@@ -97,7 +97,7 @@ class CouponController extends Controller
                     $coupon->update(['status' => false]);
                 }
                 $highestPriorityCoupon->update(['status' => true]);
-                
+
                 if (empty($overlappingCoupons) || Coupon::isNewCouponHigherPriority($validatedData, $highestPriorityCoupon)) {
                     $validatedData['status'] = true;
                     $highestPriorityCoupon->update(['status' => false]);

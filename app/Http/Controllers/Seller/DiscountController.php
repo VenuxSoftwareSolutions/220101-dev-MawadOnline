@@ -19,7 +19,7 @@ class DiscountController extends Controller
     {
         $scope = $request->query('scope', 'product');
         $isCoupon = $request->route()->uri === 'vendor/coupons';
-        $discounts = Discount::where('scope', $scope)->get();
+        $discounts = Discount::where('scope', $scope)->paginate(6);
         $columnHeader = '';
         $columnValue = '';
         switch ($scope) {
