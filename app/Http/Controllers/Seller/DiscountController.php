@@ -65,6 +65,7 @@ class DiscountController extends Controller
 
         return view('seller.promotions.create', compact('categories', 'products', 'nestedCategories'));
     }
+    
 
     public function store(DiscountStoreRequest $request)
     {
@@ -89,6 +90,21 @@ class DiscountController extends Controller
 
         if (!$request->has('ignore_overlap') || !$request->ignore_overlap) {
             if (count($overlappingDiscounts) > 0) {
+                $highestPriorityDiscount = collect($overlappingDiscounts)->sort(function ($a, $b) {
+                    return [$b->discount_percentage, $b->max_discount, $b->created_at] <=> [$a->discount_percentage, $a->max_discount, $a->created_at];
+                })->first();
+                foreach ($overlappingDiscounts as $discount) {
+                    $discount->update(['status' => false]);
+                }
+                $highestPriorityDiscount->update(['status' => true]);
+                if (empty($overlappingDiscounts) || Discount::isNewDiscountHigherPriority($validatedData, $highestPriorityDiscount)) {
+                    $validatedData['status'] = true;
+                    $highestPriorityDiscount->update(['status' => false]);
+
+                } else {
+                    $validatedData['status'] = false;
+                }
+            
                 return response()->json([
                     'status' => 'overlap',
                     'overlappingDiscounts' => $overlappingDiscounts,
@@ -96,6 +112,7 @@ class DiscountController extends Controller
             }
         }
 
+    
         Discount::create($validatedData);
         $scope = $validatedData['scope'];
 

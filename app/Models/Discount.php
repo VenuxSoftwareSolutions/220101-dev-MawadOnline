@@ -119,6 +119,22 @@ class Discount extends Model
     }
        
 
+    protected function isNewDiscountHigherPriority($newDiscountData, $existingDiscount)
+    {
+        if ($newDiscountData['discount_percentage'] > $existingDiscount->discount_percentage) {
+            return true;
+        } elseif ($newDiscountData['discount_percentage'] < $existingDiscount->discount_percentage) {
+            return false;
+        }
+
+        if ($newDiscountData['max_discount'] > $existingDiscount->max_discount) {
+            return true;
+        } elseif ($newDiscountData['max_discount'] < $existingDiscount->max_discount) {
+            return false;
+        }
+
+        return Carbon::now()->greaterThan($existingDiscount->created_at);
+    }
 
 
 
