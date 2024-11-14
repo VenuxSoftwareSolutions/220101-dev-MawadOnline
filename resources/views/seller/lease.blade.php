@@ -16,8 +16,10 @@
 <div id="step1" class="card">
     <div class="card-header">
         <h5 class="mb-0 h6 fw-700 fs-22"><div>{{__('lease.Current Lease Due')}}</div> <br>
+        @if ($current_lease)
             {{Carbon\Carbon::createFromFormat('Y-m-d', $current_lease->start_date)->isoFormat('DD-MMMM-YYYY')}} {{__('lease.to')}}
             {{Carbon\Carbon::createFromFormat('Y-m-d', $current_lease->end_date)->isoFormat('DD-MMMM-YYYY')}}
+        @endif
         </h5>
     </div>
     <div class="card-body">
@@ -32,6 +34,7 @@
                 </tr>
             </thead>
             <tbody>
+                @if($current_lease)
                 <tr>
                     <td>{{Carbon\Carbon::createFromFormat('Y-m-d', $current_lease->start_date)->isoFormat('DD-MMMM-YYYY')}}</td>
                     <td>{{Carbon\Carbon::createFromFormat('Y-m-d', $current_lease->end_date)->isoFormat('DD-MMMM-YYYY')}}</td>
@@ -68,12 +71,12 @@
                         </div> -->
                     </td>
                 </tr>
-
+                @endif
             </tbody>
         </table>
     </div>
 </div>
-
+@if($leases)
 @foreach ($leases as $lease)
 <div class="card">
     <div class="card-header">
@@ -138,7 +141,7 @@
 
 @endforeach
 @endsection
-
+@endif
 @section('script')
 
 <script>
