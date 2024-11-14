@@ -897,10 +897,11 @@
                     $('header').delay(800).removeClass('z-1').addClass('z-1020');
                 }
             }
-        </script> @endif
+        </script>
+    @endif
 
     @yield('script')
 
-    {{ get_setting('footer_script') }}
+    {!! get_setting('footer_script') !!}
 </body>
 </html>
