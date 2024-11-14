@@ -6,31 +6,25 @@ namespace App\Http\Controllers\Api\V2;
 
 use App\Http\Controllers\OTPVerificationController;
 use App\Models\BusinessSetting;
-use App\Models\Customer;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 use App\Models\User;
 use App\Notifications\AppEmailVerificationNotification;
 use Hash;
-use GeneaLabs\LaravelSocialiter\Facades\Socialiter;
 use Socialite;
 use App\Models\Cart;
 use App\Rules\Recaptcha;
-use App\Services\SocialRevoke;
-
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Laravel\Sanctum\PersonalAccessToken;
+use App\Utility\PayhereUtility;
 
 class AuthController extends Controller
 {
-
     public function generateSalt($email)
     {
         if ($email == null) {
             return response()->json(['errors' => [translate('Email is required')]], 422);
         }
-
 
         // Your secret key for HMAC-SHA256 algorithm
         $secretKey = config('api.SALT_GENERATION_KEY'); // Make sure to set this in your .env file
@@ -172,6 +166,7 @@ class AuthController extends Controller
             'email.numeric' => translate('Phone must be a number.'),
             'password.required' => translate('Password is required'),
         );
+
         $validator = Validator::make($request->all(), [
             'password' => 'required',
             'login_by' => 'required',
@@ -217,7 +212,7 @@ class AuthController extends Controller
         }
         // if (!$delivery_boy_condition) {
         if (!$delivery_boy_condition && !$seller_condition) {
-            if (\App\Utility\PayhereUtility::create_wallet_reference($request->identity_matrix) == false) {
+            if (PayhereUtility::create_wallet_reference($request->identity_matrix) == false) {
                 return response()->json(['result' => false, 'message' => 'Identity matrix error', 'user' => null], 401);
             }
         }
@@ -225,10 +220,6 @@ class AuthController extends Controller
         if ($user != null) {
             if (!$user->banned) {
                 if (Hash::check($request->password, $user->password)) {
-
-                    // if ($user->email_verified_at == null) {
-                    //     return response()->json(['result' => false, 'message' => translate('Please verify your account'), 'user' => null], 401);
-                    // }
                     return $this->loginSuccess($user);
                 } else {
                     return response()->json(['result' => false, 'message' => translate('Unauthorized'), 'user' => null], 401);
@@ -246,9 +237,8 @@ class AuthController extends Controller
         return response()->json($request->user());
     }
 
-    public function logout(Request $request)
+    public function logout()
     {
-
         $user = request()->user();
         $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
 
@@ -291,6 +281,7 @@ class AuthController extends Controller
             default:
                 $social_user = null;
         }
+
         if ($social_user == null) {
             return response()->json(['result' => false, 'message' => translate('No social provider matches'), 'user' => null]);
         }
@@ -347,10 +338,10 @@ class AuthController extends Controller
 
     public function loginSuccess($user, $token = null)
     {
-
         if (!$token) {
             $token = $user->createToken('API Token')->plainTextToken;
         }
+
         return response()->json([
             'result' => true,
             'message' => translate('Successfully logged in'),
@@ -373,7 +364,6 @@ class AuthController extends Controller
 
     protected function loginFailed()
     {
-
         return response()->json([
             'result' => false,
             'message' => translate('Login Failed'),
@@ -398,14 +388,6 @@ class AuthController extends Controller
         if (auth()->user()) {
             Cart::where('user_id', auth()->user()->id)->delete();
         }
-
-        // if (auth()->user()->provider && auth()->user()->provider != 'apple') {
-        //     $social_revoke =  new SocialRevoke;
-        //     $revoke_output = $social_revoke->apply(auth()->user()->provider);
-
-        //     if ($revoke_output) {
-        //     }
-        // }
 
         $auth_user = auth()->user();
         $auth_user->tokens()->where('id', $auth_user->currentAccessToken()->id)->delete();
