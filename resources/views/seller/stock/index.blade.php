@@ -655,7 +655,7 @@
 <script>
     $(document).ready( function () {
         $('.table').DataTable({
-            "order": [[0, "asc"]], // Sort by first column in descending order
+            "order": [[5, "desc"]], // Sort by first column in descending order
             "dom": 'Bfrtip', // Add buttons to the layout
             "language": {
                 "search": "", // Remove the label text for search input
