@@ -31,21 +31,25 @@ class SellerLeaseController extends Controller
         {
             Session::flash('message', trans('lease.payment_completed_successfully'));
         }
-        // ($request->has('display_flash') && $request->display_flash == true)?:Session::flash('message', 'This is a message!');
+
         $currentDate = Carbon::now();
         $startDay = (clone $currentDate);
         $endDay = (clone $currentDate)->subDay(1);
 
+
         // Retrieve the lease where the current date is between start_date and end_date
         $current_lease = SellerLease::where('vendor_id',Auth::user()->owner_id)->where('start_date', '<=', $startDay)
-            ->where('end_date', '>=', $endDay)->first();
-        $current_details=SellerLeaseDetail::where('lease_id',$current_lease->id)->get();
+        ->where('end_date', '>=', $endDay)->first();
+        $current_details = is_null($current_lease) ? null : SellerLeaseDetail::where('lease_id',$current_lease->id)->get();
         $leases = SellerLease::where('vendor_id',Auth::user()->owner_id)
+            ->when($current_lease, function($query) use ($current_lease) {
+                return $query->where('id','!=',$current_lease->id);
+            })
             ->latest() // Order by the latest leases
             ->take(4)  // Take the latest four leases
             ->get();
-        // Remove the first element, as it's the current lease
-        $leases = $leases->splice(1);
+            // Remove the first element, as it's the current lease
+            // $leases = $leases->splice(1);
         //$leases=SellerLease::where('vendor_id',Auth::user()->owner_id)->get();
         $tour_steps=Tour::orderBy('step_number')->get();
         return view('seller.lease',compact('current_lease','current_details','leases','tour_steps','user'));
