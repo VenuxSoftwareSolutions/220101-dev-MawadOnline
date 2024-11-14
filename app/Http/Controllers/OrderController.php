@@ -2,36 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\AffiliateController;
-use Illuminate\Http\Request;
-use App\Models\Order;
-use App\Models\Cart;
+use App\Mail\InvoiceEmailManager;
 use App\Models\Address;
+use App\Models\Cart;
+use App\Models\CombinedOrder;
+use App\Models\Coupon;
+use App\Models\CouponUsage;
+use App\Models\Order;
+use App\Models\OrderDetail;
 use App\Models\Product;
 use App\Models\ProductStock;
-use App\Models\OrderDetail;
-use App\Models\CouponUsage;
-use App\Models\Coupon;
-use App\Models\User;
-use App\Models\CombinedOrder;
 use App\Models\SmsTemplate;
-use Auth;
-use Mail;
-use App\Mail\InvoiceEmailManager;
+use App\Models\User;
 use App\Utility\NotificationUtility;
-use CoreComponentRepository;
 use App\Utility\SmsUtility;
+use Auth;
+use CoreComponentRepository;
+use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Mail;
 
 class OrderController extends Controller
 {
-
     public function __construct()
     {
         // Staff Permission Check
         $this->middleware(['permission:view_all_orders|view_inhouse_orders|view_seller_orders|view_pickup_point_orders'])->only('all_orders');
         $this->middleware(['permission:view_order_details'])->only('show');
-        $this->middleware(['permission:delete_order'])->only('destroy','bulk_order_delete');
+        $this->middleware(['permission:delete_order'])->only('destroy', 'bulk_order_delete');
     }
 
     // All Orders
@@ -47,18 +46,17 @@ class OrderController extends Controller
         $orders = Order::orderBy('id', 'desc');
         $admin_user_id = User::where('user_type', 'admin')->first()->id;
 
-
         if (
             Route::currentRouteName() == 'inhouse_orders.index' &&
             Auth::user()->can('view_inhouse_orders')
         ) {
             $orders = $orders->where('orders.seller_id', '=', $admin_user_id);
-        } else if (
+        } elseif (
             Route::currentRouteName() == 'seller_orders.index' &&
             Auth::user()->can('view_seller_orders')
         ) {
             $orders = $orders->where('orders.seller_id', '!=', $admin_user_id);
-        } else if (
+        } elseif (
             Route::currentRouteName() == 'pick_up_point.index' &&
             Auth::user()->can('view_pickup_point_orders')
         ) {
@@ -73,7 +71,7 @@ class OrderController extends Controller
                 $orders->where('shipping_type', 'pickup_point')
                     ->where('pickup_point_id', Auth::user()->staff->pick_up_point->id);
             }
-        } else if (
+        } elseif (
             Route::currentRouteName() == 'all_orders.index' &&
             Auth::user()->can('view_all_orders')
         ) {
@@ -86,7 +84,7 @@ class OrderController extends Controller
 
         if ($request->search) {
             $sort_search = $request->search;
-            $orders = $orders->where('code', 'like', '%' . $sort_search . '%');
+            $orders = $orders->where('code', 'like', '%'.$sort_search.'%');
         }
         if ($request->payment_status != null) {
             $orders = $orders->where('payment_status', $request->payment_status);
@@ -97,10 +95,11 @@ class OrderController extends Controller
             $delivery_status = $request->delivery_status;
         }
         if ($date != null) {
-            $orders = $orders->where('created_at', '>=', date('Y-m-d', strtotime(explode(" to ", $date)[0])) . '  00:00:00')
-                ->where('created_at', '<=', date('Y-m-d', strtotime(explode(" to ", $date)[1])) . '  23:59:59');
+            $orders = $orders->where('created_at', '>=', date('Y-m-d', strtotime(explode(' to ', $date)[0])).'  00:00:00')
+                ->where('created_at', '<=', date('Y-m-d', strtotime(explode(' to ', $date)[1])).'  23:59:59');
         }
         $orders = $orders->paginate(15);
+
         return view('backend.sales.index', compact('orders', 'sort_search', 'payment_status', 'delivery_status', 'date'));
     }
 
@@ -114,6 +113,7 @@ class OrderController extends Controller
 
         $order->viewed = 1;
         $order->save();
+
         return view('backend.sales.show', compact('order', 'delivery_boys'));
     }
 
@@ -130,7 +130,6 @@ class OrderController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -140,6 +139,7 @@ class OrderController extends Controller
 
         if ($carts->isEmpty()) {
             flash(translate('Your cart is empty'))->warning();
+
             return redirect()->route('home');
         }
 
@@ -147,16 +147,16 @@ class OrderController extends Controller
 
         $shippingAddress = [];
         if ($address != null) {
-            $shippingAddress['name']        = Auth::user()->name;
-            $shippingAddress['email']       = Auth::user()->email;
-            $shippingAddress['address']     = $address->address;
-            $shippingAddress['country']     = $address->country->name;
-            $shippingAddress['state']       = $address->state->name;
-            $shippingAddress['city']        = $address->city->name;
+            $shippingAddress['name'] = Auth::user()->name;
+            $shippingAddress['email'] = Auth::user()->email;
+            $shippingAddress['address'] = $address->address;
+            $shippingAddress['country'] = $address->country->name;
+            $shippingAddress['state'] = $address->state->name;
+            $shippingAddress['city'] = $address->city->name;
             $shippingAddress['postal_code'] = $address->postal_code;
-            $shippingAddress['phone']       = $address->phone;
+            $shippingAddress['phone'] = $address->phone;
             if ($address->latitude || $address->longitude) {
-                $shippingAddress['lat_lang'] = $address->latitude . ',' . $address->longitude;
+                $shippingAddress['lat_lang'] = $address->latitude.','.$address->longitude;
             }
         }
 
@@ -165,9 +165,9 @@ class OrderController extends Controller
         $combined_order->shipping_address = json_encode($shippingAddress);
         $combined_order->save();
 
-        $seller_products = array();
+        $seller_products = [];
         foreach ($carts as $cartItem) {
-            $product_ids = array();
+            $product_ids = [];
             $product = Product::find($cartItem['product_id']);
             if (isset($seller_products[$product->user_id])) {
                 $product_ids = $seller_products[$product->user_id];
@@ -195,7 +195,7 @@ class OrderController extends Controller
             $order->payment_type = $request->payment_option;
             $order->delivery_viewed = '0';
             $order->payment_status_viewed = '0';
-            $order->code = date('Ymd-His') . rand(10, 99);
+            $order->code = date('Ymd-His').rand(10, 99);
             $order->date = strtotime('now');
             $order->save();
 
@@ -209,15 +209,16 @@ class OrderController extends Controller
                 $product = Product::find($cartItem['product_id']);
 
                 $subtotal += cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
-                $tax +=  cart_product_tax($cartItem, $product, false) * $cartItem['quantity'];
+                $tax += cart_product_tax($cartItem, $product, false) * $cartItem['quantity'];
                 $coupon_discount += $cartItem['discount'];
 
                 $product_variation = $cartItem['variation'];
 
                 $product_stock = $product->stocks->where('variant', $product_variation)->first();
                 if ($product->digital != 1 && $cartItem['quantity'] > 15  /* $product_stock->qty */) {
-                    flash(translate('The requested quantity is not available for ') . $product->getTranslation('name'))->warning();
+                    flash(translate('The requested quantity is not available for ').$product->getTranslation('name'))->warning();
                     $order->delete();
+
                     return redirect()->route('cart')->send();
                 } elseif ($product->digital != 1) {
                     // $product_stock->qty -= $cartItem['quantity'];
@@ -294,7 +295,7 @@ class OrderController extends Controller
 
         $combined_order->save();
 
-        foreach($combined_order->orders as $order){
+        foreach ($combined_order->orders as $order) {
             NotificationUtility::sendOrderPlacedNotification($order);
         }
 
@@ -304,15 +305,14 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -323,8 +323,7 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -335,7 +334,7 @@ class OrderController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -350,7 +349,8 @@ class OrderController extends Controller
                         $product_stock->qty += $orderDetail->quantity;
                         $product_stock->save();
                     }
-                } catch (\Exception $e) {
+                } catch (Exception) {
+                    // @todo log error
                 }
 
                 $orderDetail->delete();
@@ -360,6 +360,7 @@ class OrderController extends Controller
         } else {
             flash(translate('Something went wrong'))->error();
         }
+
         return back();
     }
 
@@ -378,6 +379,7 @@ class OrderController extends Controller
     {
         $order = Order::findOrFail($request->order_id);
         $order->save();
+
         return view('seller.order_details_seller', compact('order'));
     }
 
@@ -463,7 +465,8 @@ class OrderController extends Controller
         if (addon_is_activated('otp_system') && SmsTemplate::where('identifier', 'delivery_status_change')->first()->status == 1) {
             try {
                 SmsUtility::delivery_status_change(json_decode($order->shipping_address)->phone, $order);
-            } catch (\Exception $e) {
+            } catch (Exception) {
+                // @todo log error
             }
         }
 
@@ -471,17 +474,16 @@ class OrderController extends Controller
         NotificationUtility::sendNotification($order, $request->status);
         if (get_setting('google_firebase') == 1 && $order->user->device_token != null) {
             $request->device_token = $order->user->device_token;
-            $request->title = "Order updated !";
-            $status = str_replace("_", "", $order->delivery_status);
+            $request->title = 'Order updated !';
+            $status = str_replace('_', '', $order->delivery_status);
             $request->text = " Your order {$order->code} has been {$status}";
 
-            $request->type = "order";
+            $request->type = 'order';
             $request->id = $order->id;
             $request->user_id = $order->user->id;
 
             NotificationUtility::sendFirebaseNotification($request);
         }
-
 
         if (addon_is_activated('delivery_boy')) {
             if (Auth::user()->user_type == 'delivery_boy') {
@@ -529,7 +531,6 @@ class OrderController extends Controller
         $order->payment_status = $status;
         $order->save();
 
-
         if (
             $order->payment_status == 'paid' &&
             $order->commission_calculated == 0
@@ -541,24 +542,25 @@ class OrderController extends Controller
         NotificationUtility::sendNotification($order, $request->status);
         if (get_setting('google_firebase') == 1 && $order->user->device_token != null) {
             $request->device_token = $order->user->device_token;
-            $request->title = "Order updated !";
-            $status = str_replace("_", "", $order->payment_status);
+            $request->title = 'Order updated !';
+            $status = str_replace('_', '', $order->payment_status);
             $request->text = " Your order {$order->code} has been {$status}";
 
-            $request->type = "order";
+            $request->type = 'order';
             $request->id = $order->id;
             $request->user_id = $order->user->id;
 
             NotificationUtility::sendFirebaseNotification($request);
         }
 
-
         if (addon_is_activated('otp_system') && SmsTemplate::where('identifier', 'payment_status_change')->first()->status == 1) {
             try {
                 SmsUtility::payment_status_change(json_decode($order->shipping_address)->phone, $order);
-            } catch (\Exception $e) {
+            } catch (Exception) {
+                // @todo log error
             }
         }
+
         return 1;
     }
 
@@ -568,7 +570,7 @@ class OrderController extends Controller
 
             $order = Order::findOrFail($request->order_id);
             $order->assign_delivery_boy = $request->delivery_boy;
-            $order->delivery_history_date = date("Y-m-d H:i:s");
+            $order->delivery_history_date = date('Y-m-d H:i:s');
             $order->save();
 
             $delivery_history = \App\Models\DeliveryHistory::where('order_id', $order->id)
@@ -588,7 +590,7 @@ class OrderController extends Controller
 
             if (env('MAIL_USERNAME') != null && get_setting('delivery_boy_mail_notification') == '1') {
                 $array['view'] = 'emails.invoice';
-                $array['subject'] = translate('You are assigned to delivery an order. Order code') . ' - ' . $order->code;
+                $array['subject'] = translate('You are assigned to delivery an order. Order code').' - '.$order->code;
                 $array['from'] = env('MAIL_FROM_ADDRESS');
                 $array['order'] = $order;
 
