@@ -7,6 +7,7 @@ use App\Models\Carrier;
 use App\Models\Cart;
 use App\Models\Category;
 use App\Models\CombinedOrder;
+use App\Models\Country;
 use App\Models\Coupon;
 use App\Models\CouponUsage;
 use App\Models\Emirate;
@@ -190,11 +191,12 @@ class CheckoutController extends Controller
 
         $carts = Cart::where('user_id', Auth::user()->id)->get();
 
-        if ($carts && count($carts) > 0) {
+        if ($carts && $carts->count() > 0) {
             $categories = Category::all();
 
             return view('frontend.shipping_info', compact('categories', 'carts', 'emirates'));
         }
+
         flash(translate('Your cart is empty'))->success();
 
         return back();
@@ -209,6 +211,7 @@ class CheckoutController extends Controller
         }
 
         $carts = Cart::where('user_id', Auth::user()->id)->get();
+
         if ($carts->isEmpty()) {
             flash(translate('Your cart is empty'))->warning();
 
@@ -221,19 +224,24 @@ class CheckoutController extends Controller
         }
 
         $carrier_list = [];
-        if (get_setting('shipping_type') == 'carrier_wise_shipping') {
-            $zone = \App\Models\Country::where('id', $carts[0]['address']['country_id'])->first()->zone_id;
 
-            $carrier_query = Carrier::where('status', 1);
-            $carrier_query->whereIn('id', function ($query) use ($zone) {
-                $query->select('carrier_id')->from('carrier_range_prices')
-                    ->where('zone_id', $zone);
-            })->orWhere('free_shipping', 1);
-            $carrier_list = $carrier_query->get();
+        if (get_setting('shipping_type') == 'carrier_wise_shipping') {
+            $zone = Country::where('id', $carts[0]['address']['country_id'])->first()->zone_id;
+
+            $carrier_list = Carrier::where('status', 1)
+                ->whereIn('id', function ($query) use ($zone) {
+                    $query->select('carrier_id')
+                        ->from('carrier_range_prices')
+                        ->where('zone_id', $zone);
+                })->orWhere('free_shipping', 1)
+                ->get();
         }
 
-        $addresse = Address::find($request->address_id);
-        $shippers_areas = ShippersArea::where('emirate_id', $addresse->state_id)->where('area_id', $addresse->city_id)->get();
+        $address = Address::find($request->address_id);
+
+        $shippers_areas = ShippersArea::where('emirate_id', $address->state_id)
+            ->where('area_id', $address->city_id)
+            ->get();
 
         return view('frontend.delivery_info', compact('carts', 'carrier_list', 'shippers_areas'));
     }
