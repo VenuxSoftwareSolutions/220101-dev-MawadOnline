@@ -366,27 +366,36 @@ class Product extends Model
 
     public function getAttributesVariant()
     {
-        $attributes = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->get();
-        $variants_id = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->pluck('id')->toArray();
-        $historique_children = DB::table('revisions')->whereNull('deleted_at')->whereIn('revisionable_id', $variants_id)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
+        $attributes = ProductAttributeValues::where('id_products', $this->id)
+            ->where('is_variant', 1)
+            ->get();
+        $variants_id = ProductAttributeValues::where('id_products', $this->id)
+            ->where('is_variant', 1)
+            ->pluck('id')
+            ->toArray();
+        $history_children = DB::table('revisions')
+            ->whereNull('deleted_at')
+            ->whereIn('revisionable_id', $variants_id)
+            ->where('revisionable_type', 'App\Models\ProductAttributeValues')
+            ->get();
 
-        if (count($historique_children) > 0) {
-            foreach ($historique_children as $historique_child) {
+        if (count($history_children) > 0) {
+            foreach ($history_children as $history_child) {
                 foreach ($attributes as $variant) {
-                    if ($variant->id == $historique_child->revisionable_id) {
-                        $variant->key = $historique_child->key;
-                        if ($historique_child->key == "add_attribute") {
+                    if ($variant->id == $history_child->revisionable_id) {
+                        $variant->key = $history_child->key;
+                        if ($history_child->key == 'add_attribute') {
                             $variant->added = true;
                         } else {
-                            if ($historique_child->key == 'id_units') {
-                                $unit = Unity::find($historique_child->old_value);
+                            if ($history_child->key == 'id_units') {
+                                $unit = Unity::find($history_child->old_value);
                                 if ($unit != null) {
                                     $variant->old_value = $unit->name;
                                 } else {
                                     $variant->old_value = '';
                                 }
                             } else {
-                                $variant->old_value = $historique_child->old_value;
+                                $variant->old_value = $history_child->old_value;
                             }
                         }
                     }
@@ -424,8 +433,12 @@ class Product extends Model
     {
         $children = Product::where('parent_id', $this->id)->first();
         $ids = [];
+
         if ($children != null) {
-            $ids = ProductAttributeValues::where('id_products', $children->id)->where('is_variant', 1)->pluck('id_attribute')->toArray();
+            $ids = ProductAttributeValues::where('id_products', $children->id)
+                ->where('is_variant', 1)
+                ->pluck('id_attribute')
+                ->toArray();
         }
 
         return $ids;
@@ -433,8 +446,11 @@ class Product extends Model
 
     public function getAttributesVariantChildren()
     {
-        $attributes = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->get();
+        $attributes = ProductAttributeValues::where('id_products', $this->id)
+            ->where('is_variant', 1)
+            ->get();
         $data = [];
+
         if (count($attributes) > 0) {
             foreach ($attributes as $attribute) {
                 $data[$attribute->id_attribute] = $attribute;
@@ -448,6 +464,7 @@ class Product extends Model
     {
         $product_category = ProductCategory::where('product_id', $this->id)->first();
         $path = '';
+
         if ($product_category != null) {
             $current_category = Category::find($product_category->category_id);
             if ($current_category != null) {
@@ -481,7 +498,7 @@ class Product extends Model
     {
         try {
             $productVariantName = " ";
-        
+
             foreach ($this->productAttributeValues as $productAttributeValue) {
                 if ($productAttributeValue->attribute->type_value == "numeric") {
                     $productVariantName .= $productAttributeValue->attribute->name . ' ' . $productAttributeValue->value . " " . $productAttributeValue->unity->name . " ";
@@ -490,15 +507,13 @@ class Product extends Model
                 } else if ($productAttributeValue->attribute->type_value == 'color') {
                     $productVariantName .= $productAttributeValue->attribute->name . ' ' . $productAttributeValue->color->name . " ";
                 } else {
-                    $productVariantName .= $productAttributeValue->attribute->name . ' ' . $productAttributeValue->value . " ";
+                    $productVariantName .= $productAttributeValue->attribute->name.' '.$productAttributeValue->value.' ';
                 }
             }
-        
+
             return $productVariantName;
-        }
-         catch (\Exception $e) {
-            // Handle any exceptions here
-            return " ";
+        } catch (\Exception) {
+            return ' ';
         }
     }
 
@@ -591,7 +606,8 @@ class Product extends Model
     {
 
         // Fetch the shipping options based on quantity range
-        $shippingOptions = Shipping::where('product_id', $this->id)->where('from_shipping', '<=', $qty)
+        return Shipping::where('product_id', $this->id)
+            ->where('from_shipping', '<=', $qty)
             ->where('to_shipping', '>=', $qty)
             ->first();
 
@@ -615,17 +631,17 @@ class Product extends Model
         {
             $discount = $this->discounts()->active()->withinDateRange()->first();
             $categoryDiscount = $this->categories()->first()->discounts()->active()->withinDateRange()->first();
-    
+
             return $discount && $categoryDiscount ? max($discount, $categoryDiscount) : ($discount ?: $categoryDiscount);
         }
-    
+
         public function getBestCoupon($userId, $orderAmount = null)
         {
             $coupon = $this->coupons()->active()->withinDateRange()->whereHas('users', function ($query) use ($userId) {
                 $query->where('user_id', $userId);
             })->first();
-    
+
             return $coupon;
         }
-    
+
 }
