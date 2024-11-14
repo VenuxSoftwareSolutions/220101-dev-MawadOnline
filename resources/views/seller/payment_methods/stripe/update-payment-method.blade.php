@@ -77,9 +77,18 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label" for="card-cvc-element">CVC</label>
                                     <div class="col-md-8">
-                                    <div id="card-cvc-element" class="form-control"></div>
+                                        <div id="card-cvc-element" class="form-control"></div>
+                                    </div>
                                 </div>
-                            </div>
+                                 <div class="form-group row">
+                                    <label class="col-md-3 col-from-label">Automatic Payment?</label>
+                                    <div class="col-md-8">
+                                        <label class="aiz-switch aiz-switch-success mb-0">
+                                            <input type="checkbox" name="automatic_payment" value="1" checked="checked">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </div>
                         </div>
                     </div>
                     <div class="card-footer">
