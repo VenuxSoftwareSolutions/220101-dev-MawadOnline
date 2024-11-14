@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Mail;
 use App\Services\ProductService;
+use App\Models\Emirate;
 
 class HomeController extends Controller
 {
@@ -200,7 +201,8 @@ class HomeController extends Controller
                 flash(translate('You had placed your items in the shopping cart. Try to order before the product quantity runs out.'))->warning();
             }
 
-            return view('frontend.user.customer.dashboard');
+            $emirates = Emirate::all();
+            return view('frontend.user.customer.dashboard', compact("emirates"));
         } elseif (Auth::user()->user_type == 'delivery_boy') {
             return view('delivery_boys.dashboard');
         } else {
@@ -208,14 +210,15 @@ class HomeController extends Controller
         }
     }
 
-    public function profile(Request $request)
+    public function profile()
     {
         if (Auth::user()->user_type == 'seller') {
             return redirect()->route('seller.profile.index');
         } elseif (Auth::user()->user_type == 'delivery_boy') {
             return view('delivery_boys.profile');
         } else {
-            return view('frontend.user.profile');
+            $emirates= Emirate::all();
+            return view('frontend.user.profile', compact("emirates"));
         }
     }
 
