@@ -27,7 +27,7 @@
                                 <div class="">
                                     <form class="form-default" role="form" action="{{ route('login') }}" method="POST">
                                         @csrf
-                                        
+
                                         <!-- Email -->
                                         <div class="form-group">
                                             <label for="email" class="fs-12 fw-700 text-soft-dark">{{  translate('Email') }}</label>
@@ -38,7 +38,7 @@
                                                 </span>
                                             @endif
                                         </div>
-                                            
+
                                         <!-- password -->
                                         <div class="form-group">
                                             <label for="password" class="fs-12 fw-700 text-soft-dark">{{  translate('Password') }}</label>
@@ -57,7 +57,7 @@
                                                     <span class="aiz-square-check"></span>
                                                 </label>
                                             </div>
-                                            
+
                                             <!-- Forgot password -->
                                             <div class="col-6 text-right">
                                                 <a href="{{ route('password.request') }}" class="text-reset fs-12 fw-400 text-gray-dark hov-text-primary"><u>{{ translate('Forgot password?')}}</u></a>

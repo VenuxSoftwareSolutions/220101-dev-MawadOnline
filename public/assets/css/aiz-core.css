@@ -13196,6 +13196,10 @@ border:none !important;
 .hov-text-vendor{
     color: #A2B8C6;
 }
+.btn-regiter-user{
+    color: #cb774b;
+    opacity: 0.8;
+}
 .user-section-header{
     height: 48px;
     width: 138px;
