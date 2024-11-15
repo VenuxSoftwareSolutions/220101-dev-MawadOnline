@@ -160,6 +160,9 @@ class Product extends Model
         'max_third_party_sample',
         'product_catalog_id',
     ];
+    protected $guarded = ['choice_attributes'];
+
+    protected $with = ['shippingRelation', 'product_translations', 'taxes', 'thumbnail'];
 
     // Ensure cascading deletes at the model level
     protected static function booted()
@@ -173,6 +176,11 @@ class Product extends Model
     public function stockSummaries()
     {
         return $this->hasMany(StockSummary::class, 'variant_id', 'id');
+    }
+
+    function shippingRelation()
+    {
+        return $this->hasMany(Shipping::class);
     }
 
     public function getTotalQuantity()
