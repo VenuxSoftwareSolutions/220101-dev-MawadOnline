@@ -143,9 +143,10 @@ class OrderController extends Controller
             return redirect()->route('home');
         }
 
-        $address = Address::where('id', $carts[0]['address_id'])->first();
+        $address = Address::where('id', $carts->first()->address_id)->first();
 
         $shippingAddress = [];
+
         if ($address != null) {
             $shippingAddress['name'] = Auth::user()->name;
             $shippingAddress['email'] = Auth::user()->email;
@@ -155,6 +156,7 @@ class OrderController extends Controller
             $shippingAddress['city'] = $address->city->name;
             $shippingAddress['postal_code'] = $address->postal_code;
             $shippingAddress['phone'] = $address->phone;
+
             if ($address->latitude || $address->longitude) {
                 $shippingAddress['lat_lang'] = $address->latitude.','.$address->longitude;
             }
@@ -166,6 +168,7 @@ class OrderController extends Controller
         $combined_order->save();
 
         $seller_products = [];
+
         foreach ($carts as $cartItem) {
             $product_ids = [];
             $product = Product::find($cartItem['product_id']);
