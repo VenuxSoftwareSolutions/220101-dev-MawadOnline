@@ -387,7 +387,7 @@ class Product extends Model
             ->where('revisionable_type', 'App\Models\ProductAttributeValues')
             ->get();
 
-        if (count($history_children) > 0) {
+        if ($history_children->count() > 0) {
             foreach ($history_children as $history_child) {
                 foreach ($attributes as $variant) {
                     if ($variant->id == $history_child->revisionable_id) {
@@ -412,7 +412,8 @@ class Product extends Model
         }
 
         $data = [];
-        if (count($attributes) > 0) {
+
+        if ($attributes->count() > 0) {
             foreach ($attributes as $attribute) {
                 if ($attribute->id_colors != null) {
                     if (isset($attribute->added)) {
