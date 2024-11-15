@@ -1,8 +1,6 @@
 @extends('frontend.layouts.app')
 
 @section('content')
-
-    <!-- Steps -->
     <section class="pt-5 mb-4">
         <div class="container">
             <div class="row">
@@ -550,9 +548,7 @@
                                 <!-- Offline Payment Fields -->
                                 @if (addon_is_activated('offline_payment'))
                                     <div class="d-none mb-3 rounded border bg-white p-3 text-left">
-                                        <div id="manual_payment_description">
-
-                                        </div>
+                                        <div id="manual_payment_description"></div>
                                         <br>
                                         <div class="row">
                                             <div class="col-md-3">
@@ -640,7 +636,7 @@
 
                 <!-- Cart Summary -->
                 <div class="col-lg-4 mt-lg-0 mt-4" id="cart_summary">
-                    @include('frontend.'.get_setting('homepage_select').'.partials.cart_summary')
+                    @include('frontend.' . get_setting('homepage_select') . '.partials.cart_summary')
                 </div>
             </div>
         </div>
