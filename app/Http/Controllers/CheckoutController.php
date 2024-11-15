@@ -36,7 +36,7 @@ class CheckoutController extends Controller
 
         $carts = Cart::where('user_id', Auth::user()->id)->get();
 
-        // Minumum order amount check
+        // Minimum order amount check
         if (get_setting('minimum_order_amount_check') == 1) {
             $subtotal = 0;
             foreach ($carts as $cartItem) {
@@ -65,6 +65,7 @@ class CheckoutController extends Controller
         if ($request->session()->get('combined_order_id') != null) {
             // If block for Online payment, wallet and cash on delivery. Else block for Offline payment
             $decorator = __NAMESPACE__.'\\Payment\\'.str_replace(' ', '', ucwords(str_replace('_', ' ', $request->payment_option))).'Controller';
+
             if (class_exists($decorator)) {
                 return (new $decorator)->pay($request);
             } else {
