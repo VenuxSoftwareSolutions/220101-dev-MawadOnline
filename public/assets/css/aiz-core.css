@@ -9143,7 +9143,7 @@ input[type="number"] {
     border-color: var(--secondary-base);
 }
 .btn-secondary-base:hover{
-    background-color: var(--hov-secondary-base);
+    background-color: #d98356;
 }
 .btn-info,
 .btn-soft-info:hover,
@@ -13295,3 +13295,40 @@ border:none !important;
     background: none;
     color: #7E808A;
 }
+.register-shop-style{
+    border-radius: 12px;
+    border: solid 1px #DBDCDF;
+}
+.register-shop-h{
+    min-height: 64px;
+    background: #F3F4F5;
+    border-radius: 12px 12px 0px 0px;
+}
+.register-shop-h-text{
+    line-height: 22px;
+    color: #3A3B40;
+    padding: 21px 0px;
+}
+.border-inside-right{
+    border-right:solid 1px #DBDCDF;
+}
+@media (max-width: 991.98px) {
+    .no-border-right-md {
+      border-right: none !important;
+    }
+  }
+.register-shop-s-t{
+    color: #3A3B40;
+}
+.register-shop-desc{
+    color: #7E808A;
+}
+.register-shop-btn{
+    width: 265px;
+    height: 48px;
+}
+@media (max-width: 767.98px) {
+    .register-shop-title{
+        font-size:38px !important;
+    }
+  }
