@@ -184,14 +184,6 @@ class OrderController extends Controller
 
             $order->additional_info = $request->additional_info;
 
-            // $order->shipping_type = $carts[0]['shipping_type'];
-            // if ($carts[0]['shipping_type'] == 'pickup_point') {
-            //     $order->pickup_point_id = $cartItem['pickup_point'];
-            // }
-            // if ($carts[0]['shipping_type'] == 'carrier') {
-            //     $order->carrier_id = $cartItem['carrier_id'];
-            // }
-
             $order->payment_type = $request->payment_option;
             $order->delivery_viewed = '0';
             $order->payment_status_viewed = '0';
@@ -214,15 +206,11 @@ class OrderController extends Controller
 
                 $product_variation = $cartItem['variation'];
 
-                $product_stock = $product->stocks->where('variant', $product_variation)->first();
-                if ($product->digital != 1 && $cartItem['quantity'] > 15  /* $product_stock->qty */) {
+                if ($product->digital != 1 && $cartItem['quantity'] > 15) {
                     flash(translate('The requested quantity is not available for ').$product->getTranslation('name'))->warning();
                     $order->delete();
 
                     return redirect()->route('cart')->send();
-                } elseif ($product->digital != 1) {
-                    // $product_stock->qty -= $cartItem['quantity'];
-                    // $product_stock->save();
                 }
 
                 $order_detail = new OrderDetail;
@@ -256,6 +244,7 @@ class OrderController extends Controller
                 if ($cartItem['shipping_type'] == 'pickup_point') {
                     $order->pickup_point_id = $cartItem['pickup_point'];
                 }
+
                 if ($cartItem['shipping_type'] == 'carrier') {
                     $order->carrier_id = $cartItem['carrier_id'];
                 }
@@ -270,8 +259,8 @@ class OrderController extends Controller
                     if ($order_detail->product_referral_code) {
                         $referred_by_user = User::where('referral_code', $order_detail->product_referral_code)->first();
 
-                        $affiliateController = new AffiliateController;
-                        $affiliateController->processAffiliateStats($referred_by_user->id, 0, $order_detail->quantity, 0, 0);
+                        (new AffiliateController)
+                            ->processAffiliateStats($referred_by_user->id, 0, $order_detail->quantity, 0, 0);
                     }
                 }
             }
