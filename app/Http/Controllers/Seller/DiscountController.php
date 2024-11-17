@@ -10,7 +10,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\Discounts\DiscountStoreRequest;
 use App\Http\Requests\Discounts\DiscountUpdateRequest;
-
+use Illuminate\Support\Facades\Cache;
 
 class DiscountController extends Controller
 {
@@ -48,9 +48,8 @@ class DiscountController extends Controller
     }
     public function create()
     {
-        $nestedCategories = Category::all();
 
-        $products = Product::where('user_id', Auth::id())->with('categories')->get();
+        $products = Product::where('user_id', Auth::id())->with('categories:id,name,parent_id')->get();
 
         $productCategoryIds = $products->map(function ($product) {
             return $product->categories->pluck('id');
@@ -61,9 +60,15 @@ class DiscountController extends Controller
                 $query->select('parent_id')->from('categories')->whereNotNull('parent_id');
             })
             ->get();
-        $nestedCategories = $this->buildTree($nestedCategories);
 
-        return view('seller.promotions.create', compact('categories', 'products', 'nestedCategories'));
+            $nestedCategories = Cache::remember(
+                'nested_categories_level_0',
+                now()->addHours(1),
+                fn() => $this->fetchNestedCategories(0)
+            );
+        
+            
+            return view('seller.promotions.create', compact('categories', 'products', 'nestedCategories'));
     }
     
 
@@ -144,25 +149,17 @@ class DiscountController extends Controller
 
     private function buildTree($categories, $parentId = 0, $path = "")
     {
-        $branch = [];
-
-        foreach ($categories as $category) {
-            if ($category->parent_id == $parentId) {
-                $newPath = $path ? "$path/{$category->name}" : $category->name;
-                $category->path = $newPath;
-
-                $children = $this->buildTree($categories, $category->id, $newPath);
-                $category->isLeaf = !is_array($children) || count($children) === 0;
-                if ($children) {
-                    $category->children = $children;
-                }
-
-                $branch[] = $category;
-            }
-        }
-
-        return $branch;
+        return $categories->map(function ($category) use ($path) {
+            $newPath = $path ? "$path/{$category->name}" : $category->name;
+            $category->path = $newPath;
+            $category->isLeaf = $category->children->isEmpty();
+    
+            $category->children = $this->buildTree($category->children, $category->id, $newPath);
+    
+            return $category;
+        });
     }
+    
     public function getProductsByCategory(Request $request)
     {
         $categoryId = $request->query('category_id');
@@ -206,6 +203,28 @@ class DiscountController extends Controller
 
         return response()->json(['success' => false], 404);
     }   
+    private function fetchNestedCategories($parentId = 0)
+    {
+        return Category::with(['children' => function ($query) {
+            $query->select('id', 'name', 'parent_id');
+        }])
+        ->select('id', 'name', 'parent_id')
+        ->where('parent_id', $parentId)
+        ->get()
+        ->map(fn($category) => $this->transformCategory($category));
+    }
+
+    private function transformCategory($category, $path = "")
+    {
+        $newPath = $path ? "$path/{$category->name}" : $category->name;
+
+        $category->path = $newPath;
+        $category->isLeaf = $category->children->isEmpty();
+
+        $category->children = $category->children->map(fn($child) => $this->transformCategory($child, $newPath));
+
+        return $category;
+    }
 
 
 }

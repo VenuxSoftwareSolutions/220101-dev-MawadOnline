@@ -120,6 +120,10 @@ class Category extends Model
         return $this->hasMany(Coupon::class);
     }
 
+    public function children()
+    {
+        return $this->hasMany(Category::class, 'parent_id');
+    }
     public function hasActiveDiscounts()
     {
         return $this->discounts()->active()->withinDateRange()->exists();
@@ -129,6 +133,8 @@ class Category extends Model
     {
         return $this->coupons()->active()->withinDateRange()->exists();
     }
+
+
 
 
     
