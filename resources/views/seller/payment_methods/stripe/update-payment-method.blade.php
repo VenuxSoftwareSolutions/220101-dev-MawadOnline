@@ -59,7 +59,13 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label" for="cardholder-name">Cardholder name</label>
                                     <div class="col-md-8">
-                                    <input id="cardholder-name" class="form-control" class="card_input" type="text">
+                                    <input id="card-holder-name" class="form-control" class="card_input" type="text">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-from-label" for="cardholder-name">Cardholder email</label>
+                                    <div class="col-md-8">
+                                    <input id="card-holder-email" class="form-control" class="card_input" type="email">
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -118,22 +124,22 @@
 <script>
     const stripe = Stripe('{{ env('STRIPE_KEY') }}');
     const elements = stripe.elements({
-    fonts: [
-        {
-            cssSrc: 'https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap'
-        }
-    ]
-})
+        fonts: [
+                {
+                    cssSrc: 'https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap'
+                }
+            ]
+    })
     // const elements = stripe.elements();
 
     const cardNumberElement = elements.create('cardNumber', {
-    style: {
-        base: {
-            color: '#555',
-            fontFamily: 'Montserrat, sans-serif'
+        style: {
+            base: {
+                color: '#555',
+                fontFamily: 'Montserrat, sans-serif'
+            }
         }
-    }
-})
+    });
     cardNumberElement.mount('#card-number-element');
 
     const cardExpiryElement = elements.create('cardExpiry');
@@ -143,18 +149,20 @@
     cardCVCElement.mount('#card-cvc-element');
 
     const cardHolderName = document.getElementById('card-holder-name');
+    const cardHolderEmail = document.getElementById('card-holder-email');
     const cardButton = document.getElementById('card-button');
     const clientSecret = cardButton.dataset.secret;
     const cardResult = document.getElementById('card-result');
 cardButton.addEventListener('click', async (e) => {
     cardResult.textContent = 'Loading...';
-        const { setupIntent, error } = await stripe.confirmCardSetup(
-            clientSecret, {
-                payment_method: {
-                    card: cardNumberElement,
-                }
-            }
-        );
+        const { paymentMethod, error } = await stripe.createPaymentMethod({
+        type: 'card',
+        card: cardNumberElement,
+        billing_details: {
+            name: cardHolderName.value,
+            email: cardHolderEmail.value,
+        }
+    });
     if (error) {
         cardResult.textContent = error.message
     } else {
@@ -164,16 +172,20 @@ cardButton.addEventListener('click', async (e) => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 package : document.getElementById('package_id').value,
-                paymentMethodId: setupIntent.payment_method,
+                paymentMethodId: paymentMethod.id,
                 "_token": "{{ csrf_token() }}",
             })
         });
+
         let data = await response.json();
+
+
         cardResult.textContent = data.message
         cardNumberElement.clear();
         cardExpiryElement.clear();
         cardCVCElement.clear();
-        document.getElementById('cardholder-name').value='';
+        document.getElementById('card-holder-name').value='';
+        document.getElementById('card-holder-email').value='';
         window.location.href="{{route('seller.lease.index',['display_flash'=>'true'])}}";
     }
 });
