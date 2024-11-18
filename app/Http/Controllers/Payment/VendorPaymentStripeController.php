@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\SellerLease;
 use App\Models\SellerPackage;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\App;
 
 class VendorPaymentStripeController extends Controller
 {
@@ -30,7 +31,22 @@ class VendorPaymentStripeController extends Controller
     public function storePaymentAccount(Request $request){
         try{
                 $user = Auth::user();
-
+                $stripe = new \Stripe\StripeClient(App::environment('STRIPE_KEY'));
+                $customer = $user->createOrGetStripeCustomer();
+                $striepeMethod = $stripe->paymentMethods->attach(
+                $request->paymentMethodId,
+                ['customer' => $customer->id]
+                );
+                $striepeDefaultMethod = $stripe->customers->update(
+                $customer->id,
+                ['invoice_settings' =>['default_payment_method' => $request->paymentMethodId]]
+                );
+                $payment = $stripe->setupIntents->create(
+                [
+                    'payment_method_types' => ['card'],
+                    'customer'=>$customer->id,
+                    'payment_method'=>$request->paymentMethodId,
+                ]);
                 $currentDate = Carbon::now();
                 // Calculate the start date of the lease cycle
                 $startDate = Carbon::create($currentDate);
@@ -46,8 +62,11 @@ class VendorPaymentStripeController extends Controller
                 $seller_lease->discount = $package->amount;
                 $seller_lease->save();
 
-                $user->createOrGetStripeCustomer();
-                return response()->json(['error'=>false,'message'=>"Account verified successfully"],200);
+
+                return response()->json(['error'=>false,
+                                         'message'=> trans('lease.payment_completed_successfully'),
+                                         'customer'=>$customer]
+                                         ,200);
         }catch(exception $e){
             return response()->json(['error'=>true,'message'=>$e->getMessage()],500);
         }
