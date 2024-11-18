@@ -153,44 +153,44 @@
     const cardButton = document.getElementById('card-button');
     const clientSecret = cardButton.dataset.secret;
     const cardResult = document.getElementById('card-result');
-cardButton.addEventListener('click', async (e) => {
-    cardResult.textContent = 'Loading...';
-        const { paymentMethod, error } = await stripe.createPaymentMethod({
-        type: 'card',
-        card: cardNumberElement,
-        billing_details: {
-            name: cardHolderName.value,
-            email: cardHolderEmail.value,
+    cardButton.addEventListener('click', async (e) => {
+        cardResult.textContent = 'Loading...';
+            const { paymentMethod, error } = await stripe.createPaymentMethod({
+            type: 'card',
+            card: cardNumberElement,
+            billing_details: {
+                name: cardHolderName.value,
+                email: cardHolderEmail.value,
+            }
+        });
+        if (error) {
+            cardResult.textContent = error.message
+        } else {
+
+            const response = await fetch("{{route('vendor.save.payment')}}", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    package : document.getElementById('package_id').value,
+                    paymentMethodId: paymentMethod.id,
+                    "_token": "{{ csrf_token() }}",
+                })
+            });
+
+            let data = await response.json();
+
+
+            cardResult.textContent = data.message
+            cardNumberElement.clear();
+            cardExpiryElement.clear();
+            cardCVCElement.clear();
+            document.getElementById('card-holder-name').value='';
+            document.getElementById('card-holder-email').value='';
+            window.location.href="{{route('seller.lease.index',['display_flash'=>'true'])}}";
         }
     });
-    if (error) {
-        cardResult.textContent = error.message
-    } else {
-
-        const response = await fetch("{{route('vendor.save.payment')}}", {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                package : document.getElementById('package_id').value,
-                paymentMethodId: paymentMethod.id,
-                "_token": "{{ csrf_token() }}",
-            })
-        });
-
-        let data = await response.json();
-
-
-        cardResult.textContent = data.message
-        cardNumberElement.clear();
-        cardExpiryElement.clear();
-        cardCVCElement.clear();
-        document.getElementById('card-holder-name').value='';
-        document.getElementById('card-holder-email').value='';
-        window.location.href="{{route('seller.lease.index',['display_flash'=>'true'])}}";
-    }
-});
-cardNumberElement.on('change', (event) => {
-    document.getElementById('card-number-element').style.backgroundImage = `url(images/${event.brand}.png)`
-});
+    cardNumberElement.on('change', (event) => {
+        document.getElementById('card-number-element').style.backgroundImage = `url(images/${event.brand}.png)`
+    });
 </script>
 @endsection
