@@ -56,7 +56,7 @@
         </div>
     </div>
 </div>-->
-<div class="container">
+<div class="col-12 p-0">
     <div class="home-banner-area">
         <div class="banner-inner">
             <!-- Sliders -->
@@ -71,25 +71,31 @@
                         @foreach ($sliders as $key => $slider)
                             <div class="carousel-box">
 
-                                <a href="{{ json_decode(get_setting('home_slider_links'), true)[$key] }}">
+                              <!--  <a href="{{ json_decode(get_setting('home_slider_links'), true)[$key] }}"> -->
                                     <!-- Image -->
-                                    <div class="d-block mw-100 img-fit overflow-hidden h-424px h-md-424px h-lg-460px h-xl-553px overflow-hidden radius-banner">
-                                    <div class="col-12 col-xl-6 col-lg-8 col-md-10 slider-content">
-                                        <div class="col-12 slider-content-title fs-32 font-prompt-exd px-5 pt-5 pb-2">
-                                            UAE's Premier Construction Marketplace
-                                        </div>
-                                        <div class="col-12 slider-content-desc fs-16 font-prompt px-5">
-                                            Effortlessly Buy and Sell Materials, Equipment, and Services—all on One Platform.Effortlessly Buy and Sell Materials, Equipment, and Services—all on One Easy-to-Use, Reliable, and Secure Platform that Streamlines Your Transactions.
-                                        </div>
-                                        <div class="col-12 px-5 pt-4">
-                                            <button type="button" class="btn btn-secondary-base slider-register-vendor text-white border-radius-16 fs-16 font-prompt py-2">
-                                                Register as Vendor
-                                                <svg width="20" height="20" viewBox="0 0 24 24" class="ml-1" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M14.43 5.92993L20.5 11.9999L14.43 18.0699" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                    <path d="M3.5 12H20.33" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                </svg>
-                                            </button>
-                                            <button type="button" class="slider-buyder-btn fs-16 font-prompt" href="#">Join Buyer Waitlist</button>
+                                    <div class="d-block mw-100 img-fit overflow-hidden h-424px h-md-424px h-lg-460px h-xl-504px overflow-hidden">
+                                    <div class="slider-content-container col-12 d-flex justify-content-center">
+                                        <div class="container">
+                                            <div class="col-12 col-xl-6 col-lg-8 col-md-10 slider-content pt-md-5 pt-4">
+                                                <div class="col-12 slider-content-title fs-banner-title font-prompt-exd p-0 pt-5 pb-2">
+                                                    Welcome to the UAE’s Premier Marketplace for Construction Materials, Equipment, and Services.
+                                                </div>
+                                                <div class="col-12 slider-content-desc fs-16 font-prompt p-0">
+                                                    Effortlessly buy and sell on one convenient platform.
+                                                </div>
+                                                <div class="col-12 pt-4 p-0">
+                                                    <button type="button" class="btn btn-secondary-base slider-register-vendor text-white border-radius-16 fs-16 font-prompt py-2">
+                                                        Register as Vendor
+                                                    </button>
+                                                    <button type="button" class="btn bg-white slider-register-buyer margin-s-r-b text-secondary-base border-radius-16 fs-16 font-prompt py-2">
+                                                        Join Buyer Waitlist
+                                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M14.4299 5.92993L20.4999 11.9999L14.4299 18.0699" stroke="#CB774B" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                                            <path d="M3.5 12H20.33" stroke="#CB774B" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                         <img class="img-fit-slider h-100 m-auto has-transition ls-is-cached lazyloaded"
@@ -97,7 +103,7 @@
                                         alt="{{ env('APP_NAME') }} promo"
                                         onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder-rect.jpg') }}';">
                                     </div>
-                                </a>
+                               <!-- </a> -->
                             </div>
                         @endforeach
                     </div>
@@ -263,9 +269,9 @@
 -->
     <!-- Featured Categories -->
     @if (count($featured_categories) > 0)
-        <section class="mb-2 mb-md-3">
-            <div class="container">
-                <div class="bg-white pb-2">
+        <section class="mb-2 mb-md-3 mt-4">
+            <div class="container mt-2">
+                <div class="bg-white pb-2 px-1">
                     <!-- Top Section -->
                     <div class="d-flexZ align-items-baseline justify-content-between">
                         <!-- Title -->
