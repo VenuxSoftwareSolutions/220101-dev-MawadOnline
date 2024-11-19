@@ -49,6 +49,7 @@ class LoginController extends Controller
      */
     public function redirectToProvider($provider)
     {
+        
         if (request()->get('query') == 'mobile_app') {
             request()->session()->put('login_from', 'mobile_app');
         }
@@ -57,7 +58,14 @@ class LoginController extends Controller
                 ->scopes(["name", "email"])
                 ->redirect();
         }
-        return Socialite::driver($provider)->redirect();
+        if ($provider == 'twitter') {
+            return Socialite::driver('twitter-oauth-2')
+            ->redirect();
+        }
+        return Socialite::driver($provider)
+        ->with(['prompt' => 'consent'])
+        ->redirect();
+        
     }
 
     public function handleAppleCallback(Request $request)
@@ -65,8 +73,8 @@ class LoginController extends Controller
         try {
             $user = Socialite::driver("sign-in-with-apple")->user();
         } catch (\Exception $e) {
-            flash(translate("Something Went wrong. Please try again."))->error();
-            return redirect()->route('user.login');
+            flash(message: translate("Something Went wrong. Please try again."))->error();
+            return redirect()->route(route: 'user.login');
         }
         //check if provider_id exist
         $existingUserByProviderId = User::where('provider_id', $user->id)->first();
@@ -133,7 +141,7 @@ class LoginController extends Controller
         }
         try {
             if ($provider == 'twitter') {
-                $user = Socialite::driver('twitter')->user();
+                $user = Socialite::driver('twitter-oauth-2')->stateless()->user();
             } else {
                 $user = Socialite::driver($provider)->stateless()->user();
             }
@@ -190,7 +198,7 @@ class LoginController extends Controller
         }
 
         if (session('link') != null) {
-            return redirect(session('link'));
+            return redirect(session(key: 'link'));
         } else {
             if (auth()->user()->user_type == 'seller') {
                 return redirect()->route('seller.dashboard');
