@@ -636,21 +636,27 @@ class Product extends Model
             'maxTo' => $maxTo ?? 1,
         ];
     }
-        public function getBestDiscount($orderAmount = null)
-        {
-            $discount = $this->discounts()->active()->withinDateRange()->first();
-            $categoryDiscount = $this->categories()->first()->discounts()->active()->withinDateRange()->first();
 
-            return $discount && $categoryDiscount ? max($discount, $categoryDiscount) : ($discount ?: $categoryDiscount);
-        }
+    public function getBestDiscount($orderAmount = null)
+    {
+        $discount = $this->discounts()->active()->withinDateRange()->first();
+        $categoryDiscount = $this->categories()->first()->discounts()->active()->withinDateRange()->first();
 
-        public function getBestCoupon($userId, $orderAmount = null)
-        {
-            $coupon = $this->coupons()->active()->withinDateRange()->whereHas('users', function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            })->first();
+        return $discount && $categoryDiscount ? max($discount, $categoryDiscount) : ($discount ?: $categoryDiscount);
+    }
 
-            return $coupon;
-        }
+    public function getBestCoupon($userId, $orderAmount = null)
+    {
+        $coupon = $this->coupons()->active()->withinDateRange()->whereHas('users', function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        })->first();
 
+        return $coupon;
+    }
+
+
+    public function stockDetails()
+    {
+        return $this->hasMany(StockDetails::class, 'variant_id', 'id');
+    }
 }
