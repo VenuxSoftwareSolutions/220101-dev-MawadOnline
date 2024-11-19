@@ -17,7 +17,7 @@ class Warehouse extends Model
         'address_street',
         'address_building',
         'address_unit',
-        'saveasdraft'
+        'saveasdraft',
     ];
 
     public function checkWhHasProducts()
@@ -29,6 +29,13 @@ class Warehouse extends Model
         return $stockSummaryCount > 0;
     }
 
+    public function area()
+    {
+        return $this->belongsTo(Area::class);
+    }
 
-
+    public function emirate()
+    {
+        return $this->belongsTo(Emirate::class);
+    }
 }
