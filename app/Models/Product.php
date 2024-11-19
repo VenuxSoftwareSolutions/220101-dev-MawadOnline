@@ -160,6 +160,7 @@ class Product extends Model
         'max_third_party_sample',
         'product_catalog_id',
     ];
+
     protected $guarded = ['choice_attributes'];
 
     protected $with = ['shippingRelation', 'product_translations', 'taxes', 'thumbnail'];
@@ -178,7 +179,7 @@ class Product extends Model
         return $this->hasMany(StockSummary::class, 'variant_id', 'id');
     }
 
-    function shippingRelation()
+    public function shippingRelation()
     {
         return $this->hasMany(Shipping::class);
     }
