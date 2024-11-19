@@ -1,5 +1,4 @@
-<div class="modal fade" id="login_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+<div class="modal fade" id="login_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-zoom" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -89,7 +88,10 @@
                     </div>
 
                     <!-- Social Login -->
-                    @if (get_setting('google_login') == 1 || get_setting('facebook_login') == 1 || get_setting('twitter_login') == 1 || get_setting('apple_login') == 1)
+                    @if (get_setting('google_login') == 1 ||
+                            get_setting('facebook_login') == 1 ||
+                            get_setting('twitter_login') == 1 ||
+                            get_setting('apple_login') == 1)
                         <div class="separator mb-3">
                             <span class="bg-white px-3 opacity-60">{{ translate('Or Login With') }}</span>
                         </div>
@@ -137,3 +139,4 @@
         </div>
     </div>
 </div>
+
