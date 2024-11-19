@@ -50,7 +50,7 @@ use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\SupportTicketController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\WishlistController;
-use App\Http\Controllers\SizeChartController;
+use App\Http\Controllers\AramexController;
 
 /*
   |--------------------------------------------------------------------------
@@ -476,3 +476,17 @@ Route::controller(PageController::class)->group(function () {
 
 Route::post('/update-price-preview', [ProductController::class, 'updatePricePreview'])->name('seller.update-price-preview');
 Route::post('/send-checked-attributes', [ProductController::class, 'ProductCheckedAttributes'])->name('seller.product.checked.attributes');
+
+Route::controller(AramexController::class)->prefix("/aramex")->group(function () {
+    Route::get("/cities/{countryCode}", "fetchCities");
+    Route::get("/rate", "calculateRate");
+    Route::get("/pickup", "createPickup");
+    Route::get("/track-pickup/{reference}", "trackPickup");
+    Route::get("/cancel-pickup/{guid}", "cancelPickup");
+    Route::get("/shipments", "createShipments");
+    Route::get("/track-shipments/{id}", "trackShipments");
+    Route::get("/print-label/{shipmentnumber}", "printLabel");
+
+    Route::get("carts/{user_id}", "carts");
+    Route::get("orders/{user_id}", "orders");
+});
