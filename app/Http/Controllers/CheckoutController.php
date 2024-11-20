@@ -209,10 +209,10 @@ class CheckoutController extends Controller
             return redirect()->route('home');
         }
 
-        foreach ($carts as $key => $cartItem) {
-            $cartItem->address_id = $request->address_id;
-            $cartItem->save();
-        }
+        $carts->each(function ($cart) {
+            $cart->address_id = request()->address_id;
+            $cart->save();
+        });
 
         $carrier_list = [];
 
