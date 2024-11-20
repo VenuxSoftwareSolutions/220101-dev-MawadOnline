@@ -212,6 +212,31 @@
                                                                         class="fs-14 text-dark fw-500">{{ $duration ?? '' }}</span>
                                                                 </div>
                                                             </div>
+                                                            <div class="row rate-calculator-wrapper__clz">
+                                                                <div class="col-md-12">
+                                                                    <span
+                                                                        class="fs-14 text-secondary">{{ translate('Rate') }}:</span>
+                                                                    <span class="fs-14 text-dark"
+                                                                        id="rate-calculator-result">N/A</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-12 d-flex justify-content-end">
+                                                                    <span class="fs-14"><a
+                                                                            class="btn btn-sm btn-secondary-base text-white ml-4 rounded-0 px-4"
+                                                                            onclick="sendCalculateRateRequest(this)">
+                                                                            <span id="button-text">Calculate Rate</span>
+                                                                            <span class="d-none" id="loading-wrapper">
+                                                                                <span
+                                                                                    class="spinner-border spinner-border-sm"
+                                                                                    role="status"
+                                                                                    aria-hidden="true"></span>
+                                                                                <span
+                                                                                    class="visually-hidden">Loading...</span>
+                                                                            </span>
+                                                                        </a></span>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -559,6 +584,40 @@
             } else {
                 shippersAreaContainer.style.display = 'none';
             }
+        }
+
+        function sendCalculateRateRequest(element) {
+            $(element).toggleClass("disabled");
+            $("#loading-wrapper").toggleClass("d-none");
+            $("#button-text").toggleClass("d-none");
+
+            $.post("{{ route('user.orders', ['user_id' => auth()->user()->id]) }}", {
+                product_id: {{ $product->id }},
+            }).done(
+                function({
+                    error,
+                    data,
+                    message
+                }) {
+                    $("#loading-wrapper").toggleClass("d-none");
+                    $("#button-text").toggleClass("d-none");
+                    $(element).toggleClass("disabled");
+
+                    if (error === true) {
+                        throw new Error(message);
+                    } else if (data["HasErrors"] === false) {
+                        $("#rate-calculator-result").html(
+                            `${data["TotalAmount"]["Value"]} ${data["TotalAmount"]["CurrencyCode"]}`
+                        ).removeClass("text-dark").addClass("text-success").addClass("fw-700");
+                    } else {
+                        AIZ.plugins.notify('error', '{{ __('Something went wrong!') }}');
+                    }
+                }).catch(() => {
+                    $(element).toggleClass("disabled");
+                    $("#loading-wrapper").toggleClass("d-none");
+                    $("#button-text").toggleClass("d-none");
+                    AIZ.plugins.notify('error', '{{ __('Something went wrong!') }}')
+                });
         }
     </script>
 @endsection
