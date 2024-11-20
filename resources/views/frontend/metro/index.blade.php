@@ -84,16 +84,16 @@
                                                     Effortlessly buy and sell on one convenient platform.
                                                 </div>
                                                 <div class="col-12 pt-4 p-0">
-                                                    <button type="button" class="btn btn-secondary-base slider-register-vendor text-white border-radius-16 fs-16 font-prompt py-2">
+                                                    <a href="https://business.mawadonline.com/"><button type="button" class="btn btn-secondary-base slider-register-vendor text-white border-radius-16 fs-16 font-prompt py-2">
                                                         Register as Vendor
-                                                    </button>
-                                                    <button type="button" class="btn bg-white slider-register-buyer margin-s-r-b text-secondary-base border-radius-16 fs-16 font-prompt py-2">
+                                                    </button></a>
+                                                    <a href="https://about.mawadonline.com/"><button type="button" class="btn bg-white slider-register-buyer margin-s-r-b text-secondary-base border-radius-16 fs-16 font-prompt py-2">
                                                         Join Buyer Waitlist
                                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                             <path d="M14.4299 5.92993L20.4999 11.9999L14.4299 18.0699" stroke="#CB774B" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
                                                             <path d="M3.5 12H20.33" stroke="#CB774B" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
                                                         </svg>
-                                                    </button>
+                                                    </button></a>
                                                 </div>
                                             </div>
                                         </div>
