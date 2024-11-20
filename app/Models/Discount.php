@@ -58,8 +58,8 @@ class Discount extends Model
         // Fetch all discounts within the date range of the new discount
         $existingDiscounts = self::where(function ($query) use ($newDiscountData) {
             $query->whereDate('start_date', '<=', $newDiscountData['end_date'])
-                  ->whereDate('end_date', '>=', $newDiscountData['start_date'])
-                  ->where('status', true);
+                  ->whereDate('end_date', '>=', $newDiscountData['start_date']);
+                 
         })->get();
     
         foreach ($existingDiscounts as $discount) {
