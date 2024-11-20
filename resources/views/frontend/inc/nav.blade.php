@@ -33,7 +33,7 @@
                     <ul class="list-inline d-flex justify-content-between justify-content-lg-start mb-0">
                         <!-- Welcome -->
                         <li class="list-inline-item mr-0 pl-0 py-2">
-                            <div class="text-dark fs-12 pr-3 d-inline-block border-width-2">
+                            <div class="text-dark fs-13 pr-3 d-inline-block border-width-2">
                                 Welcome To MawadOnline's Marketplace
                             </div>
                         </li>
@@ -50,7 +50,7 @@
                                 $system_currency = get_system_currency();
                             @endphp
 
-                            <a href="javascript:void(0)" class="dropdown-toggle text-secondary fs-12 my-2 pr-3 border-right"
+                            <a href="javascript:void(0)" class="dropdown-toggle text-secondary fs-13 my-2 pr-3 border-right"
                                 data-toggle="dropdown" data-display="static">
                                 {{ $system_currency->name }}
                             </a>
@@ -70,7 +70,7 @@
                         @if (get_setting('show_language_switcher') == 'on')
                             <li class="list-inline-item dropdown mr-4" id="lang-change">
 
-                                <a href="javascript:void(0)" class="dropdown-toggle text-secondary fs-12 my-2 pr-3 border-right"
+                                <a href="javascript:void(0)" class="dropdown-toggle text-secondary fs-13 my-2 pr-3 border-right"
                                     data-toggle="dropdown" data-display="static">
                                     <img src="{{ static_asset('assets/img/placeholder.jpg') }}"
                                     data-src="{{ static_asset('assets/img/flags/' . $system_language->code . '.png') }}"
@@ -98,12 +98,12 @@
                             <!-- Become a Seller -->
                             <li class="list-inline-item mr-0 pl-0 py-2">
                                 <a href="{{ route('shops.packages') }}"
-                                    class="text-secondary fs-12 pr-3 d-inline-block border-width-2 border-right">{{ translate('Become a Seller') }}</a>
+                                    class="text-secondary-base fs-13 pr-3 d-inline-block border-width-2 border-right">{{ translate('Become a Seller') }}</a>
                             </li>
                             <!-- Seller Login -->
                             <li class="list-inline-item mr-0 pl-0 py-2">
                                 <a href="{{ route('seller.login') }}"
-                                    class="text-secondary fs-12 pl-3 d-inline-block">{{ translate('Login to Seller') }}</a>
+                                    class="text-secondary fs-13 pl-3 d-inline-block">{{ translate('Login to Seller') }}</a>
                             </li>
                             @endunless
 
@@ -112,7 +112,7 @@
                             <!-- Helpline -->
                             <li class="list-inline-item ml-3 pl-3 mr-0 pr-0">
                                 <a href="tel:{{ get_setting('helpline_number') }}"
-                                    class="text-secondary fs-12 d-inline-block py-2">
+                                    class="text-secondary fs-13 d-inline-block py-2">
                                     <span>{{ translate('Helpline') }}</span>
                                     <span>{{ get_setting('helpline_number') }}</span>
                                 </a>
@@ -385,7 +385,7 @@
                             </span>
                         @else
                             <!--Login & Registration -->
-                            <a class="user-s-h-account-dd" href="{{ route('user.login') }}">
+
                             <span class="d-flex align-items-center nav-user-info ml-3">
                                 <!-- Image -->
                                 <span
@@ -405,10 +405,12 @@
                                 -->
                                 <div class="user-section-header">
                                     <span class="user-s-h-account-dd font-prompt fs-16">{{ translate('My Account') }}</span>
-                                    <span class="user-s-h-account-dd font-prompt fs-14">Hello, {{ translate('Sign in') }}</span>
+                                    <span class="user-s-h-account-dd font-prompt fs-14">
+                                        Register <span style="color:#767676;">|</span> <a class="user-s-h-account-dd" href="{{ route('user.login') }}">{{ translate('Sign in') }}</a>
+                                    </span>
                                 </div>
                                 </span>
-                            </a>
+
                         @endauth
                     </div>
                 </div>
@@ -663,6 +665,7 @@
                                         </li>
                                     @endforeach
                                 @endif
+                                <!--
                                 <li class="list-inline-item mr-0 animate-underline-white" style="cursor:pointer;">
                                     <a class="fs-16 px-3 py-3 d-inline-block fw-400 text-white header_menu_links hov-bg-black-10">
                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -675,6 +678,7 @@
                                         <i class="las la-angle-down text-white has-transition ml-3" id="category-menu-bar-icon" style="font-size: 1.2rem !important; position:relative;top:3px;"></i>
                                     </a>
                                 </li>
+                            -->
                             </ul>
                         </div>
                     </div>
@@ -732,9 +736,9 @@
                         </svg>
                     </span>
                     <a href="{{ route('user.login') }}"
-                        class="text-reset opacity-60 hov-opacity-100 hov-text-primary fs-12 d-inline-block border-right border-soft-light border-width-2 pr-2 ml-3">{{ translate('Login') }}</a>
+                        class="text-reset opacity-60 hov-opacity-100 hov-text-primary fs-13 d-inline-block border-right border-soft-light border-width-2 pr-2 ml-3">{{ translate('Login') }}</a>
                     <a href="{{ route('user.registration') }}"
-                        class="text-reset opacity-60 hov-opacity-100 hov-text-primary fs-12 d-inline-block py-2 pl-2">{{ translate('Registration') }}</a>
+                        class="text-reset opacity-60 hov-opacity-100 hov-text-primary fs-13 d-inline-block py-2 pl-2">{{ translate('Registration') }}</a>
                 </span>
             @endauth
             <hr>

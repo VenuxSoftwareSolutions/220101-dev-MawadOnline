@@ -23,9 +23,41 @@
 
     @php $lang = get_system_language()->code;  @endphp
 
-    <!-- Sliders -->
+    <!-- Sliders old
     <div class="container">
     <div class="home-banner-area mb-3">
+        <div class="banner-inner">
+            <!-- Sliders
+            <div class="home-slider slider-full">
+                @if (get_setting('home_slider_images') != null)
+                    <div class="aiz-carousel dots-inside-bottom mobile-img-auto-height" data-autoplay="true" data-dots="true" data-infinite="true">
+
+                        @php
+                            $decoded_slider_images = json_decode(get_setting('home_slider_images', null, $lang), true);
+                            $sliders = get_slider_images($decoded_slider_images);
+                        @endphp
+                        @foreach ($sliders as $key => $slider)
+                            <div class="carousel-box">
+
+                                <a href="{{ json_decode(get_setting('home_slider_links'), true)[$key] }}">
+                                    <!-- Image
+                                    <div class="d-block mw-100 img-fit overflow-hidden h-180px h-md-320px h-lg-460px h-xl-553px overflow-hidden radius-banner">
+                                        <img class="img-fit h-100 m-auto has-transition ls-is-cached lazyloaded"
+                                        src="{{ $slider ? my_asset($slider->file_name) : static_asset('assets/img/placeholder.jpg') }}"
+                                        alt="{{ env('APP_NAME') }} promo"
+                                        onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder-rect.jpg') }}';">
+                                    </div>
+                                </a>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+</div>-->
+<div class="col-12 p-0">
+    <div class="home-banner-area">
         <div class="banner-inner">
             <!-- Sliders -->
             <div class="home-slider slider-full">
@@ -39,15 +71,39 @@
                         @foreach ($sliders as $key => $slider)
                             <div class="carousel-box">
 
-                                <a href="{{ json_decode(get_setting('home_slider_links'), true)[$key] }}">
+                              <!--  <a href="{{ json_decode(get_setting('home_slider_links'), true)[$key] }}"> -->
                                     <!-- Image -->
-                                    <div class="d-block mw-100 img-fit overflow-hidden h-180px h-md-320px h-lg-460px h-xl-553px overflow-hidden radius-banner">
-                                        <img class="img-fit h-100 m-auto has-transition ls-is-cached lazyloaded"
+                                    <div class="d-block mw-100 img-fit overflow-hidden h-424px h-md-424px h-lg-460px h-xl-504px overflow-hidden">
+                                    <div class="slider-content-container col-12 d-flex justify-content-center">
+                                        <div class="container">
+                                            <div class="col-12 col-xl-6 col-lg-8 col-md-10 slider-content pt-md-5 pt-4">
+                                                <div class="col-12 slider-content-title fs-banner-title font-prompt-exd p-0 pt-5 pb-2">
+                                                    Welcome to the UAE’s Premier Marketplace for Construction Materials, Equipment, and Services.
+                                                </div>
+                                                <div class="col-12 slider-content-desc fs-16 font-prompt p-0">
+                                                    Effortlessly buy and sell on one convenient platform.
+                                                </div>
+                                                <div class="col-12 pt-4 p-0">
+                                                    <button type="button" class="btn btn-secondary-base slider-register-vendor text-white border-radius-16 fs-16 font-prompt py-2">
+                                                        Register as Vendor
+                                                    </button>
+                                                    <button type="button" class="btn bg-white slider-register-buyer margin-s-r-b text-secondary-base border-radius-16 fs-16 font-prompt py-2">
+                                                        Join Buyer Waitlist
+                                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M14.4299 5.92993L20.4999 11.9999L14.4299 18.0699" stroke="#CB774B" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                                            <path d="M3.5 12H20.33" stroke="#CB774B" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                        <img class="img-fit-slider h-100 m-auto has-transition ls-is-cached lazyloaded"
                                         src="{{ $slider ? my_asset($slider->file_name) : static_asset('assets/img/placeholder.jpg') }}"
                                         alt="{{ env('APP_NAME') }} promo"
                                         onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder-rect.jpg') }}';">
                                     </div>
-                                </a>
+                               <!-- </a> -->
                             </div>
                         @endforeach
                     </div>
@@ -65,7 +121,7 @@
 
     @endphp
     @if ($flash_deal != null)
-        <section class="mb-2 mb-md-3 mt-2 mt-md-3" style="background: {{ ($flash_deal_bg_full_width && $flash_deal_bg != null) ? $flash_deal_bg : '' }};" id="flash_deal">
+        <section class="mb-2 mb-md-3" style="background: {{ ($flash_deal_bg_full_width && $flash_deal_bg != null) ? $flash_deal_bg : '' }};" id="flash_deal">
             <div class="container">
                 <!-- Top Section sm to lg -->
                 <div class="d-flex d-lg-none flex-wrap mb-2 mb-md-3 @if ($flash_deal_bg_full_width && $flash_deal_bg != null) pt-2 pt-md-3 @endif align-items-baseline justify-content-between">
@@ -213,9 +269,9 @@
 -->
     <!-- Featured Categories -->
     @if (count($featured_categories) > 0)
-        <section class="mb-2 mb-md-3 mt-2 mt-md-3">
-            <div class="container">
-                <div class="bg-white">
+        <section class="mb-2 mb-md-3 mt-4">
+            <div class="container mt-2">
+                <div class="bg-white pb-2 px-1">
                     <!-- Top Section -->
                     <div class="d-flexZ align-items-baseline justify-content-between">
                         <!-- Title -->
@@ -237,7 +293,7 @@
                             <div class="carousel-box position-relative p-0 has-transition">
                                 <div class="h-250px p-4">
                                     <div class="h-150px w-150px w-xl-auto position-relative overflow-hidden radius-category">
-                                        <div class="position-absolute h-100 w-100 overflow-hidden">
+                                        <div class="position-absolute h-100 w-100 overflow-hidden categ-image-shape">
                                             <img src="{{ isset($category->cover_image) ? my_asset('public/'.$category->cover_image) : static_asset('assets/img/placeholder.jpg') }}"
                                                 alt="{{ $category_name }}"
                                                 class="img-fit h-100 has-transition radius-category categ-img" loading="lazy"
@@ -673,6 +729,86 @@
             </div>
         </section>
     @endif
-
+    <div class="container mb-5">
+        <!-- Easy to shop -->
+        <div class="col-xl-3 col-lg-6 col-12 pr-xl-3 pr-lg-3 pb-lg-3 pb-md-3 p-0 float-left">
+            <div class="sllng-point col-md-12 p-5">
+            <div class="col-12 p-0 pb-3">
+                <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 16C0 7.16344 7.16344 0 16 0H40C48.8366 0 56 7.16344 56 16V40C56 48.8366 48.8366 56 40 56H16C7.16344 56 0 48.8366 0 40V16Z" fill="#3D3D3B"/>
+                    <path d="M14.6667 14.6666H16.9867C18.4267 14.6666 19.56 15.9066 19.44 17.3333L18.3334 30.6133C18.1467 32.7866 19.8667 34.6533 22.0533 34.6533H36.2534C38.1734 34.6533 39.8534 33.08 40 31.1733L40.72 21.1733C40.88 18.96 39.2 17.16 36.9733 17.16H19.76" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M33.6667 41.3333C34.5871 41.3333 35.3333 40.5871 35.3333 39.6667C35.3333 38.7462 34.5871 38 33.6667 38C32.7462 38 32 38.7462 32 39.6667C32 40.5871 32.7462 41.3333 33.6667 41.3333Z" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M23 41.3333C23.9205 41.3333 24.6666 40.5871 24.6666 39.6667C24.6666 38.7462 23.9205 38 23 38C22.0795 38 21.3333 38.7462 21.3333 39.6667C21.3333 40.5871 22.0795 41.3333 23 41.3333Z" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M24 22.6666H40" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="col-12 p-0">
+                <span class="sllng-point-title fs-24 font-prompt-md">Easy to Shop</span>
+            </div>
+            <div class="col-12 p-0 mt-2">
+                <span class="sllng-point-desc fs-18 font-prompt">Effortlessly find and order construction materials with our user-friendly platform.</span>
+            </div>
+        </div>
+        </div>
+        <!-- 24/7 Support -->
+        <div class="col-xl-3 col-lg-6 col-12 pr-xl-3 pr-lg-0 pb-lg-3 pb-md-3 p-0 float-left">
+            <div class="sllng-point bg-support col-md-12 p-5">
+            <div class="col-12 p-0 pb-3">
+                <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 16C0 7.16344 7.16344 0 16 0H40C48.8366 0 56 7.16344 56 16V40C56 48.8366 48.8366 56 40 56H16C7.16344 56 0 48.8366 0 40V16Z" fill="#3D3D3B"/>
+                    <path d="M36 37.1467H34.9867C33.92 37.1467 32.9067 37.56 32.16 38.3067L29.88 40.5601C28.84 41.5868 27.1467 41.5868 26.1067 40.5601L23.8267 38.3067C23.08 37.56 22.0533 37.1467 21 37.1467H20C17.7867 37.1467 16 35.3734 16 33.1867V18.64C16 16.4533 17.7867 14.6801 20 14.6801H36C38.2133 14.6801 40 16.4533 40 18.64V33.1867C40 35.3601 38.2133 37.1467 36 37.1467Z" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M21.3333 24.2134C21.3333 22.9734 22.3467 21.96 23.5867 21.96C24.8267 21.96 25.84 22.9734 25.84 24.2134C25.84 26.72 22.28 26.9867 21.4933 29.3734C21.3333 29.8667 21.7467 30.36 22.2667 30.36H25.84" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M33.3867 30.3466V22.7333C33.3867 22.3867 33.16 22.0799 32.8267 21.9866C32.4933 21.8933 32.1333 22.0266 31.9467 22.3199C30.9867 23.8666 29.9467 25.6266 29.04 27.1733C28.8933 27.4266 28.8933 27.7599 29.04 28.0133C29.1867 28.2666 29.4667 28.4265 29.7733 28.4265H34.6667" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="col-12 p-0">
+                <span class="sllng-point-title fs-24 font-prompt-md">24/7 Support</span>
+            </div>
+            <div class="col-12 p-0 mt-2">
+                <span class="sllng-point-desc fs-18 font-prompt">Get assistance anytime, anywhere with our round-the-clock support team.</span>
+            </div>
+        </div>
+        </div>
+        <!-- Fast & Free Shipping -->
+        <div class="col-xl-3 col-lg-6 col-12 pr-xl-3 pr-lg-3 pb-md-3 p-0 float-left">
+            <div class="sllng-point col-md-12 p-5">
+            <div class="col-12 p-0 pb-3">
+                <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 16C0 7.16344 7.16344 0 16 0H40C48.8366 0 56 7.16344 56 16V40C56 48.8366 48.8366 56 40 56H16C7.16344 56 0 48.8366 0 40V16Z" fill="#3D3D3B"/>
+                    <path d="M16.2267 21.9199L28 28.7332L39.6933 21.9599" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M28 40.8132V28.7198" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M25.24 15.3066L18.12 19.2667C16.5067 20.16 15.1867 22.4 15.1867 24.24V31.7733C15.1867 33.6133 16.5067 35.8533 18.12 36.7466L25.24 40.7067C26.76 41.5467 29.2533 41.5467 30.7733 40.7067L37.8933 36.7466C39.5067 35.8533 40.8267 33.6133 40.8267 31.7733V24.24C40.8267 22.4 39.5067 20.16 37.8933 19.2667L30.7733 15.3066C29.24 14.4533 26.76 14.4533 25.24 15.3066Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M34.6667 29.6534V24.7734L22.0133 17.4667" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="col-12 p-0">
+                <span class="sllng-point-title fs-24 font-prompt-md">Fast & Free Shipping</span>
+            </div>
+            <div class="col-12 p-0 mt-2">
+                <span class="sllng-point-desc fs-18 font-prompt">Enjoy prompt delivery with no additional cost on all orders.</span>
+            </div>
+        </div>
+        </div>
+        <!-- Fast & Free Shipping -->
+        <div class="col-xl-3 col-lg-6 col-12 p-0 float-left">
+            <div class="sllng-point col-md-12 p-5">
+            <div class="col-12 p-0 pb-3">
+                <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 16C0 7.16344 7.16344 0 16 0H40C48.8366 0 56 7.16344 56 16V40C56 48.8366 48.8366 56 40 56H16C7.16344 56 0 48.8366 0 40V16Z" fill="#3D3D3B"/>
+                    <path d="M39.3333 31.9867L32.6533 38.68" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16.6667 31.9867H39.3333" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16.6667 24.0133L23.3467 17.3199" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M39.3333 24.0133H16.6667" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="col-12 p-0">
+                <span class="sllng-point-title fs-24 font-prompt-md">Hassle Free Returns</span>
+            </div>
+            <div class="col-12 p-0 mt-2">
+                <span class="sllng-point-desc fs-18 font-prompt">Return or exchange items hassle-free within our specified timeframe.</span>
+            </div>
+        </div>
+        </div>
+    </div>
 @endsection
 
