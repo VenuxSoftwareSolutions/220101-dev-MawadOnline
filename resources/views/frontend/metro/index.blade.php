@@ -776,10 +776,14 @@
             <div class="col-12 p-0 pb-3">
                 <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M0 16C0 7.16344 7.16344 0 16 0H40C48.8366 0 56 7.16344 56 16V40C56 48.8366 48.8366 56 40 56H16C7.16344 56 0 48.8366 0 40V16Z" fill="#3D3D3B"/>
-                    <path d="M16.2267 21.9199L28 28.7332L39.6933 21.9599" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M28 40.8132V28.7198" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M25.24 15.3066L18.12 19.2667C16.5067 20.16 15.1867 22.4 15.1867 24.24V31.7733C15.1867 33.6133 16.5067 35.8533 18.12 36.7466L25.24 40.7067C26.76 41.5467 29.2533 41.5467 30.7733 40.7067L37.8933 36.7466C39.5067 35.8533 40.8267 33.6133 40.8267 31.7733V24.24C40.8267 22.4 39.5067 20.16 37.8933 19.2667L30.7733 15.3066C29.24 14.4533 26.76 14.4533 25.24 15.3066Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M34.6667 29.6534V24.7734L22.0133 17.4667" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M28 30.6666H29.3333C30.8 30.6666 32 29.4666 32 28V14.6666H20C18 14.6666 16.2533 15.7733 15.3467 17.3999" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M14.6667 34.6666C14.6667 36.88 16.4534 38.6666 18.6667 38.6666H20.0001C20.0001 37.2 21.2001 36 22.6667 36C24.1334 36 25.3334 37.2 25.3334 38.6666H30.6667C30.6667 37.2 31.8667 36 33.3334 36C34.8001 36 36.0001 37.2 36.0001 38.6666H37.3334C39.5468 38.6666 41.3334 36.88 41.3334 34.6666V30.6666H37.3334C36.6001 30.6666 36.0001 30.0666 36.0001 29.3333V25.3333C36.0001 24.6 36.6001 24 37.3334 24H39.0534L36.7734 20.0133C36.2934 19.1866 35.4135 18.6666 34.4535 18.6666H32.0001V28C32.0001 29.4666 30.8001 30.6666 29.3334 30.6666H28.0001" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M22.6667 41.3333C24.1394 41.3333 25.3333 40.1394 25.3333 38.6667C25.3333 37.1939 24.1394 36 22.6667 36C21.1939 36 20 37.1939 20 38.6667C20 40.1394 21.1939 41.3333 22.6667 41.3333Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M33.3334 41.3333C34.8062 41.3333 36.0001 40.1394 36.0001 38.6667C36.0001 37.1939 34.8062 36 33.3334 36C31.8607 36 30.6667 37.1939 30.6667 38.6667C30.6667 40.1394 31.8607 41.3333 33.3334 41.3333Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M41.3333 28V30.6667H37.3333C36.6 30.6667 36 30.0667 36 29.3333V25.3333C36 24.6 36.6 24 37.3333 24H39.0533L41.3333 28Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M14.6667 22.6666H22.6667" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M14.6667 26.6666H20.0001" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M14.6667 30.6666H17.3334" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
             <div class="col-12 p-0">
@@ -796,14 +800,8 @@
             <div class="col-12 p-0 pb-3">
                 <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M0 16C0 7.16344 7.16344 0 16 0H40C48.8366 0 56 7.16344 56 16V40C56 48.8366 48.8366 56 40 56H16C7.16344 56 0 48.8366 0 40V16Z" fill="#3D3D3B"/>
-                    <path d="M28 30.6666H29.3333C30.8 30.6666 32 29.4666 32 28V14.6666H20C18 14.6666 16.2533 15.7733 15.3467 17.3999" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M14.6667 34.6666C14.6667 36.88 16.4534 38.6666 18.6667 38.6666H20.0001C20.0001 37.2 21.2001 36 22.6667 36C24.1334 36 25.3334 37.2 25.3334 38.6666H30.6667C30.6667 37.2 31.8667 36 33.3334 36C34.8001 36 36.0001 37.2 36.0001 38.6666H37.3334C39.5468 38.6666 41.3334 36.88 41.3334 34.6666V30.6666H37.3334C36.6001 30.6666 36.0001 30.0666 36.0001 29.3333V25.3333C36.0001 24.6 36.6001 24 37.3334 24H39.0534L36.7734 20.0133C36.2934 19.1866 35.4135 18.6666 34.4535 18.6666H32.0001V28C32.0001 29.4666 30.8001 30.6666 29.3334 30.6666H28.0001" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M22.6667 41.3333C24.1394 41.3333 25.3333 40.1394 25.3333 38.6667C25.3333 37.1939 24.1394 36 22.6667 36C21.1939 36 20 37.1939 20 38.6667C20 40.1394 21.1939 41.3333 22.6667 41.3333Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M33.3334 41.3333C34.8062 41.3333 36.0001 40.1394 36.0001 38.6667C36.0001 37.1939 34.8062 36 33.3334 36C31.8607 36 30.6667 37.1939 30.6667 38.6667C30.6667 40.1394 31.8607 41.3333 33.3334 41.3333Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M41.3333 28V30.6667H37.3333C36.6 30.6667 36 30.0667 36 29.3333V25.3333C36 24.6 36.6 24 37.3333 24H39.0533L41.3333 28Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M14.6667 22.6666H22.6667" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M14.6667 26.6666H20.0001" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M14.6667 30.6666H17.3334" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M25.9866 14.9735L19.3333 17.4801C17.8 18.0535 16.5466 19.8668 16.5466 21.4935V31.4001C16.5466 32.9735 17.5866 35.0401 18.8533 35.9868L24.5866 40.2668C26.4666 41.6801 29.56 41.6801 31.44 40.2668L37.1733 35.9868C38.44 35.0401 39.48 32.9735 39.48 31.4001V21.4935C39.48 19.8535 38.2266 18.0401 36.6933 17.4668L30.04 14.9735C28.9066 14.5601 27.0933 14.5601 25.9866 14.9735Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M24.0667 27.8268L26.2133 29.9734L31.9466 24.2401" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
             <div class="col-12 p-0">
