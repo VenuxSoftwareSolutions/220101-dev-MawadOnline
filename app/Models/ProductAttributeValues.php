@@ -10,6 +10,8 @@ class ProductAttributeValues extends Model
 {
     use EnhancedRevisionableTrait, HasFactory;
 
+    protected $with = ["attribute", "unity"];
+
     protected function getLastActionNumber()
     {
         $lastRevision = $this->revisionHistory()->latest('id')->first();

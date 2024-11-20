@@ -19,6 +19,7 @@ class Warehouse extends Model
         'address_unit',
         'saveasdraft',
     ];
+    protected $with = ["area"];
 
     public function checkWhHasProducts()
     {

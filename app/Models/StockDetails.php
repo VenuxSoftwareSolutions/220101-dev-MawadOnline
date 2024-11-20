@@ -14,6 +14,7 @@ class StockDetails extends Model
         'operation_type', 'variant_id', 'warehouse_id',
         'before_quantity', 'transaction_quantity', 'after_quantity', 'user_comment', 'seller_id',
     ];
+    protected $with = ["warehouse"];
 
     public function warehouse()
     {

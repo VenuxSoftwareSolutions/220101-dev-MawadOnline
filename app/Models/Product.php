@@ -163,7 +163,7 @@ class Product extends Model
 
     protected $guarded = ['choice_attributes'];
 
-    protected $with = ['shippingRelation', 'product_translations', 'taxes', 'thumbnail'];
+    protected $with = ["productAttributeValues", "stockDetails", 'shippingRelation', 'product_translations', 'taxes', 'thumbnail'];
 
     // Ensure cascading deletes at the model level
     protected static function booted()
