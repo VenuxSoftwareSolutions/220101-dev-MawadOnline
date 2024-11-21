@@ -214,44 +214,80 @@ class ProductController extends Controller
         return $data;*/
     }
 
+    // public function update(ProductRequest $request, Product $product)
+    // {
+    //     dd($product);
+    //     //Product
+    //     $product = $this->productService->update($request->except([
+    //         '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
+    //     ]), $product);
+
+    //     //Product Stock
+    //     foreach ($product->stocks as $key => $stock) {
+    //         $stock->delete();
+    //     }
+    //     $request->merge(['product_id' => $product->id]);
+
+    //     //Product categories
+    //     $product->categories()->sync($request->category_ids);
+
+    //     $this->productStockService->store($request->only([
+    //         'colors_active', 'colors', 'choice_no', 'unit_price', 'sku', 'current_stock', 'product_id'
+    //     ]), $product);
+
+    //     //VAT & Tax
+    //     if ($request->tax_id) {
+    //         ProductTax::where('product_id', $product->id)->delete();
+    //         $request->merge(['product_id' => $product->id]);
+    //         $this->productTaxService->store($request->only([
+    //             'tax_id', 'tax', 'tax_type', 'product_id'
+    //         ]));
+    //     }
+
+    //     // Product Translations
+    //     ProductTranslation::updateOrCreate(
+    //         $request->only([
+    //             'lang', 'product_id'
+    //         ]),
+    //         $request->only([
+    //             'name', 'unit', 'description'
+    //         ])
+    //     );
+
+    //     return $this->success(translate('Product has been updated successfully'));
+    // }
+
+
+
     public function update(ProductRequest $request, Product $product)
     {
-        //Product
-        $product = $this->productService->update($request->except([
-            '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type'
-        ]), $product);
+        $data = [];
 
-        //Product Stock
-        foreach ($product->stocks as $key => $stock) {
-            $stock->delete();
+        $product->name = $request->name;
+        $product->brand_id = $request->brand_id;
+        $product->unit = $request->unit;
+        $product->tags = $request->tags;
+        $product->video_provider = $request->video_provider;
+        $product->video_link = $request->video_link;
+        $product->low_stock_quantity = $request->min_qty;
+
+
+        $product->update();
+
+        if(isset($product)){
+            $data['product'] = $product;
+            $data['document_names'] = $request->document_names;
+            $data['documents'] = $request->documents;
+
+            $data['main_photos'] = $request->main_photos;
+            $data['photosThumbnail'] = $request->photosThumbnail;
+            $update = true;
+
+            $this->productUploadsService->store_uploads($data, $update);
         }
-        $request->merge(['product_id' => $product->id]);
+        
 
-        //Product categories
-        $product->categories()->sync($request->category_ids);
-
-        $this->productStockService->store($request->only([
-            'colors_active', 'colors', 'choice_no', 'unit_price', 'sku', 'current_stock', 'product_id'
-        ]), $product);
-
-        //VAT & Tax
-        if ($request->tax_id) {
-            ProductTax::where('product_id', $product->id)->delete();
-            $request->merge(['product_id' => $product->id]);
-            $this->productTaxService->store($request->only([
-                'tax_id', 'tax', 'tax_type', 'product_id'
-            ]));
-        }
-
-        // Product Translations
-        ProductTranslation::updateOrCreate(
-            $request->only([
-                'lang', 'product_id'
-            ]),
-            $request->only([
-                'name', 'unit', 'description'
-            ])
-        );
+        $product->categories()->sync($request->category_id);
 
         return $this->success(translate('Product has been updated successfully'));
     }

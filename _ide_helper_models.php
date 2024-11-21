@@ -2819,6 +2819,7 @@ namespace App\Models{
  * @property int|null $max_third_party_sample
  * @property int|null $product_catalog_id
  * @property-read \App\Models\Brand|null $brand
+ * @property-read \App\Models\Product|null $product
  * @method static \Illuminate\Database\Eloquent\Builder|ProductCatalog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ProductCatalog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ProductCatalog query()
@@ -3069,7 +3070,7 @@ namespace App\Models{
  *
  * @property int $id
  * @property int $user_id
- * @property mixed $modified_fields
+ * @property string $modified_fields
  * @property string $status
  * @property int $admin_viewed
  * @property \Illuminate\Support\Carbon|null $created_at

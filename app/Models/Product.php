@@ -355,6 +355,7 @@ class Product extends Model
         return $path;
     }
 
+    
     public function productAttributeValues()
     {
         return $this->hasMany(ProductAttributeValues::class, 'id_products', 'id');

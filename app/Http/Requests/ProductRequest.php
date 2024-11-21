@@ -30,19 +30,19 @@ class ProductRequest extends FormRequest
         $rules = [];
 
         $rules['name']          = 'required|max:255';
-        $rules['category_ids']  = 'required';
-        $rules['category_id']   = ['required', Rule::in($this->category_ids)];
-        $rules['unit']         = 'sometimes|required';
-        $rules['min_qty']      = 'sometimes|required|numeric';
-        $rules['unit_price']    = 'sometimes|required|numeric';
-        if ($this->get('discount_type') == 'amount') {
-            $rules['discount'] = 'sometimes|required|numeric|lt:unit_price';
-        } else {
-            $rules['discount'] = 'sometimes|required|numeric|lt:100';
-        }
-        $rules['current_stock'] = 'sometimes|required|numeric';
-        $rules['starting_bid']  = 'sometimes|required|numeric|min:1';
-        $rules['auction_date_range']  = 'sometimes|required';
+        // $rules['category_ids']  = 'required';
+        // $rules['category_id']   = ['required', Rule::in($this->category_ids)];
+        // $rules['unit']         = 'sometimes|required';
+        // $rules['min_qty']      = 'sometimes|required|numeric';
+        // $rules['unit_price']    = 'sometimes|required|numeric';
+        // if ($this->get('discount_type') == 'amount') {
+        //     $rules['discount'] = 'sometimes|required|numeric|lt:unit_price';
+        // } else {
+        //     $rules['discount'] = 'sometimes|required|numeric|lt:100';
+        // }
+        // $rules['current_stock'] = 'sometimes|required|numeric';
+        // $rules['starting_bid']  = 'sometimes|required|numeric|min:1';
+        // $rules['auction_date_range']  = 'sometimes|required';
 
         return $rules;
     }
