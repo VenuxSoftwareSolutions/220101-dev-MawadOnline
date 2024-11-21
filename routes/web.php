@@ -489,7 +489,5 @@ Route::controller(AramexController::class)->prefix("/aramex")->group(function ()
 
     Route::get("carts/{user_id}", "carts");
 
-    // calculate rate from user orders
-    // @todo choose a better name
-    Route::any("orders/{user_id}", "orders")->name("user.orders");
+    Route::any("orders/{user_id}", "calculateOrderProductsCharge")->name("user.orders");
 });
