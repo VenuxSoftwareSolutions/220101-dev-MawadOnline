@@ -657,16 +657,17 @@ class AramexController extends Controller
         ];
     }
 
-    public function orders($user_id)
+    public function calculateOrderProductsCharge($user_id)
     {
         // @todo add dimensions: length, width, height
         $weight_attribute_id = WEIGHT_ATTRIBUTE_ID;
 
         if (request()->has('product_id')) {
-            $data = Cart::where('user_id', auth()->user()->id)
+            $data = Cart::where('user_id', $user_id)
+                ->where('product_id', request()->product_id)
                 ->get()
                 ->map(function ($cart) use ($weight_attribute_id) {
-                    $shipping_address = AddressModel::with(["country", "state", "city"])
+                    $shippingAddress = AddressModel::with(["city"])
                         ->where('id', $cart->address_id)
                         ->get()
                         ->map(fn($data) => [
@@ -679,88 +680,11 @@ class AramexController extends Controller
                         ->values()
                         ->toArray();
 
-                    return [
-                        'product' => [
-                            'id' => $cart->product->id,
-                            'name' => $cart->product->name,
-                            'package_weight' => $cart->product->weight,
-                            'length' => $cart->product->length,
-                            'width' => $cart->product->width,
-                            'unit_weight' => $cart->product->unit_weight !== null && $cart->product->unit_weight === 'kilograms' ? 'KG' : null,
-                            'height' => $cart->product->height,
-                        ],
-                        'orderDetails' => $cart->toArray(),
-                        'attributes' => $attributes,
-                        'shippingAddress' => $shipping_address,
-                        'shippingOptions' => $cart->product
+                    $shippingOptions = $cart->product
                             ->shippingRelation
-                            // we need to calculate the rate for aramex shipping
-                            /* ->filter(fn($option) => str()->lower($option->shipper) === "aramex") */
-                            ->toArray(),
-                        'warehouseDetails' => $cart->product->stockDetails->map(
-                            fn ($stock) => [
-                                'name' => $stock->warehouse->warehouse_name,
-                                'street' => $stock->warehouse->address_street,
-                                'building' => $stock->warehouse->address_building,
-                                'unit' => $stock->warehouse->address_unit,
-                                'area' => [
-                                    'city' => $stock->warehouse->area->name,
-                                    'emirate' => $stock->warehouse->area->emirate->name,
-                                    'country' => 'AE',
-                                ],
-                            ]
-                        )->toArray(),
-                    ];
-                })->first();
+                            ->toArray();
 
-            return response()->json([
-                'error' => false,
-                'data' => $this->calculateRate($this->transformShipmentData($data))
-            ]);
-        }
-
-        $orders = Order::with([
-            'orderDetails' => [
-                'product' => [
-                    'productAttributeValues:id,value,id_products,id_attribute,id_units' => [
-                        'attribute:id,name,is_activated',
-                        'unity:id,name,rate',
-                    ],
-                    'shippingRelation',
-                    'stockDetails' => [
-                        'warehouse' => ['area'],
-                    ],
-                ],
-            ],
-        ])->where('user_id', $user_id)
-            ->get();
-
-        $subOrders = $orders->flatMap(function ($order) use ($weight_attribute_id) {
-            return $order->orderDetails->map(function ($detail) use ($order, $weight_attribute_id) {
-                $attributes = $detail->product->productAttributeValues
-                    ->filter(fn ($value) => $value->id_attribute === $weight_attribute_id)
-                    ->values()
-                    ->toArray();
-
-                return [
-                    'product' => [
-                        'id' => $detail->product->id,
-                        'name' => $detail->product->name,
-                        'package_weight' => $detail->product->weight,
-                        'length' => $detail->product->length,
-                        'width' => $detail->product->width,
-                        'unit_weight' => $detail->product->unit_weight !== null && $detail->product->unit_weight === 'kilograms' ? 'KG' : null,
-                        'height' => $detail->product->height,
-                    ],
-                    'orderDetails' => $detail->toArray(),
-                    'attributes' => $attributes,
-                    'shippingAddress' => json_decode($order->shipping_address, true),
-                    'shippingOptions' => $detail->product
-                        ->shippingRelation
-                        // we need to calculate the rate for aramex shipping
-                        /* ->filter(fn($option) => str()->lower($option->shipper) === "aramex") */
-                        ->toArray(),
-                    'warehouseDetails' => $detail->product->stockDetails->map(
+                    $warehouseDetails = $cart->product->stockDetails->map(
                         fn ($stock) => [
                             'name' => $stock->warehouse->warehouse_name,
                             'street' => $stock->warehouse->address_street,
@@ -772,26 +696,35 @@ class AramexController extends Controller
                                 'country' => 'AE',
                             ],
                         ]
-                    )->toArray(),
-                ];
-            });
-        })->all();
+                    )->toArray();
 
-        $subOrders = collect($subOrders);
+                    $orderDetails = $cart->toArray();
 
-        if (request()->has('product_id') === true) {
-            $subOrders = $subOrders
-                ->filter(fn ($order) => $order['product']['id'] == request()->product_id);
+                    return [
+                        'product' => [
+                            'id' => $cart->product->id,
+                            'name' => $cart->product->name,
+                            'package_weight' => $cart->product->weight,
+                            'length' => $cart->product->length,
+                            'width' => $cart->product->width,
+                            'unit_weight' => $cart->product->unit_weight !== null && $cart->product->unit_weight === 'kilograms' ? 'KG' : null,
+                            'height' => $cart->product->height,
+                        ],
+                        'orderDetails' => $orderDetails,
+                        'attributes' => $attributes,
+                        'shippingAddress' => $shippingAddress,
+                        'shippingOptions' => $shippingOptions,
+                        'warehouseDetails' => $warehouseDetails,
+                    ];
+                })->first();
+
+            return response()->json([
+                'error' => false,
+                'data' => $this->calculateRate($this->transformShipmentData($data))
+            ]);
         }
 
-        $rates = $subOrders
-            ->map(fn ($subOrder) => $this->calculateRate($this->transformShipmentData($subOrder)))
-            ->toArray();
-
-        return response()->json([
-            'error' => false,
-            'data' => $rates,
-        ], 200);
+        return response()->json(["error" => true, "message" => __("Something went wrong!")], 500);
     }
 
     public function __destruct()
