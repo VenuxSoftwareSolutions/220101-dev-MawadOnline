@@ -110,6 +110,9 @@
                                                                 <div class="col-md-6">
                                                                     <label for="shipping_method"
                                                                         class="fs-14 text-secondary">{{ translate('Shipping Method') }}:</label>
+                                                                    <script>
+                                                                        window.shippingMethodSelectFirstChange = true;
+                                                                    </script>
                                                                     <select data-prod="{{ $product->id }}"
                                                                         name="shipping_method" id="shipping_method"
                                                                         class="form-control fs-14 text-dark fw-500"
@@ -144,29 +147,6 @@
                                                                         </div>
                                                                     @endforeach
                                                                 </div>
-
-                                                                <div class="col-md-12">
-                                                                    <span
-                                                                        class="fs-14 text-secondary">{{ translate('Paid By') }}:</span>
-                                                                    <span
-                                                                        class="fs-14 text-dark fw-500">{{ $shippingOptions->paid ?? '' }}</span>
-                                                                </div>
-
-
-                                                                <div class="col-md-6">
-                                                                    <span
-                                                                        class="fs-14 text-secondary">{{ translate('Cost') }}:</span>
-                                                                    <span class="fs-14 text-dark fw-500">
-
-                                                                        @if (in_array('vendor', $shippers) && $shippingOptions->paid == 'buyer')
-                                                                            @if ($shippingOptions->shipping_charge == 'flat')
-                                                                                {{ $shippingOptions->flat_rate_shipping }}
-                                                                            @elseif ($shippingOptions->shipping_charge == 'charging')
-                                                                                {{ $shippingOptions->charge_per_unit_shipping }}
-                                                                            @endif
-                                                                        @endif
-                                                                    </span>
-                                                                </div>
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-md-6">
@@ -176,31 +156,64 @@
                                                                         class="fs-14 text-dark fw-500">{{ $duration ?? '' }}</span>
                                                                 </div>
                                                             </div>
-                                                            <div class="row rate-calculator-wrapper__clz">
+                                                            <div class="row charge-wrapper__clz">
                                                                 <div class="col-md-12">
                                                                     <span
-                                                                        class="fs-14 text-secondary">{{ translate('Rate') }}:</span>
+                                                                        class="fs-14 text-secondary">{{ translate('Charge') }}:</span>
                                                                     <span class="fs-14 text-dark"
-                                                                        id="rate-calculator-result">N/A</span>
+                                                                        id="charge-result">N/A</span>
                                                                 </div>
                                                             </div>
-                                                            <div class="row">
-                                                                <div class="col-md-12 d-flex justify-content-end">
-                                                                    <span class="fs-14"><a
-                                                                            class="btn btn-sm btn-secondary-base text-white ml-4 rounded-0 px-4"
-                                                                            onclick="sendCalculateRateRequest(this)">
-                                                                            <span id="button-text">Calculate Rate</span>
-                                                                            <span class="d-none" id="loading-wrapper">
-                                                                                <span
-                                                                                    class="spinner-border spinner-border-sm"
-                                                                                    role="status"
-                                                                                    aria-hidden="true"></span>
-                                                                                <span
-                                                                                    class="visually-hidden">Loading...</span>
-                                                                            </span>
-                                                                        </a></span>
-                                                                </div>
-                                                            </div>
+                                                            <script>
+                                                                document.addEventListener("DOMContentLoaded", function() {
+                                                                    $("#shipping_method").on("change", function() {
+                                                                        if (["vendor", ""].includes($(this).val()) === false && shippingMethodSelectFirstChange === true) {
+                                                                            @if ($shippingOptions->paid == 'buyer')
+                                                                                $("#charge-result").html(`
+                                                                                    <span class="p-1 bg-black-20 rounded">
+                                                                                        <span
+                                                                                            class="spinner-border spinner-border-sm"
+                                                                                            role="status"
+                                                                                            aria-hidden="true"></span>
+                                                                                        <span
+                                                                                            class="visually-hidden">Loading...</span>
+                                                                                    </span>
+                                                                                `);
+
+                                                                                $.post("{{ route('user.orders', ['user_id' => auth()->user()->id]) }}", {
+                                                                                    product_id: {{ $product->id }},
+                                                                                }).done(
+                                                                                    function({
+                                                                                        error,
+                                                                                        data,
+                                                                                        message
+                                                                                    }) {
+                                                                                        shippingMethodSelectFirstChange = false;
+                                                                                        if (error === true) {
+                                                                                            throw new Error(message);
+                                                                                        } else if (data["HasErrors"] === false) {
+                                                                                            $("#charge-result").html(
+                                                                                                `${data["TotalAmount"]["Value"]} ${data["TotalAmount"]["CurrencyCode"]}`
+                                                                                            ).removeClass("text-dark").addClass("text-success").addClass(
+                                                                                                "fw-700");
+                                                                                        } else {
+                                                                                            AIZ.plugins.notify('error', '{{ __('Something went wrong!') }}');
+                                                                                        }
+                                                                                    }).catch(() => {
+                                                                                    $("#charge-result").html("N/A");
+                                                                                    AIZ.plugins.notify('error', '{{ __('Something went wrong!') }}')
+                                                                                });
+                                                                            @else
+                                                                                $("#charge-result").html('{{ __("Free (handled by vendor)") }}');
+                                                                            @endif
+                                                                        } else if(["vendor"].includes($(this).val()) === true) {
+                                                                            @if($shippingOptions->paid === "vendor")
+                                                                                $("#charge-result").html('{{ __("Free (handled by vendor)") }}');
+                                                                            @endif
+                                                                        }
+                                                                    });
+                                                                });
+                                                            </script>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -548,40 +561,6 @@
             } else {
                 shippersAreaContainer.style.display = 'none';
             }
-        }
-
-        function sendCalculateRateRequest(element) {
-            $(element).toggleClass("disabled");
-            $("#loading-wrapper").toggleClass("d-none");
-            $("#button-text").toggleClass("d-none");
-
-            $.post("{{ route('user.orders', ['user_id' => auth()->user()->id]) }}", {
-                product_id: {{ $product->id }},
-            }).done(
-                function({
-                    error,
-                    data,
-                    message
-                }) {
-                    $("#loading-wrapper").toggleClass("d-none");
-                    $("#button-text").toggleClass("d-none");
-                    $(element).toggleClass("disabled");
-
-                    if (error === true) {
-                        throw new Error(message);
-                    } else if (data["HasErrors"] === false) {
-                        $("#rate-calculator-result").html(
-                            `${data["TotalAmount"]["Value"]} ${data["TotalAmount"]["CurrencyCode"]}`
-                        ).removeClass("text-dark").addClass("text-success").addClass("fw-700");
-                    } else {
-                        AIZ.plugins.notify('error', '{{ __('Something went wrong!') }}');
-                    }
-                }).catch(() => {
-                    $(element).toggleClass("disabled");
-                    $("#loading-wrapper").toggleClass("d-none");
-                    $("#button-text").toggleClass("d-none");
-                    AIZ.plugins.notify('error', '{{ __('Something went wrong!') }}')
-                });
         }
     </script>
 @endsection
