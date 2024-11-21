@@ -648,6 +648,8 @@ class AramexController extends Controller
                 'DeliveryInstructions' => null,
                 'AdditionalProperties' => null,
                 'ContainsDangerousGoods' => false,
+                "ShippingDate" => null,
+                "DueDate" => null
             ],
             'PreferredCurrencyCode' => $currency_code ?? 'AED',
             'ClientInfo' => $this->clientInfo,
