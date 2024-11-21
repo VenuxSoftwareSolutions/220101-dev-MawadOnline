@@ -57,43 +57,7 @@
                         <form class="form-default" action="{{ route('checkout.store_delivery_info') }}" role="form"
                             method="POST">
                             @csrf
-                            @php
-                                $admin_products = [];
-                                $seller_products = [];
-                                $productQtyPanier = [];
-                                $admin_product_variation = [];
-                                $seller_product_variation = [];
-                                foreach ($carts as $key => $cartItem) {
-                                    $product = get_single_product($cartItem['product_id']);
-                                    $productId = $cartItem['product_id'];
-                                    $quantity = $cartItem['quantity'];
 
-                                    if (isset($productQtyPanier[$productId])) {
-                                        $productQtyPanier[$productId] += $quantity;
-                                    } else {
-                                        $productQtyPanier[$productId] = $quantity;
-                                    }
-                                    if ($product->added_by == 'admin') {
-                                        array_push($admin_products, $cartItem['product_id']);
-                                        $admin_product_variation[] = $cartItem['variation'];
-                                    } else {
-                                        $product_ids = [];
-                                        if (isset($seller_products[$product->user_id])) {
-                                            $product_ids = $seller_products[$product->user_id];
-                                        }
-                                        array_push($product_ids, $cartItem['product_id']);
-                                        $seller_products[$product->user_id] = $product_ids;
-                                        $seller_product_variation[] = $cartItem['variation'];
-                                    }
-                                }
-
-                                $pickup_point_list = [];
-                                if (get_setting('pickup_point') == 1) {
-                                    $pickup_point_list = get_all_pickup_points();
-                                }
-                            @endphp
-
-                            <!-- Inhouse Products -->
                             @if (!empty($admin_products))
                                 <div class="card mb-5 border-0 rounded-0 shadow-none">
                                     <div class="card-header py-3 px-0 border-bottom-0">

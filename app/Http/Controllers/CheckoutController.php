@@ -164,7 +164,52 @@ class CheckoutController extends Controller
             ->where('area_id', $address->city_id)
             ->get();
 
-        return view('frontend.delivery_info', compact('carts', 'carrier_list', 'shippers_areas'));
+        $admin_products = [];
+        $seller_products = [];
+        $productQtyPanier = [];
+        $admin_product_variation = [];
+        $seller_product_variation = [];
+
+        $carts->each(function ($cart) use (
+            &$admin_products, &$seller_products,
+            &$productQtyPanier, &$admin_product_variation,
+            &$seller_product_variation
+        ) {
+            $product = get_single_product($cart['product_id']);
+            $productId = $cart['product_id'];
+            $quantity = $cart['quantity'];
+
+            if (isset($productQtyPanier[$productId])) {
+                $productQtyPanier[$productId] += $quantity;
+            } else {
+                $productQtyPanier[$productId] = $quantity;
+            }
+
+            if ($product->added_by == 'admin') {
+                array_push($admin_products, $cart['product_id']);
+                $admin_product_variation[] = $cart['variation'];
+            } else {
+                $product_ids = [];
+                if (isset($seller_products[$product->user_id])) {
+                    $product_ids = $seller_products[$product->user_id];
+                }
+                array_push($product_ids, $cart['product_id']);
+                $seller_products[$product->user_id] = $product_ids;
+                $seller_product_variation[] = $cart['variation'];
+            }
+        });
+
+        $pickup_point_list = [];
+
+        if (get_setting('pickup_point') == 1) {
+            $pickup_point_list = get_all_pickup_points();
+        }
+
+        return view('frontend.delivery_info', compact(
+            'carts', 'carrier_list', 'shippers_areas',
+            'pickup_point_list', 'admin_products', 'seller_products',
+            'productQtyPanier', 'admin_product_variation', 'seller_product_variation'
+        ));
     }
 
     public function store_delivery_info(Request $request)
