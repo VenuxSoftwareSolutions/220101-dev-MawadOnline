@@ -269,7 +269,7 @@
 -->
     <!-- Featured Categories -->
     @if (count($featured_categories) > 0)
-        <section class="mb-2 mb-md-3 mt-4">
+        <section class="mt-4">
             <div class="container mt-2">
                 <div class="bg-white pb-2 px-1">
                     <!-- Top Section -->
@@ -357,14 +357,14 @@
         </div>
     @endif -->
 
-    <!-- Featured Products -->
+    <!-- Featured Products
     <div id="section_featured" class="pt-2 pt-md-3">
 
-    </div>
+    </div>-->
 
     <!-- Banner Section 2 -->
     @if (get_setting('home_banner2_images') != null)
-        <div class="mb-2 mb-md-3 mt-2 mt-md-3">
+        <div class="mb-2 mb-md-3">
             <div class="container">
                 @php
                     $banner_2_imags = json_decode(get_setting('home_banner2_images', null, $lang));
@@ -729,7 +729,7 @@
             </div>
         </section>
     @endif
-    <div class="container mb-5">
+    <div class="container mb-5 mt-5">
         <!-- 24/7 Virtual Showroom -->
         <div class="col-xl-4 col-lg-6 col-12 pr-xl-3 pr-lg-3 pb-lg-3 pb-md-3 p-0 pb-3 float-left">
             <div class="sllng-point col-md-12 p-5">
