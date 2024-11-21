@@ -275,7 +275,7 @@
                     <!-- Top Section -->
                     <div class="d-flexZ align-items-baseline justify-content-between">
                         <!-- Title -->
-                        <h3 class="fs-16 fs-md-20 mb-2 mb-sm-0">
+                        <h3 class="fs-20 mb-2 mb-sm-0">
                             <span class="font-prompt-md">{{ translate('Featured Categories') }}</span>
                         </h3>
                     </div>
