@@ -737,7 +737,8 @@
                     </span>
                     <a href="{{ route('user.login') }}"
                         class="text-reset opacity-60 hov-opacity-100 hov-text-primary fs-13 d-inline-block border-right border-soft-light border-width-2 pr-2 ml-3">{{ translate('Login') }}</a>
-                    <a href="{{ route('user.registration') }}"
+                    <<!--<a href="{{ route('user.registration') }}" -->
+                        <a href="https://about.mawadonline.com"
                         class="text-reset opacity-60 hov-opacity-100 hov-text-primary fs-13 d-inline-block py-2 pl-2">{{ translate('Registration') }}</a>
                 </span>
             @endauth
