@@ -406,7 +406,7 @@
                                 <div class="user-section-header">
                                     <span class="user-s-h-account-dd font-prompt fs-16">{{ translate('My Account') }}</span>
                                     <span class="user-s-h-account-dd font-prompt fs-14">
-                                        Register <span style="color:#767676;">|</span> <a class="user-s-h-account-dd" href="{{ route('user.login') }}">{{ translate('Sign in') }}</a>
+                                        <a class="user-s-h-account-dd" href="https://about.mawadonline.com"> Register </a><span style="color:#767676;">|</span> <a class="user-s-h-account-dd" href="{{ route('user.login') }}">{{ translate('Sign in') }}</a>
                                     </span>
                                 </div>
                                 </span>
@@ -737,8 +737,7 @@
                     </span>
                     <a href="{{ route('user.login') }}"
                         class="text-reset opacity-60 hov-opacity-100 hov-text-primary fs-13 d-inline-block border-right border-soft-light border-width-2 pr-2 ml-3">{{ translate('Login') }}</a>
-                    <<!--<a href="{{ route('user.registration') }}" -->
-                        <a href="https://about.mawadonline.com"
+                    <a href="{{ route('user.registration') }}"
                         class="text-reset opacity-60 hov-opacity-100 hov-text-primary fs-13 d-inline-block py-2 pl-2">{{ translate('Registration') }}</a>
                 </span>
             @endauth
