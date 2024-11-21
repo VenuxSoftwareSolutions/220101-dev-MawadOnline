@@ -4,8 +4,8 @@
             <!-- Top Section -->
             <div class="d-flex mb-2 mb-md-3 align-items-baseline justify-content-between px-1">
                 <!-- Title -->
-                <h3 class="fs-16 fs-md-20 fw-700 mb-2 mb-sm-0">
-                    <span class="">{{ translate('Recently Added') }}</span>
+                <h3 class="fs-16 fs-md-20 mb-2 mb-sm-0">
+                    <span class="font-prompt-md">{{ translate('Recently Added') }}</span>
                 </h3>
                 <!-- Links -->
                 <div class="d-flex">
