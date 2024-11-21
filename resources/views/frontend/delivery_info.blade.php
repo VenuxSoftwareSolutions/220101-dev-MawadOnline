@@ -105,13 +105,13 @@
                                                                     }
                                                                 @endphp
                                                                 <div class="col-md-6">
-                                                                    <label for="shipping_method"
+                                                                    <label for="shipping_method_{{ $product->id }}"
                                                                         class="fs-14 text-secondary">{{ translate('Shipping Method') }}:</label>
                                                                     <script>
-                                                                        window.shippingMethodSelectFirstChange = true;
+                                                                        window.shippingMethodSelectFirstChange_{{ $product->id }} = true;
                                                                     </script>
                                                                     <select data-prod="{{ $product->id }}"
-                                                                        name="shipping_method" id="shipping_method"
+                                                                        name="shipping_method_{{ $product->id }}" id="shipping_method_{{ $product->id }}"
                                                                         class="form-control fs-14 text-dark fw-500"
                                                                         onchange="toggleShippersArea(this, '{{ $product->id }}')">
                                                                         <option value="">
@@ -153,20 +153,20 @@
                                                                         class="fs-14 text-dark fw-500">{{ $duration ?? '' }}</span>
                                                                 </div>
                                                             </div>
-                                                            <div class="row charge-wrapper__clz">
+                                                            <div class="row charge-wrapper-{{ $product->id }}__clz">
                                                                 <div class="col-md-12">
                                                                     <span
                                                                         class="fs-14 text-secondary">{{ translate('Charge') }}:</span>
                                                                     <span class="fs-14 text-dark"
-                                                                        id="charge-result">N/A</span>
+                                                                        id="charge-result_{{ $product->id }}">N/A</span>
                                                                 </div>
                                                             </div>
                                                             <script>
                                                                 document.addEventListener("DOMContentLoaded", function() {
-                                                                    $("#shipping_method").on("change", function() {
-                                                                        if (["vendor", ""].includes($(this).val()) === false && shippingMethodSelectFirstChange === true) {
+                                                                    $("#shipping_method_{{ $product->id }}").on("change", function() {
+                                                                        if (["vendor", ""].includes($(this).val()) === false && shippingMethodSelectFirstChange_{{ $product->id }} === true) {
                                                                             @if ($shippingOptions->paid == 'buyer')
-                                                                                $("#charge-result").html(`
+                                                                                $("#charge-result_{{ $product->id }}").html(`
                                                                                     <span class="p-1 bg-black-20 rounded">
                                                                                         <span
                                                                                             class="spinner-border spinner-border-sm"
@@ -185,11 +185,11 @@
                                                                                         data,
                                                                                         message
                                                                                     }) {
-                                                                                        shippingMethodSelectFirstChange = false;
+                                                                                        shippingMethodSelectFirstChange_{{ $product->id }} = false;
                                                                                         if (error === true) {
                                                                                             throw new Error(message);
                                                                                         } else if (data["HasErrors"] === false) {
-                                                                                            $("#charge-result").html(
+                                                                                            $("#charge-result_{{ $product->id }}").html(
                                                                                                 `${data["TotalAmount"]["Value"]} ${data["TotalAmount"]["CurrencyCode"]}`
                                                                                             ).removeClass("text-dark").addClass("text-success").addClass(
                                                                                                 "fw-700");
@@ -197,15 +197,18 @@
                                                                                             AIZ.plugins.notify('error', '{{ __('Something went wrong!') }}');
                                                                                         }
                                                                                     }).catch(() => {
-                                                                                    $("#charge-result").html("N/A");
+                                                                                    $("#charge-result_{{ $product->id }}").html("N/A");
                                                                                     AIZ.plugins.notify('error', '{{ __('Something went wrong!') }}')
                                                                                 });
                                                                             @else
-                                                                                $("#charge-result").html('{{ __("Free (handled by vendor)") }}');
+                                                                                $("#charge-result_{{ $product->id }}").html('{{ __("Free (handled by vendor)") }}');
                                                                             @endif
                                                                         } else if(["vendor"].includes($(this).val()) === true) {
                                                                             @if($shippingOptions->paid === "vendor")
-                                                                                $("#charge-result").html('{{ __("Free (handled by vendor)") }}');
+                                                                                $("#charge-result_{{ $product->id }}").html('{{ __("Free (handled by vendor)") }}');
+                                                                            @elseif($shippingOptions->paid === "buyer")
+                                                                                $("#charge-result_{{ $product->id }}").html('{{ formatChargeBasedOnChargeType($shippingOptions) }}');
+
                                                                             @endif
                                                                         }
                                                                     });
