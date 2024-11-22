@@ -97,7 +97,7 @@
                                         </form>
                                         <p class="fs-12 text-gray mb-0">
                                             Dont have an account?
-                                            <a href="" class="ml-2 fs-14 fw-700 animate-underline-primary btn-regiter-user">Register Now</a>
+                                            <a href="https://about.mawadonline.com" class="ml-2 fs-14 fw-700 animate-underline-primary btn-regiter-user">Register Now</a>
                                         </p>
                                         <!-- DEMO MODE -->
                                         @if (env("DEMO_MODE") == "On")

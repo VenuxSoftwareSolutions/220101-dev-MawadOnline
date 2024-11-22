@@ -406,7 +406,7 @@
                                 <div class="user-section-header">
                                     <span class="user-s-h-account-dd font-prompt fs-16">{{ translate('My Account') }}</span>
                                     <span class="user-s-h-account-dd font-prompt fs-14">
-                                        Register <span style="color:#767676;">|</span> <a class="user-s-h-account-dd" href="{{ route('user.login') }}">{{ translate('Sign in') }}</a>
+                                        <a class="user-s-h-account-dd" href="https://about.mawadonline.com"> Register </a><span style="color:#767676;">|</span> <a class="user-s-h-account-dd" href="{{ route('user.login') }}">{{ translate('Sign in') }}</a>
                                     </span>
                                 </div>
                                 </span>

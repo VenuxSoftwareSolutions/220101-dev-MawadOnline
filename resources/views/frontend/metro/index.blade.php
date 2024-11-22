@@ -84,16 +84,16 @@
                                                     Effortlessly buy and sell on one convenient platform.
                                                 </div>
                                                 <div class="col-12 pt-4 p-0">
-                                                    <button type="button" class="btn btn-secondary-base slider-register-vendor text-white border-radius-16 fs-16 font-prompt py-2">
+                                                    <a href="https://business.mawadonline.com/"><button type="button" class="btn btn-secondary-base slider-register-vendor text-white border-radius-16 fs-16 font-prompt py-2">
                                                         Register as Vendor
-                                                    </button>
-                                                    <button type="button" class="btn bg-white slider-register-buyer margin-s-r-b text-secondary-base border-radius-16 fs-16 font-prompt py-2">
+                                                    </button></a>
+                                                    <a href="https://about.mawadonline.com/"><button type="button" class="btn bg-white slider-register-buyer margin-s-r-b text-secondary-base border-radius-16 fs-16 font-prompt py-2">
                                                         Join Buyer Waitlist
                                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                             <path d="M14.4299 5.92993L20.4999 11.9999L14.4299 18.0699" stroke="#CB774B" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
                                                             <path d="M3.5 12H20.33" stroke="#CB774B" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
                                                         </svg>
-                                                    </button>
+                                                    </button></a>
                                                 </div>
                                             </div>
                                         </div>
@@ -269,14 +269,14 @@
 -->
     <!-- Featured Categories -->
     @if (count($featured_categories) > 0)
-        <section class="mb-2 mb-md-3 mt-4">
+        <section class="mt-4">
             <div class="container mt-2">
                 <div class="bg-white pb-2 px-1">
                     <!-- Top Section -->
                     <div class="d-flexZ align-items-baseline justify-content-between">
                         <!-- Title -->
-                        <h3 class="fs-16 fs-md-20 fw-700 mb-2 mb-sm-0">
-                            <span class="">{{ translate('Featured Categories') }}</span>
+                        <h3 class="fs-20 mb-2 mb-sm-0">
+                            <span class="font-prompt-md">{{ translate('Featured Categories') }}</span>
                         </h3>
                     </div>
                 </div>
@@ -326,7 +326,7 @@
         </section>
     @endif
 
-    <!-- Banner section 1 -->
+    <!-- Banner section 1
     @if (get_setting('home_banner1_images') != null)
         <div class="pb-2 pb-md-3 pt-2 pt-md-3">
             <div class="container mb-2 mb-md-3">
@@ -355,16 +355,16 @@
                 </div>
             </div>
         </div>
-    @endif
+    @endif -->
 
-    <!-- Featured Products -->
+    <!-- Featured Products
     <div id="section_featured" class="pt-2 pt-md-3">
 
-    </div>
+    </div>-->
 
     <!-- Banner Section 2 -->
     @if (get_setting('home_banner2_images') != null)
-        <div class="mb-2 mb-md-3 mt-2 mt-md-3">
+        <div class="mb-2 mb-md-3">
             <div class="container">
                 @php
                     $banner_2_imags = json_decode(get_setting('home_banner2_images', null, $lang));
@@ -729,83 +729,125 @@
             </div>
         </section>
     @endif
-    <div class="container mb-5">
-        <!-- Easy to shop -->
-        <div class="col-xl-3 col-lg-6 col-12 pr-xl-3 pr-lg-3 pb-lg-3 pb-md-3 p-0 float-left">
+    <div class="container mb-5 mt-5">
+        <!-- 24/7 Virtual Showroom -->
+        <div class="col-xl-4 col-lg-6 col-12 pr-xl-3 pr-lg-3 pb-lg-3 pb-md-3 p-0 pb-3 float-left">
             <div class="sllng-point col-md-12 p-5">
             <div class="col-12 p-0 pb-3">
                 <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M0 16C0 7.16344 7.16344 0 16 0H40C48.8366 0 56 7.16344 56 16V40C56 48.8366 48.8366 56 40 56H16C7.16344 56 0 48.8366 0 40V16Z" fill="#3D3D3B"/>
-                    <path d="M14.6667 14.6666H16.9867C18.4267 14.6666 19.56 15.9066 19.44 17.3333L18.3334 30.6133C18.1467 32.7866 19.8667 34.6533 22.0533 34.6533H36.2534C38.1734 34.6533 39.8534 33.08 40 31.1733L40.72 21.1733C40.88 18.96 39.2 17.16 36.9733 17.16H19.76" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M33.6667 41.3333C34.5871 41.3333 35.3333 40.5871 35.3333 39.6667C35.3333 38.7462 34.5871 38 33.6667 38C32.7462 38 32 38.7462 32 39.6667C32 40.5871 32.7462 41.3333 33.6667 41.3333Z" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M23 41.3333C23.9205 41.3333 24.6666 40.5871 24.6666 39.6667C24.6666 38.7462 23.9205 38 23 38C22.0795 38 21.3333 38.7462 21.3333 39.6667C21.3333 40.5871 22.0795 41.3333 23 41.3333Z" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M24 22.6666H40" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M29.2266 15.0134L37.9066 19.6934C38.9199 20.24 38.9199 21.8 37.9066 22.3467L29.2266 27.0267C28.4533 27.44 27.5466 27.44 26.7733 27.0267L18.0933 22.3467C17.0799 21.8 17.0799 20.24 18.0933 19.6934L26.7733 15.0134C27.5466 14.6 28.4533 14.6 29.2266 15.0134Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16.8134 25.5067L24.8801 29.5467C25.8801 30.0534 26.5201 31.08 26.5201 32.2V39.8267C26.5201 40.9334 25.3601 41.64 24.3734 41.1467L16.3067 37.1067C15.3067 36.6 14.6667 35.5734 14.6667 34.4534V26.8267C14.6667 25.72 15.8267 25.0134 16.8134 25.5067Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M39.1866 25.5067L31.12 29.5467C30.12 30.0534 29.48 31.08 29.48 32.2V39.8267C29.48 40.9334 30.64 41.64 31.6266 41.1467L39.6933 37.1067C40.6933 36.6 41.3333 35.5734 41.3333 34.4534V26.8267C41.3333 25.72 40.1733 25.0134 39.1866 25.5067Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
             <div class="col-12 p-0">
-                <span class="sllng-point-title fs-24 font-prompt-md">Easy to Shop</span>
+                <span class="sllng-point-title fs-24 font-prompt-md">24/7 Virtual Showroom</span>
             </div>
             <div class="col-12 p-0 mt-2">
-                <span class="sllng-point-desc fs-18 font-prompt">Effortlessly find and order construction materials with our user-friendly platform.</span>
+                <span class="sllng-point-desc fs-18 font-prompt">Browse and showcase products anytime, anywhere, with our always-open online showroom.</span>
             </div>
         </div>
         </div>
-        <!-- 24/7 Support -->
-        <div class="col-xl-3 col-lg-6 col-12 pr-xl-3 pr-lg-0 pb-lg-3 pb-md-3 p-0 float-left">
+        <!-- Secure Payments -->
+        <div class="col-xl-4 col-lg-6 col-12 pr-xl-3 pr-lg-0 pb-lg-3 pb-md-3 p-0 pb-3 float-left">
             <div class="sllng-point bg-support col-md-12 p-5">
             <div class="col-12 p-0 pb-3">
                 <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M0 16C0 7.16344 7.16344 0 16 0H40C48.8366 0 56 7.16344 56 16V40C56 48.8366 48.8366 56 40 56H16C7.16344 56 0 48.8366 0 40V16Z" fill="#3D3D3B"/>
-                    <path d="M36 37.1467H34.9867C33.92 37.1467 32.9067 37.56 32.16 38.3067L29.88 40.5601C28.84 41.5868 27.1467 41.5868 26.1067 40.5601L23.8267 38.3067C23.08 37.56 22.0533 37.1467 21 37.1467H20C17.7867 37.1467 16 35.3734 16 33.1867V18.64C16 16.4533 17.7867 14.6801 20 14.6801H36C38.2133 14.6801 40 16.4533 40 18.64V33.1867C40 35.3601 38.2133 37.1467 36 37.1467Z" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M21.3333 24.2134C21.3333 22.9734 22.3467 21.96 23.5867 21.96C24.8267 21.96 25.84 22.9734 25.84 24.2134C25.84 26.72 22.28 26.9867 21.4933 29.3734C21.3333 29.8667 21.7467 30.36 22.2667 30.36H25.84" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M33.3867 30.3466V22.7333C33.3867 22.3867 33.16 22.0799 32.8267 21.9866C32.4933 21.8933 32.1333 22.0266 31.9467 22.3199C30.9867 23.8666 29.9467 25.6266 29.04 27.1733C28.8933 27.4266 28.8933 27.7599 29.04 28.0133C29.1867 28.2666 29.4667 28.4265 29.7733 28.4265H34.6667" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M27.6534 35.6666H35.5468C35.4268 35.7733 35.3067 35.8667 35.1867 35.9733L29.4934 40.24C27.6134 41.64 24.5468 41.64 22.6534 40.24L16.9468 35.9733C15.6934 35.04 14.6667 32.9733 14.6667 31.4133V21.5333C14.6667 19.9066 15.9068 18.1066 17.4268 17.5333L24.0668 15.04C25.1601 14.6266 26.9734 14.6266 28.0668 15.04L34.6934 17.5333C35.9601 18.0133 37.0401 19.3466 37.3734 20.7066H27.6401C27.3467 20.7066 27.0801 20.72 26.8267 20.72C24.3601 20.8667 23.7201 21.76 23.7201 24.5733V31.8133C23.7334 34.88 24.5201 35.6666 27.6534 35.6666Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M23.7334 26.96H41.3334" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M41.3334 24.5601V31.96C41.3067 34.92 40.4934 35.6534 37.4134 35.6534H27.6534C24.5201 35.6534 23.7334 34.8667 23.7334 31.7867V24.5467C23.7334 21.7467 24.3734 20.8534 26.8401 20.6934C27.0934 20.6934 27.3601 20.6801 27.6534 20.6801H37.4134C40.5467 20.6934 41.3334 21.4667 41.3334 24.5601Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M27.0935 32.3467H28.8668" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M31.6667 32.3467H36.0268" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
             <div class="col-12 p-0">
-                <span class="sllng-point-title fs-24 font-prompt-md">24/7 Support</span>
+                <span class="sllng-point-title fs-24 font-prompt-md">Secure Payments</span>
             </div>
             <div class="col-12 p-0 mt-2">
-                <span class="sllng-point-desc fs-18 font-prompt">Get assistance anytime, anywhere with our round-the-clock support team.</span>
+                <span class="sllng-point-desc fs-18 font-prompt">Transact with peace of mind using our secure payment system, safeguarding both buyers and vendors.</span>
             </div>
         </div>
         </div>
-        <!-- Fast & Free Shipping -->
-        <div class="col-xl-3 col-lg-6 col-12 pr-xl-3 pr-lg-3 pb-md-3 p-0 float-left">
+        <!-- Fast and Reliable Deliveries -->
+        <div class="col-xl-4 col-lg-6 col-12 pb-md-3 p-0 pb-3 float-left">
             <div class="sllng-point col-md-12 p-5">
             <div class="col-12 p-0 pb-3">
                 <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M0 16C0 7.16344 7.16344 0 16 0H40C48.8366 0 56 7.16344 56 16V40C56 48.8366 48.8366 56 40 56H16C7.16344 56 0 48.8366 0 40V16Z" fill="#3D3D3B"/>
-                    <path d="M16.2267 21.9199L28 28.7332L39.6933 21.9599" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M28 40.8132V28.7198" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M25.24 15.3066L18.12 19.2667C16.5067 20.16 15.1867 22.4 15.1867 24.24V31.7733C15.1867 33.6133 16.5067 35.8533 18.12 36.7466L25.24 40.7067C26.76 41.5467 29.2533 41.5467 30.7733 40.7067L37.8933 36.7466C39.5067 35.8533 40.8267 33.6133 40.8267 31.7733V24.24C40.8267 22.4 39.5067 20.16 37.8933 19.2667L30.7733 15.3066C29.24 14.4533 26.76 14.4533 25.24 15.3066Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M34.6667 29.6534V24.7734L22.0133 17.4667" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M28 30.6666H29.3333C30.8 30.6666 32 29.4666 32 28V14.6666H20C18 14.6666 16.2533 15.7733 15.3467 17.3999" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M14.6667 34.6666C14.6667 36.88 16.4534 38.6666 18.6667 38.6666H20.0001C20.0001 37.2 21.2001 36 22.6667 36C24.1334 36 25.3334 37.2 25.3334 38.6666H30.6667C30.6667 37.2 31.8667 36 33.3334 36C34.8001 36 36.0001 37.2 36.0001 38.6666H37.3334C39.5468 38.6666 41.3334 36.88 41.3334 34.6666V30.6666H37.3334C36.6001 30.6666 36.0001 30.0666 36.0001 29.3333V25.3333C36.0001 24.6 36.6001 24 37.3334 24H39.0534L36.7734 20.0133C36.2934 19.1866 35.4135 18.6666 34.4535 18.6666H32.0001V28C32.0001 29.4666 30.8001 30.6666 29.3334 30.6666H28.0001" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M22.6667 41.3333C24.1394 41.3333 25.3333 40.1394 25.3333 38.6667C25.3333 37.1939 24.1394 36 22.6667 36C21.1939 36 20 37.1939 20 38.6667C20 40.1394 21.1939 41.3333 22.6667 41.3333Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M33.3334 41.3333C34.8062 41.3333 36.0001 40.1394 36.0001 38.6667C36.0001 37.1939 34.8062 36 33.3334 36C31.8607 36 30.6667 37.1939 30.6667 38.6667C30.6667 40.1394 31.8607 41.3333 33.3334 41.3333Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M41.3333 28V30.6667H37.3333C36.6 30.6667 36 30.0667 36 29.3333V25.3333C36 24.6 36.6 24 37.3333 24H39.0533L41.3333 28Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M14.6667 22.6666H22.6667" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M14.6667 26.6666H20.0001" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M14.6667 30.6666H17.3334" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
             <div class="col-12 p-0">
-                <span class="sllng-point-title fs-24 font-prompt-md">Fast & Free Shipping</span>
+                <span class="sllng-point-title fs-24 font-prompt-md">Fast and Reliable Deliveries</span>
             </div>
             <div class="col-12 p-0 mt-2">
-                <span class="sllng-point-desc fs-18 font-prompt">Enjoy prompt delivery with no additional cost on all orders.</span>
+                <span class="sllng-point-desc fs-18 font-prompt">Keep your projects on schedule—or deliver your orders on time—with our quick and dependable delivery services.</span>
             </div>
         </div>
         </div>
-        <!-- Fast & Free Shipping -->
-        <div class="col-xl-3 col-lg-6 col-12 p-0 float-left">
+        <!-- Trusted Marketplace -->
+        <div class="col-xl-4 col-lg-6 pr-xl-3 pr-lg-3 pb-md-3 col-12 p-0 pb-3 float-left">
+            <div class="sllng-point bg-support col-md-12 p-5">
+            <div class="col-12 p-0 pb-3">
+                <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 16C0 7.16344 7.16344 0 16 0H40C48.8366 0 56 7.16344 56 16V40C56 48.8366 48.8366 56 40 56H16C7.16344 56 0 48.8366 0 40V16Z" fill="#3D3D3B"/>
+                    <path d="M25.9866 14.9735L19.3333 17.4801C17.8 18.0535 16.5466 19.8668 16.5466 21.4935V31.4001C16.5466 32.9735 17.5866 35.0401 18.8533 35.9868L24.5866 40.2668C26.4666 41.6801 29.56 41.6801 31.44 40.2668L37.1733 35.9868C38.44 35.0401 39.48 32.9735 39.48 31.4001V21.4935C39.48 19.8535 38.2266 18.0401 36.6933 17.4668L30.04 14.9735C28.9066 14.5601 27.0933 14.5601 25.9866 14.9735Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M24.0667 27.8268L26.2133 29.9734L31.9466 24.2401" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="col-12 p-0">
+                <span class="sllng-point-title fs-24 font-prompt-md">Trusted Marketplace</span>
+            </div>
+            <div class="col-12 p-0 mt-2">
+                <span class="sllng-point-desc fs-18 font-prompt">Build strong business relationships by leveraging reviews and verified statuses to ensure credibility.</span>
+            </div>
+        </div>
+        </div>
+        <!-- Effortless Transaction Tracking -->
+        <div class="col-xl-4 col-lg-6 pr-xl-3 pr-lg-3 pb-md-3 col-12 p-0 pb-3 float-left">
             <div class="sllng-point col-md-12 p-5">
             <div class="col-12 p-0 pb-3">
                 <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M0 16C0 7.16344 7.16344 0 16 0H40C48.8366 0 56 7.16344 56 16V40C56 48.8366 48.8366 56 40 56H16C7.16344 56 0 48.8366 0 40V16Z" fill="#3D3D3B"/>
-                    <path d="M39.3333 31.9867L32.6533 38.68" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M16.6667 31.9867H39.3333" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M16.6667 24.0133L23.3467 17.3199" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M39.3333 24.0133H16.6667" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M39.3334 27.0666V21.3866C39.3334 16.0133 38.0801 14.6666 33.0401 14.6666H22.9601C17.9201 14.6666 16.6667 16.0133 16.6667 21.3866V36.3999C16.6667 39.9466 18.6134 40.7866 20.9734 38.2533L20.9867 38.24C22.0801 37.08 23.7467 37.1733 24.6934 38.4399L26.0401 40.24" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M36.2667 40.5333C38.6231 40.5333 40.5333 38.6231 40.5333 36.2667C40.5333 33.9103 38.6231 32 36.2667 32C33.9103 32 32 33.9103 32 36.2667C32 38.6231 33.9103 40.5333 36.2667 40.5333Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M41.3333 41.3333L40 40" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M22.6667 21.3334H33.3334" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M24 26.6666H32" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
             <div class="col-12 p-0">
-                <span class="sllng-point-title fs-24 font-prompt-md">Hassle Free Returns</span>
+                <span class="sllng-point-title fs-24 font-prompt-md">Effortless Transaction Tracking</span>
             </div>
             <div class="col-12 p-0 mt-2">
-                <span class="sllng-point-desc fs-18 font-prompt">Return or exchange items hassle-free within our specified timeframe.</span>
+                <span class="sllng-point-desc fs-18 font-prompt">Easily monitor your orders and payments, ensuring transparency at every step.</span>
+            </div>
+        </div>
+        </div>
+        <!-- Informed Decisions -->
+        <div class="col-xl-4 col-lg-6 col-12 p-0 float-left">
+            <div class="sllng-point bg-support col-md-12 p-5">
+            <div class="col-12 p-0 pb-3">
+                <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 16C0 7.16344 7.16344 0 16 0H40C48.8366 0 56 7.16344 56 16V40C56 48.8366 48.8366 56 40 56H16C7.16344 56 0 48.8366 0 40V16Z" fill="#3D3D3B"/>
+                    <path d="M23.0666 36.0534V34.5067C20 32.6534 17.48 29.04 17.48 25.2C17.48 18.6 23.5466 13.4267 30.4 14.92C33.4133 15.5867 36.0533 17.5867 37.4266 20.3467C40.2133 25.9467 37.28 31.8934 32.9733 34.4934V36.04C32.9733 36.4267 33.12 37.32 31.6933 37.32H24.3466C22.88 37.3334 23.0666 36.76 23.0666 36.0534Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M23.3333 41.3333C26.3866 40.4667 29.6133 40.4667 32.6666 41.3333" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="col-12 p-0">
+                <span class="sllng-point-title fs-24 font-prompt-md">Informed Decisions</span>
+            </div>
+            <div class="col-12 p-0 mt-2">
+                <span class="sllng-point-desc fs-18 font-prompt">Access detailed product information and reviews to choose the best options for your construction needs.</span>
             </div>
         </div>
         </div>
