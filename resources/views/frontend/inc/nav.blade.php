@@ -249,13 +249,14 @@
                     </div>
                     <div class="d-none d-lg-block mr-3 mt-2" style="margin-left: 20px;">
                         <div class="" id="wishlist">
-                            @include('frontend.'.get_setting('homepage_select').'.partials.wishlist')
+                            @include('frontend.' . get_setting('homepage_select') . '.partials.wishlist')
                         </div>
                     </div>
-                    <div class="dd-none d-lg-block  mt-2"
-                        data-hover="dropdown">
-                        <div class="nav-cart-box dropdown h-100" id="cart_items" style="width: max-content;">
-                            @include('frontend.'.get_setting('homepage_select').'.partials.cart')
+                    <div class="dd-none d-lg-block mt-2" data-toggle="tooltip"
+                        data-title="{{ translate('Cart') }}" data-placement="top" data-hover="dropdown">
+                        <div class="nav-cart-box dropdown h-100 cart-button-wrapper__clz" id="cart_items"
+                            style="width: max-content;">
+                            @include('frontend.' . get_setting('homepage_select') . '.partials.cart')
                         </div>
                     </div>
                     @if (!isAdmin())
