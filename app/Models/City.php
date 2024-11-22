@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class City extends Model
 {
+    protected $with = ["country", "state"];
+
     public function getTranslation($field = '', $lang = false)
     {
         $lang = $lang == false ? App::getLocale() : $lang;
