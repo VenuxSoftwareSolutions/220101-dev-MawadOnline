@@ -10,7 +10,8 @@
             data-value="removed">
             <a href="{{ get_setting('topbar_banner_link') }}" class="d-block text-reset h-40px h-lg-60px">
                 <!-- For Large device -->
-                <img src="{{ $topbar_banner_asset }}" class="d-none d-xl-block img-fit h-100" alt="{{ translate('topbar_banner') }}">
+                <img src="{{ $topbar_banner_asset }}" class="d-none d-xl-block img-fit h-100"
+                    alt="{{ translate('topbar_banner') }}">
                 <!-- For Medium device -->
                 <img src="{{ $topbar_banner_medium != null ? uploaded_asset($topbar_banner_medium) : $topbar_banner_asset }}"
                     class="d-none d-md-block d-xl-none img-fit h-100" alt="{{ translate('topbar_banner') }}">
@@ -50,7 +51,8 @@
                                 $system_currency = get_system_currency();
                             @endphp
 
-                            <a href="javascript:void(0)" class="dropdown-toggle text-secondary fs-13 my-2 pr-3 border-right"
+                            <a href="javascript:void(0)"
+                                class="dropdown-toggle text-secondary fs-13 my-2 pr-3 border-right"
                                 data-toggle="dropdown" data-display="static">
                                 {{ $system_currency->name }}
                             </a>
@@ -60,7 +62,8 @@
                                         <a class="dropdown-item @if ($system_currency->code == $currency->code) active @endif"
                                             href="javascript:void(0)"
                                             data-currency="{{ $currency->code }}">{{ $currency->name }}
-                                            ({{ $currency->symbol }})</a>
+                                            ({{ $currency->symbol }})
+                                        </a>
                                     </li>
                                 @endforeach
                             </ul>
@@ -70,11 +73,12 @@
                         @if (get_setting('show_language_switcher') == 'on')
                             <li class="list-inline-item dropdown mr-4" id="lang-change">
 
-                                <a href="javascript:void(0)" class="dropdown-toggle text-secondary fs-13 my-2 pr-3 border-right"
+                                <a href="javascript:void(0)"
+                                    class="dropdown-toggle text-secondary fs-13 my-2 pr-3 border-right"
                                     data-toggle="dropdown" data-display="static">
                                     <img src="{{ static_asset('assets/img/placeholder.jpg') }}"
-                                    data-src="{{ static_asset('assets/img/flags/' . $system_language->code . '.png') }}"
-                                    class="mr-1 lazyload" alt="{{ $system_language->name }}" height="11">
+                                        data-src="{{ static_asset('assets/img/flags/' . $system_language->code . '.png') }}"
+                                        class="mr-1 lazyload" alt="{{ $system_language->name }}" height="11">
                                     <span class="">{{ $system_language->name }}</span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-left">
@@ -93,20 +97,18 @@
                             </li>
                         @endif
                         @if (get_setting('vendor_system_activation') == 1)
-                        @unless(Auth::check() && Auth::user()->user_type == 'seller')
-
-                            <!-- Become a Seller -->
-                            <li class="list-inline-item mr-0 pl-0 py-2">
-                                <a href="{{ route('shops.packages') }}"
-                                    class="text-secondary-base fs-13 pr-3 d-inline-block border-width-2 border-right">{{ translate('Become a Seller') }}</a>
-                            </li>
-                            <!-- Seller Login -->
-                            <li class="list-inline-item mr-0 pl-0 py-2">
-                                <a href="{{ route('seller.login') }}"
-                                    class="text-secondary fs-13 pl-3 d-inline-block">{{ translate('Login to Seller') }}</a>
-                            </li>
+                            @unless (Auth::check() && Auth::user()->user_type == 'seller')
+                                <!-- Become a Seller -->
+                                <li class="list-inline-item mr-0 pl-0 py-2">
+                                    <a href="{{ route('shops.packages') }}"
+                                        class="text-secondary-base fs-13 pr-3 d-inline-block border-width-2 border-right">{{ translate('Become a Seller') }}</a>
+                                </li>
+                                <!-- Seller Login -->
+                                <li class="list-inline-item mr-0 pl-0 py-2">
+                                    <a href="{{ route('seller.login') }}"
+                                        class="text-secondary fs-13 pl-3 d-inline-block">{{ translate('Login to Seller') }}</a>
+                                </li>
                             @endunless
-
                         @endif
                         @if (get_setting('helpline_number'))
                             <!-- Helpline -->
@@ -162,9 +164,14 @@
                     <div class="d-lg-none ml-auto mr-0">
                         <a class="p-2 d-block text-reset" href="javascript:void(0);" data-toggle="class-toggle"
                             data-target=".front-header-search">
-                            <svg width="32" height="32" class="la-2x mr-3 mt-search-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M22 22L20 20" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg width="32" height="32" class="la-2x mr-3 mt-search-icon" viewBox="0 0 32 32"
+                                fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z"
+                                    stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path d="M22 22L20 20" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round" />
                             </svg>
                         </a>
                     </div>
@@ -186,9 +193,14 @@
                                             value="{{ $query }}"
                                         @endisset
                                             placeholder="{{ translate('I am shopping for...') }}" autocomplete="off">
-                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z" stroke="#A2A4AD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M22 22L20 20" stroke="#A2A4AD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z"
+                                                stroke="#A2A4AD" stroke-width="1.5" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                            <path d="M22 22L20 20" stroke="#A2A4AD" stroke-width="1.5"
+                                                stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
                                 </div>
@@ -215,9 +227,15 @@
                     <div class="d-none d-lg-none ml-3 mr-0">
                         <div class="nav-search-box">
                             <a href="#" class="nav-box-link">
-                                <svg width="32" height="32" class="la-flip-horizontal d-inline-block nav-box-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M22 22L20 20" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <svg width="32" height="32"
+                                    class="la-flip-horizontal d-inline-block nav-box-icon" viewBox="0 0 32 32"
+                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z"
+                                        stroke="#292D32" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path d="M22 22L20 20" stroke="#292D32" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round" />
                                 </svg>
                             </a>
                         </div>
@@ -229,19 +247,24 @@
                         </div>
                     </div> --}}
                     <!-- Wishlist -->
-                    <div class="dd-none d-lg-block mr-3 mt-2"
-                        data-hover="dropdown">
+                    <div class="dd-none d-lg-block mr-3 mt-2" data-hover="dropdown">
                         <div class="nav-cart-box dropdown h-100" {{-- id="cart_items" --}} style="width: max-content;">
-                            <a href="{{ route('wishlists.index') }}" class="d-flex align-items-center text-dark" data-toggle="tooltip" data-title="{{ translate('Compare') }}" data-placement="top">
+                            <a href="{{ route('wishlists.index') }}" class="d-flex align-items-center text-dark"
+                                data-toggle="tooltip" data-title="{{ translate('Compare') }}" data-placement="top">
                                 <span class="position-relative d-inline-block">
-                                    <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M27.3333 19.9866L20.6533 26.6799" stroke="#F3F4F5" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M4.66666 19.9866H27.3333" stroke="#F3F4F5" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M4.66666 12.0134L11.3467 5.32007" stroke="#F3F4F5" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M27.3333 12.0134H4.66666" stroke="#F3F4F5" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
+                                    <svg width="28" height="28" viewBox="0 0 32 32" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M27.3333 19.9866L20.6533 26.6799" stroke="#F3F4F5" stroke-width="2"
+                                            stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M4.66666 19.9866H27.3333" stroke="#F3F4F5" stroke-width="2"
+                                            stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M4.66666 12.0134L11.3467 5.32007" stroke="#F3F4F5" stroke-width="2"
+                                            stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M27.3333 12.0134H4.66666" stroke="#F3F4F5" stroke-width="2"
+                                            stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
 
-                                        <span class="badge badge-counter-compare font-prompt">0</span>
+                                    <span class="badge badge-counter-compare font-prompt">0</span>
                                 </span>
                             </a>
 
@@ -252,8 +275,8 @@
                             @include('frontend.' . get_setting('homepage_select') . '.partials.wishlist')
                         </div>
                     </div>
-                    <div class="dd-none d-lg-block mt-2" data-toggle="tooltip"
-                        data-title="{{ translate('Cart') }}" data-placement="top" data-hover="dropdown">
+                    <div class="dd-none d-lg-block mt-2" data-toggle="tooltip" data-title="{{ translate('Cart') }}"
+                        data-placement="top" data-hover="dropdown">
                         <div class="nav-cart-box dropdown h-100 cart-button-wrapper__clz" id="cart_items"
                             style="width: max-content;">
                             @include('frontend.' . get_setting('homepage_select') . '.partials.cart')
@@ -276,144 +299,149 @@
 
                                            {{-- @if (Auth::check() && count($user->unreadNotifications) > 0) --}}
                                            @if (Auth::check())
-                                                <span class="badge badge-counter-notification font-prompt">{{ count($user->unreadNotifications) }}</span>
-                                            @endif
+<span class="badge badge-counter-notification font-prompt">{{ count($user->unreadNotifications) }}</span>
+@endif
                                         </span>
                                 </a>
 
                                 @auth
-                                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg py-0 rounded-0">
-                                        <div class="p-3 bg-light border-bottom">
-                                            <h6 class="mb-0">{{ translate('Notifications') }}</h6>
-                                        </div>
-                                        <div class="px-3 c-scrollbar-light overflow-auto " style="max-height:300px;">
-                                            <ul class="list-group list-group-flush">
-                                                @forelse($user->unreadNotifications as $notification)
-                                                    <li class="list-group-item">
-                                                        @if ($notification->type == 'App\Notifications\OrderNotification')
-                                                            @if ($user->user_type == 'customer')
-                                                                <a href="{{ route('purchase_history.details', encrypt($notification->data['order_id'])) }}"
-                                                                    class="text-secondary fs-12">
-                                                                    <span class="ml-2">
-                                                                        {{ translate('Order code: ') }}
-                                                                        {{ $notification->data['order_code'] }}
-                                                                        {{ translate('has been ' . ucfirst(str_replace('_', ' ', $notification->data['status']))) }}
-                                                                    </span>
-                                                                </a>
-                                                            @elseif ($user->user_type == 'seller')
-                                                                <a href="{{ route('seller.orders.show', encrypt($notification->data['order_id'])) }}"
-                                                                    class="text-secondary fs-12">
-                                                                    <span class="ml-2">
-                                                                        {{ translate('Order code: ') }}
-                                                                        {{ $notification->data['order_code'] }}
-                                                                        {{ translate('has been ' . ucfirst(str_replace('_', ' ', $notification->data['status']))) }}
-                                                                    </span>
-                                                                </a>
-                                                            @endif
-                                                        @elseif ($notification->type == 'App\Notifications\CustomStatusNotification')
-                                                        <span class="ml-2">
-                                                            @if ($notification->data['newStatus'] == 'Suspended')
-                                                                {{ __('messages.suspended_notification', ['reason' =>$notification->data['suspendedTitle'] ?? "" ]) }}
-                                                                @elseif ($notification->data['newStatus'] == 'Pending Approval')
-                                                                {{ __('messages.registration_completed_notif') }}
-                                                                @elseif ($notification->data['newStatus'] == 'Closed')
-                                                                {{ __('messages.vendor_closed') }}
-                                                                @elseif ($notification->data['newStatus'] == 'Pending Closure')
-                                                                {{ __('messages.pending_closure') }}
-                                                                @elseif ($notification->data['newStatus'] == 'Enabled')
-                                                                {{ __('messages.approved') }}
-                                                                @elseif ($notification->data['newStatus'] == 'Rejected')
-                                                                {{ __('messages.registration_rejected') }}
-                                                            @endif
-                                                        </span>
-                                                        @elseif ($notification->type == 'App\Notifications\ChangesApprovedNotification')
-
-                                                        <p>{{ $notification->data['message'] }}</p>
-                                                        @elseif ($notification->type == 'App\Notifications\ModificationRejectedNotification')
-
-
-                                                        <p>{{ $notification->data['message'] }}</p>
-                                                        @endif
-                                                    </li>
+                                        <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg py-0 rounded-0">
+                                            <div class="p-3 bg-light border-bottom">
+                                                <h6 class="mb-0">{{ translate('Notifications') }}</h6>
+                                            </div>
+                                            <div class="px-3 c-scrollbar-light overflow-auto " style="max-height:300px;">
+                                                <ul class="list-group list-group-flush">
+                                                    @forelse($user->unreadNotifications as $notification)
+    <li class="list-group-item">
+                                                            @if ($notification->type == 'App\Notifications\OrderNotification')
+    @if ($user->user_type == 'customer')
+    <a href="{{ route('purchase_history.details', encrypt($notification->data['order_id'])) }}"
+                                                                        class="text-secondary fs-12">
+                                                                        <span class="ml-2">
+                                                                            {{ translate('Order code: ') }}
+                                                                            {{ $notification->data['order_code'] }}
+                                                                            {{ translate('has been ' . ucfirst(str_replace('_', ' ', $notification->data['status']))) }}
+                                                                        </span>
+                                                                    </a>
+@elseif ($user->user_type == 'seller')
+    <a href="{{ route('seller.orders.show', encrypt($notification->data['order_id'])) }}"
+                                                                        class="text-secondary fs-12">
+                                                                        <span class="ml-2">
+                                                                            {{ translate('Order code: ') }}
+                                                                            {{ $notification->data['order_code'] }}
+                                                                            {{ translate('has been ' . ucfirst(str_replace('_', ' ', $notification->data['status']))) }}
+                                                                        </span>
+                                                                    </a>
+    @endif
+@elseif ($notification->type == 'App\Notifications\CustomStatusNotification')
+    <span class="ml-2">
+                                                                @if ($notification->data['newStatus'] == 'Suspended')
+    {{ __('messages.suspended_notification', ['reason' => $notification->data['suspendedTitle'] ?? '']) }}
+@elseif ($notification->data['newStatus'] == 'Pending Approval')
+    {{ __('messages.registration_completed_notif') }}
+@elseif ($notification->data['newStatus'] == 'Closed')
+    {{ __('messages.vendor_closed') }}
+@elseif ($notification->data['newStatus'] == 'Pending Closure')
+    {{ __('messages.pending_closure') }}
+@elseif ($notification->data['newStatus'] == 'Enabled')
+    {{ __('messages.approved') }}
+@elseif ($notification->data['newStatus'] == 'Rejected')
+    {{ __('messages.registration_rejected') }}
+    @endif
+                                                            </span>
+@elseif ($notification->type == 'App\Notifications\ChangesApprovedNotification')
+    <p>{{ $notification->data['message'] }}</p>
+@elseif ($notification->type == 'App\Notifications\ModificationRejectedNotification')
+    <p>{{ $notification->data['message'] }}</p>
+    @endif
+                                                        </li>
                                                 @empty
-                                                    <li class="list-group-item">
-                                                        <div class="py-4 text-center fs-16">
-                                                            {{ translate('No notification found') }}
-                                                        </div>
-                                                    </li>
-                                                @endforelse
-                                            </ul>
+                                                        <li class="list-group-item">
+                                                            <div class="py-4 text-center fs-16">
+                                                                {{ translate('No notification found') }}
+                                                            </div>
+                                                        </li>
+    @endforelse
+                                                </ul>
+                                            </div>
+                                            <div class="text-center border-top">
+                                                <a href="{{ route('all-notifications') }}"
+                                                    class="text-secondary fs-12 d-block py-2">
+                                                    {{ translate('View All Notifications') }}
+                                                </a>
+                                            </div>
                                         </div>
-                                        <div class="text-center border-top">
-                                            <a href="{{ route('all-notifications') }}"
-                                                class="text-secondary fs-12 d-block py-2">
-                                                {{ translate('View All Notifications') }}
-                                            </a>
-                                        </div>
-                                    </div>
                                 @endauth
                             </li>
                         </ul>
                     @endif
                 -->
-                    <div class="d-none d-xl-block ml-auto mr-0">
-                        @auth
-                            <span
-                                class="d-flex align-items-center nav-user-info py-20px @if (isAdmin()) ml-5 @endif"
-                                id="nav-user-info">
-                                <!-- Image -->
+                        <div class="d-none d-xl-block ml-auto mr-0">
+                            @auth
                                 <span
-                                    class="size-40px rounded-circle overflow-hidden border border-transparent nav-user-img">
-                                    @if ($user->avatar_original != null)
-                                        <img src="{{ $user_avatar }}"
-                                            class="img-fit h-100" alt="{{ translate('avatar') }}"
-                                            onerror="this.onerror=null;this.src='{{ static_asset('assets/img/avatar-place.png') }}';">
-                                    @else
-                                        <img src="{{ static_asset('assets/img/avatar-place.png') }}" class="image" alt="{{ translate('avatar') }}"
-                                            onerror="this.onerror=null;this.src='{{ static_asset('assets/img/avatar-place.png') }}';">
-                                    @endif
+                                    class="d-flex align-items-center nav-user-info py-20px @if (isAdmin()) ml-5 @endif"
+                                    id="nav-user-info">
+                                    <!-- Image -->
+                                    <span
+                                        class="size-40px rounded-circle overflow-hidden border border-transparent nav-user-img">
+                                        @if ($user->avatar_original != null)
+                                            <img src="{{ $user_avatar }}" class="img-fit h-100"
+                                                alt="{{ translate('avatar') }}"
+                                                onerror="this.onerror=null;this.src='{{ static_asset('assets/img/avatar-place.png') }}';">
+                                        @else
+                                            <img src="{{ static_asset('assets/img/avatar-place.png') }}" class="image"
+                                                alt="{{ translate('avatar') }}"
+                                                onerror="this.onerror=null;this.src='{{ static_asset('assets/img/avatar-place.png') }}';">
+                                        @endif
+                                    </span>
+                                    <!-- Name -->
+                                    <div class="user-section-header">
+                                        <span class="user-s-h-account-dd font-prompt fs-16">
+                                            {{ translate('My Account') }}
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M20 9L13.4141 15.4304C12.6364 16.1899 11.3636 16.1899 10.5859 15.4304L4 9"
+                                                    stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+                                        </span>
+                                        <span class="font-prompt fs-14 user-s-h-account-un">{{ $user->name }}</span>
+                                    </div>
                                 </span>
-                                <!-- Name -->
-                                <div class="user-section-header">
-                                    <span class="user-s-h-account-dd font-prompt fs-16">
-                                        {{ translate('My Account') }}
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M20 9L13.4141 15.4304C12.6364 16.1899 11.3636 16.1899 10.5859 15.4304L4 9" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                            @else
+                                <!--Login & Registration -->
+
+                                <span class="d-flex align-items-center nav-user-info ml-3">
+                                    <!-- Image -->
+                                    <span
+                                        class="size-40px rounded-circle overflow-hidden border d-flex align-items-center justify-content-center nav-user-img bg-white">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="19.902" height="20.012"
+                                            viewBox="0 0 19.902 20.012">
+                                            <path id="fe2df171891038b33e9624c27e96e367"
+                                                d="M15.71,12.71a6,6,0,1,0-7.42,0,10,10,0,0,0-6.22,8.18,1.006,1.006,0,1,0,2,.22,8,8,0,0,1,15.9,0,1,1,0,0,0,1,.89h.11a1,1,0,0,0,.88-1.1,10,10,0,0,0-6.25-8.19ZM12,12a4,4,0,1,1,4-4A4,4,0,0,1,12,12Z"
+                                                transform="translate(-2.064 -1.995)" fill="#91919b" />
                                         </svg>
                                     </span>
-                                    <span class="font-prompt fs-14 user-s-h-account-un">{{ $user->name }}</span>
-                                </div>
-                            </span>
-                        @else
-                            <!--Login & Registration -->
-
-                            <span class="d-flex align-items-center nav-user-info ml-3">
-                                <!-- Image -->
-                                <span
-                                    class="size-40px rounded-circle overflow-hidden border d-flex align-items-center justify-content-center nav-user-img bg-white">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="19.902" height="20.012"
-                                        viewBox="0 0 19.902 20.012">
-                                        <path id="fe2df171891038b33e9624c27e96e367"
-                                            d="M15.71,12.71a6,6,0,1,0-7.42,0,10,10,0,0,0-6.22,8.18,1.006,1.006,0,1,0,2,.22,8,8,0,0,1,15.9,0,1,1,0,0,0,1,.89h.11a1,1,0,0,0,.88-1.1,10,10,0,0,0-6.25-8.19ZM12,12a4,4,0,1,1,4-4A4,4,0,0,1,12,12Z"
-                                            transform="translate(-2.064 -1.995)" fill="#91919b" />
-                                    </svg>
-                                </span>
-                                <!--
-                                <a href="{{ route('user.login') }}"
-                                    class="opacity-60 hov-opacity-100 hov-text-white text-white fs-12 d-inline-block border-right border-soft-light border-width-2 pr-2 ml-3">{{ translate('Login') }}</a>
-                                <a href="{{ route('business') }}"
-                                    class="opacity-60 hov-opacity-100 hov-text-white text-white fs-12 d-inline-block py-2 pl-2">{{ translate('Registration') }}</a>
-                                -->
-                                <div class="user-section-header">
-                                    <span class="user-s-h-account-dd font-prompt fs-16">{{ translate('My Account') }}</span>
-                                    <span class="user-s-h-account-dd font-prompt fs-14">
-                                        <a class="user-s-h-account-dd" href="https://about.mawadonline.com"> Register </a><span style="color:#767676;">|</span> <a class="user-s-h-account-dd" href="{{ route('user.login') }}">{{ translate('Sign in') }}</a>
-                                    </span>
-                                </div>
+                                    <!--
+                                    <a href="{{ route('user.login') }}"
+                                        class="opacity-60 hov-opacity-100 hov-text-white text-white fs-12 d-inline-block border-right border-soft-light border-width-2 pr-2 ml-3">{{ translate('Login') }}</a>
+                                    <a href="{{ route('business') }}"
+                                        class="opacity-60 hov-opacity-100 hov-text-white text-white fs-12 d-inline-block py-2 pl-2">{{ translate('Registration') }}</a>
+                                    -->
+                                    <div class="user-section-header">
+                                        <span
+                                            class="user-s-h-account-dd font-prompt fs-16">{{ translate('My Account') }}</span>
+                                        <span class="user-s-h-account-dd font-prompt fs-14">
+                                            <a class="user-s-h-account-dd" href="https://about.mawadonline.com"> Register
+                                            </a><span style="color:#767676;">|</span> <a class="user-s-h-account-dd"
+                                                href="{{ route('user.login') }}">{{ translate('Sign in') }}</a>
+                                        </span>
+                                    </div>
                                 </span>
 
-                        @endauth
-                    </div>
+                            @endauth
+                        </div>
                 </div>
             </div>
 
@@ -622,12 +650,17 @@
                             style="padding-top: 12px;padding-bottom: 12px; width:270px; cursor: pointer;">
                             <div class="d-flex align-items-center justify-content-between">
                                 <div>
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M3 7H21" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round"/>
-                                        <path d="M3 12H21" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round"/>
-                                        <path d="M3 17H21" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round"/>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3 7H21" stroke="#F3F4F5" stroke-width="1.5"
+                                            stroke-linecap="round" />
+                                        <path d="M3 12H21" stroke="#F3F4F5" stroke-width="1.5"
+                                            stroke-linecap="round" />
+                                        <path d="M3 17H21" stroke="#F3F4F5" stroke-width="1.5"
+                                            stroke-linecap="round" />
                                     </svg>
-                                    <span class="fw-700 fs-16 text-white ml-2 mr-3 category-menu-title">{{ translate('Categories') }}</span>
+                                    <span
+                                        class="fw-700 fs-16 text-white ml-2 mr-3 category-menu-title">{{ translate('Categories') }}</span>
                                 </div>
                                 <i class="las la-angle-down text-white has-transition" id="category-menu-bar-icon"
                                     style="font-size: 1.2rem !important"></i>
@@ -636,7 +669,7 @@
                     </div>
                     <!-- Header Menus -->
                     @php
-                        $nav_txt_color = ((get_setting('header_nav_menu_text') == 'light') ||  (get_setting('header_nav_menu_text') == null)) ? 'text-white' : 'text-white';
+                        $nav_txt_color = get_setting('header_nav_menu_text') == 'light' || get_setting('header_nav_menu_text') == null ? 'text-white' : 'text-white';
                     @endphp
                     <div class="ml-xl-4 w-100 overflow-hidden">
                         <div class="d-flex align-items-center justify-content-center justify-content-xl-start h-100">
@@ -647,21 +680,41 @@
                                             <a href="{{ json_decode(get_setting('header_menu_links'), true)[$key] }}"
                                                 class="fs-16 px-3 py-3 d-inline-block fw-400 {{ $nav_txt_color }} header_menu_links hov-bg-black-10
                                             @if (url()->current() == json_decode(get_setting('header_menu_links'), true)[$key]) active @endif">
-                                            @if ($value == "Brands")
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M2 15.29V5.71002C2 4.38002 2.77 4.06002 3.71 5.00002L6.3 7.59002C6.69 7.98002 7.33 7.98002 7.71 7.59002L11.29 4.00002C11.68 3.61002 12.32 3.61002 12.7 4.00002L16.29 7.59002C16.68 7.98002 17.32 7.98002 17.7 7.59002L20.29 5.00002C21.23 4.06002 22 4.38002 22 5.71002V15.3C22 18.3 20 20.3 17 20.3H7C4.24 20.29 2 18.05 2 15.29Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
-                                        @elseif ($value == "Vendors")
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M3.01001 11.22V15.71C3.01001 20.2 4.81001 22 9.30001 22H14.69C19.18 22 20.98 20.2 20.98 15.71V11.22" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M12 12C13.83 12 15.18 10.51 15 8.68L14.34 2H9.66999L8.99999 8.68C8.81999 10.51 10.17 12 12 12Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M18.31 12C20.33 12 21.81 10.36 21.61 8.35L21.33 5.6C20.97 3 19.97 2 17.35 2H14.3L15 9.01C15.17 10.66 16.66 12 18.31 12Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M5.64 12C7.29 12 8.78 10.66 8.94 9.01L9.16 6.8L9.64001 2H6.59C3.97001 2 2.97 3 2.61 5.6L2.34 8.35C2.14 10.36 3.62 12 5.64 12Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M12 17C10.33 17 9.5 17.83 9.5 19.5V22H14.5V19.5C14.5 17.83 13.67 17 12 17Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
-                                        @endif
+                                                @if ($value == 'Brands')
+                                                    <svg width="24" height="24" viewBox="0 0 24 24"
+                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path
+                                                            d="M2 15.29V5.71002C2 4.38002 2.77 4.06002 3.71 5.00002L6.3 7.59002C6.69 7.98002 7.33 7.98002 7.71 7.59002L11.29 4.00002C11.68 3.61002 12.32 3.61002 12.7 4.00002L16.29 7.59002C16.68 7.98002 17.32 7.98002 17.7 7.59002L20.29 5.00002C21.23 4.06002 22 4.38002 22 5.71002V15.3C22 18.3 20 20.3 17 20.3H7C4.24 20.29 2 18.05 2 15.29Z"
+                                                            stroke="#F3F4F5" stroke-width="1.5"
+                                                            stroke-linecap="round" stroke-linejoin="round" />
+                                                    </svg>
+                                                @elseif ($value == 'Vendors')
+                                                    <svg width="24" height="24" viewBox="0 0 24 24"
+                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path
+                                                            d="M3.01001 11.22V15.71C3.01001 20.2 4.81001 22 9.30001 22H14.69C19.18 22 20.98 20.2 20.98 15.71V11.22"
+                                                            stroke="#F3F4F5" stroke-width="1.5"
+                                                            stroke-linecap="round" stroke-linejoin="round" />
+                                                        <path
+                                                            d="M12 12C13.83 12 15.18 10.51 15 8.68L14.34 2H9.66999L8.99999 8.68C8.81999 10.51 10.17 12 12 12Z"
+                                                            stroke="#F3F4F5" stroke-width="1.5"
+                                                            stroke-linecap="round" stroke-linejoin="round" />
+                                                        <path
+                                                            d="M18.31 12C20.33 12 21.81 10.36 21.61 8.35L21.33 5.6C20.97 3 19.97 2 17.35 2H14.3L15 9.01C15.17 10.66 16.66 12 18.31 12Z"
+                                                            stroke="#F3F4F5" stroke-width="1.5"
+                                                            stroke-linecap="round" stroke-linejoin="round" />
+                                                        <path
+                                                            d="M5.64 12C7.29 12 8.78 10.66 8.94 9.01L9.16 6.8L9.64001 2H6.59C3.97001 2 2.97 3 2.61 5.6L2.34 8.35C2.14 10.36 3.62 12 5.64 12Z"
+                                                            stroke="#F3F4F5" stroke-width="1.5"
+                                                            stroke-linecap="round" stroke-linejoin="round" />
+                                                        <path
+                                                            d="M12 17C10.33 17 9.5 17.83 9.5 19.5V22H14.5V19.5C14.5 17.83 13.67 17 12 17Z"
+                                                            stroke="#F3F4F5" stroke-width="1.5"
+                                                            stroke-linecap="round" stroke-linejoin="round" />
+                                                    </svg>
+                                                @endif
 
-                                            {{ translate($value) }}
+                                                {{ translate($value) }}
                                             </a>
                                         </li>
                                     @endforeach
@@ -691,7 +744,7 @@
                 <div class="container">
                     <div class="d-flex position-relative">
                         <div class="position-static">
-                            @include('frontend.'.get_setting("homepage_select").'.partials.category_menu')
+                            @include('frontend.' . get_setting('homepage_select') . '.partials.category_menu')
                         </div>
                     </div>
                 </div>
@@ -716,7 +769,8 @@
                             <img src="{{ $user_avatar }}" class="img-fit h-100" alt="{{ translate('avatar') }}"
                                 onerror="this.onerror=null;this.src='{{ static_asset('assets/img/avatar-place.png') }}';">
                         @else
-                            <img src="{{ static_asset('assets/img/avatar-place.png') }}" class="image" alt="{{ translate('avatar') }}"
+                            <img src="{{ static_asset('assets/img/avatar-place.png') }}" class="image"
+                                alt="{{ translate('avatar') }}"
                                 onerror="this.onerror=null;this.src='{{ static_asset('assets/img/avatar-place.png') }}';">
                         @endif
                     </span>
