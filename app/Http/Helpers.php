@@ -2711,3 +2711,13 @@ if (!function_exists('generateUniqueSlug')) {
     }
     
 }
+
+if (function_exists('formatChargeBasedOnChargeType') === false) {
+    function formatChargeBasedOnChargeType(object $shippingOptions): string {
+        if ($shippingOptions->charge_per_unit_shipping != null) {
+            return $shippingOptions->charge_per_unit_shipping . " " . str()->ucfirst($shippingOptions->shipping_charge);
+        } else {
+            return $shippingOptions->flat_rate_shipping . " " . str()->ucfirst($shippingOptions->shipping_charge);
+        }
+    }
+}
