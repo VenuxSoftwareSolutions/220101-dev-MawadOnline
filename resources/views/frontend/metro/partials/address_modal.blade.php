@@ -87,12 +87,13 @@
                                 <label>{{ translate('State/Emirate') }} *</label>
                             </div>
                             <div class="col-md-8">
-                                {{-- <select id="emirateempire" class="form-control mb-3 aiz-selectpicker rounded-0" data-live-search="true" name="state" required>
+                                <select id="emirateempire" class="form-control mb-3 aiz-selectpicker rounded-0"
+                                    data-live-search="true" name="state" required>
                                     <option value="" selected>{{ translate('please_choose') }}</option>
                                     @foreach ($emirates as $emirate)
                                         <option value="{{ $emirate->id }}">{{ $emirate->name }}</option>
                                     @endforeach
-                                </select> --}}
+                                </select>
                             </div>
                         </div>
 
