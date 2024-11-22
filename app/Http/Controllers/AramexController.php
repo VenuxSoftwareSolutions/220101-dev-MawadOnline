@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Address as AddressModel;
 use App\Models\Cart;
 use App\Models\Currency;
-use App\Models\Order;
-use App\Models\Address as AddressModel;
 use Carbon\Carbon;
 use Exception;
 use ExtremeSa\Aramex\API\Classes\Address;
@@ -648,8 +647,8 @@ class AramexController extends Controller
                 'DeliveryInstructions' => null,
                 'AdditionalProperties' => null,
                 'ContainsDangerousGoods' => false,
-                "ShippingDate" => null,
-                "DueDate" => null
+                'ShippingDate' => null,
+                'DueDate' => null,
             ],
             'PreferredCurrencyCode' => $currency_code ?? 'AED',
             'ClientInfo' => $this->clientInfo,
@@ -667,12 +666,12 @@ class AramexController extends Controller
                 ->where('product_id', request()->product_id)
                 ->get()
                 ->map(function ($cart) use ($weight_attribute_id) {
-                    $shippingAddress = AddressModel::with(["city"])
+                    $shippingAddress = AddressModel::with(['city'])
                         ->where('id', $cart->address_id)
                         ->get()
-                        ->map(fn($data) => [
-                            "address" => $data->address,
-                            "city" => $data->city->name
+                        ->map(fn ($data) => [
+                            'address' => $data->address,
+                            'city' => $data->city->name,
                         ])->first();
 
                     $attributes = $cart->product->productAttributeValues
@@ -681,8 +680,8 @@ class AramexController extends Controller
                         ->toArray();
 
                     $shippingOptions = $cart->product
-                            ->shippingRelation
-                            ->toArray();
+                        ->shippingRelation
+                        ->toArray();
 
                     $warehouseDetails = $cart->product->stockDetails->map(
                         fn ($stock) => [
@@ -720,11 +719,11 @@ class AramexController extends Controller
 
             return response()->json([
                 'error' => false,
-                'data' => $this->calculateRate($this->transformShipmentData($data))
+                'data' => $this->calculateRate($this->transformShipmentData($data)),
             ]);
         }
 
-        return response()->json(["error" => true, "message" => __("Something went wrong!")], 500);
+        return response()->json(['error' => true, 'message' => __('Something went wrong!')], 500);
     }
 
     public function __destruct()
