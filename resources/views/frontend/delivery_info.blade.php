@@ -179,7 +179,7 @@
 
                                                                                 $.post("{{ route('user.orders', ['user_id' => auth()->user()->id]) }}", {
                                                                                     product_id: {{ $product->id }},
-                                                                                }).done(
+                                                                                }).then(
                                                                                     function({
                                                                                         error,
                                                                                         data,
@@ -188,17 +188,17 @@
                                                                                         shippingMethodSelectFirstChange_{{ $product->id }} = false;
                                                                                         if (error === true) {
                                                                                             throw new Error(message);
-                                                                                        } else if (data["HasErrors"] === false) {
+                                                                                        } else if (data?.HasErrors === false) {
                                                                                             $("#charge-result_{{ $product->id }}").html(
                                                                                                 `${data["TotalAmount"]["Value"]} ${data["TotalAmount"]["CurrencyCode"]}`
                                                                                             ).removeClass("text-dark").addClass("text-success").addClass(
                                                                                                 "fw-700");
                                                                                         } else {
-                                                                                            AIZ.plugins.notify('error', '{{ __('Something went wrong!') }}');
+                                                                                            throw new Error('{{ __("Something went wrong!") }}');
                                                                                         }
                                                                                     }).catch(() => {
                                                                                     $("#charge-result_{{ $product->id }}").html("N/A");
-                                                                                    AIZ.plugins.notify('error', '{{ __('Something went wrong!') }}')
+                                                                                    AIZ.plugins.notify('danger', '{{ __('Something went wrong!') }}')
                                                                                 });
                                                                             @else
                                                                                 $("#charge-result_{{ $product->id }}").html('{{ __("Free (handled by vendor)") }}');
