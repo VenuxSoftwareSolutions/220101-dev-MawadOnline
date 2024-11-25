@@ -111,7 +111,8 @@
                                                                         window.shippingMethodSelectFirstChange_{{ $product->id }} = true;
                                                                     </script>
                                                                     <select data-prod="{{ $product->id }}"
-                                                                        name="shipping_method_{{ $product->id }}" id="shipping_method_{{ $product->id }}"
+                                                                        name="shipping_method_{{ $product->id }}"
+                                                                        id="shipping_method_{{ $product->id }}"
                                                                         class="form-control fs-14 text-dark fw-500"
                                                                         onchange="toggleShippersArea(this, '{{ $product->id }}')">
                                                                         <option value="">
@@ -164,7 +165,8 @@
                                                             <script>
                                                                 document.addEventListener("DOMContentLoaded", function() {
                                                                     $("#shipping_method_{{ $product->id }}").on("change", function() {
-                                                                        if (["vendor", ""].includes($(this).val()) === false && shippingMethodSelectFirstChange_{{ $product->id }} === true) {
+                                                                        if (["vendor", ""].includes($(this).val()) === false &&
+                                                                            shippingMethodSelectFirstChange_{{ $product->id }} === true) {
                                                                             @if ($shippingOptions->paid == 'buyer')
                                                                                 $("#charge-result_{{ $product->id }}").html(`
                                                                                     <span class="p-1 bg-black-20 rounded">
@@ -194,21 +196,23 @@
                                                                                             ).removeClass("text-dark").addClass("text-success").addClass(
                                                                                                 "fw-700");
                                                                                         } else {
-                                                                                            throw new Error('{{ __("Something went wrong!") }}');
+                                                                                            throw new Error('{{ __('Something went wrong!') }}');
                                                                                         }
                                                                                     }).catch(() => {
                                                                                     $("#charge-result_{{ $product->id }}").html("N/A");
                                                                                     AIZ.plugins.notify('danger', '{{ __('Something went wrong!') }}')
                                                                                 });
                                                                             @else
-                                                                                $("#charge-result_{{ $product->id }}").html('{{ __("Free (handled by vendor)") }}');
+                                                                                $("#charge-result_{{ $product->id }}").html(
+                                                                                    '{{ __('Free (handled by vendor)') }}');
                                                                             @endif
-                                                                        } else if(["vendor"].includes($(this).val()) === true) {
-                                                                            @if($shippingOptions->paid === "vendor")
-                                                                                $("#charge-result_{{ $product->id }}").html('{{ __("Free (handled by vendor)") }}');
-                                                                            @elseif($shippingOptions->paid === "buyer")
-                                                                                $("#charge-result_{{ $product->id }}").html('{{ formatChargeBasedOnChargeType($shippingOptions) }}');
-
+                                                                        } else if (["vendor"].includes($(this).val()) === true) {
+                                                                            @if ($shippingOptions->paid === 'vendor')
+                                                                                $("#charge-result_{{ $product->id }}").html(
+                                                                                    '{{ __('Free (handled by vendor)') }}');
+                                                                            @elseif ($shippingOptions->paid === 'buyer')
+                                                                                $("#charge-result_{{ $product->id }}").html(
+                                                                                    '{{ formatChargeBasedOnChargeType($shippingOptions) }}');
                                                                             @endif
                                                                         }
                                                                     });
