@@ -101,7 +101,7 @@
                                                                     $shippingOptions = $product->shippingOptions($productQtyPanier[$product->id]);
                                                                     if ($shippingOptions) {
                                                                         $shippers = explode(',', $shippingOptions->shipper);
-                                                                        $duration = $shippingOptions->estimated_shipping;
+                                                                        $duration = $shippingOptions->estimated_order + $shippingOptions->estimated_shipping;
                                                                     }
                                                                 @endphp
                                                                 <div class="col-md-6">
