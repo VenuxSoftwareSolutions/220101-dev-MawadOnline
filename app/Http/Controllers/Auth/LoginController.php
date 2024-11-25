@@ -72,7 +72,7 @@ class LoginController extends Controller
     public function handleAppleCallback(Request $request)
     {
         try {
-            $user = Socialite::driver("sign-in-with-apple")->user();
+            $user = Socialite::driver("apple")->user();
         } catch (\Exception $e) {
             flash(translate("Something Went wrong. Please try again."))->error();
             return redirect()->route(route: 'user.login');
@@ -129,7 +129,7 @@ class LoginController extends Controller
             }
             return redirect()->route('dashboard');
         }
-    }
+    }/*
     /**
      * Obtain the user information from Google.
      *

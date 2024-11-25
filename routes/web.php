@@ -97,7 +97,7 @@ Route::controller(LoginController::class)->group(function () {
     Route::get('/social-login/redirect/{provider}', 'redirectToProvider')->name('social.login');
     Route::get('/social-login/{provider}/callback', 'handleProviderCallback')->name('social.callback');
     //Apple Callback
-    Route::post('/apple-callback', 'handleAppleCallback');
+    Route::post('/social-login/apple/callback', 'handleAppleCallback');
     Route::get('/account-deletion', 'account_deletion')->name('account_delete');
     Route::get('/handle-demo-login', 'handle_demo_login')->name('handleDemoLogin');
 });

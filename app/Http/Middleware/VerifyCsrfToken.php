@@ -35,5 +35,6 @@ class VerifyCsrfToken extends Middleware
         '/lnmo*',
         '/rozer*',
         '/phonepe*',
+        'social-login/apple/callback',
     ];
 }
