@@ -55,15 +55,23 @@ class LoginController extends Controller
         }
         if ($provider == 'apple') {
             return Socialite::driver("apple")
-                ->scopes(["name", "email"])
+                ->scopes(["name"])
                 ->enablePKCE()
                 ->redirect();
         }
         if ($provider == 'twitter') {
             return Socialite::driver('twitter-oauth-2')
+            ->scopes(["users.read"])
             ->enablePKCE()
             ->redirect();
         }
+        if ($provider == 'facebook') {
+            return Socialite::driver('facebook')
+            ->scopes(['email'])
+            ->enablePKCE()
+            ->redirect();
+        }
+
         return Socialite::driver($provider)
         ->with(['prompt' => 'consent'])
         ->enablePKCE()
