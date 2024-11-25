@@ -376,31 +376,22 @@ class Product extends Model
     {
         try {
             $productVariantName = " ";
+        
             foreach ($this->productAttributeValues as $productAttributeValue) {
                 if ($productAttributeValue->attribute->type_value == "numeric") {
                     $productVariantName .= $productAttributeValue->attribute->name . ' ' . $productAttributeValue->value . " " . $productAttributeValue->unity->name . " ";
-                } elseif ($productAttributeValue->attribute->type_value == "list") {
+                } else if ($productAttributeValue->attribute->type_value == "list") {
                     $productVariantName .= $productAttributeValue->attribute->name . ' ' . $productAttributeValue->attributeValues->value . " ";
-
-                } elseif ($productAttributeValue->attribute->type_value == 'color') {
-                    $productVariantName .= $productAttributeValue->attribute->name.' '.$productAttributeValue->color->name.' ';
-
-                } else {
-                    $productVariantName .= $productAttributeValue->attribute->name.' '.$productAttributeValue->value.' ';
-
-                } elseif ($productAttributeValue->attribute->type_value == "color") {
+                } else if ($productAttributeValue->attribute->type_value == 'color') {
                     $productVariantName .= $productAttributeValue->attribute->name . ' ' . $productAttributeValue->color->name . " ";
-
                 } else {
                     $productVariantName .= $productAttributeValue->attribute->name . ' ' . $productAttributeValue->value . " ";
-
                 }
-
-
             }
-
+        
             return $productVariantName;
-        } catch (\Exception $e) {
+        }
+         catch (\Exception $e) {
             // Handle any exceptions here
             return " ";
         }

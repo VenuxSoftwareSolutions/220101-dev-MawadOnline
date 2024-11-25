@@ -928,11 +928,17 @@ namespace App\Models{
  * @property-read int|null $categories_attributes_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CategoryTranslation> $category_translations
  * @property-read int|null $category_translations_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Category> $children
+ * @property-read int|null $children_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Category> $childrenCategories
  * @property-read int|null $children_categories_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CustomerProduct> $classified_products
  * @property-read int|null $classified_products_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Coupon> $coupons
+ * @property-read int|null $coupons_count
  * @property-read \App\Models\Upload|null $coverImage
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Discount> $discounts
+ * @property-read int|null $discounts_count
  * @property-read Category|null $parent
  * @property-read Category|null $parentCategory
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Product> $products
@@ -1345,16 +1351,16 @@ namespace App\Models{
  * @property string $details
  * @property float $discount
  * @property string $discount_type
- * @property int|null $start_date
- * @property int|null $end_date
- * @property int $status
+ * @property \Illuminate\Support\Carbon|null $start_date
+ * @property \Illuminate\Support\Carbon|null $end_date
+ * @property bool $status
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CouponUsage> $couponUsages
- * @property-read int|null $coupon_usages_count
- * @property-read \App\Models\User|null $user
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UserCoupon> $userCoupons
- * @property-read int|null $user_coupons_count
+ * @property-read \App\Models\Category|null $category
+ * @property-read \App\Models\Product|null $product
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
+ * @property-read int|null $users_count
+ * @method static \Illuminate\Database\Eloquent\Builder|Coupon active()
  * @method static \Illuminate\Database\Eloquent\Builder|Coupon newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Coupon newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Coupon query()
@@ -1370,29 +1376,20 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Coupon withinDateRange()
  */
 	class Coupon extends \Eloquent {}
 }
 
 namespace App\Models{
 /**
- * App\Models\CouponUsage
+ * App\Models\CouponUser
  *
- * @property int $id
- * @property int $user_id
- * @property int $coupon_id
- * @property \Illuminate\Support\Carbon $created_at
- * @property \Illuminate\Support\Carbon $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|CouponUsage newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|CouponUsage newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|CouponUsage query()
- * @method static \Illuminate\Database\Eloquent\Builder|CouponUsage whereCouponId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CouponUsage whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CouponUsage whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CouponUsage whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CouponUsage whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CouponUser newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CouponUser newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CouponUser query()
  */
-	class CouponUsage extends \Eloquent {}
+	class CouponUser extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -1671,6 +1668,48 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|DeliveryHistory query()
  */
 	class DeliveryHistory extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\Discount
+ *
+ * @property int $id
+ * @property string $scope
+ * @property int|null $product_id
+ * @property int|null $category_id
+ * @property int $user_id
+ * @property float|null $min_order_amount
+ * @property float $discount_percentage
+ * @property float|null $max_discount
+ * @property \Illuminate\Support\Carbon|null $start_date
+ * @property \Illuminate\Support\Carbon|null $end_date
+ * @property bool $status
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Category|null $category
+ * @property-read \App\Models\Product|null $product
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|Discount active()
+ * @method static \Illuminate\Database\Eloquent\Builder|Discount newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Discount newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Discount query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Discount whereCategoryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Discount whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Discount whereDiscountPercentage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Discount whereEndDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Discount whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Discount whereMaxDiscount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Discount whereMinOrderAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Discount whereProductId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Discount whereScope($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Discount whereStartDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Discount whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Discount whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Discount whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Discount withinDateRange()
+ */
+	class Discount extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -2488,6 +2527,10 @@ namespace App\Models{
  * @property-read int|null $categories_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Product> $children
  * @property-read int|null $children_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Coupon> $coupons
+ * @property-read int|null $coupons_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Discount> $discounts
+ * @property-read int|null $discounts_count
  * @property-read \App\Models\FlashDealProduct|null $flash_deal_product
  * @property-read \App\Models\Category|null $main_category
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UploadProducts> $medias
@@ -4418,6 +4461,8 @@ namespace App\Models{
  * @property-read int|null $customer_package_payments_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CustomerProduct> $customer_products
  * @property-read int|null $customer_products_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Discount> $discounts
+ * @property-read int|null $discounts_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SellerLease> $leases
  * @property-read int|null $leases_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
