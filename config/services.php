@@ -53,6 +53,11 @@ return [
         'client_secret' => env('TWITTER_CLIENT_SECRET'),
         'redirect'      => env('APP_URL').'/social-login/twitter/callback',
     ],
+    'apple' => [
+        'client_id' => env('APPLE_CLIENT_ID'),
+        'client_secret' => generateAppleClientSecret(),
+        'redirect' => env('APPLE_REDIRECT_URI'),
+    ],
 
     'paytm-wallet' => [
         'env' => env('PAYTM_ENVIRONMENT'),
