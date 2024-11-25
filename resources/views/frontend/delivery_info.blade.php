@@ -120,7 +120,8 @@
                                                                         </option>
                                                                         @foreach ($shippers as $option)
                                                                             <option value="{{ $option }}">
-                                                                                {{ $option }}</option>
+                                                                                {{ ucfirst($option === 'third_party' ? __('MawadOnline 3rd Party Shipping') : $option) }}
+                                                                            </option>
                                                                         @endforeach
                                                                     </select>
                                                                 </div>
