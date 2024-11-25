@@ -54,7 +54,7 @@ class LoginController extends Controller
             request()->session()->put('login_from', 'mobile_app');
         }
         if ($provider == 'apple') {
-            return Socialite::driver("sign-in-with-apple")
+            return Socialite::driver("apple")
                 ->scopes(["name", "email"])
                 ->redirect();
         }

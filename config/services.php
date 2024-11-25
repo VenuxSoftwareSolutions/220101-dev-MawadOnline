@@ -56,9 +56,8 @@ return [
     'apple' => [
         'client_id' => env('APPLE_CLIENT_ID'),
         'client_secret' => generateAppleClientSecret(),
-        'redirect' => env('APPLE_REDIRECT_URI'),
+        'redirect' => env('APP_URL').'/social-login/apple/callback',
     ],
-
     'paytm-wallet' => [
         'env' => env('PAYTM_ENVIRONMENT'),
         'merchant_id' => env('PAYTM_MERCHANT_ID'),
