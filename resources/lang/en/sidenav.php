@@ -30,13 +30,8 @@ return [
     'Product_Reviews'=>'Product Reviews',
     'Contact_us'=>'Contact Us',
     'bulk_upload' => 'Bulk Upload',
-
-
-
-
-
-
-
-
+    'Offers' => 'Offers',
+    'Offers_list' => 'Offers List',
+    'Offers_create' => 'Add Offer',
 
 ];

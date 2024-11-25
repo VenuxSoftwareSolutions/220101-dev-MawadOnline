@@ -1,57 +1,55 @@
 <?php
 
 namespace App\Http\Controllers\Seller;
-
 use Auth;
 use App\Models\Tour;
-use App\Models\Coupon;
+use App\Models\Discount;
 use App\Models\Category;
 use App\Models\Product;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Requests\Coupons\CouponStoreRequest;
-use App\Http\Requests\Coupons\CouponUpdateRequest;
+use App\Http\Requests\Discounts\DiscountStoreRequest;
+use App\Http\Requests\Discounts\DiscountUpdateRequest;
+use Illuminate\Support\Facades\Cache;
 
-class CouponController extends Controller
+class DiscountController extends Controller
 {
+
     public function index(Request $request)
     {
         $scope = $request->query('scope', 'product');
         $isCoupon = $request->route()->uri === 'vendor/coupons';
-        $coupons = Coupon::where('scope', $scope)->paginate(6);
+        $discounts = Discount::where('scope', $scope)->paginate(6);
         $columnHeader = '';
         $columnValue = '';
-
         switch ($scope) {
             case 'product':
                 $columnHeader = 'Product Name';
-                $columnValue = fn($coupon) => $coupon->product ? $coupon->product->name : 'N/A';
+                $columnValue = fn($discount) => $discount->product ? $discount->product->name : 'N/A';
                 break;
             case 'category':
                 $columnHeader = 'Category';
-                $columnValue = fn($coupon) => $coupon->category ? $coupon->category->name : 'N/A';
+                $columnValue = fn($discount) => $discount->category ? $discount->category->name : 'N/A';
                 break;
             case 'ordersOverAmount':
                 $columnHeader = 'Minimum Amount';
-                $columnValue = fn($coupon) => $coupon->min_order_amount ?? 'N/A';
+                $columnValue = fn($discount) => $discount->min_order_amount ?? 'N/A';
                 break;
             case 'allOrders':
                 $columnHeader = 'All Orders';
-                $columnValue = fn($coupon) => '-';
+                $columnValue = fn($discount) => '-';
                 break;
             default:
                 $columnHeader = 'Product Name';
-                $columnValue = fn($coupon) => $coupon->product ? $coupon->product->name : 'N/A';
+                $columnValue = fn($discount) => $discount->product ? $discount->product->name : 'N/A';
                 break;
         }
-
-        return view('seller.promotions.index', compact('coupons', 'scope', 'columnHeader', 'columnValue','isCoupon'));
+        return view('seller.promotions.index', compact('discounts', 'scope', 'columnHeader', 'columnValue', 'isCoupon'));
     }
-
     public function create()
     {
 
-        $products = Product::where('user_id', Auth::id())->with('categories')->get();
+        $products = Product::where('user_id', Auth::id())->with('categories:id,name,parent_id')->get();
 
         $productCategoryIds = $products->map(function ($product) {
             return $product->categories->pluck('id');
@@ -62,11 +60,19 @@ class CouponController extends Controller
                 $query->select('parent_id')->from('categories')->whereNotNull('parent_id');
             })
             ->get();
-        $nestedCategories = $this->buildTree($categories);
-        return view('seller.promotions.create', compact('categories', 'products', 'nestedCategories'));
-    }
 
-    public function store(CouponStoreRequest $request)
+            $nestedCategories = Cache::remember(
+                'nested_categories_level_0',
+                now()->addHours(1),
+                fn() => $this->fetchNestedCategories(0)
+            );
+        
+            
+            return view('seller.promotions.create', compact('categories', 'products', 'nestedCategories'));
+    }
+    
+
+    public function store(DiscountStoreRequest $request)
     {
         $validatedData = $request->validated();
         $validatedData['user_id'] = auth()->id();
@@ -85,88 +91,75 @@ class CouponController extends Controller
             ], 422);
         }
 
-        $overlappingCoupons = Coupon::checkForOverlappingCoupons($validatedData);
+        $overlappingDiscounts = Discount::checkForOverlappingDiscounts($validatedData);
 
         if (!$request->has('ignore_overlap') || !$request->ignore_overlap) {
-            if (count($overlappingCoupons) > 0) {
-                $highestPriorityCoupon = collect($overlappingCoupons)->sort(function ($a, $b) {
+            if (count($overlappingDiscounts) > 0) {
+                $highestPriorityDiscount = collect($overlappingDiscounts)->sort(function ($a, $b) {
                     return [$b->discount_percentage, $b->max_discount, $b->created_at] <=> [$a->discount_percentage, $a->max_discount, $a->created_at];
                 })->first();
-
-                foreach ($overlappingCoupons as $coupon) {
-                    $coupon->update(['status' => false]);
+                foreach ($overlappingDiscounts as $discount) {
+                    $discount->update(['status' => false]);
                 }
-                $highestPriorityCoupon->update(['status' => true]);
-
-                if (empty($overlappingCoupons) || Coupon::isNewCouponHigherPriority($validatedData, $highestPriorityCoupon)) {
+                $highestPriorityDiscount->update(['status' => true]);
+                if (empty($overlappingDiscounts) || Discount::isNewDiscountHigherPriority($validatedData, $highestPriorityDiscount)) {
                     $validatedData['status'] = true;
-                    $highestPriorityCoupon->update(['status' => false]);
+                    $highestPriorityDiscount->update(['status' => false]);
+
                 } else {
                     $validatedData['status'] = false;
                 }
-
+            
                 return response()->json([
                     'status' => 'overlap',
-                    'overlappingCoupons' => $overlappingCoupons,
+                    'overlappingDiscounts' => $overlappingDiscounts,
                 ]);
             }
         }
 
-        Coupon::create($validatedData);
+    
+        Discount::create($validatedData);
         $scope = $validatedData['scope'];
 
         return response()->json([
             'status' => 'success',
-            'redirectUrl' => route('seller.coupons.index', ['scope' => $scope]),
-            'message' => 'Coupon created successfully.'
+            'redirectUrl' => route('seller.discounts.index', ['scope' => $scope]),
+            'message' => 'Discount created successfully.'
         ]);
     }
 
-    
-
     public function edit($id)
     {
-        $coupon = Coupon::findOrFail($id);
-        return response()->json($coupon);
+        $discount = Discount::findOrFail($id);
+        return response()->json($discount);
     }
-
-    public function update(CouponUpdateRequest  $request, $id)
+    public function update(DiscountUpdateRequest $request, $id)
     {
         $validatedData = $request->validated();
-        $coupon = Coupon::findOrFail($id);
-        $coupon->update($validatedData);
-        return response()->json(['success' => true, 'message' => 'Coupon updated successfully.']);
+        $discount = Discount::findOrFail($id);
+        $discount->update($validatedData);
+        return response()->json(['success' => true, 'message' => 'Discount updated successfully.']);
     }
-
     public function destroy($id)
     {
-        $coupon = Coupon::findOrFail($id);
-        $coupon->delete();
-        return response()->json(['success' => true, 'message' => 'Coupon deleted successfully.']);
+        $discount = Discount::findOrFail($id);
+        $discount->delete();
+        return response()->json(data: ['success' => true, 'message' => 'Discount deleted successfully.']);
     }
 
     private function buildTree($categories, $parentId = 0, $path = "")
     {
-        $branch = [];
-
-        foreach ($categories as $category) {
-            if ($category->parent_id == $parentId) {
-                $newPath = $path ? "$path/{$category->name}" : $category->name;
-                $category->path = $newPath;
-
-                $children = $this->buildTree($categories, $category->id, $newPath);
-                $category->isLeaf = !is_array($children) || count($children) === 0;
-                if ($children) {
-                    $category->children = $children;
-                }
-
-                $branch[] = $category;
-            }
-        }
-
-        return $branch;
+        return $categories->map(function ($category) use ($path) {
+            $newPath = $path ? "$path/{$category->name}" : $category->name;
+            $category->path = $newPath;
+            $category->isLeaf = $category->children->isEmpty();
+    
+            $category->children = $this->buildTree($category->children, $category->id, $newPath);
+    
+            return $category;
+        });
     }
-
+    
     public function getProductsByCategory(Request $request)
     {
         $categoryId = $request->query('category_id');
@@ -195,20 +188,44 @@ class CouponController extends Controller
 
         return response()->json(['categories' => $categories]);
     }
+
     public function toggleStatus(Request $request)
     {
         $request->validate(['id' => 'required|integer', 'status' => 'required|boolean']);
+        $discount = Discount::find($request->id);
 
-        $coupon = Coupon::find($request->id);
-
-        if ($coupon) {
-            $coupon->status = $request->status;
-            $coupon->save();
+        if ($discount) {
+            $discount->status = $request->status;
+            $discount->save();
 
             return response()->json(['success' => true]);
         }
 
         return response()->json(['success' => false], 404);
+    }   
+    private function fetchNestedCategories($parentId = 0)
+    {
+        return Category::with(['children' => function ($query) {
+            $query->select('id', 'name', 'parent_id');
+        }])
+        ->select('id', 'name', 'parent_id')
+        ->where('parent_id', $parentId)
+        ->get()
+        ->map(fn($category) => $this->transformCategory($category));
     }
 
+    private function transformCategory($category, $path = "")
+    {
+        $newPath = $path ? "$path/{$category->name}" : $category->name;
+
+        $category->path = $newPath;
+        $category->isLeaf = $category->children->isEmpty();
+
+        $category->children = $category->children->map(fn($child) => $this->transformCategory($child, $newPath));
+
+        return $category;
+    }
+
+
 }
+

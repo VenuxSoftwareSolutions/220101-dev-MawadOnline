@@ -8,6 +8,10 @@ use App\Http\Controllers\Seller\StockController;
 use App\Http\Controllers\Seller\SellerRoleController;
 use App\Http\Controllers\Seller\SellerStaffController;
 use App\Http\Controllers\Seller\CatalogController;
+use App\Http\Controllers\Seller\DiscountController;
+use App\Http\Controllers\Seller\CouponController;
+
+
 
 //Upload
 Route::group(['prefix' => 'vendor', 'middleware' => ['seller', 'verified', 'user', 'prevent-back-history'], 'as' => 'seller.'], function () {
@@ -60,7 +64,6 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
         Route::get('/products/delete_pricing', 'delete_pricing')->name('products.delete_pricing');
         Route::post('/products/bulk-delete', 'bulk_product_delete')->name('products.bulk-delete');
     });
-
     // Stocks
     Route::controller(StockController::class)->group(function () {
         Route::get('/stocks', [StockController::class, 'index'])->name('stocks.index');
@@ -101,13 +104,34 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
         Route::get('/digitalproducts/download/{id}', 'download')->name('digitalproducts.download');
     });
 
-    //Coupon
+   /* //Coupon(old implementation)
     Route::resource('coupon', CouponController::class);
     Route::controller(CouponController::class)->group(function () {
         Route::post('/coupon/get_form', 'get_coupon_form')->name('coupon.get_coupon_form');
         Route::post('/coupon/get_form_edit', 'get_coupon_form_edit')->name('coupon.get_coupon_form_edit');
         Route::get('/coupon/destroy/{id}', 'destroy')->name('coupon.destroy');
-    });
+    });*/
+
+    //discounts
+    Route::resource('discounts', DiscountController::class)->except(['show']);
+    Route::put('/{id}', [DiscountController::class, 'update'])->name('update'); // PUT route for updates
+    Route::delete('/{id}', [DiscountController::class, 'destroy'])->name('destroy'); // DELETE route for deletion
+    Route::get('/get-products-by-category', [DiscountController::class, 'getProductsByCategory'])->name('discounts.getproductbycategory');;
+    Route::get('/get-categories-for-product-scope', [DiscountController::class, 'getCategoriesForProductScope'])
+    ->name('discounts.getCategoriesForProductScope');
+
+    Route::post('/discounts/bulk-delete', [DiscountController::class, 'bulkDelete'])->name('discounts.bulk-delete');
+    Route::post('/discounts/toggle-status', [DiscountController::class, 'toggleStatus'])->name('discounts.toggle-status');
+    //COUPONS 
+
+    Route::resource('coupons', CouponController::class)->except(['show']);
+    Route::put('/{id}', [CouponController::class, 'update'])->name('update'); 
+
+    Route::delete('/coupons/{id}', [CouponController::class, 'destroy'])->name('coupons.destroy'); // DELETE route for deletion
+    Route::get('/coupons/get-products-by-category', [CouponController::class, 'getProductsByCategory'])->name('coupons.getProductsByCategory');
+    Route::get('/coupons/get-categories-for-product-scope', [CouponController::class, 'getCategoriesForProductScope'])->name('coupons.getCategoriesForProductScope');
+    Route::post('/coupons/bulk-delete', [CouponController::class, 'bulkDelete'])->name('coupons.bulk-delete');
+    Route::post('/coupons/toggle-status', [CouponController::class, 'toggleStatus'])->name('coupons.toggle-status');
 
     //Order
     Route::resource('orders', OrderController::class);

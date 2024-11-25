@@ -100,6 +100,37 @@
                         </ul>
                     </li>
                 @endcanany
+
+
+                {{-- Discounts and Coupons Management --}}
+                    <li class="aiz-side-nav-item">
+                        <a href="#" class="aiz-side-nav-link">
+                            <i class="las la-gift aiz-side-nav-icon"></i>
+                            <span class="aiz-side-nav-text">{{ __('sidenav.Offers') }}</span>
+                            <span class="aiz-side-nav-arrow"></span>
+                        </a>
+                        <!--Submenu-->
+                        <ul class="aiz-side-nav-list level-2">
+                            <li id="discounts" class="aiz-side-nav-item">
+                                <a href="{{ route('seller.discounts.index') }}"
+                                class="aiz-side-nav-link ">
+
+                                    <span class="aiz-side-nav-text">{{ __('sidenav.Offers_list') }}</span>
+                                </a>
+                            </li>
+                            <li id="discounts" class="aiz-side-nav-item">
+                                <a href="{{ route('seller.discounts.create') }}"
+                                class="aiz-side-nav-link ">
+
+                                    <span class="aiz-side-nav-text">{{ __('sidenav.Offers_create') }}</span>
+                                </a>
+                            </li>
+                            
+                        </ul>
+                    </li>
+                {{-- Discounts and Coupons Management --}}
+
+
                 {{-- <li id="catalog" class="aiz-side-nav-item">
                     <a href="{{ route('catalog.search_page') }}"
                         class="aiz-side-nav-link {{ areActiveRoutes(['catalog.search_page']) }}">

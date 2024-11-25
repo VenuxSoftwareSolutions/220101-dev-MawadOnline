@@ -55,9 +55,6 @@ class Product extends Model
         'max_third_party_sample',
         'product_catalog_id',
     ];
-    protected $guarded = ['choice_attributes'];
-
-    protected $with = ['product_translations', 'taxes', 'thumbnail'];
 
     // Ensure cascading deletes at the model level
     protected static function booted()
@@ -137,7 +134,15 @@ class Product extends Model
     {
         return $this->hasMany(Review::class)->where('status', 1);
     }
+    public function discounts()
+    {
+        return $this->hasMany(Discount::class);
+    }
 
+    public function coupons()
+    {
+        return $this->hasMany(Coupon::class);
+    }
     public function pricingConfiguration()
     {
         return $this->hasMany(PricingConfiguration::class, 'id_products', 'id');
@@ -209,32 +214,38 @@ class Product extends Model
 
     public function getChildrenProducts()
     {
-        return Product::where('parent_id', $this->id)->get();
+        $childrens = Product::where('parent_id', $this->id)->get();
+        return $childrens;
     }
 
     public function getChildrenProductsDesc()
     {
-        return Product::where('parent_id', $this->id)->orderBy('id', 'asc')->get();
+        $childrens = Product::where('parent_id', $this->id)->orderBy('id', 'asc')->get();
+        return $childrens;
     }
 
     public function getImagesProduct()
     {
-        return UploadProducts::where('id_product', $this->id)->where('type', 'images')->get();
+        $images = UploadProducts::where('id_product', $this->id)->where('type', 'images')->get();
+        return $images;
     }
 
     public function getThumbnailsProduct()
     {
-        return UploadProducts::where('id_product', $this->id)->where('type', 'thumbnails')->get();
+        $thumbnails = UploadProducts::where('id_product', $this->id)->where('type', 'thumbnails')->get();
+        return $thumbnails;
     }
 
     public function getDocumentsProduct()
     {
-        return UploadProducts::where('id_product', $this->id)->where('type', 'documents')->get();
+        $documents = UploadProducts::where('id_product', $this->id)->where('type', 'documents')->get();
+        return $documents;
     }
 
     public function getPricingConfiguration()
     {
-        return PricingConfiguration::where('id_products', $this->id)->get();
+        $pricing = PricingConfiguration::where('id_products', $this->id)->get();
+        return $pricing;
     }
 
     public function getFirstPricingConfiguration()
@@ -244,7 +255,8 @@ class Product extends Model
 
     public function getIdsAttributesVariant()
     {
-        return ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->pluck('id_attribute')->toArray();
+        $ids = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->pluck('id_attribute')->toArray();
+        return $ids;
     }
 
     public function getAttributesVariant()
@@ -258,7 +270,7 @@ class Product extends Model
                 foreach ($attributes as $variant) {
                     if ($variant->id == $historique_child->revisionable_id) {
                         $variant->key = $historique_child->key;
-                        if ($historique_child->key == 'add_attribute') {
+                        if ($historique_child->key == "add_attribute") {
                             $variant->added = true;
                         } else {
                             if ($historique_child->key == 'id_units') {
@@ -338,7 +350,7 @@ class Product extends Model
                     if ($path == '') {
                         $path = $current_category->name;
                     } else {
-                        $path = $current_category->name.' > '.$path;
+                        $path = $current_category->name . ' > ' . $path;
                     }
                     $current_category = Category::find($current_category->parent_id);
                 }
@@ -346,7 +358,7 @@ class Product extends Model
                     if ($path == '') {
                         $path = $current_category->name;
                     } else {
-                        $path = $current_category->name.' > '.$path;
+                        $path = $current_category->name . ' > ' . $path;
                     }
                 }
             }
@@ -355,7 +367,6 @@ class Product extends Model
         return $path;
     }
 
-    
     public function productAttributeValues()
     {
         return $this->hasMany(ProductAttributeValues::class, 'id_products', 'id');
@@ -364,12 +375,12 @@ class Product extends Model
     public function productVariantDetails()
     {
         try {
-            $productVariantName = ' ';
+            $productVariantName = " ";
             foreach ($this->productAttributeValues as $productAttributeValue) {
-                if ($productAttributeValue->attribute->type_value == 'numeric') {
-                    $productVariantName .= $productAttributeValue->attribute->name.' '.$productAttributeValue->value.' '.$productAttributeValue->unity->name.' ';
-                } elseif ($productAttributeValue->attribute->type_value == 'list') {
-                    $productVariantName .= $productAttributeValue->attribute->name.' '.$productAttributeValue->attributeValues->value.' ';
+                if ($productAttributeValue->attribute->type_value == "numeric") {
+                    $productVariantName .= $productAttributeValue->attribute->name . ' ' . $productAttributeValue->value . " " . $productAttributeValue->unity->name . " ";
+                } elseif ($productAttributeValue->attribute->type_value == "list") {
+                    $productVariantName .= $productAttributeValue->attribute->name . ' ' . $productAttributeValue->attributeValues->value . " ";
 
                 } elseif ($productAttributeValue->attribute->type_value == 'color') {
                     $productVariantName .= $productAttributeValue->attribute->name.' '.$productAttributeValue->color->name.' ';
@@ -377,18 +388,28 @@ class Product extends Model
                 } else {
                     $productVariantName .= $productAttributeValue->attribute->name.' '.$productAttributeValue->value.' ';
 
+                } elseif ($productAttributeValue->attribute->type_value == "color") {
+                    $productVariantName .= $productAttributeValue->attribute->name . ' ' . $productAttributeValue->color->name . " ";
+
+                } else {
+                    $productVariantName .= $productAttributeValue->attribute->name . ' ' . $productAttributeValue->value . " ";
+
                 }
+
+
             }
 
             return $productVariantName;
         } catch (\Exception $e) {
-            return ' ';
+            // Handle any exceptions here
+            return " ";
         }
     }
 
     public function getShipping()
     {
-        return Shipping::where('product_id', $this->id)->get();
+        $shipping = Shipping::where('product_id', $this->id)->get();
+        return $shipping;
     }
 
     public function getIdsChildrens()
@@ -409,9 +430,9 @@ class Product extends Model
             ->first();
 
         if ($lastPrice == $firstPrice) {
-            return $firstPrice.' AED';
+            return $firstPrice . " AED";
         } else {
-            return $firstPrice.' AED - '.$lastPrice.' AED';
+            return $firstPrice . " AED - " . $lastPrice . " AED";
         }
     }
 
@@ -466,16 +487,25 @@ class Product extends Model
         }
     }
 
+    public function getPrice()
+    {
+        // dd($this->getPricingConfiguration()) ;
+    }
     public function shippingOptions($qty)
     {
+
         // Fetch the shipping options based on quantity range
-        return Shipping::where('product_id', $this->id)->where('from_shipping', '<=', $qty)
+        $shippingOptions = Shipping::where('product_id', $this->id)->where('from_shipping', '<=', $qty)
             ->where('to_shipping', '>=', $qty)
             ->first();
+
+        return $shippingOptions;
+
     }
 
     public function minMaxQuantity()
     {
+        // Get the minimum and maximum 'from' values for the given product
         $minFrom = PricingConfiguration::where('id_products', $this->id)->min('from');
 
         $maxTo = PricingConfiguration::where('id_products', $this->id)->max('to');
@@ -485,4 +515,21 @@ class Product extends Model
             'maxTo' => $maxTo ?? 1,
         ];
     }
+        public function getBestDiscount($orderAmount = null)
+        {
+            $discount = $this->discounts()->active()->withinDateRange()->first();
+            $categoryDiscount = $this->categories()->first()->discounts()->active()->withinDateRange()->first();
+    
+            return $discount && $categoryDiscount ? max($discount, $categoryDiscount) : ($discount ?: $categoryDiscount);
+        }
+    
+        public function getBestCoupon($userId, $orderAmount = null)
+        {
+            $coupon = $this->coupons()->active()->withinDateRange()->whereHas('users', function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            })->first();
+    
+            return $coupon;
+        }
+    
 }
