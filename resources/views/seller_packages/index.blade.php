@@ -4,15 +4,15 @@
 <div class="aiz-titlebar mt-2 mb-3">
 	<div class="row align-items-center">
 		<div class="col-md-6">
-			<h1 class="h3">{{translate('All Seller Packages')}}</h1>
+			<h1 class="h3">{{translate('All Seller Plans')}}</h1>
 		</div>
-        @can('add_seller_package')
+        <!-- @can('add_seller_package')
             <div class="col-md-6 text-md-right">
                 <a href="{{ route('seller_packages.create') }}" class="btn btn-circle btn-info">
                     <span>{{translate('Add New Package')}}</span>
                 </a>
             </div>
-        @endcan
+        @endcan -->
 	</div>
 </div>
 
@@ -35,9 +35,9 @@
                         @can('edit_seller_package')
 						    <a href="{{route('seller_packages.edit', ['id'=>$seller_package->id, 'lang'=>env('DEFAULT_LANGUAGE')] )}}" class="btn btn-sm btn-info">{{translate('Edit')}}</a>
                         @endcan
-                        @can('delete_seller_package')
+                        <!-- @can('delete_seller_package')
                             <a href="#" data-href="{{route('seller_packages.destroy', $seller_package->id)}}" class="btn btn-sm btn-danger confirm-delete">{{translate('Delete')}}</a>
-                        @endcan
+                        @endcan -->
                     </div>
                 </div>
             </div>
