@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="aiz-titlebar mt-2 mb-3">
-    <h5 class="mb-0 h6">{{translate('Update Package Information')}}</h5>
+    <h5 class="mb-0 h6">{{translate('Update eshop lease Information')}}</h5>
 </div>
 
 <div class="col-lg-10 mx-auto">
@@ -23,7 +23,7 @@
                 <input type="hidden" name="lang" value="{{ $lang }}">
             	@csrf
                 <div class="form-group row">
-                    <label class="col-sm-2 col-from-label" for="name">{{translate('Package Name')}}</label>
+                    <label class="col-sm-2 col-from-label" for="name">{{translate('eshop Name')}}</label>
                     <div class="col-sm-10">
                         <input type="text" placeholder="{{translate('Name')}}" value="{{ $seller_package->getTranslation('name', $lang) }}" id="name" name="name" class="form-control" required>
                     </div>
@@ -43,7 +43,17 @@
                 <div class="form-group row">
                     <label class="col-sm-2 col-from-label" for="duration">{{translate('Duration')}}</label>
                     <div class="col-sm-10">
-                        <input type="number" min="0" step="1" placeholder="{{translate('Validity in number of days')}}" value="{{ $seller_package->duration }}" id="duration" name="duration" class="form-control" required>
+                        <input type="text"   value="{{ $seller_package->recurrence_values }}" readonly disabled id="duration" name="duration" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-lg-2 col-from-label">{{ translate('Details') }}</label>
+                    <div class="col-lg-8">
+                        <input type="text" class="form-control aiz-tag-input" name="details[]"
+                           value="@foreach ($seller_package->getTranslation('details', $lang) as $key=>$value)
+                            {{$value}}
+                           @endforeach" placeholder="{{ translate('Type to add a details') }}">
                     </div>
                 </div>
                 <div class="form-group row">
