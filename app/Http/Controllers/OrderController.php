@@ -22,6 +22,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Mail;
+use Log;
 
 class OrderController extends Controller
 {
@@ -134,164 +135,168 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        $carts = Cart::where('user_id', Auth::user()->id)
-            ->get();
+        try {
+            $carts = Cart::where('user_id', Auth::user()->id)
+                ->get();
 
-        if ($carts->isEmpty()) {
-            flash(translate('Your cart is empty'))->warning();
+            if ($carts->isEmpty()) {
+                flash(translate('Your cart is empty'))->warning();
 
-            return redirect()->route('home');
-        }
-
-        $address = Address::where('id', $carts->first()->address_id)->first();
-
-        $shippingAddress = [];
-
-        if ($address != null) {
-            $shippingAddress['name'] = Auth::user()->name;
-            $shippingAddress['email'] = Auth::user()->email;
-            $shippingAddress['address'] = $address->address;
-            $shippingAddress['country'] = $address->country->name;
-            $shippingAddress['state'] = $address->state->name;
-            $shippingAddress['city'] = $address->city->name;
-            $shippingAddress['postal_code'] = $address->postal_code;
-            $shippingAddress['phone'] = $address->phone;
-
-            if ($address->latitude || $address->longitude) {
-                $shippingAddress['lat_lang'] = $address->latitude.','.$address->longitude;
+                return redirect()->route('home');
             }
-        }
 
-        $combined_order = new CombinedOrder;
-        $combined_order->user_id = Auth::user()->id;
-        $combined_order->shipping_address = json_encode($shippingAddress);
-        $combined_order->save();
+            $address = Address::where('id', $carts->first()->address_id)->first();
 
-        $seller_products = [];
+            $shippingAddress = [];
 
-        foreach ($carts as $cartItem) {
-            $product_ids = [];
-            $product = Product::find($cartItem['product_id']);
-            if (isset($seller_products[$product->user_id])) {
-                $product_ids = $seller_products[$product->user_id];
+            if ($address != null) {
+                $shippingAddress['name'] = Auth::user()->name;
+                $shippingAddress['email'] = Auth::user()->email;
+                $shippingAddress['address'] = $address->address;
+                $shippingAddress['country'] = $address->country->name;
+                $shippingAddress['state'] = $address->state->name;
+                $shippingAddress['city'] = $address->city->name;
+                $shippingAddress['postal_code'] = $address->postal_code;
+                $shippingAddress['phone'] = $address->phone;
+
+                if ($address->latitude || $address->longitude) {
+                    $shippingAddress['lat_lang'] = $address->latitude.','.$address->longitude;
+                }
             }
-            array_push($product_ids, $cartItem);
-            $seller_products[$product->user_id] = $product_ids;
-        }
 
-        foreach ($seller_products as $seller_product) {
-            $order = new Order;
-            $order->combined_order_id = $combined_order->id;
-            $order->user_id = Auth::user()->id;
-            $order->shipping_address = $combined_order->shipping_address;
+            $combined_order = new CombinedOrder;
+            $combined_order->user_id = Auth::user()->id;
+            $combined_order->shipping_address = json_encode($shippingAddress);
+            $combined_order->save();
 
-            $order->additional_info = $request->additional_info;
+            $seller_products = [];
 
-            $order->payment_type = $request->payment_option;
-            $order->delivery_viewed = '0';
-            $order->payment_status_viewed = '0';
-            $order->code = date('Ymd-His').rand(10, 99);
-            $order->date = strtotime('now');
-            $order->save();
-
-            $subtotal = 0;
-            $tax = 0;
-            $shipping = 0;
-            $coupon_discount = 0;
-
-            //Order Details Storing
-            foreach ($seller_product as $cartItem) {
+            foreach ($carts as $cartItem) {
+                $product_ids = [];
                 $product = Product::find($cartItem['product_id']);
-
-                $subtotal += cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
-                $tax += cart_product_tax($cartItem, $product, false) * $cartItem['quantity'];
-                $coupon_discount += $cartItem['discount'];
-
-                $product_variation = $cartItem['variation'];
-
-                if ($product->digital != 1 && $cartItem['quantity'] > 15) {
-                    flash(translate('The requested quantity is not available for ').$product->getTranslation('name'))->warning();
-                    $order->delete();
-
-                    return redirect()->route('cart')->send();
+                if (isset($seller_products[$product->user_id])) {
+                    $product_ids = $seller_products[$product->user_id];
                 }
+                array_push($product_ids, $cartItem);
+                $seller_products[$product->user_id] = $product_ids;
+            }
 
-                $order_detail = new OrderDetail;
-                $order_detail->order_id = $order->id;
-                $order_detail->seller_id = $product->user_id;
-                $order_detail->product_id = $product->id;
-                $order_detail->variation = $product_variation;
-                $order_detail->price = cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
-                $order_detail->tax = cart_product_tax($cartItem, $product, false) * $cartItem['quantity'];
-                $order_detail->shipping_type = $cartItem['shipping_type'];
-                $order_detail->product_referral_code = $cartItem['product_referral_code'];
-                $order_detail->shipping_cost = $cartItem['shipping_cost'];
+            foreach ($seller_products as $seller_product) {
+                $order = new Order;
+                $order->combined_order_id = $combined_order->id;
+                $order->user_id = Auth::user()->id;
+                $order->shipping_address = $combined_order->shipping_address;
 
-                $shipping += $order_detail->shipping_cost;
-                //End of storing shipping cost
+                $order->additional_info = $request->additional_info;
 
-                $order_detail->quantity = $cartItem['quantity'];
+                $order->payment_type = $request->payment_option;
+                $order->delivery_viewed = '0';
+                $order->payment_status_viewed = '0';
+                $order->code = date('Ymd-His').rand(10, 99);
+                $order->date = strtotime('now');
+                $order->save();
 
-                if (addon_is_activated('club_point')) {
-                    $order_detail->earn_point = $product->earn_point;
-                }
+                $subtotal = 0;
+                $tax = 0;
+                $shipping = 0;
+                $coupon_discount = 0;
 
-                $order_detail->save();
+                //Order Details Storing
+                foreach ($seller_product as $cartItem) {
+                    $product = Product::find($cartItem['product_id']);
 
-                $product->num_of_sale += $cartItem['quantity'];
-                $product->save();
+                    $subtotal += cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
+                    $tax += cart_product_tax($cartItem, $product, false) * $cartItem['quantity'];
+                    $coupon_discount += $cartItem['discount'];
 
-                $order->seller_id = $product->user_id;
-                $order->shipping_type = $cartItem['shipping_type'];
+                    $product_variation = $cartItem['variation'];
 
-                if ($cartItem['shipping_type'] == 'pickup_point') {
-                    $order->pickup_point_id = $cartItem['pickup_point'];
-                }
+                    if ($product->digital != 1 && $cartItem['quantity'] > 15) {
+                        flash(translate('The requested quantity is not available for ').$product->getTranslation('name'))->warning();
+                        $order->delete();
 
-                if ($cartItem['shipping_type'] == 'carrier') {
-                    $order->carrier_id = $cartItem['carrier_id'];
-                }
+                        return redirect()->route('cart')->send();
+                    }
 
-                if ($product->added_by == 'seller' && $product->user->seller != null) {
-                    $seller = $product->user->seller;
-                    $seller->num_of_sale += $cartItem['quantity'];
-                    $seller->save();
-                }
+                    $order_detail = new OrderDetail;
+                    $order_detail->order_id = $order->id;
+                    $order_detail->seller_id = $product->user_id;
+                    $order_detail->product_id = $product->id;
+                    $order_detail->variation = $product_variation;
+                    $order_detail->price = cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
+                    $order_detail->tax = cart_product_tax($cartItem, $product, false) * $cartItem['quantity'];
+                    $order_detail->shipping_type = $cartItem['shipping_type'];
+                    $order_detail->product_referral_code = $cartItem['product_referral_code'];
+                    $order_detail->shipping_cost = $cartItem['shipping_cost'];
 
-                if (addon_is_activated('affiliate_system')) {
-                    if ($order_detail->product_referral_code) {
-                        $referred_by_user = User::where('referral_code', $order_detail->product_referral_code)->first();
+                    $shipping += $order_detail->shipping_cost;
+                    //End of storing shipping cost
 
-                        (new AffiliateController)
-                            ->processAffiliateStats($referred_by_user->id, 0, $order_detail->quantity, 0, 0);
+                    $order_detail->quantity = $cartItem['quantity'];
+
+                    if (addon_is_activated('club_point')) {
+                        $order_detail->earn_point = $product->earn_point;
+                    }
+
+                    $order_detail->save();
+
+                    $product->num_of_sale += $cartItem['quantity'];
+                    $product->save();
+
+                    $order->seller_id = $product->user_id;
+                    $order->shipping_type = $cartItem['shipping_type'];
+
+                    if ($cartItem['shipping_type'] == 'pickup_point') {
+                        $order->pickup_point_id = $cartItem['pickup_point'];
+                    }
+
+                    if ($cartItem['shipping_type'] == 'carrier') {
+                        $order->carrier_id = $cartItem['carrier_id'];
+                    }
+
+                    if ($product->added_by == 'seller' && $product->user->seller != null) {
+                        $seller = $product->user->seller;
+                        $seller->num_of_sale += $cartItem['quantity'];
+                        $seller->save();
+                    }
+
+                    if (addon_is_activated('affiliate_system')) {
+                        if ($order_detail->product_referral_code) {
+                            $referred_by_user = User::where('referral_code', $order_detail->product_referral_code)->first();
+
+                            (new AffiliateController)
+                                ->processAffiliateStats($referred_by_user->id, 0, $order_detail->quantity, 0, 0);
+                        }
                     }
                 }
+
+                $order->grand_total = $subtotal + $tax + $shipping;
+
+                if ($seller_product[0]->coupon_code != null) {
+                    $order->coupon_discount = $coupon_discount;
+                    $order->grand_total -= $coupon_discount;
+
+                    $coupon_usage = new CouponUsage;
+                    $coupon_usage->user_id = Auth::user()->id;
+                    $coupon_usage->coupon_id = Coupon::where('code', $seller_product[0]->coupon_code)->first()->id;
+                    $coupon_usage->save();
+                }
+
+                $combined_order->grand_total += $order->grand_total;
+
+                $order->save();
             }
 
-            $order->grand_total = $subtotal + $tax + $shipping;
+            $combined_order->save();
 
-            if ($seller_product[0]->coupon_code != null) {
-                $order->coupon_discount = $coupon_discount;
-                $order->grand_total -= $coupon_discount;
-
-                $coupon_usage = new CouponUsage;
-                $coupon_usage->user_id = Auth::user()->id;
-                $coupon_usage->coupon_id = Coupon::where('code', $seller_product[0]->coupon_code)->first()->id;
-                $coupon_usage->save();
+            foreach ($combined_order->orders as $order) {
+                NotificationUtility::sendOrderPlacedNotification($order);
             }
 
-            $combined_order->grand_total += $order->grand_total;
-
-            $order->save();
+            $request->session()->put('combined_order_id', $combined_order->id);
+        } catch(Exception $e) {
+            Log::error("Error while storing order, with message {$e->getMessage()}");
         }
-
-        $combined_order->save();
-
-        foreach ($combined_order->orders as $order) {
-            NotificationUtility::sendOrderPlacedNotification($order);
-        }
-
-        $request->session()->put('combined_order_id', $combined_order->id);
     }
 
     /**
