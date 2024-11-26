@@ -62,7 +62,6 @@ class LoginController extends Controller
         if ($provider == 'twitter') {
             return Socialite::driver('twitter-oauth-2')
             ->scopes(["users.read"])
-            ->enablePKCE()
             ->redirect();
         }
         if ($provider == 'facebook') {
@@ -180,7 +179,7 @@ class LoginController extends Controller
         if ($provider === 'twitter') {
            return Socialite::driver('twitter-oauth-2')->user();
         }
-        return Socialite::driver($provider)->stateless()->user();
+        return Socialite::driver($provider)->enablePKCE()->user();
     }
 
     /**
