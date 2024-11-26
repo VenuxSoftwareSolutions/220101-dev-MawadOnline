@@ -27,6 +27,7 @@ class CartController extends Controller
     {
         if (auth()->user() != null) {
             $user_id = Auth::user()->id;
+
             if ($request->session()->get('temp_user_id')) {
                 Cart::where('temp_user_id', $request->session()->get('temp_user_id'))
                     ->update(
@@ -38,13 +39,12 @@ class CartController extends Controller
 
                 Session::forget('temp_user_id');
             }
+
             $carts = Cart::where('user_id', $user_id)->get();
         } else {
             $temp_user_id = $request->session()->get('temp_user_id');
-            // $carts = Cart::where('temp_user_id', $temp_user_id)->get();
             $carts = ($temp_user_id != null) ? Cart::where('temp_user_id', $temp_user_id)->get() : [];
         }
-
 
         foreach ($carts as $item) {
             $product_stock = StockSummary::where('variant_id', $item['product_id'])->sum('current_total_quantity');
@@ -55,6 +55,7 @@ class CartController extends Controller
                     $existingWishlistItem = Wishlist::where('user_id', $user_id)
                         ->where('product_id', $item->product_id)
                         ->first();
+
                     // Move to Wishlist if not already in the wishlist
                     if ($existingWishlistItem === null) {
                         // Move to Wishlist
@@ -72,6 +73,7 @@ class CartController extends Controller
 
         return view('frontend.view_cart', compact('carts'));
     }
+
     public function getYoutubeVideoId($videoLink)
     {
         // Parse the YouTube video URL to extract the video ID
