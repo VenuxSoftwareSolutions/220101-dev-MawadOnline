@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Models\SellerPackage;
 use App\Models\SellerPackagePayment;
 use App\Models\SellerPackageTranslation;
+use Illuminate\Support\Facades\App;
 
 class SellerPackageController extends Controller
 {
@@ -111,7 +112,7 @@ class SellerPackageController extends Controller
         if ($request->lang == env("DEFAULT_LANGUAGE")) {
             $seller_package->name = $request->name;
         }
-        $seller_package->amount = $request->amount;
+        $seller_package->amount = number_format($request->amount,2);
         $seller_package->product_upload_limit = $request->product_upload_limit;
         $seller_package->duration = $request->duration;
         $seller_package->logo = $request->logo;
@@ -119,7 +120,29 @@ class SellerPackageController extends Controller
 
             $seller_package_translation = SellerPackageTranslation::firstOrNew(['lang' => $request->lang, 'seller_package_id' => $seller_package->id]);
             $seller_package_translation->name = $request->name;
+            $seller_package_translation->details = $request->details;
             $seller_package_translation->save();
+            $stripe = new \Stripe\StripeClient(config('app.STRIPE_SECRET'));
+            if ($seller_package_translation->wasChanged('name')){
+                $stripe->products->update(
+                    $seller_package->stripe_product_id,
+                    ['name' => $request->name]
+                );
+            }
+            if ($seller_package->wasChanged('amount')){
+                $newPrice = $stripe->prices->create([
+                'currency' => 'aed',
+                'unit_amount' => number_format($request->amount,2)*100,
+                'product' => $seller_package->stripe_product_id,
+                'recurring' => ['interval' => 'month'],
+                ]);
+                $stripe->products->update(
+                    $seller_package->stripe_product_id,
+                    ['default_price' => $newPrice->id]
+                );
+                $seller_package->stripe_price_id = $newPrice->id;
+                $seller_package->save();
+            }
             flash(translate('Package has been inserted successfully'))->success();
             return redirect()->route('seller_packages.index');
         } else {
