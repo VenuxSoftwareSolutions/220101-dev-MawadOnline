@@ -163,7 +163,11 @@ class Product extends Model
 
     protected $guarded = ['choice_attributes'];
 
-    protected $with = ["productAttributeValues", "stockDetails", 'shippingRelation', 'product_translations', 'taxes', 'thumbnail'];
+    protected $with = [
+        'productAttributeValues', 'stockDetails',
+        'shippingRelation', 'product_translations',
+        'taxes', 'thumbnail',
+    ];
 
     // Ensure cascading deletes at the model level
     protected static function booted()
@@ -248,6 +252,7 @@ class Product extends Model
     {
         return $this->hasMany(Review::class)->where('status', 1);
     }
+
     public function discounts()
     {
         return $this->hasMany(Discount::class);
@@ -257,6 +262,7 @@ class Product extends Model
     {
         return $this->hasMany(Coupon::class);
     }
+
     public function pricingConfiguration()
     {
         return $this->hasMany(PricingConfiguration::class, 'id_products', 'id');
@@ -328,38 +334,40 @@ class Product extends Model
 
     public function getChildrenProducts()
     {
-        $childrens = Product::where('parent_id', $this->id)->get();
-        return $childrens;
+        return Product::where('parent_id', $this->id)->get();
     }
 
     public function getChildrenProductsDesc()
     {
-        $childrens = Product::where('parent_id', $this->id)->orderBy('id', 'asc')->get();
-        return $childrens;
+        return Product::where('parent_id', $this->id)
+            ->orderBy('id', 'asc')
+            ->get();
     }
 
     public function getImagesProduct()
     {
-        $images = UploadProducts::where('id_product', $this->id)->where('type', 'images')->get();
-        return $images;
+        return UploadProducts::where('id_product', $this->id)
+            ->where('type', 'images')
+            ->get();
     }
 
     public function getThumbnailsProduct()
     {
-        $thumbnails = UploadProducts::where('id_product', $this->id)->where('type', 'thumbnails')->get();
-        return $thumbnails;
+        return UploadProducts::where('id_product', $this->id)
+            ->where('type', 'thumbnails')
+            ->get();
     }
 
     public function getDocumentsProduct()
     {
-        $documents = UploadProducts::where('id_product', $this->id)->where('type', 'documents')->get();
-        return $documents;
+        return UploadProducts::where('id_product', $this->id)
+            ->where('type', 'documents')
+            ->get();
     }
 
     public function getPricingConfiguration()
     {
-        $pricing = PricingConfiguration::where('id_products', $this->id)->get();
-        return $pricing;
+        return PricingConfiguration::where('id_products', $this->id)->get();
     }
 
     public function getFirstPricingConfiguration()
@@ -369,8 +377,10 @@ class Product extends Model
 
     public function getIdsAttributesVariant()
     {
-        $ids = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->pluck('id_attribute')->toArray();
-        return $ids;
+        return ProductAttributeValues::where('id_products', $this->id)
+            ->where('is_variant', 1)
+            ->pluck('id_attribute')
+            ->toArray();
     }
 
     public function getAttributesVariant()
@@ -482,7 +492,7 @@ class Product extends Model
                     if ($path == '') {
                         $path = $current_category->name;
                     } else {
-                        $path = $current_category->name . ' > ' . $path;
+                        $path = $current_category->name.' > '.$path;
                     }
                     $current_category = Category::find($current_category->parent_id);
                 }
@@ -490,7 +500,7 @@ class Product extends Model
                     if ($path == '') {
                         $path = $current_category->name;
                     } else {
-                        $path = $current_category->name . ' > ' . $path;
+                        $path = $current_category->name.' > '.$path;
                     }
                 }
             }
@@ -507,15 +517,15 @@ class Product extends Model
     public function productVariantDetails()
     {
         try {
-            $productVariantName = " ";
+            $productVariantName = ' ';
 
             foreach ($this->productAttributeValues as $productAttributeValue) {
-                if ($productAttributeValue->attribute->type_value == "numeric") {
-                    $productVariantName .= $productAttributeValue->attribute->name . ' ' . $productAttributeValue->value . " " . $productAttributeValue->unity->name . " ";
-                } else if ($productAttributeValue->attribute->type_value == "list") {
-                    $productVariantName .= $productAttributeValue->attribute->name . ' ' . $productAttributeValue->attributeValues->value . " ";
-                } else if ($productAttributeValue->attribute->type_value == 'color') {
-                    $productVariantName .= $productAttributeValue->attribute->name . ' ' . $productAttributeValue->color->name . " ";
+                if ($productAttributeValue->attribute->type_value == 'numeric') {
+                    $productVariantName .= $productAttributeValue->attribute->name.' '.$productAttributeValue->value.' '.$productAttributeValue->unity->name.' ';
+                } elseif ($productAttributeValue->attribute->type_value == 'list') {
+                    $productVariantName .= $productAttributeValue->attribute->name.' '.$productAttributeValue->attributeValues->value.' ';
+                } elseif ($productAttributeValue->attribute->type_value == 'color') {
+                    $productVariantName .= $productAttributeValue->attribute->name.' '.$productAttributeValue->color->name.' ';
                 } else {
                     $productVariantName .= $productAttributeValue->attribute->name.' '.$productAttributeValue->value.' ';
                 }
@@ -529,8 +539,7 @@ class Product extends Model
 
     public function getShipping()
     {
-        $shipping = Shipping::where('product_id', $this->id)->get();
-        return $shipping;
+        return Shipping::where('product_id', $this->id)->get();
     }
 
     public function getIdsChildrens()
@@ -551,9 +560,9 @@ class Product extends Model
             ->first();
 
         if ($lastPrice == $firstPrice) {
-            return $firstPrice . " AED";
+            return $firstPrice.' AED';
         } else {
-            return $firstPrice . " AED - " . $lastPrice . " AED";
+            return $firstPrice.' AED - '.$lastPrice.' AED';
         }
     }
 
@@ -608,21 +617,12 @@ class Product extends Model
         }
     }
 
-    public function getPrice()
-    {
-        // dd($this->getPricingConfiguration()) ;
-    }
     public function shippingOptions($qty)
     {
-
-        // Fetch the shipping options based on quantity range
         return Shipping::where('product_id', $this->id)
             ->where('from_shipping', '<=', $qty)
             ->where('to_shipping', '>=', $qty)
             ->first();
-
-        return $shippingOptions;
-
     }
 
     public function minMaxQuantity()
@@ -638,23 +638,31 @@ class Product extends Model
         ];
     }
 
-    public function getBestDiscount($orderAmount = null)
+    public function getBestDiscount()
     {
-        $discount = $this->discounts()->active()->withinDateRange()->first();
-        $categoryDiscount = $this->categories()->first()->discounts()->active()->withinDateRange()->first();
+        $discount = $this->discounts()
+            ->active()
+            ->withinDateRange()
+            ->first();
+        $categoryDiscount = $this->categories()
+            ->first()
+            ->discounts()
+            ->active()
+            ->withinDateRange()
+            ->first();
 
         return $discount && $categoryDiscount ? max($discount, $categoryDiscount) : ($discount ?: $categoryDiscount);
     }
 
-    public function getBestCoupon($userId, $orderAmount = null)
+    public function getBestCoupon($userId)
     {
-        $coupon = $this->coupons()->active()->withinDateRange()->whereHas('users', function ($query) use ($userId) {
-            $query->where('user_id', $userId);
-        })->first();
-
-        return $coupon;
+        return $this->coupons()
+            ->active()
+            ->withinDateRange()
+            ->whereHas('users', function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            })->first();
     }
-
 
     public function stockDetails()
     {
