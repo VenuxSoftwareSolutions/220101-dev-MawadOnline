@@ -116,22 +116,14 @@
                                 </div>
 
                                 <ul class="list-group list-group-raw fs-13 mb-5">
+
+                                    @foreach( json_decode($seller_packages[0]->getTranslation('details')[0])   as $key=>$value)
+
                                     <li class="list-group-item py-2 fw-700">
                                         <img src="{{ asset('public/images/tick-circle.png') }}" alt="Tick">
-                                        <p>{{ __('package.Full access to all eShop essentials') }}</p>
+                                        <p>{{ $value->value }}</p>
                                     </li>
-                                    <li class="list-group-item py-2 fw-700">
-                                        <img src="{{ asset('public/images/tick-circle.png') }}" alt="Tick">
-                                        <p>{{ __('package.Unlimited products') }}</p>
-                                    </li>
-                                    <li class="list-group-item py-2 fw-700">
-                                        <img src="{{ asset('public/images/tick-circle.png') }}" alt="Tick">
-                                        <p>{{ __('package.Free eShop administrator + 4 positions') }}</p>
-                                    </li>
-                                    {{-- <li class="list-group-item py-2 fw-700">
-                                        <img src="{{ asset('public/images/tick-circle.png') }}" alt="Tick">
-                                        <p>{{ __('package.Additional staff position just for AED 10/month') }}</p>
-                                    </li> --}}
+                                    @endforeach
                                 </ul>
 
 
