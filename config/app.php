@@ -27,6 +27,7 @@ return [
     */
 
     'env' => env('APP_ENV', 'production'),
+    'STRIPE_SECRET' => env('STRIPE_SECRET', ''),
 
     /*
     |--------------------------------------------------------------------------
