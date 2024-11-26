@@ -31,7 +31,7 @@ class VendorPaymentStripeController extends Controller
     public function storePaymentAccount(Request $request){
         try{
                 $user = Auth::user();
-                $stripe = new \Stripe\StripeClient(App::environment('STRIPE_KEY'));
+                $stripe = new \Stripe\StripeClient(config('app.STRIPE_KEY'));
                 $customer = $user->createOrGetStripeCustomer();
                 $striepeMethod = $stripe->paymentMethods->attach(
                 $request->paymentMethodId,
