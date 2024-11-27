@@ -166,7 +166,7 @@ class Product extends Model
     protected $with = [
         'productAttributeValues', 'stockDetails',
         'shippingRelation', 'product_translations',
-        'taxes', 'thumbnail',
+        'taxes', 'thumbnail', 'stockSummaries',
     ];
 
     // Ensure cascading deletes at the model level
