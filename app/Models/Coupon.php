@@ -53,13 +53,18 @@ class Coupon extends Model
     {
         return $this->belongsTo(Category::class);
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
-    public function users()
+
+   /* public function users()
     {
         return $this->belongsToMany(User::class, 'coupon_user')
                     ->withPivot('times_used')
                     ->withTimestamps();
-    }
+    }*/
 
     // Scopes
     public function scopeActive($query)

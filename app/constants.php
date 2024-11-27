@@ -1,0 +1,4 @@
+<?php
+
+const APPROVED_STATUS = 1;
+const UNDER_REVIEW_STATUS = 4;

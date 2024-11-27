@@ -4,7 +4,9 @@ namespace App\Models;
 
 use Auth;
 use App\Models\Cart;
+use App\Models\Coupon;
 use App\Models\SellerLease;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
@@ -55,6 +57,11 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Discount::class);
     }
+    public function coupons(): HasMany 
+    {
+        return $this->hasMany(Coupon::class);
+    }
+
 
     public function affiliate_user()
     {
@@ -177,9 +184,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Upload::class);
     }
 
-    public function userCoupon(){
+    /*public function userCoupon(){
         return $this->hasOne(UserCoupon::class);
-    }
+    }*/
     public function business_information() {
         return $this->hasOne(BusinessInformation::class);
 
