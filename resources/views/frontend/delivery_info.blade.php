@@ -137,7 +137,7 @@
                                                                             <input class="form-check-input" type="radio"
                                                                                 name="shippers_area"
                                                                                 id="shippers_area_{{ $product->id }}"
-                                                                                value="{{ $area->id }}">
+                                                                                value="{{ $area->id }}" @if($shippers_areas->count() === 1) checked @endif>
                                                                             <label
                                                                                 class="form-check-label fs-14 text-dark fw-500"
                                                                                 for="shippers_area_{{ $area->id }}">
