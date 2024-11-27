@@ -114,7 +114,7 @@
                                                                         name="shipping_method_{{ $product->id }}"
                                                                         id="shipping_method_{{ $product->id }}"
                                                                         class="form-control fs-14 text-dark fw-500"
-                                                                        onchange="toggleShippersArea(this, '{{ $product->id }}')">
+                                                                        @if($shippers_areas->count() > 0) onchange="toggleShippersArea(this, '{{ $product->id }}')" @endif>
                                                                         <option value="">
                                                                             {{ translate('Please choose shipper') }}
                                                                         </option>
