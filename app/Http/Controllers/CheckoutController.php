@@ -16,7 +16,9 @@ use App\Models\Product;
 use App\Models\ShippersArea;
 use Auth;
 use Illuminate\Http\Request;
+use App\Mail\OrderConfirmation;
 use Session;
+use Mail;
 
 class CheckoutController extends Controller
 {
@@ -432,6 +434,8 @@ class CheckoutController extends Controller
     public function order_confirmed()
     {
         $combined_order = CombinedOrder::findOrFail(Session::get('combined_order_id'));
+
+        Mail::to(auth()->user()->email)->send(new OrderConfirmation($combined_order));
 
         Cart::where('user_id', $combined_order->user_id)
             ->delete();
