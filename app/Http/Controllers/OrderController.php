@@ -211,6 +211,12 @@ class OrderController extends Controller
 
                     $product_variation = $cartItem['variation'];
 
+                    // @todo we should remove the quantity from stock
+                    // deduct the qty from the warehouse that has enough stock to fullfill order:
+                    // 1. get stock summaries sorted by quantities
+                    // 2. deduct qty from the first stock summaries that has enough stock
+                    // 3. add a stock details entry which record the stock deduction (same warehouse of prev stock summaries)
+
                     $order_detail = new OrderDetail;
                     $order_detail->order_id = $order->id;
                     $order_detail->seller_id = $product->user_id;
