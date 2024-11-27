@@ -554,13 +554,10 @@
         }
 
         function toggleShippersArea(selectElement, productId) {
-            // Get selected value
-            var selectedValue = selectElement.value;
+            let selectedValue = selectElement.value;
 
-            // Get the shippers area container
-            var shippersAreaContainer = document.getElementById('shippers_area_container_' + productId);
+            let shippersAreaContainer = document.getElementById('shippers_area_container_' + productId);
 
-            // Show or hide the shippers area based on the selected value
             if (selectedValue === 'third_party') {
                 shippersAreaContainer.style.display = 'block';
             } else {
