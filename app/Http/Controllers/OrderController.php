@@ -211,13 +211,6 @@ class OrderController extends Controller
 
                     $product_variation = $cartItem['variation'];
 
-                    if ($product->digital != 1 && $cartItem['quantity'] > 15) {
-                        flash(translate('The requested quantity is not available for ').$product->getTranslation('name'))->warning();
-                        $order->delete();
-
-                        return redirect()->route('cart')->send();
-                    }
-
                     $order_detail = new OrderDetail;
                     $order_detail->order_id = $order->id;
                     $order_detail->seller_id = $product->user_id;
