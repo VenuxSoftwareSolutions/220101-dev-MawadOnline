@@ -16,7 +16,6 @@ use App\Models\Wishlist;
 use Auth;
 use App\Utility\CartUtility;
 use Session;
-use Cookie;
 use DateTime;
 use DB;
 use Str;
