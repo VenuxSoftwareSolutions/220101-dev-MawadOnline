@@ -41,7 +41,7 @@
                             <a href="{{ route('product', $product->slug) }}"
                                 class="text-reset d-flex align-items-center flex-grow-1">
                                 <img src="{{ static_asset('assets/img/placeholder.jpg') }}"
-                                    data-src="{{ asset('/public/' . $product->getFirstImage()) }}
+                                    data-src="{{ asset('/public' . $product->getFirstImage()) }}"
                                     class="img-fit
                                     lazyload size-60px has-transition" alt="{{ $product->getTranslation('name') }}"
                                     onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
