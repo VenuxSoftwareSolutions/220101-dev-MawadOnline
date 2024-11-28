@@ -2721,3 +2721,9 @@ if (function_exists('formatChargeBasedOnChargeType') === false) {
         }
     }
 }
+
+if(function_exists("getProductVolumetricWeight") === false) {
+    function getProductVolumetricWeight($length, $height, $width) {
+        return ($length * $height * $width) / 5000;
+    }
+}
