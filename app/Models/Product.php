@@ -7,6 +7,7 @@ use App\Traits\EnhancedRevisionableTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
+use Exception;
 
 class Product extends Model
 {
@@ -521,18 +522,18 @@ class Product extends Model
 
             foreach ($this->productAttributeValues as $productAttributeValue) {
                 if ($productAttributeValue->attribute->type_value == 'numeric') {
-                    $productVariantName .= $productAttributeValue->attribute->name.' '.$productAttributeValue->value.' '.$productAttributeValue->unity->name.' ';
+                    $productVariantName .= $productAttributeValue->attribute->name.': '.$productAttributeValue->value.' '.$productAttributeValue->unity->name.', ';
                 } elseif ($productAttributeValue->attribute->type_value == 'list') {
-                    $productVariantName .= $productAttributeValue->attribute->name.' '.$productAttributeValue->attributeValues->value.' ';
+                    $productVariantName .= $productAttributeValue->attribute->name.': '.$productAttributeValue->attributeValues->value.', ';
                 } elseif ($productAttributeValue->attribute->type_value == 'color') {
-                    $productVariantName .= $productAttributeValue->attribute->name.' '.$productAttributeValue->color->name.' ';
+                    $productVariantName .= $productAttributeValue->attribute->name.': '.$productAttributeValue->color->name.', ';
                 } else {
-                    $productVariantName .= $productAttributeValue->attribute->name.' '.$productAttributeValue->value.' ';
+                    $productVariantName .= $productAttributeValue->attribute->name.': '.$productAttributeValue->value.', ';
                 }
             }
 
-            return $productVariantName;
-        } catch (\Exception) {
+            return str()->replaceLast(", ", "", $productVariantName);
+        } catch (Exception) {
             return ' ';
         }
     }
