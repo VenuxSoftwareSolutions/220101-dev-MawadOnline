@@ -33,6 +33,7 @@ use Illuminate\Support\Str;
 use Mail;
 use App\Services\ProductService;
 use App\Models\Emirate;
+use Exception;
 
 class HomeController extends Controller
 {
@@ -140,6 +141,7 @@ class HomeController extends Controller
         if (Auth::check()) {
             return redirect()->route('home');
         }
+
         if ($request->has('referral_code') && addon_is_activated('affiliate_system')) {
             try {
                 $affiliate_validation_time = AffiliateConfig::where('type', 'validation_time')->first();
@@ -153,11 +155,13 @@ class HomeController extends Controller
 
                 $affiliateController = new AffiliateController;
                 $affiliateController->processAffiliateStats($referred_by_user->id, 1, 0, 0, 0);
-            } catch (\Exception $e) {
+            } catch (Exception) {
             }
         }
 
-        return view('auth.'.get_setting('authentication_layout_select').'.user_registration');
+        $viewPath = 'auth.'.get_setting('authentication_layout_select').'.user_registration';
+
+        return view($viewPath);
     }
 
     public function cart_login(Request $request)
