@@ -691,9 +691,9 @@ class CartController extends Controller
     //         'nav_cart_view' => view('frontend.'.get_setting('homepage_select').'.partials.cart')->render(),
     //     );
     // }
+
     public function addToCart(Request $request)
     {
-
         // Get product preview data from session
         $dataProduct = $request->session()->get('productPreviewData', null);
 
@@ -739,6 +739,7 @@ class CartController extends Controller
                 'nav_cart_view' => view('frontend.' . get_setting('homepage_select') . '.partials.cart')->render(),
             );
         }
+
         // Create or update the cart item based on user_id or temp_user_id
         $cart = auth()->check()
             ? Cart::firstOrNew([
