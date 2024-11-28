@@ -554,8 +554,8 @@ class ProductController extends Controller
         }
 
         $attributes = [];
-        $childrens = [];
-        $childrens_ids = [];
+        $children = [];
+        $children_ids = [];
         $variants_attributes = [];
         $general_attributes = [];
         $variants_attributes_ids_attributes = [];
@@ -611,11 +611,11 @@ class ProductController extends Controller
             }
 
             if ($product->is_parent == 1) {
-                $childrens = Product::where('parent_id', $id)->get();
-                $childrens_ids = Product::where('parent_id', $id)->pluck('id')->toArray();
-                $variants_attributes = ProductAttributeValues::whereIn('id_products', $childrens_ids)->where('is_variant', 1)->get();
+                $children = Product::where('parent_id', $id)->get();
+                $children_ids = Product::where('parent_id', $id)->pluck('id')->toArray();
+                $variants_attributes = ProductAttributeValues::whereIn('id_products', $children_ids)->where('is_variant', 1)->get();
 
-                $variants_attributes_ids_attributes = ProductAttributeValues::whereIn('id_products', $childrens_ids)->where('is_variant', 1)->pluck('id_attribute')->toArray();
+                $variants_attributes_ids_attributes = ProductAttributeValues::whereIn('id_products', $children_ids)->where('is_variant', 1)->pluck('id_attribute')->toArray();
 
             }
             $general_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->get();
@@ -688,8 +688,8 @@ class ProductController extends Controller
                     'categorie' => $categorie,
                     'product_category' => $product_category,
                     'attributes' => $attributes,
-                    'childrens' => $childrens,
-                    'childrens_ids' => $childrens_ids,
+                    'childrens' => $children,
+                    'childrens_ids' => $children_ids,
                     'variants_attributes' => $variants_attributes,
                     'variants_attributes_ids_attributes' => $variants_attributes_ids_attributes,
                     'general_attributes_ids_attributes' => $general_attributes_ids_attributes,
@@ -706,8 +706,8 @@ class ProductController extends Controller
                     'categorie' => $categorie,
                     'product_category' => $product_category,
                     'attributes' => $attributes,
-                    'childrens' => $childrens,
-                    'childrens_ids' => $childrens_ids,
+                    'childrens' => $children,
+                    'childrens_ids' => $children_ids,
                     'variants_attributes' => $variants_attributes,
                     'variants_attributes_ids_attributes' => $variants_attributes_ids_attributes,
                     'general_attributes_ids_attributes' => $general_attributes_ids_attributes,
