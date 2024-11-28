@@ -795,21 +795,76 @@ class CartController extends Controller
         ];
     }
 
-    //removes from Cart
     public function removeFromCart(Request $request)
     {
         Cart::destroy($request->id);
+
         if (auth()->user() != null) {
-            $user_id = Auth::user()->id;
-            $carts = Cart::where('user_id', $user_id)->get();
+            $carts = Cart::where('user_id', auth()->user()->id)->get();
         } else {
-            $temp_user_id = $request->session()->get('temp_user_id');
-            $carts = Cart::where('temp_user_id', $temp_user_id)->get();
+            $carts = Cart::where('temp_user_id', $request->session()->get('temp_user_id'))->get();
+        }
+
+        $total = 0;
+
+        $data = [];
+
+        foreach ($carts as $key => $item) {
+            $product_stock = StockSummary::where('variant_id', $item['product_id'])->sum('current_total_quantity');
+
+            $product = get_single_product($item['product_id']);
+
+            $total = $total + cart_product_price($item, $product, false) * $item['quantity'];
+            $product_name_with_choice = str()->ucfirst($product->getTranslation('name'));
+            $stockStatus = 'In Stock';
+            $stockAlert = '';
+            $outOfStockItems = [];
+
+            if ($item['variation'] != null) {
+                $product_name_with_choice = str()->ucfirst(
+                    $product->getTranslation('name')
+                ) . ' - ' . $item['variation'];
+            }
+
+            if ($product_stock <= 0) {
+                $stockStatus = translate('Out of Stock');
+                $outOfStockItems[] = $item['id'];
+            } elseif ($product_stock <= LOW_STOCK_THRESHOLD) {
+                $stockAlert = translate('Running Low');
+            }
+
+            $data[$key] = [
+                "product" => $product,
+                "product_stock" => $product_stock,
+                "total" => $total,
+                "product_name_with_choice" => $product_name_with_choice,
+                "stockStatus" =>$stockStatus,
+                "outOfStockItems" => $outOfStockItems,
+                "stockAlert" => $stockAlert
+            ];
+
+            if ($product_stock < $item->quantity) {
+                if (auth()->user() != null) {
+                    $existingWishlistItem = Wishlist::where('user_id', $user_id)
+                        ->where('product_id', $item->product_id)
+                        ->first();
+
+                    // Move to Wishlist if not already in the wishlist
+                    if ($existingWishlistItem === null) {
+                        Wishlist::create([
+                            'user_id' => $user_id,
+                            'product_id' => $item->product_id,
+                        ]);
+                    }
+                }
+                // Remove from Cart
+                $item->delete();
+            }
         }
 
         return array(
             'cart_count' => count($carts),
-            'cart_view' => view('frontend.' . get_setting('homepage_select') . '.partials.cart_details', compact('carts'))->render(),
+            'cart_view' => view('frontend.' . get_setting('homepage_select') . '.partials.cart_details', compact('carts', 'data'))->render(),
             'nav_cart_view' => view('frontend.' . get_setting('homepage_select') . '.partials.cart')->render(),
         );
     }
