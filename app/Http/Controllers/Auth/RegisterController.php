@@ -80,9 +80,7 @@ class RegisterController extends Controller
             if (EmailAllowedClient::where('email', $request->email)->first() == null) {
                 return redirect()->route('business');
             }
-        }
 
-        if (filter_var($request->email, FILTER_VALIDATE_EMAIL)) {
             if (User::where('email', $request->email)->first() != null) {
                 flash(translate('Email or Phone already exists.'));
 
