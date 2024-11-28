@@ -16,40 +16,12 @@
                         </div>
                         <!-- Cart Items -->
                         <ul class="list-group list-group-flush">
-                            @php
-                                $total = 0;
-                            @endphp
                             @foreach ($carts as $key => $cartItem)
-                                @php
-                                    $product = get_single_product($cartItem['product_id']);
-
-                                    $product_stock = App\Models\StockSummary::where('variant_id', $cartItem['product_id'])->sum('current_total_quantity');
-
-                                    $total = $total + cart_product_price($cartItem, $product, false) * $cartItem['quantity'];
-                                    $product_name_with_choice = str()->ucfirst($product->getTranslation('name'));
-                                    $stockStatus = 'In Stock';
-                                    $stockAlert = '';
-                                    $outOfStockItems = [];
-
-                                    if ($cartItem['variation'] != null) {
-                                        $product_name_with_choice = str()->ucfirst($product->getTranslation('name')) . ' - ' . $cartItem['variation'];
-                                    }
-
-                                    // Check stock status
-                                    if ($product_stock <= 0) {
-                                        $stockStatus = 'Out of Stock';
-                                        $outOfStockItems[] = $cartItem['id']; // Collect out-of-stock items
-                                    } elseif ($product_stock <= 5) {
-                                        // Example threshold for low stock
-                                        $stockAlert = 'Running Low';
-                                    }
-
-                                @endphp
                                 <li class="list-group-item px-0">
                                     <div class="row gutters-5 align-items-center">
                                         <!-- Quantity -->
                                         <div class="col-md-1 col order-1 order-md-0">
-                                            @if ($cartItem['digital'] != 1 && $product->auction_product == 0)
+                                            @if ($cartItem['digital'] != 1 && $data[$key]["product"]->auction_product == 0)
                                                 <div
                                                     class="d-flex flex-column align-items-start aiz-plus-minus mr-2 ml-0">
                                                     <button class="btn col-auto btn-icon btn-sm btn-circle btn-light"
@@ -60,8 +32,8 @@
                                                     <input type="number" name="quantity[{{ $cartItem['id'] }}]"
                                                         class="col border-0 text-left px-0 flex-grow-1 fs-14 input-number"
                                                         placeholder="1" value="{{ $cartItem['quantity'] }}"
-                                                        min="{{ $product->minMaxQuantity()['minFrom'] }}"
-                                                        max="{{ $product->minMaxQuantity()['maxTo'] }}"
+                                                        min="{{ $data[$key]["product"]->minMaxQuantity()['minFrom'] }}"
+                                                        max="{{ $data[$key]["product"]->minMaxQuantity()['maxTo'] }}"
                                                         onchange="updateQuantity({{ $cartItem['id'] }}, this)"
                                                         style="padding-left:0.75rem !important;">
                                                     <button class="btn col-auto btn-icon btn-sm btn-circle btn-light"
@@ -70,7 +42,7 @@
                                                         <i class="las la-minus"></i>
                                                     </button>
                                                 </div>
-                                            @elseif($product->auction_product == 1)
+                                            @elseif($data[$key]["product"]->auction_product == 1)
                                                 <span class="fw-700 fs-14">1</span>
                                             @endif
                                         </div>
@@ -78,21 +50,21 @@
                                         <div class="col-md-5 d-flex align-items-center mb-2 mb-md-0">
                                             <span class="mr-2 ml-0">
                                                 <img src="{{ static_asset('assets/img/placeholder.jpg') }}"
-                                                    data-src="{{ asset('/public' . $product->getFirstImage()) }}"
+                                                    data-src="{{ asset('/public' . $data[$key]["product"]->getFirstImage()) }}"
                                                     class="img-fit lazyload size-60px has-transition"
-                                                    alt="{{ $product->getTranslation('name') }}"
+                                                    alt="{{ $data[$key]["product"]->getTranslation('name') }}"
                                                     onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
                                             </span>
-                                            <span class="fs-14">{{ $product_name_with_choice }}</span>
+                                            <span class="fs-14">{{ $data[$key]["product_name_with_choice"] }}</span>
                                         </div>
                                         <!-- Stock Status -->
                                         <div class="col-md col-4 order-2 order-md-0 my-3 my-md-0">
                                             <span
                                                 class="opacity-60 fs-12 d-block d-md-none">{{ translate('Stock Status') }}</span>
                                             <span
-                                                class="fw-700 fs-14 {{ $stockStatus == 'Out of Stock' ? 'text-danger' : 'text-success' }}">{{ $stockStatus }}</span>
-                                            @if ($stockAlert)
-                                                <span class="badge badge-warning">{{ $stockAlert }}</span>
+                                                class="fw-700 fs-14 {{ $data[$key]["stockStatus"] == 'Out of Stock' ? 'text-danger' : 'text-success' }}">{{ $data[$key]["stockStatus"] }}</span>
+                                            @if ($data[$key]["stockAlert"])
+                                                <span class="badge badge-warning">{{ $data[$key]["stockAlert"] }}</span>
                                             @endif
                                         </div>
                                         <!-- Price -->
@@ -100,7 +72,7 @@
                                             <span
                                                 class="opacity-60 fs-12 d-block d-md-none">{{ translate('Price') }}</span>
                                             <span
-                                                class="fw-700 fs-14">{{ cart_product_price($cartItem, $product, true, false) }}</span>
+                                                class="fw-700 fs-14">{{ cart_product_price($cartItem, $data[$key]["product"], true, false) }}</span>
                                         </div>
                                         <!-- Tax -->
                                         <div class="col-md col-4 order-3 order-md-0 my-3 my-md-0">
@@ -113,7 +85,7 @@
                                             <span
                                                 class="opacity-60 fs-12 d-block d-md-none">{{ translate('Total') }}</span>
                                             <span
-                                                class="fw-700 fs-16 text-primary">{{ single_price(cart_product_price($cartItem, $product, false) * $cartItem['quantity']) }}</span>
+                                                class="fw-700 fs-16 text-primary">{{ single_price(cart_product_price($cartItem, $data[$key]["product"], false) * $cartItem['quantity']) }}</span>
                                         </div>
                                         <!-- Remove From Cart -->
                                         <div class="col-md-auto col-6 order-5 order-md-0 text-right">
@@ -128,7 +100,7 @@
                             @endforeach
                         </ul>
                         <!-- Notification for Out of Stock Items Moved to Wishlist -->
-                        @if (count($outOfStockItems) > 0)
+                        @if (count($data[$key]["outOfStockItems"]) > 0)
                             <div class="alert alert-warning mt-3">
                                 {{ translate('Some products were out of stock and have been moved to your Wishlist.') }}
                             </div>
@@ -138,7 +110,7 @@
                     <!-- Subtotal -->
                     <div class="px-0 py-2 mb-4 border-top d-flex justify-content-between">
                         <span class="opacity-60 fs-14">{{ translate('Subtotal') }}</span>
-                        <span class="fw-700 fs-16">{{ single_price($total) }}</span>
+                        <span class="fw-700 fs-16">{{ single_price($data[$key]["total"]) }}</span>
                     </div>
                     <div class="row align-items-center">
                         <!-- Return to shop -->

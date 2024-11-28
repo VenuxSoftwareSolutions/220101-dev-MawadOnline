@@ -45,23 +45,55 @@ class CartController extends Controller
             $carts = ($temp_user_id != null) ? Cart::where('temp_user_id', $temp_user_id)->get() : [];
         }
 
-        foreach ($carts as $item) {
+        $total = 0;
+
+        $data = [];
+
+        foreach ($carts as $key => $item) {
             $product_stock = StockSummary::where('variant_id', $item['product_id'])->sum('current_total_quantity');
+
+            $product = get_single_product($item['product_id']);
+
+            $total = $total + cart_product_price($item, $product, false) * $item['quantity'];
+            $product_name_with_choice = str()->ucfirst($product->getTranslation('name'));
+            $stockStatus = 'In Stock';
+            $stockAlert = '';
+            $outOfStockItems = [];
+
+            if ($item['variation'] != null) {
+                $product_name_with_choice = str()->ucfirst(
+                    $product->getTranslation('name')
+                ) . ' - ' . $item['variation'];
+            }
+
+            if ($product_stock <= 0) {
+                $stockStatus = translate('Out of Stock');
+                $outOfStockItems[] = $item['id'];
+            } elseif ($product_stock <= LOW_STOCK_THRESHOLD) {
+                $stockAlert = translate('Running Low');
+            }
+
+            $data[$key] = [
+                "product" => $product,
+                "product_stock" => $product_stock,
+                "total" => $total,
+                "product_name_with_choice" => $product_name_with_choice,
+                "stockStatus" =>$stockStatus,
+                "outOfStockItems" => $outOfStockItems,
+                "stockAlert" => $stockAlert
+            ];
 
             if ($product_stock < $item->quantity) {
                 if (auth()->user() != null) {
-                    // Check if the product is already in the wishlist
                     $existingWishlistItem = Wishlist::where('user_id', $user_id)
                         ->where('product_id', $item->product_id)
                         ->first();
 
                     // Move to Wishlist if not already in the wishlist
                     if ($existingWishlistItem === null) {
-                        // Move to Wishlist
                         Wishlist::create([
                             'user_id' => $user_id,
                             'product_id' => $item->product_id,
-
                         ]);
                     }
                 }
@@ -70,7 +102,7 @@ class CartController extends Controller
             }
         }
 
-        return view('frontend.view_cart', compact('carts'));
+        return view('frontend.view_cart', compact('carts', 'data'));
     }
 
     public function getYoutubeVideoId($videoLink)
