@@ -40,48 +40,51 @@
         </div>
     </div>
 
-    <!-- Related product -->
-    <div class="bg-white shadow-sm">
-        <div class="py-3">
-            <h3 class="fs-16 fw-700 mb-0 text-dark">
-                <span class="mr-4">{{ translate('Frequently Bought Together') }}</span>
-            </h3>
-        </div>
-        <div class="p-3">
-            <div class="aiz-carousel gutters-5 half-outside-arrow" data-items="2" data-xl-items="3" data-lg-items="4"
-                data-md-items="3" data-sm-items="2" data-xs-items="2" data-arrows='true' data-infinite='true'>
-                @foreach (get_related_products($product) as $key => $related_product)
-                    <div class="carousel-box hov-scale-img hov-shadow-sm">
-                        <div class="aiz-card-box my-2 has-transition">
-                            <div class="">
-                                <a href="{{ route('product', $related_product->slug) }}" class="d-block">
-                                    <img class="img-fit lazyload mx-auto h-140px h-md-200px has-transition"
-                                        src="{{ static_asset('assets/img/placeholder.jpg') }}"
-                                        data-src="{{ uploaded_asset($related_product->thumbnail_img) }}"
-                                        alt="{{ $related_product->getTranslation('name') }}"
-                                        onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
-                                </a>
-                            </div>
-                            <div class="p-md-3 p-2 text-center">
-                                <h3 class="fw-400 fs-14 text-dark text-truncate-2 lh-1-4 mb-0 h-35px">
-                                    <a href="{{ route('product', $related_product->slug) }}"
-                                        class="d-block text-reset hov-text-primary">{{ $related_product->getTranslation('name') }}</a>
-                                </h3>
-                                <div class="fs-14 mt-3">
-                                    <span
-                                        class="fw-700 text-primary">{{ home_discounted_base_price($related_product) }}</span>
-                                    @if (home_base_price($related_product) != home_discounted_base_price($related_product))
-                                        <del
-                                            class="fw-600 opacity-50 ml-1">{{ home_base_price($related_product) }}</del>
-                                    @endif
+    @if (get_related_products($product)->count() > 0)
+        <!-- Related product -->
+        <div class="bg-white shadow-sm">
+            <div class="py-3">
+                <h3 class="fs-16 fw-700 mb-0 text-dark">
+                    <span class="mr-4">{{ translate('Frequently Bought Together') }}</span>
+                </h3>
+            </div>
+            <div class="p-3">
+                <div class="aiz-carousel gutters-5 half-outside-arrow" data-items="2" data-xl-items="3"
+                    data-lg-items="4" data-md-items="3" data-sm-items="2" data-xs-items="2" data-arrows='true'
+                    data-infinite='true'>
+                    @foreach (get_related_products($product) as $key => $related_product)
+                        <div class="carousel-box hov-scale-img hov-shadow-sm">
+                            <div class="aiz-card-box my-2 has-transition">
+                                <div class="">
+                                    <a href="{{ route('product', $related_product->slug) }}" class="d-block">
+                                        <img class="img-fit lazyload mx-auto h-140px h-md-200px has-transition"
+                                            src="{{ static_asset('assets/img/placeholder.jpg') }}"
+                                            data-src="{{ uploaded_asset($related_product->thumbnail_img) }}"
+                                            alt="{{ $related_product->getTranslation('name') }}"
+                                            onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
+                                    </a>
+                                </div>
+                                <div class="p-md-3 p-2 text-center">
+                                    <h3 class="fw-400 fs-14 text-dark text-truncate-2 lh-1-4 mb-0 h-35px">
+                                        <a href="{{ route('product', $related_product->slug) }}"
+                                            class="d-block text-reset hov-text-primary">{{ $related_product->getTranslation('name') }}</a>
+                                    </h3>
+                                    <div class="fs-14 mt-3">
+                                        <span
+                                            class="fw-700 text-primary">{{ home_discounted_base_price($related_product) }}</span>
+                                        @if (home_base_price($related_product) != home_discounted_base_price($related_product))
+                                            <del
+                                                class="fw-600 opacity-50 ml-1">{{ home_base_price($related_product) }}</del>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                </div>
             </div>
         </div>
-    </div>
+    @endif
 
     <!-- Back to shopping & Checkout buttons -->
     <div class="row gutters-5">
