@@ -585,7 +585,7 @@ class ProductController extends Controller
 
         if ($product != null) {
             if ($product->activate_third_party == 1) {
-                $volumetric_weight = ($product->length * $product->height * $product->width) / 5000;
+                $volumetric_weight = getProductVolumetricWeight($product->length, $product->height, $product->weight);
                 if ($volumetric_weight > $product->weight) {
                     $chargeable_weight = $volumetric_weight;
                 } else {
@@ -598,7 +598,7 @@ class ProductController extends Controller
             }
 
             if ($product->activate_third_party_sample == 1) {
-                $volumetric_weight_sample = ($product->length_sample * $product->height_sample * $product->width_sample) / 5000;
+                $volumetric_weight_sample = getProductVolumetricWeight($product->length_sample, $product->height_sample, $product->width_sample);
                 if ($volumetric_weight_sample > $product->package_weight_sample) {
                     $chargeable_weight_sample = $volumetric_weight_sample;
                 } else {
