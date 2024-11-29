@@ -1345,17 +1345,20 @@ namespace App\Models{
  * App\Models\Coupon
  *
  * @property int $id
- * @property int $user_id
- * @property string $type
  * @property string $code
- * @property string $details
- * @property float $discount
- * @property string $discount_type
+ * @property string $scope
+ * @property int|null $product_id
+ * @property int|null $category_id
+ * @property float|null $min_order_amount
+ * @property float $discount_percentage
+ * @property float|null $max_discount
  * @property \Illuminate\Support\Carbon|null $start_date
  * @property \Illuminate\Support\Carbon|null $end_date
  * @property bool $status
- * @property \Illuminate\Support\Carbon $created_at
- * @property \Illuminate\Support\Carbon $updated_at
+ * @property int|null $usage_limit
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int $user_id
  * @property-read \App\Models\Category|null $category
  * @property-read \App\Models\Product|null $product
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
@@ -1364,17 +1367,20 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Coupon newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Coupon newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Coupon query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereCategoryId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereDetails($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereDiscount($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereDiscountType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereDiscountPercentage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereEndDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereMaxDiscount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereMinOrderAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereProductId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereScope($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereStartDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereUsageLimit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Coupon whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Coupon withinDateRange()
  */
@@ -1385,9 +1391,21 @@ namespace App\Models{
 /**
  * App\Models\CouponUser
  *
+ * @property int $id
+ * @property int $coupon_id
+ * @property int $user_id
+ * @property int $times_used
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|CouponUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CouponUser newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CouponUser query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CouponUser whereCouponId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CouponUser whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CouponUser whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CouponUser whereTimesUsed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CouponUser whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CouponUser whereUserId($value)
  */
 	class CouponUser extends \Eloquent {}
 }
