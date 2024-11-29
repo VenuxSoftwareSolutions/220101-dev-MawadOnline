@@ -56,6 +56,7 @@ class ProductController extends Controller
 
     public function index()
     {
+        
         $products = Product::where('user_id', auth()->user()->owner_id)
             ->with(['medias', 'variants', 'variants.medias'])
             ->where(function ($query) {

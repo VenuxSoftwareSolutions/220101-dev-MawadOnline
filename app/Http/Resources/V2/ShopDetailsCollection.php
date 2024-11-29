@@ -9,6 +9,8 @@ class ShopDetailsCollection extends JsonResource
 {
     public function toArray($request)
     {
+        $decoded_slider_images = json_decode(get_setting('home_slider_images', null, lang: "en"), true);
+
         return 
         [
             'id' => $this->id,
@@ -24,7 +26,7 @@ class ShopDetailsCollection extends JsonResource
             'seller_package' => $this->seller_package->name??"",
             'seller_package_img' =>uploaded_asset($this->seller_package->logo??"") ,
             'upload_id' => $this->logo,
-            'sliders' => get_images_path($this->sliders),
+            'sliders' => get_slider_images_api($decoded_slider_images),
             'sliders_id' => $this->sliders,
             'address' => $this->address,
             'admin_to_pay' => format_price( $this->admin_to_pay),

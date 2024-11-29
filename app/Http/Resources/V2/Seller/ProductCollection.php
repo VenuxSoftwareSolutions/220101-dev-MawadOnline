@@ -27,11 +27,13 @@ class ProductCollection extends ResourceCollection
                     'id' => $data->id,
                     'name' => $data->name,
                     //'thumbnail_img' => uploaded_asset($data->thumbnail_img),
-                    'thumbnail_img' => UploadProducts::where('id_product', $data->id)
-                        ->where('type', 'thumbnails')
-                        ->value('path') != null ? static_asset(UploadProducts::where('id_product', $data->id)
-                            ->where('type', 'thumbnails')
-                            ->value('path')) : static_asset('assets/img/placeholder.jpg'),
+                    // 'thumbnail_img' => UploadProducts::where('id_product', $data->id)
+                    //     ->where('type', 'thumbnails')
+                    //     ->value('path') != null ? static_asset(UploadProducts::where('id_product', $data->id)
+                    //         ->where('type', 'thumbnails')
+                    //         ->value('path')) : static_asset('assets/img/placeholder.jpg'),
+
+                    'thumbnail_img' => $data->getFirstImage() ? url('public' . $data->getFirstImage()) : static_asset('assets/img/placeholder.jpg'),
                     //'price' => format_price($data->unit_price),                    
                     'price' => ($data->getPricingConfiguration() && $data->getPricingConfiguration()->first() != null)
                         ? format_price($data->getPricingConfiguration()->first()->unit_price)

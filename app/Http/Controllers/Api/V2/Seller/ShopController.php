@@ -162,7 +162,7 @@ class ShopController extends Controller
             if ($productCount > 0) {
                 return [
                     'name' => $category->getTranslation('name'),
-                    'banner' => uploaded_asset($category->banner),
+                    'banner' => url('public/'.$category->cover_image),
                     'cnt_product' => $productCount,
                 ];
             }
