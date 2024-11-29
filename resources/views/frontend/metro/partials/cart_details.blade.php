@@ -11,7 +11,7 @@
                             <div class="col fw-600">{{ translate('Stock Status') }}</div>
                             <div class="col fw-600">{{ translate('Price') }}</div>
                             <div class="col fw-600">{{ translate('Tax') }}</div>
-                            <div class="col fw-600">{{ translate('Total') }}</div>
+                            <div class="col fw-600">{{ translate('Subtotal') }}</div>
                             <div class="col-auto fw-600">{{ translate('Remove') }}</div>
                         </div>
                         <!-- Cart Items -->
@@ -107,9 +107,8 @@
                         @endif
                     </div>
 
-                    <!-- Subtotal -->
                     <div class="px-0 py-2 mb-4 border-top d-flex justify-content-between">
-                        <span class="opacity-60 fs-14">{{ translate('Subtotal') }}</span>
+                        <span class="opacity-60 fs-14">{{ translate('Total') }}</span>
                         <span class="fw-700 fs-16">{{ single_price($data[$key]["total"]) }}</span>
                     </div>
                     <div class="row align-items-center">
