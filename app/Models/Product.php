@@ -117,7 +117,7 @@ class Product extends Model
         'max_third_party_sample',
         'product_catalog_id',
     ];
-    
+
     protected $dontKeepRevisionOf = [
         'is_draft',
         'approved',
