@@ -846,14 +846,14 @@ class CartController extends Controller
 
             if ($product_stock < $item->quantity) {
                 if (auth()->user() != null) {
-                    $existingWishlistItem = Wishlist::where('user_id', $user_id)
+                    $existingWishlistItem = Wishlist::where('user_id', auth()->user()->id)
                         ->where('product_id', $item->product_id)
                         ->first();
 
                     // Move to Wishlist if not already in the wishlist
                     if ($existingWishlistItem === null) {
                         Wishlist::create([
-                            'user_id' => $user_id,
+                            'user_id' => auth()->user()->id,
                             'product_id' => $item->product_id,
                         ]);
                     }
