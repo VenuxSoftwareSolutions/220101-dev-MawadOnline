@@ -26,39 +26,6 @@
 
     @php $lang = get_system_language()->code;  @endphp
 
-    <!-- Sliders old
-        <div class="container">
-        <div class="home-banner-area mb-3">
-            <div class="banner-inner">
-                <!-- Sliders
-                <div class="home-slider slider-full">
-                    @if (get_setting('home_slider_images') != null)
-    <div class="aiz-carousel dots-inside-bottom mobile-img-auto-height" data-autoplay="true" data-dots="true" data-infinite="true">
-
-                            @php
-                                $decoded_slider_images = json_decode(get_setting('home_slider_images', null, $lang), true);
-                                $sliders = get_slider_images($decoded_slider_images);
-                            @endphp
-                            @foreach ($sliders as $key => $slider)
-    <div class="carousel-box">
-
-                                    <a href="{{ json_decode(get_setting('home_slider_links'), true)[$key] }}">
-                                        <!-- Image
-                                        <div class="d-block mw-100 img-fit overflow-hidden h-180px h-md-320px h-lg-460px h-xl-553px overflow-hidden radius-banner">
-                                            <img class="img-fit h-100 m-auto has-transition ls-is-cached lazyloaded"
-                                            src="{{ $slider ? my_asset($slider->file_name) : static_asset('assets/img/placeholder.jpg') }}"
-                                            alt="{{ env('APP_NAME') }} promo"
-                                            onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder-rect.jpg') }}';">
-                                        </div>
-                                    </a>
-                                </div>
-    @endforeach
-                        </div>
-    @endif
-                </div>
-            </div>
-        </div>
-    </div>-->
     <div class="col-12 p-0">
         <div class="home-banner-area">
             <div class="banner-inner">
@@ -67,15 +34,12 @@
                     @if (get_setting('home_slider_images') != null)
                         <div class="aiz-carousel dots-inside-bottom mobile-img-auto-height" data-autoplay="true"
                             data-dots="true" data-infinite="true">
-
                             @php
                                 $decoded_slider_images = json_decode(get_setting('home_slider_images', null, $lang), true);
                                 $sliders = get_slider_images($decoded_slider_images);
                             @endphp
                             @foreach ($sliders as $key => $slider)
                                 <div class="carousel-box">
-
-                                    <!--  <a href="{{ json_decode(get_setting('home_slider_links'), true)[$key] }}"> -->
                                     <!-- Image -->
                                     <div
                                         class="d-block mw-100 img-fit overflow-hidden h-424px h-md-424px h-lg-460px h-xl-504px overflow-hidden">
@@ -93,11 +57,11 @@
                                                     <div class="col-12 pt-4 p-0">
                                                         <a href="https://business.mawadonline.com/"><button type="button"
                                                                 class="btn btn-secondary-base slider-register-vendor text-white border-radius-16 fs-16 font-prompt py-2">
-                                                                Register as Vendor
+                                                                {{ __('Register as Vendor') }}
                                                             </button></a>
                                                         <a href="https://about.mawadonline.com/"><button type="button"
                                                                 class="btn bg-white slider-register-buyer margin-s-r-b text-secondary-base border-radius-16 fs-16 font-prompt py-2">
-                                                                Join Buyer Waitlist
+                                                                {{ __('Join Buyer Waitlist') }}
                                                                 <svg width="24" height="24" viewBox="0 0 24 24"
                                                                     fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                     <path
@@ -119,7 +83,6 @@
                                             alt="{{ env('APP_NAME') }} promo"
                                             onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder-rect.jpg') }}';">
                                     </div>
-                                    <!-- </a> -->
                                 </div>
                             @endforeach
                         </div>
@@ -134,8 +97,8 @@
         $flash_deal_bg = get_setting('flash_deal_bg_color');
         $flash_deal_bg_full_width = get_setting('flash_deal_bg_full_width') == 1 ? true : false;
         $flash_deal_banner_menu_text = get_setting('flash_deal_banner_menu_text') == 'dark' || get_setting('flash_deal_banner_menu_text') == null ? 'text-dark' : 'text-white';
-
     @endphp
+
     @if ($flash_deal != null)
         <section class="mb-2 mb-md-3"
             style="background: {{ $flash_deal_bg_full_width && $flash_deal_bg != null ? $flash_deal_bg : '' }};"
@@ -222,9 +185,8 @@
                                 $flash_deal_products = get_flash_deal_products($flash_deal->id);
                             @endphp
                             <div class="aiz-carousel border-top @if (count($flash_deal_products) > 8) border-right @endif arrow-inactive-none arrow-x-0"
-                                data-items="5" data-xxl-items="5" data-xl-items="3.5" data-lg-items="3"
-                                data-md-items="2" data-sm-items="2.5" data-xs-items="2" data-arrows="true"
-                                data-dots="false">
+                                data-items="5" data-xxl-items="5" data-xl-items="3.5" data-lg-items="3" data-md-items="2"
+                                data-sm-items="2.5" data-xs-items="2" data-arrows="true" data-dots="false">
                                 @php
                                     $init = 0;
                                     $end = 1;
@@ -285,11 +247,7 @@
     @php
         $todays_deal_section_bg = get_setting('todays_deal_section_bg_color');
     @endphp
-    <!--
-        <div id="todays_deal" class="mb-2rem mt-2 mt-md-3" @if (get_setting('todays_deal_section_bg') == 1) style="background: {{ $todays_deal_section_bg }};" @endif>
 
-        </div>
-    -->
     <!-- Featured Categories -->
     @if (count($featured_categories) > 0)
         <section class="mt-4">
@@ -333,15 +291,6 @@
                                             href="{{ route('products.category', $category->slug) }}">
                                             <center>{{ $category_name }}&nbsp;</center>
                                         </a>
-                                        <!--
-                                                    <div class="d-flex flex-wrap h-50px overflow-hidden mt-2">
-                                                        @foreach ($category->childrenCategories->take(6) as $key => $child_category)
-    <a href="{{ route('products.category', $child_category->slug) }}" class="fs-13 fw-300 text-soft-dark hov-text-dark text-dark pr-3 pt-1">
-                                                            {{ $child_category->getTranslation('name') }}
-                                                        </a>
-    @endforeach
-                                                    </div>
-                                                -->
                                     </div>
                                 </div>
                             </div>
@@ -351,42 +300,6 @@
             </div>
         </section>
     @endif
-
-    <!-- Banner section 1
-        @if (get_setting('home_banner1_images') != null)
-    <div class="pb-2 pb-md-3 pt-2 pt-md-3">
-                <div class="container mb-2 mb-md-3">
-                    @php
-                        $banner_1_imags = json_decode(get_setting('home_banner1_images', null, $lang));
-                        $data_md = count($banner_1_imags) >= 2 ? 2 : 1;
-                    @endphp
-                    <div class="w-100">
-                        <div class="aiz-carousel gutters-16 overflow-hidden arrow-inactive-none arrow-dark arrow-x-15"
-                            data-items="{{ count($banner_1_imags) }}" data-xxl-items="{{ count($banner_1_imags) }}"
-                            data-xl-items="{{ count($banner_1_imags) }}" data-lg-items="{{ $data_md }}"
-                            data-md-items="{{ $data_md }}" data-sm-items="1" data-xs-items="1" data-arrows="true"
-                            data-dots="false">
-                            @foreach ($banner_1_imags as $key => $value)
-    <div class="carousel-box overflow-hidden hov-scale-img">
-                                    <a href="{{ json_decode(get_setting('home_banner1_links'), true)[$key] }}"
-                                        class="d-block text-reset overflow-hidden">
-                                        <img src="{{ static_asset('assets/img/placeholder-rect.jpg') }}"
-                                            data-src="{{ uploaded_asset($value) }}" alt="{{ env('APP_NAME') }} promo"
-                                            class="img-fluid lazyload w-100 has-transition"
-                                            onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder-rect.jpg') }}';">
-                                    </a>
-                                </div>
-    @endforeach
-                        </div>
-                    </div>
-                </div>
-            </div>
-    @endif -->
-
-    <!-- Featured Products
-        <div id="section_featured" class="pt-2 pt-md-3">
-
-        </div>-->
 
     <!-- Banner Section 2 -->
     @if (get_setting('home_banner2_images') != null)
@@ -418,14 +331,10 @@
     @endif
 
     <!-- Best Selling  -->
-    <div id="section_best_selling">
-
-    </div>
+    <div id="section_best_selling"></div>
 
     <!-- New Products -->
-    <div id="section_newest">
-
-    </div>
+    <div id="section_newest"></div>
 
     <!-- Banner Section 3 -->
     @if (get_setting('home_banner3_images') != null)
@@ -458,12 +367,10 @@
 
     <!-- Auction Product -->
     @if (addon_is_activated('auction'))
-        <div id="auction_products">
-
-        </div>
+        <div id="auction_products"></div>
     @endif
 
-    <!-- Cupon -->
+    <!-- Coupon -->
     @if (get_setting('coupon_system') == 1)
         <div class=" mt-2 mt-md-3" style="background-color: {{ get_setting('cupon_background_color', '#292933') }}">
             <div class="container">
@@ -546,9 +453,7 @@
     @endif
 
     <!-- Category wise Products -->
-    <div id="section_home_categories">
-
-    </div>
+    <div id="section_home_categories"></div>
 
     <!-- Classified Product -->
     @if (get_setting('classified_product') == 1)
@@ -643,9 +548,9 @@
     <!-- Top Sellers -->
     @if (get_setting('vendor_system_activation') == 1)
         @php
-            $best_selers = get_best_sellers(5);
+            $best_sellers = get_best_sellers(5);
         @endphp
-        @if (count($best_selers) > 0)
+        @if (count($best_sellers) > 0)
             <section class="mb-2 mb-md-3 mt-2 mt-md-3">
                 <div class="container">
                     <!-- Top Section -->
@@ -664,7 +569,7 @@
                     <div class="aiz-carousel arrow-x-0 arrow-inactive-none" data-items="5" data-xxl-items="5"
                         data-xl-items="4" data-lg-items="3.4" data-md-items="2.5" data-sm-items="2" data-xs-items="1.4"
                         data-arrows="true" data-dots="false">
-                        @foreach ($best_selers as $key => $seller)
+                        @foreach ($best_sellers as $key => $seller)
                             @if ($seller->user != null)
                                 <div
                                     class="carousel-box h-100 position-relative text-center border-right border-top border-bottom @if ($key == 0) border-left @endif has-transition hov-animate-outline">
