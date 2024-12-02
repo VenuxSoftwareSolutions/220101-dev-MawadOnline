@@ -19,6 +19,7 @@ use Session;
 use DateTime;
 use DB;
 use Str;
+use App\Models\User;
 
 class CartController extends Controller
 {
@@ -60,10 +61,18 @@ class CartController extends Controller
             $stockAlert = '';
             $outOfStockItems = [];
 
+            $vendor_name = User::find($product->user_id)->shop->name;
+
             if ($item['variation'] != null) {
-                $product_name_with_choice = str()->ucfirst(
-                    $product->getTranslation('name')
-                ) . ' - ' . $item['variation'];
+                $product_name_with_choice = sprintf(
+                    "%s - %s: %s, %s",
+                    str()->ucfirst(
+                        $product->getTranslation('name')
+                    ),
+                    __("Vendor"),
+                    $vendor_name,
+                    $item['variation']
+                );
             }
 
             if ($product_stock <= 0) {
