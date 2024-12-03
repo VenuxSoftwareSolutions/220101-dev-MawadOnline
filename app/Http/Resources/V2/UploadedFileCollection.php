@@ -12,15 +12,16 @@ class UploadedFileCollection extends ResourceCollection
             'data' => $this->collection->map(function($data) {
                 return [
                     'id' => $data->id,
-                    'file_original_name' =>$data->file_original_name,
+                    'file_original_name' => $data->file_original_name,
                     'file_name' => $data->file_name,
-                    'url' => uploaded_asset($data->id),
+                    'url' => str_replace('/uploads', '/public/uploads', uploaded_asset($data->id)),
                     'file_size' => $data->file_size,
                     'extension' => $data->extension,
                     'type' => $data->type
                 ];
             })
         ];
+        
     }
 
     public function with($request)

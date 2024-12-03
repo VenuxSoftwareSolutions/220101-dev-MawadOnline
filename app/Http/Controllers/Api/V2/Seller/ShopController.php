@@ -146,40 +146,48 @@ class ShopController extends Controller
     public function category_wise_products(Request $request)
     {
         $ownerId = auth()->user()->owner_id;
-        
+
         // Get the current page number from the request (default to 1)
         $page = $request->input('page', 1);
         $perPage = 10; // Define how many items per page
-        
-        // Fetch paginated categories with their products
-        $categories = Category::with(['products' => function ($query) use ($ownerId) {
-            $query->where('user_id', $ownerId);
-        }])->paginate($perPage);
 
-        // Transform the categories and calculate product count
+        // Fetch paginated categories with their published products owned by the auth user
+        $categories = Category::whereNull('deleted_at') // Ensure the category is not soft-deleted
+            ->whereHas('products', function ($query) use ($ownerId) {
+                $query->where('user_id', $ownerId)
+                    ->where('published', 1)
+                    ->whereNull('deleted_at'); // Only select products that are not soft-deleted
+            })
+            ->with(['products' => function ($query) use ($ownerId) {
+                $query->where('user_id', $ownerId)
+                    ->where('published', 1)
+                    ->whereNull('deleted_at'); // Only include products that are not soft-deleted
+            }])
+            ->paginate($perPage);
+
+        // Now, calculate the product count correctly by using distinct products
         $data = $categories->map(function ($category) {
-            $productCount = $category->products->count();
+            $productCount = $category->products->unique('id')->count(); // Count distinct products only
             if ($productCount > 0) {
                 return [
                     'name' => $category->getTranslation('name'),
-                    'banner' => url('public/'.$category->cover_image),
+                    'banner' => url('public/' . $category->cover_image),
                     'cnt_product' => $productCount,
                 ];
             }
             return null;
         })->filter()->values();
 
-        // Prepare the response with pagination metadata
         $result = [
             'data' => $data,
             'total' => $categories->total(),
             'next_page_url' => $categories->nextPageUrl(),
         ];
-        
+
         return response()->json($result);
     }
 
-    
+
 
     public function top_12_products()
     {

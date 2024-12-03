@@ -58,24 +58,46 @@ class ProductController extends Controller
     {
         
         $products = Product::where('user_id', auth()->user()->owner_id)
-            ->with(['medias', 'variants', 'variants.medias'])
-            ->where(function ($query) {
-                $query->where('is_draft', '=', 1)
-                    ->where('parent_id', 0)
-                    ->orWhere(function ($query) {
-                        $query->where('is_draft', 0)
-                            ->where('parent_id', 0)
-                            ->where('is_parent', 0);
-                    })
-                    ->orWhere(function ($query) {
-                        $query->where('is_draft', 0)
-                            ->where('is_parent', 1);
-                    });
-            })
-            ->orderBy('id', 'desc')
-            ->paginate(10);  // Change this number to control the number of items per page
+        ->with(['medias', 'variants', 'variants.medias'])
+        ->where(function ($query) {
+            $query->where('is_draft', '=', 1)
+                ->where('parent_id', 0)
+                ->orWhere(function ($query) {
+                    $query->where('is_draft', 0)
+                        ->where('parent_id', 0)
+                        ->where('is_parent', 0);
+                })
+                ->orWhere(function ($query) {
+                    $query->where('is_draft', 0)
+                        ->where('is_parent', 1);
+                });
+        })
+        ->orderBy('id', 'desc')
+        ->paginate(10);  // Change this number to control the number of items per page
     
-        return $products;
+    // Modify the media paths
+    $products->getCollection()->transform(function ($product) {
+        // Modify the path in the product's media
+        $product->medias = $product->medias->map(function ($media) {
+            // Change the path of the media, for example, prepend a base URL
+            $media->path = url('public' . $media->path);  // Modify this as needed
+            return $media;
+        });
+    
+        // Do the same for variants if needed
+        $product->variants->each(function ($variant) {
+            $variant->medias = $variant->medias->map(function ($media) {
+                // Modify the path for variant medias
+                $media->path = url('public' . $media->path);  // Modify this as needed
+                return $media;
+            });
+        });
+    
+        return $product;
+    });
+    
+    return $products;
+    
     }
     
 

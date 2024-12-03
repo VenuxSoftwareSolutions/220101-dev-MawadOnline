@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
+    use SoftDeletes;
+
     protected $with = ['category_translations'];
 
     // Parent Category Relationship

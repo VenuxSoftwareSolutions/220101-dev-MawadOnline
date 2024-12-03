@@ -946,6 +946,7 @@ namespace App\Models{
  * @property-read \App\Models\SizeChart|null $sizeChart
  * @method static \Illuminate\Database\Eloquent\Builder|Category newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Category newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Category onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Category query()
  * @method static \Illuminate\Database\Eloquent\Builder|Category whereCommisionRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Category whereCoverImage($value)
@@ -965,6 +966,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Category whereThumbnailImage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Category whereTop($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Category whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Category withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Category withoutTrashed()
  */
 	class Category extends \Eloquent {}
 }
