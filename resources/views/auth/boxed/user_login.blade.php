@@ -116,7 +116,7 @@
                                         @endif
 
                                         <!-- Social Login -->
-                                        {{-- @if(get_setting('google_login') == 1 || get_setting('facebook_login') == 1 || get_setting('twitter_login') == 1 || get_setting('apple_login') == 1)
+                                         @if(get_setting('google_login') == 1 || get_setting('facebook_login') == 1 || get_setting('twitter_login') == 1 || get_setting('apple_login') == 1)
                                             <div class="text-center mb-3">
                                                 <span class="bg-white fs-12 text-gray">{{ translate('Or Login With')}}</span>
                                             </div>
@@ -151,7 +151,7 @@
                                                     </li>
                                                 @endif
                                             </ul>
-                                        @endif --}}
+                                        @endif 
                                     </div>
 
                                     <!-- Register Now -->
