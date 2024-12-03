@@ -21,7 +21,7 @@
                 <div class="col-lg-6">
                     <table class="table-borderless table">
                         <tr>
-                            <td class="w-50 fw-600">{{ translate('Order Code') }}:</td>
+                            <td class="w-50 fw-600">{{ translate('Order Code') }}</td>
                             <td>{{ $order->code }}</td>
                         </tr>
                         <tr>
