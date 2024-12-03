@@ -49,24 +49,43 @@ class LoginController extends Controller
      */
     public function redirectToProvider($provider)
     {
+
         if (request()->get('query') == 'mobile_app') {
             request()->session()->put('login_from', 'mobile_app');
         }
         if ($provider == 'apple') {
-            return Socialite::driver("sign-in-with-apple")
-                ->scopes(["name", "email"])
+            return Socialite::driver("apple")
+                ->scopes(["name"])
+                ->enablePKCE()
                 ->redirect();
         }
-        return Socialite::driver($provider)->redirect();
+        if ($provider == 'twitter') {
+            return Socialite::driver('twitter-oauth-2')
+            ->scopes(["users.read"])
+            ->redirect();
+        }
+        if ($provider == 'facebook') {
+            return Socialite::driver('facebook')
+            ->scopes(['email'])
+            ->enablePKCE()
+            ->redirect();
+        }
+
+        return Socialite::driver($provider)
+        ->with(['prompt' => 'consent'])
+        ->enablePKCE()
+        ->redirect();
+
+       
     }
 
     public function handleAppleCallback(Request $request)
     {
         try {
-            $user = Socialite::driver("sign-in-with-apple")->user();
+            $user = Socialite::driver("apple")->user();
         } catch (\Exception $e) {
             flash(translate("Something Went wrong. Please try again."))->error();
-            return redirect()->route('user.login');
+            return redirect()->route(route: 'user.login');
         }
         //check if provider_id exist
         $existingUserByProviderId = User::where('provider_id', $user->id)->first();
@@ -120,7 +139,7 @@ class LoginController extends Controller
             }
             return redirect()->route('dashboard');
         }
-    }
+    }/*
     /**
      * Obtain the user information from Google.
      *
@@ -131,73 +150,84 @@ class LoginController extends Controller
         if (session('login_from') == 'mobile_app') {
             return $this->mobileHandleProviderCallback($request, $provider);
         }
+
         try {
-            if ($provider == 'twitter') {
-                $user = Socialite::driver('twitter')->user();
-            } else {
-                $user = Socialite::driver($provider)->stateless()->user();
-            }
+            $socialUser = $this->getSocialUser($provider);
         } catch (\Exception $e) {
-            flash(translate("Something Went wrong. Please try again."))->error();
+            flash(translate("Something went wrong. Please try again."))->error();
             return redirect()->route('user.login');
         }
 
-        //check if provider_id exist
-        $existingUserByProviderId = User::where('provider_id', $user->id)->first();
+        // Find or create a user based on social user details
+        $user = $this->findOrCreateUser($socialUser, $provider);
 
-        if ($existingUserByProviderId) {
-            $existingUserByProviderId->access_token = $user->token;
-            $existingUserByProviderId->save();
-            //proceed to login
-            auth()->login($existingUserByProviderId, true);
-        } else {
-            //check if email exist
-            $existingUser = User::where('email', '!=', null)->where('email', $user->email)->first();
+        // Log in the user
+        auth()->login($user, true);
 
-            if ($existingUser) {
-                //update provider_id
-                $existing_User = $existingUser;
-                $existing_User->provider_id = $user->id;
-                $existing_User->provider = $provider;
-                $existing_User->access_token = $user->token;
-                $existing_User->save();
+        // Handle user cart merging
+        $this->mergeCartWithUser();
 
-                //proceed to login
-                auth()->login($existing_User, true);
-            } else {
-                //create a new user
-                $newUser = new User;
-                $newUser->name = $user->name;
-                $newUser->email = $user->email;
-                $newUser->email_verified_at = date('Y-m-d Hms');
-                $newUser->provider_id = $user->id;
-                $newUser->provider = $provider;
-                $newUser->access_token = $user->token;
-                $newUser->save();
-                //proceed to login
-                auth()->login($newUser, true);
-            }
+        // Redirect the user
+        return $this->redirectUser();
+    }
+
+    /**
+     * Retrieve the social user using the provider.
+     */
+    private function getSocialUser($provider)
+    {
+        if ($provider === 'twitter') {
+           return Socialite::driver('twitter-oauth-2')->user();
         }
+        return Socialite::driver($provider)->enablePKCE()->user();
+    }
 
-        if (session('temp_user_id') != null) {
+    /**
+     * Find or create a user from the social user details.
+     */
+    private function findOrCreateUser($socialUser, $provider)
+    {
+        return User::updateOrCreate(
+            ['email' => $socialUser->email], // Match user by email
+            [
+                'name' => $socialUser->name,
+                'email_verified_at' => now(),
+                'provider_id' => $socialUser->id,
+                'provider' => $provider,
+                'access_token' => $socialUser->token,
+            ]
+        );
+    }
+
+    /**
+     * Merge temporary cart with the authenticated user.
+     */
+    private function mergeCartWithUser()
+    {
+        if (session('temp_user_id')) {
             Cart::where('temp_user_id', session('temp_user_id'))
                 ->update([
-                    'user_id' => auth()->user()->id,
-                    'temp_user_id' => null
+                    'user_id' => auth()->id(),
+                    'temp_user_id' => null,
                 ]);
-
             Session::forget('temp_user_id');
         }
-
-        if (session('link') != null) {
-            return redirect(session('link'));
-        } else {
-            if (auth()->user()->user_type == 'seller') {
-                return redirect()->route('seller.dashboard');
-            }
-            return redirect()->route('dashboard');
-        }
     }
+
+    /**
+     * Redirect the user to the appropriate dashboard or link.
+     */
+    private function redirectUser()
+    {
+        if (session('link')) {
+            return redirect(session('link'));
+        }
+
+        return auth()->user()->user_type === 'seller'
+            ? redirect()->route('seller.dashboard')
+            : redirect()->route('dashboard');
+    }
+
 
     public function mobileHandleProviderCallback($request, $provider)
     {
@@ -224,8 +254,8 @@ class LoginController extends Controller
     protected function validateLogin(Request $request)
     {
         $request->validate([
-            'email'    => 'required_without:phone',
-            'phone'    => 'required_without:email',
+            'email' => 'required_without:phone',
+            'phone' => 'required_without:email',
             'password' => 'required|string',
         ]);
     }
@@ -288,16 +318,16 @@ class LoginController extends Controller
                     'user_id' => auth()->user()->id,
                     'temp_user_id' => null
                 ]);
-    
+
             Session::forget('temp_user_id');
         }
-    
+
         // Redirecting Admins and Staff
         if (auth()->user()->user_type == 'admin' || auth()->user()->user_type == 'staff') {
             //CoreComponentRepository::instantiateShopRepository();
             return redirect()->route('admin.dashboard');
         }
-    
+
         // Return an error for non-admin and non-staff users
         else {
             Auth::logout(); // Optional: log the user out
@@ -308,7 +338,7 @@ class LoginController extends Controller
             // or return redirect('some_route')->withErrors(['error' => 'You do not have permission to access this area.']);
         }
     }
-    
+
 
     /**
      * Get the failed login response instance.
@@ -406,7 +436,7 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except(['logout', 'account_deletion']);
     }
-    
+
     public function handle_demo_login()
     {
         return view('frontend.handle_demo_login');

@@ -171,6 +171,8 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         KingFlamez\Rave\RaveServiceProvider::class,
+        \SocialiteProviders\Manager\ServiceProvider::class,
+
 
         /*
          * Package Service Providers...

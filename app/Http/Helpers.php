@@ -58,6 +58,7 @@ use App\Http\Controllers\CommissionController;
 use AizPackages\ColorCodeConverter\Services\ColorCodeConverter;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Firebase\JWT\JWT;
 
 
 if (!function_exists('humanFileSize')) {
@@ -2694,4 +2695,20 @@ if (!function_exists('generateUniqueSlug')) {
 
         return $slug;
     }
+    if (!function_exists('generateAppleClientSecret')) {
+        function generateAppleClientSecret()
+        {
+            $key = env('APPLE_PRIVATE_KEY');
+            $payload = [
+                'iss' => env('APPLE_TEAM_ID'),
+                'iat' => time(),
+                'exp' => time() + (60 * 60 * 24), // Valid for 1 day
+                'aud' => 'https://appleid.apple.com',
+                'sub' => env('APPLE_CLIENT_ID'),
+            ];
+    
+            return JWT::encode($payload, $key, 'ES256', env('APPLE_KEY_ID'));
+        }
+    }
+    
 }
