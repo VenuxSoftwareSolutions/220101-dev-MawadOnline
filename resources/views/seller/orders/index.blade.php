@@ -1,7 +1,6 @@
 @extends('seller.layouts.app')
 
 @section('panel_content')
-
     <div class="card">
         <form id="sort_orders" action="" method="GET">
             <div id="step1" class="card-header row gutters-5">
@@ -67,10 +66,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($orders as $key => $order_id)
-                            @php
-                                $order = \App\Models\Order::find($order_id->id);
-                            @endphp
+                        @foreach ($orders as $key => $order)
                             @if ($order != null)
                                 <tr>
                                     <td>
@@ -97,10 +93,7 @@
                                         {{ single_price($order->grand_total) }}
                                     </td>
                                     <td>
-                                        @php
-                                            $status = $order->delivery_status;
-                                        @endphp
-                                        {{ translate(ucfirst(str_replace('_', ' ', $status))) }}
+                                        {{ translate(ucfirst(str_replace('_', ' ', $order->delivery_status))) }}
                                     </td>
                                     <td>
                                         @if ($order->payment_status == 'paid')
@@ -143,10 +136,9 @@
 @endsection
 
 @section('script')
-    <script type="text/javascript">
+    <script>
         function sort_orders(el) {
             $('#sort_orders').submit();
         }
     </script>
-
 @endsection
