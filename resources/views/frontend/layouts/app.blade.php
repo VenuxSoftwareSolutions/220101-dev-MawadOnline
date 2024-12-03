@@ -784,8 +784,8 @@
                 countryData = window.intlTelInputGlobals.getCountryData(),
                 input = document.querySelector("#phone-code");
 
-            for (var i = 0; i < countryData.length; i++) {
-                var country = countryData[i];
+            for (let i = 0; i < countryData.length; i++) {
+                let country = countryData[i];
                 if (country.iso2 == 'bd') {
                     country.dialCode = '88';
                 }
@@ -807,7 +807,7 @@
             $('input[name=country_code]').val(country.dialCode);
 
             input.addEventListener("countrychange", function(e) {
-                var country = iti.getSelectedCountryData();
+                let country = iti.getSelectedCountryData();
                 $('input[name=country_code]').val(country.dialCode);
 
             });

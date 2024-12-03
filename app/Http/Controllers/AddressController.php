@@ -69,7 +69,7 @@ class AddressController extends Controller
             'country'       => 'required|exists:countries,id',
             'address'      => 'required|string|max:255',
             'building_name'    => 'required|string|max:255',
-            'state'          => 'required|exists:states,id',
+            'state'          => 'required|exists:emirates,id',
             'area_id'             => 'nullable|string|max:255',
             'landmark'         => 'nullable|string|max:255',
             'address_type'     => 'nullable|string|in:home,work,site,other',
@@ -86,8 +86,8 @@ class AddressController extends Controller
         $address->country_id          = $request->country;
         $address->address         = $request->address;
         $address->building_name       = $request->building_name;
-         $address->state_id      = $request->state;
-        $address->city_id       = $request->area_id;
+        $address->emirate_id      = $request->state;
+        $address->area_id       = $request->area_id;
         $address->landmark            = $request->landmark;
         $address->address_type        = $request->address_type;
         $address->delivery_instructions = $request->delivery_instructions;
@@ -167,8 +167,8 @@ class AddressController extends Controller
         'full_name'        => 'required|string|max:255',
         'phone'    => 'required|string',
         'country' => 'required|exists:countries,id',
-        'state' => 'required|exists:states,id',
-        'area_id' => 'nullable|exists:cities,id',
+        'state' => 'required|exists:emirates,id',
+        'area_id' => 'nullable|exists:areas,id',
         'address' => 'required|string|max:255',
         'building_name' => 'required|string|max:255',
         'landmark' => 'nullable|string|max:255',
@@ -183,8 +183,8 @@ class AddressController extends Controller
         $address->country_id          = $request->country;
         $address->address         = $request->address;
         $address->building_name       = $request->building_name;
-         $address->state_id      = $request->state;
-        $address->city_id       = $request->area_id;
+        $address->emirate_id      = $request->state;
+        $address->area_id       = $request->area_id;
         $address->landmark            = $request->landmark;
         $address->address_type        = $request->address_type;
         $address->delivery_instructions = $request->delivery_instructions;
