@@ -2348,15 +2348,23 @@ if (!function_exists('get_shop_by_user_id')) {
 if (!function_exists('get_coupons')) {
     function get_coupons($user_id = null, $paginate = null)
     {
-        $coupon_query = Coupon::query();
-        $coupon_query = $coupon_query->where('start_date', '<=', strtotime(date('d-m-Y')))->where('end_date', '>=', strtotime(date('d-m-Y')));
-        if ($user_id) {
-            $coupon_query = $coupon_query->where('user_id', $user_id);
+        try {
+            $coupon_query = Coupon::query();
+            $coupon_query = $coupon_query->where('start_date', '<=', strtotime(date('d-m-Y')))->where('end_date', '>=', strtotime(date('d-m-Y')));
+
+            if ($user_id) {
+                $coupon_query = $coupon_query->where('user_id', $user_id);
+            }
+
+            if ($paginate) {
+                return $coupon_query->paginate($paginate);
+            }
+
+            return $coupon_query->get();
+        } catch(Exception $e) {
+            Log::error("Error while getting coupon, with message: {$e->getMessage()}");
+            return [];
         }
-        if ($paginate) {
-            return $coupon_query->paginate($paginate);
-        }
-        return $coupon_query->get();
     }
 }
 
@@ -2705,11 +2713,11 @@ if (!function_exists('generateUniqueSlug')) {
                 'aud' => 'https://appleid.apple.com',
                 'sub' => env('APPLE_CLIENT_ID'),
             ];
-    
+
             return JWT::encode($payload, $key, 'ES256', env('APPLE_KEY_ID'));
         }
     }
-    
+
 }
 
 if (function_exists('formatChargeBasedOnChargeType') === false) {
