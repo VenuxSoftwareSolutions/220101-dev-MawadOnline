@@ -10,6 +10,4 @@ class Revision extends Model
 {
     use HasFactory;
     use SoftDeletes;
-
-
 }
