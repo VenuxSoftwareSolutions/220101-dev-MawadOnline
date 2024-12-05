@@ -29,39 +29,6 @@ class StockController extends Controller
         $this->middleware(['permission:seller_inventory_history'])->only('stockOperationReport');
     }
 
-    // public function index(Request $request)
-    // {
-
-    //     $productVariant = $request->input('productVariant');
-    //     $warehouse = $request->input('warehouse');
-
-    //     if ($productVariant && $warehouse) {
-    //         // Fetch inventory data based on the provided parameters
-    //         // For example, you might want to filter the data using these parameters
-    //         $inventoryData = StockSummary::where('variant_id', $productVariant)
-    //             ->where('warehouse_id', $warehouse)
-    //             ->paginate(10);
-    //     } else {
-    //         $query = StockSummary::query();
-    //         // Check if a search term is provided
-    //         if ($searchTerm = $request->input('search')) {
-    //             $query->whereHas('productVariant', function ($query) use ($searchTerm) {
-    //                 $query->where('name', 'like', "%{$searchTerm}%") ;
-    //                     // ->orWhere('sku', 'like', "%{$searchTerm}%");
-    //             })
-    //                 ->orWhereHas('warehouse', function ($query) use ($searchTerm) {
-    //                     $query->where('warehouse_name', 'like', "%{$searchTerm}%");
-    //                 })
-    //                 ->orWhere('current_total_quantity', 'like', "%{$searchTerm}%")
-    //                 ->orWhereDate('updated_at', 'like', "%{$searchTerm}%");
-    //         }
-
-    //         $inventoryData = $query->paginate(10);
-    //     }
-    //     $warehouses = Warehouse::all();
-    //     return view('backend.stock.index', compact('inventoryData', 'warehouses'));
-    // }
-
     public function index(Request $request, $type = null)
     {
         seller_lease_creation($user=Auth::user());
