@@ -267,15 +267,17 @@ Route::group(['middleware' => ['user', 'verified', 'unbanned']], function () {
     Route::get('/all-notifications', [NotificationController::class, 'index'])->name('all-notifications');
 });
 
-Route::group(['middleware' => ['customer', 'verified', 'unbanned']], function () {
+Route::group(['middleware' => ['customer', 'verified', 'unbanned', "check.cart.stock"]], function () {
     // Checkout Routes
     Route::group(['prefix' => 'checkout'], function () {
         Route::controller(CheckoutController::class)->group(function () {
             Route::get('/', 'get_shipping_info')->name('checkout.shipping_info');
             Route::any('/delivery-info', 'store_shipping_info')->name('checkout.store_shipping_infostore');
             Route::post('/payment-select', 'store_delivery_info')->name('checkout.store_delivery_info');
-            Route::get('/order-confirmed', 'order_confirmed')->name('order_confirmed');
-            Route::post('/payment', 'checkout')->name('payment.checkout');
+            Route::get('/order-confirmed', 'order_confirmed')->name('order_confirmed')
+                ->withoutMiddleware("check.cart.stock");
+            Route::post('/payment', 'checkout')->name('payment.checkout')
+                ->withoutMiddleware("check.cart.stock");
             Route::post('/get-pick-up-points', 'get_pick_up_points')->name('shipping_info.get_pick_up_points');
             Route::get('/payment-select', 'get_payment_info')->name('checkout.payment_info');
             Route::post('/apply-coupon-code', 'apply_coupon_code')->name('checkout.apply_coupon_code');
