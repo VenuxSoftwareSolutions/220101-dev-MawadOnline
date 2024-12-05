@@ -90,15 +90,18 @@
 @endsection
 
 @section('script')
-    <script type="text/javascript">
+    <script>
         function removeFromWishlist(id) {
             $.post('{{ route('wishlists.remove') }}', {
                 _token: '{{ csrf_token() }}',
                 id: id
-            }, function(data) {
+            }).then(function(data) {
                 $('#wishlist').html(data);
                 $('#wishlist_' + id).hide();
                 AIZ.plugins.notify('success', '{{ translate('Item has been removed from wishlist') }}');
+            }).catch((error) => {
+                console.log(`Error while removing item ${id} from wishlist, with message: ${error.message}`)
+                AIZ.plugins.notify('danger', '{{ translate('Something went wrong!') }}');
             })
         }
     </script>
