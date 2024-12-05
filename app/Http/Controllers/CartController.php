@@ -698,6 +698,10 @@ class CartController extends Controller
             $userId
         )->get();
 
+        $carts->each(function($cart) {
+            $cart->user->wishlists->each(fn($wishlist) => $wishlist->delete());
+        });
+
         return [
             'status' => 1,
             'cart_count' => count($carts),
