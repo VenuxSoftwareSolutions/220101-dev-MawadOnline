@@ -98,7 +98,7 @@
             }, function(data) {
                 $('#wishlist').html(data);
                 $('#wishlist_' + id).hide();
-                AIZ.plugins.notify('success', '{{ translate('Item has been renoved from wishlist') }}');
+                AIZ.plugins.notify('success', '{{ translate('Item has been removed from wishlist') }}');
             })
         }
     </script>
