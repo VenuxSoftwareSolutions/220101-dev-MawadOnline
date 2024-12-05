@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use Illuminate\Http\Request;
 use App\Models\Product;
-use App\Models\Category;
+use App\Models\Revision;
 use App\Models\Cart;
 use App\Models\PricingConfiguration;
 use App\Models\ProductAttributeValues;
@@ -135,41 +135,54 @@ class CartController extends Controller
         }
         return $videoId;
     }
-    // public function showCartModal(Request $request)
-    // {
-    //     $product = Product::find($request->id);
-    //     return view('frontend.'.get_setting('homepage_select').'.partials.addToCart', compact('product'));
-    // }
+
     public function showCartModal(Request $request)
     {
-
         $product = Product::find($request->id);
-        $parent  = Product::where('id', $request->id)/* ->where('approved', 1) */->first();
+        $parent  = Product::where('id', $request->id)->first();
 
         if ($parent != null) {
-
             if ($parent->is_parent == 0) {
                 if ($parent->parent_id != 0) {
                     $parent = Product::find($parent->parent_id);
                 }
             }
 
-            $revision_parent_name = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type', 'App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'name')->latest()->first();
+            $revision_parent_name = Revision::whereNull('deleted_at')
+                ->where('revisionable_type', 'App\Models\Product')
+                ->where('revisionable_id', $parent->id)
+                ->where('key', 'name')
+                ->latest()
+                ->first();
+
             $name = '';
+
             if ($revision_parent_name != null && $parent->last_version == 1) {
                 $name = $revision_parent_name->old_value;
             } else {
                 $name = $parent->name;
             }
 
-            $revision_parent_brand = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type', 'App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'brand_id')->latest()->first();
+            $revision_parent_brand = Revision::whereNull('deleted_at')
+                ->where('revisionable_type', 'App\Models\Product')
+                ->where('revisionable_id', $parent->id)
+                ->where('key', 'brand_id')
+                ->latest()
+                ->first();
+
             if ($revision_parent_brand != null && $parent->last_version == 1) {
                 $brand_id = $revision_parent_brand->old_value;
             } else {
                 $brand_id = $parent->brand_id;
             }
 
-            $revision_parent_description = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type', 'App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'description')->latest()->first();
+            $revision_parent_description = Revision::whereNull('deleted_at')
+                ->where('revisionable_type', 'App\Models\Product')
+                ->where('revisionable_id', $parent->id)
+                ->where('key', 'description')
+                ->latest()
+                ->first();
+
             $description = '';
             if ($revision_parent_description != null && $parent->last_version == 1) {
                 $description = $revision_parent_description->old_value;
@@ -177,7 +190,13 @@ class CartController extends Controller
                 $description = $parent->description;
             }
 
-            $revision_parent_unit = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type', 'App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'unit')->latest()->first();
+            $revision_parent_unit = Revision::whereNull('deleted_at')
+                ->where('revisionable_type', 'App\Models\Product')
+                ->where('revisionable_id', $parent->id)
+                ->where('key', 'unit')
+                ->latest()
+                ->first();
+
             $unit = '';
             if ($revision_parent_unit != null && $parent->last_version == 1) {
                 $unit = $revision_parent_unit->old_value;
@@ -210,6 +229,7 @@ class CartController extends Controller
 
             $variations = [];
             $pricing_children = [];
+
             if ($parent->is_parent == 1) {
                 $childrens_ids = Product::where('parent_id', $parent->id)->pluck('id')->toArray();
 
@@ -238,7 +258,12 @@ class CartController extends Controller
                     ];
                     $attributes_variant = ProductAttributeValues::where('id_products', $children_id)->where('is_variant', 1)->get();
                     foreach ($attributes_variant as $attribute) {
-                        $revision_children_attribute = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type', 'App\Models\ProductAttributeValues')->where('revisionable_id', $attribute->id)->latest()->first();
+                        $revision_children_attribute = Revision::whereNull('deleted_at')
+                            ->where('revisionable_type', 'App\Models\ProductAttributeValues')
+                            ->where('revisionable_id', $attribute->id)
+                            ->latest()
+                            ->first();
+
                         if ($revision_children_attribute != null && $parent->last_version == 1) {
                             if ($attribute->id_units != null) {
                                 $unit = null;
@@ -268,13 +293,17 @@ class CartController extends Controller
                         }
                     }
 
-
                     if ($parent->last_version == 1) {
                         $images_children = UploadProducts::where('id_product', $children_id)->where('type', 'images')->get();
                         if (count($images_children) > 0) {
                             $path = [];
                             foreach ($images_children as $image) {
-                                $revision_children_image = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type', 'App\Models\UploadProducts')->where('revisionable_id', $image->id)->latest()->first();
+                                $revision_children_image = Revision::whereNull('deleted_at')
+                                    ->where('revisionable_type', 'App\Models\UploadProducts')
+                                    ->where('revisionable_id', $image->id)
+                                    ->latest()
+                                    ->first();
+
                                 if ($revision_children_image == null) {
                                     array_push($path, $image->path);
                                 }
@@ -292,7 +321,12 @@ class CartController extends Controller
                 if (count($images_parent) > 0) {
                     $path = [];
                     foreach ($images_parent as $image) {
-                        $revision_parent_image = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type', 'App\Models\UploadProducts')->where('revisionable_id', $image->id)->latest()->first();
+                        $revision_parent_image = Revision::whereNull('deleted_at')
+                            ->where('revisionable_type', 'App\Models\UploadProducts')
+                            ->where('revisionable_id', $image->id)
+                            ->latest()
+                            ->first();
+
                         if ($revision_parent_image == null) {
                             array_push($path, $image->path);
                         }
@@ -313,7 +347,12 @@ class CartController extends Controller
 
             $attributesGeneralArray = [];
             foreach ($attributes_general as $attribute_general) {
-                $revision_parent_attribute = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type', 'App\Models\ProductAttributeValues')->where('revisionable_id', $attribute_general->id)->latest()->first();
+                $revision_parent_attribute = Revision::whereNull('deleted_at')
+                    ->where('revisionable_type', 'App\Models\ProductAttributeValues')
+                    ->where('revisionable_id', $attribute_general->id)
+                    ->latest()
+                    ->first();
+
                 if ($revision_parent_attribute != null && $parent->last_version == 1) {
                     if ($attribute->id_units != null) {
                         $unit = null;
@@ -360,11 +399,8 @@ class CartController extends Controller
                 }
             }
 
-
-
             if (is_array($variations) && !empty($variations)) {
-                $lastItem  = $variations[$request->id] /* end($variations) */;
-                // dd( $variations[$request->id]) ;
+                $lastItem  = $variations[$request->id];
                 $variationId = $request->id;
 
                 if (count($lastItem['variant_pricing-from']['to']) > 0) {
@@ -385,10 +421,22 @@ class CartController extends Controller
                     $max = max($pricing['to']);
             }
 
-            $revision_parent_video_provider = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type', 'App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'video_provider')->latest()->first();
+            $revision_parent_video_provider = Revision::whereNull('deleted_at')
+                ->where('revisionable_type', 'App\Models\Product')
+                ->where('revisionable_id', $parent->id)
+                ->where('key', 'video_provider')
+                ->latest()
+                ->first();
+
             $video_provider = '';
             if ($revision_parent_video_provider != null && $parent->last_version == 1) {
-                $old_link = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type', 'App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'video_link')->latest()->first();
+                $old_link = Revision::whereNull('deleted_at')
+                    ->where('revisionable_type', 'App\Models\Product')
+                    ->where('revisionable_id', $parent->id)
+                    ->where('key', 'video_link')
+                    ->latest()
+                    ->first();
+
                 $video_provider = $revision_parent_video_provider->old_value;
                 if ($revision_parent_video_provider->old_value === "youtube") {
                     $getYoutubeVideoId = null;
@@ -433,8 +481,6 @@ class CartController extends Controller
                     if ($lastItem['variant_pricing-from']['discount']['type'][0] == "percent") {
                         $percent = $lastItem['variant_pricing-from']['discount']['percentage'][0];
                         if ($percent) {
-
-
                             // Calculate the discount amount based on the given percentage
                             $discountPercent = $percent; // Example: $percent = 5; // 5% discount
                             $discountAmount = ($variantPricing * $discountPercent) / 100;
@@ -480,8 +526,6 @@ class CartController extends Controller
                         if ($pricing['discount_type'][0] == "percent") {
                             $percent = $pricing['discount_percentage'][0];
                             if ($percent) {
-
-
                                 // Calculate the discount amount based on the given percentage
                                 $discountPercent = $percent; // Example: $percent = 5; // 5% discount
                                 $discountAmount = ($variantPricing * $discountPercent) / 100;
@@ -505,6 +549,7 @@ class CartController extends Controller
                     $totalDiscount = $pricing['from'][0] * $discountedPrice;
                 }
             }
+
             $detailedProduct = [
                 'name' => $name,
                 'brand' => $brand ? $brand->name : "",
@@ -514,7 +559,6 @@ class CartController extends Controller
                 'quantity' => $lastItem['variant_pricing-from']['from'][0] ?? $pricing['from'][0] ?? '',
                 'price' => $lastItem['variant_pricing-from']['unit_price'][0] ?? $pricing['unit_price'][0] ?? '',
                 'total' => isset($lastItem['variant_pricing-from']['from'][0]) && isset($lastItem['variant_pricing-from']['unit_price'][0]) ? $lastItem['variant_pricing-from']['from'][0] * $lastItem['variant_pricing-from']['unit_price'][0] : $total,
-
                 'general_attributes' => $attributesGeneralArray,
                 'attributes' => $attributes ?? [],
                 'from' => $pricing['from'] ?? [],
@@ -538,14 +582,14 @@ class CartController extends Controller
                 'discount_amount' => $pricing['discount_amount'],
                 'percent' => $percent ?? null,
                 'product_id' => $parent->id ?? null,
-
             ];
-
 
             $previewData['detailedProduct'] = $detailedProduct;
             session(['productPreviewData' => $previewData]);
 
-            return view('frontend.' . get_setting('homepage_select') . '.partials.addToCart', compact('product', 'previewData'));
+            $viewPath = 'frontend.' . get_setting('homepage_select') . '.partials.addToCart';
+
+            return view($viewPath, compact('product', 'previewData'));
         }
     }
 
