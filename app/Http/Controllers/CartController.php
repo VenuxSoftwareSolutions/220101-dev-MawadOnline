@@ -614,9 +614,10 @@ class CartController extends Controller
         }
 
         // Fetch existing cart items using user_id or temp_user_id
-        $carts = auth()->check()
-            ? Cart::where('user_id', $userId)->get()
-            : Cart::where('temp_user_id', $userId)->get();
+        $carts = Cart::where(
+            auth()->check() ? 'user_id' : 'temp_user_id',
+            $userId
+        )->get();
 
         $product = Product::find($request->variationId);
 
@@ -648,17 +649,18 @@ class CartController extends Controller
         }
 
         // Create or update the cart item based on user_id or temp_user_id
-        $cart = auth()->check()
-            ? Cart::firstOrNew([
-                'variation' => $str,
-                'user_id' => $userId,
-                'product_id' => $request['variationId']
-            ])
-            : Cart::firstOrNew([
-                'variation' => $str,
-                'temp_user_id' => $userId,
-                'product_id' => $request['variationId']
-            ]);
+        $data = [
+            'variation' => $str,
+            'product_id' => $request['variationId']
+        ];
+
+        if (auth()->check()) {
+            $data["user_id"] = $userId;
+        } else {
+            $data["temp_user_id"] = $userId;
+        }
+
+        $cart = Cart::firstOrNew($data);
 
         // Handle product-specific validations
         if ($cart->exists && $product->digital == 0) {
@@ -670,6 +672,7 @@ class CartController extends Controller
                     'nav_cart_view' => view('frontend.' . get_setting('homepage_select') . '.partials.cart')->render(),
                 ];
             }
+
             if ($product_stock < $cart->quantity + $request['quantity']) {
                 return [
                     'status' => 0,
@@ -682,7 +685,6 @@ class CartController extends Controller
         }
 
         // Calculate the price and tax
-        // $price = CartUtility::get_price_mawad($dataProduct, $request->variationId, $request->quantity);
         $price = CartUtility::priceProduct($request->variationId, $request->quantity);
 
         $tax = 0;
@@ -691,9 +693,10 @@ class CartController extends Controller
         CartUtility::save_cart_data($cart, $product, $price, $tax, $quantity);
 
         // Fetch updated cart items
-        $carts = auth()->check()
-            ? Cart::where('user_id', $userId)->get()
-            : Cart::where('temp_user_id', $userId)->get();
+        $carts = Cart::where(
+            auth()->check() ? 'user_id' : 'temp_user_id',
+            $userId
+        )->get();
 
         return [
             'status' => 1,
