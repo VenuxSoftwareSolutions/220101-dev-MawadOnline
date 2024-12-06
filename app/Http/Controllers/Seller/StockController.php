@@ -95,7 +95,6 @@ class StockController extends Controller
      */
     public function saveRecord(SaveRecordRequest $request)
     {
-
         $seller_id = Auth::user()->owner_id;
 
         // Extract and rename specific data from the request
