@@ -10424,11 +10424,27 @@ div.footable-loader > span.fooicon:after {
     border-radius:15px !important;
 }
 /*social icon colored*/
+ul.social {
+    padding: 0;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+    gap: 15px;
+}
+
+ul.social li {
+    display: inline-block;
+}
+
+
+
+
 ul.social a {
     display: inline-block;
     width: 36px;
     height: 36px;
-    line-height: 20px;
+    line-height: 42px;
     text-align: center;
     font-size: 18px;
 }
