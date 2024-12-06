@@ -8,7 +8,7 @@ return
         'keywords'              => '',
         'creator'               => 'Laravel Pdf',
         'display_mode'          => 'fullpage',
-        'tempDir'               => base_path('temp/'),
+        'tempDir'               => base_path('storage/app/mpdf'),
         'font_path' => base_path('public/assets/fonts/'),
         'font_data' => [
             'roboto' => [

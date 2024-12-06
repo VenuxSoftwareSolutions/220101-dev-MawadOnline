@@ -18,6 +18,9 @@ use PayPalCheckoutSdk\Orders\OrdersCreateRequest;
 use PayPalCheckoutSdk\Orders\OrdersCaptureRequest;
 use Session;
 use Redirect;
+use Log;
+use App\Models\Currency;
+use Exception;
 
 class PaypalController extends Controller
 {
@@ -58,7 +61,7 @@ class PaypalController extends Controller
                 "reference_id" => rand(000000, 999999),
                 "amount" => [
                     "value" => number_format($amount, 2, '.', ''),
-                    "currency_code" => \App\Models\Currency::findOrFail(get_setting('system_default_currency'))->code
+                    "currency_code" => Currency::findOrFail(get_setting('system_default_currency'))->code
                 ]
             ]],
             "application_context" => [
@@ -71,9 +74,11 @@ class PaypalController extends Controller
             // Call API with your client and get a response for your call
             $response = $client->execute($request);
             // If call returns body in response, you can get the deserialized version from the result attribute of the response
+
             return Redirect::to($response->result->links[1]->href);
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             flash(translate('Something was wrong'))->error();
+            Log::error("Error while paying with paypal, with message: {$ex->getMessage()}");
             return redirect()->route('home');
         }
     }

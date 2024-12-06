@@ -1395,16 +1395,15 @@ if (!function_exists('isUnique')) {
 if (!function_exists('get_setting')) {
     function get_setting($key, $default = null, $lang = false)
     {
-        // $settings = Cache::remember('business_settings', 86400, function () {
-        //     return BusinessSetting::all();
-        // });
         $settings = BusinessSetting::all();
+
         if ($lang == false) {
             $setting = $settings->where('type', $key)->first();
         } else {
             $setting = $settings->where('type', $key)->where('lang', $lang)->first();
             $setting = !$setting ? $settings->where('type', $key)->first() : $setting;
         }
+
         return $setting == null ? $default : $setting->value;
     }
 }
@@ -2349,15 +2348,23 @@ if (!function_exists('get_shop_by_user_id')) {
 if (!function_exists('get_coupons')) {
     function get_coupons($user_id = null, $paginate = null)
     {
-        $coupon_query = Coupon::query();
-        $coupon_query = $coupon_query->where('start_date', '<=', strtotime(date('d-m-Y')))->where('end_date', '>=', strtotime(date('d-m-Y')));
-        if ($user_id) {
-            $coupon_query = $coupon_query->where('user_id', $user_id);
+        try {
+            $coupon_query = Coupon::query();
+            $coupon_query = $coupon_query->where('start_date', '<=', strtotime(date('d-m-Y')))->where('end_date', '>=', strtotime(date('d-m-Y')));
+
+            if ($user_id) {
+                $coupon_query = $coupon_query->where('user_id', $user_id);
+            }
+
+            if ($paginate) {
+                return $coupon_query->paginate($paginate);
+            }
+
+            return $coupon_query->get();
+        } catch(Exception $e) {
+            Log::error("Error while getting coupon, with message: {$e->getMessage()}");
+            return [];
         }
-        if ($paginate) {
-            return $coupon_query->paginate($paginate);
-        }
-        return $coupon_query->get();
     }
 }
 
@@ -2706,9 +2713,25 @@ if (!function_exists('generateUniqueSlug')) {
                 'aud' => 'https://appleid.apple.com',
                 'sub' => env('APPLE_CLIENT_ID'),
             ];
-    
+
             return JWT::encode($payload, $key, 'ES256', env('APPLE_KEY_ID'));
         }
     }
-    
+
+}
+
+if (function_exists('formatChargeBasedOnChargeType') === false) {
+    function formatChargeBasedOnChargeType(object $shippingOptions): string {
+        if ($shippingOptions->charge_per_unit_shipping != null) {
+            return $shippingOptions->charge_per_unit_shipping . " " . str()->ucfirst($shippingOptions->shipping_charge);
+        } else {
+            return $shippingOptions->flat_rate_shipping . " " . str()->ucfirst($shippingOptions->shipping_charge);
+        }
+    }
+}
+
+if(function_exists("getProductVolumetricWeight") === false) {
+    function getProductVolumetricWeight($length, $height, $width) {
+        return ($length * $height * $width) / 5000;
+    }
 }

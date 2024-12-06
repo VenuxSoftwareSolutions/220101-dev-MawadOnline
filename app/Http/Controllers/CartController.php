@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use Illuminate\Http\Request;
 use App\Models\Product;
-use App\Models\Category;
+use App\Models\Revision;
 use App\Models\Cart;
 use App\Models\PricingConfiguration;
 use App\Models\ProductAttributeValues;
@@ -16,10 +16,10 @@ use App\Models\Wishlist;
 use Auth;
 use App\Utility\CartUtility;
 use Session;
-use Cookie;
 use DateTime;
 use DB;
 use Str;
+use App\Models\User;
 
 class CartController extends Controller
 {
@@ -27,6 +27,7 @@ class CartController extends Controller
     {
         if (auth()->user() != null) {
             $user_id = Auth::user()->id;
+
             if ($request->session()->get('temp_user_id')) {
                 Cart::where('temp_user_id', $request->session()->get('temp_user_id'))
                     ->update(
@@ -38,30 +39,70 @@ class CartController extends Controller
 
                 Session::forget('temp_user_id');
             }
+
             $carts = Cart::where('user_id', $user_id)->get();
         } else {
             $temp_user_id = $request->session()->get('temp_user_id');
-            // $carts = Cart::where('temp_user_id', $temp_user_id)->get();
             $carts = ($temp_user_id != null) ? Cart::where('temp_user_id', $temp_user_id)->get() : [];
         }
 
+        $total = 0;
 
-        foreach ($carts as $item) {
+        $data = [];
+
+        foreach ($carts as $key => $item) {
             $product_stock = StockSummary::where('variant_id', $item['product_id'])->sum('current_total_quantity');
+
+            $product = get_single_product($item['product_id']);
+
+            $total = $total + cart_product_price($item, $product, false) * $item['quantity'];
+            $product_name_with_choice = str()->ucfirst($product->getTranslation('name'));
+            $stockStatus = 'In Stock';
+            $stockAlert = '';
+            $outOfStockItems = [];
+
+            $vendor_name = User::find($product->user_id)->shop->name;
+
+            if ($item['variation'] != null) {
+                $product_name_with_choice = sprintf(
+                    "%s - %s: %s, %s",
+                    str()->ucfirst(
+                        $product->getTranslation('name')
+                    ),
+                    __("Vendor"),
+                    $vendor_name,
+                    $item['variation']
+                );
+            }
+
+            if ($product_stock <= 0) {
+                $stockStatus = translate('Out of Stock');
+                $outOfStockItems[] = $item['id'];
+            } elseif ($product_stock <= LOW_STOCK_THRESHOLD) {
+                $stockAlert = translate('Running Low');
+            }
+
+            $data[$key] = [
+                "product" => $product,
+                "product_stock" => $product_stock,
+                "total" => $total,
+                "product_name_with_choice" => $product_name_with_choice,
+                "stockStatus" =>$stockStatus,
+                "outOfStockItems" => $outOfStockItems,
+                "stockAlert" => $stockAlert
+            ];
 
             if ($product_stock < $item->quantity) {
                 if (auth()->user() != null) {
-                    // Check if the product is already in the wishlist
                     $existingWishlistItem = Wishlist::where('user_id', $user_id)
                         ->where('product_id', $item->product_id)
                         ->first();
+
                     // Move to Wishlist if not already in the wishlist
                     if ($existingWishlistItem === null) {
-                        // Move to Wishlist
                         Wishlist::create([
                             'user_id' => $user_id,
                             'product_id' => $item->product_id,
-
                         ]);
                     }
                 }
@@ -70,8 +111,9 @@ class CartController extends Controller
             }
         }
 
-        return view('frontend.view_cart', compact('carts'));
+        return view('frontend.view_cart', compact('carts', 'data'));
     }
+
     public function getYoutubeVideoId($videoLink)
     {
         // Parse the YouTube video URL to extract the video ID
@@ -93,41 +135,54 @@ class CartController extends Controller
         }
         return $videoId;
     }
-    // public function showCartModal(Request $request)
-    // {
-    //     $product = Product::find($request->id);
-    //     return view('frontend.'.get_setting('homepage_select').'.partials.addToCart', compact('product'));
-    // }
+
     public function showCartModal(Request $request)
     {
-
         $product = Product::find($request->id);
-        $parent  = Product::where('id', $request->id)/* ->where('approved', 1) */->first();
+        $parent  = Product::where('id', $request->id)->first();
 
         if ($parent != null) {
-
             if ($parent->is_parent == 0) {
                 if ($parent->parent_id != 0) {
                     $parent = Product::find($parent->parent_id);
                 }
             }
 
-            $revision_parent_name = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type', 'App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'name')->latest()->first();
+            $revision_parent_name = Revision::whereNull('deleted_at')
+                ->where('revisionable_type', 'App\Models\Product')
+                ->where('revisionable_id', $parent->id)
+                ->where('key', 'name')
+                ->latest()
+                ->first();
+
             $name = '';
+
             if ($revision_parent_name != null && $parent->last_version == 1) {
                 $name = $revision_parent_name->old_value;
             } else {
                 $name = $parent->name;
             }
 
-            $revision_parent_brand = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type', 'App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'brand_id')->latest()->first();
+            $revision_parent_brand = Revision::whereNull('deleted_at')
+                ->where('revisionable_type', 'App\Models\Product')
+                ->where('revisionable_id', $parent->id)
+                ->where('key', 'brand_id')
+                ->latest()
+                ->first();
+
             if ($revision_parent_brand != null && $parent->last_version == 1) {
                 $brand_id = $revision_parent_brand->old_value;
             } else {
                 $brand_id = $parent->brand_id;
             }
 
-            $revision_parent_description = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type', 'App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'description')->latest()->first();
+            $revision_parent_description = Revision::whereNull('deleted_at')
+                ->where('revisionable_type', 'App\Models\Product')
+                ->where('revisionable_id', $parent->id)
+                ->where('key', 'description')
+                ->latest()
+                ->first();
+
             $description = '';
             if ($revision_parent_description != null && $parent->last_version == 1) {
                 $description = $revision_parent_description->old_value;
@@ -135,7 +190,13 @@ class CartController extends Controller
                 $description = $parent->description;
             }
 
-            $revision_parent_unit = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type', 'App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'unit')->latest()->first();
+            $revision_parent_unit = Revision::whereNull('deleted_at')
+                ->where('revisionable_type', 'App\Models\Product')
+                ->where('revisionable_id', $parent->id)
+                ->where('key', 'unit')
+                ->latest()
+                ->first();
+
             $unit = '';
             if ($revision_parent_unit != null && $parent->last_version == 1) {
                 $unit = $revision_parent_unit->old_value;
@@ -168,6 +229,7 @@ class CartController extends Controller
 
             $variations = [];
             $pricing_children = [];
+
             if ($parent->is_parent == 1) {
                 $childrens_ids = Product::where('parent_id', $parent->id)->pluck('id')->toArray();
 
@@ -196,7 +258,12 @@ class CartController extends Controller
                     ];
                     $attributes_variant = ProductAttributeValues::where('id_products', $children_id)->where('is_variant', 1)->get();
                     foreach ($attributes_variant as $attribute) {
-                        $revision_children_attribute = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type', 'App\Models\ProductAttributeValues')->where('revisionable_id', $attribute->id)->latest()->first();
+                        $revision_children_attribute = Revision::whereNull('deleted_at')
+                            ->where('revisionable_type', 'App\Models\ProductAttributeValues')
+                            ->where('revisionable_id', $attribute->id)
+                            ->latest()
+                            ->first();
+
                         if ($revision_children_attribute != null && $parent->last_version == 1) {
                             if ($attribute->id_units != null) {
                                 $unit = null;
@@ -226,13 +293,17 @@ class CartController extends Controller
                         }
                     }
 
-
                     if ($parent->last_version == 1) {
                         $images_children = UploadProducts::where('id_product', $children_id)->where('type', 'images')->get();
                         if (count($images_children) > 0) {
                             $path = [];
                             foreach ($images_children as $image) {
-                                $revision_children_image = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type', 'App\Models\UploadProducts')->where('revisionable_id', $image->id)->latest()->first();
+                                $revision_children_image = Revision::whereNull('deleted_at')
+                                    ->where('revisionable_type', 'App\Models\UploadProducts')
+                                    ->where('revisionable_id', $image->id)
+                                    ->latest()
+                                    ->first();
+
                                 if ($revision_children_image == null) {
                                     array_push($path, $image->path);
                                 }
@@ -250,7 +321,12 @@ class CartController extends Controller
                 if (count($images_parent) > 0) {
                     $path = [];
                     foreach ($images_parent as $image) {
-                        $revision_parent_image = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type', 'App\Models\UploadProducts')->where('revisionable_id', $image->id)->latest()->first();
+                        $revision_parent_image = Revision::whereNull('deleted_at')
+                            ->where('revisionable_type', 'App\Models\UploadProducts')
+                            ->where('revisionable_id', $image->id)
+                            ->latest()
+                            ->first();
+
                         if ($revision_parent_image == null) {
                             array_push($path, $image->path);
                         }
@@ -271,7 +347,12 @@ class CartController extends Controller
 
             $attributesGeneralArray = [];
             foreach ($attributes_general as $attribute_general) {
-                $revision_parent_attribute = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type', 'App\Models\ProductAttributeValues')->where('revisionable_id', $attribute_general->id)->latest()->first();
+                $revision_parent_attribute = Revision::whereNull('deleted_at')
+                    ->where('revisionable_type', 'App\Models\ProductAttributeValues')
+                    ->where('revisionable_id', $attribute_general->id)
+                    ->latest()
+                    ->first();
+
                 if ($revision_parent_attribute != null && $parent->last_version == 1) {
                     if ($attribute->id_units != null) {
                         $unit = null;
@@ -318,11 +399,8 @@ class CartController extends Controller
                 }
             }
 
-
-
             if (is_array($variations) && !empty($variations)) {
-                $lastItem  = $variations[$request->id] /* end($variations) */;
-                // dd( $variations[$request->id]) ;
+                $lastItem  = $variations[$request->id];
                 $variationId = $request->id;
 
                 if (count($lastItem['variant_pricing-from']['to']) > 0) {
@@ -343,10 +421,22 @@ class CartController extends Controller
                     $max = max($pricing['to']);
             }
 
-            $revision_parent_video_provider = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type', 'App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'video_provider')->latest()->first();
+            $revision_parent_video_provider = Revision::whereNull('deleted_at')
+                ->where('revisionable_type', 'App\Models\Product')
+                ->where('revisionable_id', $parent->id)
+                ->where('key', 'video_provider')
+                ->latest()
+                ->first();
+
             $video_provider = '';
             if ($revision_parent_video_provider != null && $parent->last_version == 1) {
-                $old_link = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_type', 'App\Models\Product')->where('revisionable_id', $parent->id)->where('key', 'video_link')->latest()->first();
+                $old_link = Revision::whereNull('deleted_at')
+                    ->where('revisionable_type', 'App\Models\Product')
+                    ->where('revisionable_id', $parent->id)
+                    ->where('key', 'video_link')
+                    ->latest()
+                    ->first();
+
                 $video_provider = $revision_parent_video_provider->old_value;
                 if ($revision_parent_video_provider->old_value === "youtube") {
                     $getYoutubeVideoId = null;
@@ -391,8 +481,6 @@ class CartController extends Controller
                     if ($lastItem['variant_pricing-from']['discount']['type'][0] == "percent") {
                         $percent = $lastItem['variant_pricing-from']['discount']['percentage'][0];
                         if ($percent) {
-
-
                             // Calculate the discount amount based on the given percentage
                             $discountPercent = $percent; // Example: $percent = 5; // 5% discount
                             $discountAmount = ($variantPricing * $discountPercent) / 100;
@@ -438,8 +526,6 @@ class CartController extends Controller
                         if ($pricing['discount_type'][0] == "percent") {
                             $percent = $pricing['discount_percentage'][0];
                             if ($percent) {
-
-
                                 // Calculate the discount amount based on the given percentage
                                 $discountPercent = $percent; // Example: $percent = 5; // 5% discount
                                 $discountAmount = ($variantPricing * $discountPercent) / 100;
@@ -463,6 +549,7 @@ class CartController extends Controller
                     $totalDiscount = $pricing['from'][0] * $discountedPrice;
                 }
             }
+
             $detailedProduct = [
                 'name' => $name,
                 'brand' => $brand ? $brand->name : "",
@@ -472,7 +559,6 @@ class CartController extends Controller
                 'quantity' => $lastItem['variant_pricing-from']['from'][0] ?? $pricing['from'][0] ?? '',
                 'price' => $lastItem['variant_pricing-from']['unit_price'][0] ?? $pricing['unit_price'][0] ?? '',
                 'total' => isset($lastItem['variant_pricing-from']['from'][0]) && isset($lastItem['variant_pricing-from']['unit_price'][0]) ? $lastItem['variant_pricing-from']['from'][0] * $lastItem['variant_pricing-from']['unit_price'][0] : $total,
-
                 'general_attributes' => $attributesGeneralArray,
                 'attributes' => $attributes ?? [],
                 'from' => $pricing['from'] ?? [],
@@ -496,14 +582,14 @@ class CartController extends Controller
                 'discount_amount' => $pricing['discount_amount'],
                 'percent' => $percent ?? null,
                 'product_id' => $parent->id ?? null,
-
             ];
-
 
             $previewData['detailedProduct'] = $detailedProduct;
             session(['productPreviewData' => $previewData]);
 
-            return view('frontend.' . get_setting('homepage_select') . '.partials.addToCart', compact('product', 'previewData'));
+            $viewPath = 'frontend.' . get_setting('homepage_select') . '.partials.addToCart';
+
+            return view($viewPath, compact('product', 'previewData'));
         }
     }
 
@@ -512,155 +598,9 @@ class CartController extends Controller
         $product = Product::find($request->id);
         return view('auction.frontend.addToCartAuction', compact('product'));
     }
-    // public function addToCart(Request $request)
-    // {
-    //     $carts = Cart::where('user_id', auth()->user()->id)->get();
-    //     $check_auction_in_cart = CartUtility::check_auction_in_cart($carts);
-    //     $product = Product::find($request->id);
-    //     $carts = array();
 
-    //     if($check_auction_in_cart && $product->auction_product == 0) {
-    //         return array(
-    //             'status' => 0,
-    //             'cart_count' => count($carts),
-    //             'modal_view' => view('frontend.'.get_setting('homepage_select').'.partials.removeAuctionProductFromCart')->render(),
-    //             'nav_cart_view' => view('frontend.'.get_setting('homepage_select').'.partials.cart')->render(),
-    //         );
-    //     }
-
-    //     $quantity = $request['quantity'];
-
-    //     if ($quantity < $product->min_qty) {
-    //         return array(
-    //             'status' => 0,
-    //             'cart_count' => count($carts),
-    //             'modal_view' => view('frontend.'.get_setting('homepage_select').'.partials.minQtyNotSatisfied', ['min_qty' => $product->min_qty])->render(),
-    //             'nav_cart_view' => view('frontend.'.get_setting('homepage_select').'.partials.cart')->render(),
-    //         );
-    //     }
-
-    //     //check the color enabled or disabled for the product
-    //     $str = CartUtility::create_cart_variant($product, $request->all());
-    //     $product_stock = $product->stocks->where('variant', $str)->first();
-
-    //     $cart = Cart::firstOrNew([
-    //         'variation' => $str,
-    //         'user_id' => auth()->user()->id,
-    //         'product_id' => $request['id']
-    //     ]);
-
-    //     if ($cart->exists && $product->digital == 0) {
-    //         if ($product->auction_product == 1 && ($cart->product_id == $product->id)) {
-    //             return array(
-    //                 'status' => 0,
-    //                 'cart_count' => count($carts),
-    //                 'modal_view' => view('frontend.'.get_setting('homepage_select').'.partials.auctionProductAlredayAddedCart')->render(),
-    //                 'nav_cart_view' => view('frontend.'.get_setting('homepage_select').'.partials.cart')->render(),
-    //             );
-    //         }
-    //         if ($product_stock->qty < $cart->quantity + $request['quantity']) {
-    //             return array(
-    //                 'status' => 0,
-    //                 'cart_count' => count($carts),
-    //                 'modal_view' => view('frontend.'.get_setting('homepage_select').'.partials.outOfStockCart')->render(),
-    //                 'nav_cart_view' => view('frontend.'.get_setting('homepage_select').'.partials.cart')->render(),
-    //             );
-    //         }
-    //         $quantity = $cart->quantity + $request['quantity'];
-    //     }
-
-    //     $price = CartUtility::get_price($product, $product_stock, $request->quantity);
-    //     $tax = CartUtility::tax_calculation($product, $price);
-
-    //     CartUtility::save_cart_data($cart, $product, $price, $tax, $quantity);
-
-    //     $carts = Cart::where('user_id', auth()->user()->id)->get();
-    //     return array(
-    //         'status' => 1,
-    //         'cart_count' => count($carts),
-    //         'modal_view' => view('frontend.'.get_setting('homepage_select').'.partials.addedToCart', compact('product', 'cart'))->render(),
-    //         'nav_cart_view' => view('frontend.'.get_setting('homepage_select').'.partials.cart')->render(),
-    //     );
-    // }
-
-    // public function addToCart(Request $request)
-    // {
-    //     $dataProduct=$request->session()->get('productPreviewData', null) ;
-
-    //     $carts = Cart::where('user_id', auth()->user()->id)->get();
-    //     $check_auction_in_cart = CartUtility::check_auction_in_cart($carts);
-    //     $product = Product::find($request->variationId);
-    //     $carts = array();
-
-    //     if($check_auction_in_cart && $product->auction_product == 0) {
-    //         return array(
-    //             'status' => 0,
-    //             'cart_count' => count($carts),
-    //             'modal_view' => view('frontend.'.get_setting('homepage_select').'.partials.removeAuctionProductFromCart')->render(),
-    //             'nav_cart_view' => view('frontend.'.get_setting('homepage_select').'.partials.cart')->render(),
-    //         );
-    //     }
-
-    //     $quantity = $request['quantity'];
-    //     $min_from_value = PricingConfiguration::where('id_products', $request['variationId'])->min('from');
-
-    //     if ($quantity < $min_from_value) {
-    //         return array(
-    //             'status' => 0,
-    //             'cart_count' => count($carts),
-    //             'modal_view' => view('frontend.'.get_setting('homepage_select').'.partials.minQtyNotSatisfied', ['min_qty' => $min_from_value])->render(),
-    //             'nav_cart_view' => view('frontend.'.get_setting('homepage_select').'.partials.cart')->render(),
-    //         );
-    //     }
-
-    //     //check the color enabled or disabled for the product
-    //     $str = $product->productVariantDetails();
-    //     $product_stock = StockSummary::where('variant_id',$request->variationId)->sum('current_total_quantity');
-
-    //     $cart = Cart::firstOrNew([
-    //         'variation' => $str,
-    //         'user_id' => auth()->user()->id,
-    //         'product_id' => $request['variationId']
-    //     ]);
-
-    //     if ($cart->exists && $product->digital == 0) {
-    //         if ($product->auction_product == 1 && ($cart->product_id == $product->id)) {
-    //             return array(
-    //                 'status' => 0,
-    //                 'cart_count' => count($carts),
-    //                 'modal_view' => view('frontend.'.get_setting('homepage_select').'.partials.auctionProductAlredayAddedCart')->render(),
-    //                 'nav_cart_view' => view('frontend.'.get_setting('homepage_select').'.partials.cart')->render(),
-    //             );
-    //         }
-    //         if ($product_stock < $cart->quantity + $request['quantity']) {
-
-    //             return array(
-    //                 'status' => 0,
-    //                 'cart_count' => count($carts),
-    //                 'modal_view' => view('frontend.'.get_setting('homepage_select').'.partials.outOfStockCart')->render(),
-    //                 'nav_cart_view' => view('frontend.'.get_setting('homepage_select').'.partials.cart')->render(),
-    //             );
-    //         }
-    //         $quantity = $cart->quantity + $request['quantity'];
-    //     }
-    //     $price = CartUtility::get_price_mawad($dataProduct, $request->variationId , $request->quantity);
-
-    //     // $price = CartUtility::get_price($product, $product_stock, $request->quantity);
-    //     // $tax = CartUtility::tax_calculation($product, $price);
-    //     $tax = 0 ;
-    //     CartUtility::save_cart_data($cart, $product, $price, $tax, $quantity);
-
-    //     $carts = Cart::where('user_id', auth()->user()->id)->get();
-    //     return array(
-    //         'status' => 1,
-    //         'cart_count' => count($carts),
-    //         'modal_view' => view('frontend.'.get_setting('homepage_select').'.partials.addedToCart', compact('product', 'cart'))->render(),
-    //         'nav_cart_view' => view('frontend.'.get_setting('homepage_select').'.partials.cart')->render(),
-    //     );
-    // }
     public function addToCart(Request $request)
     {
-
         // Get product preview data from session
         $dataProduct = $request->session()->get('productPreviewData', null);
 
@@ -674,9 +614,10 @@ class CartController extends Controller
         }
 
         // Fetch existing cart items using user_id or temp_user_id
-        $carts = auth()->check()
-            ? Cart::where('user_id', $userId)->get()
-            : Cart::where('temp_user_id', $userId)->get();
+        $carts = Cart::where(
+            auth()->check() ? 'user_id' : 'temp_user_id',
+            $userId
+        )->get();
 
         $product = Product::find($request->variationId);
 
@@ -706,18 +647,20 @@ class CartController extends Controller
                 'nav_cart_view' => view('frontend.' . get_setting('homepage_select') . '.partials.cart')->render(),
             );
         }
+
         // Create or update the cart item based on user_id or temp_user_id
-        $cart = auth()->check()
-            ? Cart::firstOrNew([
-                'variation' => $str,
-                'user_id' => $userId,
-                'product_id' => $request['variationId']
-            ])
-            : Cart::firstOrNew([
-                'variation' => $str,
-                'temp_user_id' => $userId,
-                'product_id' => $request['variationId']
-            ]);
+        $data = [
+            'variation' => $str,
+            'product_id' => $request['variationId']
+        ];
+
+        if (auth()->check()) {
+            $data["user_id"] = $userId;
+        } else {
+            $data["temp_user_id"] = $userId;
+        }
+
+        $cart = Cart::firstOrNew($data);
 
         // Handle product-specific validations
         if ($cart->exists && $product->digital == 0) {
@@ -729,6 +672,7 @@ class CartController extends Controller
                     'nav_cart_view' => view('frontend.' . get_setting('homepage_select') . '.partials.cart')->render(),
                 ];
             }
+
             if ($product_stock < $cart->quantity + $request['quantity']) {
                 return [
                     'status' => 0,
@@ -741,7 +685,6 @@ class CartController extends Controller
         }
 
         // Calculate the price and tax
-        // $price = CartUtility::get_price_mawad($dataProduct, $request->variationId, $request->quantity);
         $price = CartUtility::priceProduct($request->variationId, $request->quantity);
 
         $tax = 0;
@@ -750,9 +693,14 @@ class CartController extends Controller
         CartUtility::save_cart_data($cart, $product, $price, $tax, $quantity);
 
         // Fetch updated cart items
-        $carts = auth()->check()
-            ? Cart::where('user_id', $userId)->get()
-            : Cart::where('temp_user_id', $userId)->get();
+        $carts = Cart::where(
+            auth()->check() ? 'user_id' : 'temp_user_id',
+            $userId
+        )->get();
+
+        $carts->each(function($cart) {
+            $cart->user->wishlists->each(fn($wishlist) => $wishlist->delete());
+        });
 
         return [
             'status' => 1,
@@ -762,21 +710,76 @@ class CartController extends Controller
         ];
     }
 
-    //removes from Cart
     public function removeFromCart(Request $request)
     {
         Cart::destroy($request->id);
+
         if (auth()->user() != null) {
-            $user_id = Auth::user()->id;
-            $carts = Cart::where('user_id', $user_id)->get();
+            $carts = Cart::where('user_id', auth()->user()->id)->get();
         } else {
-            $temp_user_id = $request->session()->get('temp_user_id');
-            $carts = Cart::where('temp_user_id', $temp_user_id)->get();
+            $carts = Cart::where('temp_user_id', $request->session()->get('temp_user_id'))->get();
+        }
+
+        $total = 0;
+
+        $data = [];
+
+        foreach ($carts as $key => $item) {
+            $product_stock = StockSummary::where('variant_id', $item['product_id'])->sum('current_total_quantity');
+
+            $product = get_single_product($item['product_id']);
+
+            $total = $total + cart_product_price($item, $product, false) * $item['quantity'];
+            $product_name_with_choice = str()->ucfirst($product->getTranslation('name'));
+            $stockStatus = 'In Stock';
+            $stockAlert = '';
+            $outOfStockItems = [];
+
+            if ($item['variation'] != null) {
+                $product_name_with_choice = str()->ucfirst(
+                    $product->getTranslation('name')
+                ) . ' - ' . $item['variation'];
+            }
+
+            if ($product_stock <= 0) {
+                $stockStatus = translate('Out of Stock');
+                $outOfStockItems[] = $item['id'];
+            } elseif ($product_stock <= LOW_STOCK_THRESHOLD) {
+                $stockAlert = translate('Running Low');
+            }
+
+            $data[$key] = [
+                "product" => $product,
+                "product_stock" => $product_stock,
+                "total" => $total,
+                "product_name_with_choice" => $product_name_with_choice,
+                "stockStatus" =>$stockStatus,
+                "outOfStockItems" => $outOfStockItems,
+                "stockAlert" => $stockAlert
+            ];
+
+            if ($product_stock < $item->quantity) {
+                if (auth()->user() != null) {
+                    $existingWishlistItem = Wishlist::where('user_id', auth()->user()->id)
+                        ->where('product_id', $item->product_id)
+                        ->first();
+
+                    // Move to Wishlist if not already in the wishlist
+                    if ($existingWishlistItem === null) {
+                        Wishlist::create([
+                            'user_id' => auth()->user()->id,
+                            'product_id' => $item->product_id,
+                        ]);
+                    }
+                }
+                // Remove from Cart
+                $item->delete();
+            }
         }
 
         return array(
             'cart_count' => count($carts),
-            'cart_view' => view('frontend.' . get_setting('homepage_select') . '.partials.cart_details', compact('carts'))->render(),
+            'cart_view' => view('frontend.' . get_setting('homepage_select') . '.partials.cart_details', compact('carts', 'data'))->render(),
             'nav_cart_view' => view('frontend.' . get_setting('homepage_select') . '.partials.cart')->render(),
         );
     }
@@ -849,43 +852,7 @@ class CartController extends Controller
 
         if ($cartItem['id'] == $request->id) {
             $product = Product::find($cartItem['product_id']);
-            // $product_stock = $product->stocks->where('variant', $cartItem['variation'])->first();
-            // $quantity = $product_stock->qty;
-            // $price = $product_stock->price;
             $price = CartUtility::priceProduct($product->id, $request->quantity);
-
-            //discount calculation
-            // $discount_applicable = false;
-
-            // if ($product->discount_start_date == null) {
-            //     $discount_applicable = true;
-            // } elseif (
-            //     strtotime(date('d-m-Y H:i:s')) >= $product->discount_start_date &&
-            //     strtotime(date('d-m-Y H:i:s')) <= $product->discount_end_date
-            // ) {
-            //     $discount_applicable = true;
-            // }
-
-            // if ($discount_applicable) {
-            //     if ($product->discount_type == 'percent') {
-            //         $price -= ($price * $product->discount) / 100;
-            //     } elseif ($product->discount_type == 'amount') {
-            //         $price -= $product->discount;
-            //     }
-            // }
-
-            // if ($quantity >= $request->quantity) {
-            //     if ($request->quantity >= $product->min_qty) {
-            //         $cartItem['quantity'] = $request->quantity;
-            //     }
-            // }
-
-            // if ($product->wholesale_product) {
-            //     $wholesalePrice = $product_stock->wholesalePrices->where('min_qty', '<=', $request->quantity)->where('max_qty', '>=', $request->quantity)->first();
-            //     if ($wholesalePrice) {
-            //         $price = $wholesalePrice->price;
-            //     }
-            // }
 
             $cartItem['price'] = $price;
             $cartItem['quantity'] = $request->quantity;
@@ -900,9 +867,65 @@ class CartController extends Controller
             $carts = Cart::where('temp_user_id', $temp_user_id)->get();
         }
 
+        $total = 0;
+
+        $data = [];
+
+        foreach ($carts as $key => $item) {
+            $product_stock = StockSummary::where('variant_id', $item['product_id'])->sum('current_total_quantity');
+
+            $product = get_single_product($item['product_id']);
+
+            $total = $total + cart_product_price($item, $product, false) * $item['quantity'];
+            $product_name_with_choice = str()->ucfirst($product->getTranslation('name'));
+            $stockStatus = 'In Stock';
+            $stockAlert = '';
+            $outOfStockItems = [];
+
+            if ($item['variation'] != null) {
+                $product_name_with_choice = str()->ucfirst(
+                    $product->getTranslation('name')
+                ) . ' - ' . $item['variation'];
+            }
+
+            if ($product_stock <= 0) {
+                $stockStatus = translate('Out of Stock');
+                $outOfStockItems[] = $item['id'];
+            } elseif ($product_stock <= LOW_STOCK_THRESHOLD) {
+                $stockAlert = translate('Running Low');
+            }
+
+            $data[$key] = [
+                "product" => $product,
+                "product_stock" => $product_stock,
+                "total" => $total,
+                "product_name_with_choice" => $product_name_with_choice,
+                "stockStatus" =>$stockStatus,
+                "outOfStockItems" => $outOfStockItems,
+                "stockAlert" => $stockAlert
+            ];
+
+            if ($product_stock < $item->quantity) {
+                if (auth()->user() != null) {
+                    $existingWishlistItem = Wishlist::where('user_id', auth()->user()->id)
+                        ->where('product_id', $item->product_id)
+                        ->first();
+
+                    // Move to Wishlist if not already in the wishlist
+                    if ($existingWishlistItem === null) {
+                        Wishlist::create([
+                            'user_id' => auth()->user()->id,
+                            'product_id' => $item->product_id,
+                        ]);
+                    }
+                }
+                // Remove from Cart
+                $item->delete();
+            }
+        }
         return array(
             'cart_count' => count($carts),
-            'cart_view' => view('frontend.' . get_setting('homepage_select') . '.partials.cart_details', compact('carts'))->render(),
+            'cart_view' => view('frontend.' . get_setting('homepage_select') . '.partials.cart_details', compact('carts', 'data'))->render(),
             'nav_cart_view' => view('frontend.' . get_setting('homepage_select') . '.partials.cart')->render(),
         );
     }

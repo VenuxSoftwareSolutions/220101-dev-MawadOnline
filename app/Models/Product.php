@@ -7,6 +7,7 @@ use App\Traits\EnhancedRevisionableTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
+use Exception;
 
 class Product extends Model
 {
@@ -116,7 +117,7 @@ class Product extends Model
         'max_third_party_sample',
         'product_catalog_id',
     ];
-    
+
     protected $dontKeepRevisionOf = [
         'is_draft',
         'approved',
@@ -161,6 +162,14 @@ class Product extends Model
         'product_catalog_id',
     ];
 
+    protected $guarded = ['choice_attributes'];
+
+    protected $with = [
+        'productAttributeValues', 'stockDetails',
+        'shippingRelation', 'product_translations',
+        'taxes', 'thumbnail', 'stockSummaries',
+    ];
+
     // Ensure cascading deletes at the model level
     protected static function booted()
     {
@@ -173,6 +182,11 @@ class Product extends Model
     public function stockSummaries()
     {
         return $this->hasMany(StockSummary::class, 'variant_id', 'id');
+    }
+
+    public function shippingRelation()
+    {
+        return $this->hasMany(Shipping::class);
     }
 
     public function getTotalQuantity()
@@ -239,6 +253,7 @@ class Product extends Model
     {
         return $this->hasMany(Review::class)->where('status', 1);
     }
+
     public function discounts()
     {
         return $this->hasMany(Discount::class);
@@ -248,6 +263,7 @@ class Product extends Model
     {
         return $this->hasMany(Coupon::class);
     }
+
     public function pricingConfiguration()
     {
         return $this->hasMany(PricingConfiguration::class, 'id_products', 'id');
@@ -319,38 +335,40 @@ class Product extends Model
 
     public function getChildrenProducts()
     {
-        $childrens = Product::where('parent_id', $this->id)->get();
-        return $childrens;
+        return Product::where('parent_id', $this->id)->get();
     }
 
     public function getChildrenProductsDesc()
     {
-        $childrens = Product::where('parent_id', $this->id)->orderBy('id', 'asc')->get();
-        return $childrens;
+        return Product::where('parent_id', $this->id)
+            ->orderBy('id', 'asc')
+            ->get();
     }
 
     public function getImagesProduct()
     {
-        $images = UploadProducts::where('id_product', $this->id)->where('type', 'images')->get();
-        return $images;
+        return UploadProducts::where('id_product', $this->id)
+            ->where('type', 'images')
+            ->get();
     }
 
     public function getThumbnailsProduct()
     {
-        $thumbnails = UploadProducts::where('id_product', $this->id)->where('type', 'thumbnails')->get();
-        return $thumbnails;
+        return UploadProducts::where('id_product', $this->id)
+            ->where('type', 'thumbnails')
+            ->get();
     }
 
     public function getDocumentsProduct()
     {
-        $documents = UploadProducts::where('id_product', $this->id)->where('type', 'documents')->get();
-        return $documents;
+        return UploadProducts::where('id_product', $this->id)
+            ->where('type', 'documents')
+            ->get();
     }
 
     public function getPricingConfiguration()
     {
-        $pricing = PricingConfiguration::where('id_products', $this->id)->get();
-        return $pricing;
+        return PricingConfiguration::where('id_products', $this->id)->get();
     }
 
     public function getFirstPricingConfiguration()
@@ -360,33 +378,44 @@ class Product extends Model
 
     public function getIdsAttributesVariant()
     {
-        $ids = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->pluck('id_attribute')->toArray();
-        return $ids;
+        return ProductAttributeValues::where('id_products', $this->id)
+            ->where('is_variant', 1)
+            ->pluck('id_attribute')
+            ->toArray();
     }
 
     public function getAttributesVariant()
     {
-        $attributes = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->get();
-        $variants_id = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->pluck('id')->toArray();
-        $historique_children = DB::table('revisions')->whereNull('deleted_at')->whereIn('revisionable_id', $variants_id)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
+        $attributes = ProductAttributeValues::where('id_products', $this->id)
+            ->where('is_variant', 1)
+            ->get();
+        $variants_id = ProductAttributeValues::where('id_products', $this->id)
+            ->where('is_variant', 1)
+            ->pluck('id')
+            ->toArray();
+        $history_children = DB::table('revisions')
+            ->whereNull('deleted_at')
+            ->whereIn('revisionable_id', $variants_id)
+            ->where('revisionable_type', 'App\Models\ProductAttributeValues')
+            ->get();
 
-        if (count($historique_children) > 0) {
-            foreach ($historique_children as $historique_child) {
+        if ($history_children->count() > 0) {
+            foreach ($history_children as $history_child) {
                 foreach ($attributes as $variant) {
-                    if ($variant->id == $historique_child->revisionable_id) {
-                        $variant->key = $historique_child->key;
-                        if ($historique_child->key == "add_attribute") {
+                    if ($variant->id == $history_child->revisionable_id) {
+                        $variant->key = $history_child->key;
+                        if ($history_child->key == 'add_attribute') {
                             $variant->added = true;
                         } else {
-                            if ($historique_child->key == 'id_units') {
-                                $unit = Unity::find($historique_child->old_value);
+                            if ($history_child->key == 'id_units') {
+                                $unit = Unity::find($history_child->old_value);
                                 if ($unit != null) {
                                     $variant->old_value = $unit->name;
                                 } else {
                                     $variant->old_value = '';
                                 }
                             } else {
-                                $variant->old_value = $historique_child->old_value;
+                                $variant->old_value = $history_child->old_value;
                             }
                         }
                     }
@@ -395,7 +424,8 @@ class Product extends Model
         }
 
         $data = [];
-        if (count($attributes) > 0) {
+
+        if ($attributes->count() > 0) {
             foreach ($attributes as $attribute) {
                 if ($attribute->id_colors != null) {
                     if (isset($attribute->added)) {
@@ -424,8 +454,12 @@ class Product extends Model
     {
         $children = Product::where('parent_id', $this->id)->first();
         $ids = [];
+
         if ($children != null) {
-            $ids = ProductAttributeValues::where('id_products', $children->id)->where('is_variant', 1)->pluck('id_attribute')->toArray();
+            $ids = ProductAttributeValues::where('id_products', $children->id)
+                ->where('is_variant', 1)
+                ->pluck('id_attribute')
+                ->toArray();
         }
 
         return $ids;
@@ -433,8 +467,11 @@ class Product extends Model
 
     public function getAttributesVariantChildren()
     {
-        $attributes = ProductAttributeValues::where('id_products', $this->id)->where('is_variant', 1)->get();
+        $attributes = ProductAttributeValues::where('id_products', $this->id)
+            ->where('is_variant', 1)
+            ->get();
         $data = [];
+
         if (count($attributes) > 0) {
             foreach ($attributes as $attribute) {
                 $data[$attribute->id_attribute] = $attribute;
@@ -448,6 +485,7 @@ class Product extends Model
     {
         $product_category = ProductCategory::where('product_id', $this->id)->first();
         $path = '';
+
         if ($product_category != null) {
             $current_category = Category::find($product_category->category_id);
             if ($current_category != null) {
@@ -455,7 +493,7 @@ class Product extends Model
                     if ($path == '') {
                         $path = $current_category->name;
                     } else {
-                        $path = $current_category->name . ' > ' . $path;
+                        $path = $current_category->name.' > '.$path;
                     }
                     $current_category = Category::find($current_category->parent_id);
                 }
@@ -463,7 +501,7 @@ class Product extends Model
                     if ($path == '') {
                         $path = $current_category->name;
                     } else {
-                        $path = $current_category->name . ' > ' . $path;
+                        $path = $current_category->name.' > '.$path;
                     }
                 }
             }
@@ -480,32 +518,32 @@ class Product extends Model
     public function productVariantDetails()
     {
         try {
-            $productVariantName = " ";
-        
+            $productVariantName = ' ';
+            $colors = __("Colors") . ": ";
+
             foreach ($this->productAttributeValues as $productAttributeValue) {
-                if ($productAttributeValue->attribute->type_value == "numeric") {
-                    $productVariantName .= $productAttributeValue->attribute->name . ' ' . $productAttributeValue->value . " " . $productAttributeValue->unity->name . " ";
-                } else if ($productAttributeValue->attribute->type_value == "list") {
-                    $productVariantName .= $productAttributeValue->attribute->name . ' ' . $productAttributeValue->attributeValues->value . " ";
-                } else if ($productAttributeValue->attribute->type_value == 'color') {
-                    $productVariantName .= $productAttributeValue->attribute->name . ' ' . $productAttributeValue->color->name . " ";
+                if ($productAttributeValue->attribute->type_value == 'numeric') {
+                    $productVariantName .= "{$productAttributeValue->attribute->name}: {$productAttributeValue->value} {$productAttributeValue->unity->name}, ";
+                } elseif ($productAttributeValue->attribute->type_value == 'list') {
+                    $productVariantName .= "{$productAttributeValue->attribute->name}: {$productAttributeValue->attributeValues->value}, ";
+                } elseif ($productAttributeValue->attribute->type_value == 'color') {
+                    $colors .= "{$productAttributeValue->color->name}, ";
                 } else {
-                    $productVariantName .= $productAttributeValue->attribute->name . ' ' . $productAttributeValue->value . " ";
+                    $productVariantName .= "{$productAttributeValue->attribute->name}: {$productAttributeValue->value}, ";
                 }
             }
-        
-            return $productVariantName;
-        }
-         catch (\Exception $e) {
-            // Handle any exceptions here
-            return " ";
+
+             $productVariantName .= str()->length($colors) > 0 ? $colors : "";
+
+            return str()->replaceLast(", ", "", $productVariantName);
+        } catch (Exception) {
+            return ' ';
         }
     }
 
     public function getShipping()
     {
-        $shipping = Shipping::where('product_id', $this->id)->get();
-        return $shipping;
+        return Shipping::where('product_id', $this->id)->get();
     }
 
     public function getIdsChildrens()
@@ -526,9 +564,9 @@ class Product extends Model
             ->first();
 
         if ($lastPrice == $firstPrice) {
-            return $firstPrice . " AED";
+            return $firstPrice.' AED';
         } else {
-            return $firstPrice . " AED - " . $lastPrice . " AED";
+            return $firstPrice.' AED - '.$lastPrice.' AED';
         }
     }
 
@@ -583,20 +621,12 @@ class Product extends Model
         }
     }
 
-    public function getPrice()
-    {
-        // dd($this->getPricingConfiguration()) ;
-    }
     public function shippingOptions($qty)
     {
-
-        // Fetch the shipping options based on quantity range
-        $shippingOptions = Shipping::where('product_id', $this->id)->where('from_shipping', '<=', $qty)
+        return Shipping::where('product_id', $this->id)
+            ->where('from_shipping', '<=', $qty)
             ->where('to_shipping', '>=', $qty)
             ->first();
-
-        return $shippingOptions;
-
     }
 
     public function minMaxQuantity()
@@ -611,21 +641,35 @@ class Product extends Model
             'maxTo' => $maxTo ?? 1,
         ];
     }
-        public function getBestDiscount($orderAmount = null)
-        {
-            $discount = $this->discounts()->active()->withinDateRange()->first();
-            $categoryDiscount = $this->categories()->first()->discounts()->active()->withinDateRange()->first();
-    
-            return $discount && $categoryDiscount ? max($discount, $categoryDiscount) : ($discount ?: $categoryDiscount);
-        }
-    
-        public function getBestCoupon($userId, $orderAmount = null)
-        {
-            $coupon = $this->coupons()->active()->withinDateRange()->whereHas('users', function ($query) use ($userId) {
+
+    public function getBestDiscount()
+    {
+        $discount = $this->discounts()
+            ->active()
+            ->withinDateRange()
+            ->first();
+        $categoryDiscount = $this->categories()
+            ->first()
+            ->discounts()
+            ->active()
+            ->withinDateRange()
+            ->first();
+
+        return $discount && $categoryDiscount ? max($discount, $categoryDiscount) : ($discount ?: $categoryDiscount);
+    }
+
+    public function getBestCoupon($userId)
+    {
+        return $this->coupons()
+            ->active()
+            ->withinDateRange()
+            ->whereHas('users', function ($query) use ($userId) {
                 $query->where('user_id', $userId);
             })->first();
-    
-            return $coupon;
-        }
-    
+    }
+
+    public function stockDetails()
+    {
+        return $this->hasMany(StockDetails::class, 'variant_id', 'id');
+    }
 }
