@@ -63,9 +63,6 @@
         <div class="container text-left">
             <div class="row">
                 <div class="col-xl-8 mx-auto">
-                    @php
-                        $first_order = $combined_order->orders->first();
-                    @endphp
                     <!-- Order Confirmation Text-->
                     <div class="text-center py-4 mb-0">
                         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36"
@@ -82,8 +79,10 @@
                             </g>
                         </svg>
                         <h1 class="mb-2 fs-28 fw-500 text-success">{{ translate('Thank You for Your Order!') }}</h1>
-                        <p class="fs-13 text-soft-dark">{{ translate('A copy or your order summary has been sent to') }}
-                            <strong>{{ json_decode($first_order->shipping_address)->email }}</strong></p>
+                        @if($first_order["shipping_address"]["email"] !== null)
+                            <p class="fs-13 text-soft-dark">{{ translate('A copy or your order summary has been sent to') }}
+                            <strong>{{ $first_order["shipping_address"]["email"] }}</strong></p>
+                        @endif
                     </div>
                     <!-- Order Summary -->
                     <div class="mb-4 bg-white p-4 border">
@@ -94,25 +93,25 @@
                                 <table class="table fs-14 text-soft-dark">
                                     <tr>
                                         <td class="w-50 fw-600 border-top-0 pl-0 py-2">{{ translate('Order date') }}:</td>
-                                        <td class="border-top-0 py-2">{{ date('d-m-Y H:i A', $first_order->date) }}</td>
+                                        <td class="border-top-0 py-2">{{ date('d-m-Y H:i A', $first_order["date"]) }}</td>
                                     </tr>
                                     <tr>
                                         <td class="w-50 fw-600 border-top-0 pl-0 py-2">{{ translate('Name') }}:</td>
                                         <td class="border-top-0 py-2">
-                                            {{ json_decode($first_order->shipping_address)->name }}</td>
+                                            {{ $first_order["shipping_address"]["name"] }}</td>
                                     </tr>
                                     <tr>
                                         <td class="w-50 fw-600 border-top-0 pl-0 py-2">{{ translate('Email') }}:</td>
                                         <td class="border-top-0 py-2">
-                                            {{ json_decode($first_order->shipping_address)->email }}</td>
+                                            {{ $first_order["shipping_address"]["email"] ?? "N/A" }}</td>
                                     </tr>
                                     <tr>
                                         <td class="w-50 fw-600 border-top-0 pl-0 py-2">{{ translate('Shipping address') }}:
                                         </td>
                                         <td class="border-top-0 py-2">
-                                            {{ json_decode($first_order->shipping_address)->address }},
-                                            {{ json_decode($first_order->shipping_address)->city }},
-                                            {{ json_decode($first_order->shipping_address)->country }}</td>
+                                            {{ $first_order["shipping_address"]["address"] }},
+                                            {{ $first_order["shipping_address"]["city"] }},
+                                            {{ $first_order["shipping_address"]["country"] }}</td>
                                     </tr>
                                 </table>
                             </div>
@@ -121,7 +120,7 @@
                                     <tr>
                                         <td class="w-50 fw-600 border-top-0 py-2">{{ translate('Order status') }}:</td>
                                         <td class="border-top-0 pr-0 py-2">
-                                            {{ translate(ucfirst(str_replace('_', ' ', $first_order->delivery_status))) }}
+                                            {{ translate(ucfirst(str_replace('_', ' ', $first_order["delivery_status"]))) }}
                                         </td>
                                     </tr>
                                     <tr>
@@ -137,7 +136,7 @@
                                     <tr>
                                         <td class="w-50 fw-600 border-top-0 py-2">{{ translate('Payment method') }}:</td>
                                         <td class="border-top-0 pr-0 py-2">
-                                            {{ translate(ucfirst(str_replace('_', ' ', $first_order->payment_type))) }}
+                                            {{ translate(ucfirst(str_replace('_', ' ', $first_order["payment_type"]))) }}
                                         </td>
                                     </tr>
                                 </table>

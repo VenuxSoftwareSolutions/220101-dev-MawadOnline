@@ -15,6 +15,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\ShippersArea;
 use Auth;
+use Log;
 use Illuminate\Http\Request;
 use App\Mail\OrderConfirmation;
 use Session;
@@ -435,11 +436,31 @@ class CheckoutController extends Controller
     {
         $combined_order = CombinedOrder::findOrFail(Session::get('combined_order_id'));
 
-        Mail::to(auth()->user()->email)->send(new OrderConfirmation($combined_order));
+        if (auth()->user()->email !== null) {
+            Mail::to(auth()->user()->email)->send(new OrderConfirmation($combined_order));
+        } else {
+            Log::info(
+                sprintf(
+                    "User % hasn't an email ! We can't send you an order confirmation email !",
+                    auth()->user()->name
+                )
+            );
+
+            flash(
+                __(
+                    "Hey :name ! You don't seem to have an email ! Sorry, We can't send you an order confirmation email !", [
+                        "name" => auth()->user()->name
+                    ]
+                )
+            )->warning();
+        }
 
         Cart::where('user_id', $combined_order->user_id)
             ->delete();
 
-        return view('frontend.order_confirmed', compact('combined_order'));
+        $first_order = $combined_order->orders->first()->toArray();
+        $first_order["shipping_address"] = json_decode($first_order["shipping_address"], true);
+
+        return view('frontend.order_confirmed', compact('combined_order', 'first_order'));
     }
 }
