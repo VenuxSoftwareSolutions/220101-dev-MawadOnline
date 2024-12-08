@@ -24,6 +24,8 @@ use App\Models\ProductTax;
 use App\Models\ProductTranslation;
 use App\Models\Review;
 use App\Models\Tax;
+use App\Models\Upload;
+use App\Models\UploadProducts;
 use Artisan;
 
 use App\Services\ProductFlashDealService;
@@ -284,35 +286,75 @@ class ProductController extends Controller
 
     public function update(ProductRequest $request, Product $product)
     {
-        $data = [];
-
-        $product->name = $request->name;
-        $product->brand_id = $request->brand_id;
-        $product->unit = $request->unit;
-        $product->tags = $request->tags;
-        $product->video_provider = $request->video_provider;
-        $product->video_link = $request->video_link;
-        $product->low_stock_quantity = $request->min_qty;
-
-
-        $product->update();
-
-        if(isset($product)){
-            $data['product'] = $product;
-            $data['document_names'] = $request->document_names;
-            $data['documents'] = $request->documents;
-
-            $data['main_photos'] = $request->main_photos;
-            $data['photosThumbnail'] = $request->photosThumbnail;
-            $update = true;
-
-            $this->productUploadsService->store_uploads($data, $update);
-        }
         
+        $product = Product::find($request->product_id);
 
-        $product->categories()->sync($request->category_id);
+        // Check if the product exists
+        if (!$product) {
+            return response()->json(['error' => 'Product not found'], 404);
+        }
+    
+        // Update product details (e.g., name, price, etc.)
+        // $product->update([
+        //     'name' => $request->input('name'),
+        //     'unit_price' => $request->input('unit_price'),
+        //     'discount' => $request->input('discount'),
+        //     // ... other fields
+        // ]);
+    
+        // Check if 'photos' field exists in the request
+        if ($request->has('photos') && !empty($request->input('photos'))) {
+            $photoId = $request->input('photos');
+    
+            // Fetch the image data from the upload model
+            $upload = Upload::find($photoId);
+            
+            if ($upload) {
+                // Update the upload_product table with necessary fields
+                UploadProducts::updateOrCreate(
+                    [
+                        'id_product' => $product->id,   // Ensure the product association
+                        'type' => 'images'              // Ensure the type is also considered
+                    ],
+                    [
+                        'path' => '/'.$upload->file_name,      // Set the image path from the upload table
+                        'extension' => 'jpg',                  // Set the extension
+                        'document_name' => $upload->document_name,  // Set document name if available
+                    ]
+                );
+                
+            } else {
+                return response()->json(['error' => 'Photo not found'], 404);
+            }
+        }
 
-        return $this->success(translate('Product has been updated successfully'));
+
+        if ($request->has('thumbnail_img') && !empty($request->input('thumbnail_img'))) {
+            $photoId = $request->input('thumbnail_img');
+    
+            // Fetch the image data from the upload model
+            $upload = Upload::find($photoId);
+            
+            if ($upload) {
+                // Update the upload_product table with necessary fields
+                UploadProducts::updateOrCreate(
+                    ['id_product' => $product->id,
+                    'type' => 'thumbnails',                // Assuming type is 'image' for product photos
+
+                ],  // Ensure the product association
+                    [
+                        'path' => '/'.$upload->file_name,         // Set the image path from the upload table
+                        'extension' => 'jpg', // Set the extension
+                        'document_name' => $upload->document_name, // Set document name if available
+                        'type' => 'thumbnails',                // Assuming type is 'image' for product photos
+                    ]
+                );
+            } else {
+                return response()->json(['error' => 'Photo not found'], 404);
+            }
+        }
+    
+        return response()->json(['message' => 'Product updated successfully']);
     }
 
     public function change_status(Request $request)

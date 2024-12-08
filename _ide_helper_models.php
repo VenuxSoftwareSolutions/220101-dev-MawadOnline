@@ -57,17 +57,23 @@ namespace App\Models{
  * @property int $set_default
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon $updated_at
+ * @property int $emirate_id
+ * @property int $area_id
+ * @property-read \App\Models\Area $area
  * @property-read \App\Models\City|null $city
  * @property-read \App\Models\Country|null $country
+ * @property-read \App\Models\Emirate $emirate
  * @property-read \App\Models\State|null $state
  * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder|Address newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Address newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Address query()
  * @method static \Illuminate\Database\Eloquent\Builder|Address whereAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Address whereAreaId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Address whereCityId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Address whereCountryId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Address whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Address whereEmirateId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Address whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Address whereLatitude($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Address whereLongitude($value)
@@ -332,8 +338,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Area whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Area whereEmirateId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Area whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Area whereJsonContainsLocale(string $column, string $locale, ?mixed $value)
- * @method static \Illuminate\Database\Eloquent\Builder|Area whereJsonContainsLocales(string $column, array $locales, ?mixed $value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Area whereJsonContainsLocale(string $column, string $locale, ?mixed $value, string $operand = '=')
+ * @method static \Illuminate\Database\Eloquent\Builder|Area whereJsonContainsLocales(string $column, array $locales, ?mixed $value, string $operand = '=')
  * @method static \Illuminate\Database\Eloquent\Builder|Area whereLocale(string $column, string $locale)
  * @method static \Illuminate\Database\Eloquent\Builder|Area whereLocales(string $column, array $locales)
  * @method static \Illuminate\Database\Eloquent\Builder|Area whereName($value)
@@ -442,8 +448,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AttributeValue whereColorCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AttributeValue whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AttributeValue whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|AttributeValue whereJsonContainsLocale(string $column, string $locale, ?mixed $value)
- * @method static \Illuminate\Database\Eloquent\Builder|AttributeValue whereJsonContainsLocales(string $column, array $locales, ?mixed $value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AttributeValue whereJsonContainsLocale(string $column, string $locale, ?mixed $value, string $operand = '=')
+ * @method static \Illuminate\Database\Eloquent\Builder|AttributeValue whereJsonContainsLocales(string $column, array $locales, ?mixed $value, string $operand = '=')
  * @method static \Illuminate\Database\Eloquent\Builder|AttributeValue whereLang($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AttributeValue whereLocale(string $column, string $locale)
  * @method static \Illuminate\Database\Eloquent\Builder|AttributeValue whereLocales(string $column, array $locales)
@@ -695,8 +701,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|BusinessInformation whereEshopDesc($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BusinessInformation whereEshopName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BusinessInformation whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|BusinessInformation whereJsonContainsLocale(string $column, string $locale, ?mixed $value)
- * @method static \Illuminate\Database\Eloquent\Builder|BusinessInformation whereJsonContainsLocales(string $column, array $locales, ?mixed $value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BusinessInformation whereJsonContainsLocale(string $column, string $locale, ?mixed $value, string $operand = '=')
+ * @method static \Illuminate\Database\Eloquent\Builder|BusinessInformation whereJsonContainsLocales(string $column, array $locales, ?mixed $value, string $operand = '=')
  * @method static \Illuminate\Database\Eloquent\Builder|BusinessInformation whereLandline($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BusinessInformation whereLicenseExpiryDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BusinessInformation whereLicenseIssueDate($value)
@@ -918,6 +924,7 @@ namespace App\Models{
  * @property string|null $meta_description
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Attribute> $attributes
  * @property-read int|null $attributes_count
  * @property-read \App\Models\Upload|null $bannerImage
@@ -951,6 +958,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Category whereCommisionRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Category whereCoverImage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Category whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Category whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Category whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Category whereDigital($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Category whereFeatured($value)
@@ -1766,8 +1774,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Emirate query()
  * @method static \Illuminate\Database\Eloquent\Builder|Emirate whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Emirate whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Emirate whereJsonContainsLocale(string $column, string $locale, ?mixed $value)
- * @method static \Illuminate\Database\Eloquent\Builder|Emirate whereJsonContainsLocales(string $column, array $locales, ?mixed $value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Emirate whereJsonContainsLocale(string $column, string $locale, ?mixed $value, string $operand = '=')
+ * @method static \Illuminate\Database\Eloquent\Builder|Emirate whereJsonContainsLocales(string $column, array $locales, ?mixed $value, string $operand = '=')
  * @method static \Illuminate\Database\Eloquent\Builder|Emirate whereLocale(string $column, string $locale)
  * @method static \Illuminate\Database\Eloquent\Builder|Emirate whereLocales(string $column, array $locales)
  * @method static \Illuminate\Database\Eloquent\Builder|Emirate whereName($value)
@@ -3784,8 +3792,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Shop whereGoogle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Shop whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Shop whereInstagram($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Shop whereJsonContainsLocale(string $column, string $locale, ?mixed $value)
- * @method static \Illuminate\Database\Eloquent\Builder|Shop whereJsonContainsLocales(string $column, array $locales, ?mixed $value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Shop whereJsonContainsLocale(string $column, string $locale, ?mixed $value, string $operand = '=')
+ * @method static \Illuminate\Database\Eloquent\Builder|Shop whereJsonContainsLocales(string $column, array $locales, ?mixed $value, string $operand = '=')
  * @method static \Illuminate\Database\Eloquent\Builder|Shop whereLocale(string $column, string $locale)
  * @method static \Illuminate\Database\Eloquent\Builder|Shop whereLocales(string $column, array $locales)
  * @method static \Illuminate\Database\Eloquent\Builder|Shop whereLogo($value)
@@ -4318,8 +4326,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Unity whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Unity whereDefaultUnit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Unity whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Unity whereJsonContainsLocale(string $column, string $locale, ?mixed $value)
- * @method static \Illuminate\Database\Eloquent\Builder|Unity whereJsonContainsLocales(string $column, array $locales, ?mixed $value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Unity whereJsonContainsLocale(string $column, string $locale, ?mixed $value, string $operand = '=')
+ * @method static \Illuminate\Database\Eloquent\Builder|Unity whereJsonContainsLocales(string $column, array $locales, ?mixed $value, string $operand = '=')
  * @method static \Illuminate\Database\Eloquent\Builder|Unity whereLocale(string $column, string $locale)
  * @method static \Illuminate\Database\Eloquent\Builder|Unity whereLocales(string $column, array $locales)
  * @method static \Illuminate\Database\Eloquent\Builder|Unity whereName($value)
