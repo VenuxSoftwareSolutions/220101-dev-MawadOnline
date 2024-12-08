@@ -1,5 +1,4 @@
 version: '3.8'
-
 services:
   app:
     build:
@@ -21,19 +20,6 @@ services:
       - laravel
     extra_hosts:
       - "host.docker.internal:host-gateway"
-
-  certbot:
-    image: certbot/certbot
-    container_name: certbot
-    volumes:
-      - ./letsencrypt:/etc/letsencrypt
-      - ./docker/apache:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-    depends_on:
-      - app
-    networks:
-      - laravel
-
 networks:
   laravel:
     driver: bridge
