@@ -10,6 +10,10 @@ class Emirate extends Model
 {
     use HasFactory,HasTranslations;
 
-    public $translatable= ['name'] ;
+    public $translatable = ['name'];
 
+    public function area()
+    {
+        return $this->hasMany(Area::class);
+    }
 }

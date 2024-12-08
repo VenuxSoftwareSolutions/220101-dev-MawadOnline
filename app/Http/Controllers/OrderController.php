@@ -2,36 +2,36 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\AffiliateController;
-use Illuminate\Http\Request;
-use App\Models\Order;
-use App\Models\Cart;
+use App\Mail\InvoiceEmailManager;
 use App\Models\Address;
+use App\Models\Cart;
+use App\Models\CombinedOrder;
+use App\Models\Coupon;
+use App\Models\CouponUsage;
+use App\Models\Order;
+use App\Models\OrderDetail;
 use App\Models\Product;
 use App\Models\ProductStock;
-use App\Models\OrderDetail;
-use App\Models\CouponUsage;
-use App\Models\Coupon;
-use App\Models\User;
-use App\Models\CombinedOrder;
 use App\Models\SmsTemplate;
-use Auth;
-use Mail;
-use App\Mail\InvoiceEmailManager;
+use App\Models\User;
 use App\Utility\NotificationUtility;
-use CoreComponentRepository;
 use App\Utility\SmsUtility;
+use Auth;
+use CoreComponentRepository;
+use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Mail;
+use Log;
 
 class OrderController extends Controller
 {
-
     public function __construct()
     {
         // Staff Permission Check
         $this->middleware(['permission:view_all_orders|view_inhouse_orders|view_seller_orders|view_pickup_point_orders'])->only('all_orders');
         $this->middleware(['permission:view_order_details'])->only('show');
-        $this->middleware(['permission:delete_order'])->only('destroy','bulk_order_delete');
+        $this->middleware(['permission:delete_order'])->only('destroy', 'bulk_order_delete');
     }
 
     // All Orders
@@ -47,18 +47,17 @@ class OrderController extends Controller
         $orders = Order::orderBy('id', 'desc');
         $admin_user_id = User::where('user_type', 'admin')->first()->id;
 
-
         if (
             Route::currentRouteName() == 'inhouse_orders.index' &&
             Auth::user()->can('view_inhouse_orders')
         ) {
             $orders = $orders->where('orders.seller_id', '=', $admin_user_id);
-        } else if (
+        } elseif (
             Route::currentRouteName() == 'seller_orders.index' &&
             Auth::user()->can('view_seller_orders')
         ) {
             $orders = $orders->where('orders.seller_id', '!=', $admin_user_id);
-        } else if (
+        } elseif (
             Route::currentRouteName() == 'pick_up_point.index' &&
             Auth::user()->can('view_pickup_point_orders')
         ) {
@@ -73,7 +72,7 @@ class OrderController extends Controller
                 $orders->where('shipping_type', 'pickup_point')
                     ->where('pickup_point_id', Auth::user()->staff->pick_up_point->id);
             }
-        } else if (
+        } elseif (
             Route::currentRouteName() == 'all_orders.index' &&
             Auth::user()->can('view_all_orders')
         ) {
@@ -86,7 +85,7 @@ class OrderController extends Controller
 
         if ($request->search) {
             $sort_search = $request->search;
-            $orders = $orders->where('code', 'like', '%' . $sort_search . '%');
+            $orders = $orders->where('code', 'like', '%'.$sort_search.'%');
         }
         if ($request->payment_status != null) {
             $orders = $orders->where('payment_status', $request->payment_status);
@@ -97,10 +96,11 @@ class OrderController extends Controller
             $delivery_status = $request->delivery_status;
         }
         if ($date != null) {
-            $orders = $orders->where('created_at', '>=', date('Y-m-d', strtotime(explode(" to ", $date)[0])) . '  00:00:00')
-                ->where('created_at', '<=', date('Y-m-d', strtotime(explode(" to ", $date)[1])) . '  23:59:59');
+            $orders = $orders->where('created_at', '>=', date('Y-m-d', strtotime(explode(' to ', $date)[0])).'  00:00:00')
+                ->where('created_at', '<=', date('Y-m-d', strtotime(explode(' to ', $date)[1])).'  23:59:59');
         }
         $orders = $orders->paginate(15);
+
         return view('backend.sales.index', compact('orders', 'sort_search', 'payment_status', 'delivery_status', 'date'));
     }
 
@@ -114,6 +114,7 @@ class OrderController extends Controller
 
         $order->viewed = 1;
         $order->save();
+
         return view('backend.sales.show', compact('order', 'delivery_boys'));
     }
 
@@ -130,189 +131,184 @@ class OrderController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        $carts = Cart::where('user_id', Auth::user()->id)
-            ->get();
+        try {
+            $carts = Cart::where('user_id', Auth::user()->id)
+                ->get();
 
-        if ($carts->isEmpty()) {
-            flash(translate('Your cart is empty'))->warning();
-            return redirect()->route('home');
-        }
+            if ($carts->isEmpty()) {
+                flash(translate('Your cart is empty'))->warning();
 
-        $address = Address::where('id', $carts[0]['address_id'])->first();
-
-        $shippingAddress = [];
-        if ($address != null) {
-            $shippingAddress['name']        = Auth::user()->name;
-            $shippingAddress['email']       = Auth::user()->email;
-            $shippingAddress['address']     = $address->address;
-            $shippingAddress['country']     = $address->country->name;
-            $shippingAddress['state']       = $address->state->name;
-            $shippingAddress['city']        = $address->city->name;
-            $shippingAddress['postal_code'] = $address->postal_code;
-            $shippingAddress['phone']       = $address->phone;
-            if ($address->latitude || $address->longitude) {
-                $shippingAddress['lat_lang'] = $address->latitude . ',' . $address->longitude;
+                return redirect()->route('home');
             }
-        }
 
-        $combined_order = new CombinedOrder;
-        $combined_order->user_id = Auth::user()->id;
-        $combined_order->shipping_address = json_encode($shippingAddress);
-        $combined_order->save();
+            $address = Address::where('id', $carts->first()->address_id)->first();
 
-        $seller_products = array();
-        foreach ($carts as $cartItem) {
-            $product_ids = array();
-            $product = Product::find($cartItem['product_id']);
-            if (isset($seller_products[$product->user_id])) {
-                $product_ids = $seller_products[$product->user_id];
+            $shippingAddress = [];
+
+            if ($address != null) {
+                $shippingAddress['name'] = Auth::user()->name;
+                $shippingAddress['email'] = Auth::user()->email;
+                $shippingAddress['address'] = $address->address;
+                $shippingAddress['country'] = $address->country->name;
+                $shippingAddress['state'] = $address->state->name;
+                $shippingAddress['city'] = $address->city->name;
+                $shippingAddress['postal_code'] = $address->postal_code;
+                $shippingAddress['phone'] = $address->phone;
+
+                if ($address->latitude || $address->longitude) {
+                    $shippingAddress['lat_lang'] = $address->latitude.','.$address->longitude;
+                }
             }
-            array_push($product_ids, $cartItem);
-            $seller_products[$product->user_id] = $product_ids;
-        }
 
-        foreach ($seller_products as $seller_product) {
-            $order = new Order;
-            $order->combined_order_id = $combined_order->id;
-            $order->user_id = Auth::user()->id;
-            $order->shipping_address = $combined_order->shipping_address;
+            $combined_order = new CombinedOrder;
+            $combined_order->user_id = Auth::user()->id;
+            $combined_order->shipping_address = json_encode($shippingAddress);
+            $combined_order->save();
 
-            $order->additional_info = $request->additional_info;
+            $seller_products = [];
 
-            // $order->shipping_type = $carts[0]['shipping_type'];
-            // if ($carts[0]['shipping_type'] == 'pickup_point') {
-            //     $order->pickup_point_id = $cartItem['pickup_point'];
-            // }
-            // if ($carts[0]['shipping_type'] == 'carrier') {
-            //     $order->carrier_id = $cartItem['carrier_id'];
-            // }
-
-            $order->payment_type = $request->payment_option;
-            $order->delivery_viewed = '0';
-            $order->payment_status_viewed = '0';
-            $order->code = date('Ymd-His') . rand(10, 99);
-            $order->date = strtotime('now');
-            $order->save();
-
-            $subtotal = 0;
-            $tax = 0;
-            $shipping = 0;
-            $coupon_discount = 0;
-
-            //Order Details Storing
-            foreach ($seller_product as $cartItem) {
+            foreach ($carts as $cartItem) {
+                $product_ids = [];
                 $product = Product::find($cartItem['product_id']);
-
-                $subtotal += cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
-                $tax +=  cart_product_tax($cartItem, $product, false) * $cartItem['quantity'];
-                $coupon_discount += $cartItem['discount'];
-
-                $product_variation = $cartItem['variation'];
-
-                $product_stock = $product->stocks->where('variant', $product_variation)->first();
-                if ($product->digital != 1 && $cartItem['quantity'] > 15  /* $product_stock->qty */) {
-                    flash(translate('The requested quantity is not available for ') . $product->getTranslation('name'))->warning();
-                    $order->delete();
-                    return redirect()->route('cart')->send();
-                } elseif ($product->digital != 1) {
-                    // $product_stock->qty -= $cartItem['quantity'];
-                    // $product_stock->save();
+                if (isset($seller_products[$product->user_id])) {
+                    $product_ids = $seller_products[$product->user_id];
                 }
+                array_push($product_ids, $cartItem);
+                $seller_products[$product->user_id] = $product_ids;
+            }
 
-                $order_detail = new OrderDetail;
-                $order_detail->order_id = $order->id;
-                $order_detail->seller_id = $product->user_id;
-                $order_detail->product_id = $product->id;
-                $order_detail->variation = $product_variation;
-                $order_detail->price = cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
-                $order_detail->tax = cart_product_tax($cartItem, $product, false) * $cartItem['quantity'];
-                $order_detail->shipping_type = $cartItem['shipping_type'];
-                $order_detail->product_referral_code = $cartItem['product_referral_code'];
-                $order_detail->shipping_cost = $cartItem['shipping_cost'];
+            foreach ($seller_products as $seller_product) {
+                $order = new Order;
+                $order->combined_order_id = $combined_order->id;
+                $order->user_id = Auth::user()->id;
+                $order->shipping_address = $combined_order->shipping_address;
 
-                $shipping += $order_detail->shipping_cost;
-                //End of storing shipping cost
+                $order->additional_info = $request->additional_info;
 
-                $order_detail->quantity = $cartItem['quantity'];
+                $order->payment_type = $request->payment_option;
+                $order->delivery_viewed = '0';
+                $order->payment_status_viewed = '0';
+                $order->code = date('Ymd-His').rand(10, 99);
+                $order->date = strtotime('now');
+                $order->save();
 
-                if (addon_is_activated('club_point')) {
-                    $order_detail->earn_point = $product->earn_point;
-                }
+                $subtotal = 0;
+                $tax = 0;
+                $shipping = 0;
+                $coupon_discount = 0;
 
-                $order_detail->save();
+                //Order Details Storing
+                foreach ($seller_product as $cartItem) {
+                    $product = Product::find($cartItem['product_id']);
 
-                $product->num_of_sale += $cartItem['quantity'];
-                $product->save();
+                    $subtotal += cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
+                    $tax += cart_product_tax($cartItem, $product, false) * $cartItem['quantity'];
+                    $coupon_discount += $cartItem['discount'];
 
-                $order->seller_id = $product->user_id;
-                $order->shipping_type = $cartItem['shipping_type'];
+                    $product_variation = $cartItem['variation'];
 
-                if ($cartItem['shipping_type'] == 'pickup_point') {
-                    $order->pickup_point_id = $cartItem['pickup_point'];
-                }
-                if ($cartItem['shipping_type'] == 'carrier') {
-                    $order->carrier_id = $cartItem['carrier_id'];
-                }
+                    // @todo we should remove the quantity from stock
+                    // deduct the qty from the warehouse that has enough stock to fullfill order:
+                    // 1. get stock summaries sorted by quantities
+                    // 2. deduct qty from the first stock summaries that has enough stock
+                    // 3. add a stock details entry which record the stock deduction (same warehouse of prev stock summaries)
 
-                if ($product->added_by == 'seller' && $product->user->seller != null) {
-                    $seller = $product->user->seller;
-                    $seller->num_of_sale += $cartItem['quantity'];
-                    $seller->save();
-                }
+                    $order_detail = new OrderDetail;
+                    $order_detail->order_id = $order->id;
+                    $order_detail->seller_id = $product->user_id;
+                    $order_detail->product_id = $product->id;
+                    $order_detail->variation = $product_variation;
+                    $order_detail->price = cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
+                    $order_detail->tax = cart_product_tax($cartItem, $product, false) * $cartItem['quantity'];
+                    $order_detail->shipping_type = $cartItem['shipping_type'];
+                    $order_detail->product_referral_code = $cartItem['product_referral_code'];
+                    $order_detail->shipping_cost = $cartItem['shipping_cost'];
 
-                if (addon_is_activated('affiliate_system')) {
-                    if ($order_detail->product_referral_code) {
-                        $referred_by_user = User::where('referral_code', $order_detail->product_referral_code)->first();
+                    $shipping += $order_detail->shipping_cost;
+                    //End of storing shipping cost
 
-                        $affiliateController = new AffiliateController;
-                        $affiliateController->processAffiliateStats($referred_by_user->id, 0, $order_detail->quantity, 0, 0);
+                    $order_detail->quantity = $cartItem['quantity'];
+
+                    if (addon_is_activated('club_point')) {
+                        $order_detail->earn_point = $product->earn_point;
+                    }
+
+                    $order_detail->save();
+
+                    $product->num_of_sale += $cartItem['quantity'];
+                    $product->save();
+
+                    $order->seller_id = $product->user_id;
+                    $order->shipping_type = $cartItem['shipping_type'];
+
+                    if ($cartItem['shipping_type'] == 'pickup_point') {
+                        $order->pickup_point_id = $cartItem['pickup_point'];
+                    }
+
+                    if ($cartItem['shipping_type'] == 'carrier') {
+                        $order->carrier_id = $cartItem['carrier_id'];
+                    }
+
+                    if ($product->added_by == 'seller' && $product->user->seller != null) {
+                        $seller = $product->user->seller;
+                        $seller->num_of_sale += $cartItem['quantity'];
+                        $seller->save();
+                    }
+
+                    if (addon_is_activated('affiliate_system')) {
+                        if ($order_detail->product_referral_code) {
+                            $referred_by_user = User::where('referral_code', $order_detail->product_referral_code)->first();
+
+                            (new AffiliateController)
+                                ->processAffiliateStats($referred_by_user->id, 0, $order_detail->quantity, 0, 0);
+                        }
                     }
                 }
+
+                $order->grand_total = $subtotal + $tax + $shipping;
+
+                if ($seller_product[0]->coupon_code != null) {
+                    $order->coupon_discount = $coupon_discount;
+                    $order->grand_total -= $coupon_discount;
+
+                    $coupon_usage = new CouponUsage;
+                    $coupon_usage->user_id = Auth::user()->id;
+                    $coupon_usage->coupon_id = Coupon::where('code', $seller_product[0]->coupon_code)->first()->id;
+                    $coupon_usage->save();
+                }
+
+                $combined_order->grand_total += $order->grand_total;
+
+                $order->save();
             }
 
-            $order->grand_total = $subtotal + $tax + $shipping;
+            $combined_order->save();
 
-            if ($seller_product[0]->coupon_code != null) {
-                $order->coupon_discount = $coupon_discount;
-                $order->grand_total -= $coupon_discount;
-
-                $coupon_usage = new CouponUsage;
-                $coupon_usage->user_id = Auth::user()->id;
-                $coupon_usage->coupon_id = Coupon::where('code', $seller_product[0]->coupon_code)->first()->id;
-                $coupon_usage->save();
+            foreach ($combined_order->orders as $order) {
+                NotificationUtility::sendOrderPlacedNotification($order);
             }
 
-            $combined_order->grand_total += $order->grand_total;
-
-            $order->save();
+            $request->session()->put('combined_order_id', $combined_order->id);
+        } catch(Exception $e) {
+            Log::error("Error while storing order, with message {$e->getMessage()}");
         }
-
-        $combined_order->save();
-
-        foreach($combined_order->orders as $order){
-            NotificationUtility::sendOrderPlacedNotification($order);
-        }
-
-        $request->session()->put('combined_order_id', $combined_order->id);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -323,8 +319,7 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -335,7 +330,7 @@ class OrderController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -350,7 +345,8 @@ class OrderController extends Controller
                         $product_stock->qty += $orderDetail->quantity;
                         $product_stock->save();
                     }
-                } catch (\Exception $e) {
+                } catch (Exception) {
+                    // @todo log error
                 }
 
                 $orderDetail->delete();
@@ -360,6 +356,7 @@ class OrderController extends Controller
         } else {
             flash(translate('Something went wrong'))->error();
         }
+
         return back();
     }
 
@@ -378,6 +375,7 @@ class OrderController extends Controller
     {
         $order = Order::findOrFail($request->order_id);
         $order->save();
+
         return view('seller.order_details_seller', compact('order'));
     }
 
@@ -463,7 +461,8 @@ class OrderController extends Controller
         if (addon_is_activated('otp_system') && SmsTemplate::where('identifier', 'delivery_status_change')->first()->status == 1) {
             try {
                 SmsUtility::delivery_status_change(json_decode($order->shipping_address)->phone, $order);
-            } catch (\Exception $e) {
+            } catch (Exception) {
+                // @todo log error
             }
         }
 
@@ -471,17 +470,16 @@ class OrderController extends Controller
         NotificationUtility::sendNotification($order, $request->status);
         if (get_setting('google_firebase') == 1 && $order->user->device_token != null) {
             $request->device_token = $order->user->device_token;
-            $request->title = "Order updated !";
-            $status = str_replace("_", "", $order->delivery_status);
+            $request->title = 'Order updated !';
+            $status = str_replace('_', '', $order->delivery_status);
             $request->text = " Your order {$order->code} has been {$status}";
 
-            $request->type = "order";
+            $request->type = 'order';
             $request->id = $order->id;
             $request->user_id = $order->user->id;
 
             NotificationUtility::sendFirebaseNotification($request);
         }
-
 
         if (addon_is_activated('delivery_boy')) {
             if (Auth::user()->user_type == 'delivery_boy') {
@@ -529,7 +527,6 @@ class OrderController extends Controller
         $order->payment_status = $status;
         $order->save();
 
-
         if (
             $order->payment_status == 'paid' &&
             $order->commission_calculated == 0
@@ -541,24 +538,25 @@ class OrderController extends Controller
         NotificationUtility::sendNotification($order, $request->status);
         if (get_setting('google_firebase') == 1 && $order->user->device_token != null) {
             $request->device_token = $order->user->device_token;
-            $request->title = "Order updated !";
-            $status = str_replace("_", "", $order->payment_status);
+            $request->title = 'Order updated !';
+            $status = str_replace('_', '', $order->payment_status);
             $request->text = " Your order {$order->code} has been {$status}";
 
-            $request->type = "order";
+            $request->type = 'order';
             $request->id = $order->id;
             $request->user_id = $order->user->id;
 
             NotificationUtility::sendFirebaseNotification($request);
         }
 
-
         if (addon_is_activated('otp_system') && SmsTemplate::where('identifier', 'payment_status_change')->first()->status == 1) {
             try {
                 SmsUtility::payment_status_change(json_decode($order->shipping_address)->phone, $order);
-            } catch (\Exception $e) {
+            } catch (Exception) {
+                // @todo log error
             }
         }
+
         return 1;
     }
 
@@ -568,7 +566,7 @@ class OrderController extends Controller
 
             $order = Order::findOrFail($request->order_id);
             $order->assign_delivery_boy = $request->delivery_boy;
-            $order->delivery_history_date = date("Y-m-d H:i:s");
+            $order->delivery_history_date = date('Y-m-d H:i:s');
             $order->save();
 
             $delivery_history = \App\Models\DeliveryHistory::where('order_id', $order->id)
@@ -588,7 +586,7 @@ class OrderController extends Controller
 
             if (env('MAIL_USERNAME') != null && get_setting('delivery_boy_mail_notification') == '1') {
                 $array['view'] = 'emails.invoice';
-                $array['subject'] = translate('You are assigned to delivery an order. Order code') . ' - ' . $order->code;
+                $array['subject'] = translate('You are assigned to delivery an order. Order code').' - '.$order->code;
                 $array['from'] = env('MAIL_FROM_ADDRESS');
                 $array['order'] = $order;
 

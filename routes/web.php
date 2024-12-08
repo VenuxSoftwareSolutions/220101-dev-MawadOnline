@@ -45,11 +45,12 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Seller\ProductController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\SizeChartController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\SupportTicketController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\WishlistController;
-use App\Http\Controllers\SizeChartController;
+use App\Http\Controllers\AramexController;
 
 /*
   |--------------------------------------------------------------------------
@@ -87,7 +88,7 @@ Route::controller(AizUploadController::class)->group(function () {
     Route::get('/aiz-uploader/download/{id}', 'attachment_download')->name('download_attachment');
 });
 
-Route::group(['middleware' => ['prevent-back-history','handle-demo-login']], function () {
+Route::group(['middleware' => ['prevent-back-history', 'handle-demo-login']], function () {
     Auth::routes(['verify' => true]);
 });
 
@@ -127,8 +128,7 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/business', function () {
         return view('email.waitlist-email');
     })->name('business');
-    Route::post('/send-waitlist-email', 'sendWaitlistEmail' )->name('send-waitlist-email');
-
+    Route::post('/send-waitlist-email', 'sendWaitlistEmail')->name('send-waitlist-email');
 
     //Home Page
     Route::get('/', 'index')->name('home');
@@ -163,7 +163,6 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/vendors', 'all_seller')->name('sellers');
     Route::get('/coupons', 'all_coupons')->name('coupons.all');
     Route::get('/inhouse', 'inhouse_products')->name('inhouse.all');
-
 
     // Policies
     Route::get('/seller-policy', 'sellerpolicy')->name('sellerpolicy');
@@ -268,15 +267,17 @@ Route::group(['middleware' => ['user', 'verified', 'unbanned']], function () {
     Route::get('/all-notifications', [NotificationController::class, 'index'])->name('all-notifications');
 });
 
-Route::group(['middleware' => ['customer', 'verified', 'unbanned']], function () {
+Route::group(['middleware' => ['customer', 'verified', 'unbanned', "check.cart.stock"]], function () {
     // Checkout Routes
     Route::group(['prefix' => 'checkout'], function () {
         Route::controller(CheckoutController::class)->group(function () {
             Route::get('/', 'get_shipping_info')->name('checkout.shipping_info');
             Route::any('/delivery-info', 'store_shipping_info')->name('checkout.store_shipping_infostore');
             Route::post('/payment-select', 'store_delivery_info')->name('checkout.store_delivery_info');
-            Route::get('/order-confirmed', 'order_confirmed')->name('order_confirmed');
-            Route::post('/payment', 'checkout')->name('payment.checkout');
+            Route::get('/order-confirmed', 'order_confirmed')->name('order_confirmed')
+                ->withoutMiddleware("check.cart.stock");
+            Route::post('/payment', 'checkout')->name('payment.checkout')
+                ->withoutMiddleware("check.cart.stock");
             Route::post('/get-pick-up-points', 'get_pick_up_points')->name('shipping_info.get_pick_up_points');
             Route::get('/payment-select', 'get_payment_info')->name('checkout.payment_info');
             Route::post('/apply-coupon-code', 'apply_coupon_code')->name('checkout.apply_coupon_code');
@@ -335,7 +336,6 @@ Route::group(['middleware' => ['customer', 'verified', 'unbanned']], function ()
     Route::post('/product-review-modal', [ReviewController::class, 'product_review_modal'])->name('product_review_modal');
 });
 
-
 Route::get('translation-check/{check}', [LanguageController::class, 'get_translation']);
 
 Route::group(['middleware' => ['auth']], function () {
@@ -368,13 +368,13 @@ Route::group(['middleware' => ['auth']], function () {
 });
 
 Route::resource('shops', ShopController::class)->middleware('handle-demo-login');
-Route::get('/status/{status}', [ShopController::class,"showStatus"])->name('seller.status');
-Route::get('/register-eshop', [ShopController::class,"seller_packages"])->name('shops.packages');
+Route::get('/status/{status}', [ShopController::class, 'showStatus'])->name('seller.status');
+Route::get('/register-eshop', [ShopController::class, 'seller_packages'])->name('shops.packages');
 
-Route::post('verify-code', [ShopController::class,"verifyCode"])->name('verify.code')->middleware('throttle:5,1');
+Route::post('verify-code', [ShopController::class, 'verifyCode'])->name('verify.code')->middleware('throttle:5,1');
 Route::post('/shops/business_info', [ShopController::class, 'storeBusinessInfo'])->name('shops.business_info');
-Route::post('/resend-code', [ShopController::class,"resendCode"])->name('resend.code')->middleware('throttle:15,1');
-Route::get('/getArea/{id}', [ShopController::class,"getArea"])->name('get.area');
+Route::post('/resend-code', [ShopController::class, 'resendCode'])->name('resend.code')->middleware('throttle:15,1');
+Route::get('/getArea/{id}', [ShopController::class, 'getArea'])->name('get.area');
 Route::post('/shops/contact_person', [ShopController::class, 'storeContactPerson'])->name('shops.contact_person');
 Route::post('/shops/warehouse', [ShopController::class, 'storeWarehouse'])->name('shops.warehouses');
 Route::post('/shops/payout_info', [ShopController::class, 'storePayoutInfo'])->name('shops.payout_info');
@@ -476,5 +476,20 @@ Route::controller(PageController::class)->group(function () {
     Route::get('/{slug}', 'show_custom_page')->name('custom-pages.show_custom_page');
 });
 
-Route::post('/update-price-preview',[ProductController::class, 'updatePricePreview'])->name('seller.update-price-preview');
-Route::post('/send-checked-attributes',[ProductController::class, 'ProductCheckedAttributes'])->name('seller.product.checked.attributes');
+Route::post('/update-price-preview', [ProductController::class, 'updatePricePreview'])->name('seller.update-price-preview');
+Route::post('/send-checked-attributes', [ProductController::class, 'ProductCheckedAttributes'])->name('seller.product.checked.attributes');
+
+Route::controller(AramexController::class)->prefix("/aramex")->group(function () {
+    Route::get("/cities/{countryCode}", "fetchCities");
+    Route::get("/rate", "calculateRate");
+    Route::get("/pickup", "createPickup");
+    Route::get("/track-pickup/{reference}", "trackPickup");
+    Route::get("/cancel-pickup/{guid}", "cancelPickup");
+    Route::get("/shipments", "createShipments");
+    Route::get("/track-shipments/{id}", "trackShipments");
+    Route::get("/print-label/{shipmentnumber}", "printLabel");
+
+    Route::get("carts/{user_id}", "carts");
+
+    Route::any("orders/{user_id}", "calculateOrderProductsCharge")->name("user.orders");
+});

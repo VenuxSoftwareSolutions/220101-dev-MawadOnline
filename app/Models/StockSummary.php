@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Model;
 
 class StockSummary extends Model
@@ -10,18 +11,16 @@ class StockSummary extends Model
         'warehouse_id',
         'current_total_quantity',
         'seller_id',
-        'current_total_quantity'
-        // Add other fillable attributes as needed
+        'current_total_quantity',
     ];
-
-
 
     public function warehouse()
     {
         return $this->belongsTo(Warehouse::class);
     }
-        public function productVariant()
+
+    public function productVariant()
     {
-        return $this->belongsTo(Product::class, 'variant_id','id');
+        return $this->belongsTo(Product::class, 'variant_id', 'id');
     }
 }

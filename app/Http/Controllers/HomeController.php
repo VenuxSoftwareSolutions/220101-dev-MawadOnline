@@ -32,6 +32,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Mail;
 use App\Services\ProductService;
+use App\Models\Emirate;
+use Exception;
 
 class HomeController extends Controller
 {
@@ -48,7 +50,6 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $lang = get_system_language() ? get_system_language()->code : null;
         $featured_categories = Cache::rememberForever('featured_categories', function () {
             return Category::with('bannerImage')->where('featured', 1)->get();
         });
@@ -139,6 +140,7 @@ class HomeController extends Controller
         if (Auth::check()) {
             return redirect()->route('home');
         }
+
         if ($request->has('referral_code') && addon_is_activated('affiliate_system')) {
             try {
                 $affiliate_validation_time = AffiliateConfig::where('type', 'validation_time')->first();
@@ -152,11 +154,13 @@ class HomeController extends Controller
 
                 $affiliateController = new AffiliateController;
                 $affiliateController->processAffiliateStats($referred_by_user->id, 1, 0, 0, 0);
-            } catch (\Exception $e) {
+            } catch (Exception) {
             }
         }
 
-        return view('auth.'.get_setting('authentication_layout_select').'.user_registration');
+        $viewPath = 'auth.'.get_setting('authentication_layout_select').'.user_registration';
+
+        return view($viewPath);
     }
 
     public function cart_login(Request $request)
@@ -200,7 +204,8 @@ class HomeController extends Controller
                 flash(translate('You had placed your items in the shopping cart. Try to order before the product quantity runs out.'))->warning();
             }
 
-            return view('frontend.user.customer.dashboard');
+            $emirates = Emirate::all();
+            return view('frontend.user.customer.dashboard', compact("emirates"));
         } elseif (Auth::user()->user_type == 'delivery_boy') {
             return view('delivery_boys.dashboard');
         } else {
@@ -208,14 +213,15 @@ class HomeController extends Controller
         }
     }
 
-    public function profile(Request $request)
+    public function profile()
     {
         if (Auth::user()->user_type == 'seller') {
             return redirect()->route('seller.profile.index');
         } elseif (Auth::user()->user_type == 'delivery_boy') {
             return view('delivery_boys.profile');
         } else {
-            return view('frontend.user.profile');
+            $emirates= Emirate::all();
+            return view('frontend.user.profile', compact("emirates"));
         }
     }
 

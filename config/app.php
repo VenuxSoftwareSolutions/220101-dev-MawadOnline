@@ -244,6 +244,7 @@ return [
         'PDF' => niklasravnsborg\LaravelPdf\Facades\Pdf::class,
         'Str' => Illuminate\Support\Str::class,
         'Rave' => KingFlamez\Rave\Facades\Rave::class,
+        "Js" => Illuminate\Support\Js::class,
     ],
 
 ];

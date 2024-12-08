@@ -4804,8 +4804,7 @@ class ProductService
             }
         }
 
-        $revision_parent_name = DB::table('revisions')
-            ->whereNull('deleted_at')
+        $revision_parent_name = Revision::whereNull('deleted_at')
             ->where('revisionable_type', 'App\Models\Product')
             ->where('revisionable_id', $parent->id)
             ->where('key', 'name')
@@ -4820,8 +4819,7 @@ class ProductService
             $name = $parent->name;
         }
 
-        $revision_parent_brand = DB::table('revisions')
-            ->whereNull('deleted_at')
+        $revision_parent_brand = Revision::whereNull('deleted_at')
             ->where('revisionable_type', 'App\Models\Product')
             ->where('revisionable_id', $parent->id)
             ->where('key', 'brand_id')
@@ -4834,8 +4832,7 @@ class ProductService
             $brand_id = $parent->brand_id;
         }
 
-        $revision_parent_description = DB::table('revisions')
-            ->whereNull('deleted_at')
+        $revision_parent_description = Revision::whereNull('deleted_at')
             ->where('revisionable_type', 'App\Models\Product')
             ->where('revisionable_id', $parent->id)
             ->where('key', 'description')
@@ -4858,8 +4855,7 @@ class ProductService
             $short_description = $parent->short_description;
         }
 
-        $revision_parent_unit = DB::table('revisions')
-            ->whereNull('deleted_at')
+        $revision_parent_unit = Revision::whereNull('deleted_at')
             ->where('revisionable_type', 'App\Models\Product')
             ->where('revisionable_id', $parent->id)
             ->where('key', 'unit')
@@ -4925,8 +4921,7 @@ class ProductService
             if (count($images_parent) > 0) {
                 $path = [];
                 foreach ($images_parent as $image) {
-                    $revision_parent_image = DB::table('revisions')
-                        ->whereNull('deleted_at')
+                    $revision_parent_image = Revision::whereNull('deleted_at')
                         ->where('revisionable_type', 'App\Models\UploadProducts')
                         ->where('revisionable_id', $image->id)
                         ->latest()
@@ -4988,8 +4983,7 @@ class ProductService
                     ->get();
 
                 foreach ($attributes_variant as $attribute) {
-                    $revision_children_attribute = DB::table('revisions')
-                        ->whereNull('deleted_at')
+                    $revision_children_attribute = Revision::whereNull('deleted_at')
                         ->where('revisionable_type', 'App\Models\ProductAttributeValues')
                         ->where('revisionable_id', $attribute->id)
                         ->latest()
@@ -5049,8 +5043,7 @@ class ProductService
                     if (count($images_children) > 0) {
                         $path = [];
                         foreach ($images_children as $image) {
-                            $revision_children_image = DB::table('revisions')
-                                ->whereNull('deleted_at')
+                            $revision_children_image = Revision::whereNull('deleted_at')
                                 ->where('revisionable_type', 'App\Models\UploadProducts')
                                 ->where('revisionable_id', $image->id)
                                 ->latest()
@@ -5089,8 +5082,7 @@ class ProductService
         $attributesGeneralArray = [];
 
         foreach ($attributes_general as $attribute_general) {
-            $revision_parent_attribute = DB::table('revisions')
-                ->whereNull('deleted_at')
+            $revision_parent_attribute = Revision::whereNull('deleted_at')
                 ->where('revisionable_type', 'App\Models\ProductAttributeValues')
                 ->where('revisionable_id', $attribute_general->id)
                 ->latest()
@@ -5193,8 +5185,7 @@ class ProductService
             }
         }
 
-        $revision_parent_video_provider = DB::table('revisions')
-            ->whereNull('deleted_at')
+        $revision_parent_video_provider = Revision::whereNull('deleted_at')
             ->where('revisionable_type', 'App\Models\Product')
             ->where('revisionable_id', $parent->id)
             ->where('key', 'video_provider')
@@ -5204,8 +5195,7 @@ class ProductService
         $video_provider = '';
 
         if ($revision_parent_video_provider != null && $parent->last_version == 1) {
-            $old_link = DB::table('revisions')
-                ->whereNull('deleted_at')
+            $old_link = Revision::whereNull('deleted_at')
                 ->where('revisionable_type', 'App\Models\Product')
                 ->where('revisionable_id', $parent->id)
                 ->where('key', 'video_link')

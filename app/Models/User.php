@@ -2,24 +2,21 @@
 
 namespace App\Models;
 
+use App\Notifications\EmailVerificationNotification;
 use Auth;
-use App\Models\Cart;
-use App\Models\SellerLease;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Notifications\Notifiable;
-use Spatie\Permission\Models\Permission;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Notifications\EmailVerificationNotification;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use Notifiable, HasApiTokens, HasRoles;
+    use HasApiTokens, HasRoles, Notifiable;
 
     public function sendEmailVerificationNotification()
     {
-        $this->notify(new EmailVerificationNotification());
+        $this->notify(new EmailVerificationNotification);
     }
 
     /**
@@ -28,11 +25,13 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $fillable = [
-        'name', 'email','user_type','first_name','last_name' ,'password', 'address', 'city', 'postal_code', 'phone', 'country', 'provider_id', 'email_verified_at', 'verification_code',
+        'name', 'email', 'user_type', 'first_name', 'last_name', 'password', 'address', 'city', 'postal_code', 'phone', 'country', 'provider_id', 'email_verified_at', 'verification_code',
     ];
+
     protected $dates = [
-        'approved_at','last_status_update'
+        'approved_at', 'last_status_update',
     ];
+
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -51,6 +50,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(Customer::class);
     }
+
     public function discounts()
     {
         return $this->hasMany(Discount::class);
@@ -75,11 +75,11 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(Shop::class);
     }
+
     public function seller()
     {
         return $this->hasOne(Seller::class);
     }
-
 
     public function staff()
     {
@@ -93,11 +93,12 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function seller_orders()
     {
-        return $this->hasMany(Order::class, "seller_id");
+        return $this->hasMany(Order::class, 'seller_id');
     }
+
     public function seller_sales()
     {
-        return $this->hasMany(OrderDetail::class, "seller_id");
+        return $this->hasMany(OrderDetail::class, 'seller_id');
     }
 
     public function wallets()
@@ -115,10 +116,12 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsTo(CustomerPackage::class);
     }
 
-    public function vendor_status_history() {
+    public function vendor_status_history()
+    {
 
-        return $this->hasMany(VendorStatusHistory::class,'vendor_id');
+        return $this->hasMany(VendorStatusHistory::class, 'vendor_id');
     }
+
     public function getSuspendedStatusHistory()
     {
         // Retrieve the latest vendor status history where the status is "Suspended"
@@ -129,6 +132,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
         return $latestSuspendedHistory;
     }
+
     public function customer_package_payments()
     {
         return $this->hasMany(CustomerPackagePayment::class);
@@ -169,38 +173,50 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(AuctionProductBid::class);
     }
 
-    public function product_queries(){
-        return $this->hasMany(ProductQuery::class,'customer_id');
+    public function product_queries()
+    {
+        return $this->hasMany(ProductQuery::class, 'customer_id');
     }
 
-    public function uploads(){
+    public function uploads()
+    {
         return $this->hasMany(Upload::class);
     }
 
-    public function userCoupon(){
+    public function userCoupon()
+    {
         return $this->hasOne(UserCoupon::class);
     }
-    public function business_information() {
+
+    public function business_information()
+    {
         return $this->hasOne(BusinessInformation::class);
 
     }
-    public function contact_people() {
+
+    public function contact_people()
+    {
         return $this->hasOne(ContactPerson::class);
 
     }
-    public function payout_information() {
+
+    public function payout_information()
+    {
         return $this->hasOne(PayoutInformation::class);
 
     }
 
-    public function warehouses() {
+    public function warehouses()
+    {
         return $this->hasMany(Warehouse::class);
 
     }
 
-    public function getStaff() {
-        return $this->hasMany(User::class, 'owner_id', 'id')->where('id','!=',$this->id);
+    public function getStaff()
+    {
+        return $this->hasMany(User::class, 'owner_id', 'id')->where('id', '!=', $this->id);
     }
+
     protected static function boot()
     {
         parent::boot();
@@ -213,14 +229,17 @@ class User extends Authenticatable implements MustVerifyEmail
             }
         });
     }
+
     public function leases()
     {
         return $this->hasMany(SellerLease::class);
     }
-    public function checkProposedChanges(){
+
+    public function checkProposedChanges()
+    {
         $proposedChange = ProposedPayoutChange::where('user_id', $this->id)->latest()->first();
-         return ($proposedChange && $proposedChange->status=="pending" ) ;
+
+        return $proposedChange && $proposedChange->status == 'pending';
 
     }
-
 }

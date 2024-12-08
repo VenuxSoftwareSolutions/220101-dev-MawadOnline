@@ -90,7 +90,7 @@ class Kernel extends HttpKernel
         'prevent-back-history' => \App\Http\Middleware\PreventBackHistory::class,
         'handle-demo-login' => \App\Http\Middleware\HandleDemoLogin::class,
         'seller_or_admin' => \App\Http\Middleware\CheckSellerOrAdmin::class,
-
+        'check.cart.stock' => \App\Http\Middleware\CheckCartStock::class,
     ];
 
     /**

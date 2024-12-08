@@ -554,8 +554,8 @@ class ProductController extends Controller
         }
 
         $attributes = [];
-        $childrens = [];
-        $childrens_ids = [];
+        $children = [];
+        $children_ids = [];
         $variants_attributes = [];
         $general_attributes = [];
         $variants_attributes_ids_attributes = [];
@@ -571,8 +571,8 @@ class ProductController extends Controller
 
                 if (count($shipper_areas) > 0) {
                     foreach ($shipper_areas as $area) {
-                        $warhouses = Warehouse::where('user_id', Auth::user()->owner_id)->where('emirate_id', $area->emirate_id)->where('area_id', $area->area_id)->get();
-                        if (count($warhouses) > 0) {
+                        $warehouses = Warehouse::where('user_id', Auth::user()->owner_id)->where('emirate_id', $area->emirate_id)->where('area_id', $area->area_id)->get();
+                        if (count($warehouses) > 0) {
                             if (! array_key_exists($shipper->id, $supported_shippers)) {
                                 $supported_shippers[$shipper->id] = $shipper;
                             }
@@ -585,7 +585,7 @@ class ProductController extends Controller
 
         if ($product != null) {
             if ($product->activate_third_party == 1) {
-                $volumetric_weight = ($product->length * $product->height * $product->width) / 5000;
+                $volumetric_weight = getProductVolumetricWeight($product->length, $product->height, $product->weight);
                 if ($volumetric_weight > $product->weight) {
                     $chargeable_weight = $volumetric_weight;
                 } else {
@@ -598,7 +598,7 @@ class ProductController extends Controller
             }
 
             if ($product->activate_third_party_sample == 1) {
-                $volumetric_weight_sample = ($product->length_sample * $product->height_sample * $product->width_sample) / 5000;
+                $volumetric_weight_sample = getProductVolumetricWeight($product->length_sample, $product->height_sample, $product->width_sample);
                 if ($volumetric_weight_sample > $product->package_weight_sample) {
                     $chargeable_weight_sample = $volumetric_weight_sample;
                 } else {
@@ -611,11 +611,11 @@ class ProductController extends Controller
             }
 
             if ($product->is_parent == 1) {
-                $childrens = Product::where('parent_id', $id)->get();
-                $childrens_ids = Product::where('parent_id', $id)->pluck('id')->toArray();
-                $variants_attributes = ProductAttributeValues::whereIn('id_products', $childrens_ids)->where('is_variant', 1)->get();
+                $children = Product::where('parent_id', $id)->get();
+                $children_ids = Product::where('parent_id', $id)->pluck('id')->toArray();
+                $variants_attributes = ProductAttributeValues::whereIn('id_products', $children_ids)->where('is_variant', 1)->get();
 
-                $variants_attributes_ids_attributes = ProductAttributeValues::whereIn('id_products', $childrens_ids)->where('is_variant', 1)->pluck('id_attribute')->toArray();
+                $variants_attributes_ids_attributes = ProductAttributeValues::whereIn('id_products', $children_ids)->where('is_variant', 1)->pluck('id_attribute')->toArray();
 
             }
             $general_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->get();
@@ -688,8 +688,8 @@ class ProductController extends Controller
                     'categorie' => $categorie,
                     'product_category' => $product_category,
                     'attributes' => $attributes,
-                    'childrens' => $childrens,
-                    'childrens_ids' => $childrens_ids,
+                    'childrens' => $children,
+                    'childrens_ids' => $children_ids,
                     'variants_attributes' => $variants_attributes,
                     'variants_attributes_ids_attributes' => $variants_attributes_ids_attributes,
                     'general_attributes_ids_attributes' => $general_attributes_ids_attributes,
@@ -706,8 +706,8 @@ class ProductController extends Controller
                     'categorie' => $categorie,
                     'product_category' => $product_category,
                     'attributes' => $attributes,
-                    'childrens' => $childrens,
-                    'childrens_ids' => $childrens_ids,
+                    'childrens' => $children,
+                    'childrens_ids' => $children_ids,
                     'variants_attributes' => $variants_attributes,
                     'variants_attributes_ids_attributes' => $variants_attributes_ids_attributes,
                     'general_attributes_ids_attributes' => $general_attributes_ids_attributes,
