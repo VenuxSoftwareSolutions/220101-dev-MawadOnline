@@ -235,6 +235,8 @@ class OrderController extends Controller
                     }
 
                     $order_detail->save();
+                    firstCountDownNotificationJob::dispatch($order_details)
+                                                ->delay(now()->addHours(24));
 
                     $product->num_of_sale += $cartItem['quantity'];
                     $product->save();
