@@ -536,6 +536,12 @@
     </section>
 @endsection
 
+@section('modal')
+    @if ($isCheckoutSessionTimeoutExpires === true)
+        @include('frontend.' . get_setting('homepage_select') . '.partials.checkout_timeout_modal')
+    @endif
+@endsection
+
 @section('script')
     <script>
         function show_pickup_point(el, type) {

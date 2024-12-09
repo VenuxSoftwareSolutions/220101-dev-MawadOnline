@@ -118,7 +118,16 @@ class CheckoutController extends Controller
         if ($carts && $carts->count() > 0) {
             $categories = Category::all();
 
-            return view('frontend.shipping_info', compact('categories', 'carts', 'emirates'));
+            $isCheckoutSessionTimeoutExpires = $carts->filter(fn($cart) => str()->upper($cart->reserved) === "NO")
+                ->count() > 0;
+
+            return view(
+                'frontend.shipping_info',
+                compact(
+                    'categories', 'carts',
+                    'emirates', 'isCheckoutSessionTimeoutExpires'
+                )
+            );
         }
 
         flash(translate('Your cart is empty'))->success();
@@ -135,6 +144,9 @@ class CheckoutController extends Controller
         }
 
         $carts = Cart::where('user_id', Auth::user()->id)->get();
+
+        $isCheckoutSessionTimeoutExpires = $carts->filter(fn($cart) => str()->upper($cart->reserved) === "NO")
+            ->count() > 0;
 
         if ($carts->isEmpty()) {
             flash(translate('Your cart is empty'))->warning();
@@ -212,7 +224,8 @@ class CheckoutController extends Controller
         return view('frontend.delivery_info', compact(
             'carts', 'carrier_list', 'shippers_areas',
             'pickup_point_list', 'admin_products', 'seller_products',
-            'productQtyPanier', 'admin_product_variation', 'seller_product_variation'
+            'productQtyPanier', 'admin_product_variation', 'seller_product_variation',
+            'isCheckoutSessionTimeoutExpires'
         ));
     }
 
@@ -268,7 +281,16 @@ class CheckoutController extends Controller
 
             $total = $subtotal + $tax + $shipping;
 
-            return view('frontend.payment_select', compact('carts', 'shipping_info', 'total'));
+            $isCheckoutSessionTimeoutExpires = $carts->filter(fn($cart) => str()->upper($cart->reserved) === "NO")
+                ->count() > 0;
+
+            return view(
+                'frontend.payment_select',
+                compact(
+                    'carts', 'shipping_info',
+                    'total', 'isCheckoutSessionTimeoutExpires'
+                )
+            );
         } else {
             flash(translate('Your Cart was empty'))->warning();
 
