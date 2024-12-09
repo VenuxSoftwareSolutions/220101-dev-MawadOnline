@@ -382,7 +382,6 @@
     <!-- Select extension -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     @yield('script')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.all.min.js"></script>
     <!-- Include MultiSelect JS -->
     <script src="https://cdn.rawgit.com/nobleclem/jQuery-MultiSelect/master/jquery.multiselect.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/intro.min.js"></script>
