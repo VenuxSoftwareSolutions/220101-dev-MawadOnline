@@ -35,7 +35,7 @@ class CountdownEmail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Order count down',
+            subject: 'Reminder',
         );
     }
 
