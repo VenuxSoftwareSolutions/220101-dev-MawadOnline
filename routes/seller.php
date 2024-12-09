@@ -132,6 +132,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
     Route::get('/coupons/get-categories-for-product-scope', [CouponController::class, 'getCategoriesForProductScope'])->name('coupons.getCategoriesForProductScope');
     Route::post('/coupons/bulk-delete', [CouponController::class, 'bulkDelete'])->name('coupons.bulk-delete');
     Route::post('/coupons/toggle-status', [CouponController::class, 'toggleStatus'])->name('coupons.toggle-status');
+    Route::get('/test-coupons', [CouponController::class, 'testHighestCoupon']);
 
     //Order
     Route::resource('orders', OrderController::class);
