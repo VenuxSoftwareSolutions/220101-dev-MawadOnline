@@ -32,9 +32,17 @@ class Coupon extends Model
     use HasFactory;
 
     protected $fillable = [
-        'code', 'scope', 'product_id', 'category_id', 'min_order_amount',
-        'discount_percentage', 'max_discount', 'start_date', 'end_date',
-        'status', 'usage_limit'
+        'code',
+        'scope',
+        'product_id',
+        'category_id',
+        'min_order_amount',
+        'discount_percentage',
+        'max_discount',
+        'start_date',
+        'end_date',
+        'status',
+        'usage_limit'
     ];
     protected $casts = [
         'start_date' => 'date',
@@ -57,8 +65,8 @@ class Coupon extends Model
     public function users()
     {
         return $this->belongsToMany(User::class, 'coupon_user')
-                    ->withPivot('times_used')
-                    ->withTimestamps();
+            ->withPivot('times_used')
+            ->withTimestamps();
     }
 
     // Scopes
@@ -70,7 +78,7 @@ class Coupon extends Model
     public function scopeWithinDateRange($query)
     {
         return $query->whereDate('start_date', '<=', Carbon::now())
-                     ->whereDate('end_date', '>=', Carbon::now());
+            ->whereDate('end_date', '>=', Carbon::now());
     }
 
     // Check if the coupon is valid for usage
@@ -79,7 +87,7 @@ class Coupon extends Model
         $usageCount = $this->users()->where('user_id', $userId)->count();
 
         return $this->usage_limit > $usageCount &&
-               ($this->min_order_amount === null || $orderAmount >= $this->min_order_amount);
+            ($this->min_order_amount === null || $orderAmount >= $this->min_order_amount);
     }
 
     // Overlap check for coupon creation
@@ -89,7 +97,7 @@ class Coupon extends Model
 
         $existingCoupons = self::where(function ($query) use ($newCouponData) {
             $query->whereDate('start_date', '<=', $newCouponData['end_date'])
-                  ->whereDate('end_date', '>=', $newCouponData['start_date']);
+                ->whereDate('end_date', '>=', $newCouponData['start_date']);
         })->get();
 
         foreach ($existingCoupons as $coupon) {
@@ -159,4 +167,66 @@ class Coupon extends Model
     }
 
 
+    //helper that returns the highest priority coupon base don (coupon_id or coupon_code)
+    public static function getHighestPriorityCoupon($identifier)
+    {
+        $coupon = is_numeric($identifier)
+            ? self::find($identifier)
+            : self::where('code', $identifier)->first();
+
+        if (!$coupon) {
+            return null;
+        }
+
+        $newCouponData = [
+            'scope' => $coupon->scope,
+            'product_id' => $coupon->product_id,
+            'category_id' => $coupon->category_id,
+            'start_date' => $coupon->start_date,
+            'end_date' => $coupon->end_date,
+        ];
+
+        $overlappingCoupons = self::checkForOverlappingCoupons($newCouponData);
+
+        $overlappingCoupons[] = $coupon;
+
+        $highestPriorityCoupon = collect($overlappingCoupons)->sort(function ($a, $b) {
+            return [$b->discount_percentage, $b->max_discount, $b->created_at] <=> [$a->discount_percentage, $a->max_discount, $a->created_at];
+        })->first();
+
+        return $highestPriorityCoupon;
+    }
+    // helper that returns the discount percentage and maxiumum discount based on coupon_code and product_i
+    public static function getDiscountPercentage($couponCode, $productId)
+    {
+        $highestCoupon = self::getHighestPriorityCoupon($couponCode);
+
+        if (!$highestCoupon) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Coupon not found or not applicable.'
+            ], 404);
+        }
+
+        if ($highestCoupon->scope === 'product' && $highestCoupon->product_id != $productId) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Coupon does not apply to this product.'
+            ], 404);
+        }
+
+        if ($highestCoupon->scope === 'category' && !self::isProductInCategory($productId, $highestCoupon->category_id)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Coupon does not apply to this product category.'
+            ], 404);
+        }
+
+        return [
+            'discount_percentage' => $highestCoupon->discount_percentage,
+            'max_discount_amount' => $highestCoupon->max_discount
+        ];
+    }
+
 }
+
