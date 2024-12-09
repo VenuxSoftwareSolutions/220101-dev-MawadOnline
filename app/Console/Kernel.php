@@ -10,6 +10,8 @@ use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Jobs\ProcessStockQuantityReservationCheck;
+use App\Jobs\CountdownNotificationJob;
+
 
 class Kernel extends ConsoleKernel
 {
@@ -104,6 +106,8 @@ class Kernel extends ConsoleKernel
 
         $schedule->job(new ProcessStockQuantityReservationCheck)
             ->everyThirtyMinutes();
+        $schedule->job(new CountdownNotificationJob)->everyTwoHours()->appendOutputTo(storage_path('/logs/schedule.log'));
+
     }
 
     /**
