@@ -210,5 +210,26 @@ class CouponController extends Controller
 
         return response()->json(['success' => false], 404);
     }
+   /*usage example*/
+    public function testHighestCoupon()
+    {
+    //for testing  purporses only please replace (474641 by your product_id)
+        $highestCoupon = Coupon::getHighestPriorityCouponByProduct(474641);
+
+        if ($highestCoupon) {
+            echo "Highest Coupon code: " . $highestCoupon . "<br>";
+        } else {
+            echo "No coupon found.<br>";
+        }
+        $discountDetails = Coupon::getDiscountPercentage( 474641);
+        if (isset($discountDetails['discount_percentage'])) {
+            echo "coupon_code: " . $discountDetails['code'] . "<br>";
+            echo "Discount Percentage: " . $discountDetails['discount_percentage'] . "%<br>";
+            echo "Max Discount: " . $discountDetails['max_discount_amount'] . "<br>";
+
+        } else {
+            echo $discountDetails['message'] . "<br>";
+        }
+    }
 
 }
