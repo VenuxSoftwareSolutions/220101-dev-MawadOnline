@@ -30,4 +30,9 @@ class OrderDetail extends Model
     {
         return $this->hasMany(AffiliateLog::class);
     }
+
+    public function seller()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
