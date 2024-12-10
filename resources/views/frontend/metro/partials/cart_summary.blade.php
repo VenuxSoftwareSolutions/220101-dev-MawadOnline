@@ -1,5 +1,4 @@
 <div class="card rounded-0 border shadow-none">
-
     <div class="card-header pt-4 pb-1 border-bottom-0">
         <h3 class="fs-16 fw-700 mb-0">{{ translate('Summary') }}</h3>
         <div class="text-right">
@@ -39,7 +38,8 @@
             @foreach ($carts as $key => $cartItem)
                 @php $subtotal_for_min_order_amount += cart_product_price($cartItem, $cartItem->product, false, false) * $cartItem['quantity']; @endphp
             @endforeach
-            @if (get_setting('minimum_order_amount_check') == 1 && $subtotal_for_min_order_amount < get_setting('minimum_order_amount'))
+            @if (get_setting('minimum_order_amount_check') == 1 &&
+                    $subtotal_for_min_order_amount < get_setting('minimum_order_amount'))
                 <span class="badge badge-inline badge-primary fs-12 rounded-0 px-2">
                     {{ translate('Minimum Order Amount') . ' ' . single_price(get_setting('minimum_order_amount')) }}
                 </span>
@@ -50,34 +50,39 @@
 
     <!-- Club point -->
     @if (addon_is_activated('club_point'))
-    <div class="px-4 pt-1 w-100 d-flex align-items-center justify-content-between">
-        <h3 class="fs-14 fw-700 mb-0">{{ translate('Total Clubpoint') }}</h3>
-        <div class="text-right">
-            <span class="badge badge-inline badge-secondary-base fs-12 rounded-0 px-2 text-white">
-                @php
-                    $total_point = 0;
-                @endphp
-                @foreach ($carts as $key => $cartItem)
+        <div class="px-4 pt-1 w-100 d-flex align-items-center justify-content-between">
+            <h3 class="fs-14 fw-700 mb-0">{{ translate('Total Clubpoint') }}</h3>
+            <div class="text-right">
+                <span class="badge badge-inline badge-secondary-base fs-12 rounded-0 px-2 text-white">
                     @php
-                        $product = get_single_product($cartItem['product_id']);
-                        $total_point += $product->earn_point * $cartItem['quantity'];
+                        $total_point = 0;
                     @endphp
-                @endforeach
+                    @foreach ($carts as $key => $cartItem)
+                        @php
+                            $product = get_single_product($cartItem['product_id']);
+                            $total_point += $product->earn_point * $cartItem['quantity'];
+                        @endphp
+                    @endforeach
 
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" class="mr-2">
-                    <g id="Group_23922" data-name="Group 23922" transform="translate(-973 -633)">
-                      <circle id="Ellipse_39" data-name="Ellipse 39" cx="6" cy="6" r="6" transform="translate(973 633)" fill="#fff"/>
-                      <g id="Group_23920" data-name="Group 23920" transform="translate(973 633)">
-                        <path id="Path_28698" data-name="Path 28698" d="M7.667,3H4.333L3,5,6,9,9,5Z" transform="translate(0 0)" fill="#f3af3d"/>
-                        <path id="Path_28699" data-name="Path 28699" d="M5.33,3h-1L3,5,6,9,4.331,5Z" transform="translate(0 0)" fill="#f3af3d" opacity="0.5"/>
-                        <path id="Path_28700" data-name="Path 28700" d="M12.666,3h1L15,5,12,9l1.664-4Z" transform="translate(-5.995 0)" fill="#f3af3d"/>
-                      </g>
-                    </g>
-                </svg>
-                {{ $total_point }}
-            </span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"
+                        class="mr-2">
+                        <g id="Group_23922" data-name="Group 23922" transform="translate(-973 -633)">
+                            <circle id="Ellipse_39" data-name="Ellipse 39" cx="6" cy="6" r="6"
+                                transform="translate(973 633)" fill="#fff" />
+                            <g id="Group_23920" data-name="Group 23920" transform="translate(973 633)">
+                                <path id="Path_28698" data-name="Path 28698" d="M7.667,3H4.333L3,5,6,9,9,5Z"
+                                    transform="translate(0 0)" fill="#f3af3d" />
+                                <path id="Path_28699" data-name="Path 28699" d="M5.33,3h-1L3,5,6,9,4.331,5Z"
+                                    transform="translate(0 0)" fill="#f3af3d" opacity="0.5" />
+                                <path id="Path_28700" data-name="Path 28700" d="M12.666,3h1L15,5,12,9l1.664-4Z"
+                                    transform="translate(-5.995 0)" fill="#f3af3d" />
+                            </g>
+                        </g>
+                    </svg>
+                    {{ $total_point }}
+                </span>
+            </div>
         </div>
-    </div>
     @endif
 
     <div class="card-body">
@@ -85,8 +90,10 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th class="product-name border-top-0 border-bottom-1 pl-0 fs-12 fw-400 opacity-60">{{ translate('Product') }}</th>
-                    <th class="product-total text-right border-top-0 border-bottom-1 pr-0 fs-12 fw-400 opacity-60">{{ translate('Total') }}</th>
+                    <th class="product-name border-top-0 border-bottom-1 pl-0 fs-12 fw-400 opacity-60">
+                        {{ translate('Product') }}</th>
+                    <th class="product-total text-right border-top-0 border-bottom-1 pr-0 fs-12 fw-400 opacity-60">
+                        {{ translate('Total') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -147,7 +154,8 @@
                 </tr>
                 <!-- Total Shipping -->
                 <tr class="cart-shipping">
-                    <th class="pl-0 fs-14 pt-0 pb-2 text-dark fw-600 border-top-0">{{ translate('Total Shipping') }}</th>
+                    <th class="pl-0 fs-14 pt-0 pb-2 text-dark fw-600 border-top-0">{{ translate('Total Shipping') }}
+                    </th>
                     <td class="text-right pr-0 fs-14 pt-0 pb-2 fw-600 text-primary border-top-0">
                         <span class="fw-600">{{ single_price($shipping) }}</span>
                     </td>
@@ -155,7 +163,8 @@
                 <!-- Redeem point -->
                 @if (Session::has('club_point'))
                     <tr class="cart-shipping">
-                        <th class="pl-0 fs-14 pt-0 pb-2 text-dark fw-600 border-top-0">{{ translate('Redeem point') }}</th>
+                        <th class="pl-0 fs-14 pt-0 pb-2 text-dark fw-600 border-top-0">{{ translate('Redeem point') }}
+                        </th>
                         <td class="text-right pr-0 fs-14 pt-0 pb-2 fw-600 text-primary border-top-0">
                             <span class="fw-600">{{ single_price(Session::get('club_point')) }}</span>
                         </td>
@@ -164,7 +173,8 @@
                 <!-- Coupon Discount -->
                 @if ($coupon_discount > 0)
                     <tr class="cart-shipping">
-                        <th class="pl-0 fs-14 pt-0 pb-2 text-dark fw-600 border-top-0">{{ translate('Coupon Discount') }}</th>
+                        <th class="pl-0 fs-14 pt-0 pb-2 text-dark fw-600 border-top-0">
+                            {{ translate('Coupon Discount') }}</th>
                         <td class="text-right pr-0 fs-14 pt-0 pb-2 fw-600 text-primary border-top-0">
                             <span class="fw-600">{{ single_price($coupon_discount) }}</span>
                         </td>
@@ -182,7 +192,8 @@
                 @endphp
                 <!-- Total -->
                 <tr class="cart-total">
-                    <th class="pl-0 fs-14 text-dark fw-600"><span class="strong-600">{{ translate('Total') }}</span></th>
+                    <th class="pl-0 fs-14 text-dark fw-600"><span class="strong-600">{{ translate('Total') }}</span>
+                    </th>
                     <td class="text-right pr-0 fs-14 fw-600 text-primary">
                         <strong><span>{{ single_price($total) }}</span></strong>
                     </td>
@@ -242,6 +253,5 @@
                 </div>
             @endif
         @endif
-
     </div>
 </div>
