@@ -7,6 +7,7 @@ use App\Models\Tour;
 use App\Models\Coupon;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Discount;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\Coupons\CouponStoreRequest;
@@ -210,26 +211,21 @@ class CouponController extends Controller
 
         return response()->json(['success' => false], 404);
     }
-   /*usage example*/
-    public function testHighestCoupon()
+    public function testCouponCode()
     {
-    //for testing  purporses only please replace (474641 by your product_id)
-        $highestCoupon = Coupon::getHighestPriorityCouponByProduct(474641);
+        $couponCode = '5LZ4GOJMI7';
+        $productId = 474641;       
 
-        if ($highestCoupon) {
-            echo "Highest Coupon code: " . $highestCoupon . "<br>";
-        } else {
-            echo "No coupon found.<br>";
-        }
-        $discountDetails = Coupon::getDiscountPercentage( 474641);
+        $discountDetails = Coupon::getDiscountDetailsByCode($couponCode, $productId);
+
         if (isset($discountDetails['discount_percentage'])) {
-            echo "coupon_code: " . $discountDetails['code'] . "<br>";
+            echo "Coupon Code: " . $couponCode . "<br>";
             echo "Discount Percentage: " . $discountDetails['discount_percentage'] . "%<br>";
             echo "Max Discount: " . $discountDetails['max_discount_amount'] . "<br>";
-
         } else {
             echo $discountDetails['message'] . "<br>";
         }
     }
+
 
 }
