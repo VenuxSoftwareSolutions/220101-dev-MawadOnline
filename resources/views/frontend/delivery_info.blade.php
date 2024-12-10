@@ -168,7 +168,7 @@
                                                                     $("#shipping_method_{{ $product->id }}").on("change", function() {
                                                                         if (["vendor", ""].includes($(this).val()) === false &&
                                                                             shippingMethodSelectFirstChange_{{ $product->id }} === true) {
-                                                                            @if ($shippingOptions->paid == 'buyer')
+                                                                            @if ($shippingOptions !== null && $shippingOptions->paid == 'buyer')
                                                                                 $("#charge-result_{{ $product->id }}").html(`
                                                                                     <span class="p-1 bg-black-20 rounded">
                                                                                         <span
@@ -208,10 +208,10 @@
                                                                                     '{{ __('Free (handled by vendor)') }}');
                                                                             @endif
                                                                         } else if (["vendor"].includes($(this).val()) === true) {
-                                                                            @if ($shippingOptions->paid === 'vendor')
+                                                                            @if ($shippingOptions !== null && $shippingOptions->paid === 'vendor')
                                                                                 $("#charge-result_{{ $product->id }}").html(
                                                                                     '{{ __('Free (handled by vendor)') }}');
-                                                                            @elseif ($shippingOptions->paid === 'buyer')
+                                                                            @elseif ($shippingOptions !== null && $shippingOptions->paid === 'buyer')
                                                                                 $("#charge-result_{{ $product->id }}").html(
                                                                                     '{{ formatChargeBasedOnChargeType($shippingOptions) }}');
                                                                             @endif
