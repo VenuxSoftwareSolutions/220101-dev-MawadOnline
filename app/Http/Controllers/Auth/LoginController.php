@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use GeneaLabs\LaravelSocialiter\Facades\Socialiter;
 use Socialite;
 use App\Models\User;
+use App\Models\AccountAuthenticator;
 use App\Models\Customer;
 use App\Models\Cart;
 use App\Services\SocialRevoke;
@@ -85,52 +86,55 @@ class LoginController extends Controller
             $user = Socialite::driver("apple")->user();
         } catch (\Exception $e) {
             flash(translate("Something Went wrong. Please try again."))->error();
-            return redirect()->route(route: 'user.login');
+            return redirect()->route('user.login');
         }
-        //check if provider_id exist
-        $existingUserByProviderId = User::where('provider_id', $user->id)->first();
-
+    
+        $appleAuthenticatorId = AccountAuthenticator::where('name', 'Apple')->value('id');
+    
+        $existingUserByProviderId = User::where('provider_id', $user->id)->where('authenticator_id', $appleAuthenticatorId)->first();
+    
         if ($existingUserByProviderId) {
             $existingUserByProviderId->access_token = $user->token;
             $existingUserByProviderId->refresh_token = $user->refreshToken;
+    
             if (!isset($user->user['is_private_email'])) {
                 $existingUserByProviderId->email = $user->email;
             }
+    
             $existingUserByProviderId->save();
-            //proceed to login
+    
             auth()->login($existingUserByProviderId, true);
         } else {
-            //check if email exist
-            $existing_or_new_user = User::firstOrNew([
-                'email' => $user->email
-            ]);
-            $existing_or_new_user->provider_id = $user->id;
-            $existing_or_new_user->access_token = $user->token;
-            $existing_or_new_user->refresh_token = $user->refreshToken;
-            $existing_or_new_user->provider = 'apple';
-            if (!$existing_or_new_user->exists) {
-                $existing_or_new_user->name = 'Apple User';
-                if ($user->name) {
-                    $existing_or_new_user->name = $user->name;
-                }
-                $existing_or_new_user->email = $user->email;
-                $existing_or_new_user->email_verified_at = date('Y-m-d H:m:s');
+            $existingOrNewUser = User::firstOrNew(['email' => $user->email]);
+    
+            // Update user details
+            $existingOrNewUser->provider_id = $user->id;
+            $existingOrNewUser->access_token = $user->token;
+            $existingOrNewUser->refresh_token = $user->refreshToken;
+            $existingOrNewUser->authenticator_id = $appleAuthenticatorId;
+    
+            if (!$existingOrNewUser->exists) {
+                $existingOrNewUser->name = $user->name ?? 'Apple User';
+                $existingOrNewUser->email = $user->email;
+                $existingOrNewUser->email_verified_at = now();
             }
-            $existing_or_new_user->save();
-
-            auth()->login($existing_or_new_user, true);
+    
+            $existingOrNewUser->save();
+    
+            auth()->login($existingOrNewUser, true);
         }
-
+    
         if (session('temp_user_id') != null) {
             Cart::where('temp_user_id', session('temp_user_id'))
                 ->update([
                     'user_id' => auth()->user()->id,
-                    'temp_user_id' => null
+                    'temp_user_id' => null,
                 ]);
-
+    
             Session::forget('temp_user_id');
         }
-
+    
+        // Redirect the user to the appropriate location
         if (session('link') != null) {
             return redirect(session('link'));
         } else {
@@ -139,7 +143,8 @@ class LoginController extends Controller
             }
             return redirect()->route('dashboard');
         }
-    }/*
+    }
+    
     /**
      * Obtain the user information from Google.
      *
@@ -150,56 +155,57 @@ class LoginController extends Controller
         if (session('login_from') == 'mobile_app') {
             return $this->mobileHandleProviderCallback($request, $provider);
         }
-
+    
         try {
             $socialUser = $this->getSocialUser($provider);
         } catch (\Exception $e) {
             flash(translate("Something went wrong. Please try again."))->error();
             return redirect()->route('user.login');
         }
-
-        // Find or create a user based on social user details
+    
         $user = $this->findOrCreateUser($socialUser, $provider);
-
-        // Log in the user
+    
         auth()->login($user, true);
-
-        // Handle user cart merging
+    
         $this->mergeCartWithUser();
-
-        // Redirect the user
+    
         return $this->redirectUser();
     }
-
+    
     /**
      * Retrieve the social user using the provider.
      */
     private function getSocialUser($provider)
     {
         if ($provider === 'twitter') {
-           return Socialite::driver('twitter-oauth-2')->user();
+            return Socialite::driver('twitter-oauth-2')->user();
         }
         return Socialite::driver($provider)->enablePKCE()->user();
     }
-
+    
     /**
      * Find or create a user from the social user details.
      */
     private function findOrCreateUser($socialUser, $provider)
     {
+        // Retrieve the account authenticator ID from the new table
+        $authenticatorId = AccountAuthenticator::where('name', $provider)->value('id');
+    
+        // If the provider is not in the account_authenticators table, fallback to MawadOnline (ID 1)
+        $authenticatorId = $authenticatorId ?? 1;
+    
         return User::updateOrCreate(
-            ['email' => $socialUser->email], // Match user by email
+            ['email' => $socialUser->email],
             [
                 'name' => $socialUser->name,
                 'email_verified_at' => now(),
                 'provider_id' => $socialUser->id,
-                'provider' => $provider,
+                'authenticator_id' => $authenticatorId,
                 'access_token' => $socialUser->token,
             ]
         );
     }
-
-    /**
+        /**
      * Merge temporary cart with the authenticated user.
      */
     private function mergeCartWithUser()

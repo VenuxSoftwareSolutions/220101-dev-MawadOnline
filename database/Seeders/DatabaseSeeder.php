@@ -17,6 +17,7 @@ use Database\Seeders\TranslationsRegisterVendorPart2;
 use Database\Seeders\AddPermessionEnablingAttributeSeeder;
 use Database\Seeders\TranslationProductSeeder;
 use Database\Seeders\TranslationCatalogueSeeder;
+use Database\Seeders\AccountAuthenticatorSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -43,6 +44,8 @@ class DatabaseSeeder extends Seeder
         //$this->call(LeaseSeeder::class);
         $this->call(TranslationProductSeeder::class);
         $this->call(TranslationCatalogueSeeder::class);
+        $this->call(AccountAuthenticatorSeeder::class);
+
 
 
     }
