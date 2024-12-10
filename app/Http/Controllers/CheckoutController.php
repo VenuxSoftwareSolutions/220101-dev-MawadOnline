@@ -20,6 +20,8 @@ use Illuminate\Http\Request;
 use App\Mail\OrderConfirmation;
 use Session;
 use Mail;
+use App\Models\StockSummary;
+
 
 class CheckoutController extends Controller
 {
@@ -116,6 +118,29 @@ class CheckoutController extends Controller
         $carts = Cart::where('user_id', Auth::user()->id)->get();
 
         if ($carts && $carts->count() > 0) {
+            $carts->each(function($cart) {
+                $cart->reserved = "YES";
+
+                $reservedQuantity = - $cart->quantity;
+
+                $isStockSummaryExists = StockSummary::where("variant_id", $cart->product->id)
+                    ->where('warehouse_id', MAWADONLINE_WAREHOUSE_ID)
+                    ->where('current_total_quantity', $reservedQuantity)
+                    ->where('seller_id', auth()->user()->owner_id)
+                    ->exists();
+
+                if ($isStockSummaryExists === false) {
+                    StockSummary::create([
+                        'variant_id' => $cart->product->id,
+                        'warehouse_id' => MAWADONLINE_WAREHOUSE_ID,
+                        'current_total_quantity' => $reservedQuantity,
+                        'seller_id' => auth()->user()->owner_id,
+                    ]);
+                }
+
+                $cart->save();
+            });
+
             $categories = Category::all();
 
             $isCheckoutSessionTimeoutExpires = $carts->filter(fn($cart) => str()->upper($cart->reserved) === "NO")
