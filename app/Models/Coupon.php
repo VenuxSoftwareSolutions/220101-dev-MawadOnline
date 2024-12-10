@@ -6,29 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Carbon;
 
-
 class Coupon extends Model
 {
-    /* coupon older version
-    protected $fillable = [
-    
-        'user_id', 'type', 'code','details','discount', 'discount_type', 'start_date', 'end_date'
-    ];
-
-    public function user(){
-        return $this->belongsTo(User::class);
-    }
-
-    public function userCoupons()
-    {
-        return $this->hasMany(UserCoupon::class);
-    }
-
-    public function couponUsages()
-    {
-        return $this->hasMany(CouponUsage::class);
-    }*/
-
     use HasFactory;
 
     protected $fillable = [
@@ -42,15 +21,14 @@ class Coupon extends Model
         'start_date',
         'end_date',
         'status',
-        'usage_limit'
+        'usage_limit',
     ];
+
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
         'status' => 'boolean',
-
     ];
-
 
     public function product()
     {
@@ -137,8 +115,7 @@ class Coupon extends Model
     // Helper to check if a product is in a category
     public static function isProductInCategory($productId, $categoryId)
     {
-        return \DB::table('product_categories')
-            ->where('category_id', $categoryId)
+        return ProductCategory::where('category_id', $categoryId)
             ->where('product_id', $productId)
             ->exists();
     }
@@ -146,7 +123,7 @@ class Coupon extends Model
     // Helper to check if two date ranges overlap
     public static function isDateRangeOverlap($existingCoupon, $newCouponData)
     {
-        return !($newCouponData['end_date'] < $existingCoupon->start_date || $newCouponData['start_date'] > $existingCoupon->end_date);
+        return ! ($newCouponData['end_date'] < $existingCoupon->start_date || $newCouponData['start_date'] > $existingCoupon->end_date);
     }
 
     protected function isNewCouponHigherPriority($newCouponData, $existingCoupon)
@@ -165,7 +142,6 @@ class Coupon extends Model
 
         return Carbon::now()->greaterThan($existingCoupon->created_at);
     }
-
 
     public static function getDiscountDetailsByCode($couponCode, $productId)
     {
@@ -197,9 +173,7 @@ class Coupon extends Model
 
         return [
             'discount_percentage' => $coupon->discount_percentage,
-            'max_discount_amount' => $coupon->max_discount
+            'max_discount_amount' => $coupon->max_discount,
         ];
     }
-
 }
-
