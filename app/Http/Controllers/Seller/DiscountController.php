@@ -225,6 +225,19 @@ class DiscountController extends Controller
 
         return $category;
     }
+    public function testHighestDiscount()
+    {
+        $productId = 339; 
+
+        $highestDiscount = Discount::getHighestPriorityDiscountByProduct($productId);
+        if ($highestDiscount) {
+            echo "Discount Percentage: " . $highestDiscount['discount_percentage'] . "%<br>";
+            echo "Max Discount: " . $highestDiscount['max_discount'] . "<br>";
+        } else {
+            echo "No applicable discount found.<br>";
+        }
+    }
+
 
 
 }

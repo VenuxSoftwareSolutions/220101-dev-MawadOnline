@@ -136,6 +136,68 @@ class Discount extends Model
         return Carbon::now()->greaterThan($existingDiscount->created_at);
     }
 
+    // Check for the highest applicable discount on a product
+    public static function getHighestPriorityDiscountByProduct($productId)
+    {
+        $discounts = self::where(function ($query) use ($productId) {
+            $query->where('scope', 'product')->where('product_id', $productId)
+                ->orWhere(function ($subQuery) use ($productId) {
+                    $subQuery->where('scope', 'category')
+                        ->whereIn('category_id', function ($categoryQuery) use ($productId) {
+                            $categoryQuery->select('category_id')
+                                ->from('product_categories')
+                                ->where('product_id', $productId);
+                        });
+                })
+                ->orWhereIn('scope', ['allOrders', 'min_order_amount']);
+        })->withinDateRange()->active()->get();
+        if ($discounts->isEmpty()) {
+            return null;
+        }
 
+        $highestPriorityDiscount = $discounts->sort(function ($a, $b) {
+            return [
+                $b->discount_percentage, 
+                $b->max_discount, 
+                $b->created_at
+            ] <=> [
+                $a->discount_percentage, 
+                $a->max_discount, 
+                $a->created_at
+            ];
+        })->first();
+
+        return $highestPriorityDiscount;
+    }
+
+    public static function getDiscountPercentage($productId)
+    {
+        $highestDiscount = self::getHighestPriorityDiscountByProduct($productId);
+        dd($highestDiscount);
+        if (!$highestDiscount) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Discount not found or not applicable.'
+            ], 404);
+        }
+
+        if ($highestDiscount->scope === 'product' && $highestDiscount->product_id != $productId) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Discount does not apply to this product.'
+            ], 404);
+        }
+
+        if ($highestDiscount->scope === 'category' && !self::isProductInCategory($productId, $highestDiscount->category_id)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Discount does not apply to this product category.'
+            ], 404);
+        }
+        return [
+            'discount_percentage' => $highestDiscount->discount_percentage,
+            'max_discount_amount' => $highestDiscount->max_discount,
+        ];
+    }
 
 }

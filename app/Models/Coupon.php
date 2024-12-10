@@ -167,56 +167,28 @@ class Coupon extends Model
     }
 
 
-    //check for exisiting applicable coupons a product and returns the highest one
-    public static function getHighestPriorityCouponByProduct($productId)
+    public static function getDiscountDetailsByCode($couponCode, $productId)
     {
-        $coupons = self::where(function ($query) use ($productId) {
-            $query->where('scope', 'product')->where('product_id', $productId)
-                ->orWhere(function ($subQuery) use ($productId) {
-                    $subQuery->where('scope', 'category')
-                             ->whereIn('category_id', function ($categoryQuery) use ($productId) {
-                                 $categoryQuery->select('category_id')
-                                               ->from('product_categories')
-                                               ->where('product_id', $productId);
-                             });
-                })
-                ->orWhereIn('scope', ['allOrders', 'min_order_amount']);
-        })->whereDate('start_date', '<=', now())
-          ->whereDate('end_date', '>=', now())
-          ->get();
-        if ($coupons->isEmpty()) {
-            return null; 
-        }
-    
-        $highestPriorityCoupon = $coupons->sort(function ($a, $b) {
-            return [$b->discount_percentage, $b->max_discount, $b->created_at] <=> [$a->discount_percentage, $a->max_discount, $a->created_at];
-        })->first();
-    
-        return $highestPriorityCoupon ? $highestPriorityCoupon->code : null;
-    }
-    
-    //check for the highest exisiting coupon on a specific product and returns its  percentage
+        $coupon = self::where('code', $couponCode)
+            ->whereDate('start_date', '<=', now())
+            ->whereDate('end_date', '>=', now())
+            ->first();
 
-    public static function getDiscountPercentage($productId)
-    {
-        $highestCouponCode = self::getHighestPriorityCouponByProduct($productId);
-        
-        if (!$highestCouponCode) {
+        if (!$coupon) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Coupon not found or not applicable.'
+                'message' => 'Coupon not found or expired.'
             ], 404);
         }
-        $highestCoupon = self::where('code', $highestCouponCode)->first();
 
-        if ($highestCoupon->scope === 'product' && $highestCoupon->product_id != $productId) {
+        if ($coupon->scope === 'product' && $coupon->product_id != $productId) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Coupon does not apply to this product.'
             ], 404);
         }
 
-        if ($highestCoupon->scope === 'category' && !self::isProductInCategory($productId, $highestCoupon->category_id)) {
+        if ($coupon->scope === 'category' && !self::isProductInCategory($productId, $coupon->category_id)) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Coupon does not apply to this product category.'
@@ -224,9 +196,8 @@ class Coupon extends Model
         }
 
         return [
-            'discount_percentage' => $highestCoupon->discount_percentage,
-            'max_discount_amount' => $highestCoupon->max_discount,
-            'code' => $highestCoupon->code
+            'discount_percentage' => $coupon->discount_percentage,
+            'max_discount_amount' => $coupon->max_discount
         ];
     }
 
