@@ -9,6 +9,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Jobs\ProcessStockQuantityReservationCheck;
 
 class Kernel extends ConsoleKernel
 {
@@ -100,6 +101,9 @@ class Kernel extends ConsoleKernel
                 }
             }
         })->everyMinute();
+
+        $schedule->job(new ProcessStockQuantityReservationCheck)
+            ->everyThirtyMinutes();
     }
 
     /**
