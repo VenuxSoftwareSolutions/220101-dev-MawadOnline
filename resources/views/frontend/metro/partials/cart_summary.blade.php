@@ -4,8 +4,7 @@
         <div class="text-right">
             <!-- Items Count -->
             <span class="badge badge-inline badge-primary fs-12 rounded-0 px-2">
-                {{ count($carts) }}
-                {{ translate('Items') }}
+                {{ count($carts) . " " . translate('Items') }}
             </span>
 
             <!-- Minimum Order Amount -->
@@ -35,16 +34,19 @@
             @endif
 
             @php $subtotal_for_min_order_amount = 0; @endphp
+
             @foreach ($carts as $key => $cartItem)
-                @php $subtotal_for_min_order_amount += cart_product_price($cartItem, $cartItem->product, false, false) * $cartItem['quantity']; @endphp
+                @php
+                    $subtotal_for_min_order_amount += cart_product_price($cartItem, $cartItem->product, false, false) * $cartItem['quantity'];
+                @endphp
             @endforeach
+
             @if (get_setting('minimum_order_amount_check') == 1 &&
                     $subtotal_for_min_order_amount < get_setting('minimum_order_amount'))
                 <span class="badge badge-inline badge-primary fs-12 rounded-0 px-2">
                     {{ translate('Minimum Order Amount') . ' ' . single_price(get_setting('minimum_order_amount')) }}
                 </span>
             @endif
-
         </div>
     </div>
 
@@ -114,6 +116,7 @@
                         $shipping += $product_shipping_cost;
 
                         $product_name_with_choice = $product->getTranslation('name');
+
                         if ($cartItem['variant'] != null) {
                             $product_name_with_choice = $product->getTranslation('name') . ' - ' . $cartItem['variant'];
                         }
@@ -237,13 +240,13 @@
                 </div>
             @else
                 <div class="mt-3">
-                    <form class="" id="apply-coupon-form" enctype="multipart/form-data">
+                    <form id="apply-coupon-form" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="owner_id" value="{{ $carts[0]['owner_id'] }}">
                         <div class="input-group">
                             <input type="text" class="form-control rounded-0" name="code"
                                 onkeydown="return event.key != 'Enter';"
-                                placeholder="{{ translate('Have coupon code? Apply here') }}" required>
+                                placeholder="{{ translate('Put coupon code here') }}" required>
                             <div class="input-group-append">
                                 <button type="button" id="coupon-apply"
                                     class="btn btn-primary rounded-0">{{ translate('Apply') }}</button>

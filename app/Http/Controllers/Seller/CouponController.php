@@ -129,15 +129,13 @@ class CouponController extends Controller
     public function update(CouponUpdateRequest  $request, $id)
     {
         $validatedData = $request->validated();
-        $coupon = Coupon::findOrFail($id);
-        $coupon->update($validatedData);
+        Coupon::findOrFail($id)->update($validatedData);
         return response()->json(['success' => true, 'message' => 'Coupon updated successfully.']);
     }
 
     public function destroy($id)
     {
-        $coupon = Coupon::findOrFail($id);
-        $coupon->delete();
+        Coupon::findOrFail($id)->delete();
         return response()->json(['success' => true, 'message' => 'Coupon deleted successfully.']);
     }
 
