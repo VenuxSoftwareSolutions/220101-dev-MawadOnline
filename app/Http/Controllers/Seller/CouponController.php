@@ -3,11 +3,9 @@
 namespace App\Http\Controllers\Seller;
 
 use Auth;
-use App\Models\Tour;
 use App\Models\Coupon;
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\Discount;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\Coupons\CouponStoreRequest;
@@ -51,7 +49,6 @@ class CouponController extends Controller
 
     public function create()
     {
-
         $products = Product::where('user_id', Auth::id())->with('categories')->get();
 
         $productCategoryIds = $products->map(function ($product) {
@@ -122,8 +119,6 @@ class CouponController extends Controller
             'message' => 'Coupon created successfully.'
         ]);
     }
-
-    
 
     public function edit($id)
     {
@@ -196,6 +191,7 @@ class CouponController extends Controller
 
         return response()->json(['categories' => $categories]);
     }
+
     public function toggleStatus(Request $request)
     {
         $request->validate(['id' => 'required|integer', 'status' => 'required|boolean']);
@@ -211,21 +207,4 @@ class CouponController extends Controller
 
         return response()->json(['success' => false], 404);
     }
-    public function testCouponCode()
-    {
-        $couponCode = '5LZ4GOJMI7';
-        $productId = 474641;       
-
-        $discountDetails = Coupon::getDiscountDetailsByCode($couponCode, $productId);
-
-        if (isset($discountDetails['discount_percentage'])) {
-            echo "Coupon Code: " . $couponCode . "<br>";
-            echo "Discount Percentage: " . $discountDetails['discount_percentage'] . "%<br>";
-            echo "Max Discount: " . $discountDetails['max_discount_amount'] . "<br>";
-        } else {
-            echo $discountDetails['message'] . "<br>";
-        }
-    }
-
-
 }
