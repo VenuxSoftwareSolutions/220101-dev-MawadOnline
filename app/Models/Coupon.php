@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 class Coupon extends Model
@@ -150,25 +151,16 @@ class Coupon extends Model
             ->whereDate('end_date', '>=', now())
             ->first();
 
-        if (!$coupon) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Coupon not found or expired.'
-            ], 404);
+        if ($coupon === null) {
+            throw new Exception('Coupon not found or expired.');
         }
 
         if ($coupon->scope === 'product' && $coupon->product_id != $productId) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Coupon does not apply to this product.'
-            ], 404);
+            throw new Exception('Coupon does not apply to this product.');
         }
 
-        if ($coupon->scope === 'category' && !self::isProductInCategory($productId, $coupon->category_id)) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Coupon does not apply to this product category.'
-            ], 404);
+        if ($coupon->scope === 'category' && ! self::isProductInCategory($productId, $coupon->category_id)) {
+            throw new Exception('Coupon does not apply to this product category.');
         }
 
         return [
