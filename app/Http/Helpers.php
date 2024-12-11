@@ -2061,11 +2061,24 @@ if (!function_exists('get_single_category')) {
 }
 
 // Get categories by level zero
-if (!function_exists('get_level_zero_categories')) {
+/*
+    if (!function_exists('get_level_zero_categories')) {
     function get_level_zero_categories()
     {
         $categories_query = Category::query()->with(['coverImage', 'catIcon']);
         return $categories_query->where('level', 1)->orderBy('order_level', 'asc')->get();
+    }
+} */
+
+if (!function_exists('get_level_zero_categories')) {
+    function get_level_zero_categories()
+    {
+        return Category::query()
+            ->withoutGlobalScopes()
+            ->with(['coverImage', 'catIcon'])
+            ->where('level', 1)
+            ->orderBy('order_level', 'asc')
+            ->get();
     }
 }
 

@@ -267,10 +267,17 @@
                                 <ul class="list-unstyled">
                                     <li class="mb-2">
                                         <p class="fs-13 text-secondary mb-0">
-                                            {{ translate('Become A Seller') }}
+                                            <a href="https://business.mawadonline.com"
+                                                class="fs-13 fw-700 text-secondary-base">
+                                                {{ translate('Become A Seller') }}
+                                            </a>
+                                        </p>
+                                    </li>
+                                    <li class="mb-2">
+                                        <p class="fs-13 text-secondary mb-0">
                                             <a href="{{ route('shops.packages') }}"
-                                                class="fs-13 fw-700 text-secondary-base ml-2">
-                                                <br />{{ translate('Apply Now') }}
+                                                class="fs-13 text-secondary animate-underline-white">
+                                                {{ translate('Register as Vendor') }}
                                             </a>
                                         </p>
                                     </li>
@@ -334,22 +341,21 @@
                     {{ translate('Subscribe to our newsletter for regular updates about Offers, Coupons & more') }}
                 </h5>
                 <div class="mb-4 fs-16 text-secondary text-justify font-prompt">
-                    Stay in the loop with our newsletter! Get exclusive offers, discounts, and the <br /> latest updates
-                    delivered right to your inbox. Don’t miss out and subscribe now!
+                    Be the first to know about exclusive promotions, discounts, industry news, and product updates—delivered straight to your inbox.
                 </div>
             </div>
             <div class="mb-3 col-12 col-md-6 mt-1">
                 <form method="POST" action="{{ route('subscribers.store') }}">
                     @csrf
                     <div class="row gutters-10">
-                        <div class="col-lg-9 col-md-7 col-6">
+                        <div class="col-xl-8 col-lg-7 col-md-7 col-6">
                             <input type="email"
                                 class="form-control border-secondary text-white w-100 bg-white font-prompt border-radius-8px border-0"
                                 placeholder="{{ translate('Your Email Address') }}" name="email" required>
                         </div>
-                        <div class="col-lg-3 col-md-5 col-6">
+                        <div class="col-xl-4 col-lg-5 col-md-5 col-6">
                             <button type="submit"
-                                class="btn btn-primary w-100 font-prompt border-radius-8px border-0">{{ translate('Subscribe') }}</button>
+                                class="btn btn-primary w-100 font-prompt border-radius-8px border-0">{{ translate('Subscribe Now') }}</button>
                         </div>
                     </div>
                 </form>

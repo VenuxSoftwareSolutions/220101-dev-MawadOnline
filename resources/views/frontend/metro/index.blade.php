@@ -47,14 +47,14 @@
                                             <div class="container">
                                                 <div class="col-12 col-xl-6 col-lg-8 col-md-10 slider-content pt-md-5 pt-4">
                                                     <div
-                                                        class="col-12 slider-content-title fs-banner-title font-prompt-exd p-0 pt-5 pb-2">
+                                                        class="col-12 slider-content-title fs-banner-title font-prompt-exd p-0 pt-5 pb-4">
                                                         Welcome to the UAE’s Premier Marketplace for Construction Materials,
                                                         Equipment, and Services.
                                                     </div>
                                                     <div class="col-12 slider-content-desc fs-16 font-prompt p-0">
                                                         Effortlessly buy and sell on one convenient platform.
                                                     </div>
-                                                    <div class="col-12 pt-4 p-0">
+                                                    <div class="col-12 pt-5 p-0">
                                                         <a href="https://business.mawadonline.com/"><button type="button"
                                                                 class="btn btn-secondary-base slider-register-vendor text-white border-radius-16 fs-16 font-prompt py-2">
                                                                 {{ __('Register as Vendor') }}
@@ -257,7 +257,7 @@
                     <div class="d-flexZ align-items-baseline justify-content-between">
                         <!-- Title -->
                         <h3 class="fs-20 mb-2 mb-sm-0">
-                            <span class="font-prompt-md">{{ translate('Featured Categories') }}</span>
+                            <span class="font-prompt-md">{{ translate('Popular Categories') }}</span>
                         </h3>
                     </div>
                 </div>
@@ -277,11 +277,11 @@
                                     <div
                                         class="h-150px w-150px w-xl-auto position-relative overflow-hidden radius-category">
                                         <div class="position-absolute h-100 w-100 overflow-hidden categ-image-shape">
-                                            <img src="{{ isset($category->cover_image) ? my_asset('public/' . $category->cover_image) : static_asset('assets/img/placeholder.jpg') }}"
+                                            <img src="{{ isset($category->cover_image) ? my_asset('public/' . $category->cover_image) : static_asset('assets/img/placeholder-shop.png') }}"
                                                 alt="{{ $category_name }}"
                                                 class="img-fit h-100 has-transition radius-category categ-img"
                                                 loading="lazy"
-                                                onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
+                                                onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder-shop.png') }}';">
                                         </div>
 
                                     </div>
@@ -607,10 +607,10 @@
                                             <span class="button-text">{{ translate('visit eShop') }}</span>
                                         </a>
                                         @if ($seller->verification_status == 1)
-                                            <span class="absolute-top-right mr-05rem mt-05rem">
+                                            <!--<span class="absolute-top-right mr-05rem mt-05rem">
                                                 <img class="International-eShops-img"
                                                     src="{{ static_asset('assets/img/International-eShops.png') }}">
-                                            </span>
+                                            </span>-->
                                         @endif
                                     </div>
                                 </div>
@@ -664,6 +664,15 @@
         </section>
     @endif
     <div class="container mb-5 mt-5">
+        <div class="bg-white pb-3 px-1">
+            <!-- Top Section -->
+            <div class="d-flexZ align-items-baseline justify-content-between">
+                <!-- Title -->
+                <h3 class="fs-20 mb-md-1 mb-sm-0">
+                    <span class="font-prompt-md">Why Choose MawadOnline</span>
+                </h3>
+            </div>
+        </div>
         <!-- 24/7 Virtual Showroom -->
         <div class="col-xl-4 col-lg-6 col-12 pr-xl-3 pr-lg-3 pb-lg-3 pb-md-3 p-0 pb-3 float-left">
             <div class="sllng-point col-md-12 p-5">

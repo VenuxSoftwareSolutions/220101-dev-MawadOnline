@@ -32,11 +32,13 @@
             <div class="row">
                 <div class="col-lg-6 col">
                     <ul class="list-inline d-flex justify-content-between justify-content-lg-start mb-0">
+                        <!--
                         <li class="list-inline-item mr-0 pl-0 py-2">
                             <div class="text-dark fs-13 pr-3 d-inline-block border-width-2">
                                 Welcome To MawadOnline's Marketplace
                             </div>
                         </li>
+                        -->
                     </ul>
                 </div>
 
@@ -94,12 +96,16 @@
                         @if (get_setting('vendor_system_activation') == 1)
                             @unless (Auth::check() && Auth::user()->user_type == 'seller')
                                 <li class="list-inline-item mr-0 pl-0 py-2">
-                                    <a href="{{ route('shops.packages') }}"
+                                    <a href="https://business.mawadonline.com"
                                         class="text-secondary-base fs-13 pr-3 d-inline-block border-width-2 border-right">{{ translate('Become a Seller') }}</a>
                                 </li>
                                 <li class="list-inline-item mr-0 pl-0 py-2">
+                                    <a href="{{ route('shops.packages') }}"
+                                        class="text-secondary fs-13 pl-3 pr-3 d-inline-block border-width-2 border-right">{{ translate('Register as Vendor') }}</a>
+                                </li>
+                                <li class="list-inline-item mr-0 pl-0 py-2">
                                     <a href="{{ route('seller.login') }}"
-                                        class="text-secondary fs-13 pl-3 d-inline-block">{{ translate('Login to Seller') }}</a>
+                                        class="text-secondary fs-13 pl-3 d-inline-block">{{ translate('Vendor Login') }}</a>
                                 </li>
                             @endunless
                         @endif
@@ -315,9 +321,9 @@
                                     <span
                                         class="user-s-h-account-dd font-prompt fs-16">{{ translate('My Account') }}</span>
                                     <span class="user-s-h-account-dd font-prompt fs-14">
-                                        <a class="user-s-h-account-dd" href="{{ route("user.registration") }}" target="_blank"> {{ translate("Register") }}
-                                        </a><span style="color:#767676;">|</span> <a class="user-s-h-account-dd"
-                                            href="{{ route('user.login') }}">{{ translate('Sign in') }}</a>
+                                        <!--<a class="user-s-h-account-dd" href="{{ route("user.registration") }}" target="_blank"> {{ translate("Register") }}
+                                        </a><span style="color:#767676;">|</span>--> <a class="user-s-h-account-dd"
+                                            href="{{ route('user.login') }}">{{ translate('Hello, Sign in') }}</a>
                                     </span>
                                 </div>
                             </span>
