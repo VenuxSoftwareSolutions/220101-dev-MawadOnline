@@ -15,10 +15,13 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\ShippersArea;
 use Auth;
+use Log;
 use Illuminate\Http\Request;
 use App\Mail\OrderConfirmation;
 use Session;
 use Mail;
+use App\Models\StockSummary;
+
 
 class CheckoutController extends Controller
 {
@@ -115,9 +118,41 @@ class CheckoutController extends Controller
         $carts = Cart::where('user_id', Auth::user()->id)->get();
 
         if ($carts && $carts->count() > 0) {
+            $carts->each(function($cart) {
+                $cart->reserved = "YES";
+
+                $reservedQuantity = - $cart->quantity;
+
+                $isStockSummaryExists = StockSummary::where("variant_id", $cart->product->id)
+                    ->where('warehouse_id', MAWADONLINE_WAREHOUSE_ID)
+                    ->where('current_total_quantity', $reservedQuantity)
+                    ->where('seller_id', auth()->user()->owner_id)
+                    ->exists();
+
+                if ($isStockSummaryExists === false) {
+                    StockSummary::create([
+                        'variant_id' => $cart->product->id,
+                        'warehouse_id' => MAWADONLINE_WAREHOUSE_ID,
+                        'current_total_quantity' => $reservedQuantity,
+                        'seller_id' => auth()->user()->owner_id,
+                    ]);
+                }
+
+                $cart->save();
+            });
+
             $categories = Category::all();
 
-            return view('frontend.shipping_info', compact('categories', 'carts', 'emirates'));
+            $isCheckoutSessionTimeoutExpires = $carts->filter(fn($cart) => str()->upper($cart->reserved) === "NO")
+                ->count() > 0;
+
+            return view(
+                'frontend.shipping_info',
+                compact(
+                    'categories', 'carts',
+                    'emirates', 'isCheckoutSessionTimeoutExpires'
+                )
+            );
         }
 
         flash(translate('Your cart is empty'))->success();
@@ -134,6 +169,9 @@ class CheckoutController extends Controller
         }
 
         $carts = Cart::where('user_id', Auth::user()->id)->get();
+
+        $isCheckoutSessionTimeoutExpires = $carts->filter(fn($cart) => str()->upper($cart->reserved) === "NO")
+            ->count() > 0;
 
         if ($carts->isEmpty()) {
             flash(translate('Your cart is empty'))->warning();
@@ -211,7 +249,8 @@ class CheckoutController extends Controller
         return view('frontend.delivery_info', compact(
             'carts', 'carrier_list', 'shippers_areas',
             'pickup_point_list', 'admin_products', 'seller_products',
-            'productQtyPanier', 'admin_product_variation', 'seller_product_variation'
+            'productQtyPanier', 'admin_product_variation', 'seller_product_variation',
+            'isCheckoutSessionTimeoutExpires'
         ));
     }
 
@@ -267,7 +306,16 @@ class CheckoutController extends Controller
 
             $total = $subtotal + $tax + $shipping;
 
-            return view('frontend.payment_select', compact('carts', 'shipping_info', 'total'));
+            $isCheckoutSessionTimeoutExpires = $carts->filter(fn($cart) => str()->upper($cart->reserved) === "NO")
+                ->count() > 0;
+
+            return view(
+                'frontend.payment_select',
+                compact(
+                    'carts', 'shipping_info',
+                    'total', 'isCheckoutSessionTimeoutExpires'
+                )
+            );
         } else {
             flash(translate('Your Cart was empty'))->warning();
 
@@ -435,11 +483,31 @@ class CheckoutController extends Controller
     {
         $combined_order = CombinedOrder::findOrFail(Session::get('combined_order_id'));
 
-        Mail::to(auth()->user()->email)->send(new OrderConfirmation($combined_order));
+        if (auth()->user()->email !== null) {
+            Mail::to(auth()->user()->email)->send(new OrderConfirmation($combined_order));
+        } else {
+            Log::info(
+                sprintf(
+                    "User % hasn't an email ! We can't send you an order confirmation email !",
+                    auth()->user()->name
+                )
+            );
+
+            flash(
+                __(
+                    "Hey :name ! You don't seem to have an email ! Sorry, We can't send you an order confirmation email !", [
+                        "name" => auth()->user()->name
+                    ]
+                )
+            )->warning();
+        }
 
         Cart::where('user_id', $combined_order->user_id)
             ->delete();
 
-        return view('frontend.order_confirmed', compact('combined_order'));
+        $first_order = $combined_order->orders->first()->toArray();
+        $first_order["shipping_address"] = json_decode($first_order["shipping_address"], true);
+
+        return view('frontend.order_confirmed', compact('combined_order', 'first_order'));
     }
 }

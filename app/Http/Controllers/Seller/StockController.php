@@ -29,77 +29,44 @@ class StockController extends Controller
         $this->middleware(['permission:seller_inventory_history'])->only('stockOperationReport');
     }
 
-    // public function index(Request $request)
-    // {
-
-    //     $productVariant = $request->input('productVariant');
-    //     $warehouse = $request->input('warehouse');
-
-    //     if ($productVariant && $warehouse) {
-    //         // Fetch inventory data based on the provided parameters
-    //         // For example, you might want to filter the data using these parameters
-    //         $inventoryData = StockSummary::where('variant_id', $productVariant)
-    //             ->where('warehouse_id', $warehouse)
-    //             ->paginate(10);
-    //     } else {
-    //         $query = StockSummary::query();
-    //         // Check if a search term is provided
-    //         if ($searchTerm = $request->input('search')) {
-    //             $query->whereHas('productVariant', function ($query) use ($searchTerm) {
-    //                 $query->where('name', 'like', "%{$searchTerm}%") ;
-    //                     // ->orWhere('sku', 'like', "%{$searchTerm}%");
-    //             })
-    //                 ->orWhereHas('warehouse', function ($query) use ($searchTerm) {
-    //                     $query->where('warehouse_name', 'like', "%{$searchTerm}%");
-    //                 })
-    //                 ->orWhere('current_total_quantity', 'like', "%{$searchTerm}%")
-    //                 ->orWhereDate('updated_at', 'like', "%{$searchTerm}%");
-    //         }
-
-    //         $inventoryData = $query->paginate(10);
-    //     }
-    //     $warehouses = Warehouse::all();
-    //     return view('backend.stock.index', compact('inventoryData', 'warehouses'));
-    // }
-
     public function index(Request $request, $type = null)
     {
         seller_lease_creation($user=Auth::user());
 
         // Filter by product variant and warehouse if provided
         $productVariant = $request->input('productVariant');
-        $warehouse = $request->input('warehouse');
+        $warehouse_id = $request->input('warehouse');
+
         $seller = User::find(Auth::user()->owner_id);
-        //$seller = Auth::user();
 
-        // Check if productVariant and warehouse are provided and exist
-        // if ($productVariant && !ProductVariant::where('id', $productVariant)->exists()) {
-        //     return back()->withErrors(['error' => 'Invalid product variant.']);
-        // }
+        $is_vendor_warehouse_exists = Warehouse::where('id', $warehouse_id)
+            ->where('user_id', $seller->id)
+            ->exists();
 
-        if ($warehouse && !Warehouse::where('id', $warehouse)->where('user_id', $seller->id)->exists()) {
+        if ($warehouse_id && !$is_vendor_warehouse_exists) {
             return back()->withErrors(['error' => 'Invalid warehouse.']);
         }
 
-        if ($productVariant && $warehouse) {
+        if ($productVariant && $warehouse_id) {
             $inventoryData = StockSummary::where('variant_id', $productVariant)
-                ->where('warehouse_id', $warehouse)
+                ->where('warehouse_id', $warehouse_id)
                 ->where('seller_id', $seller->id)
-                ->orderBy('updated_at', 'desc') // Sort by most recent updates
+                ->orderBy('updated_at', 'desc')
                 ->get();
         } else {
             $inventoryData = StockSummary::where('seller_id', $seller->id)
-                ->orderBy('updated_at', 'desc') // Sort by most recent updates
+                ->orderBy('updated_at', 'desc')
                 ->get();
         }
+
         $warehouses = Warehouse::where('user_id', $seller->id)->get();
-        $products = Product::where('is_parent', 0)   // Filter products where 'is_parent' column is 0
-            ->where('is_draft', 0)                   // Filter products where 'is_draft' column is 0
-           /*  ->where('approved', 1)       */             // Filter products where 'approved' column is 1
-            ->where('user_id', $seller->id)          // Filter products where 'user_id' column matches the seller's id
+        $products = Product::where('is_parent', 0)
+            ->where('is_draft', 0)
+            ->where('user_id', $seller->id)
             ->get();
 
-        $tour_steps=Tour::orderBy('step_number')->get();
+        $tour_steps = Tour::orderBy('step_number')->get();
+
         return view('seller.stock.index', compact('inventoryData', 'warehouses', 'products','tour_steps'));
     }
 
@@ -128,7 +95,6 @@ class StockController extends Controller
      */
     public function saveRecord(SaveRecordRequest $request)
     {
-
         $seller_id = Auth::user()->owner_id;
 
         // Extract and rename specific data from the request

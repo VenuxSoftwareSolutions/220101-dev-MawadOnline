@@ -154,8 +154,8 @@ class OrderController extends Controller
                 $shippingAddress['email'] = Auth::user()->email;
                 $shippingAddress['address'] = $address->address;
                 $shippingAddress['country'] = $address->country->name;
-                $shippingAddress['state'] = $address->state->name;
-                $shippingAddress['city'] = $address->city->name;
+                $shippingAddress['state'] = $address->emirate->name;
+                $shippingAddress['city'] = $address->area->name;
                 $shippingAddress['postal_code'] = $address->postal_code;
                 $shippingAddress['phone'] = $address->phone;
 

@@ -12,21 +12,13 @@ use enshrined\svgSanitize\Sanitizer;
 
 class AizUploadController extends Controller
 {
-    // public function __construct()
-    // {
-    //     // Staff Permission Check
-    //     $this->middleware(['permission:seller_uploaded_files'])->only('index');
-    //     $this->middleware(['permission:seller_add_file'])->only('create');
-    //     $this->middleware(['permission:seller_edit_file'])->only('edit');
-    //     $this->middleware(['permission:seller_destroy_file'])->only('destroy');
-    // }
-
     public function index(Request $request)
     {
+        $user = Auth::user();
+        $all_uploads = (auth()->user()->user_type == 'seller')
+            ? Upload::where('user_id', auth()->user()->id)
+            : Upload::query();
 
-        $user=Auth::user();
-        dd( $roles = $user->roles()->get());
-        $all_uploads = (auth()->user()->user_type == 'seller') ? Upload::where('user_id', auth()->user()->id) : Upload::query();
         $search = null;
         $sort_by = null;
 
@@ -36,6 +28,7 @@ class AizUploadController extends Controller
         }
 
         $sort_by = $request->sort;
+
         switch ($request->sort) {
             case 'newest':
                 $all_uploads->orderBy('created_at', 'desc');
@@ -55,7 +48,6 @@ class AizUploadController extends Controller
         }
 
         $all_uploads = $all_uploads->paginate(60)->appends(request()->query());
-
 
         return (auth()->user()->user_type == 'seller')
             ? view('seller.uploads.index', compact('all_uploads', 'search', 'sort_by'))
@@ -157,7 +149,7 @@ class AizUploadController extends Controller
                 }else{
                     $path = $request->file('aiz_file')->store('uploads/all', 'local');
                 }
-                
+
                 $size = $request->file('aiz_file')->getSize();
 
                 // Return MIME type ala mimetype extension
@@ -171,7 +163,7 @@ class AizUploadController extends Controller
                         $img = Image::make($request->file('aiz_file')->getRealPath())->encode('jpg');
                         $height = $img->height();
                         $width = $img->width();
-                        
+
                         $setting_min_width = get_setting('image_min_width');
                         $setting_img_quality = get_setting('image_img_quality');
                         if($width<$setting_min_width){
@@ -185,7 +177,7 @@ class AizUploadController extends Controller
                                 $constraint->upsize(); // Prevent upsizing
                             });
                         }
-                        
+
                         $img->save(base_path('public/') . $path,80);
                         clearstatcache();
 
@@ -196,7 +188,7 @@ class AizUploadController extends Controller
                         // Log::error('Image processing error: ' . $e->getMessage());
                     }
                 }
-                
+
                 // if (env('FILESYSTEM_DRIVER') != 'local') {
 
                 //     Storage::disk(env('FILESYSTEM_DRIVER'))->put(

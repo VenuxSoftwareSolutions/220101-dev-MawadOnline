@@ -50,12 +50,13 @@ class CartController extends Controller
 
         $data = [];
 
-        foreach ($carts as $key => $item) {
-            $product_stock = StockSummary::where('variant_id', $item['product_id'])->sum('current_total_quantity');
+        foreach ($carts as $key => $cart) {
+            $product_stock = $cart->product->getTotalQuantity();
 
-            $product = get_single_product($item['product_id']);
+            $product = $cart->product;
 
-            $total = $total + cart_product_price($item, $product, false) * $item['quantity'];
+            $total = $total + cart_product_price($cart, $product, false) * $cart['quantity'];
+
             $product_name_with_choice = str()->ucfirst($product->getTranslation('name'));
             $stockStatus = 'In Stock';
             $stockAlert = '';
@@ -63,7 +64,7 @@ class CartController extends Controller
 
             $vendor_name = User::find($product->user_id)->shop->name;
 
-            if ($item['variation'] != null) {
+            if ($cart['variation'] != null) {
                 $product_name_with_choice = sprintf(
                     "%s - %s: %s, %s",
                     str()->ucfirst(
@@ -71,13 +72,13 @@ class CartController extends Controller
                     ),
                     __("Vendor"),
                     $vendor_name,
-                    $item['variation']
+                    $cart['variation']
                 );
             }
 
             if ($product_stock <= 0) {
                 $stockStatus = translate('Out of Stock');
-                $outOfStockItems[] = $item['id'];
+                $outOfStockItems[] = $cart['id'];
             } elseif ($product_stock <= LOW_STOCK_THRESHOLD) {
                 $stockAlert = translate('Running Low');
             }
@@ -92,22 +93,23 @@ class CartController extends Controller
                 "stockAlert" => $stockAlert
             ];
 
-            if ($product_stock < $item->quantity) {
+            if ($product_stock < $cart->quantity) {
                 if (auth()->user() != null) {
                     $existingWishlistItem = Wishlist::where('user_id', $user_id)
-                        ->where('product_id', $item->product_id)
+                        ->where('product_id', $cart->product_id)
                         ->first();
 
                     // Move to Wishlist if not already in the wishlist
                     if ($existingWishlistItem === null) {
                         Wishlist::create([
                             'user_id' => $user_id,
-                            'product_id' => $item->product_id,
+                            'product_id' => $cart->product_id,
                         ]);
                     }
                 }
+
                 // Remove from Cart
-                $item->delete();
+                $cart->delete();
             }
         }
 
