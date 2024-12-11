@@ -21,7 +21,7 @@ use App\Mail\OrderConfirmation;
 use Session;
 use Mail;
 use App\Models\StockSummary;
-
+use Exception;
 
 class CheckoutController extends Controller
 {
@@ -325,114 +325,126 @@ class CheckoutController extends Controller
 
     public function apply_coupon_code(Request $request)
     {
-        $user = auth()->user();
-        $coupon = Coupon::where('code', $request->code)->first();
-        $response_message = [];
+        try {
+            $user = auth()->user();
+            $coupon = Coupon::where('code', $request->code)->first();
+            $response_message = [];
 
-        // if the Coupon type is Welcome base, check the user has this coupon or not
-        $couponUser = true;
-        if ($coupon && $coupon->type == 'welcome_base') {
-            $userCoupon = $user->userCoupon;
-            if (! $userCoupon) {
-                $couponUser = false;
-            }
-        }
-
-        if ($coupon != null && $couponUser) {
-
-            //  Coupon expiry Check
-            if ($coupon->type != 'welcome_base') {
-                $validationDateCheckCondition = strtotime(date('d-m-Y')) >= $coupon->start_date && strtotime(date('d-m-Y')) <= $coupon->end_date;
-            } else {
-                $validationDateCheckCondition = false;
-                if ($userCoupon) {
-                    $validationDateCheckCondition = $userCoupon->expiry_date >= strtotime(date('d-m-Y H:i:s'));
+            // if the Coupon type is Welcome base, check the user has this coupon or not
+            $couponUser = true;
+            if ($coupon && $coupon->type == 'welcome_base') {
+                $userCoupon = $user->userCoupon;
+                if (! $userCoupon) {
+                    $couponUser = false;
                 }
             }
-            if ($validationDateCheckCondition) {
-                if (CouponUsage::where('user_id', Auth::user()->id)->where('coupon_id', $coupon->id)->first() == null) {
-                    $coupon_details = json_decode($coupon->details);
 
-                    $carts = Cart::where('user_id', Auth::user()->id)
-                        ->where('owner_id', $coupon->user_id)
-                        ->get();
+            if ($coupon != null && $couponUser) {
+                //  Coupon expiry Check
+                if ($coupon->type != 'welcome_base') {
+                    $validationDateCheckCondition = strtotime(date('d-m-Y')) >= $coupon->start_date->timestamp && strtotime(date('d-m-Y')) <= $coupon->end_date->timestamp;
+                } else {
+                    $validationDateCheckCondition = false;
+                    if ($userCoupon) {
+                        $validationDateCheckCondition = $userCoupon->expiry_date >= strtotime(date('d-m-Y H:i:s'));
+                    }
+                }
 
-                    $coupon_discount = 0;
+                if ($validationDateCheckCondition) {
+                    $couponUsage = CouponUsage::where('user_id', Auth::user()->id)
+                        ->where('coupon_id', $coupon->id)
+                        ->first();
 
-                    if ($coupon->type == 'cart_base' || $coupon->type == 'welcome_base') {
-                        $subtotal = 0;
-                        $tax = 0;
-                        $shipping = 0;
-                        foreach ($carts as $key => $cartItem) {
-                            $product = Product::find($cartItem['product_id']);
-                            $subtotal += cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
-                            $tax += cart_product_tax($cartItem, $product, false) * $cartItem['quantity'];
-                            $shipping += $cartItem['shipping_cost'];
-                        }
-                        $sum = $subtotal + $tax + $shipping;
-                        if ($coupon->type == 'cart_base' && $sum >= $coupon_details->min_buy) {
-                            if ($coupon->discount_type == 'percent') {
-                                $coupon_discount = ($sum * $coupon->discount) / 100;
-                                if ($coupon_discount > $coupon_details->max_discount) {
-                                    $coupon_discount = $coupon_details->max_discount;
-                                }
-                            } elseif ($coupon->discount_type == 'amount') {
-                                $coupon_discount = $coupon->discount;
+                    if ($couponUsage == null) {
+                        $coupon_details = json_decode($coupon->details);
+
+                        $carts = Cart::where('user_id', Auth::user()->id)
+                            ->where('owner_id', $coupon->user_id)
+                            ->get();
+
+                        $coupon_discount = 0;
+
+                        if ($coupon->type == 'cart_base' || $coupon->type == 'welcome_base') {
+                            $subtotal = 0;
+                            $tax = 0;
+                            $shipping = 0;
+                            foreach ($carts as $key => $cartItem) {
+                                $product = Product::find($cartItem['product_id']);
+                                $subtotal += cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
+                                $tax += cart_product_tax($cartItem, $product, false) * $cartItem['quantity'];
+                                $shipping += $cartItem['shipping_cost'];
                             }
-                        } elseif ($coupon->type == 'welcome_base' && $sum >= $userCoupon->min_buy) {
-                            $coupon_discount = $userCoupon->discount_type == 'percent' ? (($sum * $userCoupon->discount) / 100) : $userCoupon->discount;
-                        }
-                    } elseif ($coupon->type == 'product_base') {
-                        foreach ($carts as $key => $cartItem) {
-                            $product = Product::find($cartItem['product_id']);
-                            foreach ($coupon_details as $key => $coupon_detail) {
-                                if ($coupon_detail->product_id == $cartItem['product_id']) {
-                                    if ($coupon->discount_type == 'percent') {
-                                        $coupon_discount += (cart_product_price($cartItem, $product, false, false) * $coupon->discount / 100) * $cartItem['quantity'];
-                                    } elseif ($coupon->discount_type == 'amount') {
-                                        $coupon_discount += $coupon->discount * $cartItem['quantity'];
+                            $sum = $subtotal + $tax + $shipping;
+                            if ($coupon->type == 'cart_base' && $sum >= $coupon_details->min_buy) {
+                                if ($coupon->discount_type == 'percent') {
+                                    $coupon_discount = ($sum * $coupon->discount) / 100;
+                                    if ($coupon_discount > $coupon_details->max_discount) {
+                                        $coupon_discount = $coupon_details->max_discount;
+                                    }
+                                } elseif ($coupon->discount_type == 'amount') {
+                                    $coupon_discount = $coupon->discount;
+                                }
+                            } elseif ($coupon->type == 'welcome_base' && $sum >= $userCoupon->min_buy) {
+                                $coupon_discount = $userCoupon->discount_type == 'percent' ? (($sum * $userCoupon->discount) / 100) : $userCoupon->discount;
+                            }
+                        } elseif ($coupon->type == 'product_base') {
+                            foreach ($carts as $key => $cartItem) {
+                                $product = Product::find($cartItem['product_id']);
+                                foreach ($coupon_details as $key => $coupon_detail) {
+                                    if ($coupon_detail->product_id == $cartItem['product_id']) {
+                                        if ($coupon->discount_type == 'percent') {
+                                            $coupon_discount += (cart_product_price($cartItem, $product, false, false) * $coupon->discount / 100) * $cartItem['quantity'];
+                                        } elseif ($coupon->discount_type == 'amount') {
+                                            $coupon_discount += $coupon->discount * $cartItem['quantity'];
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
 
-                    if ($coupon_discount > 0) {
-                        Cart::where('user_id', Auth::user()->id)
-                            ->where('owner_id', $coupon->user_id)
-                            ->update(
-                                [
-                                    'discount' => $coupon_discount / count($carts),
-                                    'coupon_code' => $request->code,
-                                    'coupon_applied' => 1,
-                                ]
-                            );
+                        if ($coupon_discount > 0) {
+                            Cart::where('user_id', Auth::user()->id)
+                                ->where('owner_id', $coupon->user_id)
+                                ->update(
+                                    [
+                                        'discount' => $coupon_discount / count($carts),
+                                        'coupon_code' => $request->code,
+                                        'coupon_applied' => 1,
+                                    ]
+                                );
 
-                        $response_message['response'] = 'success';
-                        $response_message['message'] = translate('Coupon has been applied');
+                            $response_message['response'] = 'success';
+                            $response_message['message'] = translate('Coupon has been applied');
+                        } else {
+                            $response_message['response'] = 'warning';
+                            $response_message['message'] = translate('This coupon is not applicable to your cart products!');
+                        }
                     } else {
                         $response_message['response'] = 'warning';
-                        $response_message['message'] = translate('This coupon is not applicable to your cart products!');
+                        $response_message['message'] = translate('You already used this coupon!');
                     }
                 } else {
                     $response_message['response'] = 'warning';
-                    $response_message['message'] = translate('You already used this coupon!');
+                    $response_message['message'] = translate('Coupon expired!');
                 }
             } else {
-                $response_message['response'] = 'warning';
-                $response_message['message'] = translate('Coupon expired!');
+                $response_message['response'] = 'danger';
+                $response_message['message'] = translate('Invalid coupon!');
             }
-        } else {
-            $response_message['response'] = 'danger';
-            $response_message['message'] = translate('Invalid coupon!');
+
+            $carts = Cart::where('user_id', Auth::user()->id)->get();
+            $shipping_info = Address::where('id', $carts[0]['address_id'])->first();
+
+            $returnHTML = view('frontend.'.get_setting('homepage_select').'.partials.cart_summary', compact('coupon', 'carts', 'shipping_info'))->render();
+
+            return response()->json(['response_message' => $response_message, 'html' => $returnHTML]);
+        } catch(Exception $e) {
+            Log::error("Error while applying coupon code, with message: {$e->getMessage()}");
+            return response()->json([
+                "error" => true,
+                "message" => __("Something went wrong!")
+            ], 500);
         }
-
-        $carts = Cart::where('user_id', Auth::user()->id)->get();
-        $shipping_info = Address::where('id', $carts[0]['address_id'])->first();
-
-        $returnHTML = view('frontend.'.get_setting('homepage_select').'.partials.cart_summary', compact('coupon', 'carts', 'shipping_info'))->render();
-
-        return response()->json(['response_message' => $response_message, 'html' => $returnHTML]);
     }
 
     public function remove_coupon_code(Request $request)
