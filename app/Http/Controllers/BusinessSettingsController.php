@@ -33,7 +33,7 @@ class BusinessSettingsController extends Controller
 
     public function general_setting(Request $request)
     {
-        
+
     	return view('backend.setup_configurations.general_settings');
     }
 
@@ -44,59 +44,59 @@ class BusinessSettingsController extends Controller
 
     public function social_login(Request $request)
     {
-        
+
         return view('backend.setup_configurations.social_login');
     }
 
     public function smtp_settings(Request $request)
     {
-       
+
         return view('backend.setup_configurations.smtp_settings');
     }
 
     public function google_analytics(Request $request)
     {
-       
+
         return view('backend.setup_configurations.google_configuration.google_analytics');
     }
 
     public function google_recaptcha(Request $request)
     {
-        
+
         return view('backend.setup_configurations.google_configuration.google_recaptcha');
     }
 
     public function google_map(Request $request) {
-       
+
         return view('backend.setup_configurations.google_configuration.google_map');
     }
 
     public function google_firebase(Request $request) {
-       
+
         return view('backend.setup_configurations.google_configuration.google_firebase');
     }
 
     public function facebook_chat(Request $request)
     {
-        
+
         return view('backend.setup_configurations.facebook_chat');
     }
 
     public function facebook_comment(Request $request)
     {
-        
+
         return view('backend.setup_configurations.facebook_configuration.facebook_comment');
     }
 
     public function payment_method(Request $request)
     {
-        
+
         return view('backend.setup_configurations.payment_method');
     }
 
     public function file_system(Request $request)
     {
-        
+
         return view('backend.setup_configurations.file_system');
     }
 
@@ -434,27 +434,26 @@ class BusinessSettingsController extends Controller
     public function updateActivationSettings(Request $request)
     {
         $env_changes = ['FORCE_HTTPS', 'FILESYSTEM_DRIVER'];
-        if (in_array($request->type, $env_changes)) {
 
+        if (in_array($request->type, $env_changes)) {
             return $this->updateActivationSettingsInEnv($request);
         }
 
         $business_settings = BusinessSetting::where('type', $request->type)->first();
-        if($business_settings!=null){
+
+        if ($business_settings != null) {
             if ($request->type == 'maintenance_mode' && $request->value == '1') {
-                if(env('DEMO_MODE') != 'On'){
+                if (env('DEMO_MODE') != 'On') {
                     Artisan::call('down');
                 }
-            }
-            elseif ($request->type == 'maintenance_mode' && $request->value == '0') {
-                if(env('DEMO_MODE') != 'On') {
+            } elseif ($request->type == 'maintenance_mode' && $request->value == '0') {
+                if (env('DEMO_MODE') != 'On') {
                     Artisan::call('up');
                 }
             }
             $business_settings->value = $request->value;
             $business_settings->save();
-        }
-        else{
+        } else {
             $business_settings = new BusinessSetting;
             $business_settings->type = $request->type;
             $business_settings->value = $request->value;
