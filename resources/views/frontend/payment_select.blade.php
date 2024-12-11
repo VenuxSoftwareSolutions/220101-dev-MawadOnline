@@ -707,7 +707,7 @@
         }
 
         $(document).on("click", "#coupon-apply", function() {
-            var data = new FormData($('#apply-coupon-form')[0]);
+            let data = new FormData($('#apply-coupon-form')[0]);
 
             $.ajax({
                 headers: {
@@ -722,6 +722,11 @@
                 success: function(data, textStatus, jqXHR) {
                     AIZ.plugins.notify(data.response_message.response, data.response_message.message);
                     $("#cart_summary").html(data.html);
+                },
+                error: function({
+                    responseJSON
+                }) {
+                    AIZ.plugins.notify("danger", responseJSON.message);
                 }
             })
         });
