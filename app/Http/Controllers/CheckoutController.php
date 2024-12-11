@@ -374,6 +374,7 @@ class CheckoutController extends Controller
                                 $tax += cart_product_tax($cartItem, $product, false) * $cartItem['quantity'];
                                 $shipping += $cartItem['shipping_cost'];
                             }
+
                             $sum = $subtotal + $tax + $shipping;
                             if ($coupon->type == 'cart_base' && $sum >= $coupon_details->min_buy) {
                                 if ($coupon->discount_type == 'percent') {
@@ -435,9 +436,18 @@ class CheckoutController extends Controller
             $carts = Cart::where('user_id', Auth::user()->id)->get();
             $shipping_info = Address::where('id', $carts[0]['address_id'])->first();
 
-            $returnHTML = view('frontend.'.get_setting('homepage_select').'.partials.cart_summary', compact('coupon', 'carts', 'shipping_info'))->render();
+            $returnHTML = view(
+                'frontend.'.get_setting('homepage_select').'.partials.cart_summary',
+                compact(
+                    'coupon', 'carts',
+                    'shipping_info'
+                )
+            )->render();
 
-            return response()->json(['response_message' => $response_message, 'html' => $returnHTML]);
+            return response()->json([
+                'response_message' => $response_message,
+                'html' => $returnHTML
+            ]);
         } catch(Exception $e) {
             Log::error("Error while applying coupon code, with message: {$e->getMessage()}");
             return response()->json([
