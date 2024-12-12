@@ -30,6 +30,7 @@ class SendOrderDetailsShipmentStatusChangeNotification
      */
     public function handle(OrderDetailsShipmentStatusChange $event)
     {
-        Mail::to($event->orderDetails->seller->email)->send(new ShipmentStatusEmail($event->orderDetails));
+        Mail::to($event->orderDetails->order->user->email)
+            ->send(new ShipmentStatusEmail($event->orderDetails));
     }
 }
