@@ -201,7 +201,6 @@ class OrderController extends Controller
                 $shipping = 0;
                 $coupon_discount = 0;
 
-                //Order Details Storing
                 foreach ($seller_product as $cartItem) {
                     $product = Product::find($cartItem['product_id']);
 
@@ -229,7 +228,6 @@ class OrderController extends Controller
                     $order_detail->shipping_cost = $cartItem['shipping_cost'];
 
                     $shipping += $order_detail->shipping_cost;
-                    //End of storing shipping cost
 
                     $order_detail->quantity = $cartItem['quantity'];
 
