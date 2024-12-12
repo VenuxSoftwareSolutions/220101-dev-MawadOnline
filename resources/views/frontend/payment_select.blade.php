@@ -732,7 +732,7 @@
         });
 
         $(document).on("click", "#coupon-remove", function() {
-            var data = new FormData($('#remove-coupon-form')[0]);
+            let data = new FormData($('#remove-coupon-form')[0]);
 
             $.ajax({
                 headers: {
@@ -740,7 +740,7 @@
                 },
                 method: "POST",
                 url: "{{ route('checkout.remove_coupon_code') }}",
-                data: data,
+                data,
                 cache: false,
                 contentType: false,
                 processData: false,
