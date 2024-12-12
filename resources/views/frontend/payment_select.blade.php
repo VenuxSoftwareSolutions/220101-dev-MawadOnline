@@ -719,14 +719,37 @@
                 cache: false,
                 contentType: false,
                 processData: false,
-                success: function(data, textStatus, jqXHR) {
-                    AIZ.plugins.notify(data.response_message.response, data.response_message.message);
-                    $("#cart_summary").html(data.html);
+                success: function({
+                    discounts,
+                    total,
+                    tax,
+                    shipping,
+                    subTotal,
+                    response_message,
+                    html
+                }, textStatus, jqXHR) {
+                    if (response_message !== undefined) {
+                        AIZ.plugins.notify(response_message.response, response_message
+                            .message);
+                        $("#cart_summary").html(html);
+                    } else if (discounts !== undefined) {
+                        for (let key in discounts) {
+                            $(`#product_${key}`).html(discounts[key]);
+                        }
+
+                        $(".cart-total strong").html(`<span>${total}</span>`);
+                        $(".cart-subtotal span").html(total);
+                        $(".cart-tax span").html(tax);
+                        $(".cart-shipping span").html(shipping);
+                        $("#sub_total").val(subTotal);
+                    }
                 },
                 error: function({
-                    responseJSON
+                    responseJSON: {
+                        message
+                    }
                 }) {
-                    AIZ.plugins.notify("danger", responseJSON.message);
+                    AIZ.plugins.notify("danger", message);
                 }
             })
         });
