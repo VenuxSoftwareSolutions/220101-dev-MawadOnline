@@ -35,9 +35,11 @@ class firstCountDownNotificationJob implements ShouldQueue
     public function handle()
     {
        try{
-            Mail::to($this->order->seller->email)->send(new CountdownEmail($this->order));
-            $this->order->first_count_down_notification = 'yes';
-            $this->order->save();
+            if($this->order->delivery_status == "pending"){
+                Mail::to($this->order->seller->email)->send(new CountdownEmail($this->order));
+                $this->order->first_count_down_notification = 'yes';
+                $this->order->save();
+            }
         }catch(Exception $e){
             Log::error('an error when runing job countdown notification',$e->getMessage());
         }
