@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Models\Product;
 
 class CompareController extends Controller
 {
@@ -24,25 +25,40 @@ class CompareController extends Controller
     //store comparing products ids in session
     public function addToCompare(Request $request)
     {
-        if($request->session()->has('compare')){
-            $compare = $request->session()->get('compare', collect([]));
-            if(!$compare->contains($request->id)){
-                if(count($compare) == 3){
-                    $compare->forget(0);
-                    $compare->push($request->id);
-                }
-                else{
-                    $compare->push($request->id);
-                }
+        $variantId = $request->id;
+
+        $variant = Product::with('category')->find($variantId);
+        if (!$variant) {
+            return response()->json(['error' => 'Variant not found'], 404);
+        }
+
+        // Get the parent product (if applicable)
+        $parentProduct = $variant->parent_id ? Product::find($variant->parent_id) : null;
+
+        // Get the leaf category name
+        $leafCategory = $variant->category;
+        $leafCategoryName = $leafCategory ? $leafCategory->name : 'Uncategorized';
+
+        $compare = $request->session()->get('compare', collect([]));
+
+        if (!$compare->contains('id', $variantId)) {
+            if ($compare->count() >= 3) {
+                $compare->shift();
             }
+
+            $compare->push([
+                'id' => $variantId,
+                'name' => $variant->name,
+                'parent' => $parentProduct ? $parentProduct->name : null,
+                'category' => $leafCategoryName,
+            ]);
         }
-        else{
-            $compare = collect([$request->id]);
-            $request->session()->put('compare', $compare);
-        }
-        
-        return view('frontend.'.get_setting('homepage_select').'.partials.compare', compact('compare'));
+
+        $request->session()->put('compare', $compare);
+
+        return view('frontend.' . get_setting('homepage_select') . '.partials.compare', compact('compare'));
     }
+
 
     public function details($unique_identifier)
     {
@@ -50,7 +66,7 @@ class CompareController extends Controller
         $data['unique_identifier'] = $unique_identifier;
         $data['main_item'] = get_setting('item_name') ?? 'eCommerce';
         $request_data_json = json_encode($data);
-        
+
         $gate = "https://activation.activeitzone.com/check_addon_activation";
 
         $header = array(
@@ -74,5 +90,5 @@ class CompareController extends Controller
             translation_tables($unique_identifier);
             return redirect()->route('home');
         }
-    } 
+    }
 }
