@@ -19,6 +19,7 @@ use Session;
 use Stripe\Checkout\Session as StripeSession;
 use Stripe\Stripe;
 use Stripe\StripeClient;
+use Stripe\PaymentIntent;
 
 class StripeController extends Controller
 {
@@ -178,5 +179,44 @@ class StripeController extends Controller
         flash(translate('Payment is cancelled'))->error();
 
         return redirect()->route('home');
+    }
+
+    public function createPaymentIntent(Request $request)
+    {
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email',
+            ]);
+
+            $stripe = new StripeClient(env('STRIPE_SECRET'));
+
+            $payment_methods = [];
+
+            $currency = Currency::findOrFail(get_setting('system_default_currency'))->code;
+
+            // @todo add more payment types
+            if ($request->session()->get('payment_type') == 'cart_payment') {
+                $payment_methods[] = "card" ;
+            }
+
+            $intent = $stripe->paymentIntents->create([
+                'amount' => $request->amount,
+                'currency' => $currency,
+                'payment_method_types' => $payment_methods,
+                'receipt_email' => $request->email,
+                'metadata' => [
+                    'name' => $request->name,
+                ],
+            ]);
+
+            return response()->json(['client_secret' => $intent->client_secret]);
+        } catch(Exception $e) {
+            Log::error("Error while processing stripe payment intent, with message: {$e->getMessage()}");
+            return response()->json([
+                "error" => true,
+                "message" => __("Something went wrong!")
+            ], 500);
+        }
     }
 }
