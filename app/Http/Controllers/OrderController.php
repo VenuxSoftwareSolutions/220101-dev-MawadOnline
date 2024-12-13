@@ -201,7 +201,6 @@ class OrderController extends Controller
                 $shipping = 0;
                 $coupon_discount = 0;
 
-                //Order Details Storing
                 foreach ($seller_product as $cartItem) {
                     $product = Product::find($cartItem['product_id']);
 
@@ -212,7 +211,7 @@ class OrderController extends Controller
                     $product_variation = $cartItem['variation'];
 
                     // @todo we should remove the quantity from stock
-                    // deduct the qty from the warehouse that has enough stock to fullfill order:
+                    // deduct the qty from the warehouse that has enough stock to fulfill order:
                     // 1. get stock summaries sorted by quantities
                     // 2. deduct qty from the first stock summaries that has enough stock
                     // 3. add a stock details entry which record the stock deduction (same warehouse of prev stock summaries)
@@ -229,7 +228,6 @@ class OrderController extends Controller
                     $order_detail->shipping_cost = $cartItem['shipping_cost'];
 
                     $shipping += $order_detail->shipping_cost;
-                    //End of storing shipping cost
 
                     $order_detail->quantity = $cartItem['quantity'];
 
@@ -261,7 +259,9 @@ class OrderController extends Controller
 
                     if (addon_is_activated('affiliate_system')) {
                         if ($order_detail->product_referral_code) {
-                            $referred_by_user = User::where('referral_code', $order_detail->product_referral_code)->first();
+                            $referred_by_user = User::where(
+                                'referral_code', $order_detail->product_referral_code
+                            )->first();
 
                             (new AffiliateController)
                                 ->processAffiliateStats($referred_by_user->id, 0, $order_detail->quantity, 0, 0);
@@ -269,11 +269,10 @@ class OrderController extends Controller
                     }
                 }
 
-                $order->grand_total = $subtotal + $tax + $shipping;
+                $order->grand_total = $coupon_discount + $tax + $shipping;
 
                 if ($seller_product[0]->coupon_code != null) {
                     $order->coupon_discount = $coupon_discount;
-                    $order->grand_total -= $coupon_discount;
 
                     $coupon_usage = new CouponUsage;
                     $coupon_usage->user_id = Auth::user()->id;

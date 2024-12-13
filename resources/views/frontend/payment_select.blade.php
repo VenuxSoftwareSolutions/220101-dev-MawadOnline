@@ -707,7 +707,7 @@
         }
 
         $(document).on("click", "#coupon-apply", function() {
-            var data = new FormData($('#apply-coupon-form')[0]);
+            let data = new FormData($('#apply-coupon-form')[0]);
 
             $.ajax({
                 headers: {
@@ -719,15 +719,43 @@
                 cache: false,
                 contentType: false,
                 processData: false,
-                success: function(data, textStatus, jqXHR) {
-                    AIZ.plugins.notify(data.response_message.response, data.response_message.message);
-                    $("#cart_summary").html(data.html);
+                success: function({
+                    discounts,
+                    total,
+                    tax,
+                    shipping,
+                    subTotal,
+                    response_message,
+                    html
+                }, textStatus, jqXHR) {
+                    if (response_message !== undefined) {
+                        AIZ.plugins.notify(response_message.response, response_message
+                            .message);
+                        $("#cart_summary").html(html);
+                    } else if (discounts !== undefined) {
+                        for (let key in discounts) {
+                            $(`#product_${key}`).html(discounts[key]);
+                        }
+
+                        $(".cart-total strong").html(`<span>${total}</span>`);
+                        $(".cart-subtotal span").html(total);
+                        $(".cart-tax span").html(tax);
+                        $(".cart-shipping span").html(shipping);
+                        $("#sub_total").val(subTotal);
+                    }
+                },
+                error: function({
+                    responseJSON: {
+                        message
+                    }
+                }) {
+                    AIZ.plugins.notify("danger", message);
                 }
             })
         });
 
         $(document).on("click", "#coupon-remove", function() {
-            var data = new FormData($('#remove-coupon-form')[0]);
+            let data = new FormData($('#remove-coupon-form')[0]);
 
             $.ajax({
                 headers: {
@@ -735,7 +763,7 @@
                 },
                 method: "POST",
                 url: "{{ route('checkout.remove_coupon_code') }}",
-                data: data,
+                data,
                 cache: false,
                 contentType: false,
                 processData: false,
