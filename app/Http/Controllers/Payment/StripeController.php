@@ -24,7 +24,29 @@ class StripeController extends Controller
 {
     public function pay()
     {
-        return view('frontend.payment.stripe');
+        // amount should be in cents, this is why it's multiplied by 100
+        $amount = 0;
+
+        if (request()->session()->has('payment_type')) {
+            if (request()->session()->get('payment_type') == 'cart_payment') {
+                $combined_order = CombinedOrder::findOrFail(Session::get('combined_order_id'));
+                $client_reference_id = $combined_order->id;
+                $amount = round($combined_order->grand_total * 100);
+            } elseif (request()->session()->get('payment_type') == 'wallet_payment') {
+                $amount = round(request()->session()->get('payment_data')['amount'] * 100);
+                $client_reference_id = auth()->id();
+            } elseif (request()->session()->get('payment_type') == 'customer_package_payment') {
+                $customer_package = CustomerPackage::findOrFail(Session::get('payment_data')['customer_package_id']);
+                $amount = round($customer_package->amount * 100);
+                $client_reference_id = auth()->id();
+            } elseif (request()->session()->get('payment_type') == 'seller_package_payment') {
+                $seller_package = SellerPackage::findOrFail(Session::get('payment_data')['seller_package_id']);
+                $amount = round($seller_package->amount * 100);
+                $client_reference_id = auth()->id();
+            }
+        }
+
+        return view('frontend.payment.stripe', compact("amount"));
     }
 
     public function create_checkout_session(Request $request)
