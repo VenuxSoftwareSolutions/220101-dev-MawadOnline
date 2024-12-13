@@ -485,7 +485,7 @@
                                         @error('photo')
                                         <div class="text-danger">{{ $message }}</div>
                                          @enderror
-                                         <span class="file-condition">{{ translate('Max file size is 5MB and accepted file types are PDF and image formats.') }}</span>
+                                         <span class="file-condition">{{ translate('Max file size is 5MB and accepted file types are image formats.') }}</span>
 
 
                                     </div>

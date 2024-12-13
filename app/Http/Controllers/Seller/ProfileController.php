@@ -97,6 +97,8 @@ class ProfileController extends Controller
                 'max:255',
                 'regex:/^[^\d]+$/' // Allow only alphabetic characters (no numbers)
             ],
+            'photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048', // Ensure it's an image
+
             'last_name_personal' => [
                 'required',
                 'string',
