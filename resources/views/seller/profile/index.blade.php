@@ -384,7 +384,7 @@
 
                 <div class="tab-pane fade show active" id="personal-info">
 
-                    <form method="POST" action="{{route('seller.personal-info.update')}}">
+                    <form method="POST" action="{{route('seller.personal-info.update')}}" enctype="multipart/form-data">
                     @csrf
                     <!-- ... Personal Info form fields ... -->
                     <div class="bg-white border mb-4">
@@ -455,7 +455,48 @@
                                             </div>
                                     </div>
                                 </div>
+
+
+
+
+                                
+
+
+
+                                <div class="col-md-6" id="photo">
+                                    <div class="form-group">
+                                        <label><b>{{ translate('Photo') }} </b></label>
+                                        @if (@$photo)
+                                            <a class="old_file {{ $proposedPayoutChange && $proposedPayoutChange->getNewValue('photo') ? 'color-modified-file' : '' }}"
+                                                href="{{ static_asset($photo) }}"
+                                                target="_blank">{{ translate('View photo') }}</a>
+                                            <input type="hidden" name="photo"
+                                                value="{{ $photo}}">
+                                        @endif
+                                        <div class="input-group">
+                                            <div class="custom-file">
+                                                <input type="file" class="form-control custom-file-input" id="photo_input"
+                                                    name="photo"  placeholder="{{ translate('Photo') }}">
+
+                                                <label class="custom-file-label" for="photo_input">{{ translate('Choose a file') }}</label>
+                                            </div>
+
+                                        </div>
+                                        @error('photo')
+                                        <div class="text-danger">{{ $message }}</div>
+                                         @enderror
+                                         <span class="file-condition">{{ translate('Max file size is 5MB and accepted file types are PDF and image formats.') }}</span>
+
+
+                                    </div>
+                                </div>
+
+
+
                             </div>
+
+
+                            
 
 
                         </div>
