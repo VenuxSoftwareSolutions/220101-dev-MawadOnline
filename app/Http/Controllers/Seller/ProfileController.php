@@ -17,6 +17,7 @@ use App\Http\Requests\SellerProfileRequest;
 use App\Models\Upload;
 use App\Notifications\VendorProfileChangesNotification;
 use App\Notifications\VendorProfileChangesWebNotification;
+use Artisan;
 
 class ProfileController extends Controller
 {
@@ -141,11 +142,21 @@ class ProfileController extends Controller
             $user->avatar = $upload->id;
             $user->avatar_original = $upload->id;
 
-            $user->save();
+
+             // Update the shop's logo with the upload ID
+            if ($user->shop) {  // Assuming the User model has a relation to the Shop model
+                $shop = $user->shop;
+                $shop->logo = $upload->id;
+                $shop->save();
+            }
+
         }
         // Save the updated user model
         $user->save();
 
+        Artisan::call('view:clear');
+        Artisan::call('cache:clear');
+        
         // Optionally, you can return a response or redirect somewhere
         return redirect()->back()->with('success', 'User information updated successfully');
     }
