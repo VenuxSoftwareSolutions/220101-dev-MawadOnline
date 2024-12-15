@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
 use App\Models\Category;
 use App\Models\Product;
 
@@ -26,36 +29,46 @@ class CompareController extends Controller
     public function addToCompare(Request $request)
     {
         $variantId = $request->id;
+        $user = Auth::user();
+        $compare = collect();
+        $leafCategoryId = DB::table('product_categories')
+        ->where('product_id', $variantId)
+        ->value('category_id');
 
-        $variant = Product::with('category')->find($variantId);
-        if (!$variant) {
-            return response()->json(['error' => 'Variant not found'], 404);
+        if (!$leafCategoryId) {
+            return response()->json(['error' => 'Invalid variant'], 400);
         }
+        $leafCategoryName = DB::table('categories')
+        ->where('id', $leafCategoryId)
+        ->value('name');
 
-        // Get the parent product (if applicable)
-        $parentProduct = $variant->parent_id ? Product::find($variant->parent_id) : null;
-
-        // Get the leaf category name
-        $leafCategory = $variant->category;
-        $leafCategoryName = $leafCategory ? $leafCategory->name : 'Uncategorized';
-
-        $compare = $request->session()->get('compare', collect([]));
-
-        if (!$compare->contains('id', $variantId)) {
-            if ($compare->count() >= 3) {
-                $compare->shift();
+        if ($user) {
+            if ($request->session()->has('compare')) {
+                $compare = $request->session()->get('compare');
             }
-
-            $compare->push([
-                'id' => $variantId,
-                'name' => $variant->name,
-                'parent' => $parentProduct ? $parentProduct->name : null,
-                'category' => $leafCategoryName,
+    
+            if (!isset($compare[$leafCategoryId])) {
+                $compare[$leafCategoryId] = collect();
+            }
+    
+            if (!$compare[$leafCategoryId]->contains($variantId)) {
+                if ($compare[$leafCategoryId]->count() >= 3 ) {
+                    $compare[$leafCategoryId]->forget(0);
+                    $compare[$leafCategoryId]->push($request->id);
+                }
+                $compare[$leafCategoryId]->push($variantId);
+            }
+        
+            $request->session()->put('compare', $compare);
+        } else {
+            return response()->json([
+                'localStorageAction' => 'add',
+                'variantId' => $variantId,
+                'categoryId' => $leafCategoryId,
+                'categoryName' => $leafCategoryName
             ]);
+    
         }
-
-        $request->session()->put('compare', $compare);
-
         return view('frontend.' . get_setting('homepage_select') . '.partials.compare', compact('compare'));
     }
 

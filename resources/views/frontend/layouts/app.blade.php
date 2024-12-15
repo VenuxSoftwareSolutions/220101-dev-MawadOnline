@@ -538,9 +538,27 @@
 
         function addToCompare(id){
             $.post('{{ route('compare.addToCompare') }}', {_token: AIZ.data.csrf, id:id}, function(data){
-                $('#compare').html(data);
-                AIZ.plugins.notify('success', "{{ translate('Item has been added to compare list') }}");
-                $('#compare_items_sidenav').html(parseInt($('#compare_items_sidenav').html())+1);
+                if (data.localStorageAction) {
+                    let compare = JSON.parse(localStorage.getItem('compare')) || {};
+                    if (!compare[data.categoryId]) {
+                        compare[data.categoryId] = [];
+                    }
+                    if (compare[data.categoryId].length < 3) {
+                        compare[data.categoryId].push(data.variantId);
+                        localStorage.setItem('compare', JSON.stringify(compare));
+                        $('#compare_items_sidenav').html(parseInt($('#compare_items_sidenav').html())+1);
+
+                        AIZ.plugins.notify('success', "{{ translate('Item has been added to compare list') }}");
+
+                    } else {
+                        AIZ.plugins.notify('warning', "{{ translate('Max variants reached for this category') }}");
+                    }
+                } else{     
+                    $('#compare').html(data);
+                    AIZ.plugins.notify('success', "{{ translate('Item has been added to compare list') }}");
+                    $('#compare_items_sidenav').html(parseInt($('#compare_items_sidenav').html())+1);
+
+                }
             });
         }
 

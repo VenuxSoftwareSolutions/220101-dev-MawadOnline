@@ -247,8 +247,9 @@
                                             stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
 
-                                    <span class="badge badge-counter-compare font-prompt">{{ session('compare', collect([]))->count() }}
+                                    <span id="compare_items_sidenav" class="badge badge-counter-compare font-prompt">{{ session('compare', collect([]))->count() }}
                                     </span>
+
                                 </span>
                             </a>
 
