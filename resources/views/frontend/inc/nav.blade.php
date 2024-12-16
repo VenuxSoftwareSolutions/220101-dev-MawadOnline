@@ -247,7 +247,8 @@
                                             stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
 
-                                    <span id="compare_items_sidenav" class="badge badge-counter-compare font-prompt">{{ session('compare', collect([]))->count() }}
+                                    <span id="compare_items_sidenav" class="badge badge-counter-compare font-prompt">
+                                        0
                                     </span>
 
                                 </span>
@@ -317,7 +318,8 @@
                                     <span
                                         class="user-s-h-account-dd font-prompt fs-16">{{ translate('My Account') }}</span>
                                     <span class="user-s-h-account-dd font-prompt fs-14">
-                                        <a class="user-s-h-account-dd" href="{{ route("user.registration") }}" target="_blank"> {{ translate("Register") }}
+                                        <a class="user-s-h-account-dd" href="{{ route('user.registration') }}"
+                                            target="_blank"> {{ translate('Register') }}
                                         </a><span style="color:#767676;">|</span> <a class="user-s-h-account-dd"
                                             href="{{ route('user.login') }}">{{ translate('Sign in') }}</a>
                                     </span>
@@ -552,7 +554,11 @@
                     </div>
                     <!-- Header Menus -->
                     @php
-                        $nav_txt_color = get_setting('header_nav_menu_text') == 'light' || get_setting('header_nav_menu_text') == null ? 'text-white' : 'text-white';
+                        $nav_txt_color =
+                            get_setting('header_nav_menu_text') == 'light' ||
+                            get_setting('header_nav_menu_text') == null
+                                ? 'text-white'
+                                : 'text-white';
                     @endphp
                     <div class="ml-xl-4 w-100 overflow-hidden">
                         <div class="d-flex align-items-center justify-content-center justify-content-xl-start h-100">
@@ -759,7 +765,29 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let compareBadge = document.getElementById('compare_items_sidenav');
 
+            let isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
+
+            if (!isLoggedIn) {
+                let compare = JSON.parse(localStorage.getItem('compare')) || {};
+                let count = Object.values(compare).reduce((total, items) => total + items.length, 0);
+                compareBadge.innerHTML = count;
+            } else {
+                let sessionCount = {{ collect(session('compare', collect([])))->flatten()->count() }};
+
+                let compare = JSON.parse(localStorage.getItem('compare')) || {};
+                let localCount = Object.values(compare).reduce((total, items) => total + items.length, 0);
+
+                let combinedCount = sessionCount + localCount;
+
+                compareBadge.innerHTML = combinedCount;
+
+            }
+        });
+    </script>
     @section('script')
         <script type="text/javascript">
             function show_order_details(order_id) {

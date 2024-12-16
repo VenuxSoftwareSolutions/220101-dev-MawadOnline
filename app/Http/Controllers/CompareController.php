@@ -30,47 +30,66 @@ class CompareController extends Controller
     {
         $variantId = $request->id;
         $user = Auth::user();
-        $compare = collect();
         $leafCategoryId = DB::table('product_categories')
-        ->where('product_id', $variantId)
-        ->value('category_id');
-
+            ->where('product_id', $variantId)
+            ->value('category_id');
+    
         if (!$leafCategoryId) {
             return response()->json(['error' => 'Invalid variant'], 400);
         }
+    
         $leafCategoryName = DB::table('categories')
-        ->where('id', $leafCategoryId)
-        ->value('name');
-
+            ->where('id', $leafCategoryId)
+            ->value('name');
+    
         if ($user) {
-            if ($request->session()->has('compare')) {
-                $compare = $request->session()->get('compare');
+            $compare = $request->session()->get('compare', collect());
+    
+            // Sync localStorage items with session
+            if ($request->has('localStorageCompare')) {
+                $localStorageCompare = collect($request->input('localStorageCompare'));
+                $localStorageCompare->each(function ($variants, $categoryId) use (&$compare) {
+                    if (!isset($compare[$categoryId])) {
+                        $compare[$categoryId] = collect();
+                    }
+                    foreach ($variants as $variantId) {
+                        if (!$compare[$categoryId]->contains($variantId)) {
+                            if ($compare[$categoryId]->count() >= 3) {
+                                $compare[$categoryId]->forget(0);
+                            }
+                            $compare[$categoryId]->push($variantId);
+                        }
+                    }
+                });
             }
     
+            // Add current variant to session compare list
             if (!isset($compare[$leafCategoryId])) {
                 $compare[$leafCategoryId] = collect();
             }
-    
             if (!$compare[$leafCategoryId]->contains($variantId)) {
-                if ($compare[$leafCategoryId]->count() >= 3 ) {
+                if ($compare[$leafCategoryId]->count() >= 3) {
                     $compare[$leafCategoryId]->forget(0);
-                    $compare[$leafCategoryId]->push($request->id);
                 }
                 $compare[$leafCategoryId]->push($variantId);
             }
-        
+    
             $request->session()->put('compare', $compare);
+    
+            // Return partial view with updated compare list
+            return view('frontend.' . get_setting('homepage_select') . '.partials.compare', compact('compare'));
         } else {
+            // Return data for localStorage update in JS
             return response()->json([
                 'localStorageAction' => 'add',
                 'variantId' => $variantId,
                 'categoryId' => $leafCategoryId,
                 'categoryName' => $leafCategoryName
             ]);
-    
         }
-        return view('frontend.' . get_setting('homepage_select') . '.partials.compare', compact('compare'));
     }
+    
+
 
 
     public function details($unique_identifier)
