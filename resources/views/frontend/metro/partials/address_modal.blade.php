@@ -270,27 +270,20 @@
 
         $(document).ready(function() {
             $(document).on('change', '[name=state]', function() {
-                let getAreaUrl = "{{ route('get.area', ['id' => ':id']) }}";
-
+                let url = "{{ route('emirate.states', ['emirate_id' => ':id']) }}";
                 let id = $(this).val();
 
                 $('[name=area_id]').find('option').remove();
 
                 $.ajax({
-                    url: getAreaUrl.replace(':id', id), // Use the route variable
-                    type: 'get',
+                    url: url.replace(':id', id),
+                    type: 'GET',
                     dataType: 'json',
                     success: function(response) {
-                        let len = 0;
-                        if (response['data'] != null) {
-                            len = response['data'].length;
-                        }
-
-                        if (len > 0) {
-                            // Read data and create <option >
-                            for (let i = 0; i < len; i++) {
+                        if (response.data !== null && response.data?.length > 0) {
+                            for (let i = 0; i < response.data.length; i++) {
                                 let id = response['data'][i].id;
-                                let name = response['data'][i].name_translated;
+                                let name = response['data'][i].name;
 
                                 $("[name=area_id]").append(`
                                     <option value='${id}'>
