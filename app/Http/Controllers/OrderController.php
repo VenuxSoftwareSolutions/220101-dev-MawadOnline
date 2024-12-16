@@ -269,7 +269,7 @@ class OrderController extends Controller
                     }
                 }
 
-                $order->grand_total = $coupon_discount + $tax + $shipping;
+                $order->grand_total = ($coupon_discount > 0 ? $coupon_discount : $subtotal) + $tax + $shipping;
 
                 if ($seller_product[0]->coupon_code != null) {
                     $order->coupon_discount = $coupon_discount;

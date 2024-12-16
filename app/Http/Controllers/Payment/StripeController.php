@@ -19,12 +19,35 @@ use Session;
 use Stripe\Checkout\Session as StripeSession;
 use Stripe\Stripe;
 use Stripe\StripeClient;
+use Stripe\PaymentIntent;
 
 class StripeController extends Controller
 {
     public function pay()
     {
-        return view('frontend.payment.stripe');
+        // amount should be in cents, this is why it's multiplied by 100
+        $amount = 0;
+
+        if (request()->session()->has('payment_type')) {
+            if (request()->session()->get('payment_type') == 'cart_payment') {
+                $combined_order = CombinedOrder::findOrFail(Session::get('combined_order_id'));
+                $client_reference_id = $combined_order->id;
+                $amount = round($combined_order->grand_total * 100);
+            } elseif (request()->session()->get('payment_type') == 'wallet_payment') {
+                $amount = round(request()->session()->get('payment_data')['amount'] * 100);
+                $client_reference_id = auth()->id();
+            } elseif (request()->session()->get('payment_type') == 'customer_package_payment') {
+                $customer_package = CustomerPackage::findOrFail(Session::get('payment_data')['customer_package_id']);
+                $amount = round($customer_package->amount * 100);
+                $client_reference_id = auth()->id();
+            } elseif (request()->session()->get('payment_type') == 'seller_package_payment') {
+                $seller_package = SellerPackage::findOrFail(Session::get('payment_data')['seller_package_id']);
+                $amount = round($seller_package->amount * 100);
+                $client_reference_id = auth()->id();
+            }
+        }
+
+        return view('frontend.payment.stripe', compact("amount"));
     }
 
     public function create_checkout_session(Request $request)
@@ -110,29 +133,43 @@ class StripeController extends Controller
         $stripe = new StripeClient(env('STRIPE_SECRET'));
 
         try {
-            $session = $stripe->checkout->sessions->retrieve($request->session_id);
-            $payment = ['status' => 'Success'];
-            $payment_type = Session::get('payment_type');
+            $paymentIntentId = $request->query('payment_intent');
 
-            if ($session->status == 'complete') {
-                if ($payment_type == 'cart_payment') {
-                    return (new CheckoutController)->checkout_done(session()->get('combined_order_id'), json_encode($payment));
-                } elseif ($payment_type == 'wallet_payment') {
-                    return (new WalletController)->wallet_payment_done(session()->get('payment_data'), json_encode($payment));
-                } elseif ($payment_type == 'customer_package_payment') {
-                    return (new CustomerPackageController)->purchase_payment_done(session()->get('payment_data'), json_encode($payment));
-                } elseif ($payment_type == 'seller_package_payment') {
-                    return (new SellerPackageController)->purchase_payment_done(session()->get('payment_data'), json_encode($payment));
+            if ($paymentIntentId === null) {
+                flash(translate('Payment failed: Missing payment intent ID'))->error();
+                return redirect()->route('home');
+            }
+
+            $paymentIntent = $stripe->paymentIntents->retrieve($paymentIntentId);
+
+            if ($paymentIntent->status === 'succeeded') {
+                $payment = ['status' => 'Success'];
+                $paymentType = session()->get('payment_type');
+
+                switch ($paymentType) {
+                    case 'cart_payment':
+                        return (new CheckoutController)
+                            ->checkout_done(session()->get('combined_order_id'), json_encode($payment));
+                    case 'wallet_payment':
+                        return (new WalletController)
+                            ->wallet_payment_done(session()->get('payment_data'), json_encode($payment));
+                    case 'customer_package_payment':
+                        return (new CustomerPackageController)
+                            ->purchase_payment_done(session()->get('payment_data'), json_encode($payment));
+                    case 'seller_package_payment':
+                        return (new SellerPackageController)
+                            ->purchase_payment_done(session()->get('payment_data'), json_encode($payment));
+                    default:
+                        flash(translate('Unknown payment type'))->error();
+                        return redirect()->route('home');
                 }
             } else {
-                flash(translate('Payment failed'))->error();
-
+                flash(translate('Payment incomplete'))->error();
                 return redirect()->route('home');
             }
         } catch (Exception $e) {
             flash(translate('Payment failed'))->error();
-            Log::error("Error while checking success stripe payment, with message: {$e->getMessage()}");
-
+            Log::error("Error while redirecting to stripe success, with message: {$e->getMessage()}");
             return redirect()->route('home');
         }
     }
@@ -142,5 +179,44 @@ class StripeController extends Controller
         flash(translate('Payment is cancelled'))->error();
 
         return redirect()->route('home');
+    }
+
+    public function createPaymentIntent(Request $request)
+    {
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email',
+            ]);
+
+            $stripe = new StripeClient(env('STRIPE_SECRET'));
+
+            $payment_methods = [];
+
+            $currency = Currency::findOrFail(get_setting('system_default_currency'))->code;
+
+            // @todo add more payment types
+            if ($request->session()->get('payment_type') == 'cart_payment') {
+                $payment_methods[] = "card" ;
+            }
+
+            $intent = $stripe->paymentIntents->create([
+                'amount' => $request->amount,
+                'currency' => $currency,
+                'payment_method_types' => $payment_methods,
+                'receipt_email' => $request->email,
+                'metadata' => [
+                    'name' => $request->name,
+                ],
+            ]);
+
+            return response()->json(['client_secret' => $intent->client_secret]);
+        } catch(Exception $e) {
+            Log::error("Error while processing stripe payment intent, with message: {$e->getMessage()}");
+            return response()->json([
+                "error" => true,
+                "message" => __("Something went wrong!")
+            ], 500);
+        }
     }
 }
