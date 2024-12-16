@@ -3,45 +3,44 @@
 namespace App\Http\Controllers;
 
 use App;
+use App\Http\Requests\SellerRegistrationRequest;
+use App\Http\Requests\SellerRegistrationShopRequest;
+use App\Http\Requests\StoreBusinessInfoRequest;
+use App\Http\Requests\StoreContactPersonRequest;
+use App\Http\Requests\StorePayoutInfoRequest;
+use App\Http\Requests\StoreWarehouseRequest;
+use App\Mail\VerificationCodeEmail;
+use App\Models\Area;
+use App\Models\BusinessInformation;
+use App\Models\ContactPerson;
+use App\Models\Emirate;
+use App\Models\PayoutInformation;
+use App\Models\Role;
+use App\Models\Seller;
+use App\Models\SellerPackage;
+use App\Models\Shop;
+use App\Models\Staff;
+use App\Models\User;
+use App\Models\VerificationCode;
+use App\Models\Warehouse;
+use App\Notifications\CustomStatusNotification;
+use App\Notifications\NewRegistrationNotification;
+use App\Notifications\NewVendorRegistration;
+use App\Notifications\VendorStatusChangedNotification;
 use Auth;
+use Carbon\Carbon;
+use Exception;
 use Hash;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Notification;
+use Log;
 use Mail;
 use Storage;
 use Validator;
-use Carbon\Carbon;
-use Exception;
-use Log;
-use App\Models\Area;
-use App\Models\Role;
-use App\Models\Shop;
-use App\Models\User;
-use App\Models\Staff;
-use App\Models\Seller;
-use App\Models\Emirate;
-use App\Models\Warehouse;
-use Illuminate\Http\Request;
-use App\Models\ContactPerson;
-use App\Models\SellerPackage;
-use App\Models\VerificationCode;
-use App\Models\PayoutInformation;
-use App\Mail\VerificationCodeEmail;
-use App\Models\BusinessInformation;
-use Illuminate\Support\Facades\File;
-use App\Http\Requests\StoreWarehouseRequest;
-use App\Notifications\NewVendorRegistration;
-use Illuminate\Support\Facades\Notification;
-use App\Http\Requests\StorePayoutInfoRequest;
-use App\Http\Requests\StoreBusinessInfoRequest;
-use App\Http\Requests\SellerRegistrationRequest;
-use App\Http\Requests\StoreContactPersonRequest;
-use App\Notifications\NewRegistrationNotification;
-use App\Http\Requests\SellerRegistrationShopRequest;
-use App\Notifications\CustomStatusNotification;
-use App\Notifications\VendorStatusChangedNotification;
 
 class ShopController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware('user', ['only' => ['index']]);
@@ -55,10 +54,12 @@ class ShopController extends Controller
     public function index()
     {
         $shop = Auth::user()->shop;
+
         return view('seller.shop', compact('shop'));
     }
 
-    public function showStatus($status) {
+    public function showStatus($status)
+    {
 
         if (Auth::check()) {
             // User is authenticated
@@ -77,22 +78,23 @@ class ShopController extends Controller
     public function create(Request $request)
     {
 
-        $emirates=Emirate::all() ;
+        $emirates = Emirate::all();
 
         if (Auth::check()) {
             if ((Auth::user()->user_type == 'admin' || Auth::user()->user_type == 'customer')) {
                 flash(translate('Admin or Customer cannot be a seller'))->error();
+
                 return back();
             }
-            if (Auth::user()->user_type == 'seller' && Auth::user()->steps && Auth::user()->status == "Enabled") {
+            if (Auth::user()->user_type == 'seller' && Auth::user()->steps && Auth::user()->status == 'Enabled') {
                 // flash(translate('This user already a seller'))->error();
                 // return back();
                 return redirect()->route('dashboard');
             }
 
-            if (Auth::user()->user_type == 'seller'  && (Auth::user()->status == "Draft" || Auth::user()->status == "Rejected" ) /* && Auth::user()->steps == 0 */) {
+            if (Auth::user()->user_type == 'seller' && (Auth::user()->status == 'Draft' || Auth::user()->status == 'Rejected') /* && Auth::user()->steps == 0 */) {
                 $user = Auth::user();
-                if(Auth::user()->status == "Draft") {
+                if (Auth::user()->status == 'Draft') {
                     $step_number = Auth::user()->step_number;
 
                     flash(translate('You need to complete all steps to create a vendor account.'))->error();
@@ -102,31 +104,35 @@ class ShopController extends Controller
 
                 }
 
-                return view('frontend.seller_form', compact('step_number', "user","emirates"));
+                return view('frontend.seller_form', compact('step_number', 'user', 'emirates'));
             }
-            if (Auth::user()->user_type == 'seller' && Auth::user()->steps && Auth::user()->status == "Pending Approval") {
-                $status =strtolower(str_replace(' ','-',Auth::user()->status)) ;
-                return redirect()->route('seller.status',$status);
+            if (Auth::user()->user_type == 'seller' && Auth::user()->steps && Auth::user()->status == 'Pending Approval') {
+                $status = strtolower(str_replace(' ', '-', Auth::user()->status));
+
+                return redirect()->route('seller.status', $status);
             }
-            if (Auth::user()->user_type == 'seller' && Auth::user()->steps && Auth::user()->status == "Pending Closure") {
-                $status =strtolower(str_replace(' ','-',Auth::user()->status)) ;
-                return redirect()->route('seller.status',$status);
+            if (Auth::user()->user_type == 'seller' && Auth::user()->steps && Auth::user()->status == 'Pending Closure') {
+                $status = strtolower(str_replace(' ', '-', Auth::user()->status));
+
+                return redirect()->route('seller.status', $status);
             }
-            if (Auth::user()->user_type == 'seller' && Auth::user()->steps && Auth::user()->status == "Suspended") {
-                $status =strtolower(str_replace(' ','-',Auth::user()->status)) ;
-                return redirect()->route('seller.status',$status);
+            if (Auth::user()->user_type == 'seller' && Auth::user()->steps && Auth::user()->status == 'Suspended') {
+                $status = strtolower(str_replace(' ', '-', Auth::user()->status));
+
+                return redirect()->route('seller.status', $status);
             }
-            if (Auth::user()->user_type == 'seller' && Auth::user()->steps && Auth::user()->status == "Closed") {
-                $status =strtolower(str_replace(' ','-',Auth::user()->status)) ;
-                return redirect()->route('seller.status',$status);
+            if (Auth::user()->user_type == 'seller' && Auth::user()->steps && Auth::user()->status == 'Closed') {
+                $status = strtolower(str_replace(' ', '-', Auth::user()->status));
+
+                return redirect()->route('seller.status', $status);
             }
-            if (Auth::user()->user_type == 'seller' &&  Auth::user()->status == "Enabled"  && Auth::user()->id != Auth::user()->owner_id ) {
-                return view('frontend.seller_form',compact('emirates'));
+            if (Auth::user()->user_type == 'seller' && Auth::user()->status == 'Enabled' && Auth::user()->id != Auth::user()->owner_id) {
+                return view('frontend.seller_form', compact('emirates'));
             }
         } else {
-            return view('frontend.seller_form',compact('emirates'));
+            return view('frontend.seller_form', compact('emirates'));
 
-      //      return view('auth.'.get_setting('authentication_layout_select').'.seller_registration');
+            //      return view('auth.'.get_setting('authentication_layout_select').'.seller_registration');
         }
     }
 
@@ -136,7 +142,7 @@ class ShopController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(SellerRegistrationRequest  $request)
+    public function store(SellerRegistrationRequest $request)
     {
 
         // $validator = Validator::make($request->all(), [
@@ -163,20 +169,20 @@ class ShopController extends Controller
         // $user->user_type = "seller";
         // $user->password = Hash::make($request->password);
         // $user->save();
-        $user = User::where('email',$request->email )->first();
-        if($user && $user->id != $user->owner_id && $user->owner_id != null){
+        $user = User::where('email', $request->email)->first();
+        if ($user && $user->id != $user->owner_id && $user->owner_id != null) {
 
-            if(Hash::check($request->password, $user->password)==true){
+            if (Hash::check($request->password, $user->password) == true) {
                 return response()->json(['message' => 'You can\'t use the same password'], 403);
             }
         }
         $user = User::updateOrCreate(
             ['email' => $request->email],
             [
-                'name' => $request->first_name . " " . $request->last_name,
+                'name' => $request->first_name.' '.$request->last_name,
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
-                'user_type' => "seller", // Set the user_type explicitly
+                'user_type' => 'seller', // Set the user_type explicitly
                 'password' => Hash::make($request->password),
             ]
         );
@@ -197,13 +203,11 @@ class ShopController extends Controller
             $user->step_number = 1;
             $user->save();
 
-
             // Send the verification code to the user's email
             Mail::to($request->email)->send(new VerificationCodeEmail($verificationCode));
         }
+
         return response()->json(['success' => true, 'message' => translate('Your account has been created successfully. Please check your email for verification.')]);
-
-
 
         // Perform additional validation and store logic if needed
 
@@ -258,53 +262,53 @@ class ShopController extends Controller
         // return back();
     }
 
-
     public function storeBusinessInfo(StoreBusinessInfoRequest $request)
     {
 
-
-        $action =  $request->input('action') ;
+        $action = $request->input('action');
         // it indicates the "save as draft" action.
-
-
 
         if ($request->input('vat_registered') == 1) {
 
             // If VAT is registered, handle VAT certificate and TRN
-            if (isset($request->vat_certificate_old) && !$request->hasFile('vat_certificate'))
+            if (isset($request->vat_certificate_old) && ! $request->hasFile('vat_certificate')) {
                 $vatCertificatePath = $request->vat_certificate_old;
-            elseif ($request->hasFile('vat_certificate'))
+            } elseif ($request->hasFile('vat_certificate')) {
                 $vatCertificatePath = Storage::putFile('vat_certificate', $request->file('vat_certificate'));
+            }
 
             $trn = $request->input('trn');
         } else {
             // If VAT is not registered, handle tax waiver
-            if (isset($request->tax_waiver_old) && !$request->hasFile('tax_waiver'))
+            if (isset($request->tax_waiver_old) && ! $request->hasFile('tax_waiver')) {
                 $taxWaiverPath = $request->tax_waiver_old;
-            elseif ($request->hasFile('tax_waiver'))
+            } elseif ($request->hasFile('tax_waiver')) {
                 $taxWaiverPath = Storage::putFile('tax_waiver', $request->file('tax_waiver'));
+            }
         }
 
         $civil_defense_approval = null;
-        if (isset($request->civil_defense_approval_old))
+        if (isset($request->civil_defense_approval_old)) {
             $civil_defense_approval = $request->civil_defense_approval_old;
+        }
 
         $trade_license_doc = null;
-        if (isset($request->trade_license_doc_old))
+        if (isset($request->trade_license_doc_old)) {
             $trade_license_doc = $request->trade_license_doc_old;
+        }
 
         // Store or update BusinessInformation
         BusinessInformation::updateOrCreate(
             [
-                'user_id' => Auth::user()->id
+                'user_id' => Auth::user()->id,
             ],
             [
                 'trade_name' => ['en' => $request->trade_name_english, 'ar' => $request->trade_name_arabic],
                 'eshop_name' => ['en' => $request->eshop_name_english, 'ar' => $request->eshop_name_arabic],
                 'eshop_desc' => ['en' => $request->eshop_desc_en, 'ar' => $request->eshop_desc_ar],
-                'trade_license_doc' => $request->hasFile('trade_license_doc') ?  $request->file('trade_license_doc')->store('trade_license_doc') : $trade_license_doc/* $request->file('trade_license_doc')->store('trade_license_docs') */,
+                'trade_license_doc' => $request->hasFile('trade_license_doc') ? $request->file('trade_license_doc')->store('trade_license_doc') : $trade_license_doc/* $request->file('trade_license_doc')->store('trade_license_docs') */,
                 'license_issue_date' => $request->license_issue_date ? Carbon::createFromFormat('d M Y', $request->license_issue_date)->format('Y-m-d') : null,
-                'license_expiry_date' => /* $request->license_expiry_date, */$request->license_expiry_date ? Carbon::createFromFormat('d M Y', $request->license_expiry_date)->format('Y-m-d') : null,
+                'license_expiry_date' => /* $request->license_expiry_date, */ $request->license_expiry_date ? Carbon::createFromFormat('d M Y', $request->license_expiry_date)->format('Y-m-d') : null,
                 'state' => $request->state,
                 'area_id' => $request->area_id,
                 'street' => $request->street,
@@ -316,24 +320,25 @@ class ShopController extends Controller
                 'vat_certificate' => isset($vatCertificatePath) ? $vatCertificatePath : null,
                 'trn' => isset($trn) ? $trn : null,
                 'tax_waiver' => isset($taxWaiverPath) ? $taxWaiverPath : null,
-                'civil_defense_approval' => $request->hasFile('civil_defense_approval') ?  $request->file('civil_defense_approval')->store('civil_defense_approval') : $civil_defense_approval,
+                'civil_defense_approval' => $request->hasFile('civil_defense_approval') ? $request->file('civil_defense_approval')->store('civil_defense_approval') : $civil_defense_approval,
                 'saveasdraft' => isset($action) ? true : false,
 
             ]
         );
-        if (!$action) {
+        if (! $action) {
 
             $user = Auth::user();
             $user->step_number = 3;
             $user->save();
+
             return response()->json(['success' => true, 'message' => translate('Business info stored successfully')]);
 
-        }
-        else {
+        } else {
             $user = Auth::user();
             $user->step_number = 2;
             $user->save();
-            return response()->json(['success' => true, 'message' => translate('Draft Business info saved successfully'),'save_as_draft' => true]);
+
+            return response()->json(['success' => true, 'message' => translate('Draft Business info saved successfully'), 'save_as_draft' => true]);
 
         }
         // Return a response
@@ -341,61 +346,61 @@ class ShopController extends Controller
 
     public function storeContactPerson(StoreContactPersonRequest $request)
     {
-      /*   if (!Auth::check()) {
+        /*   if (!Auth::check()) {
 
-            return response()->json(['loginFailed' => 'Login unsuccessful. Please create an account and confirm it.'], 401);
-        }
+              return response()->json(['loginFailed' => 'Login unsuccessful. Please create an account and confirm it.'], 401);
+          }
 
-        // Check if the user's account is not verified (assuming 'verified' is a column in the users table)
-        if (!Auth::user()->email_verified_at) {
-            return response()->json(['loginFailed' => 'Your account is not verified.'], 403);
-        }
-        $validator = Validator::make($request->all(), [
-            'first_name' => 'nullable|string|max:64',
-            'last_name' => 'nullable|string|max:64',
-            'email' => 'nullable|email',
-            'mobile_phone' => $request->input('mobile_phone') != '+971' ? ['nullable', 'string', 'max:16', new \App\Rules\UaeMobilePhone] :'',
-            'additional_mobile_phone' => $request->input('additional_mobile_phone') != '+971' ? ['nullable', 'string', 'max:16', new \App\Rules\UaeMobilePhone]:'',
-            'nationality' => 'nullable|string|max:255',
-            'date_of_birth' => 'nullable|date|before:-18 years',
-            'emirates_id_number' => ['nullable', 'string', 'max:15', 'regex:/^[0-9]{15}$/'],
-            'emirates_id_expiry_date' => 'nullable|date|after_or_equal:today',
-            'emirates_id_file' =>  'nullable|file|mimes:pdf,jpeg,png|max:5120' ,
-            'business_owner' => 'nullable|boolean',
-            'designation' => 'nullable|string|max:64',
+          // Check if the user's account is not verified (assuming 'verified' is a column in the users table)
+          if (!Auth::user()->email_verified_at) {
+              return response()->json(['loginFailed' => 'Your account is not verified.'], 403);
+          }
+          $validator = Validator::make($request->all(), [
+              'first_name' => 'nullable|string|max:64',
+              'last_name' => 'nullable|string|max:64',
+              'email' => 'nullable|email',
+              'mobile_phone' => $request->input('mobile_phone') != '+971' ? ['nullable', 'string', 'max:16', new \App\Rules\UaeMobilePhone] :'',
+              'additional_mobile_phone' => $request->input('additional_mobile_phone') != '+971' ? ['nullable', 'string', 'max:16', new \App\Rules\UaeMobilePhone]:'',
+              'nationality' => 'nullable|string|max:255',
+              'date_of_birth' => 'nullable|date|before:-18 years',
+              'emirates_id_number' => ['nullable', 'string', 'max:15', 'regex:/^[0-9]{15}$/'],
+              'emirates_id_expiry_date' => 'nullable|date|after_or_equal:today',
+              'emirates_id_file' =>  'nullable|file|mimes:pdf,jpeg,png|max:5120' ,
+              'business_owner' => 'nullable|boolean',
+              'designation' => 'nullable|string|max:64',
 
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        } */
+          ]);
+          if ($validator->fails()) {
+              return response()->json(['errors' => $validator->errors()], 422);
+          } */
 
-        $action = $request->input('action') ;
+        $action = $request->input('action');
         // it indicates the "save as draft" action.
-
 
         // Handle file upload
         $emiratesIdFilePath = null;
-        if (isset($request->emirates_id_file_old) && !$request->hasFile('emirates_id_file'))
+        if (isset($request->emirates_id_file_old) && ! $request->hasFile('emirates_id_file')) {
             $emiratesIdFilePath = $request->emirates_id_file_old;
-        else if ($request->hasFile('emirates_id_file'))
+        } elseif ($request->hasFile('emirates_id_file')) {
             $emiratesIdFilePath = Storage::putFile('emirates_ids', $request->file('emirates_id_file'));
+        }
 
         // Store contact person data
         $contactPerson = ContactPerson::updateOrCreate(
             [
-                'user_id' => Auth::user()->id
+                'user_id' => Auth::user()->id,
             ],
             [
                 'user_id' => auth()->user()->id, // Assuming you're using authentication
                 'first_name' => $request->input('first_name'),
                 'last_name' => $request->input('last_name'),
                 'email' => $request->input('email'),
-                'mobile_phone' =>   $request->input('mobile_phone') != "+971" ? $request->input('mobile_phone') : null,
-                'additional_mobile_phone' =>$request->input('additional_mobile_phone') != "+971" ? $request->input('additional_mobile_phone'): null,
+                'mobile_phone' => $request->input('mobile_phone') != '+971' ? $request->input('mobile_phone') : null,
+                'additional_mobile_phone' => $request->input('additional_mobile_phone') != '+971' ? $request->input('additional_mobile_phone') : null,
                 'nationality' => $request->input('nationality'),
                 'date_of_birth' => $request->input('date_of_birth') ? Carbon::createFromFormat('d M Y', $request->input('date_of_birth'))->format('Y-m-d') : null,
                 'emirates_id_number' => $request->input('emirates_id_number'),
-                'emirates_id_expiry_date' => /* $request->input('emirates_id_expiry_date'), */$request->input('emirates_id_expiry_date') ? Carbon::createFromFormat('d M Y', $request->input('emirates_id_expiry_date'))->format('Y-m-d') : null,
+                'emirates_id_expiry_date' => /* $request->input('emirates_id_expiry_date'), */ $request->input('emirates_id_expiry_date') ? Carbon::createFromFormat('d M Y', $request->input('emirates_id_expiry_date'))->format('Y-m-d') : null,
                 'emirates_id_file_path' => $emiratesIdFilePath,
                 'business_owner' => $request->input('business_owner'),
                 'designation' => $request->input('designation'),
@@ -404,28 +409,30 @@ class ShopController extends Controller
                 // Add other fields as needed
             ]
         );
-        if (!$action) {
+        if (! $action) {
 
             $user = Auth::user();
             $user->step_number = 4;
             $user->save();
+
             return response()->json(['success' => true, 'message' => translate('Contact person stored successfully')]);
 
-        }
-        else {
+        } else {
             $user = Auth::user();
             $user->step_number = 3;
             $user->save();
-            return response()->json(['success' => true, 'message' => translate('Draft Contact person saved successfully'),'save_as_draft' => true]);
+
+            return response()->json(['success' => true, 'message' => translate('Draft Contact person saved successfully'), 'save_as_draft' => true]);
 
         }
 
         // Return a response
     }
+
     public function verifyCode(Request $request)
     {
 
-        if (!$request->email) {
+        if (! $request->email) {
             return response()->json(['message' => translate('Please Register !!')], 403);
         }
 
@@ -445,26 +452,27 @@ class ShopController extends Controller
             ->latest()  // Get the latest record
             ->first();
 
-            if (!$verificationCode) {
-                // Increment the attempt count
-                $attempts = $request->session()->get('verification_attempts', 0);
-                $attempts++;
+        if (! $verificationCode) {
+            // Increment the attempt count
+            $attempts = $request->session()->get('verification_attempts', 0);
+            $attempts++;
 
-                // Check if the limit is reached
-                if ($attempts >= 3) {
-                    // If the limit is reached, resend a new verification code
-                    $this->resendCode($request);
-                    $request->session()->put('verification_attempts', 0); // Reset attempt count
-                    return response()->json(['errors' => ['verification_code' => [translate('Invalid verification code. Please check your email for a new code.')]]], 422);
-                }
+            // Check if the limit is reached
+            if ($attempts >= 3) {
+                // If the limit is reached, resend a new verification code
+                $this->resendCode($request);
+                $request->session()->put('verification_attempts', 0); // Reset attempt count
 
-                $request->session()->put('verification_attempts', $attempts);
-
-                return response()->json(['errors' => ['verification_code' => [translate('Invalid verification code.')]]], 422);
+                return response()->json(['errors' => ['verification_code' => [translate('Invalid verification code. Please check your email for a new code.')]]], 422);
             }
 
-            // Reset the attempt count on successful verification
-            $request->session()->put('verification_attempts', 0);
+            $request->session()->put('verification_attempts', $attempts);
+
+            return response()->json(['errors' => ['verification_code' => [translate('Invalid verification code.')]]], 422);
+        }
+
+        // Reset the attempt count on successful verification
+        $request->session()->put('verification_attempts', 0);
 
         $user = User::where('email', $request->email)->first();
         if ($user->id != $user->owner_id && $user->owner_id != null) {
@@ -474,11 +482,11 @@ class ShopController extends Controller
             // Session::put('user_id', $user->id);
             $user = Auth::user();
             $user->step_number = 5;
-            $user->status='Enabled';
+            $user->status = 'Enabled';
             $user->save();
-            return response()->json(['staff'=>true,'verif_staff_login' => true, 'success' => true, 'message' => translate('Verification successful')]);
-        }
-        elseif ($user) {
+
+            return response()->json(['staff' => true, 'verif_staff_login' => true, 'success' => true, 'message' => translate('Verification successful')]);
+        } elseif ($user) {
             $user->email_verified_at = now(); // Assuming you want to set the current timestamp
             $user->save();
             Auth::login($user);
@@ -487,7 +495,6 @@ class ShopController extends Controller
             $user->step_number = 2;
             $user->save();
         }
-
 
         // Your additional logic for handling the verification
         // ...
@@ -502,9 +509,7 @@ class ShopController extends Controller
 
         $email = $request->input('email');
 
-
-
-        if (!$email) {
+        if (! $email) {
             return response()->json(['message' => translate('Please Register !!')], 403);
         }
         // Delete existing verification codes for this email
@@ -528,7 +533,7 @@ class ShopController extends Controller
     public function getArea($emirate_id = 0)
     {
         try {
-            $empData['data'] = Area::orderby("name", "asc")
+            $empData['data'] = Area::orderby('name', 'asc')
                 ->select('id', 'name')
                 ->where('emirate_id', $emirate_id)
                 ->get();
@@ -540,28 +545,23 @@ class ShopController extends Controller
             }
 
             return response()->json($empData);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Log::error("Error while getting emirate $emirate_id areas, with message {$e->getMessage()}");
-            return response()->json(["error" => true, "message" => __("Something went wrong!")], 500);
+
+            return response()->json(['error' => true, 'message' => __('Something went wrong!')], 500);
         }
     }
 
-    public function storeWarehouse(/* Request */StoreWarehouseRequest $request)
+    public function storeWarehouse(StoreWarehouseRequest $request)
     {
-
-
         $action = $request->input('action');
         // it indicates the "save as draft" action.
 
+        $user = Auth::user();
 
-
-        $user =  Auth::user();
-
-
-            // Loop through the arrays and store each warehouse
-            Warehouse::where('user_id', $user->id)->delete();
-            if (isset($request->warehouse_name) && is_array($request->warehouse_name)) {
-
+        // Loop through the arrays and store each warehouse
+        Warehouse::where('user_id', $user->id)->delete();
+        if (isset($request->warehouse_name) && is_array($request->warehouse_name)) {
 
             foreach ($request->warehouse_name as $key => $value) {
                 Warehouse::create([
@@ -572,29 +572,28 @@ class ShopController extends Controller
                     'address_street' => $request->street_warehouse[$key],
                     'address_building' => $request->building_warehouse[$key],
                     'address_unit' => $request->unit_warehouse[$key],
-                    'saveasdraft' =>/*  $saveasdraft ?? true */ isset($action) ? true : false,
+                    'saveasdraft' => /*  $saveasdraft ?? true */ isset($action) ? true : false,
 
                 ]);
             }
-             }
-             else {
-                return response()->json(['success' => true, 'message' => translate('No Warehouses stored'),'save_as_draft' => isset($action) ? true :false,'infoMsg'=>true]);
+        } else {
+            return response()->json(['success' => true, 'message' => translate('No Warehouses stored'), 'save_as_draft' => isset($action) ? true : false, 'infoMsg' => true]);
 
-             }
-            if (!$action) {
-                $user = Auth::user();
-                $user->step_number = 5;
-                $user->save();
-                return response()->json(['success' => true, 'message' => translate('Warehouses stored successfully')]);
-            }
-            else {
-                $user = Auth::user();
-                $user->step_number = 4;
-                $user->save();
-                return response()->json(['success' => true, 'message' => translate('Draft Warehouses saved successfully'),'save_as_draft' => true]);
+        }
+        if (! $action) {
+            $user = Auth::user();
+            $user->step_number = 5;
+            $user->save();
 
-            }
+            return response()->json(['success' => true, 'message' => translate('Warehouses stored successfully')]);
+        } else {
+            $user = Auth::user();
+            $user->step_number = 4;
+            $user->save();
 
+            return response()->json(['success' => true, 'message' => translate('Draft Warehouses saved successfully'), 'save_as_draft' => true]);
+
+        }
 
     }
 
@@ -605,17 +604,17 @@ class ShopController extends Controller
         // it indicates the "save as draft" action.
 
         $ibanCertificatePath = null;
-        if (isset($request->iban_certificate_old) && !$request->hasFile('iban_certificate'))
+        if (isset($request->iban_certificate_old) && ! $request->hasFile('iban_certificate')) {
             $ibanCertificatePath = $request->iban_certificate_old;
-        else if ($request->hasFile('iban_certificate'))
+        } elseif ($request->hasFile('iban_certificate')) {
             $ibanCertificatePath = Storage::putFile('iban_certificates', $request->file('iban_certificate'));
+        }
         // Assuming you have a logged-in user
-
 
         // Create payout information
         $payoutInformation = PayoutInformation::updateOrCreate(
             [
-                'user_id' => Auth::user()->id
+                'user_id' => Auth::user()->id,
             ],
             [
 
@@ -626,14 +625,15 @@ class ShopController extends Controller
                 'swift_code' => $request->swift_code,
                 // 'iban_certificate' => $request->file('iban_certificate')->store('iban_certificates'),
                 'iban_certificate' => $ibanCertificatePath,
-                'saveasdraft' =>/*  $saveasdraft ?? true */ isset($action) ? true : false,
+                'saveasdraft' => /*  $saveasdraft ?? true */ isset($action) ? true : false,
 
             ]
         );
         $user = Auth::user();
         $user->step_number = 5;
         $user->save();
-        return response()->json(['success' => true, 'message' => translate('Draft Payout information saved successfully'),'save_as_draft' => true]);
+
+        return response()->json(['success' => true, 'message' => translate('Draft Payout information saved successfully'), 'save_as_draft' => true]);
 
         // if (!$action) {
         //     $user = Auth::user();
@@ -644,15 +644,15 @@ class ShopController extends Controller
         //     // )
         //     //     $user->steps = 1;
 
-
         //     $user->save();
         //     return response()->json(['finish' => true, 'success' => true, 'message' => 'Payout information stored successfully']);
         // } else {
-            // return response()->json(['success' => true, 'message' => 'Payout information stored successfully']);
+        // return response()->json(['success' => true, 'message' => 'Payout information stored successfully']);
         // }
     }
 
-    public function storeShopRegister(SellerRegistrationShopRequest $request) {
+    public function storeShopRegister(SellerRegistrationShopRequest $request)
+    {
 
         // if (!isset($request->warehouse_name)) {
         //     return response()->json(['status' => 'error', 'message' => translate('Please add at least one warehouse.'),'redirectWh'=>true]);
@@ -661,40 +661,44 @@ class ShopController extends Controller
         if ($request->input('vat_registered') == 1) {
 
             // If VAT is registered, handle VAT certificate and TRN
-            if (isset($request->vat_certificate_old) && !$request->hasFile('vat_certificate'))
+            if (isset($request->vat_certificate_old) && ! $request->hasFile('vat_certificate')) {
                 $vatCertificatePath = $request->vat_certificate_old;
-            elseif ($request->hasFile('vat_certificate'))
+            } elseif ($request->hasFile('vat_certificate')) {
                 $vatCertificatePath = Storage::putFile('vat_certificate', $request->file('vat_certificate'));
+            }
 
             $trn = $request->input('trn');
         } else {
             // If VAT is not registered, handle tax waiver
-            if (isset($request->tax_waiver_old) && !$request->hasFile('tax_waiver'))
+            if (isset($request->tax_waiver_old) && ! $request->hasFile('tax_waiver')) {
                 $taxWaiverPath = $request->tax_waiver_old;
-            elseif ($request->hasFile('tax_waiver'))
+            } elseif ($request->hasFile('tax_waiver')) {
                 $taxWaiverPath = Storage::putFile('tax_waiver', $request->file('tax_waiver'));
+            }
         }
 
         $civil_defense_approval = null;
-        if (isset($request->civil_defense_approval_old))
+        if (isset($request->civil_defense_approval_old)) {
             $civil_defense_approval = $request->civil_defense_approval_old;
+        }
 
         $trade_license_doc = null;
-        if (isset($request->trade_license_doc_old))
+        if (isset($request->trade_license_doc_old)) {
             $trade_license_doc = $request->trade_license_doc_old;
+        }
 
-              // Store or update BusinessInformation
+        // Store or update BusinessInformation
         BusinessInformation::updateOrCreate(
             [
-                'user_id' => Auth::user()->id
+                'user_id' => Auth::user()->id,
             ],
             [
                 'trade_name' => ['en' => $request->trade_name_english, 'ar' => $request->trade_name_arabic],
                 'eshop_name' => ['en' => $request->eshop_name_english, 'ar' => $request->eshop_name_arabic],
                 'eshop_desc' => ['en' => $request->eshop_desc_en, 'ar' => $request->eshop_desc_ar],
-                'trade_license_doc' => $request->hasFile('trade_license_doc') ?  $request->file('trade_license_doc')->store('trade_license_doc') : $trade_license_doc/* $request->file('trade_license_doc')->store('trade_license_docs') */,
-                'license_issue_date' => /* $request->license_issue_date */Carbon::createFromFormat('d M Y', $request->license_issue_date)->format('Y-m-d'),
-                'license_expiry_date' => /* $request->license_expiry_date */Carbon::createFromFormat('d M Y', $request->license_expiry_date)->format('Y-m-d'),
+                'trade_license_doc' => $request->hasFile('trade_license_doc') ? $request->file('trade_license_doc')->store('trade_license_doc') : $trade_license_doc/* $request->file('trade_license_doc')->store('trade_license_docs') */,
+                'license_issue_date' => /* $request->license_issue_date */ Carbon::createFromFormat('d M Y', $request->license_issue_date)->format('Y-m-d'),
+                'license_expiry_date' => /* $request->license_expiry_date */ Carbon::createFromFormat('d M Y', $request->license_expiry_date)->format('Y-m-d'),
                 'state' => $request->state,
                 'area_id' => $request->area_id,
                 'street' => $request->street,
@@ -706,23 +710,23 @@ class ShopController extends Controller
                 'vat_certificate' => isset($vatCertificatePath) ? $vatCertificatePath : null,
                 'trn' => isset($trn) ? $trn : null,
                 'tax_waiver' => isset($taxWaiverPath) ? $taxWaiverPath : null,
-                'civil_defense_approval' => $request->hasFile('civil_defense_approval') ?  $request->file('civil_defense_approval')->store('civil_defense_approval') : $civil_defense_approval,
-
+                'civil_defense_approval' => $request->hasFile('civil_defense_approval') ? $request->file('civil_defense_approval')->store('civil_defense_approval') : $civil_defense_approval,
 
             ]
         );
 
         // Handle file upload
         $emiratesIdFilePath = null;
-        if (isset($request->emirates_id_file_old) && !$request->hasFile('emirates_id_file'))
+        if (isset($request->emirates_id_file_old) && ! $request->hasFile('emirates_id_file')) {
             $emiratesIdFilePath = $request->emirates_id_file_old;
-        else if ($request->hasFile('emirates_id_file'))
+        } elseif ($request->hasFile('emirates_id_file')) {
             $emiratesIdFilePath = Storage::putFile('emirates_ids', $request->file('emirates_id_file'));
+        }
 
         // Store contact person data
         $contactPerson = ContactPerson::updateOrCreate(
             [
-                'user_id' => Auth::user()->id
+                'user_id' => Auth::user()->id,
             ],
             [
                 'user_id' => auth()->user()->id, // Assuming you're using authentication
@@ -730,47 +734,46 @@ class ShopController extends Controller
                 'last_name' => $request->input('last_name'),
                 'email' => $request->input('email'),
                 'mobile_phone' => $request->input('mobile_phone'),
-                'additional_mobile_phone' =>$request->input('additional_mobile_phone') != "+971" ? $request->input('additional_mobile_phone') : null,
+                'additional_mobile_phone' => $request->input('additional_mobile_phone') != '+971' ? $request->input('additional_mobile_phone') : null,
                 'nationality' => $request->input('nationality'),
-                'date_of_birth' => /* $request->input('date_of_birth') */  Carbon::createFromFormat('d M Y', $request->input('date_of_birth'))->format('Y-m-d') ,
+                'date_of_birth' => /* $request->input('date_of_birth') */ Carbon::createFromFormat('d M Y', $request->input('date_of_birth'))->format('Y-m-d'),
                 'emirates_id_number' => $request->input('emirates_id_number'),
-                'emirates_id_expiry_date' => /* $request->input('emirates_id_expiry_date'), */Carbon::createFromFormat('d M Y', $request->input('emirates_id_expiry_date'))->format('Y-m-d'),
+                'emirates_id_expiry_date' => /* $request->input('emirates_id_expiry_date'), */ Carbon::createFromFormat('d M Y', $request->input('emirates_id_expiry_date'))->format('Y-m-d'),
                 'emirates_id_file_path' => $emiratesIdFilePath,
                 'business_owner' => $request->input('business_owner'),
                 'designation' => $request->input('designation'),
-
 
                 // Add other fields as needed
             ]
         );
         Warehouse::where('user_id', Auth::user()->id)->delete();
         if (isset($request->warehouse_name) && is_array($request->warehouse_name)) {
-             // Loop through the arrays and store each warehouse
+            // Loop through the arrays and store each warehouse
 
-             foreach ($request->warehouse_name as $key => $value) {
-                 Warehouse::create([
-                     'user_id' => Auth::user()->id,
-                     'warehouse_name' => $request->warehouse_name[$key],
-                     'emirate_id' => $request->state_warehouse[$key],
-                     'area_id' => $request->area_warehouse[$key],
-                     'address_street' => $request->street_warehouse[$key],
-                     'address_building' => $request->building_warehouse[$key],
-                     'address_unit' => $request->unit_warehouse[$key],
+            foreach ($request->warehouse_name as $key => $value) {
+                Warehouse::create([
+                    'user_id' => Auth::user()->id,
+                    'warehouse_name' => $request->warehouse_name[$key],
+                    'emirate_id' => $request->state_warehouse[$key],
+                    'area_id' => $request->area_warehouse[$key],
+                    'address_street' => $request->street_warehouse[$key],
+                    'address_building' => $request->building_warehouse[$key],
+                    'address_unit' => $request->unit_warehouse[$key],
 
-
-                 ]);
-             }
+                ]);
             }
-             $ibanCertificatePath = null;
-             if (isset($request->iban_certificate_old) && !$request->hasFile('iban_certificate'))
-                 $ibanCertificatePath = $request->iban_certificate_old;
-             else if ($request->hasFile('iban_certificate'))
-                 $ibanCertificatePath = Storage::putFile('iban_certificates', $request->file('iban_certificate'));
+        }
+        $ibanCertificatePath = null;
+        if (isset($request->iban_certificate_old) && ! $request->hasFile('iban_certificate')) {
+            $ibanCertificatePath = $request->iban_certificate_old;
+        } elseif ($request->hasFile('iban_certificate')) {
+            $ibanCertificatePath = Storage::putFile('iban_certificates', $request->file('iban_certificate'));
+        }
 
-                   // Create payout information
+        // Create payout information
         $payoutInformation = PayoutInformation::updateOrCreate(
             [
-                'user_id' => Auth::user()->id
+                'user_id' => Auth::user()->id,
             ],
             [
 
@@ -782,13 +785,12 @@ class ShopController extends Controller
                 // 'iban_certificate' => $request->file('iban_certificate')->store('iban_certificates'),
                 'iban_certificate' => $ibanCertificatePath,
 
-
             ]
         );
 
         $shop = Seller::updateOrCreate(
             [
-                'user_id' => Auth::user()->id
+                'user_id' => Auth::user()->id,
             ],
             [
                 'bank_name' => $request->bank_name,
@@ -801,12 +803,12 @@ class ShopController extends Controller
 
         $seller = Shop::updateOrCreate(
             [
-                'user_id' => Auth::user()->id
+                'user_id' => Auth::user()->id,
             ],
             [
                 'name' => ['en' => $request->eshop_name_english, 'ar' => $request->eshop_name_arabic],
                 'verification_status' => 1,
-                'slug' => generateUniqueSlug(\App\Models\Shop::class,$request->eshop_name_english),
+                'slug' => generateUniqueSlug(\App\Models\Shop::class, $request->eshop_name_english),
                 'meta_title' => $request->eshop_name_english,
                 'meta_description' => $request->eshop_desc_en,
                 'bank_name' => $request->bank_name,
@@ -819,32 +821,32 @@ class ShopController extends Controller
         $user = Auth::user();
         $user->steps = 1;
         $user->status = 'Pending Approval';
-        $user->owner_id = $user->id ;
+        $user->owner_id = $user->id;
         $user->save();
 
-        $role = Role::where('name','pro')->first();
-        $user->assignRole($role) ;
+        $role = Role::where('name', 'pro')->first();
+        $user->assignRole($role);
         $staff = new Staff;
         $staff->user_id = $user->id;
         $staff->role_id = $role->id;
         $staff->save();
         // Trigger the notification
-        $admins = User::where('user_type','admin')->get(); // Fetch the first admin
+        $admins = User::where('user_type', 'admin')->get(); // Fetch the first admin
         try {
-        if ($admins->isNotEmpty()) {
-            // Notify each admin user via Laravel notifications
-            foreach ($admins as $admin) {
-                $admin->notify(new NewVendorRegistration($user));
-                Notification::send($admin, new NewRegistrationNotification($user));
+            if ($admins->isNotEmpty()) {
+                // Notify each admin user via Laravel notifications
+                foreach ($admins as $admin) {
+                    $admin->notify(new NewVendorRegistration($user));
+                    Notification::send($admin, new NewRegistrationNotification($user));
+                }
             }
-         }
-         $user->notify(new VendorStatusChangedNotification("draft", "Pending Approval",null,null,null,$user->name));
-         Notification::send($user, new CustomStatusNotification("draft", "Pending Approval"));
+            $user->notify(new VendorStatusChangedNotification('draft', 'Pending Approval', null, null, null, $user->name));
+            Notification::send($user, new CustomStatusNotification('draft', 'Pending Approval'));
         } catch (\Exception $e) {
 
         }
-        return response()->json(['finish' => true, 'success' => true, 'message' => 'Shop stored successfully']);
 
+        return response()->json(['finish' => true, 'success' => true, 'message' => 'Shop stored successfully']);
 
     }
 
@@ -854,13 +856,15 @@ class ShopController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    public function getWords()
+    {
 
-     public function getWords() {
-
-        $dictionaryPath = public_path('dictionary/dictionary.txt') ;
+        $dictionaryPath = public_path('dictionary/dictionary.txt');
         $words = File::lines($dictionaryPath);
+
         return response()->json($words);
     }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -876,9 +880,11 @@ class ShopController extends Controller
     {
         //
     }
+
     public function seller_packages()
     {
         $seller_packages = SellerPackage::all();
+
         return view('frontend.package', compact('seller_packages'));
     }
 }
