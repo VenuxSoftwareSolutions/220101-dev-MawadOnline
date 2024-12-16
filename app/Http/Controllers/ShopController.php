@@ -6,10 +6,11 @@ use App;
 use Auth;
 use Hash;
 use Mail;
-use Session;
 use Storage;
 use Validator;
 use Carbon\Carbon;
+use Exception;
+use Log;
 use App\Models\Area;
 use App\Models\Role;
 use App\Models\Shop;
@@ -21,11 +22,8 @@ use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use App\Models\ContactPerson;
 use App\Models\SellerPackage;
-use App\Models\BusinessSetting;
-use Illuminate\Validation\Rule;
 use App\Models\VerificationCode;
 use App\Models\PayoutInformation;
-use App\Rules\CustomPasswordRule;
 use App\Mail\VerificationCodeEmail;
 use App\Models\BusinessInformation;
 use Illuminate\Support\Facades\File;
@@ -39,7 +37,6 @@ use App\Http\Requests\StoreContactPersonRequest;
 use App\Notifications\NewRegistrationNotification;
 use App\Http\Requests\SellerRegistrationShopRequest;
 use App\Notifications\CustomStatusNotification;
-use App\Notifications\EmailVerificationNotification;
 use App\Notifications\VendorStatusChangedNotification;
 
 class ShopController extends Controller
@@ -527,21 +524,26 @@ class ShopController extends Controller
 
         return response()->json(['success' => true, 'message' => translate('Verification code resent successfully.')]);
     }
+
     public function getArea($emirate_id = 0)
     {
+        try {
+            $empData['data'] = Area::orderby("name", "asc")
+                ->select('id', 'name')
+                ->where('emirate_id', $emirate_id)
+                ->get();
 
-        // Fetch Employees by Departmentid
-        $empData['data'] = Area::orderby("name", "asc")
-            ->select('id', 'name')
-            ->where('emirate_id', $emirate_id)
-            ->get();
-            $currentLang = App::getLocale(); // Get the current language
+            $currentLang = App::getLocale();
 
             foreach ($empData['data'] as $area) {
-                // Check current language and get the appropriate translation
                 $area->name_translated = $area->getTranslation('name', $currentLang);
             }
-        return response()->json($empData);
+
+            return response()->json($empData);
+        } catch(Exception $e) {
+            Log::error("Error while getting emirate $emirate_id areas, with message {$e->getMessage()}");
+            return response()->json(["error" => true, "message" => __("Something went wrong!")], 500);
+        }
     }
 
     public function storeWarehouse(/* Request */StoreWarehouseRequest $request)
