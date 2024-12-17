@@ -336,9 +336,15 @@
 
 @section('script')
     <script type="text/javascript">
-        $('#update_delivery_status').on('change', function() {
-            var order_id = {{ $order->id }};
-            var status = $('#update_delivery_status').val();
+
+        const handleDeliveryStatusChanged = (event) =>{
+            (event.value == "confirmed") ?  handleUpdateWarehouse(event) :  updateDeliveryStatus(event);
+        };
+
+        const updateDeliveryStatus = (event) => {
+            console.log("change delivery status");
+            let order_id = event.dataset.orderdetail_id;
+            let status = event.value;
             $.post('{{ route('seller.orders.update_delivery_status') }}', {
                 _token: '{{ @csrf_token() }}',
                 order_id: order_id,
@@ -346,13 +352,77 @@
             }, function(data) {
                 $('#order_details').modal('hide');
                 AIZ.plugins.notify('success', '{{ translate('Order status has been updated') }}');
-                location.reload().setTimeOut(500);
+                location.reload().setTimeOut(1000);
             });
-        });
+        }
+
+        const handleUpdateWarehouse = (event) => {
+
+           let order_id = event.dataset.orderdetail_id;
+           let seller = event.dataset.user_id;
+           let product = event.dataset.product_id;
+            $.post('{{ route('seller.orders.get_warehouses') }}', {
+                _token: '{{ @csrf_token() }}',
+                order_id: order_id,
+                seller: seller,
+                product: product,
+            }, function(data) {
+                let stock = data.data;
+                let tr ='';
+                stock.forEach((element,key) => {
+                    tr+=`<tr>
+                            <td>${key}</td>
+                            <td>${element.warehouse.warehouse_name}</td>
+                            <td>${element.product_variant.name}</td>
+                            <td>${element.current_total_quantity}</td>
+                            <td>${data.quantity}</td>
+                            <td><input class="form-control" type="number" name="quantity" id="${element.warehouse.id}" value="0"/></td>
+                        </tr>`;
+                });
+                document.getElementById('save-stock-movment').dataset.order = order_id;
+                document.getElementById('save-stock-movment').dataset.product = product;
+                document.getElementById('save-stock-movment').dataset.quantity_requested = data.quantity;
+                $('#warehouses_table').html('');
+                $('#warehouses_table').append(tr);
+                $('#warehouse-modal').modal("show");
+                // $('#order_details').modal('hide');
+                AIZ.plugins.notify('success', '{{ translate('Order status has been updated') }}');
+
+            });
+        }
+
+        const handleSaveStockMovement = (event) => {
+            let order = event.dataset.order;
+            let product = event.dataset.product;
+            let quantity = event.dataset.quantity_requested;
+            inputs = document.getElementsByName('quantity');
+            let warehouses = [];
+            let totalQuantity = 0
+            inputs.forEach(element => {
+                warehouses.push({warehouse_id:element.id,quantity:parseInt(element.value)});
+                totalQuantity+=parseInt(element.value);
+            });
+            if(quantity!=totalQuantity){
+                document.getElementById('alert-quantity').style.display ='';
+                return;
+            }else{
+                document.getElementById('alert-quantity').style.display ='none';
+                $.post('{{ route('seller.orders.stock_movement') }}', {
+                    _token: '{{ @csrf_token() }}',
+                    order: order,
+                    warehouses: warehouses,
+                    product: product,
+                    }, function(data) {
+                        AIZ.plugins.notify('success', '{{ translate('Order status has been updated') }}');
+                        location.reload().setTimeOut(1000);
+                });
+            }
+            console.log(order, product,quantity,warehouses,totalQuantity);
+        }
 
         $('#update_payment_status').on('change', function() {
-            var order_id = {{ $order->id }};
-            var status = $('#update_payment_status').val();
+            let order_id = {{ $order->id }};
+            let status = $('#update_payment_status').val();
             $.post('{{ route('seller.orders.update_payment_status') }}', {
                 _token: '{{ @csrf_token() }}',
                 order_id: order_id,
