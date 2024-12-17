@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Address as AddressModel;
 use App\Models\Cart;
 use App\Models\Currency;
+use App\Models\State;
 use Carbon\Carbon;
 use Exception;
 use ExtremeSa\Aramex\API\Classes\Address;
@@ -792,6 +793,58 @@ class AramexController extends Controller
             return response()->json(['error' => true, 'message' => __('Something went wrong!')], 500);
         } catch (Exception $e) {
             Log::error("Error while calculating order products charge, with message: {$e->getMessage()}");
+
+            return response()->json(['error' => true, 'message' => __('Something went wrong!')], 500);
+        }
+    }
+
+    public function getEmirateCities($emirate)
+    {
+        try {
+            $body = json_encode([
+                'ClientInfo' => $this->clientInfo,
+                'CountryCode' => 'AE',
+                'NameStartsWith' => null,
+                'State' => $emirate,
+            ]);
+
+            curl_setopt_array($this->curl, [
+                CURLOPT_URL => $this->baseUri.'/Location/Service_1_0.svc/json/FetchCities',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => $body,
+                CURLOPT_HTTPHEADER => [
+                    'Content-Type: application/json',
+                    'Accept: application/json',
+                ],
+            ]);
+
+            $response = curl_exec($this->curl);
+            $rawData = json_decode($response, true);
+
+            return $rawData['HasErrors'] === false ? $rawData['Cities'] : [];
+        } catch (Exception $e) {
+            Log::error("Error while getting emirate $emirate states, with message: {$e->getMessage()}");
+
+            return response()->json(['error' => true, 'message' => __('Something went wrong!')], 500);
+        }
+    }
+
+    public function getEmirateStates($emirate_id)
+    {
+        try {
+            $data['data'] = State::where(
+                'emirate_id', $emirate_id
+            )->orderBy('name', 'ASC')->get(["id", "name"]);
+
+            return response()->json($data);
+        } catch (Exception $e) {
+            Log::error("Error while getting emirate $emirate_id sates, with message {$e->getMessage()}");
 
             return response()->json(['error' => true, 'message' => __('Something went wrong!')], 500);
         }
