@@ -290,6 +290,48 @@
 
         </div>
     </div>
+
+
+    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="warehouse-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">{{ translate('Warehouses') }}</h5>
+                    <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button> -->
+                </div>
+                    <div class="modal-body c-scrollbar-light">
+                        <div class="p-3">
+                            <div class="col-lg-12 table-responsive">
+                                <div class="alert alert-warning"id="alert-quantity" style="display:none;" role="alert">
+                                    The quantity entered must be equal to the quantity requested
+                                </div>
+                    <table class="table-bordered   table">
+                        <thead>
+                            <tr class="bg-trans-dark">
+                                <th data-breakpoints="lg" class="min-col">#</th>
+                                <th>{{ translate('warehouses') }}</th>
+                                <th>{{ translate('product') }}</th>
+                                <th>{{ translate('current quantity') }}</th>
+                                <th>{{ translate('quantity requested') }}</th>
+                                <th>{{ translate('quantity') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody id="warehouses_table">
+
+                        </tbody>
+                    </table>
+                </div>
+                            <!-- Save button -->
+                            <div class="form-group text-right">
+                                <button id="save-stock-movment" data-quantity_requested onclick="handleSaveStockMovement(this)"  class="btn btn-primary rounded-0 w-150px">{{translate('Save')}}</button>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('script')
