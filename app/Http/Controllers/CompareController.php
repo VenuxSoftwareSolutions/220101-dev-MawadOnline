@@ -41,11 +41,11 @@ class CompareController extends Controller
         $leafCategoryName = DB::table('categories')
             ->where('id', $leafCategoryId)
             ->value('name');
-    
+        $maxVariants = env('COMPARE_LIST_NUM_VARIANTS', 3);
+        
         if ($user) {
             $compare = $request->session()->get('compare', collect());
     
-            // Sync localStorage items with session
             if ($request->has('localStorageCompare')) {
                 $localStorageCompare = collect($request->input('localStorageCompare'));
                 $localStorageCompare->each(function ($variants, $categoryId) use (&$compare) {
@@ -54,7 +54,7 @@ class CompareController extends Controller
                     }
                     foreach ($variants as $variantId) {
                         if (!$compare[$categoryId]->contains($variantId)) {
-                            if ($compare[$categoryId]->count() >= 3) {
+                            if ($compare[$categoryId]->count() >= config('app.compare_list_num_variants', 3)) {
                                 $compare[$categoryId]->forget(0);
                             }
                             $compare[$categoryId]->push($variantId);
@@ -63,24 +63,22 @@ class CompareController extends Controller
                 });
             }
     
-            // Add current variant to session compare list
             if (!isset($compare[$leafCategoryId])) {
                 $compare[$leafCategoryId] = collect();
             }
             if (!$compare[$leafCategoryId]->contains($variantId)) {
-                if ($compare[$leafCategoryId]->count() >= 3) {
+                if ($compare[$leafCategoryId]->count() >= config('app.compare_list_num_variants', 3)) {
                     $compare[$leafCategoryId]->forget(0);
                 }
                 $compare[$leafCategoryId]->push($variantId);
             }
     
             $request->session()->put('compare', $compare);
-    
-            // Return partial view with updated compare list
-            return view('frontend.' . get_setting('homepage_select') . '.partials.compare', compact('compare'));
+            $compareData = $this->fetchCompareData($compare);
+            dd($compareData);
+            return view('frontend.' . get_setting('homepage_select') . '.partials.compare', compact('compare','compareData'));
         } else {
-            // Return data for localStorage update in JS
-            return response()->json([
+            return response()->json(data: [
                 'localStorageAction' => 'add',
                 'variantId' => $variantId,
                 'categoryId' => $leafCategoryId,
@@ -89,7 +87,26 @@ class CompareController extends Controller
         }
     }
     
-
+    private function fetchCompareData($compare)
+    {
+        $data = [];
+        foreach ($compare as $categoryId => $variantIds) {
+            $categoryName = DB::table('categories')
+                ->where('id', $categoryId)
+                ->value('name');
+    
+            $variants = DB::table('products')
+                ->whereIn('id', $variantIds)
+                ->get();
+    
+            $data[] = [
+                'category_name' => $categoryName,
+                'variants' => $variants
+            ];
+        }
+        return $data;
+    }
+    
 
 
     public function details($unique_identifier)
