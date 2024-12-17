@@ -738,7 +738,7 @@ class AramexController extends Controller
                             ->get()
                             ->map(fn ($data) => [
                                 'address' => $data->address,
-                                'city' => $data->area->name,
+                                'city' => $data->state->name,
                             ])->first();
 
                         $attributes = $cart->product->productAttributeValues
