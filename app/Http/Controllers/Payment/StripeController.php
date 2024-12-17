@@ -19,7 +19,6 @@ use Session;
 use Stripe\Checkout\Session as StripeSession;
 use Stripe\Stripe;
 use Stripe\StripeClient;
-use Stripe\PaymentIntent;
 
 class StripeController extends Controller
 {

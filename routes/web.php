@@ -493,4 +493,5 @@ Route::controller(AramexController::class)->prefix("/aramex")->group(function ()
     Route::get("carts/{user_id}", "carts");
 
     Route::any("orders/{user_id}", "calculateOrderProductsCharge")->name("user.orders");
+    Route::get("emirate/{emirate_id}/states", "getEmirateStates")->name("emirate.states");
 });

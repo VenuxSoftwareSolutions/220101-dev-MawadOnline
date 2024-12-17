@@ -9,7 +9,6 @@ use App\Models\Category;
 use App\Models\CombinedOrder;
 use App\Models\Country;
 use App\Models\Coupon;
-use App\Models\CouponUsage;
 use App\Models\Emirate;
 use App\Models\Order;
 use App\Models\Product;

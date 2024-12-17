@@ -155,7 +155,7 @@ class OrderController extends Controller
                 $shippingAddress['address'] = $address->address;
                 $shippingAddress['country'] = $address->country->name;
                 $shippingAddress['state'] = $address->emirate->name;
-                $shippingAddress['city'] = $address->area->name;
+                $shippingAddress['city'] = $address->state->name;
                 $shippingAddress['postal_code'] = $address->postal_code;
                 $shippingAddress['phone'] = $address->phone;
 
@@ -294,6 +294,8 @@ class OrderController extends Controller
             $request->session()->put('combined_order_id', $combined_order->id);
         } catch(Exception $e) {
             Log::error("Error while storing order, with message {$e->getMessage()}");
+            flash(translate("Something went wrong!"))->error();
+            return redirect()->route("home");
         }
     }
 
