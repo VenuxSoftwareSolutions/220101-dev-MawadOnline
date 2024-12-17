@@ -30,7 +30,7 @@
                             <input type="text" class="form-control" value="{{ translate($payment_status) }}" disabled>
                         @endif
                     </div>
-                    <div class="col-md-3 ml-auto">
+                    <!-- <div class="col-md-3 ml-auto">
                         <label for="update_delivery_status">{{ translate('Delivery Status') }}</label>
                         @if ($delivery_status != 'delivered' && $delivery_status != 'cancelled')
                             <select class="form-control aiz-selectpicker" data-minimum-results-for-search="Infinity"
@@ -51,7 +51,7 @@
                         @else
                             <input type="text" class="form-control" value="{{ translate(ucfirst(str_replace('_', ' ', $delivery_status))) }}" disabled>
                         @endif
-                    </div>
+                    </div> -->
                 @endif
             </div>
             <div class="row gutters-5 mt-2">
@@ -96,7 +96,7 @@
                                 <td class="text-main text-bold">{{ translate('Order #') }}</td>
                                 <td class="text-info text-bold text-right">{{ $order->code }}</td>
                             </tr>
-                            <tr>
+                            <!-- <tr>
                                 <td class="text-main text-bold">{{ translate('Order Status') }}</td>
                                 <td class="text-right">
                                     @if ($delivery_status == 'delivered')
@@ -107,7 +107,7 @@
                                             class="badge badge-inline badge-info">{{ translate(ucfirst(str_replace('_', ' ', $delivery_status))) }}</span>
                                     @endif
                                 </td>
-                            </tr>
+                            </tr> -->
                             <tr>
                                 <td class="text-main text-bold">{{ translate('Order Date') }}</td>
                                 <td class="text-right">{{ date('d-m-Y h:i A', $order->date) }}</td>
@@ -150,6 +150,8 @@
                                     {{ translate('Price') }}</th>
                                 <th data-breakpoints="lg" class="min-col text-uppercase text-right">
                                     {{ translate('Total') }}</th>
+                                    <th data-breakpoints="lg" class="min-col text-uppercase text-right">
+                                    {{ translate('Order Status') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -207,6 +209,28 @@
                                     <td class="text-center">
                                         {{ single_price($orderDetail->price / $orderDetail->quantity) }}</td>
                                     <td class="text-center">{{ single_price($orderDetail->price) }}</td>
+                                    <td>
+
+                                        @if ($orderDetail->delivery_status != 'delivered' && $orderDetail->delivery_status != 'cancelled')
+                                                <select onchange="handleDeliveryStatusChanged(this)" class="form-control" data-user_id="{{$orderDetail->seller->id}}" data-product_id="{{$orderDetail->product->id}}" data-orderdetail_id="{{$orderDetail->id}}" data-minimum-results-for-search="Infinity"
+                                                    id="update_delivery_status" style="width:200px;">
+                                                    <option value="pending" @if ($orderDetail->delivery_status == 'pending') selected @endif @if ($orderDetail->delivery_status == 'confirmed' || $orderDetail->delivery_status == 'picked_up' || $orderDetail->delivery_status == 'on_the_way') disabled @endif>
+                                                        {{ translate('Pending') }}</option>
+                                                    <option value="confirmed" @if ($orderDetail->delivery_status == 'confirmed') selected @endif @if ($orderDetail->delivery_status == 'confirmed' || $orderDetail->delivery_status == 'picked_up' || $orderDetail->delivery_status == 'on_the_way') disabled @endif>
+                                                        {{ translate('Confirmed') }}</option>
+                                                    <option value="picked_up" @if ($orderDetail->delivery_status == 'picked_up') selected @endif >
+                                                        {{ translate('Picked Up') }}</option>
+                                                    <option value="on_the_way" @if ($orderDetail->delivery_status == 'on_the_way') selected @endif>
+                                                        {{ translate('On The Way') }}</option>
+                                                    <option value="delivered" @if ($orderDetail->delivery_status == 'delivered') selected @endif>
+                                                        {{ translate('Delivered') }}</option>
+                                                    <option value="cancelled" @if ($orderDetail->delivery_status == 'cancelled') selected @endif>
+                                                        {{ translate('Cancel') }}</option>
+                                                </select>
+                                            @else
+                                                <input type="text" class="form-control" value="{{ translate(ucfirst(str_replace('_', ' ', $orderDetail->delivery_status))) }}" disabled>
+                                            @endif
+                                        </td>
                                 </tr>
                             @endforeach
                         </tbody>
