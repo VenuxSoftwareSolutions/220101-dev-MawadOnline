@@ -537,50 +537,58 @@
         }
 
         function addToCompare(id) {
-    let localCompare = JSON.parse(localStorage.getItem('compare')) || {};
+            let localCompare = JSON.parse(localStorage.getItem('compare')) || {};
 
-    $.post('{{ route('compare.addToCompare') }}', {
-        _token: AIZ.data.csrf,
-        id: id,
-        localStorageCompare: localCompare
-    }, function(data) {
-        if (data.localStorageAction) {
-            let compare = JSON.parse(localStorage.getItem('compare')) || {};
+            $.post('{{ route('compare.addToCompare') }}', {
+                _token: AIZ.data.csrf,
+                id: id,
+                localStorageCompare: localCompare
+            }, function(data) {
+                if (data.localStorageAction) {
+                    let compare = JSON.parse(localStorage.getItem('compare')) || {};
 
-            if (!compare[data.categoryId]) {
-                compare[data.categoryId] = [];
-            }
+                    if (!compare[data.categoryId]) {
+                        compare[data.categoryId] = [];
+                    }
 
-            if (compare[data.categoryId].includes(data.variantId)) {
-                AIZ.plugins.notify('warning', "{{ translate('This item is already in the compare list.') }}");
-                return;
-            }
+                    if (compare[data.categoryId].includes(data.variantId)) {
+                        AIZ.plugins.notify('warning', "{{ translate('This item is already in the compare list.') }}");
+                        return;
+                    }
 
-            if (compare[data.categoryId].length < 3) {
-                compare[data.categoryId].push(data.variantId);
-                localStorage.setItem('compare', JSON.stringify(compare));
+                    if (compare[data.categoryId].length < 3) {
+                        compare[data.categoryId].push(data.variantId);
+                        localStorage.setItem('compare', JSON.stringify(compare));
 
-                let compareCount = parseInt($('#compare_items_sidenav').html());
-                $('#compare_items_sidenav').html(compareCount + 1);
+                        let compareCount = parseInt($('#compare_items_sidenav').html());
+                        $('#compare_items_sidenav').html(compareCount + 1);
 
-                AIZ.plugins.notify('success', "{{ translate('Item has been added to the compare list.') }}");
-            } else {
-                AIZ.plugins.notify('warning', "{{ translate('Max variants reached for this category.') }}");
-            }
-        } else {
-            if (data.item_already_exists) {
-                AIZ.plugins.notify('warning', "{{ translate('This item is already in the compare list.') }}");
-            } else {
-                $('#compare').html(data);
+                        AIZ.plugins.notify('success', "{{ translate('Item has been added to the compare list.') }}");
+                    } else {
+                        AIZ.plugins.notify('warning', "{{ translate('Max variants reached for this category.') }}");
+                    }
+                } else {
+                    if (data.item_already_exists) {
+                        AIZ.plugins.notify('warning', "{{ translate('This item is already in the compare list.') }}");
+                    } else {
+                        $('#compare').html(data);
 
-                let compareCount = parseInt($('#compare_items_sidenav').html());
-                $('#compare_items_sidenav').html(compareCount + 1);
+                        let compareCount = parseInt($('#compare_items_sidenav').html());
+                        $('#compare_items_sidenav').html(compareCount + 1);
 
-                AIZ.plugins.notify('success', "{{ translate('Item has been added to the compare list.') }}");
-            }
+                        AIZ.plugins.notify('success', "{{ translate('Item has been added to the compare list.') }}");
+                    }
+                }
+            })
+            .fail(function(jqXHR) {
+                if (jqXHR.responseJSON && jqXHR.responseJSON.error) {
+                    AIZ.plugins.notify('warning', jqXHR.responseJSON.error);
+                } else {
+                    AIZ.plugins.notify('error', "{{ translate('Something went wrong. Please try again.') }}");
+                }
+
+            });
         }
-    });
-}
 
 
 
