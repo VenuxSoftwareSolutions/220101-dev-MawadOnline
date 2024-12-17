@@ -7,11 +7,13 @@ use Auth;
 use App\Models\Tour;
 use App\Models\User;
 use App\Models\Order;
+use App\Models\OrderDetail;
 use App\Models\SmsTemplate;
 use App\Utility\SmsUtility;
 use App\Models\ProductStock;
 use Illuminate\Http\Request;
 use App\Utility\NotificationUtility;
+use App\Models\StockSummary;
 
 class OrderController extends Controller
 {
@@ -87,58 +89,54 @@ class OrderController extends Controller
     // Update Delivery Status
     public function update_delivery_status(Request $request)
     {
-        $order = Order::findOrFail($request->order_id);
-        $order->delivery_viewed = '0';
+        $order = OrderDetail::findOrFail($request->order_id);
+        $order->order->delivery_viewed = '0';
         $order->delivery_status = $request->status;
         $order->save();
 
-        if ($request->status == 'cancelled' && $order->payment_type == 'wallet') {
-            $user = User::where('id', $order->user_id)->first();
+        if ($request->status == 'cancelled' && $order->order->payment_type == 'wallet') {
+            $user = User::where('id', $order->order->user_id)->first();
             $user->balance += $order->grand_total;
             $user->save();
         }
 
 
-        foreach ($order->orderDetails->where('seller_id', Auth::user()->owner_id) as $key => $orderDetail) {
-            $orderDetail->delivery_status = $request->status;
-            $orderDetail->save();
-
             if ($request->status == 'cancelled') {
-                $variant = $orderDetail->variation;
-                if ($orderDetail->variation == null) {
+                $variant = $order->variation;
+                if ($order->variation == null) {
                     $variant = '';
                 }
 
-                $product_stock = ProductStock::where('product_id', $orderDetail->product_id)
+                $product_stock = ProductStock::where('product_id', $order->product_id)
                     ->where('variant', $variant)
                     ->first();
 
                 if ($product_stock != null) {
-                    $product_stock->qty += $orderDetail->quantity;
+                    $product_stock->qty += $order->quantity;
                     $product_stock->save();
                 }
-            }
+
         }
 
         if (addon_is_activated('otp_system') && SmsTemplate::where('identifier', 'delivery_status_change')->first()->status == 1) {
             try {
-                SmsUtility::delivery_status_change(json_decode($order->shipping_address)->phone, $order);
+                SmsUtility::delivery_status_change(json_decode($order->order->shipping_address)->phone, $order->order);
             } catch (\Exception $e) {
 
             }
         }
 
         //sends Notifications to user
-        NotificationUtility::sendNotification($order, $request->status);
-        if (get_setting('google_firebase') == 1 && $order->user->device_token != null) {
-            $request->device_token = $order->user->device_token;
+        NotificationUtility::sendNotification($order->order, $request->status);
+        if (get_setting('google_firebase') == 1 && $order->order->user->device_token != null) {
+            $request->device_token = $order->order->user->device_token;
             $request->title = "Order updated !";
             $status = str_replace("_", "", $order->delivery_status);
-            $request->text = " Your order {$order->code} has been {$status}";
+            $request->text = " Your order {$order->order->code} has been {$status}";
 
             $request->type = "order";
             $request->id = $order->id;
-            $request->user_id = $order->user->id;
+            $request->user_id = $order->order->user->id;
 
             NotificationUtility::sendFirebaseNotification($request);
         }
@@ -205,5 +203,37 @@ class OrderController extends Controller
         }
         return 1;
     }
+
+    public function getWarhouses(Request $request){
+        try{
+            $quantity = OrderDetail::find($request->order_id)->quantity;
+            $data = StockSummary::where(['seller_id'=>$request->seller,'variant_id'=>$request->product])
+                                ->with(['productVariant','warehouse'])->get();
+            return response()->json(['error'=>false,'data'=>$data,'quantity'=>$quantity]);
+        }catch(Exception $e){
+            Log::error($e->getMessage());
+            return response()->json(['error'=>true, 'message' =>$e->getMessage()]);
+        }
+
+   }
+
+   public function stockMovement(Request $request){
+    try{
+            $warehouses = $request->warehouses;
+            $order = OrderDetail::find($request->order);
+            $order->delivery_status = "confirmed";
+            $order->save();
+            foreach ($warehouses as $key => $value) {
+                $stock = StockSummary::where(['warehouse_id'=>$value['warehouse_id'],'variant_id'=>$request->product])
+                                    ->first();
+                $stock->current_total_quantity = $stock->current_total_quantity - $value['quantity'];
+                $stock->save();
+            }
+            return response()->json(['error'=>false,'message'=>translate('Order status has been updated')]);
+        }catch(Exception $e){
+            Log::error($e->getMessage());
+            return response()->json(['error'=>true, 'message' =>$e->getMessage()]);
+        }
+   }
 
 }
