@@ -45,6 +45,10 @@ class CompareController extends Controller
         
         if ($user) {
             $compare = $request->session()->get('compare', collect());
+            
+            if (isset($compare[$leafCategoryId]) && $compare[$leafCategoryId]->contains($variantId)) {
+                return response()->json(['item_already_exists' => true]);
+            }
     
             if ($request->has('localStorageCompare')) {
                 $localStorageCompare = collect($request->input('localStorageCompare'));
@@ -75,7 +79,6 @@ class CompareController extends Controller
     
             $request->session()->put('compare', $compare);
             $compareData = $this->fetchCompareData($compare);
-            dd($compareData);
             return view('frontend.' . get_setting('homepage_select') . '.partials.compare', compact('compare','compareData'));
         } else {
             return response()->json(data: [
