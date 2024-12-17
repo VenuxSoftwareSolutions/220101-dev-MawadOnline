@@ -57,10 +57,6 @@
 
                             @if (!empty($admin_products))
                                 <div class="inhouse-products-wrapper__clz card mb-5 border-0 rounded-0 shadow-none">
-                                    <div class="card-header py-3 px-0 border-bottom-0">
-                                        <h5 class="fs-16 fw-700 text-dark mb-0">{{ get_setting('site_name') }}
-                                            {{ translate('Inhouse Products') }}</h5>
-                                    </div>
                                     <div class="card-body p-0">
                                         <!-- Product List -->
                                         <ul class="list-group list-group-flush border p-3 mb-3">
@@ -227,7 +223,7 @@
                                         <!-- Choose Delivery Type -->
                                         @if ($physical)
                                             <div class="row pt-3">
-                                                <div class="col-md-6">
+                                                <div class="d-none col-md-6">
                                                     <h6 class="fs-14 fw-700 mt-3">{{ translate('Choose Delivery Type') }}
                                                     </h6>
                                                 </div>
@@ -235,7 +231,7 @@
                                                     <div class="row gutters-5">
                                                         <!-- Home Delivery -->
                                                         @if (get_setting('shipping_type') != 'carrier_wise_shipping')
-                                                            <div class="col-6">
+                                                            <div class="d-none col-6">
                                                                 <label class="aiz-megabox d-block bg-white mb-0">
                                                                     <input type="radio"
                                                                         name="shipping_type_{{ get_admin()->id }}"
