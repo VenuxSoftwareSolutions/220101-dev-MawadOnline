@@ -847,12 +847,6 @@
                                                                     {{ translate('Buyer') }}</option>
                                                             </select>
                                                         </td>
-                                                        {{-- <td>
-                                                            <label class="aiz-switch aiz-switch-success mb-0">
-                                                                <input value="1" type="checkbox" class="vat_shipping" name="vat_shipping[]" @if ($vat_user->vat_registered == 1) checked @endif>
-                                                                <span></span>
-                                                            </label>
-                                                        </td> --}}
                                                         <td>
                                                             <select class="form-control shipping_charge"
                                                                 name="shipping_charge[]">
