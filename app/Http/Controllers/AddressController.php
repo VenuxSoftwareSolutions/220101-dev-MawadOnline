@@ -32,37 +32,8 @@ class AddressController extends Controller
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-
-    // public function store(Request $request)
-    // {
-    //     $address = new Address;
-    //     if ($request->has('customer_id')) {
-    //         $address->user_id   = $request->customer_id;
-    //     } else {
-    //         $address->user_id   = Auth::user()->id;
-    //     }
-    //     $address->address       = $request->address;
-    //     $address->country_id    = $request->country_id;
-    //     $address->state_id      = $request->state_id;
-    //     $address->city_id       = $request->city_id;
-    //     $address->longitude     = $request->longitude;
-    //     $address->latitude      = $request->latitude;
-    //     $address->postal_code   = $request->postal_code;
-    //     $address->phone         = $request->phone;
-    //     $address->save();
-
-    //     flash(translate('Address info Stored successfully'))->success();
-    //     return back();
-    // }
     public function store(Request $request)
     {
-        // Validate the incoming request data
         $request->validate([
             'full_name'        => 'required|string|max:255',
             'phone'    => 'required|string',
@@ -76,10 +47,8 @@ class AddressController extends Controller
             'delivery_instructions' => 'nullable|string|max:500',
         ]);
 
-        // Create a new Address instance
         $address = new Address;
 
-        // Assign values to the Address model fields
         $address->user_id             =  Auth::user()->id;
         $address->full_name           = $request->full_name;
         $address->phone               = $request->phone;
@@ -87,15 +56,13 @@ class AddressController extends Controller
         $address->address         = $request->address;
         $address->building_name       = $request->building_name;
         $address->emirate_id      = $request->state;
-        $address->area_id       = $request->area_id;
+        $address->state_id = $request->area_id;
         $address->landmark            = $request->landmark;
         $address->address_type        = $request->address_type;
         $address->delivery_instructions = $request->delivery_instructions;
 
-        // Save the Address model
         $address->save();
 
-        // Flash success message
         flash(translate('Address info stored successfully'))->success();
         return back();
     }
