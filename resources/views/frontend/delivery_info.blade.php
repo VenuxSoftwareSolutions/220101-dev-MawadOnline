@@ -206,13 +206,13 @@
                                                                                     '{{ __('Free (handled by vendor)') }}');
                                                                             @endif
                                                                         } else if (["vendor"].includes($(this).val()) === true) {
-                                                                            $("#shipping_duration_{{ $product->id }}").html({{ $duration }});
+                                                                            $("#shipping_duration_{{ $product->id }}").html('{{ $duration . " " . __("days") }}');
                                                                             @if ($shippingOptions !== null && $shippingOptions->paid === 'vendor')
                                                                                 $("#charge-result_{{ $product->id }}").html(
                                                                                     '{{ __('Free (handled by vendor)') }}');
                                                                             @elseif ($shippingOptions !== null && $shippingOptions->paid === 'buyer')
                                                                                 $("#charge-result_{{ $product->id }}").html(
-                                                                                    '{{ formatChargeBasedOnChargeType($shippingOptions) }}');
+                                                                                    '{{ formatChargeBasedOnChargeType($shippingOptions, $carts) }}');
                                                                             @endif
                                                                         }
                                                                     });
