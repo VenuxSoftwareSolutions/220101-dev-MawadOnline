@@ -57,10 +57,6 @@
 
                             @if (!empty($admin_products))
                                 <div class="inhouse-products-wrapper__clz card mb-5 border-0 rounded-0 shadow-none">
-                                    <div class="card-header py-3 px-0 border-bottom-0">
-                                        <h5 class="fs-16 fw-700 text-dark mb-0">{{ get_setting('site_name') }}
-                                            {{ translate('Inhouse Products') }}</h5>
-                                    </div>
                                     <div class="card-body p-0">
                                         <!-- Product List -->
                                         <ul class="list-group list-group-flush border p-3 mb-3">
@@ -114,7 +110,7 @@
                                                                         name="shipping_method_{{ $product->id }}"
                                                                         id="shipping_method_{{ $product->id }}"
                                                                         class="form-control fs-14 text-dark fw-500"
-                                                                        @if($shippers_areas->count() > 0) onchange="toggleShippersArea(this, '{{ $product->id }}')" @endif>
+                                                                        @if ($shippers_areas->count() > 0) onchange="toggleShippersArea(this, '{{ $product->id }}')" @endif>
                                                                         <option value="">
                                                                             {{ translate('Please choose shipper') }}
                                                                         </option>
@@ -137,7 +133,8 @@
                                                                             <input class="form-check-input" type="radio"
                                                                                 name="shippers_area"
                                                                                 id="shippers_area_{{ $product->id }}"
-                                                                                value="{{ $area->id }}" @if($shippers_areas->count() === 1) checked @endif>
+                                                                                value="{{ $area->id }}"
+                                                                                @if ($shippers_areas->count() === 1) checked @endif>
                                                                             <label
                                                                                 class="form-check-label fs-14 text-dark fw-500"
                                                                                 for="shippers_area_{{ $area->id }}">
@@ -151,8 +148,8 @@
                                                                 <div class="col-md-6">
                                                                     <span
                                                                         class="fs-14 text-secondary">{{ translate('Duration') }}:</span>
-                                                                    <span
-                                                                        class="fs-14 text-dark fw-500">{{ $duration ?? '' }}</span>
+                                                                    <span id="shipping_duration_{{ $product->id }}"
+                                                                        class="fs-14 text-dark fw-500">N/A</span>
                                                                 </div>
                                                             </div>
                                                             <div class="row charge-wrapper-{{ $product->id }}__clz">
@@ -208,6 +205,7 @@
                                                                                     '{{ __('Free (handled by vendor)') }}');
                                                                             @endif
                                                                         } else if (["vendor"].includes($(this).val()) === true) {
+                                                                            $("#shipping_duration_{{ $product->id }}").html({{ $duration }});
                                                                             @if ($shippingOptions !== null && $shippingOptions->paid === 'vendor')
                                                                                 $("#charge-result_{{ $product->id }}").html(
                                                                                     '{{ __('Free (handled by vendor)') }}');
@@ -227,7 +225,7 @@
                                         <!-- Choose Delivery Type -->
                                         @if ($physical)
                                             <div class="row pt-3">
-                                                <div class="col-md-6">
+                                                <div class="d-none col-md-6">
                                                     <h6 class="fs-14 fw-700 mt-3">{{ translate('Choose Delivery Type') }}
                                                     </h6>
                                                 </div>
@@ -235,7 +233,7 @@
                                                     <div class="row gutters-5">
                                                         <!-- Home Delivery -->
                                                         @if (get_setting('shipping_type') != 'carrier_wise_shipping')
-                                                            <div class="col-6">
+                                                            <div class="d-none col-6">
                                                                 <label class="aiz-megabox d-block bg-white mb-0">
                                                                     <input type="radio"
                                                                         name="shipping_type_{{ get_admin()->id }}"

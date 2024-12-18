@@ -17,7 +17,8 @@ use Auth;
 use App\Utility\CartUtility;
 use Session;
 use DateTime;
-use DB;
+use Log;
+use Exception;
 use Str;
 use App\Models\User;
 
@@ -603,113 +604,121 @@ class CartController extends Controller
 
     public function addToCart(Request $request)
     {
-        // Get product preview data from session
-        $dataProduct = $request->session()->get('productPreviewData', null);
+        try {
+            // Get product preview data from session
+            $dataProduct = $request->session()->get('productPreviewData', null);
 
-        // Determine the user ID; use temp_user_id if not logged in
-        $userId = auth()->check() ? auth()->user()->id : $request->session()->get('temp_user_id');
+            // Determine the user ID; use temp_user_id if not logged in
+            $userId = auth()->check() ? auth()->user()->id : $request->session()->get('temp_user_id');
 
-        // If the user is not authenticated and temp_user_id doesn't exist, generate a new temp_user_id
-        if (!auth()->check() && !$userId) {
-            $userId = (string) Str::uuid();
-            $request->session()->put('temp_user_id', $userId);
-        }
+            // If the user is not authenticated and temp_user_id doesn't exist, generate a new temp_user_id
+            if (!auth()->check() && !$userId) {
+                $userId = (string) Str::uuid();
+                $request->session()->put('temp_user_id', $userId);
+            }
 
-        // Fetch existing cart items using user_id or temp_user_id
-        $carts = Cart::where(
-            auth()->check() ? 'user_id' : 'temp_user_id',
-            $userId
-        )->get();
+            // Fetch existing cart items using user_id or temp_user_id
+            $carts = Cart::where(
+                auth()->check() ? 'user_id' : 'temp_user_id',
+                $userId
+            )->get();
 
-        $product = Product::find($request->variationId);
+            $product = Product::find($request->variationId);
 
-        // Minimum quantity validation
-        $min_from_value = PricingConfiguration::where('id_products', $request['variationId'])->min('from');
+            // Minimum quantity validation
+            $min_from_value = PricingConfiguration::where('id_products', $request['variationId'])->min('from');
 
-        $quantity = $request['quantity'];
+            $quantity = $request['quantity'];
 
-        if ($quantity < $min_from_value) {
-            return [
-                'status' => 0,
-                'cart_count' => count($carts),
-                'modal_view' => view('frontend.' . get_setting('homepage_select') . '.partials.minQtyNotSatisfied', ['min_qty' => $min_from_value])->render(),
-                'nav_cart_view' => view('frontend.' . get_setting('homepage_select') . '.partials.cart')->render(),
-            ];
-        }
-
-        // Check the product variant details
-        $str = $product->productVariantDetails();
-        $product_stock = StockSummary::where('variant_id', $request['variationId'])->sum('current_total_quantity');
-
-        if ($product_stock < $request['quantity']) {
-            return array(
-                'status' => 0,
-                'cart_count' => count($carts),
-                'modal_view' => view('frontend.' . get_setting('homepage_select') . '.partials.outOfStockCart')->render(),
-                'nav_cart_view' => view('frontend.' . get_setting('homepage_select') . '.partials.cart')->render(),
-            );
-        }
-
-        // Create or update the cart item based on user_id or temp_user_id
-        $data = [
-            'variation' => $str,
-            'product_id' => $request['variationId']
-        ];
-
-        if (auth()->check()) {
-            $data["user_id"] = $userId;
-        } else {
-            $data["temp_user_id"] = $userId;
-        }
-
-        $cart = Cart::firstOrNew($data);
-
-        // Handle product-specific validations
-        if ($cart->exists && $product->digital == 0) {
-            if ($product->auction_product == 1 && ($cart->product_id == $product->id)) {
+            if ($quantity < $min_from_value) {
                 return [
                     'status' => 0,
                     'cart_count' => count($carts),
-                    'modal_view' => view('frontend.' . get_setting('homepage_select') . '.partials.auctionProductAlredayAddedCart')->render(),
+                    'modal_view' => view('frontend.' . get_setting('homepage_select') . '.partials.minQtyNotSatisfied', ['min_qty' => $min_from_value])->render(),
                     'nav_cart_view' => view('frontend.' . get_setting('homepage_select') . '.partials.cart')->render(),
                 ];
             }
 
-            if ($product_stock < $cart->quantity + $request['quantity']) {
-                return [
+            // Check the product variant details
+            $str = $product->productVariantDetails();
+            $product_stock = StockSummary::where('variant_id', $request['variationId'])->sum('current_total_quantity');
+
+            if ($product_stock < $request['quantity']) {
+                return array(
                     'status' => 0,
                     'cart_count' => count($carts),
                     'modal_view' => view('frontend.' . get_setting('homepage_select') . '.partials.outOfStockCart')->render(),
                     'nav_cart_view' => view('frontend.' . get_setting('homepage_select') . '.partials.cart')->render(),
-                ];
+                );
             }
-            $quantity = $cart->quantity + $request['quantity'];
+
+            // Create or update the cart item based on user_id or temp_user_id
+            $data = [
+                'variation' => $str,
+                'product_id' => $request['variationId']
+            ];
+
+            if (auth()->check()) {
+                $data["user_id"] = $userId;
+            } else {
+                $data["temp_user_id"] = $userId;
+            }
+
+            $cart = Cart::firstOrNew($data);
+
+            // Handle product-specific validations
+            if ($cart->exists && $product->digital == 0) {
+                if ($product->auction_product == 1 && ($cart->product_id == $product->id)) {
+                    return [
+                        'status' => 0,
+                        'cart_count' => count($carts),
+                        'modal_view' => view('frontend.' . get_setting('homepage_select') . '.partials.auctionProductAlredayAddedCart')->render(),
+                        'nav_cart_view' => view('frontend.' . get_setting('homepage_select') . '.partials.cart')->render(),
+                    ];
+                }
+
+                if ($product_stock < $cart->quantity + $request['quantity']) {
+                    return [
+                        'status' => 0,
+                        'cart_count' => count($carts),
+                        'modal_view' => view('frontend.' . get_setting('homepage_select') . '.partials.outOfStockCart')->render(),
+                        'nav_cart_view' => view('frontend.' . get_setting('homepage_select') . '.partials.cart')->render(),
+                    ];
+                }
+                $quantity = $cart->quantity + $request['quantity'];
+            }
+
+            // Calculate the price and tax
+            $price = CartUtility::priceProduct($request->variationId, $request->quantity);
+
+            $tax = 0;
+
+            // Save the cart data
+            CartUtility::save_cart_data($cart, $product, $price, $tax, $quantity);
+
+            // Fetch updated cart items
+            $carts = Cart::where(
+                auth()->check() ? 'user_id' : 'temp_user_id',
+                $userId
+            )->get();
+
+            $carts->each(function ($cart) {
+                if ($cart->user !== null) {
+                    $cart->user->wishlists->each(fn($wishlist) => $wishlist->delete());
+                }
+            });
+
+            return [
+                'status' => 1,
+                'cart_count' => count($carts),
+                'modal_view' => view('frontend.' . get_setting('homepage_select') . '.partials.addedToCart', compact('product', 'cart'))->render(),
+                'nav_cart_view' => view('frontend.' . get_setting('homepage_select') . '.partials.cart')->render(),
+            ];
+        } catch(Exception $e) {
+            Log::info("Error while adding product to cart, with message: {$e->getMessage()}");
+
+            return response()->json(["error" => true, "message" => __("Something went wrong!")], 500);
         }
-
-        // Calculate the price and tax
-        $price = CartUtility::priceProduct($request->variationId, $request->quantity);
-
-        $tax = 0;
-
-        // Save the cart data
-        CartUtility::save_cart_data($cart, $product, $price, $tax, $quantity);
-
-        // Fetch updated cart items
-        $carts = Cart::where(
-            auth()->check() ? 'user_id' : 'temp_user_id',
-            $userId
-        )->get();
-
-        $carts->each(function($cart) {
-            $cart->user->wishlists->each(fn($wishlist) => $wishlist->delete());
-        });
-
-        return [
-            'status' => 1,
-            'cart_count' => count($carts),
-            'modal_view' => view('frontend.' . get_setting('homepage_select') . '.partials.addedToCart', compact('product', 'cart'))->render(),
-            'nav_cart_view' => view('frontend.' . get_setting('homepage_select') . '.partials.cart')->render(),
-        ];
     }
 
     public function removeFromCart(Request $request)
