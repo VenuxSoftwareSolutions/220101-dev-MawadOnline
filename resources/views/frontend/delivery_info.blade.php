@@ -194,7 +194,8 @@
                                                                                             ).removeClass("text-dark").addClass("text-success").addClass(
                                                                                                 "fw-700");
                                                                                         } else {
-                                                                                            throw new Error('{{ __('Something went wrong!') }}');
+                                                                                            $("#charge-result_{{ $product->id }}").html("N/A");
+                                                                                            AIZ.plugins.notify('danger', data["Notifications"][0]["Message"].split(" - ")[1]);
                                                                                         }
                                                                                     }).catch(() => {
                                                                                     $("#charge-result_{{ $product->id }}").html("N/A");
@@ -205,13 +206,13 @@
                                                                                     '{{ __('Free (handled by vendor)') }}');
                                                                             @endif
                                                                         } else if (["vendor"].includes($(this).val()) === true) {
-                                                                            $("#shipping_duration_{{ $product->id }}").html({{ $duration }});
+                                                                            $("#shipping_duration_{{ $product->id }}").html('{{ $duration . " " . __("days") }}');
                                                                             @if ($shippingOptions !== null && $shippingOptions->paid === 'vendor')
                                                                                 $("#charge-result_{{ $product->id }}").html(
                                                                                     '{{ __('Free (handled by vendor)') }}');
                                                                             @elseif ($shippingOptions !== null && $shippingOptions->paid === 'buyer')
                                                                                 $("#charge-result_{{ $product->id }}").html(
-                                                                                    '{{ formatChargeBasedOnChargeType($shippingOptions) }}');
+                                                                                    '{{ formatChargeBasedOnChargeType($shippingOptions, $carts) }}');
                                                                             @endif
                                                                         }
                                                                     });

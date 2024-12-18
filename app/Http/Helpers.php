@@ -2721,13 +2721,15 @@ if (!function_exists('generateUniqueSlug')) {
 }
 
 if (function_exists('formatChargeBasedOnChargeType') === false) {
-    function formatChargeBasedOnChargeType(object $shippingOptions): string {
+    function formatChargeBasedOnChargeType(object $shippingOptions, $carts): string {
         if ($shippingOptions->charge_per_unit_shipping != null) {
-            return sprintf(
-                "%d %s",
-                $shippingOptions->charge_per_unit_shipping,
-                str()->ucfirst($shippingOptions->shipping_charge)
-            );
+            $qty = 0;
+            $carts->each(function ($cart) use ($shippingOptions, &$qty) {
+                if ($cart->product_id === $shippingOptions->product_id) {
+                    $qty = $cart->quantity;
+                }
+            });
+            return single_price($shippingOptions->charge_per_unit_shipping * $qty);
         } else {
             return single_price($shippingOptions->flat_rate_shipping);
         }
