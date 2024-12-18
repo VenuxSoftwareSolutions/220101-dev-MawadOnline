@@ -110,7 +110,7 @@
                                                                         name="shipping_method_{{ $product->id }}"
                                                                         id="shipping_method_{{ $product->id }}"
                                                                         class="form-control fs-14 text-dark fw-500"
-                                                                        @if($shippers_areas->count() > 0) onchange="toggleShippersArea(this, '{{ $product->id }}')" @endif>
+                                                                        @if ($shippers_areas->count() > 0) onchange="toggleShippersArea(this, '{{ $product->id }}')" @endif>
                                                                         <option value="">
                                                                             {{ translate('Please choose shipper') }}
                                                                         </option>
@@ -133,7 +133,8 @@
                                                                             <input class="form-check-input" type="radio"
                                                                                 name="shippers_area"
                                                                                 id="shippers_area_{{ $product->id }}"
-                                                                                value="{{ $area->id }}" @if($shippers_areas->count() === 1) checked @endif>
+                                                                                value="{{ $area->id }}"
+                                                                                @if ($shippers_areas->count() === 1) checked @endif>
                                                                             <label
                                                                                 class="form-check-label fs-14 text-dark fw-500"
                                                                                 for="shippers_area_{{ $area->id }}">
@@ -147,8 +148,8 @@
                                                                 <div class="col-md-6">
                                                                     <span
                                                                         class="fs-14 text-secondary">{{ translate('Duration') }}:</span>
-                                                                    <span
-                                                                        class="fs-14 text-dark fw-500">{{ $duration ?? '' }}</span>
+                                                                    <span id="shipping_duration_{{ $product->id }}"
+                                                                        class="fs-14 text-dark fw-500">N/A</span>
                                                                 </div>
                                                             </div>
                                                             <div class="row charge-wrapper-{{ $product->id }}__clz">
@@ -204,6 +205,7 @@
                                                                                     '{{ __('Free (handled by vendor)') }}');
                                                                             @endif
                                                                         } else if (["vendor"].includes($(this).val()) === true) {
+                                                                            $("#shipping_duration_{{ $product->id }}").html({{ $duration }});
                                                                             @if ($shippingOptions !== null && $shippingOptions->paid === 'vendor')
                                                                                 $("#charge-result_{{ $product->id }}").html(
                                                                                     '{{ __('Free (handled by vendor)') }}');
