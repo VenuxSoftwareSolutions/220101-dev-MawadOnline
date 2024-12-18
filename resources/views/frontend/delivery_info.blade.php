@@ -194,7 +194,8 @@
                                                                                             ).removeClass("text-dark").addClass("text-success").addClass(
                                                                                                 "fw-700");
                                                                                         } else {
-                                                                                            throw new Error('{{ __('Something went wrong!') }}');
+                                                                                            $("#charge-result_{{ $product->id }}").html("N/A");
+                                                                                            AIZ.plugins.notify('danger', data["Notifications"][0]["Message"].split(" - ")[1]);
                                                                                         }
                                                                                     }).catch(() => {
                                                                                     $("#charge-result_{{ $product->id }}").html("N/A");
