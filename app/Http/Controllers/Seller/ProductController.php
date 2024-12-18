@@ -573,7 +573,11 @@ class ProductController extends Controller
 
                 if (count($shipper_areas) > 0) {
                     foreach ($shipper_areas as $area) {
-                        $warehouses = Warehouse::where('user_id', Auth::user()->owner_id)->where('emirate_id', $area->emirate_id)->where('area_id', $area->area_id)->get();
+                        $warehouses = Warehouse::where('user_id', Auth::user()->owner_id)
+                            ->where('emirate_id', $area->emirate_id)
+                            ->where('area_id', $area->state_id)
+                            ->get();
+
                         if (count($warehouses) > 0) {
                             if (! array_key_exists($shipper->id, $supported_shippers)) {
                                 $supported_shippers[$shipper->id] = $shipper;
