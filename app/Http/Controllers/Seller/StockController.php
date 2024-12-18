@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Seller;
 use Auth;
 use Excel;
 use Validator;
-use Carbon\Carbon;
 use App\Models\Tour;
 use App\Models\User;
 use App\Models\Emirate;
@@ -17,7 +16,6 @@ use Illuminate\Http\Request;
 use App\Exports\StockSummaryExport;
 use App\Http\Requests\SaveRecordRequest;
 use App\Http\Requests\SearchStockRequest;
-use App\Http\Requests\StoreWarehouseRequest;
 
 class StockController extends Controller
 {
@@ -327,7 +325,7 @@ class StockController extends Controller
         $seller = User::find(Auth::user()->owner_id);
         $warehouses = Warehouse::where('user_id', $seller->id)->get();
         $emirates = Emirate::all();
-        $tour_steps=Tour::orderBy('step_number')->get();
+        $tour_steps = Tour::orderBy('step_number')->get();
         return view('seller.warehouses.index', compact('warehouses', 'emirates','tour_steps'));
     }
 
