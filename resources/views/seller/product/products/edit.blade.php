@@ -4715,21 +4715,14 @@
                 if ($(this).is(':checked')) {
                     var count_shippers = "{{ count($supported_shippers) }}";
                     count_shippers = parseInt(count_shippers);
+
                     if (count_shippers == 0) {
                         $('body input[name="activate_third_party"]').prop('checked', false);
-                        // Swal.fire({
-                        //     title: 'Cancelled',
-                        //     text: "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product",
-                        //     icon: 'error',
-                        //     scrollbarPadding: false,
-                        //     backdrop:false,
-                        // });
                         var title = "{{ translate('Default Shipping Configuration') }}";
-                        var message = `<?php $text = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
-                        echo translate($text); ?>`;
+                        var message = '{{ __("You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.") }}';
 
                         $('#title-modal').text(title);
-                        $('#text-modal').text(message);
+                        $('#text-modal').html(message);
 
                         $('#modal-info').modal('show');
 
@@ -5870,22 +5863,15 @@
                 if ($(this).is(':checked')) {
                     var count_shippers = "{{ count($supported_shippers) }}";
                     count_shippers = parseInt(count_shippers);
+
                     if (count_shippers == 0) {
                         $('body input[name="activate_third_party"]').prop('checked', false);
-                        // Swal.fire({
-                        //     title: 'Cancelled',
-                        //     text: "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product",
-                        //     icon: 'error',
-                        //     scrollbarPadding: false,
-                        //     backdrop:false,
-                        // });
 
                         var title = "{{ translate('Default Shipping Configuration') }}";
-                        var message = `<?php $text = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
-                        echo translate($text); ?>`;
+                        var message = "{{ translate("You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.") }}";
 
                         $('#title-modal').text(title);
-                        $('#text-modal').text(message);
+                        $('#text-modal').html(message);
 
                         $('#modal-info').modal('show');
 
