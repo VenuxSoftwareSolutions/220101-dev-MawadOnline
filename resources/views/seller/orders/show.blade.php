@@ -214,14 +214,14 @@
                                         @if ($orderDetail->delivery_status != 'delivered' && $orderDetail->delivery_status != 'cancelled')
                                                 <select onchange="handleDeliveryStatusChanged(this)" class="form-control" data-user_id="{{$orderDetail->seller->id}}" data-product_id="{{$orderDetail->product->id}}" data-orderdetail_id="{{$orderDetail->id}}" data-minimum-results-for-search="Infinity"
                                                     id="update_delivery_status" style="width:200px;">
-                                                    <option value="pending" @if ($orderDetail->delivery_status == 'pending') selected @endif @if ($orderDetail->delivery_status == 'confirmed' || $orderDetail->delivery_status == 'picked_up' || $orderDetail->delivery_status == 'on_the_way') disabled @endif>
+                                                    <option value="pending" @if ($orderDetail->delivery_status == 'pending') selected @endif @if ($orderDetail->delivery_status == 'in_preparation' || $orderDetail->delivery_status == 'ready_for_chipment' || $orderDetail->delivery_status == 'on_the_way') disabled @endif>
                                                         {{ translate('Pending') }}</option>
-                                                    <option value="confirmed" @if ($orderDetail->delivery_status == 'confirmed') selected @endif @if ($orderDetail->delivery_status == 'confirmed' || $orderDetail->delivery_status == 'picked_up' || $orderDetail->delivery_status == 'on_the_way') disabled @endif>
-                                                        {{ translate('Confirmed') }}</option>
-                                                    <option value="picked_up" @if ($orderDetail->delivery_status == 'picked_up') selected @endif >
-                                                        {{ translate('Picked Up') }}</option>
+                                                    <option value="in_preparation" @if ($orderDetail->delivery_status == 'in_preparation') selected @endif @if ($orderDetail->delivery_status == 'in_preparation' || $orderDetail->delivery_status == 'ready_for_chipment' || $orderDetail->delivery_status == 'on_the_way') disabled @endif>
+                                                        {{ __('order.in_preparation') }}</option>
+                                                    <option value="ready_for_chipment" @if ($orderDetail->delivery_status == 'ready_for_chipment') selected @endif >
+                                                        {{ __('order.ready_for_shipment') }}</option>
                                                     <option value="on_the_way" @if ($orderDetail->delivery_status == 'on_the_way') selected @endif>
-                                                        {{ translate('On The Way') }}</option>
+                                                        {{ __('order.on_the_way') }}</option>
                                                     <option value="delivered" @if ($orderDetail->delivery_status == 'delivered') selected @endif>
                                                         {{ translate('Delivered') }}</option>
                                                     <option value="cancelled" @if ($orderDetail->delivery_status == 'cancelled') selected @endif>
@@ -305,7 +305,7 @@
                         <div class="p-3">
                             <div class="col-lg-12 table-responsive">
                                 <div class="alert alert-warning"id="alert-quantity" style="display:none;" role="alert">
-                                    The quantity entered must be equal to the quantity requested
+                                    {{__('order.quantity_entered_must_be_equal_to_the_quantity_requested') }}
                                 </div>
                     <table class="table-bordered   table">
                         <thead>
@@ -314,7 +314,6 @@
                                 <th>{{ translate('warehouses') }}</th>
                                 <th>{{ translate('product') }}</th>
                                 <th>{{ translate('current quantity') }}</th>
-                                <th>{{ translate('quantity requested') }}</th>
                                 <th>{{ translate('quantity') }}</th>
                             </tr>
                         </thead>
@@ -323,12 +322,20 @@
                         </tbody>
                     </table>
                 </div>
+                        <div class="row">
+                            <div class=" text-left col-8">
+                                <div class="form-group row">
+                                    <label class="col-md-3">{{__('order.total_quantity')}}</label>
+                                    <input class="form-control col-md-6" type="number" id="quantity_requested" />
+                                </div>
+                            </div>
                             <!-- Save button -->
-                            <div class="form-group text-right">
+                            <div class="form-group text-right col-4">
                                 <button id="save-stock-movment" data-quantity_requested onclick="handleSaveStockMovement(this)"  class="btn btn-primary rounded-0 w-150px">{{translate('Save')}}</button>
                             </div>
                         </div>
                     </div>
+                </div>
             </div>
         </div>
     </div>
@@ -338,7 +345,7 @@
     <script type="text/javascript">
 
         const handleDeliveryStatusChanged = (event) =>{
-            (event.value == "confirmed") ?  handleUpdateWarehouse(event) :  updateDeliveryStatus(event);
+            (event.value == "in_preparation") ?  handleUpdateWarehouse(event) :  updateDeliveryStatus(event);
         };
 
         const updateDeliveryStatus = (event) => {
@@ -375,13 +382,13 @@
                             <td>${element.warehouse.warehouse_name}</td>
                             <td>${element.product_variant.name}</td>
                             <td>${element.current_total_quantity}</td>
-                            <td>${data.quantity}</td>
                             <td><input class="form-control" type="number" name="quantity" id="${element.warehouse.id}" value="0"/></td>
                         </tr>`;
                 });
                 document.getElementById('save-stock-movment').dataset.order = order_id;
                 document.getElementById('save-stock-movment').dataset.product = product;
                 document.getElementById('save-stock-movment').dataset.quantity_requested = data.quantity;
+                document.getElementById('quantity_requested').value = data.quantity;
                 $('#warehouses_table').html('');
                 $('#warehouses_table').append(tr);
                 $('#warehouse-modal').modal("show");
