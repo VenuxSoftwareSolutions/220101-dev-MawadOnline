@@ -24,7 +24,7 @@ Route::controller(OTPVerificationController::class)->group(function () {
     
     //Forgot password phone
     Route::get('/password/phone/reset', 'show_reset_password_form')->name('password.phone.form');
-    Route::post('/password/reset/submit', 'reset_password_with_code')->name('password.update.phone');
+    Route::post('/password/reset/submit', 'reset_password_with_code')->name('password.update.phone')->middleware('throttle:3,1');
 });
 
 //Admin
