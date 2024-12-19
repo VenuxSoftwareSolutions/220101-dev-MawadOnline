@@ -733,8 +733,7 @@ class AramexController extends Controller
                     ->where('product_id', request()->product_id)
                     ->get()
                     ->map(function ($cart) use ($weight_attribute_id) {
-                        $shippingAddress = AddressModel::with(['city'])
-                            ->where('id', $cart->address_id)
+                        $shippingAddress = AddressModel::where('id', $cart->address_id)
                             ->get()
                             ->map(fn ($data) => [
                                 'address' => $data->address,
