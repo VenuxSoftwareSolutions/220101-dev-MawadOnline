@@ -221,7 +221,7 @@ class OrderController extends Controller
     try{
             $warehouses = $request->warehouses;
             $order = OrderDetail::find($request->order);
-            $order->delivery_status = "confirmed";
+            $order->delivery_status = "in_preparation";
             $order->save();
             foreach ($warehouses as $key => $value) {
                 $stock = StockSummary::where(['warehouse_id'=>$value['warehouse_id'],'variant_id'=>$request->product])
@@ -229,7 +229,8 @@ class OrderController extends Controller
                 $stock->current_total_quantity = $stock->current_total_quantity - $value['quantity'];
                 $stock->save();
             }
-            return response()->json(['error'=>false,'message'=>translate('Order status has been updated')]);
+            return response()->json(['error'=>false,'message'=>
+            translate('Order status has been updated')]);
         }catch(Exception $e){
             Log::error($e->getMessage());
             return response()->json(['error'=>true, 'message' =>$e->getMessage()]);
