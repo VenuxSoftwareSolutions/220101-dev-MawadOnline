@@ -18,4 +18,9 @@ class State extends Model
     {
         return $this->hasMany(City::class);
     }
+
+    public function emirate()
+    {
+        return $this->belongsTo(Emirate::class);
+    }
 }

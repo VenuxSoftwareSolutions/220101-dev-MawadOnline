@@ -201,8 +201,8 @@ class CheckoutController extends Controller
         $address = Address::find($request->address_id);
 
         $shippers_areas = ShippersArea::with(['shipper'])
-            ->where('emirate_id', $address->state_id)
-            ->where('area_id', $address->city_id)
+            ->where('emirate_id', $address->emirate_id)
+            ->where('state_id', $address->state_id)
             ->get();
 
         $admin_products = [];
