@@ -1,7 +1,6 @@
 @extends('seller.layouts.app')
 
 @section('panel_content')
-
     <div class="card">
         <div class="card-header">
             <h1 class="h2 fs-16 mb-0">{{ translate('Order Details') }}</h1>
@@ -30,28 +29,6 @@
                             <input type="text" class="form-control" value="{{ translate($payment_status) }}" disabled>
                         @endif
                     </div>
-                    <!-- <div class="col-md-3 ml-auto">
-                        <label for="update_delivery_status">{{ translate('Delivery Status') }}</label>
-                        @if ($delivery_status != 'delivered' && $delivery_status != 'cancelled')
-                            <select class="form-control aiz-selectpicker" data-minimum-results-for-search="Infinity"
-                                id="update_delivery_status">
-                                <option value="pending" @if ($delivery_status == 'pending') selected @endif>
-                                    {{ translate('Pending') }}</option>
-                                <option value="confirmed" @if ($delivery_status == 'confirmed') selected @endif>
-                                    {{ translate('Confirmed') }}</option>
-                                <option value="picked_up" @if ($delivery_status == 'picked_up') selected @endif>
-                                    {{ translate('Picked Up') }}</option>
-                                <option value="on_the_way" @if ($delivery_status == 'on_the_way') selected @endif>
-                                    {{ translate('On The Way') }}</option>
-                                <option value="delivered" @if ($delivery_status == 'delivered') selected @endif>
-                                    {{ translate('Delivered') }}</option>
-                                <option value="cancelled" @if ($delivery_status == 'cancelled') selected @endif>
-                                    {{ translate('Cancel') }}</option>
-                            </select>
-                        @else
-                            <input type="text" class="form-control" value="{{ translate(ucfirst(str_replace('_', ' ', $delivery_status))) }}" disabled>
-                        @endif
-                    </div> -->
                 @endif
             </div>
             <div class="row gutters-5 mt-2">
@@ -96,18 +73,6 @@
                                 <td class="text-main text-bold">{{ translate('Order #') }}</td>
                                 <td class="text-info text-bold text-right">{{ $order->code }}</td>
                             </tr>
-                            <!-- <tr>
-                                <td class="text-main text-bold">{{ translate('Order Status') }}</td>
-                                <td class="text-right">
-                                    @if ($delivery_status == 'delivered')
-                                        <span
-                                            class="badge badge-inline badge-success">{{ translate(ucfirst(str_replace('_', ' ', $delivery_status))) }}</span>
-                                    @else
-                                        <span
-                                            class="badge badge-inline badge-info">{{ translate(ucfirst(str_replace('_', ' ', $delivery_status))) }}</span>
-                                    @endif
-                                </td>
-                            </tr> -->
                             <tr>
                                 <td class="text-main text-bold">{{ translate('Order Date') }}</td>
                                 <td class="text-right">{{ date('d-m-Y h:i A', $order->date) }}</td>
@@ -297,9 +262,6 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">{{ translate('Warehouses') }}</h5>
-                    <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button> -->
                 </div>
                     <div class="modal-body c-scrollbar-light">
                         <div class="p-3">
@@ -317,9 +279,7 @@
                                 <th>{{ translate('quantity') }}</th>
                             </tr>
                         </thead>
-                        <tbody id="warehouses_table">
-
-                        </tbody>
+                        <tbody id="warehouses_table"></tbody>
                     </table>
                 </div>
                         <div class="row">
@@ -329,7 +289,6 @@
                                     <input class="form-control col-md-6" type="number" id="quantity_requested" />
                                 </div>
                             </div>
-                            <!-- Save button -->
                             <div class="form-group text-right col-4">
                                 <button id="save-stock-movment" data-quantity_requested onclick="handleSaveStockMovement(this)"  class="btn btn-primary rounded-0 w-150px">{{translate('Save')}}</button>
                             </div>
@@ -342,8 +301,7 @@
 @endsection
 
 @section('script')
-    <script type="text/javascript">
-
+    <script>
         const handleDeliveryStatusChanged = (event) =>{
             (event.value == "in_preparation") ?  handleUpdateWarehouse(event) :  updateDeliveryStatus(event);
         };
@@ -364,7 +322,6 @@
         }
 
         const handleUpdateWarehouse = (event) => {
-
            let order_id = event.dataset.orderdetail_id;
            let seller = event.dataset.user_id;
            let product = event.dataset.product_id;
@@ -392,9 +349,7 @@
                 $('#warehouses_table').html('');
                 $('#warehouses_table').append(tr);
                 $('#warehouse-modal').modal("show");
-                // $('#order_details').modal('hide');
                 AIZ.plugins.notify('success', '{{ translate('Order status has been updated') }}');
-
             });
         }
 
@@ -424,7 +379,6 @@
                         location.reload().setTimeOut(1000);
                 });
             }
-            console.log(order, product,quantity,warehouses,totalQuantity);
         }
 
         $('#update_payment_status').on('change', function() {
@@ -436,7 +390,6 @@
                 status: status
             }, function(data) {
                 $('#order_details').modal('hide');
-                //console.log(data);
                 AIZ.plugins.notify('success', '{{ translate('Payment status has been updated') }}');
                 location.reload().setTimeOut(500);
             });
