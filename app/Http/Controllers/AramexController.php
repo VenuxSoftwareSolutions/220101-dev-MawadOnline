@@ -649,7 +649,7 @@ class AramexController extends Controller
 
             return [
                 'OriginAddress' => [
-                    // we get those info from the 1st warehouse
+                    // we got those info from the 1st warehouse
                     'Line1' => "{$input['warehouseDetails'][0]['name']}, {$input['warehouseDetails'][0]['street']}",
                     'Line2' => $input['warehouseDetails'][0]['building'],
                     'Line3' => $input['warehouseDetails'][0]['unit'],
