@@ -1063,7 +1063,9 @@ function getShippingCost($carts, $index, $carrier = '')
         if ($product->added_by == 'admin') {
             return get_setting('shipping_cost_admin') / count($admin_products);
         } else {
-            return Shop::where('user_id', $product->user_id)->first()->shipping_cost / count($seller_products[$product->user_id]);
+            return Shop::where('user_id', $product->user_id)
+                ->first()
+                ->shipping_cost / count($seller_products[$product->user_id]);
         }
     } elseif ($shipping_type == 'area_wise_shipping') {
         $shipping_info = Address::where('id', $carts[0]['address_id'])->first();
@@ -1102,10 +1104,24 @@ function getShippingCost($carts, $index, $carrier = '')
     } else {
         $shippingOptions = $product->shippingOptions($cartItem["quantity"]);
 
-        if ($shippingOptions->charge_per_unit_shipping != null) {
-            return $shippingOptions->charge_per_unit_shipping * $cartItem["quantity"];
+        if ($shippingOptions->shipper === "vendor") {
+            if ($shippingOptions->charge_per_unit_shipping != null) {
+                return $shippingOptions->charge_per_unit_shipping * $cartItem["quantity"];
+            } else {
+                return $shippingOptions->flat_rate_shipping;
+            }
         } else {
-            return $shippingOptions->flat_rate_shipping;
+            // supported 3rd party shipper is aramex for now
+            request()->merge(["product_id" => $product->id]);
+
+            $apiResult = (new \App\Http\Controllers\AramexController)
+                ->calculateOrderProductsCharge(auth()->user()->id);
+
+            if ($apiResult->original["error"] === false) {
+                return $apiResult->original["data"]["TotalAmount"]["Value"];
+            }
+
+            return 0;
         }
 
         if ($product->is_quantity_multiplied && ($shipping_type == 'product_wise_shipping')) {
