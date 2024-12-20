@@ -190,7 +190,7 @@
                                                     <option value="delivered" @if ($orderDetail->delivery_status == 'delivered') selected @endif>
                                                         {{ translate('Delivered') }}</option>
                                                     <option value="cancelled" @if ($orderDetail->delivery_status == 'cancelled') selected @endif>
-                                                        {{ translate('Cancel') }}</option>
+                                                        {{ translate('Canceled') }}</option>
                                                 </select>
                                             @else
                                                 <input type="text" class="form-control" value="{{ translate(ucfirst(str_replace('_', ' ', $orderDetail->delivery_status))) }}" disabled>
