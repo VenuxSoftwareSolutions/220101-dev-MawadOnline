@@ -2,18 +2,17 @@
 
 namespace App\Http\Controllers\Seller;
 
-use DB;
-use Auth;
-use App\Models\Tour;
-use App\Models\User;
 use App\Models\Order;
 use App\Models\OrderDetail;
-use App\Models\SmsTemplate;
-use App\Utility\SmsUtility;
 use App\Models\ProductStock;
-use Illuminate\Http\Request;
-use App\Utility\NotificationUtility;
+use App\Models\SmsTemplate;
 use App\Models\StockSummary;
+use App\Models\User;
+use App\Utility\NotificationUtility;
+use App\Utility\SmsUtility;
+use Auth;
+use Exception;
+use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
@@ -25,7 +24,6 @@ class OrderController extends Controller
         /* $this->middleware(['permission:seller_update_delivery_status'])->only('update_delivery_status'); */
         $this->middleware(['permission:seller_update_payment_status'])->only('update_payment_status');
     }
-
 
     /**
      * Display a listing of the resource to seller.
@@ -59,7 +57,7 @@ class OrderController extends Controller
 
         if ($request->has('search')) {
             $sort_search = $request->search;
-            $orders = $orders->where('code', 'like', '%' . $sort_search . '%');
+            $orders = $orders->where('code', 'like', '%'.$sort_search.'%');
         }
 
         $orders = $orders->paginate(15);
@@ -83,10 +81,10 @@ class OrderController extends Controller
 
         $order->viewed = 1;
         $order->save();
+
         return view('seller.orders.show', compact('order', 'delivery_boys'));
     }
 
-    // Update Delivery Status
     public function update_delivery_status(Request $request)
     {
         $order = OrderDetail::findOrFail($request->order_id);
@@ -100,47 +98,43 @@ class OrderController extends Controller
             $user->save();
         }
 
+        if ($request->status == 'cancelled') {
+            $variant = $order->variation;
+            if ($order->variation == null) {
+                $variant = '';
+            }
 
-            if ($request->status == 'cancelled') {
-                $variant = $order->variation;
-                if ($order->variation == null) {
-                    $variant = '';
-                }
+            $product_stock = ProductStock::where('product_id', $order->product_id)
+                ->where('variant', $variant)
+                ->first();
 
-                $product_stock = ProductStock::where('product_id', $order->product_id)
-                    ->where('variant', $variant)
-                    ->first();
-
-                if ($product_stock != null) {
-                    $product_stock->qty += $order->quantity;
-                    $product_stock->save();
-                }
+            if ($product_stock != null) {
+                $product_stock->qty += $order->quantity;
+                $product_stock->save();
+            }
 
         }
 
         if (addon_is_activated('otp_system') && SmsTemplate::where('identifier', 'delivery_status_change')->first()->status == 1) {
             try {
                 SmsUtility::delivery_status_change(json_decode($order->order->shipping_address)->phone, $order->order);
-            } catch (\Exception $e) {
-
-            }
+            } catch (Exception) {}
         }
 
-        //sends Notifications to user
         NotificationUtility::sendNotification($order->order, $request->status);
+
         if (get_setting('google_firebase') == 1 && $order->order->user->device_token != null) {
             $request->device_token = $order->order->user->device_token;
-            $request->title = "Order updated !";
-            $status = str_replace("_", "", $order->delivery_status);
+            $request->title = 'Order updated !';
+            $status = str_replace('_', '', $order->delivery_status);
             $request->text = " Your order {$order->order->code} has been {$status}";
 
-            $request->type = "order";
+            $request->type = 'order';
             $request->id = $order->id;
             $request->user_id = $order->order->user->id;
 
             NotificationUtility::sendFirebaseNotification($request);
         }
-
 
         if (addon_is_activated('delivery_boy')) {
             if (Auth::user()->user_type == 'delivery_boy') {
@@ -173,7 +167,6 @@ class OrderController extends Controller
         $order->payment_status = $status;
         $order->save();
 
-
         if ($order->payment_status == 'paid' && $order->commission_calculated == 0) {
             calculateCommissionAffilationClubPoint($order);
         }
@@ -182,17 +175,16 @@ class OrderController extends Controller
         NotificationUtility::sendNotification($order, $request->status);
         if (get_setting('google_firebase') == 1 && $order->user->device_token != null) {
             $request->device_token = $order->user->device_token;
-            $request->title = "Order updated !";
-            $status = str_replace("_", "", $order->payment_status);
+            $request->title = 'Order updated !';
+            $status = str_replace('_', '', $order->payment_status);
             $request->text = " Your order {$order->code} has been {$status}";
 
-            $request->type = "order";
+            $request->type = 'order';
             $request->id = $order->id;
             $request->user_id = $order->user->id;
 
             NotificationUtility::sendFirebaseNotification($request);
         }
-
 
         if (addon_is_activated('otp_system') && SmsTemplate::where('identifier', 'payment_status_change')->first()->status == 1) {
             try {
@@ -201,40 +193,45 @@ class OrderController extends Controller
 
             }
         }
+
         return 1;
     }
 
-    public function getWarhouses(Request $request){
-        try{
+    public function getWarhouses(Request $request)
+    {
+        try {
             $quantity = OrderDetail::find($request->order_id)->quantity;
-            $data = StockSummary::where(['seller_id'=>$request->seller,'variant_id'=>$request->product])
-                                ->with(['productVariant','warehouse'])->get();
-            return response()->json(['error'=>false,'data'=>$data,'quantity'=>$quantity]);
-        }catch(Exception $e){
+            $data = StockSummary::where(['seller_id' => $request->seller, 'variant_id' => $request->product])
+                ->with(['productVariant', 'warehouse'])->get();
+
+            return response()->json(['error' => false, 'data' => $data, 'quantity' => $quantity]);
+        } catch (Exception $e) {
             Log::error($e->getMessage());
-            return response()->json(['error'=>true, 'message' =>$e->getMessage()]);
+
+            return response()->json(['error' => true, 'message' => $e->getMessage()]);
         }
 
-   }
+    }
 
-   public function stockMovement(Request $request){
-    try{
+    public function stockMovement(Request $request)
+    {
+        try {
             $warehouses = $request->warehouses;
             $order = OrderDetail::find($request->order);
-            $order->delivery_status = "in_preparation";
+            $order->delivery_status = 'in_preparation';
             $order->save();
             foreach ($warehouses as $key => $value) {
-                $stock = StockSummary::where(['warehouse_id'=>$value['warehouse_id'],'variant_id'=>$request->product])
-                                    ->first();
+                $stock = StockSummary::where(['warehouse_id' => $value['warehouse_id'], 'variant_id' => $request->product])
+                    ->first();
                 $stock->current_total_quantity = $stock->current_total_quantity - $value['quantity'];
                 $stock->save();
             }
-            return response()->json(['error'=>false,'message'=>
-            translate('Order status has been updated')]);
-        }catch(Exception $e){
-            Log::error($e->getMessage());
-            return response()->json(['error'=>true, 'message' =>$e->getMessage()]);
-        }
-   }
 
+            return response()->json(['error' => false, 'message' => translate('Order status has been updated')]);
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return response()->json(['error' => true, 'message' => $e->getMessage()]);
+        }
+    }
 }
