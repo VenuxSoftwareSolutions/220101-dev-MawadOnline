@@ -247,9 +247,12 @@
                                             stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
 
-                                    <span id="compare_items_sidenav" class="badge badge-counter-compare font-prompt">
-                                        0
-                                    </span>
+                                    <a href="{{ route('compare') }}">
+                                        <span id="compare_items_sidenav" class="badge badge-counter-compare font-prompt">
+                                            0
+                                        </span>
+                                    </a>
+                                    
 
                                 </span>
                             </a>
