@@ -302,16 +302,16 @@
 
 @section('script')
     <script>
-        const handleDeliveryStatusChanged = (event) =>{
+        const handleDeliveryStatusChanged = (event) => {
             (event.value == "in_preparation") ?  handleUpdateWarehouse(event) :  updateDeliveryStatus(event);
         };
 
         const updateDeliveryStatus = (event) => {
-            console.log("change delivery status");
             let order_id = event.dataset.orderdetail_id;
             let status = event.value;
+
             $.post('{{ route('seller.orders.update_delivery_status') }}', {
-                _token: '{{ @csrf_token() }}',
+                _token: '{{ csrf_token() }}',
                 order_id: order_id,
                 status: status
             }, function(data) {
