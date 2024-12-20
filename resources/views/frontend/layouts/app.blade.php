@@ -591,6 +591,9 @@
         }
 
 
+        function clearLocalStorage(event) {
+            localStorage.clear(); 
+        }
 
         function addToWishList(id){
             @if (Auth::check() && Auth::user()->user_type == 'customer')
