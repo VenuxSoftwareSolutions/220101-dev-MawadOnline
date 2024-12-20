@@ -132,7 +132,7 @@ class ProductBulkUploadController extends Controller
     public function bulk_upload(Request $request)
     {
         $request->validate([
-            'bulk_file' => 'required|file', // Adjusted validation rule
+            'upload' => 'required|file|max:8000', // Compliant
         ], [
             'bulk_file.mimes' => 'The uploaded file must be a file of type: xlsx, xlsm.',
         ]);

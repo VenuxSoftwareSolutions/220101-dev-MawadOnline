@@ -9,29 +9,41 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('shippers_areas', function (Blueprint $table) {
-            DB::statement('SET FOREIGN_KEY_CHECKS=0');
-
+            // Check if `area_id` exists and drop it if it does
             if (Schema::hasColumn('shippers_areas', 'area_id')) {
+                $table->dropForeign(['area_id']); // Drop foreign key first
                 $table->dropColumn('area_id');
             }
 
-            DB::statement('SET FOREIGN_KEY_CHECKS=1');
+            // Check if `state_id` already exists before adding it
+            if (!Schema::hasColumn('shippers_areas', 'state_id')) {
+                $table->unsignedBigInteger('state_id')->after('emirate_id');
 
-            $table->unsignedBigInteger('state_id')->after("emirate_id");
-
-            $table->foreign('state_id')->references('id')->on('states');
+                $table->foreign('state_id')
+                      ->references('id')
+                      ->on('states')
+                      ->onDelete('cascade'); // Optionally cascade delete
+            }
         });
     }
 
     public function down(): void
     {
         Schema::table('shippers_areas', function (Blueprint $table) {
-            $table->dropForeign(['state_id']);
-            $table->dropColumn('state_id');
+            // Rollback: remove `state_id` and re-add `area_id`
+            if (Schema::hasColumn('shippers_areas', 'state_id')) {
+                $table->dropForeign(['state_id']); // Drop the foreign key first
+                $table->dropColumn('state_id'); // Then drop the column
+            }
 
-            $table->unsignedBigInteger('area_id')->nullable()->after('emirate_id');
-
-            $table->foreign('area_id')->references('id')->on('areas');
+            // Re-add `area_id` if it was dropped
+            if (!Schema::hasColumn('shippers_areas', 'area_id')) {
+                $table->unsignedBigInteger('area_id')->nullable()->after('emirate_id');
+                $table->foreign('area_id')
+                      ->references('id')
+                      ->on('areas')
+                      ->onDelete('cascade'); // Optionally cascade delete
+            }
         });
     }
 };
