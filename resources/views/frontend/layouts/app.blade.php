@@ -590,6 +590,42 @@
             });
         }
 
+        $(document).on('click', '.confirm-delete', function(e) {
+    e.preventDefault();
+
+    let categoryId = $(this).data('category-id');
+    let variantId = $(this).data('variant-id');
+
+    $('#delete-confirmation-modal').modal('show');
+
+    $('#confirm-delete-btn').off('click').on('click', function() {
+        removeFromCompare(categoryId, variantId);
+    });
+});
+
+function removeFromCompare(categoryId, variantId) {
+    $.post('{{ route('compare.removeFromCompare') }}', {
+        _token: AIZ.data.csrf,
+        category_id: categoryId,
+        variant_id: variantId
+    })
+    .done(function(data) {
+        if (data.success) {
+            AIZ.plugins.notify('success', "{{ translate('Item has been removed from the compare list.') }}");
+
+            let compareCount = parseInt($('#compare_items_sidenav').html());
+            $('#compare_items_sidenav').html(compareCount - 1);
+
+            $('#delete-confirmation-modal').modal('hide');
+        } else {
+            AIZ.plugins.notify('warning', data.message || "{{ translate('Unable to remove the item.') }}");
+        }
+    })
+    .fail(function() {
+        AIZ.plugins.notify('error', "{{ translate('Something went wrong. Please try again.') }}");
+    });
+}
+
 
         function clearLocalStorage(event) {
             localStorage.clear(); 

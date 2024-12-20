@@ -1807,6 +1807,15 @@ if (!function_exists('get_single_product')) {
         return $product_query->find($product_id);
     }
 }
+if (!function_exists('get_leaf_category')) {
+    
+    function get_leaf_category(int $productId): ?int
+    {
+        return DB::table('product_categories')
+            ->where('product_id', $productId)
+            ->value('category_id');
+    }
+}
 
 // get multiple Products
 if (!function_exists('get_multiple_products')) {

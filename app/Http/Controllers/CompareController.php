@@ -14,8 +14,8 @@ class CompareController extends Controller
     public function index(Request $request)
     {
         //dd($request->session()->get('compare'));
-        $categories = Category::all();
-        return view('frontend.view_compare', compact('categories'));
+        //$categories = Category::all();
+        return view('frontend.view_compare');
     }
 
     public function reset(Request $request)
@@ -113,6 +113,35 @@ class CompareController extends Controller
         return $data;
     }
     
+    public function removeFromCompare(Request $request)
+    {
+        $categoryId = $request->input('category_id');
+        $variantId = $request->input('variant_id');
+        $user = Auth::user();
+
+        if ($user) {
+            $compare = $request->session()->get('compare', collect());
+
+            if (isset($compare[$categoryId])) {
+                $compare[$categoryId] = $compare[$categoryId]->filter(function ($id) use ($variantId) {
+                    return $id != $variantId;
+                });
+
+                if ($compare[$categoryId]->isEmpty()) {
+                    unset($compare[$categoryId]);
+                }
+
+                $request->session()->put('compare', $compare);
+                $compareData = $this->fetchCompareData($compare);
+                $request->session()->put('compareData', $compareData);
+    
+            }
+
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false, 'message' => 'Login required'], 401);
+        }
+    }
 
 
     public function details($unique_identifier)
