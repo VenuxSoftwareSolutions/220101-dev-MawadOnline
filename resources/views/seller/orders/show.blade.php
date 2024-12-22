@@ -17,7 +17,10 @@
                 @if (get_setting('product_manage_by_admin') == 0)
                     <div class="col-md-3 ml-auto">
                         <label for="update_payment_status">{{ translate('Payment Status') }}</label>
-                        @if (($order->payment_type == 'cash_on_delivery' || (addon_is_activated('offline_payment') == 1 && $order->manual_payment == 1)) && $payment_status == 'unpaid')
+                        @if (
+                            ($order->payment_type == 'cash_on_delivery' ||
+                                (addon_is_activated('offline_payment') == 1 && $order->manual_payment == 1)) &&
+                                $payment_status == 'unpaid')
                             <select class="form-control aiz-selectpicker" data-minimum-results-for-search="Infinity"
                                 id="update_payment_status">
                                 <option value="unpaid" @if ($payment_status == 'unpaid') selected @endif>
@@ -33,14 +36,17 @@
             </div>
             <div class="row gutters-5 mt-2">
                 <div class="col text-md-left text-center">
-                    @if(json_decode($order->shipping_address))
+                    @if (json_decode($order->shipping_address))
                         <address>
                             <strong class="text-main">
                                 {{ json_decode($order->shipping_address)->name }}
                             </strong><br>
                             {{ json_decode($order->shipping_address)->email }}<br>
                             {{ json_decode($order->shipping_address)->phone }}<br>
-                            {{ json_decode($order->shipping_address)->address }}, {{ json_decode($order->shipping_address)->city }}, @if(isset(json_decode($order->shipping_address)->state)) {{ json_decode($order->shipping_address)->state }} - @endif {{ json_decode($order->shipping_address)->postal_code }}<br>
+                            {{ json_decode($order->shipping_address)->address }},
+                            {{ json_decode($order->shipping_address)->city }}, @if (isset(json_decode($order->shipping_address)->state))
+                                {{ json_decode($order->shipping_address)->state }} -
+                            @endif {{ json_decode($order->shipping_address)->postal_code }}<br>
                             {{ json_decode($order->shipping_address)->country }}
                         </address>
                     @else
@@ -115,7 +121,7 @@
                                     {{ translate('Price') }}</th>
                                 <th data-breakpoints="lg" class="min-col text-uppercase text-right">
                                     {{ translate('Total') }}</th>
-                                    <th data-breakpoints="lg" class="min-col text-uppercase text-right">
+                                <th data-breakpoints="lg" class="min-col text-uppercase text-right">
                                     {{ translate('Order Status') }}</th>
                             </tr>
                         </thead>
@@ -164,7 +170,7 @@
                                             @if ($order->carrier != null)
                                                 {{ $order->carrier->name }} ({{ translate('Carrier') }})
                                                 <br>
-                                                {{ translate('Transit Time').' - '.$order->carrier->transit_time }}
+                                                {{ translate('Transit Time') . ' - ' . $order->carrier->transit_time }}
                                             @else
                                                 {{ translate('Carrier') }}
                                             @endif
@@ -177,25 +183,44 @@
                                     <td>
 
                                         @if ($orderDetail->delivery_status != 'delivered' && $orderDetail->delivery_status != 'cancelled')
-                                                <select onchange="handleDeliveryStatusChanged(this)" class="form-control" data-user_id="{{$orderDetail->seller->id}}" data-product_id="{{$orderDetail->product->id}}" data-orderdetail_id="{{$orderDetail->id}}" data-minimum-results-for-search="Infinity"
-                                                    id="update_delivery_status" style="width:200px;">
-                                                    <option value="pending" @if ($orderDetail->delivery_status == 'pending') selected @endif @if ($orderDetail->delivery_status == 'in_preparation' || $orderDetail->delivery_status == 'ready_for_shipment' || $orderDetail->delivery_status == 'on_the_way') disabled @endif>
-                                                        {{ translate('Pending') }}</option>
-                                                    <option value="in_preparation" @if ($orderDetail->delivery_status == 'in_preparation') selected @endif @if ($orderDetail->delivery_status == 'in_preparation' || $orderDetail->delivery_status == 'ready_for_shipment' || $orderDetail->delivery_status == 'on_the_way') disabled @endif>
-                                                        {{ __('order.in_preparation') }}</option>
-                                                    <option value="ready_for_shipment" @if ($orderDetail->delivery_status == 'ready_for_shipment') selected @endif >
-                                                        {{ __('order.ready_for_shipment') }}</option>
-                                                    <option value="on_the_way" @if ($orderDetail->delivery_status == 'on_the_way') selected @endif>
-                                                        {{ __('order.on_the_way') }}</option>
-                                                    <option value="delivered" @if ($orderDetail->delivery_status == 'delivered') selected @endif>
-                                                        {{ translate('Delivered') }}</option>
-                                                    <option value="cancelled" @if ($orderDetail->delivery_status == 'cancelled') selected @endif>
-                                                        {{ translate('Canceled') }}</option>
-                                                </select>
-                                            @else
-                                                <input type="text" class="form-control" value="{{ translate(ucfirst(str_replace('_', ' ', $orderDetail->delivery_status))) }}" disabled>
-                                            @endif
-                                        </td>
+                                            <select onchange="handleDeliveryStatusChanged(this)" class="form-control"
+                                                data-user_id="{{ $orderDetail->seller->id }}"
+                                                data-product_id="{{ $orderDetail->product->id }}"
+                                                data-orderdetail_id="{{ $orderDetail->id }}"
+                                                data-minimum-results-for-search="Infinity" id="update_delivery_status"
+                                                style="width:200px;">
+                                                <option value="pending" @if ($orderDetail->delivery_status == 'pending') selected @endif
+                                                    @if (
+                                                        $orderDetail->delivery_status == 'in_preparation' ||
+                                                            $orderDetail->delivery_status == 'ready_for_shipment' ||
+                                                            $orderDetail->delivery_status == 'on_the_way') disabled @endif>
+                                                    {{ translate('Pending') }}</option>
+                                                <option value="in_preparation"
+                                                    @if ($orderDetail->delivery_status == 'in_preparation') selected @endif
+                                                    @if (
+                                                        $orderDetail->delivery_status == 'in_preparation' ||
+                                                            $orderDetail->delivery_status == 'ready_for_shipment' ||
+                                                            $orderDetail->delivery_status == 'on_the_way') disabled @endif>
+                                                    {{ __('order.in_preparation') }}</option>
+                                                <option value="ready_for_shipment"
+                                                    @if ($orderDetail->delivery_status == 'ready_for_shipment') selected @endif>
+                                                    {{ __('order.ready_for_shipment') }}</option>
+                                                <option value="on_the_way"
+                                                    @if ($orderDetail->delivery_status == 'on_the_way') selected @endif>
+                                                    {{ __('order.on_the_way') }}</option>
+                                                <option value="delivered"
+                                                    @if ($orderDetail->delivery_status == 'delivered') selected @endif>
+                                                    {{ translate('Delivered') }}</option>
+                                                <option value="cancelled"
+                                                    @if ($orderDetail->delivery_status == 'cancelled') selected @endif>
+                                                    {{ translate('Canceled') }}</option>
+                                            </select>
+                                        @else
+                                            <input type="text" class="form-control"
+                                                value="{{ translate(ucfirst(str_replace('_', ' ', $orderDetail->delivery_status))) }}"
+                                                disabled>
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -257,40 +282,43 @@
     </div>
 
 
-    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="warehouse-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="warehouse-modal" tabindex="-1"
+        role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">{{ translate('Warehouses') }}</h5>
                 </div>
-                    <div class="modal-body c-scrollbar-light">
-                        <div class="p-3">
-                            <div class="col-lg-12 table-responsive">
-                                <div class="alert alert-warning"id="alert-quantity" style="display:none;" role="alert">
-                                    {{__('order.quantity_entered_must_be_equal_to_the_quantity_requested') }}
-                                </div>
-                    <table class="table-bordered   table">
-                        <thead>
-                            <tr class="bg-trans-dark">
-                                <th data-breakpoints="lg" class="min-col">#</th>
-                                <th>{{ translate('warehouses') }}</th>
-                                <th>{{ translate('product') }}</th>
-                                <th>{{ translate('current quantity') }}</th>
-                                <th>{{ translate('quantity') }}</th>
-                            </tr>
-                        </thead>
-                        <tbody id="warehouses_table"></tbody>
-                    </table>
-                </div>
+                <div class="modal-body c-scrollbar-light">
+                    <div class="p-3">
+                        <div class="col-lg-12 table-responsive">
+                            <div class="alert alert-warning"id="alert-quantity" style="display:none;" role="alert">
+                                {{ __('order.quantity_entered_must_be_equal_to_the_quantity_requested') }}
+                            </div>
+                            <table class="table-bordered   table">
+                                <thead>
+                                    <tr class="bg-trans-dark">
+                                        <th data-breakpoints="lg" class="min-col">#</th>
+                                        <th>{{ translate('warehouses') }}</th>
+                                        <th>{{ translate('product') }}</th>
+                                        <th>{{ translate('current quantity') }}</th>
+                                        <th>{{ translate('quantity') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="warehouses_table"></tbody>
+                            </table>
+                        </div>
                         <div class="row">
                             <div class=" text-left col-8">
                                 <div class="form-group row">
-                                    <label class="col-md-3">{{__('order.total_quantity')}}</label>
+                                    <label class="col-md-3">{{ __('order.total_quantity') }}</label>
                                     <input class="form-control col-md-6" type="number" id="quantity_requested" />
                                 </div>
                             </div>
                             <div class="form-group text-right col-4">
-                                <button id="save-stock-movment" data-quantity_requested onclick="handleSaveStockMovement(this)"  class="btn btn-primary rounded-0 w-150px">{{translate('Save')}}</button>
+                                <button id="save-stock-movment" data-quantity_requested
+                                    onclick="handleSaveStockMovement(this)"
+                                    class="btn btn-primary rounded-0 w-150px">{{ translate('Save') }}</button>
                             </div>
                         </div>
                     </div>
@@ -303,7 +331,7 @@
 @section('script')
     <script>
         const handleDeliveryStatusChanged = (event) => {
-            (event.value == "in_preparation") ?  handleUpdateWarehouse(event) :  updateDeliveryStatus(event);
+            (event.value == "in_preparation") ? handleUpdateWarehouse(event): updateDeliveryStatus(event);
         };
 
         const updateDeliveryStatus = (event) => {
@@ -322,9 +350,9 @@
         }
 
         const handleUpdateWarehouse = (event) => {
-           let order_id = event.dataset.orderdetail_id;
-           let seller = event.dataset.user_id;
-           let product = event.dataset.product_id;
+            let order_id = event.dataset.orderdetail_id;
+            let seller = event.dataset.user_id;
+            let product = event.dataset.product_id;
             $.post('{{ route('seller.orders.get_warehouses') }}', {
                 _token: '{{ @csrf_token() }}',
                 order_id: order_id,
@@ -332,9 +360,9 @@
                 product: product,
             }, function(data) {
                 let stock = data.data;
-                let tr ='';
-                stock.forEach((element,key) => {
-                    tr+=`<tr>
+                let tr = '';
+                stock.forEach((element, key) => {
+                    tr += `<tr>
                             <td>${key}</td>
                             <td>${element.warehouse.warehouse_name}</td>
                             <td>${element.product_variant.name}</td>
@@ -361,22 +389,25 @@
             let warehouses = [];
             let totalQuantity = 0
             inputs.forEach(element => {
-                warehouses.push({warehouse_id:element.id,quantity:parseInt(element.value)});
-                totalQuantity+=parseInt(element.value);
+                warehouses.push({
+                    warehouse_id: element.id,
+                    quantity: parseInt(element.value)
+                });
+                totalQuantity += parseInt(element.value);
             });
-            if(quantity!=totalQuantity){
-                document.getElementById('alert-quantity').style.display ='';
+            if (quantity != totalQuantity) {
+                document.getElementById('alert-quantity').style.display = '';
                 return;
-            }else{
-                document.getElementById('alert-quantity').style.display ='none';
+            } else {
+                document.getElementById('alert-quantity').style.display = 'none';
                 $.post('{{ route('seller.orders.stock_movement') }}', {
                     _token: '{{ @csrf_token() }}',
                     order: order,
                     warehouses: warehouses,
                     product: product,
-                    }, function(data) {
-                        AIZ.plugins.notify('success', '{{ translate('Order status has been updated') }}');
-                        location.reload().setTimeOut(1000);
+                }, function(data) {
+                    AIZ.plugins.notify('success', '{{ translate('Order status has been updated') }}');
+                    location.reload().setTimeOut(1000);
                 });
             }
         }
