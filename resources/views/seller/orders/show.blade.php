@@ -179,11 +179,11 @@
                                         @if ($orderDetail->delivery_status != 'delivered' && $orderDetail->delivery_status != 'cancelled')
                                                 <select onchange="handleDeliveryStatusChanged(this)" class="form-control" data-user_id="{{$orderDetail->seller->id}}" data-product_id="{{$orderDetail->product->id}}" data-orderdetail_id="{{$orderDetail->id}}" data-minimum-results-for-search="Infinity"
                                                     id="update_delivery_status" style="width:200px;">
-                                                    <option value="pending" @if ($orderDetail->delivery_status == 'pending') selected @endif @if ($orderDetail->delivery_status == 'in_preparation' || $orderDetail->delivery_status == 'ready_for_chipment' || $orderDetail->delivery_status == 'on_the_way') disabled @endif>
+                                                    <option value="pending" @if ($orderDetail->delivery_status == 'pending') selected @endif @if ($orderDetail->delivery_status == 'in_preparation' || $orderDetail->delivery_status == 'ready_for_shipment' || $orderDetail->delivery_status == 'on_the_way') disabled @endif>
                                                         {{ translate('Pending') }}</option>
-                                                    <option value="in_preparation" @if ($orderDetail->delivery_status == 'in_preparation') selected @endif @if ($orderDetail->delivery_status == 'in_preparation' || $orderDetail->delivery_status == 'ready_for_chipment' || $orderDetail->delivery_status == 'on_the_way') disabled @endif>
+                                                    <option value="in_preparation" @if ($orderDetail->delivery_status == 'in_preparation') selected @endif @if ($orderDetail->delivery_status == 'in_preparation' || $orderDetail->delivery_status == 'ready_for_shipment' || $orderDetail->delivery_status == 'on_the_way') disabled @endif>
                                                         {{ __('order.in_preparation') }}</option>
-                                                    <option value="ready_for_chipment" @if ($orderDetail->delivery_status == 'ready_for_chipment') selected @endif >
+                                                    <option value="ready_for_shipment" @if ($orderDetail->delivery_status == 'ready_for_shipment') selected @endif >
                                                         {{ __('order.ready_for_shipment') }}</option>
                                                     <option value="on_the_way" @if ($orderDetail->delivery_status == 'on_the_way') selected @endif>
                                                         {{ __('order.on_the_way') }}</option>
