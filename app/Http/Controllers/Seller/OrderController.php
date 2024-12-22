@@ -112,7 +112,6 @@ class OrderController extends Controller
                 $product_stock->qty += $order->quantity;
                 $product_stock->save();
             }
-
         }
 
         if (addon_is_activated('otp_system') && SmsTemplate::where('identifier', 'delivery_status_change')->first()->status == 1) {
