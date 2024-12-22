@@ -124,14 +124,16 @@ class OrderController extends Controller
         NotificationUtility::sendNotification($order->order, $request->status);
 
         if (get_setting('google_firebase') == 1 && $order->order->user->device_token != null) {
-            $request->device_token = $order->order->user->device_token;
-            $request->title = 'Order updated !';
             $status = str_replace('_', '', $order->delivery_status);
-            $request->text = " Your order {$order->order->code} has been {$status}";
-
-            $request->type = 'order';
-            $request->id = $order->id;
-            $request->user_id = $order->order->user->id;
+            $request->merge([
+                "device_token" => $order->order->user->device_token,
+                "title" => 'Order updated !',
+                "status" => $status,
+                "text" => " Your order {$order->order->code} has been {$status}",
+                "type" => 'order',
+                "id" => $order->id,
+                "user_id" => $order->order->user->id
+            ]);
 
             NotificationUtility::sendFirebaseNotification($request);
         }
