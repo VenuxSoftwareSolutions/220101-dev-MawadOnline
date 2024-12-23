@@ -16,5 +16,5 @@ const MAWADONLINE_WAREHOUSE_ID = 24;
 
 // in minutes
 const RESERVATION_WAIT_TIME = 30;
-const compare_list_num_variants = 3;
+const compare_list_num_variants = 5;
 

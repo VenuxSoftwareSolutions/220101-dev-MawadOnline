@@ -42,7 +42,6 @@ class CompareController extends Controller
         $leafCategoryName = DB::table('categories')
             ->where('id', $leafCategoryId)
             ->value('name');
-        $maxVariants = env('COMPARE_LIST_NUM_VARIANTS', 3);
         
         if ($user) {
             $compare = $request->session()->get('compare', collect());
