@@ -252,7 +252,8 @@ Route::controller(CompareController::class)->group(function () {
     Route::post('/compare/addToCompare', 'addToCompare')->name('compare.addToCompare');
     Route::get('/compare/details/{id}', 'details')->name('compare.details');
     Route::post('/compare/remove', [CompareController::class, 'removeFromCompare'])->name('compare.removeFromCompare');
- 
+    Route::post('/compare/data', [CompareController::class, 'getCompareData'])->name('compare.data');
+
 });
 
 Route::resource('subscribers', SubscriberController::class);

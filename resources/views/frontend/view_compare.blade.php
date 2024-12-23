@@ -2,9 +2,12 @@
 
 @section('content')
     @php
-        $compareList = Session::has('compareData') ? Session::get('compareData') : [];
+         $compareList = Auth::check() ? (Session::has('compareData') ? Session::get('compareData') : []): [];        
     @endphp
-
+   
+    
+    
+    <input type="hidden" id="compare-data" value="{{ json_encode($compareList) }}">
     <section class="mb-4 mt-3">
         <div class="container text-left">
             <div class="bg-white shadow-sm rounded py-3">
@@ -15,6 +18,10 @@
                         {{ translate('Reset Compare List') }}
                     </a>
                 </div>
+                @php
+                    $compareList = is_string($compareList) ? json_decode($compareList, true) : $compareList;
+                    $compareList = $compareList ?? [];
+                @endphp
 
                 @forelse($compareList as $compareItem)
                     <h4 class="fw-600 text-primary mb-3">
@@ -150,5 +157,35 @@
         </div>
     </div>
     
-
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            @if (!auth()->check())
+            let compare = JSON.parse(localStorage.getItem('compare')) || {};
+            if (Object.keys(compare).length > 0) {
+                fetchCompareData(compare);
+            }
+    
+            function fetchCompareData(compare) {
+                fetch("{{ route('compare.data') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    },
+                    body: JSON.stringify({ compare: compare }),
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.success) {
+                            renderCompareTable(data.compareData);
+                        }
+                    })
+                    .catch((error) => console.error("Error fetching compare data:", error));
+            }
+    
+            function renderCompareTable(compareData) {
+                console.log(compareData);
+            }
+        });    
+    </script>
 @endsection

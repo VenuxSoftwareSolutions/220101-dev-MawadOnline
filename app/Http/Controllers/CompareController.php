@@ -111,7 +111,19 @@ class CompareController extends Controller
         }
         return $data;
     }
-    
+    public function getCompareData(Request $request)
+    {
+        $compare = $request->input('compare', []);
+        $compareData = $this->fetchCompareData($compare);
+
+        return response()->json([
+            'success' => true,
+            'compareData' => $compareData,
+        ]);
+    }
+
+
+
     public function removeFromCompare(Request $request)
     {
         $categoryId = $request->input('category_id');
