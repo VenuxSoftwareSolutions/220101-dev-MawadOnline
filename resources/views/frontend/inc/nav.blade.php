@@ -781,12 +781,12 @@
             } else {
                 let sessionCount = {{ collect(session('compare', collect([])))->flatten()->count() }};
 
-                let compare = JSON.parse(localStorage.getItem('compare')) || {};
+                /* let compare = JSON.parse(localStorage.getItem('compare')) || {};
                 let localCount = Object.values(compare).reduce((total, items) => total + items.length, 0);
 
-                let combinedCount = sessionCount + localCount;
+                let combinedCount = sessionCount + localCount; */
 
-                compareBadge.innerHTML = combinedCount;
+                compareBadge.innerHTML = sessionCount;
 
             }
         });

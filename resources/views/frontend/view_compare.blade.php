@@ -2,11 +2,8 @@
 
 @section('content')
     @php
-         $compareList = Auth::check() ? (Session::has('compareData') ? Session::get('compareData') : []): [];        
+        $compareList = Auth::check() ? (Session::has('compareData') ? Session::get('compareData') : []) : [];
     @endphp
-   
-    
-    
     <input type="hidden" id="compare-data" value="{{ json_encode($compareList) }}">
     <section class="mb-4 mt-3">
         <div class="container text-left">
@@ -40,17 +37,18 @@
                                         @endphp
                                         <th>
                                             <div class="position-relative">
-                                                <img src="{{ uploaded_asset($product->thumbnail_img) }}" class="img-fluid mb-2" alt="{{ $product->name }}">
+                                                <img src="{{ uploaded_asset($product->thumbnail_img) }}"
+                                                    class="img-fluid mb-2" alt="{{ $product->name }}">
                                                 <div class="absolute-top-right">
-                                                    <a href="#" class="btn btn-sm confirm-delete" 
-                                                    data-category-id="{{ get_leaf_category($product->id) }}" 
-                                                    data-variant-id="{{ $product->id }}" 
-                                                       title="{{ translate('Delete') }}">
+                                                    <a href="#" class="btn btn-sm confirm-delete"
+                                                        data-category-id="{{ get_leaf_category($product->id) }}"
+                                                        data-variant-id="{{ $product->id }}"
+                                                        title="{{ translate('Delete') }}">
                                                         <img src="{{ asset('public/trash.svg') }}">
                                                     </a>
                                                 </div>
                                             </div>
-                                            
+
                                         </th>
                                     @endforeach
                                 </tr>
@@ -109,7 +107,28 @@
                                         </td>
                                     @endforeach
                                 </tr>
+
                                 <tr>
+                                    <td class="fw-700">{{ translate('Stock') }}</td>
+                                    @foreach ($compareItem['variants'] as $product)
+                                        <td>{{ $product->current_stock }}</td>
+                                    @endforeach
+                                </tr>
+                                <tr class="bg-light">
+                                    <td class="fw-700">{{ translate('Weight') }}</td>
+                                    @foreach ($compareItem['variants'] as $product)
+                                        <td>{{ $product->weight }}</td>
+                                    @endforeach
+                                </tr>
+
+                                <tr>
+                                    <td class="fw-700">{{ translate('Dimensions (L x W x H)') }}</td>
+                                    @foreach ($compareItem['variants'] as $product)
+                                        <td>{{ $product->length ?? 'N/A' }} x {{ $product->width ?? 'N/A' }} x
+                                            {{ $product->height ?? 'N/A' }}</td>
+                                    @endforeach
+                                </tr>
+                                <tr class="bg-light">
                                     <td class="fw-700">{{ translate('Actions') }}</td>
                                     @foreach ($compareItem['variants'] as $product)
                                         @php
@@ -156,24 +175,28 @@
             </div>
         </div>
     </div>
-    
+
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
+            console.log(fetchCompareData(JSON.parse(localStorage.getItem('compare'))));
+
             @if (!auth()->check())
-            let compare = JSON.parse(localStorage.getItem('compare')) || {};
-            if (Object.keys(compare).length > 0) {
-                fetchCompareData(compare);
-            }
-    
+                let compare = JSON.parse(localStorage.getItem('compare')) || {};
+                if (Object.keys(compare).length > 0) {
+                    fetchCompareData(compare);
+                }
+            @endif
             function fetchCompareData(compare) {
                 fetch("{{ route('compare.data') }}", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                    },
-                    body: JSON.stringify({ compare: compare }),
-                })
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                        },
+                        body: JSON.stringify({
+                            compare: compare
+                        }),
+                    })
                     .then((response) => response.json())
                     .then((data) => {
                         if (data.success) {
@@ -182,10 +205,10 @@
                     })
                     .catch((error) => console.error("Error fetching compare data:", error));
             }
-    
+
             function renderCompareTable(compareData) {
                 console.log(compareData);
             }
-        });    
+        });
     </script>
 @endsection
