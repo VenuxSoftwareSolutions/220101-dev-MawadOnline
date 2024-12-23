@@ -1062,7 +1062,7 @@ class AramexController extends Controller
         try {
             $data['data'] = State::where(
                 'emirate_id', $emirate_id
-            )->orderBy('name', 'ASC')->get(["id", "name"]);
+            )->orderBy('name', 'ASC')->get(['id', 'name']);
 
             return response()->json($data);
         } catch (Exception $e) {
