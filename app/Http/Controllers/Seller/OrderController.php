@@ -13,6 +13,8 @@ use App\Utility\SmsUtility;
 use Auth;
 use Exception;
 use Illuminate\Http\Request;
+use App\Http\Controllers\AramexController;
+use Log;
 
 class OrderController extends Controller
 {
@@ -87,65 +89,125 @@ class OrderController extends Controller
 
     public function update_delivery_status(Request $request)
     {
-        $order = OrderDetail::findOrFail($request->order_id);
-        $order->order->delivery_viewed = '0';
-        $order->delivery_status = $request->status;
-        $order->save();
+        try {
+            $order = OrderDetail::findOrFail($request->order_id);
+            $order->order->delivery_viewed = '0';
+            $order->delivery_status = $request->status;
+            $order->save();
 
-        if ($request->status == 'cancelled' && $order->order->payment_type == 'wallet') {
-            $user = User::where('id', $order->order->user_id)->first();
-            $user->balance += $order->grand_total;
-            $user->save();
-        }
+            if ($request->status === "ready_for_shipment") {
+                $controller = new AramexController;
+                $pickup_input = $controller->transformNewPickupData($request->all());
 
-        if ($request->status == 'cancelled') {
-            $variant = $order->variation;
-            if ($order->variation == null) {
-                $variant = '';
+                $pickup = $controller->createPickup($pickup_input);
+
+                if ($pickup !== null && $pickup["HasErrors"] === true) {
+                    return response()->json([
+                        "error" => true,
+                        "message" => __("There's an error while processing pickup creation! Please try again later!")
+                    ], 500);
+                }
+
+                $product = get_single_product($request->product_id);
+
+                $dimensions = [
+                    'Length' => $product->length,
+                    'Width' => $product->width,
+                    'Height' => $product->height,
+                    'Unit' => 'cm',
+                ];
+
+                $request->merge([
+                    "pickup_guid" => $pickup["ProcessedPickup"]["GUID"],
+                    "dimensions" => $dimensions
+                ]);
+
+                $shipment_input = $controller->transformNewShipmentsData($request->all());
+                $shipment = $controller->createShipments($shipment_input);
+
+                if ($shipment !== null && $shipment["HasErrors"] === true) {
+                    return response()->json([
+                        "error" => true,
+                        "message" => __("There's an error while processing shipment creation! Please try again later!")
+                    ], 500);
+                }
+
+                // @todo save shipment info for tracking
+                $link = $shipment["Shipments"][0]["ShipmentLabel"]["LabelURL"];
             }
 
-            $product_stock = ProductStock::where('product_id', $order->product_id)
-                ->where('variant', $variant)
-                ->first();
-
-            if ($product_stock != null) {
-                $product_stock->qty += $order->quantity;
-                $product_stock->save();
+            if ($request->status == 'cancelled' && $order->order->payment_type == 'wallet') {
+                $user = User::where('id', $order->order->user_id)->first();
+                $user->balance += $order->grand_total;
+                $user->save();
             }
-        }
 
-        if (addon_is_activated('otp_system') && SmsTemplate::where('identifier', 'delivery_status_change')->first()->status == 1) {
-            try {
-                SmsUtility::delivery_status_change(json_decode($order->order->shipping_address)->phone, $order->order);
-            } catch (Exception) {}
-        }
+            if ($request->status == 'cancelled') {
+                $variant = $order->variation;
+                if ($order->variation == null) {
+                    $variant = '';
+                }
 
-        NotificationUtility::sendNotification($order->order, $request->status);
+                $product_stock = ProductStock::where('product_id', $order->product_id)
+                    ->where('variant', $variant)
+                    ->first();
 
-        if (get_setting('google_firebase') == 1 && $order->order->user->device_token != null) {
-            $status = str_replace('_', '', $order->delivery_status);
-            $request->merge([
-                "device_token" => $order->order->user->device_token,
-                "title" => 'Order updated !',
-                "status" => $status,
-                "text" => " Your order {$order->order->code} has been {$status}",
-                "type" => 'order',
-                "id" => $order->id,
-                "user_id" => $order->order->user->id
-            ]);
-
-            NotificationUtility::sendFirebaseNotification($request);
-        }
-
-        if (addon_is_activated('delivery_boy')) {
-            if (Auth::user()->user_type == 'delivery_boy') {
-                $deliveryBoyController = new DeliveryBoyController;
-                $deliveryBoyController->store_delivery_history($order);
+                if ($product_stock != null) {
+                    $product_stock->qty += $order->quantity;
+                    $product_stock->save();
+                }
             }
-        }
 
-        return 1;
-    }
+            if (
+                addon_is_activated('otp_system') &&
+                SmsTemplate::where('identifier', 'delivery_status_change')
+                    ->first()
+                    ->status == 1
+            ) {
+                try {
+                    SmsUtility::delivery_status_change(json_decode($order->order->shipping_address)->phone, $order->order);
+                } catch (Exception) {}
+            }
+
+            NotificationUtility::sendNotification($order->order, $request->status);
+
+            if (get_setting('google_firebase') == 1 && $order->order->user->device_token != null) {
+                $status = str_replace('_', '', $order->delivery_status);
+                $request->merge([
+                    "device_token" => $order->order->user->device_token,
+                    "title" => 'Order updated !',
+                    "status" => $status,
+                    "text" => " Your order {$order->order->code} has been {$status}",
+                    "type" => 'order',
+                    "id" => $order->id,
+                    "user_id" => $order->order->user->id
+                ]);
+
+                NotificationUtility::sendFirebaseNotification($request);
+            }
+
+            if (addon_is_activated('delivery_boy')) {
+                if (Auth::user()->user_type == 'delivery_boy') {
+                    $deliveryBoyController = new DeliveryBoyController;
+                    $deliveryBoyController->store_delivery_history($order);
+                }
+            }
+
+           if ($request->status === "ready_for_shipment") {
+                return response()->json([
+                    "error" => false,
+                    "data" => [
+                        "link" => $link
+                    ]
+                ], 200);
+            }
+
+            return 1;
+        } catch(Exception $e) {
+            Log::info("Error while changing delivery status, with message: {$e->getMessage()}");
+            return response()->json(["error" => true, "message" => __("Something went wrong!")]);
+        }
+     }
 
     // Update Payment Status
     public function update_payment_status(Request $request)
