@@ -277,10 +277,166 @@
                         class="btn btn-icon btn-light"><i class="las la-print"></i></a>
                 </div>
             </div>
-
         </div>
     </div>
 
+
+    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="shipment-modal" tabindex="-1"
+        role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">{{ translate('Shipment') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body c-scrollbar-light">
+                    <div class="p-3">
+                        <form id="shipment_form">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label>{{ translate('Full Name') }} *</label>
+                                </div>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control mb-3 rounded-0"
+                                        placeholder="{{ translate('Your Full Name') }}" name="full_name" required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label>{{ translate('Mobile Number') }} *</label>
+                                </div>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control mb-3 rounded-0"
+                                        placeholder="{{ translate('+971') }}" name="phone"
+                                        required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label>{{ translate('Email') }} *</label>
+                                </div>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control mb-3 rounded-0"
+                                        placeholder="{{ translate('Your email') }}" name="email" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label for="recipient-name" class="col-form-label">{{ __('Address') }} *</label>
+                                </div>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control my-2" name="shipper_address_line1"
+                                        placeholder="{{ __('Line 1') }}">
+                                    <input type="text" class="form-control my-2" name="shipper_address_line2"
+                                        placeholder="{{ __('Line 2') }}">
+                                    <input type="text" class="form-control my-2" name="shipper_address_line3"
+                                        placeholder="{{ __('Line 3') }}">
+                                    <select class="form-control my-2" name="state" name="shipper_state">
+                                        <option>{{ __('Choose an emirate') }}</option>
+                                        @php
+                                            $emirates = \App\Models\Emirate::all();
+                                        @endphp
+                                        @foreach ($emirates as $emirate)
+                                            <option value="{{ $emirate->id }}">{{ $emirate->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <select class="form-control my-2" name="city" name="shipper_city">
+                                        <option>{{ __('Choose a city') }}</option>
+                                    </select>
+                                    <input type="text" class="form-control my-2" name="shipper_post_code"
+                                        placeholder="{{ __('Post code') }}">
+                                    <input type="text" class="form-control my-2" name="shipper_building_name"
+                                        placeholder="{{ __('Building name') }}">
+                                    <input type="text" class="form-control my-2" name="shipper_building_number"
+                                        placeholder="{{ __('Building number') }}">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">{{ __('Shipping date') }} *</div>
+                                <div class="col-md-8"><input type="datetime-local" class="form-control my-2"
+                                        id="shipping_datetime" name="shipping_datetime"
+                                        value="{{ old('shipping_datetime', now()->format('Y-m-d\TH:i')) }}"></div>
+                            </div>
+                            @if (json_decode($order->shipping_address))
+                                <input type="hidden" name="consignee_email"
+                                    value="{{ json_decode($order->shipping_address)->email }}">
+                                <input type="hidden" name="consignee_name"
+                                    value="{{ json_decode($order->shipping_address)->name }}">                                                        <input type="hidden" name="consignee_phone"
+                                    value="{{ json_decode($order->shipping_address)->phone }}"> <input type="hidden"
+                                    name="consignee_city" value="{{ json_decode($order->shipping_address)->city }}">
+                                <input type="hidden" name="consignee_state"
+                                    value="{{ json_decode($order->shipping_address)->state }}">
+                                <input type="hidden" name="consignee_post_code"
+                                    value="{{ json_decode($order->shipping_address)->postal_code }}">
+                                <input type="hidden" name="consignee_address"
+                                    value="{{ json_decode($order->shipping_address)->address }}">                                                     <input type="hidden" name="consignee_country_code" value="AE">
+                                <input type="hidden" id="order_detail_id" name="order_id" value="">
+                                <input type="hidden" name="status" value="ready_for_shipment">
+                            @endif
+                            <input type="hidden" name="product_id" />
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label for="recipient-name" class="col-form-label">{{ __('Pickup Address') }} *</label>
+                                </div>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control my-2" name="pickup_address_line1"
+                                        placeholder="{{ __('Line 1') }}">
+                                    <input type="text" class="form-control my-2" name="pickup_address_line2"
+                                        placeholder="{{ __('Line 2') }}">
+                                    <input type="text" class="form-control my-2" name="pickup_address_line3"
+                                        placeholder="{{ __('Line 3') }}">
+                                    <select class="form-control my-2" name="pickup_state" name="pickup_state">
+                                        <option>{{ __('Choose an emirate') }}</option>
+                                        @php
+                                            $emirates = \App\Models\Emirate::all();
+                                        @endphp
+                                        @foreach ($emirates as $emirate)
+                                            <option value="{{ $emirate->id }}">{{ $emirate->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <select class="form-control my-2" name="pickup_city" name="pickup_city">
+                                        <option>{{ __('Choose a city') }}</option>
+                                    </select>
+                                    <input type="text" class="form-control my-2" name="pickup_post_code"
+                                        placeholder="{{ __('Post code') }}">
+                                    <input type="text" class="form-control my-2" name="pickup_building_name"
+                                        placeholder="{{ __('Building name') }}">
+                                    <input type="text" class="form-control my-2" name="pickup_building_number"
+                                        placeholder="{{ __('Building number') }}">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">{{ __('Pickup date') }} *</div>
+                                <div class="col-md-8"><input type="datetime-local" class="form-control my-2"
+                                        id="pickup_datetime" name="pickup_datetime"
+                                        value="{{ old('pickup_datetime', now()->format('Y-m-d\TH:i')) }}"></div>
+                            </div>
+                            <div class="row" style="display: none;">
+                                <div class="col-md-4">{{ __("Generated printable label")}}</div>
+                                <div class="col-md-8" id="printable-label-wrapper"></div>
+                            </div>
+
+                            <div class="modal-footer form-group text-right">
+                                <button type="button" class="btn btn-secondary rounded-0 w-150px"
+                                    data-dismiss="modal">{{ __('Close') }}</button>
+                                <button type="submit" id="save_shippment_btn"
+                                    class="btn btn-primary rounded-0 w-150px">
+                                    {{ __('Save') }}
+                                  <div style="display: none;" class="spinner-border spinner-border-sm float-right" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                  </div>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="modal fade" data-backdrop="static" data-keyboard="false" id="warehouse-modal" tabindex="-1"
         role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -331,7 +487,20 @@
 @section('script')
     <script>
         const handleDeliveryStatusChanged = (event) => {
-            (event.value == "in_preparation") ? handleUpdateWarehouse(event): updateDeliveryStatus(event);
+            if (event.value == "in_preparation") {
+                handleUpdateWarehouse(event)
+            } else if (event.value === "ready_for_shipment") {
+                $("#shipment-modal").modal("show");
+                $("#shipment-modal").on('shown.bs.modal', function(e) {
+                    let orderDetailId = $(event).data("orderdetail_id");
+                    let productId = $(event).data("product_id");
+                    let modal = $(this);
+                    modal.find('.modal-body #order_detail_id').val(orderDetailId);
+                    modal.find('.modal-body [name=product_id]').val(productId);
+                });
+            } else {
+                updateDeliveryStatus(event);
+            }
         };
 
         const updateDeliveryStatus = (event) => {
@@ -354,7 +523,7 @@
             let seller = event.dataset.user_id;
             let product = event.dataset.product_id;
             $.post('{{ route('seller.orders.get_warehouses') }}', {
-                _token: '{{ @csrf_token() }}',
+                _token: '{{ csrf_token() }}',
                 order_id: order_id,
                 seller: seller,
                 product: product,
@@ -385,7 +554,7 @@
             let order = event.dataset.order;
             let product = event.dataset.product;
             let quantity = event.dataset.quantity_requested;
-            inputs = document.getElementsByName('quantity');
+            let inputs = document.getElementsByName('quantity');
             let warehouses = [];
             let totalQuantity = 0
             inputs.forEach(element => {
@@ -423,6 +592,74 @@
                 $('#order_details').modal('hide');
                 AIZ.plugins.notify('success', '{{ translate('Payment status has been updated') }}');
                 location.reload().setTimeOut(500);
+            });
+        });
+
+        $(document).ready(function() {
+            document.getElementById("shipment_form").addEventListener('submit', function(event) {
+                event.preventDefault();
+                $("#save_shippment_btn .spinner-border").show();
+                const formData = new FormData(document.getElementById('shipment_form'));
+
+                fetch('{{ route('seller.orders.update_delivery_status') }}', {
+                        method: "POST",
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content')
+                        },
+                        body: formData
+                    }).then(response => response.json())
+                    .then(function({ data }) {
+                        $("#save_shippment_btn .spinner-border").hide();
+                        $('#shipment_modal').modal('hide');
+                        console.log(data)
+                        if (data.link !== undefined) {
+                            $("#printable-label-wrapper").parent().show();
+                            $("#printable-label-wrapper").html(`<a href="${data.link}" target="_blank">{{ __("Printable label") }}</a>`);
+                        }
+                        return AIZ.plugins.notify('success',
+                            '{{ translate('Order status has been updated') }}');
+                        location.reload().setTimeOut(1000);
+                    }).catch((e) => {
+                        $("#save_shippment_btn .spinner-border").hide();
+                        AIZ.plugins.notify(
+                            'danger',
+                            e.message
+                        );
+                    });
+            });
+
+            $(document).on('change', '[name=state],[name=pickup_state]', function() {
+                let url = "{{ route('emirate.states', ['emirate_id' => ':id']) }}";
+                let id = $(this).val();
+                let parent = $(this).attr('name');
+
+                $(`${parent === "state" ? "[name=city]" : "[name=pickup_city]"}`).find('option').remove();
+
+                $.ajax({
+                    url: url.replace(':id', id),
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.data !== null && response.data?.length > 0) {
+                            for (let i = 0; i < response.data.length; i++) {
+                                let id = response['data'][i].id;
+                                let name = response['data'][i].name;
+
+                                $(`${parent === "state" ? "[name=city]" : "[name=pickup_city]"}`).append(`
+                                    <option value='${id}'>
+                                        ${name}
+                                    </option>
+                                `);
+
+                                AIZ.plugins.bootstrapSelect('refresh');
+                            }
+                        }
+                    },
+                    error: function() {
+                        AIZ.plugins.notify('{{ __('Something went wrong!') }}');
+                    }
+                });
             });
         });
     </script>
