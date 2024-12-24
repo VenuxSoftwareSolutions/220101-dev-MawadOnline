@@ -248,6 +248,7 @@
         $todays_deal_section_bg = get_setting('todays_deal_section_bg_color');
     @endphp
 
+
     <!-- Featured Categories -->
     @if (count($featured_categories) > 0)
         <section class="mt-4">

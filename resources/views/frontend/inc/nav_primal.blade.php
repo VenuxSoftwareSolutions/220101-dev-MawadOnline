@@ -534,7 +534,7 @@
                     <!-- Categoty Menu Button -->
                     <div class="d-none d-xl-block all-category has-transition bg-black-10" id="category-menu-bar">
                         <div class="px-3 h-100"
-                            style="padding-top: 12px;padding-bottom: 12px; width:auto; cursor: pointer;">
+                            style="padding-top: 12px;padding-bottom: 12px; width:270px; cursor: pointer;">
                             <div class="d-flex align-items-center justify-content-between">
                                 <div>
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -546,7 +546,11 @@
                                         <path d="M3 17H21" stroke="#F3F4F5" stroke-width="1.5"
                                             stroke-linecap="round" />
                                     </svg>
+                                    <span
+                                        class="fw-700 fs-16 text-white ml-2 mr-3 category-menu-title">{{ translate('Categories') }}</span>
                                 </div>
+                                <i class="las la-angle-down text-white has-transition" id="category-menu-bar-icon"
+                                    style="font-size: 1.2rem !important"></i>
                             </div>
                         </div>
                     </div>
@@ -557,67 +561,65 @@
                     <div class="ml-xl-4 w-100 overflow-hidden">
                         <div class="d-flex align-items-center justify-content-center justify-content-xl-start h-100">
                             <ul class="list-inline mb-0 pl-0 hor-swipe c-scrollbar-light">
-                                <li class="list-inline-item mr-0 animate-underline-white font-prompt">
-                                    <a href="#"
-                                        class="fs-16 px-3 py-3 d-inline-block fw-400 {{ $nav_txt_color }} header_menu_links hov-bg-black-10">
-                                        <svg width="20" height="20" class="nav-menu-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M12.5007 22.0001H4.0807C2.9207 22.0001 1.9707 21.0701 1.9707 19.9301V5.09011C1.9707 2.47011 3.9207 1.2801 6.3107 2.4501L10.7507 4.63011C11.7107 5.10011 12.5007 6.3501 12.5007 7.4101V22.0001Z" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M21.97 15.0602V18.8402C21.97 21.0002 20.97 22.0002 18.81 22.0002H12.5V10.4202L12.97 10.5202L17.47 11.5302L19.5 11.9802C20.82 12.2702 21.9 12.9502 21.96 14.8702C21.97 14.9302 21.97 14.9902 21.97 15.0602Z" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M5.5 9H8.97" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M5.5 13H8.97" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M17.4707 11.53V14.75C17.4707 15.99 16.4607 17 15.2207 17C13.9807 17 12.9707 15.99 12.9707 14.75V10.52L17.4707 11.53Z" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M21.9607 14.87C21.9007 16.05 20.9207 17 19.7207 17C18.4807 17 17.4707 15.99 17.4707 14.75V11.53L19.5007 11.98C20.8207 12.27 21.9007 12.95 21.9607 14.87Z" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
+                                @if (get_setting('header_menu_labels') != null)
+                                    @foreach (json_decode(get_setting('header_menu_labels'), true) as $key => $value)
+                                        <li class="list-inline-item mr-0 animate-underline-white">
+                                            <a href="{{ json_decode(get_setting('header_menu_links'), true)[$key] }}"
+                                                class="fs-16 px-3 py-3 d-inline-block fw-400 {{ $nav_txt_color }} header_menu_links hov-bg-black-10
+                                            @if (url()->current() == json_decode(get_setting('header_menu_links'), true)[$key]) active @endif">
+                                                @if ($value == 'Brands')
+                                                    <svg width="24" height="24" viewBox="0 0 24 24"
+                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path
+                                                            d="M2 15.29V5.71002C2 4.38002 2.77 4.06002 3.71 5.00002L6.3 7.59002C6.69 7.98002 7.33 7.98002 7.71 7.59002L11.29 4.00002C11.68 3.61002 12.32 3.61002 12.7 4.00002L16.29 7.59002C16.68 7.98002 17.32 7.98002 17.7 7.59002L20.29 5.00002C21.23 4.06002 22 4.38002 22 5.71002V15.3C22 18.3 20 20.3 17 20.3H7C4.24 20.29 2 18.05 2 15.29Z"
+                                                            stroke="#F3F4F5" stroke-width="1.5"
+                                                            stroke-linecap="round" stroke-linejoin="round" />
+                                                    </svg>
+                                                @elseif ($value == 'Vendors')
+                                                    <svg width="24" height="24" viewBox="0 0 24 24"
+                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path
+                                                            d="M3.01001 11.22V15.71C3.01001 20.2 4.81001 22 9.30001 22H14.69C19.18 22 20.98 20.2 20.98 15.71V11.22"
+                                                            stroke="#F3F4F5" stroke-width="1.5"
+                                                            stroke-linecap="round" stroke-linejoin="round" />
+                                                        <path
+                                                            d="M12 12C13.83 12 15.18 10.51 15 8.68L14.34 2H9.66999L8.99999 8.68C8.81999 10.51 10.17 12 12 12Z"
+                                                            stroke="#F3F4F5" stroke-width="1.5"
+                                                            stroke-linecap="round" stroke-linejoin="round" />
+                                                        <path
+                                                            d="M18.31 12C20.33 12 21.81 10.36 21.61 8.35L21.33 5.6C20.97 3 19.97 2 17.35 2H14.3L15 9.01C15.17 10.66 16.66 12 18.31 12Z"
+                                                            stroke="#F3F4F5" stroke-width="1.5"
+                                                            stroke-linecap="round" stroke-linejoin="round" />
+                                                        <path
+                                                            d="M5.64 12C7.29 12 8.78 10.66 8.94 9.01L9.16 6.8L9.64001 2H6.59C3.97001 2 2.97 3 2.61 5.6L2.34 8.35C2.14 10.36 3.62 12 5.64 12Z"
+                                                            stroke="#F3F4F5" stroke-width="1.5"
+                                                            stroke-linecap="round" stroke-linejoin="round" />
+                                                        <path
+                                                            d="M12 17C10.33 17 9.5 17.83 9.5 19.5V22H14.5V19.5C14.5 17.83 13.67 17 12 17Z"
+                                                            stroke="#F3F4F5" stroke-width="1.5"
+                                                            stroke-linecap="round" stroke-linejoin="round" />
+                                                    </svg>
+                                                @endif
 
-                                        Building Materials
+                                                {{ translate($value) }}
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                @endif
+                                <!--
+                                <li class="list-inline-item mr-0 animate-underline-white" style="cursor:pointer;">
+                                    <a class="fs-16 px-3 py-3 d-inline-block fw-400 text-white header_menu_links hov-bg-black-10">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M2 22H22" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M9.75 4V22H14.25V4C14.25 2.9 13.8 2 12.45 2H11.55C10.2 2 9.75 2.9 9.75 4Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M3 10V22H7V10C7 8.9 6.6 8 5.4 8H4.6C3.4 8 3 8.9 3 10Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M17 15V22H21V15C21 13.9 20.6 13 19.4 13H18.6C17.4 13 17 13.9 17 15Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        <span class="ml-1 fs-16">MawadOnline Index</span>
+                                        <i class="las la-angle-down text-white has-transition ml-3" id="category-menu-bar-icon" style="font-size: 1.2rem !important; position:relative;top:3px;"></i>
                                     </a>
                                 </li>
-                                <li class="list-inline-item mr-0 animate-underline-white font-prompt">
-                                    <a href=""
-                                        class="fs-16 px-3 py-3 d-inline-block fw-400 {{ $nav_txt_color }} header_menu_links hov-bg-black-10">
-                                        <svg width="20" height="20" class="nav-menu-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M20 9.6C20 5.6 18.4 4 14.4 4H9.6C5.6 4 4 5.6 4 9.6V14.4C4 18.4 5.6 20 9.6 20" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M16.35 8C15.8 7.3 14.88 7 13.5 7H10.5C8 7 7 8 7 10.5V13.5C7 14.88 7.3 15.8 7.99 16.35" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M8.00977 4V2" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M12 4V2" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M16 4V2" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M20 8H22" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M8.00977 20V22" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M2 8H4" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M2 12H4" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M2 16H4" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M16.7091 18.59C17.5873 18.59 18.2991 17.8781 18.2991 17C18.2991 16.1218 17.5873 15.41 16.7091 15.41C15.831 15.41 15.1191 16.1218 15.1191 17C15.1191 17.8781 15.831 18.59 16.7091 18.59Z" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M11.4102 17.46V16.53C11.4102 15.98 11.8602 15.53 12.4102 15.53C13.3702 15.53 13.7602 14.85 13.2802 14.02C13.0002 13.54 13.1702 12.92 13.6502 12.65L14.5602 12.12C14.9802 11.87 15.5202 12.02 15.7702 12.44L15.8302 12.54C16.3102 13.37 17.0902 13.37 17.5702 12.54L17.6302 12.44C17.8802 12.02 18.4202 11.88 18.8402 12.12L19.7502 12.65C20.2302 12.93 20.4002 13.54 20.1202 14.02C19.6402 14.85 20.0302 15.53 20.9902 15.53C21.5402 15.53 21.9902 15.98 21.9902 16.53V17.46C21.9902 18.01 21.5402 18.46 20.9902 18.46C20.0302 18.46 19.6402 19.14 20.1202 19.97C20.4002 20.45 20.2302 21.07 19.7502 21.34L18.8402 21.87C18.4202 22.12 17.8802 21.97 17.6302 21.55L17.5702 21.45C17.0902 20.62 16.3102 20.62 15.8302 21.45L15.7702 21.55C15.5202 21.97 14.9802 22.11 14.5602 21.87L13.6502 21.34C13.1702 21.06 13.0002 20.45 13.2802 19.97C13.7602 19.14 13.3702 18.46 12.4102 18.46C11.8602 18.47 11.4102 18.02 11.4102 17.46Z" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
-
-                                        Tools & Machinery
-                                    </a>
-                                </li>
-                                <li class="list-inline-item mr-0 animate-underline-white font-prompt">
-                                    <a href=""
-                                        class="fs-16 px-3 py-3 d-inline-block fw-400 {{ $nav_txt_color }} header_menu_links hov-bg-black-10">
-                                        <svg width="20" height="20" class="nav-menu-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M10.4998 16H13.4998C15.9998 16 17.4998 14.2 17.4998 12V6.91C17.4998 5.86 16.6398 5 15.5898 5H8.41982C7.36982 5 6.50982 5.86 6.50982 6.91V12C6.49982 14.2 7.99981 16 10.4998 16Z" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M9.5 2V5" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M14.5 2V5" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M12 22V16" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
-
-                                        Electrical Supplies
-                                    </a>
-                                </li>
-                                <li class="list-inline-item mr-0 animate-underline-white font-prompt">
-                                    <a href=""
-                                        class="fs-16 px-3 py-3 d-inline-block fw-400 {{ $nav_txt_color }} header_menu_links hov-bg-black-10">
-                                        <span class="badge-bundle font-prompt">Bundle Deals</span>
-                                    </a>
-                                </li>
-                                <li class="list-inline-item mr-0 animate-underline-white font-prompt">
-                                    <a href=""
-                                        class="fs-16 px-3 py-3 d-inline-block fw-400 {{ $nav_txt_color }} header_menu_links hov-bg-black-10">
-                                        SuperDeals
-                                    </a>
-                                </li>
+                            -->
                             </ul>
                         </div>
                     </div>

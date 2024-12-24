@@ -531,109 +531,78 @@
         <div class="d-none d-lg-block position-relative background-header h-50px">
             <div class="container h-100">
                 <div class="d-flex h-100">
-                    <!-- Categoty Menu Button -->
-                    <div class="d-none d-xl-block all-category has-transition bg-black-10" id="category-menu-bar">
-                        <div class="px-3 h-100"
-                            style="padding-top: 12px;padding-bottom: 12px; width:auto; cursor: pointer;">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M3 7H21" stroke="#F3F4F5" stroke-width="1.5"
-                                            stroke-linecap="round" />
-                                        <path d="M3 12H21" stroke="#F3F4F5" stroke-width="1.5"
-                                            stroke-linecap="round" />
-                                        <path d="M3 17H21" stroke="#F3F4F5" stroke-width="1.5"
-                                            stroke-linecap="round" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
                     <!-- Header Menus -->
-                    @php
-                        $nav_txt_color = get_setting('header_nav_menu_text') == 'light' || get_setting('header_nav_menu_text') == null ? 'text-white' : 'text-white';
-                    @endphp
-                    <div class="ml-xl-4 w-100 overflow-hidden">
+                    <div class="w-100">
                         <div class="d-flex align-items-center justify-content-center justify-content-xl-start h-100">
-                            <ul class="list-inline mb-0 pl-0 hor-swipe c-scrollbar-light">
-                                <li class="list-inline-item mr-0 animate-underline-white font-prompt">
-                                    <a href="#"
-                                        class="fs-16 px-3 py-3 d-inline-block fw-400 {{ $nav_txt_color }} header_menu_links hov-bg-black-10">
-                                        <svg width="20" height="20" class="nav-menu-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M12.5007 22.0001H4.0807C2.9207 22.0001 1.9707 21.0701 1.9707 19.9301V5.09011C1.9707 2.47011 3.9207 1.2801 6.3107 2.4501L10.7507 4.63011C11.7107 5.10011 12.5007 6.3501 12.5007 7.4101V22.0001Z" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M21.97 15.0602V18.8402C21.97 21.0002 20.97 22.0002 18.81 22.0002H12.5V10.4202L12.97 10.5202L17.47 11.5302L19.5 11.9802C20.82 12.2702 21.9 12.9502 21.96 14.8702C21.97 14.9302 21.97 14.9902 21.97 15.0602Z" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M5.5 9H8.97" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M5.5 13H8.97" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M17.4707 11.53V14.75C17.4707 15.99 16.4607 17 15.2207 17C13.9807 17 12.9707 15.99 12.9707 14.75V10.52L17.4707 11.53Z" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M21.9607 14.87C21.9007 16.05 20.9207 17 19.7207 17C18.4807 17 17.4707 15.99 17.4707 14.75V11.53L19.5007 11.98C20.8207 12.27 21.9007 12.95 21.9607 14.87Z" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
+                                <button class="scroll-left btn btn-link position-absolute start-0 top-50 translate-middle-y" title="{{ translate('More') }}">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                </button>
+                                <div class="w-menu overflow-hiddend=">
+                                    <div class="list-inline">
+                                        @foreach ($featured_categories as $key => $category)
+                                                @php
+                                                    $category_name = str_replace(' and ', ' & ', $category->getTranslation('name'));
+                                                @endphp
+                                    <div class="dropdown ">
+                                        <button class="dropbtn fs-14 px-3 py-3 d-inline-block fw-400 text-white header_menu_links hov-bg-black-10 font-prompt-md">{{ translate($category_name) }}</button>
+                                        <div class="dropdown-content">
+                                            @include('frontend.metro.partials.category_elements', ['categories' => $category])
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </div>
+                                </div>
+                                  <!--
+                                <div class="menu-wrapper overflow-hidden">
+                                    <div class="list-inline mb-0 pl-0 hor-swipe header-m-content">
+                                        @foreach ($featured_categories as $key => $category)
+                                            @php
+                                                $category_name = str_replace(' and ', ' & ', $category->getTranslation('name'));
+                                            @endphp
+                                            <div class="dropdown list-inline-item menu_carthegory mr-0 animate-underline-white font-prompt-md position-relative">
+                                                <a href="{{ route('products.category', $category->slug) }}"
+                                                   class="fs-14 px-3 py-3 d-inline-block fw-400 text-white header_menu_links hov-bg-black-10">
+                                                   {{ translate($category_name) }}
+                                                </a>
+                                              <!--  Submenu for the category
+                                                <div class="submenu dropdown-content">
+                                                    @include('frontend.metro.partials.category_elements', ['categories' => $category])
+                                                </div>
+                                            </div>
 
-                                        Building Materials
-                                    </a>
-                                </li>
-                                <li class="list-inline-item mr-0 animate-underline-white font-prompt">
-                                    <a href=""
-                                        class="fs-16 px-3 py-3 d-inline-block fw-400 {{ $nav_txt_color }} header_menu_links hov-bg-black-10">
-                                        <svg width="20" height="20" class="nav-menu-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M20 9.6C20 5.6 18.4 4 14.4 4H9.6C5.6 4 4 5.6 4 9.6V14.4C4 18.4 5.6 20 9.6 20" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M16.35 8C15.8 7.3 14.88 7 13.5 7H10.5C8 7 7 8 7 10.5V13.5C7 14.88 7.3 15.8 7.99 16.35" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M8.00977 4V2" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M12 4V2" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M16 4V2" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M20 8H22" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M8.00977 20V22" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M2 8H4" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M2 12H4" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M2 16H4" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M16.7091 18.59C17.5873 18.59 18.2991 17.8781 18.2991 17C18.2991 16.1218 17.5873 15.41 16.7091 15.41C15.831 15.41 15.1191 16.1218 15.1191 17C15.1191 17.8781 15.831 18.59 16.7091 18.59Z" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M11.4102 17.46V16.53C11.4102 15.98 11.8602 15.53 12.4102 15.53C13.3702 15.53 13.7602 14.85 13.2802 14.02C13.0002 13.54 13.1702 12.92 13.6502 12.65L14.5602 12.12C14.9802 11.87 15.5202 12.02 15.7702 12.44L15.8302 12.54C16.3102 13.37 17.0902 13.37 17.5702 12.54L17.6302 12.44C17.8802 12.02 18.4202 11.88 18.8402 12.12L19.7502 12.65C20.2302 12.93 20.4002 13.54 20.1202 14.02C19.6402 14.85 20.0302 15.53 20.9902 15.53C21.5402 15.53 21.9902 15.98 21.9902 16.53V17.46C21.9902 18.01 21.5402 18.46 20.9902 18.46C20.0302 18.46 19.6402 19.14 20.1202 19.97C20.4002 20.45 20.2302 21.07 19.7502 21.34L18.8402 21.87C18.4202 22.12 17.8802 21.97 17.6302 21.55L17.5702 21.45C17.0902 20.62 16.3102 20.62 15.8302 21.45L15.7702 21.55C15.5202 21.97 14.9802 22.11 14.5602 21.87L13.6502 21.34C13.1702 21.06 13.0002 20.45 13.2802 19.97C13.7602 19.14 13.3702 18.46 12.4102 18.46C11.8602 18.47 11.4102 18.02 11.4102 17.46Z" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
+                                        @endforeach
+                                    </div>
+                                </div>-->
 
-                                        Tools & Machinery
-                                    </a>
-                                </li>
-                                <li class="list-inline-item mr-0 animate-underline-white font-prompt">
-                                    <a href=""
-                                        class="fs-16 px-3 py-3 d-inline-block fw-400 {{ $nav_txt_color }} header_menu_links hov-bg-black-10">
-                                        <svg width="20" height="20" class="nav-menu-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M10.4998 16H13.4998C15.9998 16 17.4998 14.2 17.4998 12V6.91C17.4998 5.86 16.6398 5 15.5898 5H8.41982C7.36982 5 6.50982 5.86 6.50982 6.91V12C6.49982 14.2 7.99981 16 10.4998 16Z" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M9.5 2V5" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M14.5 2V5" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M12 22V16" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
-
-                                        Electrical Supplies
-                                    </a>
-                                </li>
-                                <li class="list-inline-item mr-0 animate-underline-white font-prompt">
-                                    <a href=""
-                                        class="fs-16 px-3 py-3 d-inline-block fw-400 {{ $nav_txt_color }} header_menu_links hov-bg-black-10">
-                                        <span class="badge-bundle font-prompt">Bundle Deals</span>
-                                    </a>
-                                </li>
-                                <li class="list-inline-item mr-0 animate-underline-white font-prompt">
-                                    <a href=""
-                                        class="fs-16 px-3 py-3 d-inline-block fw-400 {{ $nav_txt_color }} header_menu_links hov-bg-black-10">
-                                        SuperDeals
-                                    </a>
-                                </li>
-                            </ul>
+                                <!--
+                                <div class="menu-wrapper overflow-hidden">
+                                  <ul class="list-inline mb-0 pl-0 hor-swipe header-m-content">
+                                    @foreach ($featured_categories as $key => $category)
+                                      @php
+                                        $category_name = str_replace(' and ', ' & ', $category->getTranslation('name'));
+                                      @endphp
+                                      <li class="list-inline-item mr-0 animate-underline-white font-prompt-md">
+                                        <a href="{{ route('products.category', $category->slug) }}"
+                                           class="fs-14 px-3 py-3 d-inline-block fw-400 text-white header_menu_links hov-bg-black-10">
+                                           {{ translate($category_name) }}
+                                        </a>
+                                      </li>
+                                    @endforeach
+                                  </ul>
+                                </div> -->
+                                <button class="scroll-right btn btn-link position-absolute end-0 top-50 translate-middle-y" title="{{ translate('More') }}">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                </button>
                         </div>
                     </div>
                 </div>
             </div>
             <!-- Categoty Menus -->
-            <div class="hover-category-menu position-absolute w-100 top-100 left-0 right-0 z-3 d-none"
-                id="click-category-menu">
-                <div class="container">
-                    <div class="d-flex position-relative">
-                        <div class="position-static">
-                            @include('frontend.' . get_setting('homepage_select') . '.partials.category_menu')
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </header>
 
@@ -647,7 +616,7 @@
                 <i class="las la-times la-2x text-primary"></i>
             </button>
             @auth
-                <span class="d-flex align-items-center nav-user-info pl-4">
+                <span class="d-flex align-items-center nav-user-info pl-4 font-prompt">
                     <!-- Image -->
                     <span class="size-40px rounded-circle overflow-hidden border border-transparent nav-user-img">
                         @if ($user->avatar_original != null)
@@ -683,17 +652,17 @@
             @endauth
             <hr>
             <ul class="mb-0 pl-3 pb-3 h-100">
-                @if (get_setting('header_menu_labels') != null)
-                    @foreach (json_decode(get_setting('header_menu_labels'), true) as $key => $value)
-                        <li class="mr-0">
-                            <a href="{{ json_decode(get_setting('header_menu_links'), true)[$key] }}"
-                                class="fs-13 px-3 py-3 w-100 d-inline-block fw-700 text-dark header_menu_links
-                            @if (url()->current() == json_decode(get_setting('header_menu_links'), true)[$key]) active @endif">
-                                {{ translate($value) }}
+                @foreach ($featured_categories as $key => $category)
+                @php
+                  $category_name = str_replace(' and ', ' & ', $category->getTranslation('name'));
+                @endphp
+                        <li class="mr-3 font-prompt dark-c3 left-m-style">
+                            <a href="{{ route('products.category', $category->slug) }}"
+                                class="fs-14 px-3 py-2 mb-1 w-100 d-inline-block fw-700 text-dark header_menu_links">
+                                {{ translate($category_name) }}
                             </a>
                         </li>
-                    @endforeach
-                @endif
+                @endforeach
                 @auth
                     @if (isAdmin())
                         <hr>
@@ -761,7 +730,47 @@
             </div>
         </div>
     </div>
+    <script>
+       document.addEventListener('DOMContentLoaded', function () {
+    const menuWrapper = document.querySelector('.menu-wrapper');
+    const scrollLeft = document.querySelector('.scroll-left');
+    const scrollRight = document.querySelector('.scroll-right');
+    const scrollAmount = 770; // Adjust this value as needed
 
+    function updateArrowVisibility() {
+        const scrollLeftValue = menuWrapper.scrollLeft;
+        const scrollWidth = menuWrapper.scrollWidth;
+
+        if (scrollLeftValue === 0) {
+            scrollLeft.style.display = 'none';
+        } else {
+            scrollLeft.style.display = 'block';
+        }
+
+        if (scrollLeftValue >= 500) {
+            scrollRight.style.display = 'none';
+        } else {
+            scrollRight.style.display = 'block';
+        }
+    }
+
+    scrollLeft.addEventListener('click', function () {
+        menuWrapper.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        setTimeout(updateArrowVisibility, 300); // Delay to ensure smooth scrolling is completed
+    });
+
+    scrollRight.addEventListener('click', function () {
+        menuWrapper.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        setTimeout(updateArrowVisibility, 300); // Delay to ensure smooth scrolling is completed
+    });
+
+    menuWrapper.addEventListener('scroll', updateArrowVisibility);
+
+    // Initialize arrow visibility on page load
+    updateArrowVisibility();
+});
+
+    </script>
     @section('script')
         <script type="text/javascript">
             function show_order_details(order_id) {
@@ -781,5 +790,6 @@
                     AIZ.plugins.bootstrapSelect('refresh');
                 });
             }
+
         </script>
     @endsection

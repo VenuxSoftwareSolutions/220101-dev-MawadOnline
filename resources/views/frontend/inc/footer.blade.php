@@ -179,6 +179,16 @@
                                     </li>
                                 @endforeach
                             @endif
+                            @if (get_setting('header_menu_labels') != null)
+                                    @foreach (json_decode(get_setting('header_menu_labels'), true) as $key => $value)
+                                    <li class="mb-2 font-prompt">
+                                        <a href="{{ json_decode(get_setting('header_menu_links'), true)[$key] }}"
+                                            class="fs-13 text-secondary animate-underline-white">
+                                            {{ translate($value) }}
+                                        </a>
+                                    </li>
+                                    @endforeach
+                                    @endif
                         </ul>
                     </div>
                 </div>
@@ -380,7 +390,7 @@
                                         $widget_one_links = json_decode(get_setting('widget_one_links'), true)[$key];
                                     }
                                 @endphp
-                                <li class="mb-2 pb-2 @if (url()->current() == $widget_one_links) active @endif">
+                                <li class="mb-2 pb-2 font-prompt @if (url()->current() == $widget_one_links) active @endif">
                                     <a href="{{ $widget_one_links }}"
                                         class="fs-13 text-soft-light text-sm-secondary animate-underline-white">
                                         {{ $value }}
@@ -388,6 +398,17 @@
                                 </li>
                             @endforeach
                         @endif
+                        @if (get_setting('header_menu_labels') != null)
+                                    @foreach (json_decode(get_setting('header_menu_labels'), true) as $key => $value)
+                                    <li class="mb-2 pb-2 font-prompt">
+                                        <a href="{{ json_decode(get_setting('header_menu_links'), true)[$key] }}"
+                                            class="fs-13 text-soft-light text-sm-secondary animate-underline-white">
+                                            {{ translate($value) }}
+                                        </a>
+                                    </li>
+                                    @endforeach
+                                    @endif
+
                     </ul>
                 </div>
             </div>
@@ -395,21 +416,21 @@
 
         <div class="aiz-accordion-wrap bg-black">
             <div class="aiz-accordion-heading container bg-black">
-                <button class="aiz-accordion fs-14 text-white bg-transparent">{{ translate('Contacts') }}</button>
+                <button class="aiz-accordion fs-14 text-white bg-transparent font-prompt">{{ translate('Contacts') }}</button>
             </div>
             <div class="aiz-accordion-panel bg-transparent" style="background-color: #3D3D3B !important;">
                 <div class="container">
                     <ul class="list-unstyled mt-3">
-                        <li class="mb-2">
+                        <li class="mb-2 font-prompt">
                             <p class="fs-13 text-secondary mb-1">{{ translate('Address') }}</p>
                             <p class="fs-13 text-soft-light">
                                 {{ get_setting('contact_address', null, App::getLocale()) }}</p>
                         </li>
-                        <li class="mb-2">
+                        <li class="mb-2 font-prompt">
                             <p class="fs-13 text-secondary mb-1">{{ translate('Phone') }}</p>
                             <p class="fs-13 text-soft-light">{{ get_setting('contact_phone') }}</p>
                         </li>
-                        <li class="mb-2">
+                        <li class="mb-2 font-prompt">
                             <p class="fs-13 text-secondary mb-1">{{ translate('Email') }}</p>
                             <p class="">
                                 <a href="mailto:{{ get_setting('contact_email') }}"
@@ -423,46 +444,46 @@
 
         <div class="aiz-accordion-wrap bg-black">
             <div class="aiz-accordion-heading container bg-black">
-                <button class="aiz-accordion fs-14 text-white bg-transparent">{{ translate('My Account') }}</button>
+                <button class="aiz-accordion fs-14 text-white bg-transparent font-prompt">{{ translate('My Account') }}</button>
             </div>
             <div class="aiz-accordion-panel bg-transparent" style="background-color: #3D3D3B !important;">
                 <div class="container">
                     <ul class="list-unstyled mt-3">
                         @auth
-                            <li class="mb-2 pb-2">
+                            <li class="mb-2 pb-2 font-prompt">
                                 <a class="fs-13 text-soft-light text-sm-secondary animate-underline-white"
                                     href="{{ route('logout') }}">
                                     {{ translate('Logout') }}
                                 </a>
                             </li>
                         @else
-                            <li class="mb-2 pb-2 {{ areActiveRoutes(['user.login'], ' active') }}">
+                            <li class="mb-2 pb-2 font-prompt {{ areActiveRoutes(['user.login'], ' active') }}">
                                 <a class="fs-13 text-soft-light text-sm-secondary animate-underline-white"
                                     href="{{ route('user.login') }}">
                                     {{ translate('Login') }}
                                 </a>
                             </li>
                         @endauth
-                        <li class="mb-2 pb-2 {{ areActiveRoutes(['purchase_history.index'], ' active') }}">
+                        <li class="mb-2 pb-2 font-prompt {{ areActiveRoutes(['purchase_history.index'], ' active') }}">
                             <a class="fs-13 text-soft-light text-sm-secondary animate-underline-white"
                                 href="{{ route('purchase_history.index') }}">
                                 {{ translate('Order History') }}
                             </a>
                         </li>
-                        <li class="mb-2 pb-2 {{ areActiveRoutes(['wishlists.index'], ' active') }}">
+                        <li class="mb-2 pb-2 font-prompt {{ areActiveRoutes(['wishlists.index'], ' active') }}">
                             <a class="fs-13 text-soft-light text-sm-secondary animate-underline-white"
                                 href="{{ route('wishlists.index') }}">
                                 {{ translate('My Wishlist') }}
                             </a>
                         </li>
-                        <li class="mb-2 pb-2 {{ areActiveRoutes(['orders.track'], ' active') }}">
+                        <li class="mb-2 pb-2 font-prompt {{ areActiveRoutes(['orders.track'], ' active') }}">
                             <a class="fs-13 text-soft-light text-sm-secondary animate-underline-white"
                                 href="{{ route('orders.track') }}">
                                 {{ translate('Track Order') }}
                             </a>
                         </li>
                         @if (addon_is_activated('affiliate_system'))
-                            <li class="mb-2 pb-2 {{ areActiveRoutes(['affiliate.apply'], ' active') }}">
+                            <li class="mb-2 pb-2 font-prompt {{ areActiveRoutes(['affiliate.apply'], ' active') }}">
                                 <a class="fs-13 text-soft-light text-sm-secondary animate-underline-white"
                                     href="{{ route('affiliate.apply') }}">
                                     {{ translate('Be an affiliate partner') }}
@@ -484,25 +505,34 @@
                 <div class="aiz-accordion-panel bg-transparent" style="background-color: #3D3D3B !important;">
                     <div class="container">
                         <ul class="list-unstyled mt-3">
-                            <li class="mb-2 pb-2 {{ areActiveRoutes(['shops.create'], ' active') }}">
-                                <p class="fs-13 text-soft-light text-sm-secondary mb-0">
-                                    {{ translate('Become A Seller') }}
+                            <li class="mb-2 pb-2">
+                                <p class="fs-13 text-secondary mb-0">
+                                    <a href="https://business.mawadonline.com"
+                                        class="fs-13 fw-700 text-secondary-base font-prompt">
+                                        {{ translate('Become A Seller') }}
+                                    </a>
+                                </p>
+                            </li>
+                            <li class="mb-2 pb-2">
+                                <p class="fs-13 text-secondary mb-0">
                                     <a href="{{ route('shops.packages') }}"
-                                        class="fs-13 fw-700 text-secondary-base ml-2">{{ translate('Apply Now') }}</a>
+                                        class="fs-13 text-secondary animate-underline-white font-prompt">
+                                        {{ translate('Register as Vendor') }}
+                                    </a>
                                 </p>
                             </li>
                             @guest
-                                <li class="mb-2 pb-2 {{ areActiveRoutes(['deliveryboy.login'], ' active') }}">
-                                    <a class="fs-13 text-soft-light text-sm-secondary animate-underline-white"
+                                <li class="mb-2 pb-2">
+                                    <a class="fs-13 text-secondary animate-underline-white font-prompt"
                                         href="{{ route('seller.login') }}">
-                                        {{ translate('Login to Vendor Center') }}
+                                        {{ translate('Login to Seller Panel') }}
                                     </a>
                                 </li>
                             @endguest
                             @if (get_setting('seller_app_link'))
                                 <li class="mb-2 pb-2">
-                                    <a class="fs-13 text-soft-light text-sm-secondary animate-underline-white"
-                                        target="_blank" href="{{ get_setting('seller_app_link') }}">
+                                    <a class="fs-13 text-secondary animate-underline-white font-prompt" target="_blank"
+                                        href="{{ get_setting('seller_app_link') }}">
                                         {{ translate('Download Seller App') }}
                                     </a>
                                 </li>
@@ -518,14 +548,14 @@
             <div class="aiz-accordion-wrap bg-black">
                 <div class="aiz-accordion-heading container bg-black">
                     <button
-                        class="aiz-accordion fs-14 text-white bg-transparent">{{ translate('Delivery Boy') }}</button>
+                        class="aiz-accordion fs-14 text-white bg-transparent font-prompt">{{ translate('Delivery Boy') }}</button>
                 </div>
                 <div class="aiz-accordion-panel bg-transparent" style="background-color: #3D3D3B !important;">
                     <div class="container">
                         <ul class="list-unstyled mt-3">
                             @guest
                                 <li class="mb-2 pb-2 {{ areActiveRoutes(['deliveryboy.login'], ' active') }}">
-                                    <a class="fs-13 text-soft-light text-sm-secondary animate-underline-white"
+                                    <a class="fs-13 text-soft-light text-sm-secondary animate-underline-white font-prompt"
                                         href="{{ route('deliveryboy.login') }}">
                                         {{ translate('Login to Delivery Boy Panel') }}
                                     </a>
@@ -533,7 +563,7 @@
                             @endguest
                             @if (get_setting('delivery_boy_app_link'))
                                 <li class="mb-2 pb-2">
-                                    <a class="fs-13 text-soft-light text-sm-secondary animate-underline-white"
+                                    <a class="fs-13 text-soft-light text-sm-secondary animate-underline-white font-prompt"
                                         target="_blank" href="{{ get_setting('delivery_boy_app_link') }}">
                                         {{ translate('Download Delivery Boy App') }}
                                     </a>
