@@ -134,7 +134,7 @@ class CheckoutController extends Controller
                         'variant_id' => $cart->product->id,
                         'warehouse_id' => MAWADONLINE_WAREHOUSE_ID,
                         'current_total_quantity' => $reservedQuantity,
-                        'seller_id' => auth()->user()->owner_id,
+                        'seller_id' => $cart->product->user_id,
                     ]);
                 }
 
