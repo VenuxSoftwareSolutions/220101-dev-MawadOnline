@@ -507,13 +507,6 @@ class AramexController extends Controller
                 ],
                 'GetLastTrackingUpdateOnly' => true,
                 'ClientInfo' => $this->clientInfo,
-                'Transaction' => [
-                    'Reference1' => null,
-                    'Reference2' => null,
-                    'Reference3' => null,
-                    'Reference4' => null,
-                    'Reference5' => null,
-                ],
             ]);
 
             curl_setopt_array($this->curl, [
