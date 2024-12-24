@@ -612,12 +612,13 @@
                     .then(function({ data }) {
                         $("#save_shippment_btn .spinner-border").hide();
                         $('#shipment_modal').modal('hide');
-                        console.log(data)
+
                         if (data.link !== undefined) {
                             $("#printable-label-wrapper").parent().show();
                             $("#printable-label-wrapper").html(`<a href="${data.link}" target="_blank">{{ __("Printable label") }}</a>`);
                         }
-                        return AIZ.plugins.notify('success',
+
+                        AIZ.plugins.notify('success',
                             '{{ translate('Order status has been updated') }}');
                         location.reload().setTimeOut(1000);
                     }).catch((e) => {
