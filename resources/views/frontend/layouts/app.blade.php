@@ -517,7 +517,15 @@
 
         function updateNavCart(view,count){
             $('.cart-count').html(count);
+
             $('#cart_items').html(view);
+
+            if(count === 0) {
+                AIZ.plugins.notify("danger", "{{ __("Your Cart is empty!") }}")
+                setTimeout(() => {
+                    location.href = '/'
+                }, 2500);
+            }
         }
 
         function removeFromCart(key){
