@@ -5,6 +5,7 @@ namespace App\Utility;
 use App\Models\PricingConfiguration;
 use Cookie;
 use DateTime;
+use App\Models\Discount;
 
 class CartUtility
 {
@@ -253,8 +254,28 @@ class CartUtility
             }
         }
 
+        $discount = Discount::getDiscountPercentage($id);
+
         if (isset($discountPrice) && $discountPrice > 0) {
             return $discountPrice;
+        } else if (is_array($discount)) {
+            $unitPrice = 0;
+
+            foreach ($pricing['from'] as $index => $from) {
+                $to = $pricing['to'][$index];
+
+                if ($qty >= $from && $qty <= $to) {
+                    $unitPrice = $pricing['unit_price'][$index];
+                }
+            }
+
+            $percentage = ($unitPrice * $discount["discount_percentage"]) / 100;
+
+            if ($percentage > $discount["max_discount_amount"]) {
+                $unitPrice -= $discount["max_discount_amount"];
+            } else {
+                $unitPrice -= $percentage;
+            }
         }
 
         return $unitPrice;
