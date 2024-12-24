@@ -528,11 +528,11 @@
             }
         }
 
-        function removeFromCart(key){
+        function removeFromCart(key) {
             $.post('{{ route('cart.removeFromCart') }}', {
                 _token  : AIZ.data.csrf,
                 id      :  key
-            }, function(data){
+            }, function(data) {
                 updateNavCart(data.nav_cart_view,data.cart_count);
                 $('#cart-summary').html(data.cart_view);
                 AIZ.plugins.notify('success', "{{ translate('Item has been removed from cart') }}");
