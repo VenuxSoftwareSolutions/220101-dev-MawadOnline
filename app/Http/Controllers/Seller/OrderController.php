@@ -15,6 +15,7 @@ use Exception;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AramexController;
 use Log;
+use App\Models\TrackingShipment;
 
 class OrderController extends Controller
 {
@@ -132,8 +133,14 @@ class OrderController extends Controller
                     ], 500);
                 }
 
-                // @todo save shipment info for tracking
                 $link = $shipment["Shipments"][0]["ShipmentLabel"]["LabelURL"];
+
+                TrackingShipment::firstOrCreate([
+                    "user_id" => auth()->user()->id,
+                    "order_detail_id" => $order->id,
+                    "shipment_id" => $shipment["Shipments"][0]["ID"],
+                    "label_url" => $link
+                ]);
             }
 
             if ($request->status == 'cancelled' && $order->order->payment_type == 'wallet') {
