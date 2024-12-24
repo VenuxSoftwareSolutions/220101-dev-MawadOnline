@@ -179,6 +179,16 @@
                                     </li>
                                 @endforeach
                             @endif
+                            @if (get_setting('header_menu_labels') != null)
+                                    @foreach (json_decode(get_setting('header_menu_labels'), true) as $key => $value)
+                                        <li class="mb-2 font-prompt">
+                                            <a href="{{ json_decode(get_setting('header_menu_links'), true)[$key] }}"
+                                                class="fs-13 text-secondary animate-underline-white">
+                                                {{ translate($value) }}
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                @endif
                         </ul>
                     </div>
                 </div>
@@ -266,13 +276,16 @@
                                     {{ translate('Vendor Center') }}</h4>
                                 <ul class="list-unstyled">
                                     <li class="mb-2">
-                                        <p class="fs-13 text-secondary mb-0">
-                                            {{ translate('Become A Seller') }}
-                                            <a href="{{ route('shops.packages') }}"
-                                                class="fs-13 fw-700 text-secondary-base ml-2">
-                                                <br />{{ translate('Apply Now') }}
-                                            </a>
-                                        </p>
+                                        <a href="{{ __('Register as Vendor') }}"
+                                               class="fs-13 text-secondary animate-underline-white">
+                                               {{ translate('Become A Seller') }}
+                                        </a>
+                                   </li>
+                                    <li class="mb-2">
+                                         <a href="{{ route('shops.packages') }}"
+                                                class="fs-13 fw-700 text-secondary-base">
+                                            {{ translate('Register as Vendor') }}
+                                         </a>
                                     </li>
                                     @guest
                                         <li class="mb-2">
@@ -365,7 +378,7 @@
             </div>
             <div class="aiz-accordion-panel bg-transparent" style="background-color: #3D3D3B !important;">
                 <div class="container">
-                    <ul class="list-unstyled mt-3">
+                    <ul class="list-unstyled mt-3 font-prompt">
                         @if (get_setting('widget_one_labels', null, App::getLocale()) != null)
                             @foreach (json_decode(get_setting('widget_one_labels', null, App::getLocale()), true) as $key => $value)
                                 @php
@@ -377,11 +390,21 @@
                                 <li class="mb-2 pb-2 @if (url()->current() == $widget_one_links) active @endif">
                                     <a href="{{ $widget_one_links }}"
                                         class="fs-13 text-soft-light text-sm-secondary animate-underline-white">
-                                        {{ $value }}
+                                        {{ translate($value) }}
                                     </a>
                                 </li>
                             @endforeach
                         @endif
+                        @if (get_setting('header_menu_labels') != null)
+                                    @foreach (json_decode(get_setting('header_menu_labels'), true) as $key => $value)
+                                        <li class="mb-2 pb-2">
+                                            <a href="{{ json_decode(get_setting('header_menu_links'), true)[$key] }}"
+                                                class="fs-13 text-soft-light text-sm-secondary animate-underline-white">
+                                                {{ translate($value) }}
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                @endif
                     </ul>
                 </div>
             </div>
@@ -393,7 +416,7 @@
             </div>
             <div class="aiz-accordion-panel bg-transparent" style="background-color: #3D3D3B !important;">
                 <div class="container">
-                    <ul class="list-unstyled mt-3">
+                    <ul class="list-unstyled mt-3 font-prompt">
                         <li class="mb-2">
                             <p class="fs-13 text-secondary mb-1">{{ translate('Address') }}</p>
                             <p class="fs-13 text-soft-light">
@@ -421,7 +444,7 @@
             </div>
             <div class="aiz-accordion-panel bg-transparent" style="background-color: #3D3D3B !important;">
                 <div class="container">
-                    <ul class="list-unstyled mt-3">
+                    <ul class="list-unstyled mt-3 font-prompt">
                         @auth
                             <li class="mb-2 pb-2">
                                 <a class="fs-13 text-soft-light text-sm-secondary animate-underline-white"
@@ -479,11 +502,12 @@
                     <div class="container">
                         <ul class="list-unstyled mt-3">
                             <li class="mb-2 pb-2 {{ areActiveRoutes(['shops.create'], ' active') }}">
-                                <p class="fs-13 text-soft-light text-sm-secondary mb-0">
-                                    {{ translate('Become A Seller') }}
+                                <a href="https://business.mawadonline.com"
+                                    class="fs-13 text-sm-secondary animate-underline-white">{{ translate('Become A Seller') }}</a>
+                            </li>
+                            <li class="mb-2 pb-2 {{ areActiveRoutes(['shops.create'], ' active') }}">
                                     <a href="{{ route('shops.packages') }}"
-                                        class="fs-13 fw-700 text-secondary-base ml-2">{{ translate('Apply Now') }}</a>
-                                </p>
+                                        class="fs-13 fw-700 text-secondary-base">{{ translate('Register as Vendor') }}</a>
                             </li>
                             @guest
                                 <li class="mb-2 pb-2 {{ areActiveRoutes(['deliveryboy.login'], ' active') }}">

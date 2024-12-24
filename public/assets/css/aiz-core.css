@@ -13463,3 +13463,50 @@ border:none !important;
     }
 }
 
+.header-m-content::-webkit-scrollbar {
+    display: none;
+  }
+
+  .header-m-content {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .menu-container {
+    position: relative;
+  }
+  .menu-wrapper {
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .scroll-left,
+  .scroll-right {
+    cursor: pointer;
+    z-index: 1;
+  }
+  .scroll-left {
+    left: 0;
+  }
+  .scroll-right {
+    right: 0;
+  }
+  .list-inline {
+    display: inline-flex;
+    width: max-content;
+  }
+.dark-c3{
+    color: #3A3B40;
+}
+.left-m-style:hover{
+    background: #f0f1f4;
+    border-radius:12px;
+}
+.nav-menu-svg{
+    position: relative;
+    top: -2px;
+}
+.badge-bundle{
+    padding: 2px 10px;
+    background: #cb774b;
+    border-radius: 8px;
+}
