@@ -23,6 +23,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Mail;
 use Log;
+use App\Jobs\firstCountDownNotificationJob;
 
 class OrderController extends Controller
 {
@@ -235,7 +236,7 @@ class OrderController extends Controller
                     }
 
                     $order_detail->save();
-                    firstCountDownNotificationJob::dispatch($order_details)
+                    firstCountDownNotificationJob::dispatch($order_detail)
                                                 ->delay(now()->addHours(24));
 
                     $product->num_of_sale += $cartItem['quantity'];
