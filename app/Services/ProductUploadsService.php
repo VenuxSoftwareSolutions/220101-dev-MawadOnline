@@ -7,6 +7,8 @@ use App\Models\UploadProducts;
 use Auth;
 use Illuminate\Support\Facades\DB;
 use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManagerStatic as ImageManager;
+use Illuminate\Support\Facades\Storage;
 
 class ProductUploadsService
 {
@@ -22,17 +24,17 @@ class ProductUploadsService
 
         //check if upload_products folder is exist, if not exist create it
         $structure = public_path('upload_products');
-        if (! file_exists($structure)) {
+        if (!file_exists($structure)) {
             mkdir(public_path('upload_products', 0755));
         }
 
         //check if product folder with id of product is exist, if not exist create it with documents folder
-        if (! file_exists(public_path('/upload_products/Product-'.$collection['product']->id))) {
-            mkdir(public_path('/upload_products/Product-'.$collection['product']->id, 0755));
-            mkdir(public_path('/upload_products/Product-'.$collection['product']->id.'/documents', 0755));
+        if (!file_exists(public_path('/upload_products/Product-' . $collection['product']->id))) {
+            mkdir(public_path('/upload_products/Product-' . $collection['product']->id, 0755));
+            mkdir(public_path('/upload_products/Product-' . $collection['product']->id . '/documents', 0755));
         } else {
-            if (! file_exists(public_path('/upload_products/Product-'.$collection['product']->id.'/documents'))) {
-                mkdir(public_path('/upload_products/Product-'.$collection['product']->id.'/documents', 0755));
+            if (!file_exists(public_path('/upload_products/Product-' . $collection['product']->id . '/documents'))) {
+                mkdir(public_path('/upload_products/Product-' . $collection['product']->id . '/documents', 0755));
             }
         }
 
@@ -42,9 +44,9 @@ class ProductUploadsService
                 $check_added = false;
                 foreach ($data['documents'] as $key => $document) {
                     if ($document != null) {
-                        $document_name = time().rand(5, 15).'.'.$document->getClientOriginalExtension();
-                        $document->move(public_path('/upload_products/Product-'.$collection['product']->id.'/documents'), $document_name);
-                        $path = '/upload_products/Product-'.$collection['product']->id.'/documents'.'/'.$document_name;
+                        $document_name = time() . rand(5, 15) . '.' . $document->getClientOriginalExtension();
+                        $document->move(public_path('/upload_products/Product-' . $collection['product']->id . '/documents'), $document_name);
+                        $path = '/upload_products/Product-' . $collection['product']->id . '/documents' . '/' . $document_name;
 
                         $uploaded_document = new UploadProducts;
                         $uploaded_document->id_product = $collection['product']->id;
@@ -96,9 +98,9 @@ class ProductUploadsService
                         if ($data['old_documents'] != null) {
                             if (array_key_exists($key, $data['old_documents'])) {
                                 $new_document = $data['old_documents'][$key];
-                                $document_name = time().rand(5, 15).'.'.$new_document->getClientOriginalExtension();
-                                $new_document->move(public_path('/upload_products/Product-'.$collection['product']->id.'/documents'), $document_name);
-                                $path = '/upload_products/Product-'.$collection['product']->id.'/documents'.'/'.$document_name;
+                                $document_name = time() . rand(5, 15) . '.' . $new_document->getClientOriginalExtension();
+                                $new_document->move(public_path('/upload_products/Product-' . $collection['product']->id . '/documents'), $document_name);
+                                $path = '/upload_products/Product-' . $collection['product']->id . '/documents' . '/' . $document_name;
 
                                 $uploaded_document->path = $path;
                                 $uploaded_document->extension = $new_document->getClientOriginalExtension();
@@ -143,9 +145,9 @@ class ProductUploadsService
                             // if(file_exists(public_path($uploaded_document->path))){
                             //     unlink(public_path($uploaded_document->path));
                             // }
-                            $document_name = time().rand(5, 15).'.'.$document->getClientOriginalExtension();
-                            $new_document->move(public_path('/upload_products/Product-'.$collection['product']->id.'/documents'), $document_name);
-                            $path = '/upload_products/Product-'.$collection['product']->id.'/documents'.'/'.$document_name;
+                            $document_name = time() . rand(5, 15) . '.' . $document->getClientOriginalExtension();
+                            $new_document->move(public_path('/upload_products/Product-' . $collection['product']->id . '/documents'), $document_name);
+                            $path = '/upload_products/Product-' . $collection['product']->id . '/documents' . '/' . $document_name;
 
                             $uploaded_document->path = $path;
                             $uploaded_document->extension = $document->getClientOriginalExtension();
@@ -192,13 +194,13 @@ class ProductUploadsService
         }
 
         //check if images folder is exist, if not exist create it under under public/upload_products/Product{id_porduct}/images
-        if (! file_exists(public_path('/upload_products/Product-'.$collection['product']->id.'/images'))) {
-            mkdir(public_path('/upload_products/Product-'.$collection['product']->id.'/images', 0755));
+        if (!file_exists(public_path('/upload_products/Product-' . $collection['product']->id . '/images'))) {
+            mkdir(public_path('/upload_products/Product-' . $collection['product']->id . '/images', 0755));
         }
 
         //check if thumbnails folder is exist, if not exist create it under under public/upload_products/Product{id_porduct}/thumbnails
-        if (! file_exists(public_path('/upload_products/Product-'.$collection['product']->id.'/thumbnails'))) {
-            mkdir(public_path('/upload_products/Product-'.$collection['product']->id.'/thumbnails', 0755));
+        if (!file_exists(public_path('/upload_products/Product-' . $collection['product']->id . '/thumbnails'))) {
+            mkdir(public_path('/upload_products/Product-' . $collection['product']->id . '/thumbnails', 0755));
         }
 
         //insert paths of images in DB and upload images in folder under public/upload_products/Product{id_porduct}/images
@@ -206,20 +208,20 @@ class ProductUploadsService
             if (count($data['main_photos']) > 0) {
                 $check_added = false;
                 foreach ($data['main_photos'] as $key => $image) {
-                    $imageName = time().rand(5, 15).'.jpg';
+                    $imageName = time() . rand(5, 15) . '.jpg';
                     $extension = $image->getClientOriginalExtension();
 
                     if ($extension == 'jpg' || $extension == 'jpeg' || $extension == 'png') {
 
-                        $path = '/upload_products/Product-'.$collection['product']->id.'/images'.'/'.$imageName;
+                        $path = '/upload_products/Product-' . $collection['product']->id . '/images' . '/' . $imageName;
 
                         //check if vendor not uploaded thumbnails, the system will create a thumbnail from a gallery image
                         if ($data['photosThumbnail'] == null) {
                             //$this->createThumbnail(public_path($path), $imageName,$collection['product']->id);
                             $img3 = Image::make($image);
                             $img3->resize(300, 300);
-                            $path_thumbnail = '/upload_products/Product-'.$collection['product']->id.'/thumbnails'.'/'.$imageName;
-                            $path_to_save = public_path('/upload_products/Product-'.$collection['product']->id.'/thumbnails'.'/'.$imageName);
+                            $path_thumbnail = '/upload_products/Product-' . $collection['product']->id . '/thumbnails' . '/' . $imageName;
+                            $path_to_save = public_path('/upload_products/Product-' . $collection['product']->id . '/thumbnails' . '/' . $imageName);
                             $img3->save($path_to_save);
 
                             $uploaded_document = new UploadProducts;
@@ -244,7 +246,7 @@ class ProductUploadsService
                             }
                         }
 
-                        $image->move(public_path('/upload_products/Product-'.$collection['product']->id.'/images'), $imageName);
+                        $image->move(public_path('/upload_products/Product-' . $collection['product']->id . '/images'), $imageName);
 
                         $uploaded_document = new UploadProducts;
                         $uploaded_document->id_product = $collection['product']->id;
@@ -286,7 +288,7 @@ class ProductUploadsService
         if ($data['photosThumbnail'] != null) {
             $check_added = false;
             foreach ($data['photosThumbnail'] as $key => $image) {
-                $imageName = time().rand(5, 15).'.jpg';
+                $imageName = time() . rand(5, 15) . '.jpg';
                 // $image->move(public_path('/upload_products/Product-'.$collection['product']->id.'/thumbnails') , $imageName);
                 // $path = '/upload_products/Product-'.$collection['product']->id.'/thumbnails'.'/'.$imageName;
                 $extension = $image->getClientOriginalExtension();
@@ -294,8 +296,8 @@ class ProductUploadsService
                 if ($extension == 'jpg' || $extension == 'jpeg' || $extension == 'png') {
                     $img3 = Image::make($image);
                     $img3->resize(300, 300);
-                    $path_thumbnail = '/upload_products/Product-'.$collection['product']->id.'/thumbnails'.'/'.$imageName;
-                    $path_to_save = public_path('/upload_products/Product-'.$collection['product']->id.'/thumbnails'.'/'.$imageName);
+                    $path_thumbnail = '/upload_products/Product-' . $collection['product']->id . '/thumbnails' . '/' . $imageName;
+                    $path_to_save = public_path('/upload_products/Product-' . $collection['product']->id . '/thumbnails' . '/' . $imageName);
                     $img3->save($path_to_save);
 
                     $uploaded_document = new UploadProducts;
@@ -333,4 +335,37 @@ class ProductUploadsService
             }
         }
     }
+
+    function processImageBeforeUpload($image, $minWidth = 800, $maxWidth = 1200, $quality = 90)
+    {
+        try {
+            // Create an Intervention Image instance
+            $img = Image::make($image->getRealPath());
+
+            // Get original dimensions
+            $originalWidth = $img->width();
+            $originalHeight = $img->height();
+
+            // Resize image if needed
+            if ($originalWidth > $maxWidth || $originalWidth < $minWidth) {
+                $newWidth = max(min($originalWidth, $maxWidth), $minWidth);
+                $newHeight = intval($originalHeight * ($newWidth / $originalWidth));
+                $img->resize($newWidth, $newHeight, function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+            }
+
+            // Convert to JPG and compress
+            $img->encode('jpg', $quality);
+
+            $filename = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME) . '.jpg';
+            $path = 'uploads/' . $filename;
+            Storage::put($path, $img);
+
+            return $path;
+        } catch (\Exception $e) {
+            throw new \RuntimeException('Image processing failed: ' . $e->getMessage());
+        }
+    }
+
 }
