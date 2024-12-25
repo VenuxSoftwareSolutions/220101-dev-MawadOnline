@@ -24,10 +24,6 @@ use Exception;
 
 class CheckoutController extends Controller
 {
-    /**
-     * check the selected payment gateway,
-     * then redirect to that controller accordingly
-     */
     public function checkout(Request $request)
     {
         if ($request->payment_option == null) {
