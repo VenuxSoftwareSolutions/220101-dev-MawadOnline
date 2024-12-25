@@ -176,6 +176,7 @@
                     if (error !== undefined) {
                         AIZ.plugins.notify('danger', error.message);
                         submitButton.disabled = false;
+                        spinnerWrapper.classList.add("d-none");
                         return;
                     } else {
                         spinnerWrapper.classList.add("d-none");
