@@ -52,10 +52,6 @@ class CheckoutController extends Controller
 
         (new OrderController)->store($request);
 
-        if (count($carts) > 0) {
-            Cart::where('user_id', Auth::user()->id)->delete();
-        }
-
         $request->session()->put('payment_type', 'cart_payment');
 
         $data['combined_order_id'] = $request->session()->get('combined_order_id');
@@ -75,11 +71,13 @@ class CheckoutController extends Controller
                     'trx_id' => $request->trx_id,
                     'photo' => $request->photo,
                 ];
+
                 foreach ($combined_order->orders as $order) {
                     $order->manual_payment = 1;
                     $order->manual_payment_data = json_encode($manual_payment_data);
                     $order->save();
                 }
+
                 flash(translate('Your order has been placed successfully. Please submit payment information from purchase history'))->success();
 
                 return redirect()->route('order_confirmed');
