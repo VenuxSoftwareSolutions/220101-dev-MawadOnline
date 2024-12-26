@@ -135,7 +135,7 @@ class StripeController extends Controller
             $paymentIntentId = $request->query('payment_intent');
 
             if ($paymentIntentId === null) {
-                flash(translate('Payment failed: Missing payment intent ID'))->error();
+                flash(translate('Payment failed, Please try again later!'))->error();
                 return redirect()->route('home');
             }
 
