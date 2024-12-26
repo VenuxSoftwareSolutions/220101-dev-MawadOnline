@@ -456,4 +456,9 @@ class CheckoutController extends Controller
 
         return view('frontend.order_confirmed', compact('combined_order', 'first_order'));
     }
+
+    public function cancelCheckout($combined_order_id)
+    {
+        return (new OrderController)->deleteOrderIfPaymentFail($combined_order_id);
+    }
 }
