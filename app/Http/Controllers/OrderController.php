@@ -367,6 +367,60 @@ class OrderController extends Controller
         return back();
     }
 
+    public function deleteOrderIfPaymentFail($combined_order_id)
+    {
+        try {
+            $combined_order = CombinedOrder::findOrFail($combined_order_id);
+
+            if ($combined_order != null) {
+                foreach ($combined_order->orders as $order) {
+                    $orderDetails = OrderDetail::where("order_id", $order->id)->get();
+
+                    foreach ($orderDetails as $orderDetail) {
+                        try {
+                            $product_stock = ProductStock::where('product_id', $orderDetail->product_id)
+                                ->where('variant', $orderDetail->variation)
+                                ->first();
+
+                            if ($product_stock != null) {
+                                $product_stock->qty += $orderDetail->quantity;
+                                $product_stock->save();
+                            }
+                        } catch (Exception $error) {
+                            Log::error("Error while editing product {$orderDetail->product_id} stock in `deleting order if payment fail`, with message: {$error->getMessage()}");
+                        }
+
+                        $orderDetail->delete();
+                    }
+
+                    $order->delete();
+                }
+
+                return response()->json([
+                    "error" => false,
+                    "message" => translate('Order has been deleted successfully')
+                ], 200);
+            } else {
+                return response()->json([
+                    "error" => true,
+                    "message" => translate('Something went wrong')
+                ], 500);
+            }
+
+            return response()->json([
+                "error" => true,
+                "message" => translate('Something went wrong')
+            ], 500);
+        } catch(Exception $e) {
+            Log::error("Error while `deleting order if payment fail`, with message: {$e->getMessage()}");
+
+            return response()->json([
+                "error" => true,
+                "message" => translate('Something went wrong')
+            ], 500);
+        }
+    }
+
     public function bulk_order_delete(Request $request)
     {
         if ($request->id) {
