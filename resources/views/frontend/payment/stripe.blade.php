@@ -177,7 +177,22 @@
                         AIZ.plugins.notify('danger', error.message);
                         submitButton.disabled = false;
                         spinnerWrapper.classList.add("d-none");
-                        return;
+
+                        fetch("{{ route('cancel_checkout', ["combined_order_id" => $client_reference_id]) }}", {
+                            method: "DELETE",
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .getAttribute('content')
+                            },
+                        }).then(response => response.json())
+                        .then((data) => {
+                            if (data.error === false) {
+                                location.href = "/cart";
+                            }
+                        }).catch((error) => {
+                            AIZ.plugins.notify('danger', '{{ __("Something went wrong!") }}')
+                        });
                     } else {
                         spinnerWrapper.classList.add("d-none");
                         location.href = `${return_url}?payment_intent=${paymentIntent.id}`;
