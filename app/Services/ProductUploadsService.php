@@ -213,7 +213,7 @@ class ProductUploadsService
                     
                     if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png'])) {
                         
-                        $processedImagePath = $this->resizeImageIfNeeded($image, 300, 1200);
+                        $processedImagePath = $this->resizeImageIfNeeded($image, 1280, 1280);
                         $path = '/upload_products/Product-' . $collection['product']->id . '/images/' . $imageName;
                         $thumbnailPath = public_path($path);
                         copy($processedImagePath, $thumbnailPath);
@@ -299,7 +299,7 @@ class ProductUploadsService
                 $extension = $image->getClientOriginalExtension();
 
                 if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png'])) {
-                    $processedImagePath = $this->resizeImageIfNeeded($image, 300, 1200);
+                    $processedImagePath = $this->resizeImageIfNeeded($image, 300, 300);
                     $path_thumbnail = '/upload_products/Product-' . $collection['product']->id . '/thumbnails/' . $imageName;
                     $destinationPath = public_path($path_thumbnail);
                     copy($processedImagePath, $destinationPath);
@@ -343,7 +343,7 @@ class ProductUploadsService
     }
 
 
-    public function resizeImageIfNeeded($image, $minWidth, $maxWidth, $quality = 90) {
+    public function resizeImageIfNeeded($image, $maxWidth, $maxHeight, $quality = 90) {
         $tempPath = $image->getPathname();
     
         if (!file_exists($tempPath)) {
@@ -358,8 +358,12 @@ class ProductUploadsService
         $originalHeight = $img->height();
     
         // Check if resizing is needed
-        if ($originalWidth > $maxWidth || $originalWidth < $minWidth) {
-            $scalingFactor = $maxWidth / $originalWidth;
+            // Check if resizing is needed
+        if ($originalWidth > $maxWidth || $originalHeight > $maxHeight) {
+            $scalingFactorWidth = $maxWidth / $originalWidth;
+            $scalingFactorHeight = $maxHeight / $originalHeight;
+            $scalingFactor = min($scalingFactorWidth, $scalingFactorHeight);
+
             $newWidth = $originalWidth * $scalingFactor;
             $newHeight = $originalHeight * $scalingFactor;
             $img->resize($newWidth, $newHeight, function ($constraint) {
@@ -367,6 +371,7 @@ class ProductUploadsService
                 $constraint->upsize();
             });
         }
+
     
         // Convert to JPG and compress
         $tempPath = tempnam(sys_get_temp_dir(), 'image_') . '.jpg';
