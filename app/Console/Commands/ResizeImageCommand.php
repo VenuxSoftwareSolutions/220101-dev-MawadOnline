@@ -13,12 +13,14 @@ class ResizeImageCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'image:resize 
-                            {input : Path to the input image} 
-                            {output : Path to save the processed image} 
-                            {--minWidth=300 : Minimum width for resizing} 
-                            {--maxWidth=1200 : Maximum width for resizing} 
-                            {--quality=90 : Compression quality (1-100)}';
+    
+     protected $signature = 'image:resize 
+     {input : Path to the input image} 
+     {output : Path to save the processed image} 
+     {--maxDimension=1200 : Maximum dimension for resizing} 
+     {--quality=90 : Compression quality (1-100)}';
+ 
+
 
     /**
      * The console command description.
@@ -36,9 +38,9 @@ class ResizeImageCommand extends Command
     {
         $inputPath = $this->argument('input');
         $outputPath = $this->argument('output');
-        $minWidth = (int)$this->option('minWidth');
-        $maxWidth = (int)$this->option('maxWidth');
+        $maxDimension = (int)$this->option('maxDimension');
         $quality = (int)$this->option('quality');
+
 
 
         if (!file_exists($inputPath)) {
@@ -55,8 +57,9 @@ class ResizeImageCommand extends Command
             $originalHeight = $img->height();
 
             // Resize if necessary
-            if ($originalWidth > $maxWidth || $originalWidth < $minWidth) {
-                $scalingFactor = $maxWidth / $originalWidth;
+            if ($originalWidth > $maxDimension || $originalHeight > $maxDimension) {
+                $scalingFactor = $maxDimension / max($originalWidth, $originalHeight);
+
                 $newWidth = $originalWidth * $scalingFactor;
                 $newHeight = $originalHeight * $scalingFactor;
                 $img->resize($newWidth, $newHeight, function ($constraint) {
