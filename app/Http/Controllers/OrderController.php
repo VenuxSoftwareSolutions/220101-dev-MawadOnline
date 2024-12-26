@@ -289,10 +289,6 @@ class OrderController extends Controller
 
             $combined_order->save();
 
-            foreach ($combined_order->orders as $order) {
-                NotificationUtility::sendOrderPlacedNotification($order);
-            }
-
             $request->session()->put('combined_order_id', $combined_order->id);
         } catch(Exception $e) {
             Log::error("Error while storing order, with message {$e->getMessage()}");
