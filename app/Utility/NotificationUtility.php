@@ -10,36 +10,36 @@ use Mail;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\OrderNotification;
 use App\Models\FirebaseNotification;
+use Log;
+use Exception;
 
 class NotificationUtility
 {
     public static function sendOrderPlacedNotification($order, $request = null)
     {
-        //sends email to customer with the invoice pdf attached
         $array['view'] = 'emails.invoice';
         $array['subject'] = translate('A new order has been placed') . ' - ' . $order->code;
         $array['from'] = env('MAIL_FROM_ADDRESS');
         $array['order'] = $order;
+
         try {
             if ($order->user->email != null) {
                 Mail::to($order->user->email)->queue(new InvoiceEmailManager($array));
             }
             Mail::to($order->orderDetails->first()->product->user->email)->queue(new InvoiceEmailManager($array));
-        } catch (\Exception $e) {
-
+        } catch (Exception $e) {
+            Log::error("Error while sending order placement notification, with message: {$e->getMessage()}");
         }
 
         if (addon_is_activated('otp_system') && SmsTemplate::where('identifier', 'order_placement')->first()->status == 1) {
             try {
                 $otpController = new OTPVerificationController;
                 $otpController->send_order_code($order);
-            } catch (\Exception $e) {
-
-            }
+            } catch (Exception) {}
         }
 
-        //sends Notifications to user
         self::sendNotification($order, 'placed');
+
         if ($request !=null && get_setting('google_firebase') == 1 && $order->user->device_token != null) {
             $request->device_token = $order->user->device_token;
             $request->title = "Order placed !";
