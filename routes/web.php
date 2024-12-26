@@ -277,6 +277,11 @@ Route::group(['middleware' => ['customer', 'verified', 'unbanned', "check.cart.s
             Route::post('/payment-select', 'store_delivery_info')->name('checkout.store_delivery_info');
             Route::get('/order-confirmed', 'order_confirmed')->name('order_confirmed')
                 ->withoutMiddleware("check.cart.stock");
+
+            Route::delete('/order/{combined_order_id}', 'cancelCheckout')
+                ->name('cancel_checkout')
+                ->withoutMiddleware("check.cart.stock");
+
             Route::post('/payment', 'checkout')->name('payment.checkout')
                 ->withoutMiddleware("check.cart.stock");
             Route::post('/get-pick-up-points', 'get_pick_up_points')->name('shipping_info.get_pick_up_points');
