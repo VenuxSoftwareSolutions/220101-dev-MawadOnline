@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Address;
+use App\Utility\NotificationUtility;
 use App\Models\Carrier;
 use App\Models\Cart;
 use App\Models\Category;
@@ -100,6 +101,7 @@ class CheckoutController extends Controller
             $order->save();
 
             calculateCommissionAffilationClubPoint($order);
+            NotificationUtility::sendOrderPlacedNotification($order);
         }
 
         Session::put('combined_order_id', $combined_order_id);
