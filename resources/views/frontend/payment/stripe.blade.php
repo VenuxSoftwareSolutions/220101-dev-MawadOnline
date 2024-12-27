@@ -94,7 +94,7 @@
                             </div>
                         </div>
                         <input type="text" id="name" placeholder="{{ __('Full Name') }}" class="form-control my-2" />
-                        <button id="submit-button" class="form-control btn btn-primary">{{ __("Pay") }}</button>
+                        <button id="submit-button" class="form-control btn btn-primary">{{ __("Pay") }} {{ single_price($amount / 100) }}</button>
                         <div id="error-message" class="error"></div>
                     </div>
                 </div>
