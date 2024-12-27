@@ -55,6 +55,7 @@ use App\Http\Resources\V2\CarrierCollection;
 use App\Http\Controllers\AffiliateController;
 use App\Http\Controllers\ClubPointController;
 use App\Http\Controllers\CommissionController;
+use App\Models\ProductAttributeValues;
 use AizPackages\ColorCodeConverter\Services\ColorCodeConverter;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -1817,12 +1818,7 @@ if (!function_exists('get_leaf_category')) {
     }
 }
 if (!function_exists('get_category_attributes')) {
-    /**
-     * Get the attributes of a category based on its ID.
-     *
-     * @param int $categoryId The ID of the category.
-     * @return \Illuminate\Support\Collection|null A collection of attributes or null if no attributes exist.
-     */
+    
     function get_category_attributes(int $categoryId): ?\Illuminate\Support\Collection
     {
         $attributeIds = DB::table('categories_has_attributes')
@@ -1835,6 +1831,14 @@ if (!function_exists('get_category_attributes')) {
         }
 
         return null;
+    }
+}
+if (!function_exists('get_product_attribute_value')) {
+    function get_product_attribute_value(int $productId, int $attributeId): ?string
+    {
+        return ProductAttributeValues::where('product_id', $productId)
+            ->where('attribute_id', $attributeId)
+            ->value('value');
     }
 }
 
