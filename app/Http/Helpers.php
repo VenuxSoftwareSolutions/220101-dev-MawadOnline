@@ -1836,8 +1836,8 @@ if (!function_exists('get_category_attributes')) {
 if (!function_exists('get_product_attribute_value')) {
     function get_product_attribute_value(int $productId, int $attributeId): ?string
     {
-        return ProductAttributeValues::where('product_id', $productId)
-            ->where('attribute_id', $attributeId)
+        return ProductAttributeValues::where('id_products', $productId)
+            ->where('id_attribute', $attributeId)
             ->value('value');
     }
 }

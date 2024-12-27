@@ -3,6 +3,7 @@
 @section('content')
     @php
         $compareList = Auth::check() ? (Session::has('compareData') ? Session::get('compareData') : []) : [];
+
     @endphp
     <input type="hidden" id="compare-data" value="{{ json_encode($compareList) }}">
     <section class="mb-4 mt-3">
@@ -21,6 +22,11 @@
                 @endphp
 
                 @forelse($compareList as $compareItem)
+                    @php
+                        $attributes = get_category_attributes($compareItem['id']);
+                        $isOddRow = count($attributes) % 2 == 0;
+
+                    @endphp
                     <h4 class="fw-600 text-primary mb-3">
                         {{ translate('Compare of') }} {{ $compareItem['category_name'] }}
                     </h4>
@@ -128,7 +134,16 @@
                                             {{ $product->height ?? 'N/A' }}</td>
                                     @endforeach
                                 </tr>
-                                <tr class="bg-light">
+                                
+                                @foreach ($attributes as $item_attribute)
+                                    <tr @if($loop->iteration % 2 != 0) class="bg-light" @endif>
+                                        <td class="fw-700">{{ translate($item_attribute->name) }}</td>
+                                        @foreach ($compareItem['variants'] as $product)
+                                            <td>{{ get_product_attribute_value($product->id, $item_attribute->id) }}</td>
+                                        @endforeach
+                                    </tr>
+                                @endforeach
+                                <tr @if($isOddRow) class="bg-light" @endif>
                                     <td class="fw-700">{{ translate('Actions') }}</td>
                                     @foreach ($compareItem['variants'] as $product)
                                         @php
@@ -144,6 +159,7 @@
                                         </td>
                                     @endforeach
                                 </tr>
+                                
                             </tbody>
                         </table>
                     </div>
