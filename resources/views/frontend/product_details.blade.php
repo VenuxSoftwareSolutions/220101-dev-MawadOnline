@@ -371,11 +371,10 @@
                             <!-- Tabs -->
                             <div class="nav aiz-nav-tabs">
                                 <a href="#tab_default_1" data-toggle="tab"
-                                    class="mr-5 pb-2 fs-16 fw-700 text-reset active show">Description</a>
+                                    class="mr-2 mr-md-5 pb-2 fs-16 fw-700 text-reset active show">Description</a>
                                 <a href="#tab_default_2" data-toggle="tab"
-                                    class="mr-5 pb-2 fs-16 fw-700 text-reset">Downloadable</a>
-                                <a href="#tab_default_3" data-toggle="tab" class="mr-5 pb-2 fs-16 fw-700 text-reset">Reviews
-                                    ( {{ $totalRating ?? '0' }} )</a>
+                                    class="mr-2 mr-md-5 pb-2 fs-16 fw-700 text-reset">Downloadable</a>
+                                <a href="#tab_default_3" data-toggle="tab" class="mr-2 mr-md-5 pb-2 fs-16 fw-700 text-reset">Reviews( {{ $totalRating ?? '0' }} )</a>
                             </div>
 
                             <!-- Description -->

@@ -1,4 +1,4 @@
-<div class="text-left col-md-6 float-left">
+<div class="text-left col-lg-6 col-md-12 float-left">
     <!-- Product Name -->
     <div class="row">
         <div class="col-12 sample-option">
@@ -358,22 +358,22 @@
         $attribue = App\Models\Attribute::find($attributeId) ;
     @endphp
     @if ($attribue['name']== "Manufacturer")
-    <div class="col-sm-4 mb-2">
+    <div class="col-4 col-sm-4 mb-2">
         <div class="fs-16 font-prompt-md attrib-name">
             {{$attribue ? $attribue->getTranslation('name') : ""}}:
         </div>
     </div>
     @else
-    <div class="col-sm-2 mb-2">
+    <div class="col-2 col-sm-2 mb-2">
         <div class="fs-16 font-prompt-md attrib-name">
             {{$attribue ? $attribue->getTranslation('name') : ""}}:
         </div>
     </div>
     @endif
     @if ($attribue['name'] == "Manufacturer")
-    <div class="col-sm-8">
+    <div class="col-8 col-sm-8">
     @else
-    <div class="col-sm-10">
+    <div class="col-10 col-sm-10">
     @endif
         <div class="aiz-radio-inline">
             {{-- @foreach ( $attributeValues as $key=>$value)
@@ -720,13 +720,14 @@
             </button>
 
         </div>
+        <div class="show-side-btn">
         <div class="col-12 d-flex justify-content-between p-0">
             <div class="col-6 p-0">
                 <div class="row no-gutters mb-3 col-12 p-0 float-left">
                     <a href="javascript:void(0)"
                         class="col-md-12 has-transitiuon hov-opacity-100 border-radius-16 Compare-btn-style">
                         <center><svg width="24" height="24" viewBox="0 0 32 32"
-                                class="compare-btn-style-icon" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                class="compare-btn-style-icon mx-0" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M27.3333 19.9866L20.6533 26.6799" stroke="#4C4E54" stroke-width="1.5"
                                     stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                                 <path d="M4.66663 19.9866H27.3333" stroke="#4C4E54" stroke-width="1.5"
@@ -738,7 +739,7 @@
                             </svg>
 
                             <span
-                                class="fs-16 font-prompt-md compare-btn-txt">{{ translate('Add to Compare') }}</span>
+                                class="p-0 px-sm-3 fs-16 font-prompt-md compare-btn-txt">{{ translate('Add to Compare') }}</span>
                         </center>
                     </a>
                 </div>
@@ -747,7 +748,7 @@
                 <div class="row no-gutters mb-3 col-11 p-0 float-right">
                     <a href="javascript:void(0)"
                         class="col-md-12 has-transitiuon hov-opacity-100 border-radius-16 Compare-btn-style">
-                        <center><svg width="24" height="24" class="wishlist-btn-style-icon"
+                        <center><svg width="24" height="24" class="wishlist-btn-style-icon mx-0 mx-sm-1 mx-md-0"
                                 viewBox="0 0 33 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path
                                     d="M17.6267 27.7469C17.1733 27.9069 16.4267 27.9069 15.9733 27.7469C12.1067 26.4269 3.46667 20.9202 3.46667 11.5869C3.46667 7.46688 6.78667 4.13354 10.88 4.13354C13.3067 4.13354 15.4533 5.30688 16.8 7.12021C18.1467 5.30688 20.3067 4.13354 22.72 4.13354C26.8133 4.13354 30.1333 7.46688 30.1333 11.5869C30.1333 20.9202 21.4933 26.4269 17.6267 27.7469Z"
@@ -756,12 +757,58 @@
                             </svg>
 
                             <span
-                                class="fs-16 font-prompt-md compare-btn-txt">{{ translate('Add to Wishlist') }}</span>
+                                class="p-0 px-sm-3 fs-16 font-prompt-md compare-btn-txt">{{ translate('Add to Wishlist') }}</span>
                         </center>
                     </a>
                 </div>
             </div>
         </div>
+    </div>
+    <!-- new btn structure -->
+    <div class="show-vertical-btn">
+        <div class="col-12 p-0">
+            <div class="col-12 p-0">
+                <div class="row no-gutters mb-3 col-12 p-0 float-left">
+                    <a href="javascript:void(0)"
+                        class="col-md-12 has-transitiuon hov-opacity-100 border-radius-16 Compare-btn-style">
+                        <center><svg width="24" height="24" viewBox="0 0 32 32"
+                                class="compare-btn-style-icon mx-0" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M27.3333 19.9866L20.6533 26.6799" stroke="#4C4E54" stroke-width="1.5"
+                                    stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M4.66663 19.9866H27.3333" stroke="#4C4E54" stroke-width="1.5"
+                                    stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M4.66663 12.0134L11.3466 5.32007" stroke="#4C4E54" stroke-width="1.5"
+                                    stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M27.3333 12.0134H4.66663" stroke="#4C4E54" stroke-width="1.5"
+                                    stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+
+                            <span
+                                class="p-0 px-sm-3 fs-16 font-prompt-md compare-btn-txt">{{ translate('Add to Compare') }}</span>
+                        </center>
+                    </a>
+                </div>
+            </div>
+            <div class="col-12 p-0">
+                <div class="row no-gutters mb-3 col-12 p-0 float-right">
+                    <a href="javascript:void(0)"
+                        class="col-md-12 has-transitiuon hov-opacity-100 border-radius-16 Compare-btn-style">
+                        <center><svg width="24" height="24" class="wishlist-btn-style-icon mx-0 mx-sm-1 mx-md-0"
+                                viewBox="0 0 33 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M17.6267 27.7469C17.1733 27.9069 16.4267 27.9069 15.9733 27.7469C12.1067 26.4269 3.46667 20.9202 3.46667 11.5869C3.46667 7.46688 6.78667 4.13354 10.88 4.13354C13.3067 4.13354 15.4533 5.30688 16.8 7.12021C18.1467 5.30688 20.3067 4.13354 22.72 4.13354C26.8133 4.13354 30.1333 7.46688 30.1333 11.5869C30.1333 20.9202 21.4933 26.4269 17.6267 27.7469Z"
+                                    stroke="#4C4E54" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+
+                            <span
+                                class="p-0 px-sm-3 fs-16 font-prompt-md compare-btn-txt">{{ translate('Add to Wishlist') }}</span>
+                        </center>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
         <!-- Total Price
         <div class="row no-gutters pb-3" id="chosen_price_div">
             <div class="col-sm-2">
@@ -831,7 +878,7 @@
         </div>
     </div> -->
 </div>
-<div class="col-md-6 float-left">
+<div class="col-lg-6 col-md-12 float-left">
     <div class="col-md-12 product-rightbox-seller border-radius-8px float-left">
         <div class="col-md-12 product-rightbox-seller-info float-left">
             @if (isset($detailedProduct))

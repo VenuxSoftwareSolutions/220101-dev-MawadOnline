@@ -13128,10 +13128,10 @@ border:none !important;
         background-color: #F3F4F5;
         border-radius: 8px;
         height: 24px;
-        width: 83%;
+        width: 80%;
     }
     .rating-txt-style{
-        width: 7%;
+        width: 10%;
         color: #7E808A;
     }
   }
@@ -13140,10 +13140,10 @@ border:none !important;
         background-color: #F3F4F5;
         border-radius: 8px;
         height: 24px;
-        width: 70%;
+        width: 65%;
     }
     .rating-txt-style{
-        width: 15%;
+        width: 20%;
         color: #7E808A;
     }
   }
@@ -13509,4 +13509,31 @@ border:none !important;
     padding: 2px 10px;
     background: #cb774b;
     border-radius: 8px;
+}
+.show-side-btn {
+    display: none !important;
+}
+
+@media (min-width: 1500px) {
+    .show-side-btn {
+        display: block !important;
+    }
+}
+
+@media (max-width: 992px) {
+    .show-side-btn {
+        display: block !important;
+    }
+}
+.show-vertical-btn {
+    display: block;
+}
+
+@media (min-width: 1500px), (max-width: 992px) {
+    .show-side-btn {
+        display: block;
+    }
+    .show-vertical-btn {
+        display: none;
+    }
 }
