@@ -135,7 +135,7 @@
                                 <th data-breakpoints="lg" class="min-col">#</th>
                                 <th width="10%">{{ translate('Photo') }}</th>
                                 <th class="text-uppercase">{{ translate('Description') }}</th>
-                                <th data-breakpoints="lg" class="text-uppercase">{{ translate('Delivery Type') }}</th>
+                                <th data-breakpoints="lg" class="text-uppercase">{{ translate('Shipping Type') }}</th>
                                 <th data-breakpoints="lg" class="min-col text-uppercase text-center">
                                     {{ translate('Qty') }}
                                 </th>
