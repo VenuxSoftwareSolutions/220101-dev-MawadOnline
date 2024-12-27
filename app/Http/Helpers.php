@@ -1816,6 +1816,27 @@ if (!function_exists('get_leaf_category')) {
             ->value('category_id');
     }
 }
+if (!function_exists('get_category_attributes')) {
+    /**
+     * Get the attributes of a category based on its ID.
+     *
+     * @param int $categoryId The ID of the category.
+     * @return \Illuminate\Support\Collection|null A collection of attributes or null if no attributes exist.
+     */
+    function get_category_attributes(int $categoryId): ?\Illuminate\Support\Collection
+    {
+        $attributeIds = DB::table('categories_has_attributes')
+            ->where('category_id', $categoryId)
+            ->pluck('attribute_id')
+            ->toArray();
+
+        if (!empty($attributeIds)) {
+            return Attribute::whereIn('id', $attributeIds)->get();
+        }
+
+        return null;
+    }
+}
 
 // get multiple Products
 if (!function_exists('get_multiple_products')) {
