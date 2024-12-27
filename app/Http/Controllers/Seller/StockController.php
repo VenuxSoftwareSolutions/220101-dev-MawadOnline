@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Seller;
 use Auth;
 use Excel;
 use Validator;
-use Carbon\Carbon;
 use App\Models\Tour;
 use App\Models\User;
 use App\Models\Emirate;
@@ -17,7 +16,6 @@ use Illuminate\Http\Request;
 use App\Exports\StockSummaryExport;
 use App\Http\Requests\SaveRecordRequest;
 use App\Http\Requests\SearchStockRequest;
-use App\Http\Requests\StoreWarehouseRequest;
 
 class StockController extends Controller
 {
@@ -327,7 +325,7 @@ class StockController extends Controller
         $seller = User::find(Auth::user()->owner_id);
         $warehouses = Warehouse::where('user_id', $seller->id)->get();
         $emirates = Emirate::all();
-        $tour_steps=Tour::orderBy('step_number')->get();
+        $tour_steps = Tour::orderBy('step_number')->get();
         return view('seller.warehouses.index', compact('warehouses', 'emirates','tour_steps'));
     }
 
@@ -349,7 +347,6 @@ class StockController extends Controller
 
     public function storeWarehouses(Request $request)
     {
-           // Validate the incoming request data
         $validator = Validator::make($request->all(), [
             'warehouse_name.*' => 'required|max:128|regex:/\D/',
             'state_warehouse.*' => 'required|max:128',
@@ -359,18 +356,16 @@ class StockController extends Controller
             'unit_warehouse.*' => 'nullable|max:64',
         ]);
 
-        // Check if validation fails
         if ($validator->fails()) {
-            // Redirect back with errors and old input
             return redirect()->back()->withErrors($validator)->withInput();
         }
+
         $user = Auth::user();
 
-        // Iterate over the submitted data
         foreach ($request->warehouse_name as $key => $warehouse_name) {
             if (!empty($request->warehouse_id[$key])) {
-                // If warehouse_id is provided, update existing warehouse
                 $warehouse = Warehouse::findOrFail($request->warehouse_id[$key]);
+
                 $warehouse->update([
                     'warehouse_name' => $warehouse_name,
                     'emirate_id' => $request->state_warehouse[$key],
@@ -381,7 +376,6 @@ class StockController extends Controller
                     'saveasdraft' => isset($request->saveasdraft[$key]) ? true : false,
                 ]);
             } else {
-                // If warehouse_id is not provided, create new warehouse
                 Warehouse::create([
                     'user_id' => $user->id,
                     'warehouse_name' => $warehouse_name,
@@ -395,8 +389,8 @@ class StockController extends Controller
             }
         }
 
-        return redirect()->back()->with('success', __('stock.Warehouses saved successfully'));
-
+        return redirect()->back()
+            ->with('success', __('Warehouses saved successfully'));
     }
 
 

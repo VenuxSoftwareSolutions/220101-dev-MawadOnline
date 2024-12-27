@@ -7,6 +7,11 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use SocialiteProviders\Manager\SocialiteWasCalled;
+use App\Events\OrderDetailsShipmentStatusChange;
+use App\Listeners\SendOrderDetailsShipmentStatusChangeNotification;
+use App\Models\OrderDetail;
+use App\Observers\OrderDetailObserver;
+
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -17,11 +22,16 @@ class EventServiceProvider extends ServiceProvider
    */
   protected $listen = [
     Registered::class => [
-      SendEmailVerificationNotification::class,
+        SendEmailVerificationNotification::class,
     ],
+
     SocialiteWasCalled::class => [
-      \SocialiteProviders\Apple\AppleExtendSocialite::class.'@handle',
-     ],
+        \SocialiteProviders\Apple\AppleExtendSocialite::class.'@handle',
+    ],
+
+    OrderDetailsShipmentStatusChange::class => [
+        SendOrderDetailsShipmentStatusChangeNotification::class,
+    ],
   ];
 
   /**
@@ -32,7 +42,7 @@ class EventServiceProvider extends ServiceProvider
   public function boot()
   {
     parent::boot();
-
+    OrderDetail::observe(OrderDetailObserver::class);
     //
   }
 }

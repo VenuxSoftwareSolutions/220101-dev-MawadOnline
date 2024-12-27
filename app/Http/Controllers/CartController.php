@@ -605,19 +605,15 @@ class CartController extends Controller
     public function addToCart(Request $request)
     {
         try {
-            // Get product preview data from session
             $dataProduct = $request->session()->get('productPreviewData', null);
 
-            // Determine the user ID; use temp_user_id if not logged in
             $userId = auth()->check() ? auth()->user()->id : $request->session()->get('temp_user_id');
 
-            // If the user is not authenticated and temp_user_id doesn't exist, generate a new temp_user_id
             if (!auth()->check() && !$userId) {
                 $userId = (string) Str::uuid();
                 $request->session()->put('temp_user_id', $userId);
             }
 
-            // Fetch existing cart items using user_id or temp_user_id
             $carts = Cart::where(
                 auth()->check() ? 'user_id' : 'temp_user_id',
                 $userId

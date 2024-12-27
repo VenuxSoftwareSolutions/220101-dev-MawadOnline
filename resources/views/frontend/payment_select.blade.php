@@ -68,13 +68,13 @@
                                     placeholder="{{ translate('Type your text...') }}"></textarea>
                             </div>
 
-                            <div class="card-header p-4 border-bottom-0">
+                            <div class="d-none card-header p-4 border-bottom-0">
                                 <h3 class="fs-16 fw-700 text-dark mb-0">
                                     {{ translate('Select a payment option') }}
                                 </h3>
                             </div>
                             <!-- Payment Options -->
-                            <div class="card-body text-center px-4 pt-0">
+                            <div class="d-none card-body text-center px-4 pt-0">
                                 <div class="row gutters-10">
                                     <!-- Paypal -->
                                     @if (get_setting('paypal_payment') == 1)

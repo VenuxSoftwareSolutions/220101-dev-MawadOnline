@@ -2,14 +2,13 @@
 
 namespace App\Utility;
 
-use App\Models\Cart;
 use App\Models\PricingConfiguration;
 use Cookie;
 use DateTime;
+use App\Models\Discount;
 
 class CartUtility
 {
-
     public static function create_cart_variant($product, $request)
     {
         $str = null;
@@ -19,14 +18,15 @@ class CartUtility
 
         if (isset($product->choice_options) && count(json_decode($product->choice_options)) > 0) {
             //Gets all the choice values of customer choice option and generate a string like Black-S-Cotton
-            foreach (json_decode($product->choice_options) as $key => $choice) {
+            foreach (json_decode($product->choice_options) as $choice) {
                 if ($str != null) {
-                    $str .= '-' . str_replace(' ', '', $request['attribute_id_' . $choice->attribute_id]);
+                    $str .= '-'.str_replace(' ', '', $request['attribute_id_'.$choice->attribute_id]);
                 } else {
-                    $str .= str_replace(' ', '', $request['attribute_id_' . $choice->attribute_id]);
+                    $str .= str_replace(' ', '', $request['attribute_id_'.$choice->attribute_id]);
                 }
             }
         }
+
         return $str;
     }
 
@@ -47,149 +47,149 @@ class CartUtility
         }
 
         $price = self::discount_calculation($product, $price);
+
         return $price;
     }
 
-    public static function get_price_mawad($dataProduct,$variationId, $quantity) {
-        $data=$dataProduct ;
-        $variations = $data['detailedProduct']['variations'] ;
+    public static function get_price_mawad($dataProduct, $variationId, $quantity)
+    {
+        $data = $dataProduct;
+        $variations = $data['detailedProduct']['variations'];
 
         // Given value
         $qty = $quantity;
-        $totalDiscount = 0 ;
-        $discountPrice = 0 ;
+        $discountPrice = 0;
         // Iterate through the ranges
         $unitPrice = null;
-        if(count($variations)>0) {
-
+        if (count($variations) > 0) {
             foreach ($variations[$variationId]['variant_pricing-from']['from'] as $index => $from) {
                 $to = $variations[$variationId]['variant_pricing-from']['to'][$index];
 
                 if ($qty >= $from && $qty <= $to) {
-                     $unitPrice = $variations[$variationId]['variant_pricing-from']['unit_price'][$index];
-                     if( isset($variations[$variationId]['variant_pricing-from']['discount']['date'][$index]) && ($variations[$variationId]['variant_pricing-from']['discount']['date'][$index])){
+                    $unitPrice = $variations[$variationId]['variant_pricing-from']['unit_price'][$index];
+                    if (isset($variations[$variationId]['variant_pricing-from']['discount']['date'][$index]) && ($variations[$variationId]['variant_pricing-from']['discount']['date'][$index])) {
                         // Extract start and end dates from the first date interval
 
                         $dateRange = $variations[$variationId]['variant_pricing-from']['discount']['date'][$index];
-                        list($startDate, $endDate) = explode(' to ', $dateRange);
+                        [$startDate, $endDate] = explode(' to ', $dateRange);
 
                         // Convert date strings to DateTime objects for comparison
-                        $currentDate = new DateTime(); // Current date/time
+                        $currentDate = new DateTime; // Current date/time
                         $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
                         $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
 
-                            // Check if the current date/time is within the specified date interval
-                            if ($currentDate >= $startDateTime && $currentDate <= $endDateTime) {
+                        if ($currentDate >= $startDateTime && $currentDate <= $endDateTime) {
+                            if ($variations[$variationId]['variant_pricing-from']['discount']['type'][$index] == 'percent') {
+                                $percent = $variations[$variationId]['variant_pricing-from']['discount']['percentage'][$index];
+                                if ($percent) {
+                                    // Calculate the discount amount based on the given percentage
+                                    $discountPercent = $percent; // Example: $percent = 5; // 5% discount
+                                    $discountAmount = ($unitPrice * $discountPercent) / 100;
 
+                                    // Calculate the discounted price
+                                    $discountPrice = $unitPrice - $discountAmount;
+                                }
+                            } elseif ($variations[$variationId]['variant_pricing-from']['discount']['type'][$index] == 'amount') {
+                                // Calculate the discount amount based on the given amount
+                                $amount = $variations[$variationId]['variant_pricing-from']['discount']['amount'][$index];
 
-                                if($variations[$variationId]['variant_pricing-from']['discount']['type'][$index] == "percent") {
-                                    $percent = $variations[$variationId]['variant_pricing-from']['discount']['percentage'][$index] ;
-                                    if ($percent) {
-
-
-                                        // Calculate the discount amount based on the given percentage
-                                        $discountPercent = $percent; // Example: $percent = 5; // 5% discount
-                                        $discountAmount = ($unitPrice * $discountPercent) / 100;
-
-                                        // Calculate the discounted price
-                                        $discountPrice = $unitPrice - $discountAmount;
-
-
-                                    }
-                                }else if($variations[$variationId]['variant_pricing-from']['discount']['type'][$index] == "amount"){
-                                    // Calculate the discount amount based on the given amount
-                                    $amount = $variations[$variationId]['variant_pricing-from']['discount']['amount'][$index] ;
-
-                                    if ($amount) {
-                                        $discountAmount = $amount;
-                                        // Calculate the discounted price
-                                        $discountPrice = $unitPrice - $discountAmount;
-
-                                    }
-
+                                if ($amount) {
+                                    $discountAmount = $amount;
+                                    // Calculate the discounted price
+                                    $discountPrice = $unitPrice - $discountAmount;
                                 }
                             }
                         }
+                    }
+
                     break; // Stop iterating once the range is found
                 }
             }
 
-        }
-        else {
+        } else {
             foreach ($data['detailedProduct']['from'] as $index => $from) {
                 $to = $data['detailedProduct']['to'][$index];
                 if ($qty >= $from && $qty <= $to) {
                     $unitPrice = $data['detailedProduct']['unit_price'][$index];
 
-                    if( isset($data['detailedProduct']['date_range_pricing'][$index]) && ($data['detailedProduct']['date_range_pricing'][$index])){
+                    if (isset($data['detailedProduct']['date_range_pricing'][$index]) && ($data['detailedProduct']['date_range_pricing'][$index])) {
                         // Extract start and end dates from the first date interval
 
                         $dateRange = $data['detailedProduct']['date_range_pricing'][$index];
-                        list($startDate, $endDate) = explode(' to ', $dateRange);
+                        [$startDate, $endDate] = explode(' to ', $dateRange);
 
                         // Convert date strings to DateTime objects for comparison
-                        $currentDate = new DateTime(); // Current date/time
+                        $currentDate = new DateTime; // Current date/time
                         $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
                         $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
 
-                            // Check if the current date/time is within the specified date interval
-                            if ($currentDate >= $startDateTime && $currentDate <= $endDateTime) {
+                        // Check if the current date/time is within the specified date interval
+                        if ($currentDate >= $startDateTime && $currentDate <= $endDateTime) {
+                            if ($data['detailedProduct']['discount_type'][$index] == 'percent') {
+                                $percent = $data['detailedProduct']['discount_percentage'][$index];
 
+                                if ($percent) {
+                                    // Calculate the discount amount based on the given percentage
+                                    $discountPercent = $percent; // Example: $percent = 5; // 5% discount
+                                    $discountAmount = ($unitPrice * $discountPercent) / 100;
 
-                                if($data['detailedProduct']['discount_type'][$index] == "percent") {
-                                    $percent = $data['detailedProduct']['discount_percentage'][$index] ;
+                                    // Calculate the discounted price
+                                    $discountPrice = $unitPrice - $discountAmount;
 
-                                    if ($percent) {
+                                }
+                            } elseif ($data['detailedProduct']['discount_type'][$index] == 'amount') {
+                                // Calculate the discount amount based on the given
 
+                                $amount = $data['detailedProduct']['discount_amount'][$index];
 
-                                        // Calculate the discount amount based on the given percentage
-                                        $discountPercent = $percent; // Example: $percent = 5; // 5% discount
-                                        $discountAmount = ($unitPrice * $discountPercent) / 100;
-
-                                        // Calculate the discounted price
-                                        $discountPrice = $unitPrice - $discountAmount;
-
-                                    }
-                                }else if($data['detailedProduct']['discount_type'][$index] == "amount"){
-                                    // Calculate the discount amount based on the given
-
-                                    $amount = $data['detailedProduct']['discount_amount'][$index] ;
-
-                                    if ($amount) {
-                                        $discountAmount = $amount;
-                                        // Calculate the discounted price
-                                        $discountPrice = $unitPrice - $discountAmount;
-
-                                    }
-
+                                if ($amount) {
+                                    $discountAmount = $amount;
+                                    // Calculate the discounted price
+                                    $discountPrice = $unitPrice - $discountAmount;
                                 }
                             }
                         }
+                    }
                     break; // Stop iterating once the range is found
                 }
             }
         }
 
-
-        // $total=$qty*$unitPrice;
         if (isset($discountPrice) && $discountPrice > 0) {
-            // $totalDiscount=$qty*$discountPrice;
-            return $discountPrice ;
+            return $discountPrice;
         }
-        return $unitPrice ;
-     // Return the unit price as JSON response
-    }
-    public static function priceProduct($id , $qty) {
-        $pricing = [];
-        $pricing['from'] = PricingConfiguration::where('id_products', $id)->pluck('from')->toArray();
-        $pricing['to'] = PricingConfiguration::where('id_products', $id)->pluck('to')->toArray();
-        $pricing['unit_price'] = PricingConfiguration::where('id_products', $id)->pluck('unit_price')->toArray();
-        $pricing['discount_type'] = PricingConfiguration::where('id_products', $id)->pluck('discount_type')->toArray();
-        $pricing['discount_amount'] = PricingConfiguration::where('id_products', $id)->pluck('discount_amount')->toArray();
-        $pricing['discount_percentage'] = PricingConfiguration::where('id_products', $id)->pluck('discount_percentage')->toArray();
 
-        $startDates = PricingConfiguration::where('id_products', $id)->pluck('discount_start_datetime')->toArray();
-        $endDates = PricingConfiguration::where('id_products', $id)->pluck('discount_end_datetime')->toArray();
+        return $unitPrice;
+    }
+
+    public static function priceProduct($id, $qty)
+    {
+        $pricing = [];
+        $pricing['from'] = PricingConfiguration::where('id_products', $id)
+            ->pluck('from')
+            ->toArray();
+        $pricing['to'] = PricingConfiguration::where('id_products', $id)
+            ->pluck('to')
+            ->toArray();
+        $pricing['unit_price'] = PricingConfiguration::where('id_products', $id)
+            ->pluck('unit_price')
+            ->toArray();
+        $pricing['discount_type'] = PricingConfiguration::where('id_products', $id)
+            ->pluck('discount_type')
+            ->toArray();
+        $pricing['discount_amount'] = PricingConfiguration::where('id_products', $id)
+            ->pluck('discount_amount')
+            ->toArray();
+        $pricing['discount_percentage'] = PricingConfiguration::where('id_products', $id)
+            ->pluck('discount_percentage')
+            ->toArray();
+
+        $startDates = PricingConfiguration::where('id_products', $id)
+            ->pluck('discount_start_datetime')
+            ->toArray();
+        $endDates = PricingConfiguration::where('id_products', $id)
+            ->pluck('discount_end_datetime')
+            ->toArray();
         $pricing['date_range_pricing'] = [];
         $discountPeriods = [];
 
@@ -200,77 +200,87 @@ class CartUtility
                 $formattedEndDate = date('d-m-Y H:i:s', strtotime($endDate));
                 $pricing['date_range_pricing'][$index] = "$formattedStartDate to $formattedEndDate";
                 $discountPeriods[$index] = "$formattedStartDate to $formattedEndDate";
-
             }
         }
 
-        $pricing['variant_pricing-from']['discount'] =[
-            'type' => PricingConfiguration::where('id_products', $id)->pluck('discount_type')->toArray(),
-            'amount' => PricingConfiguration::where('id_products', $id)->pluck('discount_amount')->toArray(),
-            'percentage' => PricingConfiguration::where('id_products', $id)->pluck('discount_percentage')->toArray(),
-            'date' => $discountPeriods
-        ] ;
-
+        $pricing['variant_pricing-from']['discount'] = [
+            'type' => PricingConfiguration::where('id_products', $id)
+                ->pluck('discount_type')
+                ->toArray(),
+            'amount' => PricingConfiguration::where('id_products', $id)
+                ->pluck('discount_amount')
+                ->toArray(),
+            'percentage' => PricingConfiguration::where('id_products', $id)
+                ->pluck('discount_percentage')
+                ->toArray(),
+            'date' => $discountPeriods,
+        ];
 
         foreach ($pricing['from'] as $index => $from) {
             $to = $pricing['to'][$index];
 
             if ($qty >= $from && $qty <= $to) {
-                 $unitPrice = $pricing['unit_price'][$index];
-                 if( isset($pricing['variant_pricing-from']['discount']['date'][$index]) && ($pricing['variant_pricing-from']['discount']['date'][$index])){
-                    // Extract start and end dates from the first date interval
+                $unitPrice = $pricing['unit_price'][$index];
 
+                if (isset($pricing['variant_pricing-from']['discount']['date'][$index]) && ($pricing['variant_pricing-from']['discount']['date'][$index])) {
                     $dateRange = $pricing['variant_pricing-from']['discount']['date'][$index];
-                    list($startDate, $endDate) = explode(' to ', $dateRange);
+                    [$startDate, $endDate] = explode(' to ', $dateRange);
 
-                    // Convert date strings to DateTime objects for comparison
-                    $currentDate = new DateTime(); // Current date/time
+                    $currentDate = new DateTime;
                     $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
                     $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
 
-                        // Check if the current date/time is within the specified date interval
-                        if ($currentDate >= $startDateTime && $currentDate <= $endDateTime) {
+                    if ($currentDate >= $startDateTime && $currentDate <= $endDateTime) {
+                        if ($pricing['variant_pricing-from']['discount']['type'][$index] == 'percent') {
+                            $percent = $pricing['variant_pricing-from']['discount']['percentage'][$index];
 
+                            if ($percent) {
+                                $discountPercent = $percent; // Example: $percent = 5; // 5% discount
+                                $discountAmount = ($unitPrice * $discountPercent) / 100;
 
-                            if($pricing['variant_pricing-from']['discount']['type'][$index] == "percent") {
-                                $percent = $pricing['variant_pricing-from']['discount']['percentage'][$index] ;
-                                if ($percent) {
+                                $discountPrice = $unitPrice - $discountAmount;
+                            }
+                        } elseif ($pricing['variant_pricing-from']['discount']['type'][$index] == 'amount') {
+                            $amount = $pricing['variant_pricing-from']['discount']['amount'][$index];
 
-
-                                    // Calculate the discount amount based on the given percentage
-                                    $discountPercent = $percent; // Example: $percent = 5; // 5% discount
-                                    $discountAmount = ($unitPrice * $discountPercent) / 100;
-
-                                    // Calculate the discounted price
-                                    $discountPrice = $unitPrice - $discountAmount;
-
-
-                                }
-                            }else if($pricing['variant_pricing-from']['discount']['type'][$index] == "amount"){
-                                // Calculate the discount amount based on the given amount
-                                $amount = $pricing['variant_pricing-from']['discount']['amount'][$index] ;
-
-                                if ($amount) {
-                                    $discountAmount = $amount;
-                                    // Calculate the discounted price
-                                    $discountPrice = $unitPrice - $discountAmount;
-
-                                }
-
+                            if ($amount) {
+                                $discountAmount = $amount;
+                                $discountPrice = $unitPrice - $discountAmount;
                             }
                         }
                     }
+                }
                 break; // Stop iterating once the range is found
             }
         }
-          // $total=$qty*$unitPrice;
-          if (isset($discountPrice) && $discountPrice > 0) {
-            // $totalDiscount=$qty*$discountPrice;
-            return $discountPrice ;
+
+        $discount = Discount::getDiscountPercentage($id);
+
+        if (isset($discountPrice) && $discountPrice > 0) {
+            return $discountPrice;
+        } else if (is_array($discount)) {
+            $unitPrice = 0;
+
+            foreach ($pricing['from'] as $index => $from) {
+                $to = $pricing['to'][$index];
+
+                if ($qty >= $from && $qty <= $to) {
+                    $unitPrice = $pricing['unit_price'][$index];
+                }
+            }
+
+            $percentage = ($unitPrice * $discount["discount_percentage"]) / 100;
+
+            if ($percentage > $discount["max_discount_amount"]) {
+                $unitPrice -= $discount["max_discount_amount"];
+            } else {
+                $unitPrice -= $percentage;
+            }
         }
-        return $unitPrice ;
-     // Return the unit price as JSON response
+
+        return $unitPrice;
     }
+
     public static function discount_calculation($product, $price)
     {
         $discount_applicable = false;
@@ -290,6 +300,7 @@ class CartUtility
                 $price -= $product->discount;
             }
         }
+
         return $price;
     }
 
@@ -320,7 +331,6 @@ class CartUtility
             $cart->product_referral_code = Cookie::get('product_referral_code');
         }
 
-        // Cart::create($data);
         $cart->save();
     }
 

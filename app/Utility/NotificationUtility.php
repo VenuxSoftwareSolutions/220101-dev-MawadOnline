@@ -14,7 +14,7 @@ use App\Models\FirebaseNotification;
 class NotificationUtility
 {
     public static function sendOrderPlacedNotification($order, $request = null)
-    {       
+    {
         //sends email to customer with the invoice pdf attached
         $array['view'] = 'emails.invoice';
         $array['subject'] = translate('A new order has been placed') . ' - ' . $order->code;
@@ -54,11 +54,11 @@ class NotificationUtility
     }
 
     public static function sendNotification($order, $order_status)
-    {        
-        if ($order->seller_id == \App\Models\User::where('user_type', 'admin')->first()->id) {
+    {
+        if ($order->seller_id == User::where('user_type', 'admin')->first()->id) {
             $users = User::findMany([$order->user->id, $order->seller_id]);
         } else {
-            $users = User::findMany([$order->user->id, $order->seller_id, \App\Models\User::where('user_type', 'admin')->first()->id]);
+            $users = User::findMany([$order->user->id, $order->seller_id, User::where('user_type', 'admin')->first()->id]);
         }
 
         $order_notification = array();
@@ -72,7 +72,7 @@ class NotificationUtility
     }
 
     public static function sendFirebaseNotification($req)
-    {        
+    {
         $url = 'https://fcm.googleapis.com/fcm/send';
 
         $fields = array

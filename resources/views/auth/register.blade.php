@@ -1,4 +1,4 @@
-@extends('backend.layouts.blank')
+{{-- @extends('backend.layouts.blank')
 
 @section('content')
 
@@ -61,4 +61,4 @@
     </div>
 </div>
 
-@endsection
+@endsection --}}

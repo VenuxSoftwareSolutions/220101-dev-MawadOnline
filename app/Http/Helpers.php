@@ -1020,12 +1020,12 @@ function getShippingCost($carts, $index, $carrier = '')
         return 0;
     }
 
-    foreach ($carts as $key => $cart_item) {
+    foreach ($carts as $cart_item) {
         $item_product = Product::find($cart_item['product_id']);
+
         if ($item_product->added_by == 'admin') {
             array_push($admin_products, $cart_item['product_id']);
 
-            // For carrier wise shipping
             if ($shipping_type == 'carrier_wise_shipping') {
                 $admin_product_total_weight += ($item_product->weight * $cart_item['quantity']);
                 $admin_product_total_price += (cart_product_price($cart_item, $item_product, false, false) * $cart_item['quantity']);
@@ -1034,10 +1034,10 @@ function getShippingCost($carts, $index, $carrier = '')
             $product_ids = array();
             $weight = 0;
             $price = 0;
+
             if (isset($seller_products[$item_product->user_id])) {
                 $product_ids = $seller_products[$item_product->user_id];
 
-                // For carrier wise shipping
                 if ($shipping_type == 'carrier_wise_shipping') {
                     $weight += $seller_product_total_weight[$item_product->user_id];
                     $price += $seller_product_total_price[$item_product->user_id];
@@ -1047,7 +1047,6 @@ function getShippingCost($carts, $index, $carrier = '')
             array_push($product_ids, $cart_item['product_id']);
             $seller_products[$item_product->user_id] = $product_ids;
 
-            // For carrier wise shipping
             if ($shipping_type == 'carrier_wise_shipping') {
                 $weight += ($item_product->weight * $cart_item['quantity']);
                 $seller_product_total_weight[$item_product->user_id] = $weight;
@@ -1064,7 +1063,9 @@ function getShippingCost($carts, $index, $carrier = '')
         if ($product->added_by == 'admin') {
             return get_setting('shipping_cost_admin') / count($admin_products);
         } else {
-            return Shop::where('user_id', $product->user_id)->first()->shipping_cost / count($seller_products[$product->user_id]);
+            return Shop::where('user_id', $product->user_id)
+                ->first()
+                ->shipping_cost / count($seller_products[$product->user_id]);
         }
     } elseif ($shipping_type == 'area_wise_shipping') {
         $shipping_info = Address::where('id', $carts[0]['address_id'])->first();
@@ -1077,7 +1078,7 @@ function getShippingCost($carts, $index, $carrier = '')
             }
         }
         return 0;
-    } elseif ($shipping_type == 'carrier_wise_shipping') { // carrier wise shipping
+    } elseif ($shipping_type == 'carrier_wise_shipping') {
         $user_zone = Address::where('id', $carts[0]['address_id'])->first()->country->zone_id;
         if ($carrier == null || $user_zone == 0) {
             return 0;
@@ -1101,6 +1102,28 @@ function getShippingCost($carts, $index, $carrier = '')
         }
         return 0;
     } else {
+        $shippingOptions = $product->shippingOptions($cartItem["quantity"]);
+
+        if ($shippingOptions->shipper === "vendor") {
+            if ($shippingOptions->charge_per_unit_shipping != null) {
+                return $shippingOptions->charge_per_unit_shipping * $cartItem["quantity"];
+            } else {
+                return $shippingOptions->flat_rate_shipping;
+            }
+        } else {
+            // supported 3rd party shipper is aramex for now
+            request()->merge(["product_id" => $product->id]);
+
+            $apiResult = (new \App\Http\Controllers\AramexController)
+                ->calculateOrderProductsCharge(auth()->user()->id);
+
+            if ($apiResult->original["error"] === false) {
+                return $apiResult->original["data"]["TotalAmount"]["Value"];
+            }
+
+            return 0;
+        }
+
         if ($product->is_quantity_multiplied && ($shipping_type == 'product_wise_shipping')) {
             return  $product->shipping_cost * $cartItem['quantity'];
         }

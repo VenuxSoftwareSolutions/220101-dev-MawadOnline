@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Address as AddressModel;
+use App\Models\BusinessInformation;
 use App\Models\Cart;
 use App\Models\Currency;
+use App\Models\Emirate;
 use App\Models\State;
 use Carbon\Carbon;
 use Exception;
@@ -505,13 +507,6 @@ class AramexController extends Controller
                 ],
                 'GetLastTrackingUpdateOnly' => true,
                 'ClientInfo' => $this->clientInfo,
-                'Transaction' => [
-                    'Reference1' => null,
-                    'Reference2' => null,
-                    'Reference3' => null,
-                    'Reference4' => null,
-                    'Reference5' => null,
-                ],
             ]);
 
             curl_setopt_array($this->curl, [
@@ -629,6 +624,227 @@ class AramexController extends Controller
         }
     }
 
+    public function transformNewPickupData(array $input)
+    {
+        $city = State::find($input['pickup_city'])->first();
+        $state = Emirate::find($input['pickup_state'])->first();
+        $business = BusinessInformation::where('user_id', auth()->user()->id)->first();
+
+        return [
+            'ClientInfo' => $this->clientInfo,
+            'Transaction' => null,
+            'LabelInfo' => [
+                'ReportID' => 9201,
+                'ReportType' => 'URL',
+            ],
+            'Pickup' => [
+                'PickupAddress' => [
+                    'Line1' => $input['pickup_address_line1'],
+                    'Line2' => $input['pickup_address_line2'],
+                    'Line3' => $input['pickup_address_line2'],
+                    'City' => $city->name,
+                    'StateOrProvinceCode' => $state->name,
+                    'PostCode' => $input['pickup_post_code'],
+                    'CountryCode' => 'AE',
+                    'Longitude' => 0,
+                    'Latitude' => 0,
+                    'BuildingNumber' => $input['pickup_building_number'],
+                    'BuildingName' => $input['pickup_building_name'],
+                    'Floor' => null,
+                    'Apartment' => null,
+                    'POBox' => null,
+                    'Description' => null,
+                ],
+                'PickupContact' => [
+                    'Department' => 'Vendor',
+                    'PersonName' => $input['full_name'],
+                    'Title' => null,
+                    'CompanyName' => $business->trade_name,
+                    'PhoneNumber1' => str_replace('+', '', $input['phone']),
+                    'PhoneNumber1Ext' => null,
+                    'PhoneNumber2' => str_replace('+', '', $input['phone']),
+                    'PhoneNumber2Ext' => null,
+                    'FaxNumber' => null,
+                    'CellPhone' => str_replace('+', '', $input['phone']),
+                    'EmailAddress' => $input['email'],
+                    'Type' => null,
+                ],
+                'PickupLocation' => 'Reception',
+                'PickupDate' => '/Date('.Carbon::parse($input['pickup_datetime'])->valueOf().')/',
+                'ReadyTime' => '/Date('.Carbon::parse($input['pickup_datetime'])->valueOf().')/',
+                'LastPickupTime' => '/Date('.Carbon::parse($input['pickup_datetime'])->addDays(2)->valueOf().')/',
+                'ClosingTime' => '/Date('.Carbon::parse($input['pickup_datetime'])->addDays(2)->valueOf().')/',
+                'Comments' => '',
+                'Reference1' => 'ref1',
+                'Reference2' => 'ref2',
+                'Vehicle' => 'Car',
+                'Shipments' => null,
+                'PickupItems' => [
+                    [
+                        'ProductGroup' => ARAMEX_PRODUCT_GROUP,
+                        'ProductType' => ARAMEX_PRODUCT_TYPE,
+                        'NumberOfShipments' => 1,
+                        'PackageType' => null,
+                        'Payment' => ARAMEX_PAYMENT_TYPE,
+                        'ShipmentWeight' => null,
+                        'ShipmentVolume' => null,
+                        'NumberOfPieces' => 1,
+                        'CashAmount' => null,
+                        'ExtraCharges' => null,
+                        'ShipmentDimensions' => null,
+                        'Comments' => null,
+                    ],
+                ],
+                'Status' => 'Ready',
+                'ExistingShipments' => null,
+                'Branch' => '',
+                'RouteCode' => '',
+            ],
+        ];
+    }
+
+    public function transformNewShipmentsData(array $input)
+    {
+        $city = State::find($input['city'])->first();
+        $state = Emirate::find($input['state'])->first();
+        $currency = Currency::find(get_setting('system_default_currency'))->first();
+        $business = BusinessInformation::where('user_id', auth()->user()->id)->first();
+
+        return [
+            'Shipments' => [
+                [
+                    'Reference1' => '',
+                    'Reference2' => '',
+                    'Reference3' => '',
+                    'Shipper' => [
+                        'Reference1' => '',
+                        'Reference2' => '',
+                        'AccountNumber' => env('ARAMEX_NUMBER'),
+                        'PartyAddress' => [
+                            'Line1' => $input['shipper_address_line1'],
+                            'Line2' => $input['shipper_address_line2'],
+                            'Line3' => $input['shipper_address_line3'],
+                            'City' => $city->name,
+                            'StateOrProvinceCode' => $state->name,
+                            'PostCode' => $input['shipper_post_code'],
+                            'CountryCode' => 'AE',
+                            'Longitude' => 0,
+                            'Latitude' => 0,
+                            'BuildingNumber' => $input['shipper_building_number'],
+                            'BuildingName' => $input['shipper_building_name'],
+                            'Floor' => null,
+                            'Apartment' => null,
+                            'POBox' => null,
+                            'Description' => null,
+                        ],
+                        'Contact' => [
+                            'Department' => '',
+                            'PersonName' => $input['full_name'],
+                            'Title' => null,
+                            'CompanyName' => $business->trade_name,
+                            'PhoneNumber1' => $input['phone'],
+                            'PhoneNumber1Ext' => null,
+                            'PhoneNumber2' => null,
+                            'PhoneNumber2Ext' => null,
+                            'FaxNumber' => null,
+                            'CellPhone' => $input['phone'],
+                            'EmailAddress' => $input['email'],
+                            'Type' => null,
+                        ],
+                    ],
+                    'Consignee' => [
+                        'Reference1' => null,
+                        'Reference2' => null,
+                        'AccountNumber' => null,
+                        'PartyAddress' => [
+                            'Line1' => $input['consignee_address'],
+                            'Line2' => null,
+                            'Line3' => null,
+                            'City' => $input['consignee_city'],
+                            'StateOrProvinceCode' => $input['consignee_state'],
+                            'PostCode' => $input['consignee_post_code'],
+                            'CountryCode' => $input['consignee_country_code'],
+                            'Longitude' => 0,
+                            'Latitude' => 0,
+                            'BuildingNumber' => null,
+                            'BuildingName' => null,
+                            'Floor' => null,
+                            'Apartment' => null,
+                            'POBox' => null,
+                            'Description' => null,
+                        ],
+                        'Contact' => [
+                            'Department' => 'Web',
+                            'PersonName' => $input['consignee_name'],
+                            'Title' => null,
+                            'CompanyName' => 'MawadOnline',
+                            'PhoneNumber1' => $input['consignee_phone'],
+                            'PhoneNumber1Ext' => null,
+                            'PhoneNumber2' => null,
+                            'PhoneNumber2Ext' => null,
+                            'FaxNumber' => null,
+                            'CellPhone' => $input['consignee_phone'],
+                            'EmailAddress' => $input['consignee_email'],
+                            'Type' => null,
+                        ],
+                    ],
+                    'ThirdParty' => null,
+                    'ShippingDateTime' => '/Date('.Carbon::parse($input['shipping_datetime'])->valueOf().')/',
+                    'DueDate' => '/Date('.Carbon::parse($input['shipping_datetime'])->addDays(3)->valueOf().')/',
+                    'Comments' => null,
+                    'PickupLocation' => sprintf(
+                        '%s %s, %s %s %s',
+                        $input['shipper_building_number'],
+                        $input['shipper_building_name'],
+                        $city->name,
+                        $state->name,
+                        $input['shipper_post_code']
+                    ),
+                    'OperationsInstructions' => null,
+                    'AccountingInstructions' => null,
+                    'Details' => [
+                        'Dimensions' => $input["dimensions"],
+                        'ActualWeight' => [
+                            'Unit' => 'KG',
+                            'Value' => 0.1,
+                        ],
+                        'ChargeableWeight' => null,
+                        'DescriptionOfGoods' => 'Construction materials',
+                        'GoodsOriginCountry' => 'AE',
+                        'NumberOfPieces' => 1,
+                        'ProductGroup' => ARAMEX_PRODUCT_GROUP,
+                        'ProductType' => ARAMEX_PRODUCT_TYPE,
+                        'PaymentType' => ARAMEX_PAYMENT_TYPE,
+                        'PaymentOptions' => null,
+                        'CustomsValueAmount' => [
+                            'CurrencyCode' => $currency->code,
+                            'Value' => 0,
+                        ],
+                        'CashOnDeliveryAmount' => null,
+                        'InsuranceAmount' => null,
+                        'CashAdditionalAmount' => null,
+                        'CashAdditionalAmountDescription' => null,
+                        'CollectAmount' => null,
+                        'Services' => null,
+                        'Items' => null,
+                        'DeliveryInstructions' => null,
+                    ],
+                    'ForeignHAWB' => null,
+                    'TransportType' => 0,
+                    'PickupGUID' => $input['pickup_guid'] ?? null,
+                    'Number' => null,
+                    'ScheduledDelivery' => null,
+                ],
+            ],
+            'LabelInfo' => [
+                'ReportID' => 9729,
+                'ReportType' => 'URL',
+            ],
+            'ClientInfo' => $this->clientInfo,
+            'Transaction' => null,
+        ];
+    }
+
     public function transformShipmentData(array $input)
     {
         try {
@@ -649,7 +865,7 @@ class AramexController extends Controller
 
             return [
                 'OriginAddress' => [
-                    // we get those info from the 1st warehouse
+                    // we got those info from the 1st warehouse
                     'Line1' => "{$input['warehouseDetails'][0]['name']}, {$input['warehouseDetails'][0]['street']}",
                     'Line2' => $input['warehouseDetails'][0]['building'],
                     'Line3' => $input['warehouseDetails'][0]['unit'],
@@ -733,8 +949,7 @@ class AramexController extends Controller
                     ->where('product_id', request()->product_id)
                     ->get()
                     ->map(function ($cart) use ($weight_attribute_id) {
-                        $shippingAddress = AddressModel::with(['city'])
-                            ->where('id', $cart->address_id)
+                        $shippingAddress = AddressModel::where('id', $cart->address_id)
                             ->get()
                             ->map(fn ($data) => [
                                 'address' => $data->address,
@@ -840,7 +1055,7 @@ class AramexController extends Controller
         try {
             $data['data'] = State::where(
                 'emirate_id', $emirate_id
-            )->orderBy('name', 'ASC')->get(["id", "name"]);
+            )->orderBy('name', 'ASC')->get(['id', 'name']);
 
             return response()->json($data);
         } catch (Exception $e) {

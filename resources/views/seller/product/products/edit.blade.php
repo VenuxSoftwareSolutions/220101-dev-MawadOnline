@@ -4715,21 +4715,14 @@
                 if ($(this).is(':checked')) {
                     var count_shippers = "{{ count($supported_shippers) }}";
                     count_shippers = parseInt(count_shippers);
+
                     if (count_shippers == 0) {
                         $('body input[name="activate_third_party"]').prop('checked', false);
-                        // Swal.fire({
-                        //     title: 'Cancelled',
-                        //     text: "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product",
-                        //     icon: 'error',
-                        //     scrollbarPadding: false,
-                        //     backdrop:false,
-                        // });
                         var title = "{{ translate('Default Shipping Configuration') }}";
-                        var message = `<?php $text = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
-                        echo translate($text); ?>`;
+                        var message = '{{ __("You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.") }}';
 
                         $('#title-modal').text(title);
-                        $('#text-modal').text(message);
+                        $('#text-modal').html(message);
 
                         $('#modal-info').modal('show');
 
@@ -5072,29 +5065,13 @@
                 count_shippers = parseInt(count_shippers);
                 var selected = $(this).val();
 
-
-
                 if (selected.indexOf('third_party') !== -1) {
                     if (count_shippers == 0) {
-                        // swal(
-                        //     'Cancelled',
-                        //     "You cannot choose a third-party option because our shippers are unable to reach the warehouse.",
-                        //     'error'
-                        // )
-                        // Swal.fire({
-                        //         title: 'Cancelled',
-                        //         text: "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product",
-                        //         icon: 'error',
-                        //         scrollbarPadding: false,
-                        //         backdrop:false,
-                        //     });
-
                         var title = "{{ translate('Default Shipping Configuration') }}";
-                        var message = `<?php $text = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
-                        echo translate($text); ?>`;
+                        var message = `{{ translate("You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.") }}`;
 
                         $('#title-modal').text(title);
-                        $('#text-modal').text(message);
+                        $('#text-modal').html(message);
                         $('#modal-info').modal('show');
 
                         var checkbox = $(this).parent().find('input[type="checkbox"][value="third_party"]');
@@ -5116,15 +5093,9 @@
                         var min_third_party = $('#min_third_party').val();
                         var max_third_party = $('#max_third_party').val();
                         var unit_third_party = $('#unit_third_party').val();
+
                         if ((weight == '') || (length == '') || (width == '') || (height == '') || (
                                 min_third_party == '') || (max_third_party == '')) {
-                            // Swal.fire({
-                            //     title: 'Cancelled',
-                            //     text: "Please ensure that all required fields are filled to know all information about your package.",
-                            //     icon: 'error',
-                            //     scrollbarPadding: false,
-                            //     backdrop:false,
-                            // });
                             var title = "{{ translate('Default Shipping Configuration') }}";
                             var message =
                                 "{{ translate('Please ensure that all required fields are filled to know all information about your package.') }}";
@@ -5160,14 +5131,6 @@
                             }
 
                             if (chargeable_weight > 30) {
-                                // Swal.fire({
-                                //     title: 'Cancelled',
-                                //     text: "Chargeable Weight = " + Number(chargeable_weight.toFixed(2)) + ", then not accepted by our shipper",
-                                //     icon: 'error',
-                                //     scrollbarPadding: false,
-                                //     backdrop:false,
-                                // });
-
                                 var title = "{{ translate('Default Shipping Configuration') }}";
                                 var message = "Chargeable Weight = " + Number(chargeable_weight.toFixed(
                                     2)) + ", then not accepted by our shipper";
@@ -5195,7 +5158,6 @@
                             }
                         }
                     }
-
                 }
 
                 if (selected.indexOf('vendor') !== -1) {
@@ -5770,14 +5732,6 @@
 
                         if ((weight == '') || (length == '') || (width == '') || (height == '') || (
                                 min_third_party == '') || (max_third_party == '')) {
-                            // Swal.fire({
-                            //         title: 'Cancelled',
-                            //         text: "Please ensure that all required fields are filled to know all information about your package.",
-                            //         icon: 'error',
-                            //         scrollbarPadding: false,
-                            //         backdrop:false,
-                            //     });
-
                             var title = "{{ translate('Default Shipping Configuration') }}";
                             var message =
                                 "{{ translate('Please ensure that all required fields are filled to know all information about your package.') }}";
@@ -5823,14 +5777,6 @@
                             }
 
                             if (chargeable_weight > max) {
-                                // Swal.fire({
-                                //     title: 'Cancelled',
-                                //     text: "Chargeable Weight = " + Number(chargeable_weight.toFixed(2)) + ", then not accepted by our shipper",
-                                //     icon: 'error',
-                                //     scrollbarPadding: false,
-                                //     backdrop:false,
-                                // });
-
                                 var title = "{{ translate('Default Shipping Configuration') }}";
                                 var message = "{{ translate('Chargeable Weight = ') }}" + Number(
                                         chargeable_weight.toFixed(2)) +
@@ -5870,22 +5816,15 @@
                 if ($(this).is(':checked')) {
                     var count_shippers = "{{ count($supported_shippers) }}";
                     count_shippers = parseInt(count_shippers);
+
                     if (count_shippers == 0) {
                         $('body input[name="activate_third_party"]').prop('checked', false);
-                        // Swal.fire({
-                        //     title: 'Cancelled',
-                        //     text: "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product",
-                        //     icon: 'error',
-                        //     scrollbarPadding: false,
-                        //     backdrop:false,
-                        // });
 
                         var title = "{{ translate('Default Shipping Configuration') }}";
-                        var message = `<?php $text = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
-                        echo translate($text); ?>`;
+                        var message = "{{ translate("You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.") }}";
 
                         $('#title-modal').text(title);
-                        $('#text-modal').text(message);
+                        $('#text-modal').html(message);
 
                         $('#modal-info').modal('show');
 

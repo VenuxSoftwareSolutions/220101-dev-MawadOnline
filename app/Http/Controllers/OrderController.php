@@ -136,8 +136,7 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         try {
-            $carts = Cart::where('user_id', Auth::user()->id)
-                ->get();
+            $carts = Cart::where('user_id', Auth::user()->id)->get();
 
             if ($carts->isEmpty()) {
                 flash(translate('Your cart is empty'))->warning();
@@ -145,8 +144,8 @@ class OrderController extends Controller
                 return redirect()->route('home');
             }
 
-            $address = Address::where('id', $carts->first()->address_id)->first();
 
+            $address = Address::where('id', $carts->first()->address_id)->first();
             $shippingAddress = [];
 
             if ($address != null) {
@@ -236,6 +235,8 @@ class OrderController extends Controller
                     }
 
                     $order_detail->save();
+                    firstCountDownNotificationJob::dispatch($order_details)
+                                                ->delay(now()->addHours(24));
 
                     $product->num_of_sale += $cartItem['quantity'];
                     $product->save();
