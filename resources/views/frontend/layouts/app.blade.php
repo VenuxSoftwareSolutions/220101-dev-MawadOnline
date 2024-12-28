@@ -545,6 +545,7 @@
                 localStorageCompare: localCompare
             }, function(data) {
                 if (data.localStorageAction) {
+                    // Handle for guest users
                     let compare = JSON.parse(localStorage.getItem('compare')) || {};
 
                     if (!compare[data.categoryId]) {
@@ -556,7 +557,7 @@
                         return;
                     }
 
-                    if (compare[data.categoryId].length < 3) {
+                    if (compare[data.categoryId].length < data.maxVariants) {
                         compare[data.categoryId].push(data.variantId);
                         localStorage.setItem('compare', JSON.stringify(compare));
 
@@ -568,6 +569,7 @@
                         AIZ.plugins.notify('warning', "{{ translate('Max variants reached for this category.') }}");
                     }
                 } else {
+                    // Handle for logged-in users
                     if (data.item_already_exists) {
                         AIZ.plugins.notify('warning', "{{ translate('This item is already in the compare list.') }}");
                     } else {
@@ -586,7 +588,6 @@
                 } else {
                     AIZ.plugins.notify('error', "{{ translate('Something went wrong. Please try again.') }}");
                 }
-
             });
         }
 
@@ -627,7 +628,6 @@
                 AIZ.plugins.notify('error', "{{ translate('Something went wrong. Please try again.') }}");
             });
         }
-
 
         function clearLocalStorage(event) {
             localStorage.clear(); 

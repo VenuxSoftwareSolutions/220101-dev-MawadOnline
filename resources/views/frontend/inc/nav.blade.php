@@ -232,7 +232,8 @@
                     <!-- Wishlist -->
                     <div class="dd-none d-lg-block mr-3 mt-2" data-hover="dropdown">
                         <div class="nav-cart-box dropdown h-100" style="width: max-content;">
-                            <a href="{{ route('wishlists.index') }}" class="d-flex align-items-center text-dark"
+                            <!-- Link for Compare -->
+                            <a href="{{ route('compare') }}" class="d-flex align-items-center text-dark"
                                 data-toggle="tooltip" data-title="{{ translate('Compare') }}" data-placement="top">
                                 <span class="position-relative d-inline-block">
                                     <svg width="28" height="28" viewBox="0 0 32 32" fill="none"
@@ -246,19 +247,15 @@
                                         <path d="M27.3333 12.0134H4.66666" stroke="#F3F4F5" stroke-width="2"
                                             stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
-
-                                    <a href="{{ route('compare') }}">
-                                        <span id="compare_items_sidenav" class="badge badge-counter-compare font-prompt">
-                                            0
-                                        </span>
-                                    </a>
-                                    
-
+                                    <!-- Compare Item Count Badge -->
+                                    <span id="compare_items_sidenav" class="badge badge-counter-compare font-prompt">
+                                        0
+                                    </span>
                                 </span>
                             </a>
-
                         </div>
                     </div>
+                    
                     <div class="d-none d-lg-block mr-3 mt-2" style="margin-left: 20px;">
                         <div class="" id="wishlist">
                             @include('frontend.' . get_setting('homepage_select') . '.partials.wishlist')
@@ -786,7 +783,8 @@
 
                 let combinedCount = sessionCount + localCount; */
 
-                compareBadge.innerHTML = sessionCount;
+                let compareCount = {{ get_compare_counts (Auth::id()) }};
+                compareBadge.innerHTML = compareCount;
 
             }
         });

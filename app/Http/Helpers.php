@@ -49,6 +49,7 @@ use App\Models\FlashDealProduct;
 use App\Models\AuctionProductBid;
 use App\Models\ManualPaymentMethod;
 use App\Models\SellerPackagePayment;
+use App\Models\CompareList;
 use App\Utility\NotificationUtility;
 use Intervention\Image\Facades\Image;
 use App\Http\Resources\V2\CarrierCollection;
@@ -1839,6 +1840,16 @@ if (!function_exists('get_product_attribute_value')) {
         return ProductAttributeValues::where('id_products', $productId)
             ->where('id_attribute', $attributeId)
             ->value('value');
+    }
+}
+if (!function_exists('get_compare_counts')) {
+    function get_compare_counts($userId)
+    {
+        return CompareList::where('user_id', $userId)
+            ->get()
+            ->reduce(function ($total, $compareList) {
+                return $total + count($compareList->variants);
+            }, 0);
     }
 }
 

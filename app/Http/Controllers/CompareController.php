@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
+use App\Models\CompareList;
 
 use App\Models\Category;
 use App\Models\Product;
@@ -13,13 +15,60 @@ class CompareController extends Controller
 {
     public function index(Request $request)
     {
-        //dd($request->session()->get('compare'));
-        //$categories = Category::all();
-        return view('frontend.view_compare');
+        $user = Auth::user();
+
+        $compareList = $this->fetchCompareListData();
+        return view('frontend.view_compare', compact('compareList'));
+
     }
+    private function fetchCompareListData()
+    {
+        $compareData = [];
+
+        $categories = DB::table('compare_lists')
+            ->where('user_id', Auth::user()->id)
+            ->join('categories', 'compare_lists.category_id', '=', 'categories.id')
+            ->select('compare_lists.category_id', 'categories.name as category_name')
+            ->distinct()
+            ->orderBy('compare_lists.updated_at', 'desc') 
+            ->get();
+        foreach ($categories as $category) {
+            $variantIds = DB::table('compare_lists')
+                ->where('category_id', $category->category_id)
+                ->pluck('variants')
+                ->map(function ($variant) {
+                    return json_decode($variant, true);
+                })
+                ->flatten()
+                ->unique();
+
+            $variants = DB::table('products')
+                ->whereIn('id', $variantIds)
+                ->get();
+
+
+            if ($variants->count() > 1) {
+                $compareData[] = [
+                    'id' => $category->category_id,
+                    'category_name' => $category->category_name,
+                    'variants' => $variants,
+                ];
+            }
+        }
+
+        return $compareData;
+
+
+    }
+
 
     public function reset(Request $request)
     {
+        $user = Auth::user();
+        if ($user) {
+            CompareList::where('user_id', $user->id)->delete();
+        }
+
         $request->session()->forget('compare');
         $request->session()->forget('compareData');
 
@@ -34,54 +83,55 @@ class CompareController extends Controller
         $leafCategoryId = DB::table('product_categories')
             ->where('product_id', $variantId)
             ->value('category_id');
-    
+
         if (!$leafCategoryId) {
             return response()->json(['error' => 'Invalid variant'], 400);
         }
-    
+
         $leafCategoryName = DB::table('categories')
             ->where('id', $leafCategoryId)
             ->value('name');
-        
+
         if ($user) {
-            $compare = $request->session()->get('compare', collect());
-                
-            if (isset($compare[$leafCategoryId]) && $compare[$leafCategoryId]->contains($variantId)) {
-                return response()->json(['item_already_exists' => true]);
-            }
-    
+            $compareList = CompareList::firstOrCreate(
+                ['user_id' => $user->id, 'category_id' => $leafCategoryId],
+                ['category_name' => $leafCategoryName, 'variants' => []]
+            );
+
+
             if ($request->has('localStorageCompare')) {
                 $localStorageCompare = collect($request->input('localStorageCompare'));
-                $localStorageCompare->each(function ($variants, $categoryId) use (&$compare) {
-                    if (!isset($compare[$categoryId])) {
-                        $compare[$categoryId] = collect();
+                $localStorageCompare->each(function ($variants, $categoryId) use ($user) {
+                    $compareList = CompareList::firstOrCreate(
+                        ['user_id' => $user->id, 'category_id' => $categoryId],
+                        ['category_name' => DB::table('categories')->where('id', $categoryId)->value('name'), 'variants' => []]
+                    );
+
+                    $existingVariants = collect($compareList->variants);
+                    $variants = collect($variants);
+
+                    $mergedVariants = $existingVariants->merge($variants)->unique();
+
+                    if ($mergedVariants->count() > config('app.compare_list_num_variants', 5)) {
+                        $mergedVariants = $mergedVariants->slice(-config('app.compare_list_num_variants', 3));
                     }
-                    foreach ($variants as $variantId) {
-                        if (!$compare[$categoryId]->contains($variantId)) {
-                            if ($compare[$categoryId]->count() >= config('app.compare_list_num_variants', 3)) {
-                                $compare[$categoryId]->forget(0);
-                            }
-                            $compare[$categoryId]->push($variantId);
-                        }
-                    }
+
+                    $compareList->update(['variants' => $mergedVariants->values()->all()]);
                 });
             }
-    
-            if (!isset($compare[$leafCategoryId])) {
-                $compare[$leafCategoryId] = collect();
+            $variants = collect($compareList->variants);
+            if ($variants->contains($variantId)) {
+                return response()->json(['item_already_exists' => true]);
             }
-            if (!$compare[$leafCategoryId]->contains($variantId)) {
-                if ($compare[$leafCategoryId]->count() >= config('app.compare_list_num_variants', 3)) {
-                    $compare[$leafCategoryId]->forget(0);
-                }
-                $compare[$leafCategoryId]->push($variantId);
-            }
-            
-            $request->session()->put('compare', $compare);
-            $compareData = $this->fetchCompareData($compare);
-            $request->session()->put('compareData', $compareData);
 
-            return view('frontend.' . get_setting('homepage_select') . '.partials.compare', compact('compare','compareData'));
+            if ($variants->count() >= config('app.compare_list_num_variants', 5)) {
+                $variants->shift();
+            }
+
+
+            $variants->push($variantId);
+
+            $compareList->update(['variants' => $variants->values()->all()]);
         } else {
             return response()->json(data: [
                 'localStorageAction' => 'add',
@@ -91,37 +141,6 @@ class CompareController extends Controller
             ]);
         }
     }
-    
-    private function fetchCompareData($compare)
-    {
-        $data = [];
-        foreach ($compare as $categoryId => $variantIds) {
-            $categoryName = DB::table('categories')
-                ->where('id', $categoryId)
-                ->value('name');
-    
-            $variants = DB::table('products')
-                ->whereIn('id', $variantIds)
-                ->get();
-    
-            $data[] = [
-                'category_name' => $categoryName,
-                'variants' => $variants
-            ];
-        }
-        return $data;
-    }
-    public function getCompareData(Request $request)
-    {
-        $compare = $request->input('compare', []);
-        $compareData = $this->fetchCompareData($compare);
-
-        return response()->json([
-            'success' => true,
-            'compareData' => $compareData,
-        ]);
-    }
-
 
 
     public function removeFromCompare(Request $request)
@@ -131,28 +150,29 @@ class CompareController extends Controller
         $user = Auth::user();
 
         if ($user) {
-            $compare = $request->session()->get('compare', collect());
+            $compareList = CompareList::where('user_id', $user->id)
+                ->where('category_id', $categoryId)
+                ->first();
 
-            if (isset($compare[$categoryId])) {
-                $compare[$categoryId] = $compare[$categoryId]->filter(function ($id) use ($variantId) {
+            if ($compareList) {
+                $variants = collect($compareList->variants)->filter(function ($id) use ($variantId) {
                     return $id != $variantId;
                 });
 
-                if ($compare[$categoryId]->isEmpty()) {
-                    unset($compare[$categoryId]);
+                if ($variants->isEmpty()) {
+                    $compareList->delete();
+                } else {
+                    $compareList->update(['variants' => $variants->values()->all()]);
                 }
-
-                $request->session()->put('compare', $compare);
-                $compareData = $this->fetchCompareData($compare);
-                $request->session()->put('compareData', $compareData);
-    
             }
 
+          
             return response()->json(['success' => true]);
         } else {
             return response()->json(['success' => false, 'message' => 'Login required'], 401);
         }
     }
+
 
 
     public function details($unique_identifier)

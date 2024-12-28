@@ -1,10 +1,7 @@
 @extends('frontend.layouts.app')
 
 @section('content')
-    @php
-        $compareList = Auth::check() ? (Session::has('compareData') ? Session::get('compareData') : []) : [];
-
-    @endphp
+   
     <input type="hidden" id="compare-data" value="{{ json_encode($compareList) }}">
     <section class="mb-4 mt-3">
         <div class="container text-left">
