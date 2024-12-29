@@ -15,7 +15,7 @@
                     $payment_status = $order->orderDetails->where('seller_id', Auth::user()->owner_id)->first()->payment_status;
                 @endphp
                 @if (get_setting('product_manage_by_admin') == 0)
-                    <div class="col-md-3 ml-auto">
+                    <!-- <div class="col-md-3 ml-auto">
                         <label for="update_payment_status">{{ translate('Payment Status') }}</label>
                         @if (
                             ($order->payment_type == 'cash_on_delivery' ||
@@ -31,17 +31,39 @@
                         @else
                             <input type="text" class="form-control" value="{{ translate($payment_status) }}" disabled>
                         @endif
-                    </div>
+                    </div> -->
+                    <!-- <div class="col-md-3 ml-auto">
+                        <label for="update_delivery_status">{{ translate('Delivery Status') }}</label>
+                        @if ($delivery_status != 'delivered' && $delivery_status != 'cancelled')
+                            <select class="form-control aiz-selectpicker" data-minimum-results-for-search="Infinity"
+                                id="update_delivery_status">
+                                <option value="pending" @if ($delivery_status == 'pending') selected @endif>
+                                    {{ translate('Pending') }}</option>
+                                <option value="confirmed" @if ($delivery_status == 'confirmed') selected @endif>
+                                    {{ translate('Confirmed') }}</option>
+                                <option value="picked_up" @if ($delivery_status == 'picked_up') selected @endif>
+                                    {{ translate('Picked Up') }}</option>
+                                <option value="on_the_way" @if ($delivery_status == 'on_the_way') selected @endif>
+                                    {{ translate('On The Way') }}</option>
+                                <option value="delivered" @if ($delivery_status == 'delivered') selected @endif>
+                                    {{ translate('Delivered') }}</option>
+                                <option value="cancelled" @if ($delivery_status == 'cancelled') selected @endif>
+                                    {{ translate('Cancel') }}</option>
+                            </select>
+                        @else
+                            <input type="text" class="form-control" value="{{ translate(ucfirst(str_replace('_', ' ', $delivery_status))) }}" disabled>
+                        @endif
+                    </div> -->
                 @endif
             </div>
             <div class="row gutters-5 mt-2">
                 <div class="col text-md-left text-center">
                     @if (json_decode($order->shipping_address))
                         <address>
-                            <strong class="text-main">
+                            <!-- <strong class="text-main">
                                 {{ json_decode($order->shipping_address)->name }}
-                            </strong><br>
-                            {{ json_decode($order->shipping_address)->email }}<br>
+                            </strong><br> -->
+                            <!-- {{ json_decode($order->shipping_address)->email }}<br> -->
                             {{ json_decode($order->shipping_address)->phone }}<br>
                             {{ json_decode($order->shipping_address)->address }},
                             {{ json_decode($order->shipping_address)->city }}, @if (isset(json_decode($order->shipping_address)->state))
@@ -113,7 +135,7 @@
                                 <th data-breakpoints="lg" class="min-col">#</th>
                                 <th width="10%">{{ translate('Photo') }}</th>
                                 <th class="text-uppercase">{{ translate('Description') }}</th>
-                                <th data-breakpoints="lg" class="text-uppercase">{{ translate('Delivery Type') }}</th>
+                                <th data-breakpoints="lg" class="text-uppercase">{{ translate('Shipping Type') }}</th>
                                 <th data-breakpoints="lg" class="min-col text-uppercase text-center">
                                     {{ translate('Qty') }}
                                 </th>
@@ -121,8 +143,8 @@
                                     {{ translate('Price') }}</th>
                                 <th data-breakpoints="lg" class="min-col text-uppercase text-right">
                                     {{ translate('Total') }}</th>
-                                <th data-breakpoints="lg" class="min-col text-uppercase text-right">
-                                    {{ translate('Order Status') }}</th>
+                                    <th data-breakpoints="lg" class="min-col text-uppercase text-right">
+                                    {{ translate('Status') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -465,16 +487,16 @@
                             </table>
                         </div>
                         <div class="row">
-                            <div class=" text-left col-8">
+                            <div class=" text-left col-6">
                                 <div class="form-group row">
-                                    <label class="col-md-3">{{ __('order.total_quantity') }}</label>
-                                    <input class="form-control col-md-6" type="number" id="quantity_requested" />
+                                    <label class="col-md-4">{{__('order.total_quantity')}}</label>
+                                    <input class="form-control col-md-8" type="number" id="quantity_requested" />
                                 </div>
                             </div>
-                            <div class="form-group text-right col-4">
-                                <button id="save-stock-movment" data-quantity_requested
-                                    onclick="handleSaveStockMovement(this)"
-                                    class="btn btn-primary rounded-0 w-150px">{{ translate('Save') }}</button>
+                            <!-- Save button -->
+                            <div class="form-group text-right col-6">
+                                <button onClick="window.location.reload();"  class="btn btn-danger rounded-0 w-150px">{{translate('Cancel')}}</button>
+                                <button id="save-stock-movment" data-quantity_requested onclick="handleSaveStockMovement(this)"  class="btn btn-primary rounded-0 w-150px">{{__('order.confirm_order')}}</button>
                             </div>
                         </div>
                     </div>
@@ -546,7 +568,6 @@
                 $('#warehouses_table').html('');
                 $('#warehouses_table').append(tr);
                 $('#warehouse-modal').modal("show");
-                AIZ.plugins.notify('success', '{{ translate('Order status has been updated') }}');
             });
         }
 
