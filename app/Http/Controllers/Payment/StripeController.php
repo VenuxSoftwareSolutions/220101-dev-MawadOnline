@@ -46,7 +46,7 @@ class StripeController extends Controller
             }
         }
 
-        return view('frontend.payment.stripe', compact("amount"));
+        return view('frontend.payment.stripe', compact("amount", "client_reference_id"));
     }
 
     public function create_checkout_session(Request $request)
@@ -135,7 +135,7 @@ class StripeController extends Controller
             $paymentIntentId = $request->query('payment_intent');
 
             if ($paymentIntentId === null) {
-                flash(translate('Payment failed: Missing payment intent ID'))->error();
+                flash(translate('Payment failed, Please try again later!'))->error();
                 return redirect()->route('home');
             }
 

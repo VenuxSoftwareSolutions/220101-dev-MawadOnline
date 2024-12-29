@@ -288,6 +288,9 @@ class OrderController extends Controller
         try {
             $warehouses = $request->warehouses;
             $order = OrderDetail::find($request->order);
+            $globalOrder = Order::findOrFail($order->order_id);
+            $globalOrder->delivery_status = 'in_progress';
+            $globalOrder->save();
             $order->delivery_status = 'in_preparation';
             $order->save();
             foreach ($warehouses as $key => $value) {

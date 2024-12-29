@@ -59,7 +59,7 @@
                         <th data-breakpoints="lg">{{ translate('Customer') }}</th>
                         <th data-breakpoints="md">{{ translate('Amount') }}</th>
                         <th data-breakpoints="lg">{{ translate('Delivery Status') }}</th>
-                        <th>{{ translate('Payment Status') }}</th>
+                        <!-- <th>{{ translate('Payment Status') }}</th> -->
                         <th class="text-right">{{ translate('Options') }}</th>
                     </tr>
                 </thead>
@@ -93,13 +93,13 @@
                                 <td>
                                     {{ translate(ucfirst(str_replace('_', ' ', $order->delivery_status))) }}
                                 </td>
-                                <td>
+                                <!-- <td>
                                     @if ($order->payment_status == 'paid')
                                         <span class="badge badge-inline badge-success">{{ translate('Paid') }}</span>
                                     @else
                                         <span class="badge badge-inline badge-danger">{{ translate('Unpaid') }}</span>
                                     @endif
-                                </td>
+                                </td> -->
                                 <td class="text-right">
                                     @if (addon_is_activated('pos_system') && $order->order_from == 'pos')
                                         <a class="btn btn-soft-success btn-icon btn-circle btn-sm"
