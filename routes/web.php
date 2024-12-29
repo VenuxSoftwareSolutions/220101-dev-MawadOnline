@@ -380,7 +380,7 @@ Route::post('/shops/contact_person', [ShopController::class, 'storeContactPerson
 Route::post('/shops/warehouse', [ShopController::class, 'storeWarehouse'])->name('shops.warehouses');
 Route::post('/shops/payout_info', [ShopController::class, 'storePayoutInfo'])->name('shops.payout_info');
 Route::post('/shops/register', [ShopController::class, 'storeShopRegister'])->name('shops.register');
-Route::get('dictionary-words', [ShopController::class, 'getWords'])->name('get.words');
+Route::get('dictionary-words', [ShopController::class, 'getWords'])->name(name: 'get.words');
 
 Route::get('/instamojo/payment/pay-success', [InstamojoController::class, 'success'])->name('instamojo.success');
 
