@@ -253,6 +253,8 @@ Route::controller(CompareController::class)->group(function () {
     Route::get('/compare/details/{id}', 'details')->name('compare.details');
     Route::post('/compare/remove', [CompareController::class, 'removeFromCompare'])->name('compare.removeFromCompare');
     Route::post('/compare/data', [CompareController::class, 'getCompareData'])->name('compare.data');
+    Route::post('/compare/local', [CompareController::class, 'fetchLocalCompareData'])->name('compare.local');
+
 
 });
 

@@ -17,9 +17,14 @@ class CompareController extends Controller
     {
         $user = Auth::user();
 
-        $compareList = $this->fetchCompareListData();
+        if (!$user) {
+            $compareList = [];
+        } else {
+            $compareList = $this->fetchCompareListData($user->id);
+        }
+    
         return view('frontend.view_compare', compact('compareList'));
-
+    
     }
     private function fetchCompareListData()
     {
@@ -46,8 +51,8 @@ class CompareController extends Controller
                 ->whereIn('id', $variantIds)
                 ->get();
 
-
-            if ($variants->count() > 1) {
+                //a condition depends on business requirement to display or not compare list containing less than two items
+            if ($variants->count() > 1 ) {
                 $compareData[] = [
                     'id' => $category->category_id,
                     'category_name' => $category->category_name,
@@ -60,6 +65,28 @@ class CompareController extends Controller
 
 
     }
+    public function fetchLocalCompareData(Request $request)
+    {
+        $localCompareData = $request->compareData; 
+        $decodedData = json_decode($localCompareData, true);
+
+        $compareData = [];
+        foreach ($decodedData as $categoryId => $variantIds) {
+            $variants = DB::table('products')->whereIn('id', $variantIds)->get();
+            if ($variants->count() > 0) {
+                $category = DB::table('categories')->where('id', $categoryId)->first();
+                $compareData[] = [
+                    'id' => $categoryId,
+                    'category_name' => $category->name ?? 'Unknown Category',
+                    'variants' => $variants,
+                ];
+            }
+        }
+
+        $html = view('frontend.partials.compare_table', compact('compareData'))->render();
+        return response()->json(['html' => $html]);
+    }
+
     public function syncCompareList(Request $request)
     {
         $user = Auth::user();
@@ -92,8 +119,6 @@ class CompareController extends Controller
 
         return response()->json(['message' => 'Compare list synced successfully']);
     }
-
-
     public function reset(Request $request)
     {
         $user = Auth::user();
