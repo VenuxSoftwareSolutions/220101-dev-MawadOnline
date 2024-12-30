@@ -4,7 +4,7 @@
 
 @section('style')
     <style>
-         .loader {
+        .loader {
             border: 16px solid #f3f3f3;
             border-radius: 50%;
             border-top: 16px solid #3498db;
@@ -13,19 +13,28 @@
             animation: spin 2s linear infinite;
             margin: auto;
         }
+
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
+
         #payment-form {
             max-width: 400px;
             margin: 50px auto;
         }
+
         #card-element {
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
+
         .error {
             color: red;
             margin-top: 5px;
@@ -34,7 +43,7 @@
 @endsection
 
 @section('content')
-<section class="pt-5 mb-4">
+    <section class="pt-5 mb-4">
         <div class="container">
             <div class="row">
                 <div class="col-xl-8 mx-auto">
@@ -87,14 +96,17 @@
                         <div id="spinner-wrapper" class="d-none c-preloader text-center p-3">
                             <i class="las la-spinner la-spin la-3x"></i>
                         </div>
-                        <input type="email" id="email" placeholder="{{ __('Email Address') }}" class="form-control mb-2" />
+                        <input type="email" id="email" placeholder="{{ __('Email Address') }}"
+                            class="form-control mb-2" />
                         <div id="card-element">
                             <div class="c-preloader text-center p-3">
                                 <i class="las la-spinner la-spin la-3x"></i>
                             </div>
                         </div>
-                        <input type="text" id="name" placeholder="{{ __('Full Name') }}" class="form-control my-2" />
-                        <button id="submit-button" class="form-control btn btn-primary">{{ __("Pay") }}</button>
+                        <input type="text" id="name" placeholder="{{ __('Full Name') }}"
+                            class="form-control my-2" />
+                        <button id="submit-button" class="form-control btn btn-primary">{{ __('Pay') }}
+                            {{ single_price($amount / 100) }}</button>
                         <div id="error-message" class="error"></div>
                     </div>
                 </div>
@@ -106,7 +118,7 @@
 @section('script')
     <script src="https://js.stripe.com/v3/"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", async function () {
+        document.addEventListener("DOMContentLoaded", async function() {
             const stripe = Stripe('{{ env('STRIPE_KEY') }}');
             const elements = stripe.elements();
 
@@ -126,7 +138,7 @@
             const errorMessage = document.getElementById('error-message');
             const spinnerWrapper = document.getElementById("spinner-wrapper");
 
-            submitButton.addEventListener('click', async function () {
+            submitButton.addEventListener('click', async function() {
                 spinnerWrapper.classList.remove("d-none");
                 errorMessage.textContent = '';
                 submitButton.disabled = true;
@@ -135,7 +147,8 @@
                 const email = document.getElementById('email').value;
 
                 if (!name || !email) {
-                    AIZ.plugins.notify('danger', '{{ __("Please provide your name and email.") }}');
+                    AIZ.plugins.notify('danger',
+                    '{{ __('Please provide your name and email.') }}');
                     submitButton.disabled = false;
                     spinnerWrapper.classList.add("d-none");
                     return;
@@ -144,25 +157,34 @@
                 try {
                     spinnerWrapper.classList.remove("d-none");
 
-                    const response = await fetch('{{ route("stripe.create_payment_intent") }}', {
+                    const response = await fetch('{{ route('stripe.create_payment_intent') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
                         },
-                        body: JSON.stringify({ name, email, amount: {{ $amount }} }),
+                        body: JSON.stringify({
+                            name,
+                            email,
+                            amount: {{ $amount }}
+                        }),
                     });
 
-                    const { client_secret } = await response.json();
+                    const {
+                        client_secret
+                    } = await response.json();
 
                     if (client_secret === undefined) {
                         spinnerWrapper.classList.add("d-none");
                         throw new Error("No client secret returned from server.");
                     }
 
-                    let return_url = '{{ route("stripe.success") }}';
+                    let return_url = '{{ route('stripe.success') }}';
 
-                    const { paymentIntent, error } = await stripe.confirmCardPayment(client_secret, {
+                    const {
+                        paymentIntent,
+                        error
+                    } = await stripe.confirmCardPayment(client_secret, {
                         payment_method: {
                             card: cardElement,
                             billing_details: {
@@ -178,27 +200,30 @@
                         submitButton.disabled = false;
                         spinnerWrapper.classList.add("d-none");
 
-                        fetch("{{ route('cancel_checkout', ["combined_order_id" => $client_reference_id]) }}", {
-                            method: "DELETE",
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                    .getAttribute('content')
-                            },
-                        }).then(response => response.json())
-                        .then((data) => {
-                            if (data.error === false) {
-                                location.href = "/cart";
-                            }
-                        }).catch((error) => {
-                            AIZ.plugins.notify('danger', '{{ __("Something went wrong!") }}')
-                        });
+                        fetch("{{ route('cancel_checkout', ['combined_order_id' => $client_reference_id]) }}", {
+                                method: "DELETE",
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector(
+                                            'meta[name="csrf-token"]')
+                                        .getAttribute('content')
+                                },
+                            }).then(response => response.json())
+                            .then((data) => {
+                                if (data.error === false) {
+                                    location.href = "/cart";
+                                }
+                            }).catch((error) => {
+                                AIZ.plugins.notify('danger',
+                                    '{{ __('Something went wrong!') }}')
+                            });
                     } else {
                         spinnerWrapper.classList.add("d-none");
                         location.href = `${return_url}?payment_intent=${paymentIntent.id}`;
                     }
                 } catch (error) {
-                    AIZ.plugins.notify('danger', '{{ __("An error occurred. Please try again.") }}')
+                    AIZ.plugins.notify('danger',
+                        '{{ __('An error occurred. Please try again.') }}')
 
                     spinnerWrapper.classList.add("d-none");
                     submitButton.disabled = false;
