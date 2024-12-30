@@ -14,8 +14,12 @@
                 </div>
 
                 <div class="compare-container">
-                    <!-- The dynamic content will be rendered here -->
-                </div>
+                        @if(Auth::check())
+                        @include('frontend.partials.compare_table', ['compareData' => $compareList])
+                    @else
+                        {{-- Compare data will be loaded dynamically for guests --}}
+                    @endif
+               </div>
             </div>
         </div>
     </section>
@@ -43,29 +47,33 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const compareData = localStorage.getItem('compare');
-
-        if (!compareData) {
+        let isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
+        if (!isLoggedIn) {
+                fetch('/compare/local', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ compareData })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.html) {
+                    document.querySelector('.compare-container').innerHTML = data.html;
+                } else {
+                    console.error('Failed to load compare data.');
+                }
+            })
+            .catch(error => console.error('Error fetching compare data:', error));
+            if (!compareData) {
             console.log('No compare data found in local storage.');
             return;
         }
+        }
+     
 
-        fetch('/compare/local', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify({ compareData })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.html) {
-                document.querySelector('.compare-container').innerHTML = data.html;
-            } else {
-                console.error('Failed to load compare data.');
-            }
-        })
-        .catch(error => console.error('Error fetching compare data:', error));
+        
     });
 
 </script>   

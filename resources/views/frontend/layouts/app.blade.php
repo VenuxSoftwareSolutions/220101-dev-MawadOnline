@@ -448,24 +448,7 @@
                     });
                 });
             }
-            const isLoggedIn = '{{ Auth::check() }}' === '1';
-            const compareData = JSON.parse(localStorage.getItem('compare'));
-            if (isLoggedIn) {
-
-                if (compareData) {
-                    $.post('{{ route('compare.syncCompareList') }}', {
-                        _token: AIZ.data.csrf,
-                        localStorageCompare: compareData
-                    }, function (response) {
-                        if (response.message) {
-                            console.log(response.message);
-                            //localStorage.removeItem('compare');
-                        }
-                    }).fail(function (jqXHR) {
-                        console.error('Failed to sync compare list:', jqXHR.responseJSON);
-                    });
-                }
-            }
+           
         });
 
         $('#search').on('keyup', function(){
@@ -555,7 +538,14 @@
         }
 
         function addToCompare(id) {
-            let localCompare = JSON.parse(localStorage.getItem('compare')) || {};
+            let localCompare;
+            try {
+                localCompare = JSON.parse(localStorage.getItem('compare')) || {};
+            } catch (e) {
+                console.error('Invalid JSON in localStorage for key "compare":', e);
+                localCompare = {};
+                localStorage.removeItem('compare');
+            }
 
             $.post('{{ route('compare.addToCompare') }}', {
                 _token: AIZ.data.csrf,
@@ -589,15 +579,17 @@
                     // Handle for logged-in users
                     if (data.item_already_exists) {
                         AIZ.plugins.notify('warning', "{{ translate('This item is already in the compare list.') }}");
+                    } else if (data.max_limit_reached) {
+                        AIZ.plugins.notify('warning', "{{ translate('Max variants reached for this category.') }}");
                     } else {
                         localStorage.setItem('compare', JSON.stringify(data.compareData));
 
-                            $('#compare').html(data.compareData);
+                        $('#compare').html(data.compareData);
 
-                            let compareCount = parseInt($('#compare_items_sidenav').html());
-                            $('#compare_items_sidenav').html(compareCount + 1);
+                        let compareCount = parseInt($('#compare_items_sidenav').html());
+                        $('#compare_items_sidenav').html(compareCount + 1);
 
-                            AIZ.plugins.notify('success', "{{ translate('Item has been added to the compare list.') }}");
+                        AIZ.plugins.notify('success', "{{ translate('Item has been added to the compare list.') }}");
                     }
                 }
             })
@@ -607,8 +599,9 @@
                 } else {
                     AIZ.plugins.notify('error', "{{ translate('Something went wrong. Please try again.') }}");
                 }
-            });
+        });
         }
+
 
         $(document).on('click', '.confirm-delete', function(e) {
             e.preventDefault();
