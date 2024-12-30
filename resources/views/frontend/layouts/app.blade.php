@@ -448,6 +448,21 @@
                     });
                 });
             }
+            const compareData = JSON.parse(localStorage.getItem('compare'));
+            if (compareData) {
+                $.post('{{ route('compare.syncCompareList') }}', {
+                    _token: AIZ.data.csrf,
+                    localStorageCompare: compareData
+                }, function (response) {
+                    if (response.message) {
+                        console.log(response.message);
+                        //localStorage.removeItem('compare');
+                    }
+                }).fail(function (jqXHR) {
+                    console.error('Failed to sync compare list:', jqXHR.responseJSON);
+                });
+            }
+
         });
 
         $('#search').on('keyup', function(){
@@ -547,7 +562,6 @@
                 if (data.localStorageAction) {
                     // Handle for guest users
                     let compare = JSON.parse(localStorage.getItem('compare')) || {};
-
                     if (!compare[data.categoryId]) {
                         compare[data.categoryId] = [];
                     }
@@ -573,12 +587,14 @@
                     if (data.item_already_exists) {
                         AIZ.plugins.notify('warning', "{{ translate('This item is already in the compare list.') }}");
                     } else {
-                        $('#compare').html(data);
+                        localStorage.setItem('compare', JSON.stringify(data.compareData));
 
-                        let compareCount = parseInt($('#compare_items_sidenav').html());
-                        $('#compare_items_sidenav').html(compareCount + 1);
+                            $('#compare').html(data.compareData);
 
-                        AIZ.plugins.notify('success', "{{ translate('Item has been added to the compare list.') }}");
+                            let compareCount = parseInt($('#compare_items_sidenav').html());
+                            $('#compare_items_sidenav').html(compareCount + 1);
+
+                            AIZ.plugins.notify('success', "{{ translate('Item has been added to the compare list.') }}");
                     }
                 }
             })

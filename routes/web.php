@@ -368,6 +368,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/addresses/destroy/{id}', 'destroy')->name('addresses.destroy');
         Route::get('/addresses/set-default/{id}', 'set_default')->name('addresses.set_default');
     });
+
+    //compare list sync after login 
+    Route::post('/compare/sync', [CompareController::class, 'syncCompareList'])->name('compare.syncCompareList');
+
 });
 
 Route::resource('shops', ShopController::class)->middleware('handle-demo-login');

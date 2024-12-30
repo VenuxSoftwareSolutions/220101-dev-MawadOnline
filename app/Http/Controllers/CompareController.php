@@ -60,6 +60,38 @@ class CompareController extends Controller
 
 
     }
+    public function syncCompareList(Request $request)
+    {
+        $user = Auth::user();
+
+        if (!$user || !$request->has('localStorageCompare')) {
+            return response()->json(['error' => 'No user logged in or no local storage data provided'], 400);
+        }
+
+        $localStorageCompare = collect($request->input('localStorageCompare'));
+
+        $localStorageCompare->each(function ($variants, $categoryId) use ($user) {
+            $categoryName = DB::table('categories')->where('id', $categoryId)->value('name');
+
+            $compareList = CompareList::firstOrCreate(
+                ['user_id' => $user->id, 'category_id' => $categoryId],
+                ['category_name' => $categoryName, 'variants' => []]
+            );
+
+            $existingVariants = collect($compareList->variants);
+            $variants = collect($variants);
+
+            $mergedVariants = $existingVariants->merge($variants)->unique();
+
+            if ($mergedVariants->count() > config('app.compare_list_num_variants', 5)) {
+                $mergedVariants = $mergedVariants->slice(-config('app.compare_list_num_variants', 5));
+            }
+
+            $compareList->update(['variants' => $mergedVariants->values()->all()]);
+        });
+
+        return response()->json(['message' => 'Compare list synced successfully']);
+    }
 
 
     public function reset(Request $request)
@@ -93,6 +125,7 @@ class CompareController extends Controller
             ->value('name');
 
         if ($user) {
+
             $compareList = CompareList::firstOrCreate(
                 ['user_id' => $user->id, 'category_id' => $leafCategoryId],
                 ['category_name' => $leafCategoryName, 'variants' => []]
@@ -137,7 +170,9 @@ class CompareController extends Controller
                 'localStorageAction' => 'add',
                 'variantId' => $variantId,
                 'categoryId' => $leafCategoryId,
-                'categoryName' => $leafCategoryName
+                'categoryName' => $leafCategoryName,
+                'maxVariants' => config('app.compare_list_num_variants', 5)
+
             ]);
         }
     }
