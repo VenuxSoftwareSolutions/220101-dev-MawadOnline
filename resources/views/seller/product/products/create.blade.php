@@ -2061,7 +2061,7 @@
                 })
 
 
-            $('#short_description').ongeneral_attributes('keyup', function(event) {
+            $('#short_description').on('keyup', function(event) {
                 var currentLength = $(this).val().length;
                 var maxCharacters = 512;
                 let charactersLeft = maxCharacters - currentLength;
