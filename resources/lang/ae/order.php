@@ -6,4 +6,5 @@ return [
  'on_the_way'             => 'في الطريق',
  'total_quantity'         => 'الكمية الإجمالية',
  'quantity_entered_must_be_equal_to_the_quantity_requested'=>'يجب أن تكون الكمية المدخلة مساوية للكمية المطلوبة',
+ 'confirm_order' => 'تأكيد الطلب',
 ];

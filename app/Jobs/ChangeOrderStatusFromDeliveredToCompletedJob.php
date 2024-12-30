@@ -32,6 +32,7 @@ class ChangeOrderStatusFromDeliveredToCompletedJob implements ShouldQueue
     public function handle()
     {
         $this->fetchDeliveredOrdres();
+        $this->fetchCompletedOrdres();
     }
 
     protected function fetchDeliveredOrdres(){
@@ -43,6 +44,26 @@ class ChangeOrderStatusFromDeliveredToCompletedJob implements ShouldQueue
                                    if($days >= 7){
                                        $order->update(['delivery_status'=>"completed"]);
                                    }
+                                });
+        }catch(Exception $e){
+            Log::error('an error when fetch delivered ordres',$e->getMessage());
+        }
+    }
+
+    protected function fetchCompletedOrdres(){
+        try{
+            Order::where(['delivery_status','!=','completed'])
+                                ->get()
+                                ->each(function($order){
+                                   foreach ($order->orderDetails as $key => $value) {
+                                     if($value->delivery_status == 'completed'){
+                                        $status = 'completed';
+                                     }else{
+                                        $status = 'in_progress';
+                                     }
+                                   }
+                                   $order->delivery_status = $status;
+                                   $order->save();
                                 });
         }catch(Exception $e){
             Log::error('an error when fetch delivered ordres',$e->getMessage());

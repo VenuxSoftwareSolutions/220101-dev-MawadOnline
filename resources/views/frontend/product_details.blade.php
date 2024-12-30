@@ -297,11 +297,11 @@
                                             @if ($previewData['detailedProduct']['variationId'] || $previewData['detailedProduct']['product_id'])
     @php
         if ($previewData['detailedProduct']['variationId']) {
-            $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['variationId']);
+            $detailedProduct = get_single_product($previewData['detailedProduct']['variationId']);
         } else {
-            $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['product_id']);
+            $detailedProduct = get_single_product($previewData['detailedProduct']['product_id']);
         }
-        $totalRating = $detailedProduct->reviews->count();
+        $totalRating = $detailedProduct !== null ? $detailedProduct->reviews->count() : 0;
     @endphp
                                             <div
                                                 class="d-flex align-items-center justify-content-between justify-content-md-start">
@@ -1777,16 +1777,14 @@
                                         @if ($previewData['detailedProduct']['variationId'] || $previewData['detailedProduct']['product_id'])
                                             @php
                                                 if ($previewData['detailedProduct']['variationId']) {
-                                                    $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['variationId']);
+                                                    $detailedProduct = get_single_product($previewData['detailedProduct']['variationId']);
                                                 } else {
-                                                    $detailedProduct = App\Models\Product::find($previewData['detailedProduct']['product_id']);
+                                                    $detailedProduct = get_single_product($previewData['detailedProduct']['product_id']);
                                                 }
-                                                $totalRating = $detailedProduct->reviews->count();
+                                                $totalRating = $detailedProduct !== null ? $detailedProduct->reviews->count() : 0;
                                             @endphp
-                                            <div class="review-title fs-20 font-prompt-md text-left col-md-12">Total
-                                                Reviews</div>
-                                            <div class="review-subtitle fs-16 font-prompt-md text-left col-md-12">This
-                                                shows the average of reviews</div>
+                                            <div class="review-title fs-20 font-prompt-md text-left col-md-12">{{ __("Total Reviews") }}</div>
+                                            <div class="review-subtitle fs-16 font-prompt-md text-left col-md-12">{{ __("This shows the average of reviews") }}</div>
                                             <div class="row">
                                                 <div class="col-lg-4 col-md-6 col-12 mt-4 review-box p-4">
                                                     <div class="col-12 fs-48 font-prompt-md text-center">
