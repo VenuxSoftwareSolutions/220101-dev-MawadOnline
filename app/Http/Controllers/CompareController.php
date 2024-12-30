@@ -94,28 +94,32 @@ class CompareController extends Controller
         if (!$user || !$request->has('localStorageCompare')) {
             return response()->json(['error' => 'No user logged in or no local storage data provided'], 400);
         }
-
+        $maxVariants = compare_list_num_variants;
         $localStorageCompare = collect($request->input('localStorageCompare'));
 
-        $localStorageCompare->each(function ($variants, $categoryId) use ($user) {
+        $localStorageCompare->each(function ($variants, $categoryId) use ($user, $maxVariants) {
             $categoryName = DB::table('categories')->where('id', $categoryId)->value('name');
-
+    
             $compareList = CompareList::firstOrCreate(
                 ['user_id' => $user->id, 'category_id' => $categoryId],
                 ['category_name' => $categoryName, 'variants' => []]
             );
-
+    
             $existingVariants = collect($compareList->variants);
-            $variants = collect($variants);
-
-            $mergedVariants = $existingVariants->merge($variants)->unique();
-
-            if ($mergedVariants->count() > config('app.compare_list_num_variants', 5)) {
-                $mergedVariants = $mergedVariants->slice(-config('app.compare_list_num_variants', 5));
+            $newVariants = collect($variants)
+                ->filter(function ($variant) use ($existingVariants) {
+                    return !$existingVariants->contains($variant);
+                });
+    
+            // Merge and limit to the max allowed number of variants
+            $mergedVariants = $existingVariants->merge($newVariants)->unique();
+            if ($mergedVariants->count() > $maxVariants) {
+                $mergedVariants = $mergedVariants->slice(-$maxVariants);
             }
-
+    
             $compareList->update(['variants' => $mergedVariants->values()->all()]);
         });
+    
 
         return response()->json(['message' => 'Compare list synced successfully']);
     }
@@ -170,7 +174,7 @@ class CompareController extends Controller
 
                     $mergedVariants = $existingVariants->merge($variants)->unique();
 
-                    if ($mergedVariants->count() > config('app.compare_list_num_variants', 5)) {
+                    if ($mergedVariants->count() > compare_list_num_variants) {
                         $mergedVariants = $mergedVariants->slice(-config('app.compare_list_num_variants', 3));
                     }
 
@@ -182,7 +186,8 @@ class CompareController extends Controller
                 return response()->json(['item_already_exists' => true]);
             }
 
-            if ($variants->count() >= config('app.compare_list_num_variants', 5)) {
+            if ($variants->count() >= compare_list_num_variants) {
+                return response()->json(['max_limit_reached' => true]);
                 $variants->shift();
             }
 
@@ -196,7 +201,7 @@ class CompareController extends Controller
                 'variantId' => $variantId,
                 'categoryId' => $leafCategoryId,
                 'categoryName' => $leafCategoryName,
-                'maxVariants' => config('app.compare_list_num_variants', 5)
+                'maxVariants' => compare_list_num_variants
 
             ]);
         }
