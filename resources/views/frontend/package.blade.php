@@ -3,13 +3,18 @@
 @section('content')
     <section class="py-4 py-lg-5">
         <div class="container d-flex justify-content-center">
-            <div class="col-11 col-xl-10 p-0 fs-48 register-shop-title d-flex justify-content-start font-prompt pb-3 text-start">Become a Vendor</div>
+            <div class="col-11 col-xl-10 p-0 fs-48 register-shop-title d-flex justify-content-center font-prompt pb-0 text-center">Welcome to MawadOnline</div>
+        </div>
+        <div class="container d-flex justify-content-center">
+            <div class="col-11 col-lg-10 col-xl-9 p-0 fs-16 register-shop-desc d-flex justify-content-center font-prompt pb-4 text-center">
+                Unlock your business's full potential by joining MawadOnline—the UAE's premier marketplace for construction materials, equipment, and services. Register now to connect with a vast network of customers
+            </div>
         </div>
         <div class="container d-flex justify-content-center">
             <div class="col-11 col-xl-10 register-shop-style p-0">
                 <!-- e-shop registration header -->
                 <div class="col-12 register-shop-h d-flex justify-content-center">
-                    <span class="register-shop-h-text fs-16 font-prompt text-center">Make sure that you have the following documents handy and ready to upload</span>
+                    <span class="register-shop-h-text fs-16 font-prompt text-center">To ensure a smooth registration process, please have the following documents ready:</span>
                 </div>
                 <!-- e-shop demanded uploads -->
                 <div class="col-md-12 pt-5">
@@ -71,10 +76,20 @@
                 <div class="col-md-12 d-flex justify-content-center py-4">
                     <form action="{{ route('shops.create') }}">
                     <button type="submit" class="btn btn-secondary-base register-shop-btn text-white border-radius-16 fs-16 font-prompt py-2">
-                        Register your eShop
+                        Register Now
                     </button>
                     </form>
                 </div>
+            </div>
+        </div>
+        <div class="container d-flex justify-content-center">
+            <div class="col-10 p-0 pt-2 fs-15 register-shop-desc d-flex justify-content-start font-prompt-md dark-c3 text-start">
+                Need assistance?
+            </div>
+        </div>
+        <div class="container d-flex justify-content-center">
+            <div class="col-10 p-0 pt-1 fs-15 register-shop-desc d-flex justify-content-start font-prompt text-start">
+                Our support team is here to help you every step of the way. Contact us at hello@mawadonline.com or call +971 555626232
             </div>
         </div>
     </section>
