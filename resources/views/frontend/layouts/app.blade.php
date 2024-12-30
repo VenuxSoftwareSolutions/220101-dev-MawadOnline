@@ -448,6 +448,26 @@
                     });
                 });
             }
+            const compareData = JSON.parse(localStorage.getItem('compare'));
+            const hasSynced = sessionStorage.getItem('compareSynced');
+
+            if (compareData) {
+                $.post('{{ route('compare.syncCompareList') }}', {
+                    _token: AIZ.data.csrf,
+                    localStorageCompare: compareData
+                }, function (response) {
+                    if (response.message) {
+                        console.log(response.message);
+                        //this will depend on business requiremnts  wether to clear local storage or not
+                        // localStorage.removeItem('compare');
+                        sessionStorage.setItem('compareSynced', true);
+
+                    }
+                }).fail(function (jqXHR) {
+                    console.error('Failed to sync compare list:', jqXHR.responseJSON);
+                });
+        }
+
            
         });
 
