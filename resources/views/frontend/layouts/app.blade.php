@@ -451,7 +451,7 @@
             const compareData = JSON.parse(localStorage.getItem('compare'));
             const hasSynced = sessionStorage.getItem('compareSynced');
 
-            if (compareData) {
+            if (compareData  && !hasSynced) {
                 $.post('{{ route('compare.syncCompareList') }}', {
                     _token: AIZ.data.csrf,
                     localStorageCompare: compareData
