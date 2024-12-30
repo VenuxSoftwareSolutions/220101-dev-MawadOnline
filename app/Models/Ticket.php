@@ -10,7 +10,7 @@ class Ticket extends Model
     	return $this->belongsTo(User::class);
     }
 
-    public function ticketreplies()
+    public function ticketReplies()
     {
         return $this->hasMany(TicketReply::class)->orderBy('created_at', 'desc');
     }

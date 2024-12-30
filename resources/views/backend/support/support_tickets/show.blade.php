@@ -10,13 +10,13 @@
                <div class="mt-2">
                    <span> {{ $ticket->user->name }} </span>
                    <span class="ml-2"> {{ $ticket->created_at }} </span>
-                   <span class="badge badge-inline badge-secondary ml-2 text-capitalize"> 
-                       {{ translate(ucfirst($ticket->status)) }} 
+                   <span class="badge badge-inline badge-secondary ml-2 text-capitalize">
+                       {{ translate(ucfirst($ticket->status)) }}
                    </span>
                </div>
             </div>
         </div>
-        
+
         <div class="card-body">
             @can('reply_to_support_tickets')
                 <form action="{{ route('support_ticket.admin_store') }}" method="post" id="ticket-reply-form" enctype="multipart/form-data">
@@ -41,9 +41,9 @@
                     </div>
                     <div class="form-group mb-0 text-right">
                         <button type="submit" class="btn btn-sm btn-dark" onclick="submit_reply('pending')">
-                            {{ translate('Submit as') }} 
+                            {{ translate('Submit as') }}
                             <strong>
-                                <span class="text-capitalize"> 
+                                <span class="text-capitalize">
                                     {{ translate($ticket->status) }}
                                 </span>
                             </strong>
@@ -58,28 +58,28 @@
             @endcan
             <div class="pad-top">
                 <ul class="list-group list-group-flush">
-                    @foreach($ticket->ticketreplies as $ticketreply)
+                    @foreach($ticket->ticketReplies as $ticketReply)
                         <li class="list-group-item px-0">
                             <div class="media">
                                 <a class="media-left" href="#">
-                                    @if($ticketreply->user->avatar_original != null)
-                                        <span class="avatar avatar-sm mr-3"><img src="{{ uploaded_asset($ticketreply->user->avatar_original) }}"></span>
+                                    @if($ticketReply->user->avatar_original != null)
+                                        <span class="avatar avatar-sm mr-3"><img src="{{ uploaded_asset($ticketReply->user->avatar_original) }}"></span>
                                     @else
                                         <span class="avatar avatar-sm mr-3"><img src="{{ static_asset('assets/img/avatar-place.png') }}"></span>
                                     @endif
                                 </a>
                                 <div class="media-body">
                                     <div class="">
-                                        <span class="text-bold h6">{{ $ticketreply->user->name }}</span>
-                                        <p class="text-muted text-sm fs-11">{{$ticketreply->created_at}}</p>
+                                        <span class="text-bold h6">{{ $ticketReply->user->name }}</span>
+                                        <p class="text-muted text-sm fs-11">{{$ticketReply->created_at}}</p>
                                     </div>
                                 </div>
                             </div>
                             <div class="">
-                                @php echo $ticketreply->reply; @endphp
+                                @php echo $ticketReply->reply; @endphp
 
                                 <div class="mt-3">
-                                @foreach ((explode(",",$ticketreply->files)) as $key => $file)
+                                @foreach ((explode(",",$ticketReply->files)) as $key => $file)
                                     @php $file_detail = \App\Models\Upload::where('id', $file)->first(); @endphp
                                     @if($file_detail != null)
                                         <a href="{{ uploaded_asset($file) }}" download="" class="badge badge-lg badge-inline badge-light mb-1">

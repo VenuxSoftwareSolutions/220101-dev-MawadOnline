@@ -146,7 +146,7 @@ class SupportTicketController extends Controller
             $ticket = Ticket::findOrFail(decrypt($id));
             $ticket->client_viewed = 1;
             $ticket->save();
-            $ticket_replies = $ticket->ticketreplies;
+            $ticket_replies = $ticket->ticketReplies;
             return view('frontend.user.support_ticket.show', compact('ticket', 'ticket_replies'));
         } catch(Exception) {
             abort(500);
