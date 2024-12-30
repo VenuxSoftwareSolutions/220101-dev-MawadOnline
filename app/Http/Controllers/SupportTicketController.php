@@ -140,19 +140,17 @@ class SupportTicketController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
-        $ticket = Ticket::findOrFail(decrypt($id));
-        $ticket->client_viewed = 1;
-        $ticket->save();
-        $ticket_replies = $ticket->ticketreplies;
-        return view('frontend.user.support_ticket.show', compact('ticket', 'ticket_replies'));
+        try {
+            $ticket = Ticket::findOrFail(decrypt($id));
+            $ticket->client_viewed = 1;
+            $ticket->save();
+            $ticket_replies = $ticket->ticketreplies;
+            return view('frontend.user.support_ticket.show', compact('ticket', 'ticket_replies'));
+        } catch(Exception) {
+            abort(500);
+        }
     }
 
     public function admin_show($id)
