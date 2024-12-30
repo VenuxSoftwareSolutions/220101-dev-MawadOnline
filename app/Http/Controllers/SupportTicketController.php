@@ -9,6 +9,8 @@ use Auth;
 use App\Models\TicketReply;
 use App\Mail\SupportMailManager;
 use Mail;
+use Exception;
+use Log;
 
 class SupportTicketController extends Controller
 {
@@ -42,16 +44,6 @@ class SupportTicketController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -59,7 +51,6 @@ class SupportTicketController extends Controller
      */
     public function store(Request $request)
     {
-        //dd();
         $ticket = new Ticket;
         $ticket->code = strtotime(date('Y-m-d H:i:s')) . Auth::user()->id;
         $ticket->user_id = Auth::user()->id;
@@ -85,9 +76,12 @@ class SupportTicketController extends Controller
         $array['link'] = route('support_ticket.admin_show', encrypt($ticket->id));
         $array['sender'] = $ticket->user->name;
         $array['details'] = $ticket->details;
+
         try {
             Mail::to(User::where('user_type', 'admin')->first()->email)->queue(new SupportMailManager($array));
-        } catch (\Exception $e) {}
+        } catch (Exception $e) {
+            Log::error("Error while sending support email to admin, with message: {$e->getMessage()}");
+        }
     }
 
     public function send_support_reply_email_to_user($ticket, $tkt_reply)
@@ -102,7 +96,9 @@ class SupportTicketController extends Controller
 
         try {
             Mail::to($ticket->user->email)->queue(new SupportMailManager($array));
-        } catch (\Exception $e) {}
+        } catch (Exception $e) {
+            Log::error("Error while sending support reply email to user, with message: {$e->getMessage()}");
+        }
     }
 
     public function admin_store(Request $request)
@@ -135,8 +131,8 @@ class SupportTicketController extends Controller
         $ticket_reply->ticket->viewed = 0;
         $ticket_reply->ticket->status = 'pending';
         $ticket_reply->ticket->save();
-        if ($ticket_reply->save()) {
 
+        if ($ticket_reply->save()) {
             flash(translate('Reply has been sent successfully'))->success();
             return back();
         } else {
@@ -165,39 +161,5 @@ class SupportTicketController extends Controller
         $ticket->viewed = 1;
         $ticket->save();
         return view('backend.support.support_tickets.show', compact('ticket'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }
