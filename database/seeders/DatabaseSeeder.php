@@ -1,22 +1,9 @@
 <?php
 
-use Database\Seeds\TourSeeder;
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
-use Database\Seeders\RoleSeeder;
-use Database\Seeders\LeaseSeeder;
-use Database\Seeders\EmirateSeeder;
-use Database\Seeders\CategorySeeder;
-use Database\Seeders\PackagesSeeder;
-use Database\Seeders\MigrationSeeder;
-use Database\Seeders\AreasTableSeeder;
-use Database\Seeders\PermissionSeeder;
-use Database\Seeders\TranslationsTableSeeder;
-use Database\Seeders\AddSellerRoleToUserSeeder;
-use Database\Seeders\CreateSellerAndShopSeeder;
-use Database\Seeders\TranslationsRegisterVendorPart2;
-use Database\Seeders\AddPermessionEnablingAttributeSeeder;
-use Database\Seeders\TranslationProductSeeder;
-use Database\Seeders\TranslationCatalogueSeeder;
+use Database\Seeders\ProductSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -41,9 +28,8 @@ class DatabaseSeeder extends Seeder
         //$this->call(CreateSellerAndShopSeeder::class);
         //$this->call(TourSeeder::class);
         //$this->call(LeaseSeeder::class);
-        $this->call(TranslationProductSeeder::class);
-        $this->call(TranslationCatalogueSeeder::class);
-
-
+        /* $this->call(TranslationProductSeeder::class); */
+        /* $this->call(TranslationCatalogueSeeder::class); */
+        $this->call(ProductSeeder::class);
     }
 }

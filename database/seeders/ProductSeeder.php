@@ -5,9 +5,8 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Services\ProductService;
 use Auth;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
+use Illuminate\Database\Seeder;
 use Stripe\Product;
 
 class ProductSeeder extends Seeder
@@ -20,15 +19,13 @@ class ProductSeeder extends Seeder
     public function run()
     {
         $faker = Faker::create();
-        $productService = new ProductService(); // Create an instance of the ProductService
+        $productService = new ProductService; // Create an instance of the ProductService
 
-          // Simulate logging in a user
-          $userId = 256; // Replace with the ID of the user you want to authenticate as
-          $user = User::find($userId);
-          Auth::login($user);
+        // Simulate logging in a user
+        $userId = 337; // Replace with the ID of the user you want to authenticate as
+        $user = User::find($userId);
+        Auth::login($user);
 
-
-          
         for ($i = 0; $i < 1000000; $i++) {
             // Simulate mapped product data
             $mappedProduct = [
@@ -39,7 +36,7 @@ class ProductSeeder extends Seeder
                 'unit' => $faker->randomElement(['piece', 'box', 'kg']),
                 'country_code' => $faker->countryCode,
                 'manufacturer' => $faker->company,
-                'tags'=>  [json_encode($this->tagsHandling($faker->word))],
+                'tags' => [json_encode($this->tagsHandling($faker->word))],
                 'short_description' => $faker->sentence,
                 'stock_visibility_state' => $faker->boolean,
                 'refundable' => $faker->boolean,
@@ -49,9 +46,9 @@ class ProductSeeder extends Seeder
                 'to' => [$faker->numberBetween(100, 1000)],
                 'unit_price' => [$faker->randomFloat(2, 10, 1000)],
                 'date_range_pricing' => [
-                    $faker->dateTimeThisYear()->format('d-m-Y H:i:s') . ' to ' . $faker->dateTimeThisYear()->format('d-m-Y H:i:s'),
-                    $faker->dateTimeThisYear()->format('d-m-Y H:i:s') . ' to ' . $faker->dateTimeThisYear()->format('d-m-Y H:i:s'),
-                    $faker->dateTimeThisYear()->format('d-m-Y H:i:s') . ' to ' . $faker->dateTimeThisYear()->format('d-m-Y H:i:s')
+                    $faker->dateTimeThisYear()->format('d-m-Y H:i:s').' to '.$faker->dateTimeThisYear()->format('d-m-Y H:i:s'),
+                    $faker->dateTimeThisYear()->format('d-m-Y H:i:s').' to '.$faker->dateTimeThisYear()->format('d-m-Y H:i:s'),
+                    $faker->dateTimeThisYear()->format('d-m-Y H:i:s').' to '.$faker->dateTimeThisYear()->format('d-m-Y H:i:s'),
                 ],
                 'discount_type' => $faker->randomElement(['fixed', 'percentage']),
                 'discount_amount' => [$faker->randomFloat(2, 1, 100)],
@@ -68,7 +65,7 @@ class ProductSeeder extends Seeder
                 'max_third_party' => $faker->randomFloat(2, 0, 10),
                 'from_shipping' => [$faker->numberBetween(1, 100)],
                 'to_shipping' => [$faker->numberBetween(100, 1000)],
-                
+
                 'estimated_order' => json_encode([$faker->numberBetween(1, 10)]),
                 'estimated_shipping' => json_encode([$faker->numberBetween(1, 10)]),
                 'paid' => json_encode([$faker->randomElement(['buyer', 'seller'])]),
@@ -92,7 +89,6 @@ class ProductSeeder extends Seeder
                 //'submit_button' => null,
             ];
 
-
             // Store the product
             $product = $productService->store($mappedProduct);
 
@@ -101,26 +97,22 @@ class ProductSeeder extends Seeder
                 $products = Product::where('parent_id', $product->id)->get();
                 if (count($products) > 0) {
                     foreach ($products as $child) {
-                        $child->categories()->attach($mappedProduct["parent_id"]);
+                        $child->categories()->attach($mappedProduct['parent_id']);
                     }
                 }
             }
 
             // Attach category to the product
-            $product->categories()->attach($mappedProduct["parent_id"]);
+            $product->categories()->attach($mappedProduct['parent_id']);
         }
     }
 
-
-    private function tagsHandling($product)
+    private function tagsHandling($product_tags)
     {
-        $product_tags = $product; // Example input for tags
         $tags_array = explode(', ', $product_tags);
-        $formatted_tags = array_map(function ($tag) {
+
+        return array_map(function ($tag) {
             return ['value' => trim($tag)];
         }, $tags_array);
-        return $formatted_tags;
     }
-    
 }
-
