@@ -17,8 +17,7 @@ class ResizeImageCommand extends Command
         {output : Path to save the processed image} 
         {--maxDimension=1200 : Maximum dimension for resizing} 
         {--quality=90 : Compression quality for JPEG (1-100)} 
-        {--driver=gd : Image driver to use (gd or imagick)} 
-        {--webpQuality=60 : Compression quality for WebP (1-100)}';
+        {--driver=gd : Image driver to use (gd or imagick)}' ;
 
     /**
      * The console command description.
@@ -38,7 +37,6 @@ class ResizeImageCommand extends Command
         $outputPath = $this->argument('output');
         $maxDimension = (int) $this->option('maxDimension');
         $quality = (int) $this->option('quality');
-        $webpQuality = (int) $this->option('webpQuality');
         $driverOption = $this->option('driver');
 
         // Validate driver
@@ -80,7 +78,7 @@ class ResizeImageCommand extends Command
 
         switch ($extension) {
             case 'webp':
-                $img->toWebp($webpQuality)->save($outputPath);
+                $img->toWebp($quality)->save($outputPath);
                 break;
             case 'avif':
                 $img->toAvif($quality)->save($outputPath);
