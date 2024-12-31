@@ -370,8 +370,7 @@ class ProductUploadsService
     
         // Convert to JPG and compress
         $tempPath = tempnam(sys_get_temp_dir(), 'image_') . '.jpg';
-        $img->encode('jpg', $quality)->save($tempPath);
-    
+        $img->toJpeg($quality)->save($tempPath);    
         return $tempPath;
     }
     
