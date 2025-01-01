@@ -164,27 +164,18 @@ class Discount extends Model
         $highestDiscount = self::getHighestPriorityDiscountByProduct($productId);
 
         if (! $highestDiscount) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Discount not found or not applicable.',
-            ], 404);
+            throw new \Exception('Discount not found or not applicable.');
         }
-
+    
+    
         if ($highestDiscount->scope === 'product' && $highestDiscount->product_id != $productId) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Discount does not apply to this product.',
-            ], 404);
+            throw new \Exception('Discount does not apply to this product.');
         }
-
+    
         if ($highestDiscount->scope === 'category' && ! self::isProductInCategory($productId, $highestDiscount->category_id)) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Discount does not apply to this product category.',
-            ], 404);
+            throw new \Exception('Discount does not apply to this product category.');
         }
-
-        return [
+            return [
             'discount_percentage' => $highestDiscount->discount_percentage,
             'max_discount_amount' => $highestDiscount->max_discount,
         ];
