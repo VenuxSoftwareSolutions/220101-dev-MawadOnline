@@ -49,12 +49,14 @@ use App\Models\FlashDealProduct;
 use App\Models\AuctionProductBid;
 use App\Models\ManualPaymentMethod;
 use App\Models\SellerPackagePayment;
+use App\Models\CompareList;
 use App\Utility\NotificationUtility;
 use Intervention\Image\Facades\Image;
 use App\Http\Resources\V2\CarrierCollection;
 use App\Http\Controllers\AffiliateController;
 use App\Http\Controllers\ClubPointController;
 use App\Http\Controllers\CommissionController;
+use App\Models\ProductAttributeValues;
 use AizPackages\ColorCodeConverter\Services\ColorCodeConverter;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -1828,6 +1830,49 @@ if (!function_exists('get_single_product')) {
     {
         $product_query = Product::query()->with('thumbnail');
         return $product_query->find($product_id);
+    }
+}
+if (!function_exists('get_leaf_category')) {
+    
+    function get_leaf_category(int $productId): ?int
+    {
+        return DB::table('product_categories')
+            ->where('product_id', $productId)
+            ->value('category_id');
+    }
+}
+if (!function_exists('get_category_attributes')) {
+    
+    function get_category_attributes(int $categoryId): ?\Illuminate\Support\Collection
+    {
+        $attributeIds = DB::table('categories_has_attributes')
+            ->where('category_id', $categoryId)
+            ->pluck('attribute_id')
+            ->toArray();
+
+        if (!empty($attributeIds)) {
+            return Attribute::whereIn('id', $attributeIds)->get();
+        }
+
+        return null;
+    }
+}
+if (!function_exists('get_product_attribute_value')) {
+    function get_product_attribute_value(int $productId, int $attributeId): ?string
+    {
+        return ProductAttributeValues::where('id_products', $productId)
+            ->where('id_attribute', $attributeId)
+            ->value('value');
+    }
+}
+if (!function_exists('get_compare_counts')) {
+    function get_compare_counts($userId)
+    {
+        return CompareList::where('user_id', $userId)
+            ->get()
+            ->reduce(function ($total, $compareList) {
+                return $total + count($compareList->variants);
+            }, 0);
     }
 }
 
