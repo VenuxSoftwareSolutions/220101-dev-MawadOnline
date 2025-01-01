@@ -23,6 +23,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Mail;
 use Log;
+use App\Jobs\firstCountDownNotificationJob;
 
 class OrderController extends Controller
 {
@@ -136,8 +137,7 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         try {
-            $carts = Cart::where('user_id', Auth::user()->id)
-                ->get();
+            $carts = Cart::where('user_id', Auth::user()->id)->get();
 
             if ($carts->isEmpty()) {
                 flash(translate('Your cart is empty'))->warning();
@@ -145,8 +145,8 @@ class OrderController extends Controller
                 return redirect()->route('home');
             }
 
-            $address = Address::where('id', $carts->first()->address_id)->first();
 
+            $address = Address::where('id', $carts->first()->address_id)->first();
             $shippingAddress = [];
 
             if ($address != null) {
@@ -155,7 +155,7 @@ class OrderController extends Controller
                 $shippingAddress['address'] = $address->address;
                 $shippingAddress['country'] = $address->country->name;
                 $shippingAddress['state'] = $address->emirate->name;
-                $shippingAddress['city'] = $address->area->name;
+                $shippingAddress['city'] = $address->state->name;
                 $shippingAddress['postal_code'] = $address->postal_code;
                 $shippingAddress['phone'] = $address->phone;
 
@@ -201,7 +201,6 @@ class OrderController extends Controller
                 $shipping = 0;
                 $coupon_discount = 0;
 
-                //Order Details Storing
                 foreach ($seller_product as $cartItem) {
                     $product = Product::find($cartItem['product_id']);
 
@@ -212,7 +211,7 @@ class OrderController extends Controller
                     $product_variation = $cartItem['variation'];
 
                     // @todo we should remove the quantity from stock
-                    // deduct the qty from the warehouse that has enough stock to fullfill order:
+                    // deduct the qty from the warehouse that has enough stock to fulfill order:
                     // 1. get stock summaries sorted by quantities
                     // 2. deduct qty from the first stock summaries that has enough stock
                     // 3. add a stock details entry which record the stock deduction (same warehouse of prev stock summaries)
@@ -229,7 +228,6 @@ class OrderController extends Controller
                     $order_detail->shipping_cost = $cartItem['shipping_cost'];
 
                     $shipping += $order_detail->shipping_cost;
-                    //End of storing shipping cost
 
                     $order_detail->quantity = $cartItem['quantity'];
 
@@ -238,6 +236,8 @@ class OrderController extends Controller
                     }
 
                     $order_detail->save();
+                    firstCountDownNotificationJob::dispatch($order_detail)
+                                                ->delay(now()->addHours(24));
 
                     $product->num_of_sale += $cartItem['quantity'];
                     $product->save();
@@ -261,7 +261,9 @@ class OrderController extends Controller
 
                     if (addon_is_activated('affiliate_system')) {
                         if ($order_detail->product_referral_code) {
-                            $referred_by_user = User::where('referral_code', $order_detail->product_referral_code)->first();
+                            $referred_by_user = User::where(
+                                'referral_code', $order_detail->product_referral_code
+                            )->first();
 
                             (new AffiliateController)
                                 ->processAffiliateStats($referred_by_user->id, 0, $order_detail->quantity, 0, 0);
@@ -269,11 +271,10 @@ class OrderController extends Controller
                     }
                 }
 
-                $order->grand_total = $subtotal + $tax + $shipping;
+                $order->grand_total = ($coupon_discount > 0 ? $coupon_discount : $subtotal) + $tax + $shipping;
 
                 if ($seller_product[0]->coupon_code != null) {
                     $order->coupon_discount = $coupon_discount;
-                    $order->grand_total -= $coupon_discount;
 
                     $coupon_usage = new CouponUsage;
                     $coupon_usage->user_id = Auth::user()->id;
@@ -288,13 +289,11 @@ class OrderController extends Controller
 
             $combined_order->save();
 
-            foreach ($combined_order->orders as $order) {
-                NotificationUtility::sendOrderPlacedNotification($order);
-            }
-
             $request->session()->put('combined_order_id', $combined_order->id);
         } catch(Exception $e) {
             Log::error("Error while storing order, with message {$e->getMessage()}");
+            flash(translate("Something went wrong!"))->error();
+            return redirect()->route("home");
         }
     }
 
@@ -336,21 +335,25 @@ class OrderController extends Controller
     public function destroy($id)
     {
         $order = Order::findOrFail($id);
-        if ($order != null) {
-            foreach ($order->orderDetails as $key => $orderDetail) {
-                try {
 
-                    $product_stock = ProductStock::where('product_id', $orderDetail->product_id)->where('variant', $orderDetail->variation)->first();
+        if ($order != null) {
+            foreach ($order->orderDetails as $orderDetail) {
+                try {
+                    $product_stock = ProductStock::where('product_id', $orderDetail->product_id)
+                        ->where('variant', $orderDetail->variation)
+                        ->first();
+
                     if ($product_stock != null) {
                         $product_stock->qty += $orderDetail->quantity;
                         $product_stock->save();
                     }
-                } catch (Exception) {
-                    // @todo log error
+                } catch (Exception $error) {
+                    Log::error("Error while editing product {$orderDetail->product_id} stock, with message: {$error->getMessage()}");
                 }
 
                 $orderDetail->delete();
             }
+
             $order->delete();
             flash(translate('Order has been deleted successfully'))->success();
         } else {
@@ -358,6 +361,60 @@ class OrderController extends Controller
         }
 
         return back();
+    }
+
+    public function deleteOrderIfPaymentFail($combined_order_id)
+    {
+        try {
+            $combined_order = CombinedOrder::findOrFail($combined_order_id);
+
+            if ($combined_order != null) {
+                foreach ($combined_order->orders as $order) {
+                    $orderDetails = OrderDetail::where("order_id", $order->id)->get();
+
+                    foreach ($orderDetails as $orderDetail) {
+                        try {
+                            $product_stock = ProductStock::where('product_id', $orderDetail->product_id)
+                                ->where('variant', $orderDetail->variation)
+                                ->first();
+
+                            if ($product_stock != null) {
+                                $product_stock->qty += $orderDetail->quantity;
+                                $product_stock->save();
+                            }
+                        } catch (Exception $error) {
+                            Log::error("Error while editing product {$orderDetail->product_id} stock in `deleting order if payment fail`, with message: {$error->getMessage()}");
+                        }
+
+                        $orderDetail->delete();
+                    }
+
+                    $order->delete();
+                }
+
+                return response()->json([
+                    "error" => false,
+                    "message" => translate('Order has been deleted successfully')
+                ], 200);
+            } else {
+                return response()->json([
+                    "error" => true,
+                    "message" => translate('Something went wrong')
+                ], 500);
+            }
+
+            return response()->json([
+                "error" => true,
+                "message" => translate('Something went wrong')
+            ], 500);
+        } catch(Exception $e) {
+            Log::error("Error while `deleting order if payment fail`, with message: {$e->getMessage()}");
+
+            return response()->json([
+                "error" => true,
+                "message" => translate('Something went wrong')
+            ], 500);
+        }
     }
 
     public function bulk_order_delete(Request $request)

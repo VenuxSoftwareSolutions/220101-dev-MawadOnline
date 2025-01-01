@@ -122,6 +122,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
 
     Route::post('/discounts/bulk-delete', [DiscountController::class, 'bulkDelete'])->name('discounts.bulk-delete');
     Route::post('/discounts/toggle-status', [DiscountController::class, 'toggleStatus'])->name('discounts.toggle-status');
+    Route::get('/test-discounts', [DiscountController::class, 'testHighestDiscount']);
+
+    
     //COUPONS 
 
     Route::resource('coupons', CouponController::class)->except(['show']);
@@ -132,12 +135,15 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
     Route::get('/coupons/get-categories-for-product-scope', [CouponController::class, 'getCategoriesForProductScope'])->name('coupons.getCategoriesForProductScope');
     Route::post('/coupons/bulk-delete', [CouponController::class, 'bulkDelete'])->name('coupons.bulk-delete');
     Route::post('/coupons/toggle-status', [CouponController::class, 'toggleStatus'])->name('coupons.toggle-status');
-
+    Route::get('/test-coupons', [CouponController::class, 'testCouponCode']);
+    
     //Order
     Route::resource('orders', OrderController::class);
     Route::controller(OrderController::class)->group(function () {
         Route::post('/orders/update_delivery_status', 'update_delivery_status')->name('orders.update_delivery_status');
         Route::post('/orders/update_payment_status', 'update_payment_status')->name('orders.update_payment_status');
+        Route::post('/orders/get_warehouses', 'getWarhouses')->name('orders.get_warehouses');
+        Route::post('/orders/stock_movement', 'stockMovement')->name('orders.stock_movement');
     });
 
     Route::controller(InvoiceController::class)->group(function () {

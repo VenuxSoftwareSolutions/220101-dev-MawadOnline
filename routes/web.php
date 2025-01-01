@@ -110,7 +110,7 @@ Route::controller(VerificationController::class)->group(function () {
 
 Route::controller(HomeController::class)->group(function () {
     Route::get('/email-change/callback', 'email_change_callback')->name('email_change.callback');
-    Route::post('/password/reset/email/submit', 'reset_password_with_code')->name('password.update');
+    Route::post('/password/reset/email/submit', 'reset_password_with_code')->name('password.update')->middleware('throttle:1,1');
 
     Route::get('/users/login', 'login')->name('user.login')->middleware('handle-demo-login');
     Route::get('/vendor/login', 'login')->name('seller.login')->middleware('handle-demo-login');
@@ -241,6 +241,7 @@ Route::controller(SslcommerzController::class)->group(function () {
 Route::controller(StripeController::class)->group(function () {
     Route::get('stripe', 'stripe');
     Route::post('/stripe/create-checkout-session', 'create_checkout_session')->name('stripe.get_token');
+    Route::post('/stripe/payment/intent', 'createPaymentIntent')->name('stripe.create_payment_intent');
     Route::any('/stripe/payment/callback', 'callback')->name('stripe.callback');
     Route::get('/stripe/success', 'success')->name('stripe.success');
     Route::get('/stripe/cancel', 'cancel')->name('stripe.cancel');
@@ -281,6 +282,11 @@ Route::group(['middleware' => ['customer', 'verified', 'unbanned', "check.cart.s
             Route::post('/payment-select', 'store_delivery_info')->name('checkout.store_delivery_info');
             Route::get('/order-confirmed', 'order_confirmed')->name('order_confirmed')
                 ->withoutMiddleware("check.cart.stock");
+
+            Route::delete('/order/{combined_order_id}', 'cancelCheckout')
+                ->name('cancel_checkout')
+                ->withoutMiddleware("check.cart.stock");
+
             Route::post('/payment', 'checkout')->name('payment.checkout')
                 ->withoutMiddleware("check.cart.stock");
             Route::post('/get-pick-up-points', 'get_pick_up_points')->name('shipping_info.get_pick_up_points');
@@ -501,4 +507,5 @@ Route::controller(AramexController::class)->prefix("/aramex")->group(function ()
     Route::get("carts/{user_id}", "carts");
 
     Route::any("orders/{user_id}", "calculateOrderProductsCharge")->name("user.orders");
+    Route::get("emirate/{emirate_id}/states", "getEmirateStates")->name("emirate.states");
 });
