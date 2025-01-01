@@ -252,6 +252,11 @@ Route::controller(CompareController::class)->group(function () {
     Route::get('/compare/reset', 'reset')->name('compare.reset');
     Route::post('/compare/addToCompare', 'addToCompare')->name('compare.addToCompare');
     Route::get('/compare/details/{id}', 'details')->name('compare.details');
+    Route::post('/compare/remove', [CompareController::class, 'removeFromCompare'])->name('compare.removeFromCompare');
+    Route::post('/compare/data', [CompareController::class, 'getCompareData'])->name('compare.data');
+    Route::post('/compare/local', [CompareController::class, 'fetchLocalCompareData'])->name('compare.local');
+
+
 });
 
 Route::resource('subscribers', SubscriberController::class);
@@ -371,6 +376,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/addresses/destroy/{id}', 'destroy')->name('addresses.destroy');
         Route::get('/addresses/set-default/{id}', 'set_default')->name('addresses.set_default');
     });
+
+    //compare list sync after login 
+    Route::post('/compare/sync', [CompareController::class, 'syncCompareList'])->name('compare.syncCompareList');
+
 });
 
 Route::resource('shops', ShopController::class)->middleware('handle-demo-login');

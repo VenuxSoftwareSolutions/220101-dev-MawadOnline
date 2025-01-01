@@ -1,87 +1,80 @@
 @extends('frontend.layouts.app')
 
 @section('content')
-
+   
     <section class="mb-4 mt-3">
         <div class="container text-left">
-            <div class="bg-white shadow-sm rounded">
-                <div class="py-3 d-flex justify-content-between align-items-center">
-                    <div class="fs-16 fs-md-20 fw-700 text-dark">{{ translate('Compare Products')}}</div>
-                    <a href="{{ route('compare.reset') }}" style="text-decoration: none;border-radius: 25px;" class="btn btn-soft-primary btn-sm fs-12 fw-600">{{ translate('Reset Compare List')}}</a>
+            <div class="bg-white shadow-sm rounded py-3">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="fw-700 text-dark">{{ translate('Compare Products') }}</h2>
+                    <a href="{{ route('compare.reset') }}" class="btn btn-soft-primary btn-sm fw-600"
+                        onclick="clearLocalStorage()">
+                        {{ translate('Reset Compare List') }}
+                    </a>
                 </div>
-                @if(Session::has('compare'))
-                    @if(count(Session::get('compare')) > 0)
-                        <div class="py-3">
-                            <div class="row gutters-16 mb-4">
-                                @foreach (Session::get('compare') as $key => $item)
-                                    @php
-                                        $product = get_single_product($item);
-                                    @endphp
-                                    <div class="col-xl-3 col-lg-4 col-md-6 py-3">
-                                        <div class="border">
-                                            <!-- Product Name -->
-                                            <div class="p-4 border-bottom">
-                                                <span class="fs-12 text-gray">{{ translate('Name')}}</span>
-                                                <h5 class="mb-0 text-dark h-45px text-truncate-2 mt-1">
-                                                    <a class="text-reset fs-14 fw-700 hov-text-primary" href="{{ route('product', get_single_product($item)->slug) }}" title="{{ get_single_product($item)->getTranslation('name') }}">
-                                                        {{ get_single_product($item)->getTranslation('name') }}
-                                                    </a>
-                                                </h5>
-                                            </div>
-                                            <!-- Product Image -->
-                                            <div class="p-4 border-bottom">
-                                                <span class="fs-12 text-gray">{{ translate('Image')}}</span>
-                                                <div>
-                                                    <img loading="lazy" src="{{ uploaded_asset(get_single_product($item)->thumbnail_img) }}" alt="{{ translate('Product Image') }}" class="img-fluid py-4 h-180px h-sm-220px">
-                                                </div>
-                                            </div>
-                                            <!-- Price -->
-                                            <div class="p-4 border-bottom">
-                                                <span class="fs-12 text-gray">{{ translate('Price')}}</span>
-                                                <h5 class="mb-0 fs-14 mt-1">
-                                                    @if(home_base_price($product) != home_discounted_base_price($product))
-                                                        <del class="fw-400 opacity-50 mr-1">{{ home_base_price($product) }}</del>
-                                                    @endif
-                                                    <span class="fw-700 text-primary">{{ home_discounted_base_price($product) }}</span>
-                                                </h5>
-                                            </div>
-                                            <!-- Category -->
-                                            <div class="p-4 border-bottom">
-                                                <span class="fs-12 text-gray">{{ translate('Category')}}</span>
-                                                <h5 class="mb-0 fs-14 text-dark mt-1">
-                                                    @if (get_single_product($item)->main_category != null)
-                                                        {{ get_single_product($item)->main_category->getTranslation('name') }}
-                                                    @endif
-                                                </h5>
-                                            </div>
-                                            <!-- Brand -->
-                                            <div class="p-4 border-bottom">
-                                                <span class="fs-12 text-gray">{{ translate('Brand')}}</span>
-                                                <h5 class="mb-0 fs-14 text-dark mt-1">
-                                                    @if (get_single_product($item)->brand != null)
-                                                        {{ get_single_product($item)->brand->getTranslation('name') }}
-                                                    @endif
-                                                </h5>
-                                            </div>
-                                            <!-- Add to cart -->
-                                            <div class="p-4">
-                                                <button type="button" class="btn btn-block btn-dark rounded-0 fs-13 fw-700 has-transition opacity-80 hov-opacity-100" onclick="showAddToCartModal({{ $item }})">
-                                                    {{ translate('Add to cart')}}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
+
+                <div class="compare-container">
+                        @if(Auth::check())
+                        @include('frontend.partials.compare_table', ['compareData' => $compareList])
+                    @else
+                        {{-- Compare data will be loaded dynamically for guests --}}
                     @endif
-                @else
-                    <div class="text-center p-4">
-                        <p class="fs-17">{{ translate('Your comparison list is empty')}}</p>
-                    </div>
-                @endif
+               </div>
             </div>
         </div>
     </section>
+    
+    <div id="delete-confirmation-modal" class="modal fade">
+        <div class="modal-dialog modal-md modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title h6">{{ translate('Delete Confirmation') }}</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="mt-1 fs-14">{{ translate('Are you sure you want to delete this item?') }}</p>
+                    <button type="button" class="btn btn-secondary rounded-0 mt-2" data-dismiss="modal">
+                        {{ translate('Cancel') }}
+                    </button>
+                    <button type="button" class="btn btn-danger rounded-0 mt-2" id="confirm-delete-btn">
+                        {{ translate('Delete') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const compareData = localStorage.getItem('compare');
+        let isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
+        if (!isLoggedIn) {
+                fetch('/compare/local', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ compareData })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.html) {
+                    document.querySelector('.compare-container').innerHTML = data.html;
+                } else {
+                    console.error('Failed to load compare data.');
+                }
+            })
+            .catch(error => console.error('Error fetching compare data:', error));
+            if (!compareData) {
+            console.log('No compare data found in local storage.');
+            return;
+        }
+        }
+     
+
+        
+    });
+
+</script>   
 @endsection

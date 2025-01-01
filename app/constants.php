@@ -16,6 +16,7 @@ const MAWADONLINE_WAREHOUSE_ID = 24;
 
 // in minutes
 const RESERVATION_WAIT_TIME = 30;
-const DELIVERY_STATUS = ['ready_for_shipment','on_the_way'];
+const compare_list_num_variants = 5;
 
+const DELIVERY_STATUS = ['ready_for_shipment','on_the_way'];
 const EVERY_EIGHT_HOURS = '0 */8 * * *';

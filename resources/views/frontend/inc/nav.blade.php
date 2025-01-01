@@ -232,7 +232,8 @@
                     <!-- Wishlist -->
                     <div class="dd-none d-lg-block mr-3 mt-2" data-hover="dropdown">
                         <div class="nav-cart-box dropdown h-100" style="width: max-content;">
-                            <a href="{{ route('wishlists.index') }}" class="d-flex align-items-center text-dark"
+                            <!-- Link for Compare -->
+                            <a href="{{ route('compare') }}" class="d-flex align-items-center text-dark"
                                 data-toggle="tooltip" data-title="{{ translate('Compare') }}" data-placement="top">
                                 <span class="position-relative d-inline-block">
                                     <svg width="28" height="28" viewBox="0 0 32 32" fill="none"
@@ -246,13 +247,15 @@
                                         <path d="M27.3333 12.0134H4.66666" stroke="#F3F4F5" stroke-width="2"
                                             stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
-
-                                    <span class="badge badge-counter-compare font-prompt">0</span>
+                                    <!-- Compare Item Count Badge -->
+                                    <span id="compare_items_sidenav" class="badge badge-counter-compare font-prompt">
+                                        0
+                                    </span>
                                 </span>
                             </a>
-
                         </div>
                     </div>
+                    
                     <div class="d-none d-lg-block mr-3 mt-2" style="margin-left: 20px;">
                         <div class="" id="wishlist">
                             @include('frontend.' . get_setting('homepage_select') . '.partials.wishlist')
@@ -315,7 +318,8 @@
                                     <span
                                         class="user-s-h-account-dd font-prompt fs-16">{{ translate('My Account') }}</span>
                                     <span class="user-s-h-account-dd font-prompt fs-14">
-                                        <a class="user-s-h-account-dd" href="{{ route("user.registration") }}" target="_blank"> {{ translate("Register") }}
+                                        <a class="user-s-h-account-dd" href="{{ route('user.registration') }}"
+                                            target="_blank"> {{ translate('Register') }}
                                         </a><span style="color:#767676;">|</span> <a class="user-s-h-account-dd"
                                             href="{{ route('user.login') }}">{{ translate('Sign in') }}</a>
                                     </span>
@@ -550,7 +554,11 @@
                     </div>
                     <!-- Header Menus -->
                     @php
-                        $nav_txt_color = get_setting('header_nav_menu_text') == 'light' || get_setting('header_nav_menu_text') == null ? 'text-white' : 'text-white';
+                        $nav_txt_color =
+                            get_setting('header_nav_menu_text') == 'light' ||
+                            get_setting('header_nav_menu_text') == null
+                                ? 'text-white'
+                                : 'text-white';
                     @endphp
                     <div class="ml-xl-4 w-100 overflow-hidden">
                         <div class="d-flex align-items-center justify-content-center justify-content-xl-start h-100">
@@ -757,7 +765,30 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let compareBadge = document.getElementById('compare_items_sidenav');
 
+            let isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
+
+            if (!isLoggedIn) {
+                let compare = JSON.parse(localStorage.getItem('compare')) || {};
+                let count = Object.values(compare).reduce((total, items) => total + items.length, 0);
+                compareBadge.innerHTML = count;
+            } else {
+                let sessionCount = {{ collect(session('compare', collect([])))->flatten()->count() }};
+
+                /* let compare = JSON.parse(localStorage.getItem('compare')) || {};
+                let localCount = Object.values(compare).reduce((total, items) => total + items.length, 0);
+
+                let combinedCount = sessionCount + localCount; */
+
+                let compareCount = {{ get_compare_counts (Auth::id()) }};
+                compareBadge.innerHTML = compareCount;
+
+            }
+        });
+    </script>
     @section('script')
         <script type="text/javascript">
             function show_order_details(order_id) {
