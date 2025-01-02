@@ -5392,6 +5392,7 @@ class ProductService
             'ratingPercentages' => $ratingPercentages,
             'unit_of_sale' => $parent->unit ?? null,
             'outStock' => $outStock,
+            "sampleDetails" => $parent->getSampleDetails(),
         ];
     }
 
