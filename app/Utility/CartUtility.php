@@ -6,6 +6,8 @@ use App\Models\PricingConfiguration;
 use Cookie;
 use DateTime;
 use App\Models\Discount;
+use Exception;
+use Log;
 
 class CartUtility
 {
@@ -254,7 +256,12 @@ class CartUtility
             }
         }
 
-        $discount = Discount::getDiscountPercentage($id);
+        try {
+            $discount = Discount::getDiscountPercentage($id);
+        } catch(Exception $e) {
+            Log::error("Error while getting discount for product $id, with message: {$e->getMessage()}");
+            $discount = null;
+        }
 
         if (isset($discountPrice) && $discountPrice > 0) {
             return $discountPrice;
