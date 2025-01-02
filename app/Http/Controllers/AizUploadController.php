@@ -9,6 +9,8 @@ use Auth;
 use Storage;
 use Image;
 use enshrined\svgSanitize\Sanitizer;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\GD\Driver;
 
 class AizUploadController extends Controller
 {
@@ -75,6 +77,12 @@ class AizUploadController extends Controller
             "svg" => "image",
             "webp" => "image",
             "gif" => "image",
+            "avif" => "image",
+            "bmp" => "image",
+            "animatedwebp" => "image",
+            "tiff" => "image",
+            "jpeg2000" => "image",
+            "heic" => "image",        
             "mp4" => "video",
             "mpg" => "video",
             "mpeg" => "video",
@@ -139,50 +147,39 @@ class AizUploadController extends Controller
                     // Load the clean svg
                     file_put_contents($request->file('aiz_file'), $cleanSVG);
                 }
+                $path = $request->file('aiz_file')->store('uploads/all', 'local');
 
-                if ($type[$extension] == 'image'){
-                    $file = $request->file('aiz_file');
-                    $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-                    $filename = preg_replace('/[^A-Za-z0-9\-]/', '', $filename); // Nettoyer le nom de fichier
-                    $newFilename = $filename . '.jpg';
-                    $path = $file->storeAs('uploads/all', $newFilename, 'local');
-                }else{
-                    $path = $request->file('aiz_file')->store('uploads/all', 'local');
+                $manager = new ImageManager(new Driver());
+                $img =  $manager->read($request->file('aiz_file')->getRealPath());
+                $originalHeight = $img->height();
+                $originalWidth = $img->width();
+
+                $setting_min_width = get_setting('image_min_width');
+                //$setting_img_quality = get_setting('image_img_quality');
+                $setting_img_quality = 90;
+
+                if ($originalWidth > 1280 || $originalHeight > 1280) {
+                    $scalingFactor = 1280 / max($originalWidth, $originalHeight);
+    
+                    $newWidth = (int)($originalWidth * $scalingFactor);
+                    $newHeight = (int)($originalHeight * $scalingFactor);
+                    $img->resize($newWidth, $newHeight, function ($constraint) {
+                        $constraint->aspectRatio();
+                        $constraint->upsize();
+                    });
+
                 }
+    
+                $img->toJpeg($setting_img_quality)->save(base_path('public/') . $path);
+                clearstatcache();
 
-                $size = $request->file('aiz_file')->getSize();
+                // Get the file size
+                $size = $img->size();
 
-                // Return MIME type ala mimetype extension
-                $finfo = finfo_open(FILEINFO_MIME_TYPE);
-
-                // Get the MIME type of the file
-                $file_mime = finfo_file($finfo, base_path('public/') . $path);
-
+             
                 if ($type[$extension] == 'image' && get_setting('disable_image_optimization') != 1) {
+
                     try {
-                        $img = Image::make($request->file('aiz_file')->getRealPath())->encode('jpg');
-                        $height = $img->height();
-                        $width = $img->width();
-
-                        $setting_min_width = get_setting('image_min_width');
-                        $setting_img_quality = get_setting('image_img_quality');
-                        if($width<$setting_min_width){
-                            if (file_exists(base_path('public/') .$path)) {
-                                unlink(base_path('public/') .$path); // Supprimer l'image précédente
-                            }
-                            dd(0);
-                        }elseif($width > $setting_min_width){
-                            $img->resize($setting_min_width, null, function ($constraint) {
-                                $constraint->aspectRatio();
-                                $constraint->upsize(); // Prevent upsizing
-                            });
-                        }
-
-                        $img->save(base_path('public/') . $path,80);
-                        clearstatcache();
-
-                        // Get the file size
-                        $size = $img->filesize();
                     } catch (\Exception $e) {
                         // Log the exception or handle it accordingly
                         // Log::error('Image processing error: ' . $e->getMessage());

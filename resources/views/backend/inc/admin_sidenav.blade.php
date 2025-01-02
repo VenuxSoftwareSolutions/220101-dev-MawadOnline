@@ -1213,7 +1213,7 @@
                 @endif
 
                 <!-- Website Setup -->
-                @canany(['header_setup','footer_setup','view_all_website_pages','website_appearance','authentication_layout_settings'])
+                {{-- @canany(['header_setup','footer_setup','view_all_website_pages','website_appearance','authentication_layout_settings']) --}}
                     <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link {{ areActiveRoutes(['website.footer', 'website.header'])}}" >
                             <div class="aiz-side-nav-icon">
@@ -1227,21 +1227,19 @@
                             <span class="aiz-side-nav-arrow"></span>
                         </a>
                         <ul class="aiz-side-nav-list level-2">
-                            @can('select_homepage')
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('website.select-homepage') }}" class="aiz-side-nav-link">
                                         <span class="aiz-side-nav-text">{{translate('Select Homepage')}}</span>
                                     </a>
                                 </li>
-                            @endcan
-                            @can('edit_website_page')
+                            {{-- @can('edit_website_page') --}}
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('custom-pages.edit', ['id'=>'home', 'lang'=>env('DEFAULT_LANGUAGE'), 'page'=>'home']) }}"
                                         class="aiz-side-nav-link {{ (url()->current() == url('/admin/website/custom-pages/edit/home')) ? 'active' : '' }}">
                                         <span class="aiz-side-nav-text">{{translate('Homepage Settings')}}</span>
                                     </a>
                                 </li>
-                            @endcan
+                            {{-- @endcan --}}
                             @can('authentication_layout_settings')
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('website.authentication-layout-settings') }}" class="aiz-side-nav-link">
@@ -1279,7 +1277,7 @@
                             @endcan
                         </ul>
                     </li>
-                @endcanany
+                {{-- @endcanany --}}
 
                 <!-- Setup & Configurations -->
                 @canany(['general_settings','features_activation','language_setup','currency_setup','vat_&_tax_setup',

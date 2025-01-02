@@ -10,12 +10,10 @@ class WebsiteController extends Controller
     public function __construct()
     {
         // Staff Permission Check
-        $this->middleware(['permission:header_setup'])->only('header');
+     /*   $this->middleware(['permission:header_setup'])->only('header');
         $this->middleware(['permission:footer_setup'])->only('footer');
-        $this->middleware(['permission:view_all_website_pages'])->only('pages');
         $this->middleware(['permission:website_appearance'])->only('appearance');
-        $this->middleware(['permission:select_homepage'])->only('select_homepage');
-        $this->middleware(['permission:authentication_layout_settings'])->only('authentication_layout_settings');
+        $this->middleware(['permission:authentication_layout_settings'])->only('authentication_layout_settings');*/
     }
 
     public function header(Request $request)
