@@ -2,10 +2,10 @@
     <!-- Product Name -->
     <div class="row">
         <div class="col-12 sample-option">
-            <button id="product-button" class="sample-option-button col-6 fs-16 font-prompt float-left button-clicked">Buy
-                Product</button>
+            <button id="product-button"
+                class="sample-option-button col-6 fs-16 font-prompt float-left button-clicked">{{ __('Buy Product') }}</button>
             <button id="sample-button"
-                class="sample-option-button col-6 fs-16 font-prompt float-left nonclicked-button">Buy Sample</button>
+                class="sample-option-button col-6 fs-16 font-prompt float-left nonclicked-button">{{ __('Buy Sample') }}</button>
         </div>
     </div>
     <script>
@@ -27,7 +27,7 @@
             toggleButtonStyles(sampleButton, productButton);
         });
     </script>
-    <div class="row mt-3">
+    <div class="row mt-3 product-{{ $previewData['detailedProduct']['product_id'] }}-preview__clz">
         <div class="col-9">
             <h2 class="mt-1 fs-24 fw-700 text-dark font-prompt-sb">
                 {{ $previewData['detailedProduct']['name'] }}
@@ -75,7 +75,7 @@
             <p id="shortDescription">
                 {!! $shortDescription !!}
                 @if ($descriptionLength > 85)
-                    <span class="seemorebtn" onclick="toggleDescription()">View more</span>
+                    <span class="seemorebtn" onclick="toggleDescription()">{{ __('View more') }}</span>
                 @endif
             </p>
 
@@ -83,7 +83,7 @@
             @if ($descriptionLength > 85)
                 <p id="fullDescription" style="display: none;">
                     {!! $previewData['detailedProduct']['short_description'] !!}
-                    <span class="seemorebtn" onclick="toggleDescription()">View less</span>
+                    <span class="seemorebtn" onclick="toggleDescription()">{{ __('View less') }}</span>
                 </p>
             @endif
         </div>
@@ -110,7 +110,7 @@
                 @if (isset($totalRating) && $totalRating > 0)
                     {{ renderStarRating($detailedProduct->reviews->sum('rating') / $totalRating) }}
                 @else
-                    {{ renderStarRating(0) }} <!-- Assuming 0 stars when there are no reviews -->
+                    {{ renderStarRating(0) }}
                 @endif
             </span>
             <span class="total-var-rating ml-1 fs-16 font-prompt-md rating-style">({{ $totalRating ?? '0' }}
@@ -121,7 +121,7 @@
             </span>
             <span class="total-var-rating ml-1 fs-16 font-prompt-md rating-style">(0
                 {{ translate('reviews') }})</span>
-        @endif
+            @endif
         </div>
         <hr>
     </div>
@@ -146,87 +146,9 @@
                     </del>
                     / {{ @$previewData['detailedProduct']['unit_of_sale'] }}
                 @endif
-
-                <!-- Unit -->
-                <!-- Discount percentage
-                <span id="percent" class="@if ($previewData['detailedProduct']['percent'] > 0) bg-primary @endif ml-2 fs-11 fw-700 text-white w-35px text-center p-1"
-                    style="padding-top:2px;padding-bottom:2px;">
-                    @if ($previewData['detailedProduct']['percent'] > 0)
--{{ $previewData['detailedProduct']['percent'] }}%
-@endif
-
-                </span>
-                -->
-                <!-- Club Point -->
             </div>
-            <!-- Home Price -->
-            {{-- <del class="fs-14 opacity-60 ml-2">
-                    $90.000
-                </del>
-                <!-- Unit -->
-                <span class="opacity-70 ml-1">/pc</span>
-                <!-- Discount percentage -->
-                <span class="bg-primary ml-2 fs-11 fw-700 text-white w-35px text-center p-1"
-                    style="padding-top:2px;padding-bottom:2px;">-20%</span>
-                <!-- Club Point -->
-                <div class="ml-2 bg-secondary-base d-flex justify-content-center align-items-center px-3 py-1"
-                    style="width: fit-content;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12">
-                        <g id="Group_23922" data-name="Group 23922" transform="translate(-973 -633)">
-                            <circle id="Ellipse_39" data-name="Ellipse 39" cx="6" cy="6" r="6"
-                                transform="translate(973 633)" fill="#fff"></circle>
-                            <g id="Group_23920" data-name="Group 23920" transform="translate(973 633)">
-                                <path id="Path_28698" data-name="Path 28698" d="M7.667,3H4.333L3,5,6,9,9,5Z"
-                                    transform="translate(0 0)" fill="#f3af3d"></path>
-                                <path id="Path_28699" data-name="Path 28699" d="M5.33,3h-1L3,5,6,9,4.331,5Z"
-                                    transform="translate(0 0)" fill="#f3af3d" opacity="0.5"></path>
-                                <path id="Path_28700" data-name="Path 28700" d="M12.666,3h1L15,5,12,9l1.664-4Z"
-                                    transform="translate(-5.995 0)" fill="#f3af3d"></path>
-                            </g>
-                        </g>
-                    </svg>
-                    <small class="fs-11 fw-500 text-white ml-2">Club Point:
-                        450</small>
-                </div> --}}
         </div>
     </div>
-    <!-- new commented
-    <div class="row mb-3">
-        <div class="col-6">
-            <span class="text-secondary fs-14 fw-400 mr-4 w-50px">Sold by: </span> <a href="#" class="text-reset hov-text-primary fs-14 fw-700">{{ $previewData['detailedProduct']['shop_name'] }}</a>
-        </div>
-    </div> -->
-
-
-    {{-- <div class="row align-items-center mb-3">
-        <!-- Review -->
-       @if ($detailedProduct->auction_product != 1)
-        <div class="col-12">
-             @php
-                    $total = 0;
-                    $total += $detailedProduct->reviews->count();
-                @endphp
-            <span class="rating rating-mr-1">
-                0
-            </span>
-            <span class="ml-1 opacity-50 fs-14">(0
-                {{ translate('reviews') }})</span>
-        </div>
-         @endif
-        <!-- Estimate Shipping Time -->
-        @if ($detailedProduct->est_shipping_days)
-            <div class="col-auto fs-14 mt-1">
-                <small class="mr-1 opacity-50 fs-14">{{ translate('Estimate Shipping Time') }}:</small>
-                <span class="fw-500">{{ $detailedProduct->est_shipping_days }} {{ translate('Days') }}</span>
-            </div>
-        @endif
-        <!-- In stock -->
-        @if ($detailedProduct->digital == 1)
-            <div class="col-12 mt-1">
-                <span class="badge badge-md badge-inline badge-pill badge-success">{{ translate('In stock') }}</span>
-            </div>
-        @endif
-    </div> --}}
 
     <hr class="hr-style" />
     <!-- Category -->
@@ -286,26 +208,7 @@
                 <div class="fs-16 font-prompt-md mt-2">{{ translate('Color') }}:</div>
             </div>
             <div class="col-10 pl-2">
-                <div class="aiz-radio-inline"><!--
-                @foreach (json_decode($detailedProduct->colors) as $key => $color)
-<label class="aiz-megabox pl-0 mr-1 mb-0" data-toggle="tooltip"
-                        data-title="{{ get_single_color_name($color) }}">
-                        <input type="radio" name="color"
-                            value="{{ get_single_color_name($color) }}"
-                            @if ($key == 0) checked @endif>
-                        <span
-                            class="aiz-megabox-elem d-flex align-items-center justify-content-center p-1">
-                            <span class="d-inline-block product-color-style"
-                                style="background: {{ $color }};">
-                                <svg width="24" height="24" class="m-1 checked-color" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M7.75 11.9999L10.58 14.8299L16.25 9.16992" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-
-                            </span>
-                        </span>
-                    </label>
-@endforeach-->
+                <div class="aiz-radio-inline">
                     @foreach ($previewData['detailedProduct']['general_attributes'] as $key => $general_attribute)
                         @php
                             $attribue_general = App\Models\Attribute::find($key);
@@ -328,8 +231,8 @@
                                 <span class="aiz-megabox-elem d-flex align-items-center justify-content-center p-1">
                                     <span class="d-inline-block product-color-style"
                                         style="background: {{ $general_attribute }};">
-                                        <svg width="24" height="24" class="m-1 checked-color"
-                                            viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <svg width="24" height="24" class="m-1 checked-color" viewBox="0 0 24 24"
+                                            fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path
                                                 d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
                                                 stroke="white" stroke-width="1.5" stroke-linecap="round"
@@ -346,11 +249,11 @@
                 </div>
             </div>
         </div>
-    </div>
+</div>
 @endif
 <div class="row no-gutters mb-3">
     @php
-        $niveau = 0 ;
+        $niveau = 0;
     @endphp
     @foreach ($previewData['detailedProduct']['attributes'] as  $attributeId=>$attributeValues)
     @php
@@ -376,128 +279,85 @@
     <div class="col-10 col-sm-10">
     @endif
         <div class="aiz-radio-inline">
-            {{-- @foreach ( $attributeValues as $key=>$value)
-            <label class="aiz-megabox pl-0 mr-2 mb-0">
-                <input  type="radio" data-attributeId="{{$attributeId}}" name="attribute_id_{{$attributeId}}"   checked >
-                @if (preg_match('/^#[0-9A-F]{6}$/i', $value))
-                <span
-                class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center p-1">
-                <span class="size-25px d-inline-block rounded"
-                    style="background: {{ $value }};"></span>
-                 </span>
-                @else
-                <span
-                    class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center py-1 px-3">
-                     {{$value}}
-                </span>
-                @endif
-            </label>
-            @endforeach --}}
-                    @foreach ($attributeValues as $key => $value)
-                        @php
-                            $lastItem = $previewData['detailedProduct']['lastItem'] ?? null;
+            @foreach ($attributeValues as $key => $value)
+                @php
+                    $lastItem = $previewData['detailedProduct']['lastItem'] ?? null;
 
-                        @endphp
-                        @if (is_array($value))
-                            @php
-                                $valueStringLastItem = '';
-                                $valueString = implode('-', $value); // Join array elements with a hyphen
-                                if ($lastItem && isset($lastItem[$attributeId]) && is_array($lastItem[$attributeId])) {
-                                    $valueStringLastItem = implode('-', $lastItem[$attributeId]);
-                                }
-                            @endphp
-                            @foreach ($value as $color)
-                                <label class="attribute_value aiz-megabox pl-0 mb-0">
-                                    <input @if ($valueStringLastItem == $valueString) checked @endif niveau={{ $niveau }}
-                                        id="attribute_id_{{ $attributeId }}_{{ $valueString }}" type="radio"
-                                        attributeId="{{ $attributeId }}" value="{{ $valueString }}"
-                                        name="attribute_id_{{ $attributeId }}">
-                                    <span
-                                        class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center border-none-force">
+                @endphp
+                @if (is_array($value))
+                    @php
+                        $valueStringLastItem = '';
+                        $valueString = implode('-', $value); // Join array elements with a hyphen
+                        if ($lastItem && isset($lastItem[$attributeId]) && is_array($lastItem[$attributeId])) {
+                            $valueStringLastItem = implode('-', $lastItem[$attributeId]);
+                        }
+                    @endphp
+                    @foreach ($value as $color)
+                        <label class="attribute_value aiz-megabox pl-0 mb-0">
+                            <input @if ($valueStringLastItem == $valueString) checked @endif niveau={{ $niveau }}
+                                id="attribute_id_{{ $attributeId }}_{{ $valueString }}" type="radio"
+                                attributeId="{{ $attributeId }}" value="{{ $valueString }}"
+                                name="attribute_id_{{ $attributeId }}">
+                            <span
+                                class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center border-none-force">
+                                @if (preg_match('/^#[0-9A-F]{6}$/i', $color))
+                                    <span class="aiz-megabox-elem d-flex align-items-center justify-content-center">
+                                        <span class="d-inline-block product-color-style"
+                                            style="background: {{ $color }};">
+                                            <svg width="24" height="24" class=" checked-color"
+                                                viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
+                                                    stroke="white" stroke-width="1.5" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                                <path d="M7.75 11.9999L10.58 14.8299L16.25 9.16992" stroke="white"
+                                                    stroke-width="1.5" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                            </svg>
 
-
-
-                                        @if (preg_match('/^#[0-9A-F]{6}$/i', $color))
-                                            <!-- <span class="size-25px d-inline-block rounded" style="background: {{ $color }};"></span>-->
-
-                                            {{-- <label class="aiz-megabox pl-0 mr-1 mb-0" data-toggle="tooltip"
-                               data-title="{{ get_single_color_name($color) }}" >
-                               <input attributeId="{{$attributeId}}" niveau={{$niveau}} id="attribute_id_{{$attributeId}}_{{$valueString}}" type="radio" name="attribute_id_{{$attributeId}}"
-                                    value="{{$color}}"
-                                   @if ($lastItem && isset($lastItem[$attributeId]) && $lastItem[$attributeId] == $value)
-                                   checked
-                               @endif> --}}
-                                            <span
-                                                class="aiz-megabox-elem d-flex align-items-center justify-content-center">
-                                                <span class="d-inline-block product-color-style"
-                                                    style="background: {{ $color }};">
-                                                    <svg width="24" height="24" class=" checked-color"
-                                                        viewBox="0 0 24 24" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <path
-                                                            d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
-                                                            stroke="white" stroke-width="1.5" stroke-linecap="round"
-                                                            stroke-linejoin="round" />
-                                                        <path d="M7.75 11.9999L10.58 14.8299L16.25 9.16992"
-                                                            stroke="white" stroke-width="1.5" stroke-linecap="round"
-                                                            stroke-linejoin="round" />
-                                                    </svg>
-
-                                                </span>
-                                            </span>
-                                            {{-- </label> --}}
-                                        @else
-                                            {{ $color }}
-                                        @endif
-
-                                    </span>
-
-                                </label>
-                            @endforeach
-                        @else
-                            <label class="attribute_value aiz-megabox pl-0 mr-2 mb-0">
-                                <input @if ($lastItem && isset($lastItem[$attributeId]) && $lastItem[$attributeId] == $value) checked @endif niveau={{ $niveau }}
-                                    id="attribute_id_{{ $attributeId }}_{{ $value }}" type="radio"
-                                    attributeId="{{ $attributeId }}" name="attribute_id_{{ $attributeId }}"
-                                    value="{{ $value }}">
-                                @if (preg_match('/^#[0-9A-F]{6}$/i', $value))
-                                    <span
-                                        class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center p-1">
-                                        <span class="size-25px d-inline-block rounded"
-                                            style="background: {{ $value }};"></span>
+                                        </span>
                                     </span>
                                 @else
-                                    <span
-                                        class="aiz-megabox-elem box-attrib font-prompt fs-14 d-flex align-items-center justify-content-center py-1 px-3">
-                                        {{ $value }}
-                                    </span>
+                                    {{ $color }}
                                 @endif
-                            </label>
-                        @endif
+                            </span>
+                        </label>
                     @endforeach
-                </div>
+                @else
+                    <label class="attribute_value aiz-megabox pl-0 mr-2 mb-0">
+                        <input @if ($lastItem && isset($lastItem[$attributeId]) && $lastItem[$attributeId] == $value) checked @endif niveau={{ $niveau }}
+                            id="attribute_id_{{ $attributeId }}_{{ $value }}" type="radio"
+                            attributeId="{{ $attributeId }}" name="attribute_id_{{ $attributeId }}"
+                            value="{{ $value }}">
+                        @if (preg_match('/^#[0-9A-F]{6}$/i', $value))
+                            <span
+                                class="aiz-megabox-elem rounded-0 d-flex align-items-center justify-content-center p-1">
+                                <span class="size-25px d-inline-block rounded"
+                                    style="background: {{ $value }};"></span>
+                            </span>
+                        @else
+                            <span
+                                class="aiz-megabox-elem box-attrib font-prompt fs-14 d-flex align-items-center justify-content-center py-1 px-3">
+                                {{ $value }}
+                            </span>
+                        @endif
+                    </label>
+                @endif
+            @endforeach
+        </div>
+</div>
+@endforeach
 
-
-            </div>
-        @endforeach
-
-    </div>
-    <!--
-    <div class="col-md-12 p-0 pb-2 pt-1" style="height: 45px;">
-        <span class="fs-16 font-prompt-md float-left mr-5" style="height: 45px;line-height:38px;">Size:</span>
-        <div class="border border-radius-8px font-prompt-md fs-14 float-left size-style mr-2">Small</div>
-        <div class="border border-radius-8px font-prompt-md fs-14 float-left size-style mr-2">Medium</div>
-        <div class="border border-radius-8px font-prompt-md fs-14 float-left size-style mr-2">Large</div>
-    </div>
-    -->
-    @if (
-        $niveau > 0 ||
-            (isset($detailedProduct) &&
-                $detailedProduct->colors != null &&
-                count(json_decode($detailedProduct->colors)) > 0))
-        <hr class="hr-style" />
-    @endif
-    <!-- new commented
+</div>
+@if (
+    $niveau > 0 ||
+        (isset($detailedProduct) &&
+            $detailedProduct->colors != null &&
+            count(json_decode($detailedProduct->colors)) > 0))
+    <hr class="hr-style" />
+@endif
+<!-- new commented
     <div class="row align-items-center">
         {{-- @if (get_setting('product_query_activation') == 1) --}}
         <!-- Ask about this product
@@ -553,8 +413,8 @@
         </div>
 @endif
         -->
-    <!-- Seller Info -->
-    {{-- <div class="d-flex flex-wrap align-items-center">
+<!-- Seller Info -->
+{{-- <div class="d-flex flex-wrap align-items-center">
         <div class="d-flex align-items-center mr-4">
             <!-- Shop Name -->
             @if ($detailedProduct->added_by == 'seller' && get_setting('vendor_system_activation') == 1)
@@ -601,7 +461,7 @@
             <a href="javascript:void(1);" onclick="showSizeChartDetail({{ $sizeChartId }}, '{{ $sizeChartName }}')" class="animate-underline-primary">{{ translate('Show size guide') }}</a>
         </div>
     </div> --}}
-    <!-- new commented
+<!-- new commented
     <div class="row no-gutters mb-3">
         <div class="col-sm-2">
             <div class="text-secondary fs-14 fw-400">Price</div>
@@ -670,54 +530,54 @@
             </div>
         </div>
     -->
-    <form id="option-choice-form-preview">
-        @csrf
-        <!-- Quantity + Add to cart -->
-        <div class="row no-gutters mb-3 col-md-12 p-0">
-            <div class="col-md-4 col-4">
-                <div class="product-quantity d-flex align-items-center pr-3">
-                    <div
-                        class="row no-gutters align-items-center aiz-plus-minus mr-0 mr-md-2 product-quantity-counter col-md-12 p-0 ">
-                        <button
-                            class="btn col-auto btn-icon btn-sm btn-light rounded-0 quantity-control fs-16 font-prompt-md product-quantity-btn"
-                            type="button" data-type="minus" data-field="quantity" disabled="disabled">
-                            <i class="las la-minus"></i>
-                        </button>
-                        <input type="number" id="quantity" name="quantity"
-                            class="col border-0 text-center flex-grow-1 fs-16 input-number fs-16 font-prompt-md"
-                            placeholder="1" value="{{ $previewData['detailedProduct']['quantity'] }}"
-                            min="{{ $previewData['detailedProduct']['min'] }}"
-                            max="{{ $previewData['detailedProduct']['max'] }}" lang="en">
-                        <button id="quantity-button"
-                            class="btn col-auto btn-icon btn-sm btn-light rounded-0 quantity-control fs-16 font-prompt-md product-quantity-btn"
-                            type="button" data-type="plus" data-field="quantity"
-                            data-out-stock="{{ isset($previewData['detailedProduct']['outStock']) ? $previewData['detailedProduct']['outStock'] : false }}">
-                            <i class="las la-plus"></i>
-                        </button>
-                        <input type="hidden"
-                            value="{{ $previewData['detailedProduct']['variationId'] ?? $previewData['detailedProduct']['product_id'] }}"
-                            name="variationId" id="variationId">
+<form id="option-choice-form-preview">
+    @csrf
+    <!-- Quantity + Add to cart -->
+    <div class="row no-gutters mb-3 col-md-12 p-0">
+        <div class="col-md-4 col-4">
+            <div class="product-quantity d-flex align-items-center pr-3">
+                <div
+                    class="row no-gutters align-items-center aiz-plus-minus mr-0 mr-md-2 product-quantity-counter col-md-12 p-0 ">
+                    <button
+                        class="btn col-auto btn-icon btn-sm btn-light rounded-0 quantity-control fs-16 font-prompt-md product-quantity-btn"
+                        type="button" data-type="minus" data-field="quantity" disabled="disabled">
+                        <i class="las la-minus"></i>
+                    </button>
+                    <input type="number" id="quantity" name="quantity"
+                        class="col border-0 text-center flex-grow-1 fs-16 input-number fs-16 font-prompt-md"
+                        placeholder="1" value="{{ $previewData['detailedProduct']['quantity'] }}"
+                        min="{{ $previewData['detailedProduct']['min'] }}"
+                        max="{{ $previewData['detailedProduct']['max'] }}" lang="en">
+                    <button id="quantity-button"
+                        class="btn col-auto btn-icon btn-sm btn-light rounded-0 quantity-control fs-16 font-prompt-md product-quantity-btn"
+                        type="button" data-type="plus" data-field="quantity"
+                        data-out-stock="{{ isset($previewData['detailedProduct']['outStock']) ? $previewData['detailedProduct']['outStock'] : false }}">
+                        <i class="las la-plus"></i>
+                    </button>
+                    <input type="hidden"
+                        value="{{ $previewData['detailedProduct']['variationId'] ?? $previewData['detailedProduct']['product_id'] }}"
+                        name="variationId" id="variationId">
 
-                    </div>
-                    <div class="avialable-amount opacity-60">
-                    </div>
+                </div>
+                <div class="avialable-amount opacity-60">
                 </div>
             </div>
-            @if (isset($previewData['detailedProduct']['discountedPrice']))
-                @php
-                    $price = $previewData['detailedProduct']['discountedPrice'];
-                @endphp
-            @else
-                @php
-                    $price = $previewData['detailedProduct']['price'];
-                @endphp
-            @endif
-            <button type="button"
-                class="btn btn-secondary-base add-to-cart col-8 col-md-8 text-white border-radius-16 fs-16 font-prompt py-2"
-                @if (isset($isPreview) && $isPreview) onclick="addToCart({{ json_encode($isPreview) }})" @else onclick="addToCart()" @endif>
-                <span class="add-to-cart-style-txt">Add to cart - AED <span
-                        id="chosen_price">{{ $price }}</span></span>
-            </button>
+        </div>
+        @if (isset($previewData['detailedProduct']['discountedPrice']))
+            @php
+                $price = $previewData['detailedProduct']['discountedPrice'];
+            @endphp
+        @else
+            @php
+                $price = $previewData['detailedProduct']['price'];
+            @endphp
+        @endif
+        <button type="button"
+            class="btn btn-secondary-base add-to-cart col-8 col-md-8 text-white border-radius-16 fs-16 font-prompt py-2"
+            @if (isset($isPreview) && $isPreview) onclick="addToCart({{ json_encode($isPreview) }})" @else onclick="addToCart()" @endif>
+            <span class="add-to-cart-style-txt">Add to cart - AED <span
+                    id="chosen_price">{{ $price }}</span></span>
+        </button>
 
         </div>
         <div class="show-side-btn">
@@ -822,8 +682,8 @@
             </div>
         </div>-->
 
-    </form>
-    <!--
+</form>
+<!--
     <div class="mt-3">
 
         <button type="button" class="btn btn-primary buy-now fw-600 add-to-cart min-w-150px rounded-0"
@@ -959,7 +819,8 @@
                             </div>
                             <div class="float-right">
                                 <a href="{{ route('shop.visit', $user->shop->slug) }}" class="link-style-none">
-                                    <button class="fs-14 font-prompt border-radius-8px view-store-btn">View e-shop</button>
+                                    <button class="fs-14 font-prompt border-radius-8px view-store-btn">View
+                                        e-shop</button>
                                 </a>
                             </div>
                         </div>
