@@ -1,7 +1,6 @@
 @extends('frontend.layouts.app')
 
 <style>
-    /* This will apply a style to the label when its associated input is checked */
     .attribute_value input[type="radio"]:checked+.aiz-megabox-elem {
         border: 1px solid #D42D2A;
     }
@@ -21,7 +20,6 @@
                     <div class="col-xl-8 col-lg-8 col-md-8 col-12">
                         @include('frontend.details')
                     </div>
-
                 </div>
             </div>
         </div>
