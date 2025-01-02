@@ -166,16 +166,17 @@ class Discount extends Model
         if (! $highestDiscount) {
             throw new \Exception('Discount not found or not applicable.');
         }
-    
-    
+
+
         if ($highestDiscount->scope === 'product' && $highestDiscount->product_id != $productId) {
             throw new \Exception('Discount does not apply to this product.');
         }
-    
+
         if ($highestDiscount->scope === 'category' && ! self::isProductInCategory($productId, $highestDiscount->category_id)) {
             throw new \Exception('Discount does not apply to this product category.');
         }
-            return [
+
+        return [
             'discount_percentage' => $highestDiscount->discount_percentage,
             'max_discount_amount' => $highestDiscount->max_discount,
         ];
