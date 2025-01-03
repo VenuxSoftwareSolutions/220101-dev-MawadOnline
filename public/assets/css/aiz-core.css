@@ -13537,3 +13537,29 @@ border:none !important;
         display: none;
     }
 }
+.scroll-left{
+    display: none;
+}
+.scroll-left-container {
+    width: 70px;
+    height: 50px;
+}
+.scroll-left-svg{
+    position: relative;
+    top: 3px;
+}
+.scroll-right-container {
+    width: 70px;
+    height: 50px;
+}
+.scroll-right-svg{
+    position: relative;
+    top: 3px;
+}
+.side-m-categ:hover{
+    background: #f7f7f7;
+    border-radius: 16px;
+}
+.container-h-m{
+    max-width: 1500px;
+}
