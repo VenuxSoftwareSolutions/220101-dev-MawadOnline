@@ -606,7 +606,6 @@ class CartController extends Controller
     {
         try {
             $dataProduct = $request->session()->get('productPreviewData', null);
-
             $userId = auth()->check() ? auth()->user()->id : $request->session()->get('temp_user_id');
 
             if (!auth()->check() && !$userId) {
@@ -637,7 +636,8 @@ class CartController extends Controller
 
             // Check the product variant details
             $str = $product->productVariantDetails();
-            $product_stock = StockSummary::where('variant_id', $request['variationId'])->sum('current_total_quantity');
+            $product_stock = StockSummary::where('variant_id', $request['variationId'])
+                ->sum('current_total_quantity');
 
             if ($product_stock < $request['quantity']) {
                 return array(
