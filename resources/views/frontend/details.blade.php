@@ -724,7 +724,7 @@
         <div class="col-12 d-flex justify-content-between p-0">
             <div class="col-6 p-0">
                 <div class="row no-gutters mb-3 col-12 p-0 float-left">
-                    <a href="javascript:void(0)"
+                    <a href="javascript:void(0)" onclick="addToCompare({{ $previewData['detailedProduct']['product_id'] }})"
                         class="col-md-12 has-transitiuon hov-opacity-100 border-radius-16 Compare-btn-style">
                         <center><svg width="24" height="24" viewBox="0 0 32 32"
                                 class="compare-btn-style-icon mx-0" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -736,7 +736,7 @@
                                     stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                                 <path d="M27.3333 12.0134H4.66663" stroke="#4C4E54" stroke-width="1.5"
                                     stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
+                                </svg>
 
                             <span
                                 class="p-0 px-sm-3 fs-16 font-prompt-md compare-btn-txt">{{ translate('Add to Compare') }}</span>

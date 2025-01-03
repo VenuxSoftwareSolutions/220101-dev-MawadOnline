@@ -14,7 +14,7 @@ use App\Http\Controllers\Seller\CouponController;
 
 
 //Upload
-Route::group(['prefix' => 'vendor', 'middleware' => ['seller', 'verified', 'user', 'prevent-back-history'], 'as' => 'seller.'], function () {
+Route::group(['prefix' => 'vendor', 'middleware' => ['seller', 'verified', 'user', 'prevent-back-history','global'], 'as' => 'seller.'], function () {
     Route::controller(CategoryController::class)->group(function () {
         Route::get('/jstree', 'jstree')->name('categories.jstree');
         Route::get('/jstreeSearch', 'jstreeSearch')->name('categories.jstreeSearch');
@@ -29,7 +29,7 @@ Route::group(['prefix' => 'vendor', 'middleware' => ['seller', 'verified', 'user
     });
 });
 
-Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor', 'middleware' => ['seller', 'verified', 'user', 'prevent-back-history'], 'as' => 'seller.'], function () {
+Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor', 'middleware' => ['seller', 'verified', 'user', 'prevent-back-history','global'], 'as' => 'seller.'], function () {
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'index')->name('dashboard');
         Route::post('/tour', 'updateTour')->name('tour');
@@ -37,7 +37,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
 
     // Product
 
-    Route::controller(ProductController::class)->group(function () {
+    Route::controller(ProductController::class)->middleware('throttle:global')->group(function () {
         Route::post('/product/temp-store', 'tempStore')->name('product.tempStore');
         Route::get('/product/preview/{slug}', 'preview')->name('product.preview');
         Route::post('/update-price-preview','updatePricePreview')->name('update-price-preview')->middleware(['admin']);
@@ -65,7 +65,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
         Route::post('/products/bulk-delete', 'bulk_product_delete')->name('products.bulk-delete');
     });
     // Stocks
-    Route::controller(StockController::class)->group(function () {
+    Route::controller(StockController::class)->middleware('throttle:global')->group(function () {
         Route::get('/stocks', [StockController::class, 'index'])->name('stocks.index');
         Route::post('/save-inventory-record', 'saveRecord')->name('save.inventory.record');
         Route::post('/add-remove-stock', 'storeAddRemoveStock')->name('stock.add_remove');
@@ -80,7 +80,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
     }) ;
 
     // Product Bulk Upload
-    Route::controller(ProductBulkUploadController::class)->group(function () {
+    Route::controller(ProductBulkUploadController::class)->middleware('throttle:global')->group(function () {
         Route::get('/product-bulk-upload/index', 'index')->name('product_bulk_upload.index');
         Route::get('/product-bulk-upload/getFiles', 'getFiles')->name('product_bulk_upload.getFiles');
 
@@ -94,7 +94,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
     });
 
     // Digital Product
-    Route::controller(DigitalProductController::class)->group(function () {
+    Route::controller(DigitalProductController::class)->middleware('throttle:global')->group(function () {
         Route::get('/digitalproducts', 'index')->name('digitalproducts');
         Route::get('/digitalproducts/create', 'create')->name('digitalproducts.create');
         Route::post('/digitalproducts/store', 'store')->name('digitalproducts.store');
@@ -139,7 +139,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
     
     //Order
     Route::resource('orders', OrderController::class);
-    Route::controller(OrderController::class)->group(function () {
+    Route::controller(OrderController::class)->middleware('throttle:global')->group(function () {
         Route::post('/orders/update_delivery_status', 'update_delivery_status')->name('orders.update_delivery_status');
         Route::post('/orders/update_payment_status', 'update_payment_status')->name('orders.update_payment_status');
         Route::post('/orders/get_warehouses', 'getWarhouses')->name('orders.get_warehouses');
@@ -157,7 +157,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
     // Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews');
 
     //Shop
-    Route::controller(ShopController::class)->group(function () {
+    Route::controller(ShopController::class)->middleware('throttle:global')->group(function () {
         Route::get('/shop', 'index')->name('shop.index');
         Route::post('/shop/update', 'update')->name('shop.update');
         Route::get('/shop/apply-for-verification', 'verify_form')->name('shop.verify');
@@ -168,7 +168,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
     Route::resource('payments', PaymentController::class);
 
     // Profile Settings
-    Route::controller(ProfileController::class)->group(function () {
+    Route::controller(ProfileController::class)->middleware('throttle:global')->group(function () {
         Route::get('/profile', 'index')->name('profile.index');
         Route::post('/profile/update/{id}', 'update')->name('profile.update');
         Route::post('/profile-seller/update/{id}', 'updateProfile')->name('profile.seller.update');
@@ -191,7 +191,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
 
     // Address
     Route::resource('addresses', AddressController::class);
-    Route::controller(AddressController::class)->group(function () {
+    Route::controller(AddressController::class)->middleware('throttle:global')->group(function () {
         Route::post('/get-states', 'getStates')->name('get-state');
         Route::post('/get-cities', 'getCities')->name('get-city');
         Route::post('/address/update/{id}', 'update')->name('addresses.update');
@@ -268,7 +268,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
 
 
 
-Route::middleware(['seller_or_admin'])->group(function () {
+Route::middleware(['seller_or_admin','global'])->group(function () {
     Route::controller(CatalogController::class)->group(function () {
         Route::get('/catalog/search_page', 'search')->name('catalog.search_page');
         Route::get('/catalog/search/new_action', 'new_search_action')->name('catalog.search.new_action');

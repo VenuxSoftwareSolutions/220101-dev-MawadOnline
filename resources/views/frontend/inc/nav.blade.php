@@ -234,7 +234,8 @@
                     <!-- Wishlist -->
                     <div class="dd-none d-lg-block mr-3 mt-2" data-hover="dropdown">
                         <div class="nav-cart-box dropdown h-100" style="width: max-content;">
-                            <a href="{{ route('wishlists.index') }}" class="d-flex align-items-center text-dark"
+                            <!-- Link for Compare -->
+                            <a href="{{ route('compare') }}" class="d-flex align-items-center text-dark"
                                 data-toggle="tooltip" data-title="{{ translate('Compare') }}" data-placement="top">
                                 <span class="position-relative d-inline-block">
                                     <svg width="28" height="28" viewBox="0 0 32 32" fill="none"
@@ -248,13 +249,15 @@
                                         <path d="M27.3333 12.0134H4.66666" stroke="#F3F4F5" stroke-width="2"
                                             stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
-
-                                    <span class="badge badge-counter-compare font-prompt">0</span>
+                                    <!-- Compare Item Count Badge -->
+                                    <span id="compare_items_sidenav" class="badge badge-counter-compare font-prompt">
+                                        0
+                                    </span>
                                 </span>
                             </a>
-
                         </div>
                     </div>
+
                     <div class="d-none d-lg-block mr-3 mt-2" style="margin-left: 20px;">
                         <div class="" id="wishlist">
                             @include('frontend.' . get_setting('homepage_select') . '.partials.wishlist')
@@ -317,9 +320,16 @@
                                     <span
                                         class="user-s-h-account-dd font-prompt fs-16">{{ translate('My Account') }}</span>
                                     <span class="user-s-h-account-dd font-prompt fs-14">
+<<<<<<< HEAD
                                         <!--<a class="user-s-h-account-dd" href="{{ route("user.registration") }}" target="_blank"> {{ translate("Register") }}
                                         </a><span style="color:#767676;">|</span>--> <a class="user-s-h-account-dd"
                                             href="{{ route('user.login') }}">{{ translate('Hello, Sign in') }}</a>
+=======
+                                        <a class="user-s-h-account-dd" href="{{ route('user.registration') }}"
+                                            target="_blank"> {{ translate('Register') }}
+                                        </a><span style="color:#767676;">|</span> <a class="user-s-h-account-dd"
+                                            href="{{ route('user.login') }}">{{ translate('Sign in') }}</a>
+>>>>>>> a448a394224abdf2b56678698757de60a975b12a
                                     </span>
                                 </div>
                             </span>
@@ -547,6 +557,7 @@
                         </div>
                     </div>
                     <!-- Header Menus -->
+<<<<<<< HEAD
                     <div class="scroll-left-container">
                         <button class="scroll-left btn btn-link translate-middle-y">
                             <svg width="24" height="24" class="scroll-left-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -554,6 +565,79 @@
                                     stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </button>
+=======
+                    @php
+                        $nav_txt_color =
+                            get_setting('header_nav_menu_text') == 'light' ||
+                            get_setting('header_nav_menu_text') == null
+                                ? 'text-white'
+                                : 'text-white';
+                    @endphp
+                    <div class="ml-xl-4 w-100 overflow-hidden">
+                        <div class="d-flex align-items-center justify-content-center justify-content-xl-start h-100">
+                            <ul class="list-inline mb-0 pl-0 hor-swipe c-scrollbar-light">
+                                @if (get_setting('header_menu_labels') != null)
+                                    @foreach (json_decode(get_setting('header_menu_labels'), true) as $key => $value)
+                                        <li class="list-inline-item mr-0 animate-underline-white">
+                                            <a href="{{ json_decode(get_setting('header_menu_links'), true)[$key] }}"
+                                                class="fs-16 px-3 py-3 d-inline-block fw-400 {{ $nav_txt_color }} header_menu_links hov-bg-black-10
+                                            @if (url()->current() == json_decode(get_setting('header_menu_links'), true)[$key]) active @endif">
+                                                @if ($value == 'Brands')
+                                                    <svg width="24" height="24" viewBox="0 0 24 24"
+                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path
+                                                            d="M2 15.29V5.71002C2 4.38002 2.77 4.06002 3.71 5.00002L6.3 7.59002C6.69 7.98002 7.33 7.98002 7.71 7.59002L11.29 4.00002C11.68 3.61002 12.32 3.61002 12.7 4.00002L16.29 7.59002C16.68 7.98002 17.32 7.98002 17.7 7.59002L20.29 5.00002C21.23 4.06002 22 4.38002 22 5.71002V15.3C22 18.3 20 20.3 17 20.3H7C4.24 20.29 2 18.05 2 15.29Z"
+                                                            stroke="#F3F4F5" stroke-width="1.5"
+                                                            stroke-linecap="round" stroke-linejoin="round" />
+                                                    </svg>
+                                                @elseif ($value == 'Vendors')
+                                                    <svg width="24" height="24" viewBox="0 0 24 24"
+                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path
+                                                            d="M3.01001 11.22V15.71C3.01001 20.2 4.81001 22 9.30001 22H14.69C19.18 22 20.98 20.2 20.98 15.71V11.22"
+                                                            stroke="#F3F4F5" stroke-width="1.5"
+                                                            stroke-linecap="round" stroke-linejoin="round" />
+                                                        <path
+                                                            d="M12 12C13.83 12 15.18 10.51 15 8.68L14.34 2H9.66999L8.99999 8.68C8.81999 10.51 10.17 12 12 12Z"
+                                                            stroke="#F3F4F5" stroke-width="1.5"
+                                                            stroke-linecap="round" stroke-linejoin="round" />
+                                                        <path
+                                                            d="M18.31 12C20.33 12 21.81 10.36 21.61 8.35L21.33 5.6C20.97 3 19.97 2 17.35 2H14.3L15 9.01C15.17 10.66 16.66 12 18.31 12Z"
+                                                            stroke="#F3F4F5" stroke-width="1.5"
+                                                            stroke-linecap="round" stroke-linejoin="round" />
+                                                        <path
+                                                            d="M5.64 12C7.29 12 8.78 10.66 8.94 9.01L9.16 6.8L9.64001 2H6.59C3.97001 2 2.97 3 2.61 5.6L2.34 8.35C2.14 10.36 3.62 12 5.64 12Z"
+                                                            stroke="#F3F4F5" stroke-width="1.5"
+                                                            stroke-linecap="round" stroke-linejoin="round" />
+                                                        <path
+                                                            d="M12 17C10.33 17 9.5 17.83 9.5 19.5V22H14.5V19.5C14.5 17.83 13.67 17 12 17Z"
+                                                            stroke="#F3F4F5" stroke-width="1.5"
+                                                            stroke-linecap="round" stroke-linejoin="round" />
+                                                    </svg>
+                                                @endif
+
+                                                {{ translate($value) }}
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                @endif
+                                <!--
+                                <li class="list-inline-item mr-0 animate-underline-white" style="cursor:pointer;">
+                                    <a class="fs-16 px-3 py-3 d-inline-block fw-400 text-white header_menu_links hov-bg-black-10">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M2 22H22" stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M9.75 4V22H14.25V4C14.25 2.9 13.8 2 12.45 2H11.55C10.2 2 9.75 2.9 9.75 4Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M3 10V22H7V10C7 8.9 6.6 8 5.4 8H4.6C3.4 8 3 8.9 3 10Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M17 15V22H21V15C21 13.9 20.6 13 19.4 13H18.6C17.4 13 17 13.9 17 15Z" stroke="#F3F4F5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        <span class="ml-1 fs-16">MawadOnline Index</span>
+                                        <i class="las la-angle-down text-white has-transition ml-3" id="category-menu-bar-icon" style="font-size: 1.2rem !important; position:relative;top:3px;"></i>
+                                    </a>
+                                </li>
+                            -->
+                            </ul>
+                        </div>
+>>>>>>> a448a394224abdf2b56678698757de60a975b12a
                     </div>
                         <div class="menu-wrapper overflow-hidden">
                         <ul class="list-inline mb-0 pl-0 hor-swipe header-m-content">
@@ -720,6 +804,7 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+
             const menuWrapper = document.querySelector('.menu-wrapper');
             const scrollLeft = document.querySelector('.scroll-left');
             const scrollRight = document.querySelector('.scroll-right');
@@ -757,6 +842,26 @@
             // Initialize arrow visibility on page load
             updateArrowVisibility();
         });
+        let compareBadge = document.getElementById('compare_items_sidenav');
+
+        let isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
+
+        if (!isLoggedIn) {
+            let compare = JSON.parse(localStorage.getItem('compare')) || {};
+            let count = Object.values(compare).reduce((total, items) => total + items.length, 0);
+            compareBadge.innerHTML = count;
+        } else {
+            let sessionCount = {{ collect(session('compare', collect([])))->flatten()->count() }};
+
+            /* let compare = JSON.parse(localStorage.getItem('compare')) || {};
+            let localCount = Object.values(compare).reduce((total, items) => total + items.length, 0);
+
+            let combinedCount = sessionCount + localCount; */
+
+            let compareCount = {{ get_compare_counts (Auth::id()) }};
+            compareBadge.innerHTML = compareCount;
+
+        }
     </script>
     @section('script')
         <script type="text/javascript">
