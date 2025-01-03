@@ -43,7 +43,7 @@
                 </div>
 
                 <div class="col-6 text-right d-none d-lg-block">
-                    <ul class="list-inline mb-0 h-100 d-flex justify-content-end align-items-center">
+                    <ul class="list-inline mb-0 h-100 d-flex justify-content-end align-items-center float-right">
                         <li class="list-inline-item dropdown ml-auto ml-lg-0 mr-4" id="currency-change">
                             @php
                                 $system_currency = get_system_currency();
@@ -96,12 +96,8 @@
                         @if (get_setting('vendor_system_activation') == 1)
                             @unless (Auth::check() && Auth::user()->user_type == 'seller')
                                 <li class="list-inline-item mr-0 pl-0 py-2">
-                                    <a href="https://business.mawadonline.com"
-                                        class="text-secondary-base fs-13 pr-3 d-inline-block border-width-2 border-right">{{ translate('Become a Seller') }}</a>
-                                </li>
-                                <li class="list-inline-item mr-0 pl-0 py-2">
                                     <a href="{{ route('shops.packages') }}"
-                                        class="text-secondary fs-13 pl-3 pr-3 d-inline-block border-width-2 border-right">{{ translate('Register as Vendor') }}</a>
+                                        class="text-secondary-base fs-13 pr-3 d-inline-block border-width-2 border-right">{{ translate('Register as Vendor') }}</a>
                                 </li>
                                 <li class="list-inline-item mr-0 pl-0 py-2">
                                     <a href="{{ route('seller.login') }}"

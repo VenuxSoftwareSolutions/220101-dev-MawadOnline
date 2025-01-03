@@ -607,7 +607,6 @@
                                             </span>
                                             <span class="button-text">{{ translate('visit eShop') }}</span>
                                         </a>
-                                        @endif
 {{--                                        @if ($seller->verification_status == 1)
                                           <span class="absolute-top-right mr-05rem mt-05rem">
                                                 <img class="International-eShops-img"
