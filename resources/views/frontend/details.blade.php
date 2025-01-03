@@ -19,15 +19,38 @@
             otherButton.classList.remove("button-clicked");
         }
 
+        function showSampleDetailsElements() {
+            $('[id*="product-sample"]').removeClass('d-none');
+            $("#stock-status-container").removeClass("d-flex").hide();
+            $("#shortDescription").hide();
+            $("#product-price").removeClass("d-flex").hide();
+            $("#product-unit-of-sale").hide();
+            $("#product-add-to-cart-span").hide();
+
+            if ($("#fullDescription").length > 0) {
+                $("#fullDescription").hide();
+            }
+        }
+
         productButton.addEventListener("click", () => {
             toggleButtonStyles(productButton, sampleButton);
+
+            $("#stock-status-container").addClass("d-flex");
+            $("#product-price").addClass("d-flex");
+
+            $("#product-unit-of-sale").show();
+            $("#product-add-to-cart-span").show();
+
+            $('[id*="product-sample"]').addClass('d-none');
+            $("#shortDescription").show();
         });
 
         sampleButton.addEventListener("click", () => {
             toggleButtonStyles(sampleButton, productButton);
+            showSampleDetailsElements();
         });
     </script>
-    <div class="row mt-3 product-{{ $previewData['detailedProduct']['product_id'] }}-preview__clz">
+    <div class="row mt-3">
         <div class="col-9">
             <h2 class="mt-1 fs-24 fw-700 text-dark font-prompt-sb">
                 {{ $previewData['detailedProduct']['name'] }}
@@ -62,6 +85,18 @@
                         class="badge badge-md badge-inline badge-pill badge-danger-light fs-14 font-prompt-md border-radius-8px outof-stock-style">{{ translate('Out Of Stock') }}</span>
                 </div>
             @endif
+
+            @if ($previewData['detailedProduct']['sampleDetails']['sample_price'] !== 0)
+                <div id="product-sample-stock-status" class="col-3 d-none justify-content-end mt-2">
+                    <span
+                        class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ __('Available') }}</span>
+                </div>
+            @else
+                <div id="product-sample-stock-status" class="col-3 d-none justify-content-end mt-2">
+                    <span
+                        class="badge badge-md badge-inline badge-pill badge-danger-light fs-14 font-prompt-md border-radius-8px outof-stock-style">{{ __('Not Available') }}</span>
+                </div>
+            @endif
     </div>
     <!-- Short Description -->
     <div class="row col-md-12 fs-16 font-prompt shortdesctxt">
@@ -77,6 +112,10 @@
                 @if ($descriptionLength > 85)
                     <span class="seemorebtn" onclick="toggleDescription()">{{ __('View more') }}</span>
                 @endif
+            </p>
+
+            <p id="product-sample-description" class="d-none">
+                {!! ucfirst($previewData['detailedProduct']['sampleDetails']['sample_description']) !!}
             </p>
 
             <!-- Full description (hidden initially) -->
@@ -128,24 +167,29 @@
     <!-- Price -->
     <div class="row no-gutters mb-2">
         <div class="col-sm-10">
-            <div class="d-flex align-items-center">
-                <!-- Discount Price -->
+            <div id="product-price" class="d-flex align-items-center">
                 <strong class="fs-24 fw-700 text-dark font-prompt-sb">
                     @if (isset($previewData['detailedProduct']['discountedPrice']))
-                        AED <span>{{ $previewData['detailedProduct']['discountedPrice'] }}</span>
+                        <span>{{ single_price($previewData['detailedProduct']['discountedPrice']) }}</span>
                     @else
-                        AED <span>{{ $previewData['detailedProduct']['price'] }}</span> /
+                        <span>{{ single_price($previewData['detailedProduct']['price']) }}</span> /
                         {{ @$previewData['detailedProduct']['unit_of_sale'] }}
                     @endif
                 </strong>
 
-                <!-- Home Price -->
                 @if (isset($previewData['detailedProduct']['discountedPrice']))
                     <del id="previous-price" class="fs-24 opacity-60 ml-2 text-secondary">
-                        AED {{ $previewData['detailedProduct']['price'] }}
+                        {{ single_price($previewData['detailedProduct']['price']) }}
                     </del>
                     / {{ @$previewData['detailedProduct']['unit_of_sale'] }}
                 @endif
+            </div>
+
+            <div id="product-sample-price" class="d-none align-items-center">
+                <strong class="fs-24 fw-700 text-dark font-prompt-sb">
+                    <span>{{ single_price($previewData['detailedProduct']['sampleDetails']['sample_price']) }}</span> /
+                    {{ __('Sample') }}
+                </strong>
             </div>
         </div>
     </div>
@@ -168,8 +212,11 @@
     <!-- Unit of Sale -->
     <div class="col-md-12 p-0 pb-2">
         <div class="product-desc-each">
-            <span class="fs-16 font-prompt-md">Unit of Sale:</span>
-            <span class="fs-16 font-prompt">{{ $previewData['detailedProduct']['unit_of_sale'] }}</span>
+            <span class="fs-16 font-prompt-md">{{ __('Unit of Sale') }}:</span>
+            <span id="product-unit-of-sale"
+                class="fs-16 font-prompt">{{ $previewData['detailedProduct']['unit_of_sale'] }}</span>
+
+            <span id="product-sample-unit-of-sale" class="fs-16 font-prompt d-none">{{ __('Sample') }}</span>
         </div>
     </div>
 
@@ -563,20 +610,17 @@
                 </div>
             </div>
         </div>
-        @if (isset($previewData['detailedProduct']['discountedPrice']))
-            @php
-                $price = $previewData['detailedProduct']['discountedPrice'];
-            @endphp
-        @else
-            @php
-                $price = $previewData['detailedProduct']['price'];
-            @endphp
-        @endif
+        @php
+            $price = isset($previewData['detailedProduct']['discountedPrice']) ? $previewData['detailedProduct']['discountedPrice'] : $previewData['detailedProduct']['price'];
+        @endphp
         <button type="button"
             class="btn btn-secondary-base add-to-cart col-8 col-md-8 text-white border-radius-16 fs-16 font-prompt py-2"
             @if (isset($isPreview) && $isPreview) onclick="addToCart({{ json_encode($isPreview) }})" @else onclick="addToCart()" @endif>
-            <span class="add-to-cart-style-txt">Add to cart - AED <span
-                    id="chosen_price">{{ $price }}</span></span>
+            <span id="product-add-to-cart-span" class="add-to-cart-style-txt" onclick="samplePriceSpanClicked=false;">{{ __('Add to cart') }} - <span
+                    id="chosen_price">{{ single_price($price) }}</span></span>
+            <span id="product-sample-add-to-cart-span" class="d-none add-to-cart-style-txt" onclick="samplePriceSpanClicked=true;">{{ __('Add to cart') }} -
+                <span
+                    id="sample_chosen_price">{{ single_price($previewData['detailedProduct']['sampleDetails']['sample_price']) }}</span></span>
         </button>
 
         </div>
@@ -669,19 +713,6 @@
             </div>
         </div>
     </div>
-        <!-- Total Price
-        <div class="row no-gutters pb-3" id="chosen_price_div">
-            <div class="col-sm-2">
-                <div class="text-secondary fs-14 fw-400 mt-1">Total Price</div>
-            </div>
-            <div class="col-sm-10">
-                <div class="product-price">
-                    <strong id="chosen_price"
-                        class="fs-20 fw-700 text-primary">{{ $previewData['detailedProduct']['totalDiscount'] ?? $previewData['detailedProduct']['total'] }} AED</strong>
-                </div>
-            </div>
-        </div>-->
-
 </form>
 <!--
     <div class="mt-3">

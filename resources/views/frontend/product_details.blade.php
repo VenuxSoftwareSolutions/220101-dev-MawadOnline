@@ -2841,7 +2841,6 @@
                 currentQuantity >= quantityInput.attr("min") &&
                 currentQuantity <= quantityInput.attr("max")
             ) {
-                // AJAX request to update quantity
                 $.ajax({
                     url: '{{ route('seller.update-price-preview') }}',
                     method: 'POST',
@@ -2850,6 +2849,9 @@
                         variationId
                     },
                     success: function(response) {
+                        if(response.sampleTotal !== null) {
+                            $("#sample_chosen_price").text(response.sampleTotal)
+                        }
                         if (response.unit_price != null) {
                             if (response.discountPrice > 0) {
                                 $("#qty-interval").text(response.discountPrice)
