@@ -809,7 +809,7 @@
                 $('.c-preloader').show();
                 $.ajax({
                     type:"POST",
-                    url: '{{ route('cart.addToCart') }}',
+                    url: `{{ route('cart.addToCart') }}${typeof(samplePriceSpanClicked) !== "undefined" && samplePriceSpanClicked === true ? "?sample=true" : ""}`,
                     data: $('#option-choice-form-preview').serializeArray(),
                     success: function(data){
                        $('#addToCart-modal-body').html(null);
