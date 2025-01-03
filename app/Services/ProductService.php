@@ -5552,7 +5552,8 @@ class ProductService
             return response()->json([
                 'unit_price' => $unitPrice,
                 'qty' => $qty,
-                'total' => $total,
+                'total' => single_price($total),
+                'sampleTotal' => single_price($data['detailedProduct']['sampleDetails']["sample_price"] * $qty),
                 'maximum' => $maximum,
                 'minimum' => $minimum,
                 'totalDiscount' => $totalDiscount,
